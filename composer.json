@@ -1,0 +1,36 @@
+{
+    "name": "lizmap/naturaliz-modules",
+    "type": "jelix-module",
+    "description": "Jelix module to manage data on species observations for Lizmap.",
+    "keywords": ["module", "jelix", "lizmap", "naturaliz"],
+    "homepage": "http://3liz.com",
+    "license": "Mozilla Public License 2.0 (MPL 2.0)",
+    "authors": [
+        {
+            "name": "Laurent Jouanneau",
+            "email": "laurent@jelix.org"
+        },
+        {
+            "name": "René-Luc D'Hont",
+            "email": "rldhont@3liz.com"
+        },
+        {
+            "name": "Michaël Douchin",
+            "email": "mdouchin@3liz.com"
+        }
+    ],
+    "require": {
+    },
+    "minimum-stability": "stable",
+    "extra" : {
+        "jelix" : {
+            "modules": [
+                "taxon/",
+                "occtax/",
+                "occtax_admin/",
+                "mascarine/",
+                "mascarine_admin/"
+            ]
+        }
+    }
+}
