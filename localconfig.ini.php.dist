@@ -1,0 +1,38 @@
+;<?php die(''); ?>
+;for security reasons , don't remove or modify the first line
+
+; put here configuration variables that are specific to this installation
+
+[modules]
+lizmap.installparam=demo
+
+[taxon]
+; champ determinant le statut local : valeures possibles fr, gf, mar, gua, sm, sb, spm, may, epa, reu, taff, pf, nc, wf, cli
+colonne_locale=gua
+; liste des codes des arrêtés de protection qui concernent la zone de travail
+code_arrete_protection=GUAM1,GUAO1,GUARA1,DV971,GUAI2
+
+[naturaliz]
+; projection de référence
+srid=32620
+adminPassword="naturaliz"
+appName=Naturaliz
+
+[occtax]
+defaultRepository=
+defaultProject=
+projectName=Occurences de Taxon
+projectDescription=Cette application permet de consulter les observations faunistiques et floristiques.
+projectCss=""
+
+[mascarine]
+defaultRepository=
+defaultProject=
+projectName=Saisie Flore
+projectDescription=Cette application permet de consulter et de créer des observation floristiques.
+projectCss=""
+habitats=GUAEAR
+
+; chmod for files created by Lizmap and Jelix
+;chmodFile=0664
+;chmodDir=0775
