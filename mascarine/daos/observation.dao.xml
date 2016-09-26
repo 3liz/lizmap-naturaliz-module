@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dao xmlns="http://jelix.org/ns/dao/1.0">
+    <datasources>
+        <primarytable name="o" realname="m_observation" primarykey="id_obs" />
+    </datasources>
+    <record>
+        <property name="id_obs" fieldname="id_obs" datatype="int" autoincrement="true" default=""/>
+        <property name="type_obs" fieldname="type_obs" datatype="text"/>
+        <property name="nature_obs" fieldname="nature_obs" datatype="text"/>
+        <property name="forme_obs" fieldname="forme_obs" datatype="text"/>
+        <property name="date_obs" fieldname="date_obs" datatype="date"/>
+        <property name="num_manuscrit" fieldname="num_manuscrit" datatype="text"/>
+        <property name="id_prog" fieldname="id_prog" datatype="int"/>
+        <property name="expertise_obs" fieldname="expertise_obs" datatype="text"/>
+        <property name="remarques_obs" fieldname="remarques_obs" datatype="text"/>
+        <property name="remarques_controle_obs" fieldname="remarques_controle_obs" datatype="text"/>
+        <property name="validee_obs" fieldname="validee_obs" datatype="bool"/>
+        <!--<property name="" fieldname="" datatype="string/int/float/date"
+        required="yes" maxlength="" minlength="" regexp="" sequence=""
+        updatepattern="" insertpattern="" selectpattern=""/>-->
+    </record>
+    <factory>
+        <!--<method name="findByStage" type="select/selectfirst/delete/update/php">
+            <parameter name="" />
+            <values>
+                <value property="" value="" />
+            </values>
+            <conditions logic="and/or">
+                <eq property="" value="" />
+            </conditions>
+            <order>
+                <orderitem property="" way="asc/desc" />
+            </order>
+            <limit offset="" count=""/>
+            <body><![CDATA[
+            ]]></body>
+        </method>-->
+    </factory>
+</dao>

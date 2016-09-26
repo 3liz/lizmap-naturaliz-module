@@ -1,0 +1,12 @@
+span.redlist { color: white; font-weight:bold; padding:3px;}
+span.redlist.CR  { background-color:#D3001B; }
+span.redlist.DD  { background-color:#D3D4D5; color: black; border: 1px solid grey;}
+span.redlist.EN  { background-color:#FBBF00; color: black; border: 1px solid grey;}
+span.redlist.EW  { background-color:#3D1951; }
+span.redlist.EX  { background-color:#000000; }
+span.redlist.LC  { background-color:#78B74A; }
+span.redlist.NA  { background-color:#919294; }
+span.redlist.NE  { background-color:#FFFFFF; }
+span.redlist.NT  { background-color:#FBF2CA; color: black; border: 1px solid grey;}
+span.redlist.RE  { background-color:#5A1A63; }
+span.redlist.VU  { background-color:#FFED00; color: black; border: 1px solid grey;}

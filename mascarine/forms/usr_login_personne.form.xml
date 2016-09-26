@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form xmlns="http://jelix.org/ns/forms/1.1">
+    
+    <choice ref="select_org">
+        <label>Votre organisme</label>
+        
+        <item value="1" selected="true">
+            <label>Sélectionnez dans la liste</label>
+            <menulist ref="id_org" required="true">
+                <label locale="mascarine~observation.input.id_org"/>
+                <emptyitem>---</emptyitem>
+                <datasource dao="mascarine~organisme" method="findAll"
+                            labelproperty="nom_org" valueproperty="id_org"/>
+            </menulist>
+        </item>
+        <item value="0">
+            <label>Créez un nouvel organisme</label>
+            <input ref="nom_org" required="true">
+                <label>Nom</label>
+            </input>
+
+            <input ref="abreviation_org" required="true">
+                <label>Abreviation</label>
+            </input>
+        </item>
+    </choice>
+    
+    <choice ref="select_perso">
+        <label>Votre perso</label>
+        
+        <item value="1" selected="true">
+            <label>Sélectionnez dans la liste</label>
+            
+            <menulist ref="id_perso" required="true">
+                <label locale="mascarine~observation.input.id_perso"/>
+                <emptyitem>---</emptyitem>
+                <datasource dao="mascarine~personne" method="findByOrganismeWithoutLogin" criteriafrom="id_org"
+                            labelproperty="nom_perso prenom_perso"  labelseparator=" " valueproperty="id_perso"/>
+            </menulist>
+            
+        </item>
+        <item value="0">
+            <label>Créez un nouveau perso</label>
+            
+            <menulist ref="civilite_perso" required="true">
+                <label>Civilité</label>
+                <emptyitem>---</emptyitem>
+                <datasource dao="mascarine~nomenclature" method="findByField" criteria="civilite_perso"
+                            labelproperty="valeur" valueproperty="code"/>
+            </menulist>
+
+            <input ref="nom_perso" required="true">
+                <label>Nom</label>
+            </input>
+
+            <input ref="prenom_perso" required="true">
+                <label>Prénom</label>
+            </input>
+
+            <textarea ref="remarques_perso">
+                <label>Remarques</label>
+            </textarea>
+
+            <textarea ref="adresse">
+                <label>Adresse</label>
+            </textarea>
+
+            <input ref="telephone_perso" pattern="/[0-9 +-.()]{7,}/">
+                <label>Téléphone</label>
+            </input>
+
+            <input ref="portable_perso" pattern="/[0-9 +-.()]{7,}/">
+                <label>Portable</label>
+            </input>
+
+            <input ref="email_perso" type="email">
+                <label>Email</label>
+            </input>
+        </item>
+    </choice>
+
+    <submit ref="_submit">
+        <label>ok</label>
+    </submit>
+</form>

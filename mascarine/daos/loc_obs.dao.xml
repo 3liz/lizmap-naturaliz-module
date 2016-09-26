@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dao xmlns="http://jelix.org/ns/dao/1.0">
+    <datasources>
+        <primarytable name="loc_obs" realname="localisation_obs" primarykey="id_obs" />
+    </datasources>
+    <record>
+        <property name="id_obs" fieldname="id_obs" datatype="int" required="true"/>
+        <property name="code_commune" fieldname="code_commune" datatype="text"/>
+        <property name="code_maille" fieldname="code_maille" datatype="text"/>
+        <property name="id_lieudit" fieldname="id_lieudit" datatype="int"/>
+        <property name="coord_x" fieldname="coord_x" datatype="float"/>
+        <property name="coord_y" fieldname="coord_y" datatype="float"/>
+        <property name="alt_min" fieldname="alt_min" datatype="float"/>
+        <property name="alt_max" fieldname="alt_max" datatype="float"/>
+        <property name="alt_moy" fieldname="alt_moy" datatype="float"/>
+        <property name="description_loc" fieldname="description_loc" datatype="text"/>
+        <property name="remarques_loc" fieldname="remarques_loc" datatype="text"/>
+        <property name="geom_type" fieldname="geom" datatype="text"
+         selectpattern="GeometryType(%s)" insertpattern="" updatepattern=""/>
+        <!--property name="geom" fieldname="geom" datatype="geometry" maxlength="8350716"/-->
+        <!--<property name="" fieldname="" datatype="string/int/float/date"
+        required="yes" maxlength="" minlength="" regexp="" sequence=""
+        updatepattern="" insertpattern="" selectpattern=""/>-->
+    </record>
+    <factory>
+        <method name="updateGeomFromText" type="php">
+            <parameter name="id_obs" />
+            <parameter name="geo_wkt" />
+            <parameter name="s_crs" />
+            <parameter name="t_crs" />
+            <body><![CDATA[
+                $sql = 'update '.$this->_tables[$this->_primaryTable]['realname'];
+                $sql.= ' set geom = ST_Transform( ST_GeomFromText( '. $this->_prepareValue($geo_wkt,'string') .', '. $this->_prepareValue($s_crs,'integer') .' ), '. $this->_prepareValue($t_crs,'integer') .' )';
+                $sql.= ' where id_obs = '. $this->_prepareValue($id_obs,'integer');
+                $this->_conn->exec($sql);
+                $sql = 'update '.$this->_tables[$this->_primaryTable]['realname'];
+                $sql.= ' set coord_x = CASE WHEN GeometryType(geom) = \'POINT\' THEN ST_X(geom) END';
+                $sql.= ', coord_y = CASE WHEN GeometryType(geom) = \'POINT\' THEN ST_Y(geom) END';
+                $sql.= ' where id_obs = '. $this->_prepareValue($id_obs,'integer');
+                $this->_conn->exec($sql);
+            ]]></body>
+        </method>
+        <method name="getGeomAsText" type="php">
+            <parameter name="id_obs" />
+            <parameter name="t_crs" />
+            <body><![CDATA[
+                $sql = $this->_selectClause;
+                $sql .= ', ST_AsText( ST_Transform( geom, '. $this->_prepareValue($t_crs,'integer') .' ) ) AS geo_wkt ';
+                $sql .= $this->_fromClause.$this->_whereClause;
+                $sql .= ($this->_whereClause == ''?' WHERE ':' AND ');
+                $sql .= ' id_obs = '. $this->_prepareValue($id_obs,'integer');
+
+                $rs = $this->_conn->query($sql);
+                $rs->setFetchMode(8,$this->_DaoRecordClassName);
+
+                $record = $rs->fetch();
+                return $record->geo_wkt;
+            ]]></body>
+        </method>
+        <method name="getByObs" type="selectfirst">
+            <parameter name="id_obs"/>
+            <conditions logic="and">
+                <eq property="id_obs" expr="$id_obs" />
+            </conditions>
+        </method>
+        <!--<method name="findByStage" type="select/selectfirst/delete/update/php">
+            <parameter name="" />
+            <values>
+                <value property="" value="" />
+            </values>
+            <conditions logic="and/or">
+                <eq property="" value="" />
+            </conditions>
+            <order>
+                <orderitem property="" way="asc/desc" />
+            </order>
+            <limit offset="" count=""/>
+            <body><![CDATA[
+            ]]></body>
+        </method>-->
+    </factory>
+</dao>

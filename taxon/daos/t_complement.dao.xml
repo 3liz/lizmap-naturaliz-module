@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dao xmlns="http://jelix.org/ns/dao/1.0">
+    <datasources>
+        <primarytable name="t_complement" realname="t_complement" primarykey="cd_nom" />
+    </datasources>
+    <record>
+        <property name="cd_nom" fieldname="cd_nom" datatype="int" required="true"/>
+        <property name="statut" fieldname="statut" datatype="varchar" maxlength="15"/>
+        <property name="rarete" fieldname="rarete" datatype="varchar" maxlength="10"/>
+        <property name="endemicite" fieldname="endemicite" datatype="varchar" maxlength="5"/>
+        <property name="invasibilite" fieldname="invasibilite" datatype="varchar" maxlength="5"/>
+        <property name="menace" fieldname="menace" datatype="varchar" maxlength="5"/>
+        <property name="menace_monde" fieldname="menace_monde" datatype="varchar" maxlength="6"/>
+        <property name="protection" fieldname="protection" datatype="varchar" maxlength="5"/>
+        <property name="det_znieff" fieldname="det_znieff" datatype="varchar" maxlength="15"/>
+        <!--<property name="" fieldname="" datatype="string/int/float/date"
+        required="yes" maxlength="" minlength="" regexp="" sequence=""
+        updatepattern="" insertpattern="" selectpattern=""/>-->
+    </record>
+    <factory>
+        <!--<method name="findByStage" type="select/selectfirst/delete/update/php">
+            <parameter name="" />
+            <values>
+                <value property="" value="" />
+            </values>
+            <conditions logic="and/or">
+                <eq property="" value="" />
+            </conditions>
+            <order>
+                <orderitem property="" way="asc/desc" />
+            </order>
+            <limit offset="" count=""/>
+            <body><![CDATA[
+            ]]></body>
+        </method>-->
+    </factory>
+</dao>

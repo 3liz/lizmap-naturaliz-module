@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dao xmlns="http://jelix.org/ns/dao/1.0">
+    <datasources>
+        <primarytable name="personne" realname="personne" primarykey="id_perso" />
+    </datasources>
+    <record>
+        <property name="id_perso" fieldname="id_perso" datatype="int" autoincrement="true" default=""/>
+        <property name="civilite_perso" fieldname="civilite_perso" datatype="text"/>
+        <property name="nom_perso" fieldname="nom_perso" datatype="text"/>
+        <property name="prenom_perso" fieldname="prenom_perso" datatype="text"/>
+        <property name="id_org" fieldname="id_org" datatype="int"/>
+        <property name="remarques_perso" fieldname="remarques_perso" datatype="text"/>
+        <property name="adresse_perso" fieldname="adresse_perso" datatype="text"/>
+        <property name="telephone_perso" fieldname="telephone_perso" datatype="text"/>
+        <property name="portable_perso" fieldname="portable_perso" datatype="text"/>
+        <property name="email_perso" fieldname="email_perso" datatype="text"/>
+        <property name="usr_login" fieldname="usr_login" datatype="text"/>
+        <!--<property name="" fieldname="" datatype="string/int/float/date"
+        required="yes" maxlength="" minlength="" regexp="" sequence=""
+        updatepattern="" insertpattern="" selectpattern=""/>-->
+    </record>
+    <factory>
+        <method name="findByOrganisme" type="select">
+            <parameter name="id_org" />
+            <conditions logic="and">
+                <eq property="id_org" expr="$id_org" />
+            </conditions>
+            <order>
+                <orderitem property="nom_perso" way="asc" />
+                <orderitem property="prenom_perso" way="asc" />
+            </order>
+        </method>
+        <method name="getByUserLogin" type="selectfirst">
+            <parameter name="usr_login" />
+            <conditions logic="and">
+                <eq property="usr_login" expr="$usr_login" />
+            </conditions>
+        </method>
+        <method name="findWithoutUserLogin" type="select">
+            <conditions logic="and">
+                <isnull property="usr_login"/>
+            </conditions>
+        </method>
+        <method name="findByOrganismeWithoutLogin" type="select">
+            <parameter name="id_org" />
+            <conditions logic="and">
+                <eq property="id_org" expr="$id_org" />
+                <isnull property="usr_login"/>
+            </conditions>
+            <order>
+                <orderitem property="nom_perso" way="asc" />
+                <orderitem property="prenom_perso" way="asc" />
+            </order>
+        </method>
+        <!--<method name="findByStage" type="select/selectfirst/delete/update/php">
+            <parameter name="" />
+            <values>
+                <value property="" value="" />
+            </values>
+            <conditions logic="and/or">
+                <eq property="" value="" />
+            </conditions>
+            <order>
+                <orderitem property="" way="asc/desc" />
+            </order>
+            <limit offset="" count=""/>
+            <body><![CDATA[
+            ]]></body>
+        </method>-->
+    </factory>
+</dao>

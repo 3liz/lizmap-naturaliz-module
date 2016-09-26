@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dao xmlns="http://jelix.org/ns/dao/1.0">
+    <datasources>
+        <primarytable name="lieudit" realname="lieudit" primarykey="id_lieudit" />
+    </datasources>
+    <record>
+        <property name="id_lieudit" fieldname="id_lieudit" datatype="int" autoincrement="true" default=""/>
+        <property name="code_lieudit" fieldname="code_lieudit" datatype="text" required="true"/>
+        <property name="nom_lieudit" fieldname="nom_lieudit" datatype="text" required="true"/>
+        <property name="nature_lieudit" fieldname="nature_lieudit" datatype="text"/>
+        <property name="importance_lieudit" fieldname="importance_lieudit" datatype="int"/>
+        <property name="geom" fieldname="geom" datatype="geometry" maxlength="8350720"/>
+        <!--<property name="" fieldname="" datatype="string/int/float/date"
+        required="yes" maxlength="" minlength="" regexp="" sequence=""
+        updatepattern="" insertpattern="" selectpattern=""/>-->
+    </record>
+    <factory>
+        <method name="findNearGeomAsText" type="php">
+            <parameter name="geo_wkt" />
+            <parameter name="s_crs" default="4326"/>
+            <body><![CDATA[
+                $sql = $this->_selectClause;
+                $sql .= $this->_fromClause.$this->_whereClause;
+                $sql .= ($this->_whereClause == '' ? ' WHERE ':' AND ');
+                $sql .= ' ST_DWithin(';
+                $sql .= ' ST_GeomFromText( '. $this->_prepareValue($geo_wkt,'string') .', '. $this->_prepareValue($s_crs,'integer') .' )';
+                $sql .= ', ST_Transform( lieudit.geom, '. $this->_prepareValue($s_crs,'integer') .' )';
+                $sql .= ', 0.02 )';
+                $sql .= ' ORDER BY ST_Distance(';
+                $sql .= ' ST_GeomFromText( '. $this->_prepareValue($geo_wkt,'string') .', '. $this->_prepareValue($s_crs,'integer') .' )';
+                $sql .= ', ST_Transform( lieudit.geom, '. $this->_prepareValue($s_crs,'integer') .' )';
+                $sql .= ' )';
+                                        
+                $rs = $this->_conn->query($sql);
+                $rs->setFetchMode(8,$this->_DaoRecordClassName);
+
+                return $rs;
+            ]]></body> 
+        </method>
+        <!--<method name="findByStage" type="select/selectfirst/delete/update/php">
+            <parameter name="" />
+            <values>
+                <value property="" value="" />
+            </values>
+            <conditions logic="and/or">
+                <eq property="" value="" />
+            </conditions>
+            <order>
+                <orderitem property="" way="asc/desc" />
+            </order>
+            <limit offset="" count=""/>
+            <body><![CDATA[
+            ]]></body>
+        </method>-->
+    </factory>
+</dao>

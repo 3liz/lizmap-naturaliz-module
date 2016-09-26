@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dao xmlns="http://jelix.org/ns/dao/1.0">
+    <datasources>
+        <primarytable name="t_nomenclature" realname="t_nomenclature" primarykey="champ,code" />
+    </datasources>
+    <record>
+        <property name="champ" fieldname="champ" datatype="text" required="true"/>
+        <property name="code" fieldname="code" datatype="text" required="true"/>
+        <property name="valeur" fieldname="valeur" datatype="text"/>
+        <property name="description" fieldname="description" datatype="text"/>
+        <!--<property name="" fieldname="" datatype="string/int/float/date"
+        required="yes" maxlength="" minlength="" regexp="" sequence=""
+        updatepattern="" insertpattern="" selectpattern=""/>-->
+    </record>
+    <factory>
+        <method name="findByChamp" type="select">
+            <parameter name="champ" />
+            <conditions logic="and">
+                <eq property="champ" expr="$champ" />
+            </conditions>
+            <order>
+                <orderitem property="valeur" way="asc" />
+            </order>
+        </method>
+
+        <method name="getDistinctChamp" type="select">
+        <body><![CDATA[
+            $sql = ' SELECT DISTINCTchamp';
+            $sql.= ' ORDER BY champ';
+            $this->_conn->exec($sql);
+        ]]></body>
+        </method>
+
+        <!--<method name="findByStage" type="select/selectfirst/delete/update/php">
+            <parameter name="" />
+            <values>
+                <value property="" value="" />
+            </values>
+            <conditions logic="and/or">
+                <eq property="" value="" />
+            </conditions>
+            <order>
+                <orderitem property="" way="asc/desc" />
+            </order>
+            <limit offset="" count=""/>
+            <body><![CDATA[
+            ]]></body>
+        </method>-->
+    </factory>
+</dao>

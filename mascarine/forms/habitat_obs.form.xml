@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form xmlns="http://jelix.org/ns/forms/1.1" allowAnyOrigin="true">
+    
+    <input ref="ref_habitat" required="true">
+        <label locale="mascarine~observation.input.ref_habitat"/>
+    </input>
+    
+    <input ref="code_habitat" required="true">
+        <label locale="mascarine~observation.input.code_habitat"/>
+    </input>
+    
+    <submit ref="submit">
+        <label>Ajouter</label>
+    </submit>
+</form>

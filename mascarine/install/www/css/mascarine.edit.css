@@ -1,0 +1,185 @@
+#obs-spatial-draw-buttons button.btn {
+  width: 30px;
+  height: 30px;
+  padding: 2px;
+  background-color: #F5F5F5;
+}
+#obs-spatial-draw-buttons button.btn.disabled {
+  background-color: #E6E6E6;
+}
+
+#obs-spatial-draw-buttons button.point {
+    background-image:url(img/sig/mActionDrawPoint.png);
+    background-repeat: no-repeat;
+    background-position: 2px 2px;
+}
+#obs-spatial-draw-buttons button.write {
+    background-image:url(img/sig/mActionWritePoint.png);
+    background-repeat: no-repeat;
+    background-position: 2px 2px;
+}
+#obs-spatial-draw-buttons button.line {
+    background-image:url(img/sig/mActionDrawLine.png);
+    background-repeat: no-repeat;
+    background-position: 2px 2px;
+}
+#obs-spatial-draw-buttons button.polygon {
+    background-image:url(img/sig/mActionDrawPolygon.png);
+    background-repeat: no-repeat;
+    background-position: 2px 2px;
+}
+#obs-spatial-draw-buttons button.cancel {
+    background-image:url(img/sig/Erase.png);
+    background-repeat: no-repeat;
+    background-position: 2px 2px;
+}
+#obs-spatial-draw-buttons button.gpx {
+    background-image:url(img/sig/tracking.png);
+    background-repeat: no-repeat;
+    background-position: 2px 2px;
+}
+
+#obs-spatial-draw-buttons button.delete {
+    background-image:url(img/sig/mActionDeleteSelected.png);
+    background-repeat: no-repeat;
+    background-position: 2px 2px;
+}
+#obs-spatial-draw-buttons button.intersect {
+    background-image:url(img/sig/intersect.png);
+    background-repeat: no-repeat;
+    background-position: 2px 2px;
+}
+#obs-spatial-draw-buttons button.split {
+    background-image:url(img/sig/mActionSplitFeatures.png);
+    background-repeat: no-repeat;
+    background-position: 2px 2px;
+}
+#obs-spatial-draw-buttons button.add {
+    background-image:url(img/sig/mActionAddParcours.png);
+    background-repeat: no-repeat;
+    background-position: 2px 2px;
+}
+#div_mascarine_observation_forms button.close {
+    text-shadow: 0px 1px 0px #000;
+    color: #F0F0F0;
+    opacity:0.8;
+}
+#div_mascarine_observation_forms button.close:hover {
+    opacity:1;
+}
+#div_mascarine_observation_forms_tabs .nav-tabs > li > a:hover,
+#div_mascarine_observation_forms_tabs .nav-tabs > li > a:focus {
+    color: #08C;
+    border-color: transparent;
+}
+#div_mascarine_observation_forms_tabs .nav > li > a:hover,
+#div_mascarine_observation_forms_tabs .nav > li > a:focus {
+    background-color: transparent;
+    cursor: default;
+}
+#div_mascarine_observation_forms_tabs  .nav-tabs > .active > a,
+#div_mascarine_observation_forms_tabs .nav-tabs > .active > a:hover,
+#div_mascarine_observation_forms_tabs .nav-tabs > .active > a:focus {
+    cursor: default;
+    background-color: #FFF;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #DDD #DDD transparent;
+    -moz-border-top-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    border-image: none;
+}
+#div_mascarine_observation_forms_tabs .nav-tabs > .active > a.jforms-error-list,
+#div_mascarine_observation_forms_tabs .nav-tabs > li > a.jforms-error-list:hover,
+#div_mascarine_observation_forms_tabs .nav-tabs > li > a.jforms-error-list:focus {
+    color: #F00;
+}
+
+#div_mascarine_observation_forms_tabs {
+    position:relative;
+}
+#div_mascarine_observation_forms_tabs .tab-content {
+    position:absolute;
+    bottom:70px;
+    left: 0px;
+    right:0px;
+    top: 75px;
+    overflow-y: auto;
+}
+#div_mascarine_observation_forms_tabs .pager {
+    position: absolute;
+    bottom: 35px;
+    left: 0px;
+    right: 0px;
+    margin: 0px;
+    padding: 2px;
+}
+
+#div_form_mascarine_observation_habitat ul {
+ margin-left:10px;
+}
+#div_form_mascarine_observation_habitat li {
+ display:block;
+}
+#div_form_mascarine_observation_habitat label {
+ border:solid 1px transparent;
+}
+#div_form_mascarine_observation_habitat label:hover {
+ border:solid 1px black;
+}
+#div_form_mascarine_observation_habitat label a.btn{
+ width:12px;
+ height:18px;
+ padding: 0 3px;
+ display: inline-block;
+}
+#div_form_mascarine_observation_habitat input,
+#div_form_mascarine_observation_habitat input ~ ul {
+ display: none;
+}
+#div_form_mascarine_observation_habitat input:checked ~ ul {
+ display: block;
+}
+#div_form_mascarine_observation_habitat input ~ label .icon-chevron-down {
+ display: none;
+}
+#div_form_mascarine_observation_habitat input:checked ~ label .icon-chevron-right {
+ display: none;
+}
+#div_form_mascarine_observation_habitat input:checked ~label .icon-chevron-down {
+ display: inline-block;
+}
+
+#lizmap-modal .modal-body div.form div.add,
+#lizmap-modal .modal-body div.form div.update {
+  border: 1px solid #dddddd;
+  -webkit-border-radius: 4px;
+     -moz-border-radius: 4px;
+          border-radius: 4px;
+}
+#lizmap-modal .modal-body div.form div.update {
+  margin-top: 5px;
+}
+#lizmap-modal .modal-body div.form input[type="checkbox"] {
+ display:none;
+}
+#lizmap-modal .modal-body div.form input[type="checkbox"] ~ label {
+ margin: 0px;
+ padding:5px;
+ padding-left:15px;
+ background-color: #F9F9F9;
+  -webkit-border-radius: 4px;
+     -moz-border-radius: 4px;
+          border-radius: 4px;
+ font-size:16px;
+ font-weight:bold;
+}
+#lizmap-modal .modal-body div.form input[type="checkbox"] ~ form {
+ display:none;
+ padding-top:5px;
+}
+#lizmap-modal .modal-body div.form input[type="checkbox"]:checked ~ form {
+ display:block;
+}

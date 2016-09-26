@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form xmlns="http://jelix.org/ns/forms/1.1" allowAnyOrigin="true">
+
+    <hidden ref="id_obs"/>
+
+    <group ref="what">
+        <label locale="mascarine~search.group.what"/>
+
+        <listbox ref="cd_nom" multiple="true" size="3">
+            <label locale="mascarine~search.input.cd_nom"/>
+        </listbox>
+
+        <input ref="search_token">
+            <label>Token</label>
+        </input>
+
+    </group>
+
+    <group ref="who">
+        <label locale="mascarine~search.group.who"/>
+
+        <checkbox ref="onlymine">
+            <label locale="mascarine~search.input.onlymine"/>
+        </checkbox>
+
+        <checkbox ref="onlymyorganism">
+            <label locale="mascarine~search.input.onlymyorganization"/>
+        </checkbox>
+
+    </group>
+
+    <group ref="when">
+        <label locale="mascarine~search.group.when"/>
+
+        <date ref="date_min" defaultvalue="2000-01-01">
+            <label locale="mascarine~search.input.date_min"/>
+        </date>
+
+        <date ref="date_max" defaultvalue="now">
+            <label locale="mascarine~search.input.date_max"/>
+        </date>
+
+    </group>
+
+    <group ref="where">
+        <label locale="mascarine~search.group.where"/>
+
+        <hidden ref="code_commune">
+            <label locale="mascarine~search.input.code_commune"/>
+        </hidden>
+
+        <hidden ref="code_maille">
+            <label locale="mascarine~search.input.code_maille"/>
+        </hidden>
+
+        <hidden ref="geom">
+            <label locale="mascarine~search.input.geom"/>
+        </hidden>
+
+    </group>
+
+  <reset ref="reinit">
+    <label locale="mascarine~search.input.reinit"/>
+  </reset>
+
+  <submit ref="submit">
+    <label locale="mascarine~search.input.submit"/>
+  </submit>
+
+</form>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form xmlns="http://jelix.org/ns/forms/1.1" allowAnyOrigin="true">
+
+    <hidden ref="cle_obs"/>
+
+    <group ref="what">
+        <label locale="occtax~search.group.what"/>
+
+        <menulist ref="jdd_id">
+            <label locale="occtax~search.input.jdd_id"/>
+            <emptyitem locale="occtax~search.input.emptyitem"/>
+            <datasource dao="occtax~jdd"
+              method="getJddList" labelproperty="jdd_id,jdd_code"  labelseparator=" - "
+              valueproperty="jdd_id"/>
+        </menulist>
+
+        <listbox ref="cd_nom" multiple="true" readonly="false" size="3">
+            <label locale="occtax~search.input.cd_nom"/>
+        </listbox>
+
+        <input ref="search_token">
+            <label>Token</label>
+        </input>
+
+    </group>
+
+    <group ref="who">
+        <label locale="occtax~search.group.who"/>
+
+        <input ref="observateur">
+            <label locale="occtax~search.input.observateur"/>
+        </input>
+
+    </group>
+
+    <group ref="when">
+        <label locale="occtax~search.group.when"/>
+
+        <date ref="date_min" defaultvalue="2000-01-01">
+            <label locale="occtax~search.input.date_min"/>
+        </date>
+
+        <date ref="date_max" defaultvalue="now">
+            <label locale="occtax~search.input.date_max"/>
+        </date>
+
+    </group>
+
+    <group ref="where">
+        <label locale="occtax~search.group.where"/>
+
+        <menulist ref="type_en">
+            <label locale="occtax~search.input.type_en"/>
+            <emptyitem locale="occtax~search.input.emptyitem"/>
+            <datasource class="occtax~listExistingTypeEn" />
+        </menulist>
+
+        <hidden ref="code_commune">
+            <label locale="occtax~search.input.code_commune"/>
+        </hidden>
+
+        <hidden ref="code_masse_eau">
+            <label locale="occtax~search.input.code_masse_eau"/>
+        </hidden>
+
+        <hidden ref="code_maille">
+            <label locale="occtax~search.input.code_maille"/>
+        </hidden>
+
+        <hidden ref="geom">
+            <label locale="occtax~search.input.geom"/>
+        </hidden>
+
+    </group>
+
+  <reset ref="reinit">
+    <label locale="occtax~search.input.reinit"/>
+  </reset>
+
+  <submit ref="submit">
+    <label locale="occtax~search.input.submit"/>
+  </submit>
+
+</form>

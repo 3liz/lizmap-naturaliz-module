@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form xmlns="http://jelix.org/ns/forms/1.1">
+    
+    <hidden ref="id_flore_obs"/>
+    
+    <hidden ref="id_obs"/>
+    
+    <hidden ref="cd_nom"/>
+    
+    <hidden ref="strate_flore"/>
+    
+    <menulist ref="classe_pop_flore" required="true">
+        <label locale="mascarine~observation.input.classe_pop_flore"/>
+        <emptyitem>---</emptyitem>
+        <datasource dao="mascarine~nomenclature" method="findByField" criteria="classe_pop_flore"
+                    labelproperty="valeur" valueproperty="code"/>
+    </menulist>
+    
+    <input ref="nombre_pop_flore" type="integer" minvalue="0" required="true">
+        <label locale="mascarine~observation.input.nombre_pop_flore"/>
+    </input>
+    
+    <input ref="borne_inf_pop_flore" type="integer" minvalue="0">
+        <label locale="mascarine~observation.input.borne_inf_pop_flore"/>
+    </input>
+    
+    <input ref="borne_sup_pop_flore" type="integer" minvalue="0">
+        <label locale="mascarine~observation.input.borne_sup_pop_flore"/>
+    </input>
+    
+    <textarea ref="remarques_pop_flore">
+        <label locale="mascarine~observation.input.remarques_pop_flore"/>
+    </textarea>
+    
+    <submit ref="submit">
+        <label>Ajouter</label>
+    </submit>
+    
+</form>

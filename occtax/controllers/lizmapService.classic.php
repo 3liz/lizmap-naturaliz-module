@@ -1,0 +1,314 @@
+<?php
+/**
+* Php proxy to access map services
+* @package   lizmap
+* @subpackage occtax
+* @author    3liz
+* @copyright 2014 3liz
+* @link      http://3liz.com
+* @license    All rights reserved
+*/
+
+include jApp::getModulePath('lizmap').'controllers/service.classic.php';
+
+class lizmapServiceCtrl extends serviceCtrl {
+
+    private $data = array(
+
+        'b' => array(
+            'layers' => array(
+                'observation_brute_point',
+                'observation_brute_linestring',
+                'observation_brute_polygon',
+                'observation_brute_centroid'
+            ),
+            'originSql' => array(
+                'POINT' => "SELECT * FROM tpl_observation_brute_point",
+                'LINESTRING' => "SELECT * FROM tpl_observation_brute_linestring",
+                'POLYGON' => "SELECT * FROM tpl_observation_brute_polygon"
+            ),
+            'attributeTable' => array (
+                'source' => 'observation_brute_centroid',
+                'columns' => array (
+                    "cle_obs" => "Identifiant",
+                    "date_debut" => "Date",
+                    "nom_cite" => "Nom cité",
+                    "cd_nom" => "CD_NOM",
+                    "identite_observateur" => "Observateur",
+                )
+
+            )
+        ),
+
+        'm' => array(
+            'layers' => array(
+                'observation_maille'
+            ),
+            'attributeTable' => array(
+                'source' => 'observation_maille',
+                'columns' => array (
+                    "maille" => "Code maille",
+                    "nbobs" => "Nombre d'observations",
+                    "nbtax" => "Nombre de taxons",
+                )
+            )
+
+        )
+
+    );
+
+
+    /**
+    * GetPrint
+    * @param string $repository Lizmap Repository
+    * @param string $project Name of the project : mandatory
+    * @return Image rendered by the Map Server.
+    */
+    function GetPrint(){
+
+    // Get parameters
+    if(!$this->getServiceParameters())
+        return $this->serviceException();
+
+    $url = $this->services->wmsServerURL.'?';
+
+    // Create temporary project from template if needed
+    // And modify layers datasource via passed token and datatype
+    $token = $this->params['token'];
+    $datatype = $this->params['datatype']; // m = maille , b = données brutes
+    $dynamic = Null;
+    if( $token and $datatype ) {
+        if( !jAcl2::check("visualisation.donnees.brutes") and $datatype != 'm' )
+            $datatype = 'm';
+
+        // Maille to choose
+        $m = 2;
+        if ( jAcl2::check("visualisation.donnees.maille_01") )
+            $m = '1';
+
+        $project = $this->iParam('project');
+        $repository = $this->iParam('repository');
+        $lrep = lizmap::getRepository($repository);
+
+        $ser = lizmap::getServices();
+        $cacheRootDirectory = $ser->cacheRootDirectory;
+        if(!is_writable($cacheRootDirectory) or !is_dir($cacheRootDirectory)){
+            $cacheRootDirectory = sys_get_temp_dir();
+        }
+        $random = time();
+        //$tempProjectPath = $cacheRootDirectory . '/' . $project . '_' . $token . '_' . $datatype .'_' . $random . '.qgs';
+        // Store template project in same directory as original one to keep references to layers and media files
+        $tempProjectPath = realpath($lrep->getPath()) . '/' . $project . '_' . $token . '_' . $datatype .'_' . $random . '.qgs';
+
+        // get QGIS project path
+        $projectTemplatePath = realpath($lrep->getPath()) . '/' . $project . ".qgs";
+        $projectTemplate = jFile::read($projectTemplatePath);
+
+        // Replace datasource for observation_maille
+        $source = "SELECT * FROM tpl_observation_maille";
+        jClasses::inc('occtax~occtaxSearchObservationMaille');
+        $occtaxSearch = new occtaxSearchObservationMaille( $token, null );
+        $target = $occtaxSearch->getSql();
+        $target = str_replace( '<', '&lt;', $target );
+        $target = str_replace( '"', '\"', $target );
+        $target = str_replace(
+            'FROM (',
+            ', ST_Centroid(m.geom) AS geom FROM (',
+            $target
+        );
+        $newProjectContent = str_replace(
+            $source,
+            $target,
+            $projectTemplate
+        );
+
+        // Replace attribute table source
+        if( $datatype == 'm' ) {
+            $newProjectContent = str_replace(
+                'vectorLayer="observation_brute_centroid"',
+                'vectorLayer="observation_maille"',
+                $newProjectContent
+            );
+            // Set attribute tables columns
+        }
+
+        // Limit and offset
+        $lo = '';
+        $limit = (integer)$this->iParam('limit');
+        $offset = (integer)$this->iParam('offset');
+        if( !$limit or $limit <=0)
+            $limit = 50;
+        $lo.= " LIMIT " . $limit;
+        if( $offset > 0 )
+            $lo.= " OFFSET " . $offset;
+
+        // Get target SQL
+        jClasses::inc('occtax~occtaxSearchObservation');
+        $occtaxSearch = new occtaxSearchObservation( $token, null );
+        $target = $occtaxSearch->getSql();
+        $target.= $lo;
+        $target = str_replace( '<', '&lt;', $target );
+        $target = str_replace( '"', '\"', $target );
+
+        // Replace source SQL by target depending on geometry type
+        foreach( $this->data[$datatype]['originSql'] as $geomtype=>$source ){
+            $targetFinal = str_replace(
+                'WHERE 2>1',
+                "WHERE 2>1 AND GeometryType( g.geom ) IN ('" . $geomtype . "', 'MULTI" . $geomtype . "')",
+                $target
+            );
+            $newProjectContent = str_replace(
+                $source,
+                $targetFinal,
+                $newProjectContent
+            );
+        }
+
+        // Replace observation_brute_centroid (used for attribute table)
+        // So that we have a layer containing all data for all geometry types
+        // This layer will be used for the attribute table
+        $targetFinal = str_replace(
+            'g.geom FROM',
+            'ST_Centroid(g.geom) AS geom FROM',
+            $target
+        );
+        $source = "SELECT * FROM tpl_observation_brute_centroid";
+        $newProjectContent = str_replace(
+            $source,
+            $targetFinal,
+            $newProjectContent
+        );
+
+        // Set attribute table with correct source and columns
+        $displayColumns = '<displayColumns>';
+        $tplText = '
+          <column width="0" attribute="{$attribute}" sortByRank="0" hAlignment="1" heading="{$heading}" sortOrder="0">
+            <backgroundColor alpha="0" red="0" blue="0" green="0"/>
+          </column>
+        ';
+        foreach( $this->data[$datatype]['attributeTable']['columns'] as $attribute=>$heading ) {
+            $tpl = new jTpl();
+            $assign = array (
+                'attribute' => $attribute,
+                'heading' => $heading
+            );
+            $tpl->assign( $assign );
+            $displayColumns.= $tpl->fetchFromString( $tplText, 'text' );
+        }
+        $displayColumns.= '</displayColumns>';
+        $newProjectContent = str_replace(
+            "<displayColumns/>",
+            $displayColumns,
+            $newProjectContent
+        );
+        if( $datatype == 'm' ) {
+            $newProjectContent = str_replace(
+                'vectorLayer="observation_brute_centroid"',
+                'vectorLayer="observation_maille"',
+                $newProjectContent
+            );
+        }
+
+        // Get search description via token
+        $getSearchDescription = $occtaxSearch->getSearchDescription();
+        $getSearchDescription = '
+        Filtres actifs' . $getSearchDescription;
+        $getSearchDescription = htmlspecialchars( $getSearchDescription );
+        $newProjectContent = str_replace(
+            'Filtres actifs',
+            $getSearchDescription,
+            $newProjectContent
+        );
+
+        // Replace logo
+        $logoUrl = jUrl::getFull(
+            'view~media:getMedia',
+            array(
+                'repository' => $repository,
+                'project' => $project,
+                'path' => 'media/logo_parc.png'
+            )
+        );
+        $logoUrl = str_replace( '&', '&amp;', $logoUrl );
+        $logoUrl = str_replace( '%2F', '/', $logoUrl );
+        $newProjectContent = str_replace(
+            './media/logo_parc.png',
+            $logoUrl,
+            $newProjectContent
+        );
+
+        // Replace layernames to avoid QGIS Server layer cache
+        $t = time();
+        $displayLayers = array();
+        foreach( $this->data[$datatype]['layers'] as $l ) {
+            $newProjectContent = preg_replace(
+                '/' . $l . '/i',
+                $l . '_' . $t,
+                $newProjectContent
+            );
+            $displayLayers[] = $l . '_' . $t;
+        }
+
+        // Write the new project in the cache directory
+        jFile::write($tempProjectPath, $newProjectContent);
+
+        // Replace map parameter by the newly created one
+        $mapParam = $tempProjectPath;
+        $this->params['map'] = $mapParam;
+
+        $this->params['layers'] = implode( ',', $displayLayers ) . "," . $this->params['layers'];
+        $this->params['map0:layers'] = implode( ',', $displayLayers ) . "," . $this->params['map0:layers'];
+
+        $dynamic = $tempProjectPath;
+
+    }
+
+    // Filter the parameters of the request
+    // for querying GetPrint
+    $data = array();
+    $paramsBlacklist = array('module', 'action', 'C', 'repository','project');
+    foreach($this->params as $key=>$val){
+        if(!in_array($key, $paramsBlacklist)){
+            $data[] = strtolower($key).'='.urlencode($val);
+        }
+    }
+    $querystring = $url . implode('&', $data);
+
+    // Get data form server
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_HEADER, 0);
+    curl_setopt($ch, CURLOPT_URL, $querystring);
+    curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    $data = curl_exec($ch);
+    $info = curl_getinfo($ch);
+    $mime = $info['content_type'];
+    curl_close($ch);
+
+    // Delete temp file
+    unlink($tempProjectPath);
+
+    $rep = $this->getResponse('binary');
+    $rep->mimeType = $mime;
+    $rep->content = $data;
+    $rep->doDownload  =  false;
+    $rep->outputFileName  =  'getPrint';
+
+    // Log
+    $logContent ='
+     <a href="'.jUrl::get('lizmap~service:index',jApp::coord()->request->params).'" target="_blank">'.$this->params['template'].'<a>
+     ';
+    $eventParams = array(
+        'key' => 'print',
+        'content' => $logContent,
+        'repository' => $this->repository->getKey(),
+        'project' => $this->project->getKey()
+    );
+    jEvent::notify('LizLogItem', $eventParams);
+
+    return $rep;
+    }
+
+}
+

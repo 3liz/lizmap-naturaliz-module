@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dao xmlns="http://jelix.org/ns/dao/1.0">
+    <datasources>
+        <primarytable name="t_group_categorie" realname="t_group_categorie" primarykey="cat_nom,groupe_nom" />
+    </datasources>
+    <record>
+        <property name="cat_nom" fieldname="cat_nom" datatype="text" required="true"/>
+        <property name="groupe_nom" fieldname="groupe_nom" datatype="text" required="true"/>
+        <property name="groupe_type" fieldname="groupe_type" datatype="text"/>
+        <property name="regne" fieldname="regne" datatype="text"/>
+        <!--<property name="" fieldname="" datatype="string/int/float/date"
+        required="yes" maxlength="" minlength="" regexp="" sequence=""
+        updatepattern="" insertpattern="" selectpattern=""/>-->
+    </record>
+    <factory>
+        <method name="getDistinctCategorie" type="select" distinct="true">
+            <order>
+                <orderitem property="cat_nom" way="asc"/>
+            </order>
+        </method>
+        <method name="getDistinctCategorieByRegne" type="select" distinct="true">
+            <parameter name="regne"/>
+            <conditions logic="and">
+                <eq property="regne" expr="$regne"/>
+            </conditions>
+            <order>
+                <orderitem property="cat_nom" way="asc"/>
+            </order>
+        </method>
+        <method name="getGroupsInpn" type="select">
+            <parameter name="cat_nom"/>
+            <conditions logic="and">
+                <eq property="cat_nom" expr="$cat_nom"/>
+            </conditions>
+        </method>
+        <method name="getGroupsInpnByRegne" type="select">
+            <parameter name="cat_nom"/>
+            <parameter name="regne"/>
+            <conditions logic="and">
+                <eq property="cat_nom" expr="$cat_nom"/>
+                <eq property="regne" expr="$regne"/>
+            </conditions>
+        </method>
+        <!--<method name="findByStage" type="select/selectfirst/delete/update/php">
+            <parameter name="" />
+            <values>
+                <value property="" value="" />
+            </values>
+            <conditions logic="and/or">
+                <eq property="" value="" />
+            </conditions>
+            <order>
+                <orderitem property="" way="asc/desc" />
+            </order>
+            <limit offset="" count=""/>
+            <body><![CDATA[
+            ]]></body>
+        </method>-->
+    </factory>
+</dao>

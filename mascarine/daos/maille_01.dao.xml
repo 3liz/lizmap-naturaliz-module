@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dao xmlns="http://jelix.org/ns/dao/1.0">
+    <datasources>
+        <primarytable name="maille_01" realname="maille_01" primarykey="id_maille" />
+    </datasources>
+    <record>
+        <property name="id_maille" fieldname="id_maille" datatype="int" autoincrement="true" default=""/>
+        <property name="code_maille" fieldname="code_maille" datatype="text"/>
+        <property name="nom_maille" fieldname="nom_maille" datatype="text"/>
+        <property name="geom" fieldname="geom" datatype="geometry" maxlength="8350728"/>
+        <!--<property name="" fieldname="" datatype="string/int/float/date"
+        required="yes" maxlength="" minlength="" regexp="" sequence=""
+        updatepattern="" insertpattern="" selectpattern=""/>-->
+    </record>
+    <factory>
+        <method name="findByGeomAsText" type="php">
+            <parameter name="geo_wkt" />
+            <parameter name="s_crs" default="4326"/>
+            <body><![CDATA[
+                $sql = $this->_selectClause;
+                $sql .= $this->_fromClause.$this->_whereClause;
+                $sql .= ($this->_whereClause == '' ? ' WHERE ':' AND ');
+                $sql .= ' ST_Intersects(';
+                $sql .= ' ST_GeomFromText( '. $this->_prepareValue($geo_wkt,'string') .', '. $this->_prepareValue($s_crs,'integer') .' )';
+                $sql .= ', ST_Transform( maille_01.geom, '. $this->_prepareValue($s_crs,'integer') .' )';
+                $sql .= ' )';
+                                        
+                $rs = $this->_conn->query($sql);
+                $rs->setFetchMode(8,$this->_DaoRecordClassName);
+
+                return $rs;
+            ]]></body> 
+        </method>
+        <!--<method name="findByStage" type="select/selectfirst/delete/update/php">
+            <parameter name="" />
+            <values>
+                <value property="" value="" />
+            </values>
+            <conditions logic="and/or">
+                <eq property="" value="" />
+            </conditions>
+            <order>
+                <orderitem property="" way="asc/desc" />
+            </order>
+            <limit offset="" count=""/>
+            <body><![CDATA[
+            ]]></body>
+        </method>-->
+    </factory>
+</dao>

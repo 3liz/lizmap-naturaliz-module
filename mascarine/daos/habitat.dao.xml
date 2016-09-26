@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dao xmlns="http://jelix.org/ns/dao/1.0">
+    <datasources>
+        <primarytable name="habitat" realname="habitat" primarykey="ref_habitat,code_habitat" />
+    </datasources>
+    <record>
+        <property name="ref_habitat" fieldname="ref_habitat" datatype="text" required="true"/>
+        <property name="code_habitat" fieldname="code_habitat" datatype="text" required="true"/>
+        <property name="code_habitat_parent" fieldname="code_habitat_parent" datatype="text"/>
+        <property name="niveau_habitat" fieldname="niveau_habitat" datatype="int"/>
+        <property name="libelle_habitat" fieldname="libelle_habitat" datatype="text"/>
+        <property name="description_habitat" fieldname="description_habitat" datatype="text"/>
+        <property name="tri_habitat" fieldname="tri_habitat" datatype="int"/>
+        <!--<property name="" fieldname="" datatype="string/int/float/date"
+        required="yes" maxlength="" minlength="" regexp="" sequence=""
+        updatepattern="" insertpattern="" selectpattern=""/>-->
+    </record>
+    <factory>
+        <method name="findAll" type="select">
+            <order>
+                <orderitem property="ref_habitat" way="asc" />
+                <orderitem property="tri_habitat" way="asc" />
+            </order>
+        </method>
+        <method name="findAllByRef" type="select">
+            <parameter name="ref" />
+            <condition logic="and">
+                <eq property="ref_habitat" expr="$ref" />
+            </condition>
+            <order>
+                <orderitem property="ref_habitat" way="asc" />
+                <orderitem property="tri_habitat" way="asc" />
+            </order>
+        </method>
+        <!--<method name="findByStage" type="select/selectfirst/delete/update/php">
+            <parameter name="" />
+            <values>
+                <value property="" value="" />
+            </values>
+            <conditions logic="and/or">
+                <eq property="" value="" />
+            </conditions>
+            <order>
+                <orderitem property="" way="asc/desc" />
+            </order>
+            <limit offset="" count=""/>
+            <body><![CDATA[
+            ]]></body>
+        </method>-->
+    </factory>
+</dao>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dao xmlns="http://jelix.org/ns/dao/1.0">
+    <datasources>
+        <primarytable name="observation" realname="observation" primarykey="identifiant_permanent" />
+    </datasources>
+    <record>
+        <property name="identifiant_permanent" fieldname="identifiant_permanent" datatype="text" required="true"/>
+        <property name="statut_observation" fieldname="statut_observation" datatype="text" required="true"/>
+        <property name="cd_nom" fieldname="cd_nom" datatype="int"/>
+        <property name="cd_ref" fieldname="cd_ref" datatype="int"/>
+        <property name="denombrement_min" fieldname="denombrement_min" datatype="int"/>
+        <property name="denombrement_max" fieldname="denombrement_max" datatype="int"/>
+        <property name="objet_denombrement" fieldname="objet_denombrement" datatype="text"/>
+        <property name="type_denombrement" fieldname="type_denombrement" datatype="text"/>
+        <property name="commentaire" fieldname="commentaire" datatype="text"/>
+        <property name="statut_source" fieldname="statut_source" datatype="text" required="true"/>
+        <property name="jdd_id" fieldname="jdd_id" datatype="text"/>
+        <property name="jdd_code" fieldname="jdd_code" datatype="text"/>
+        <property name="ds_publique" fieldname="ds_publique" datatype="text" required="true"/>
+        <property name="identifiant_origine" fieldname="identifiant_origine" datatype="text"/>
+        <property name="code_idcnp" fieldname="code_idcnp" datatype="text" required="true"/>
+        <property name="sensible" fieldname="sensible" datatype="text" required="true"/>
+        <property name="nom_cite" fieldname="nom_cite" datatype="text" required="true"/>
+        <property name="reference_biblio" fieldname="reference_biblio" datatype="text"/>
+        <!--<property name="" fieldname="" datatype="string/int/float/date"
+        required="yes" maxlength="" minlength="" regexp="" sequence=""
+        updatepattern="" insertpattern="" selectpattern=""/>-->
+    </record>
+    <factory>
+        <!--<method name="findByStage" type="select/selectfirst/delete/update/php">
+            <parameter name="" />
+            <values>
+                <value property="" value="" />
+            </values>
+            <conditions logic="and/or">
+                <eq property="" value="" />
+            </conditions>
+            <order>
+                <orderitem property="" way="asc/desc" />
+            </order>
+            <limit offset="" count=""/>
+            <body><![CDATA[
+            ]]></body>
+        </method>-->
+    </factory>
+</dao>

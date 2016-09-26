@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dao xmlns="http://jelix.org/ns/dao/1.0">
+    <datasources>
+        <primarytable name="jdd" realname="jdd" primarykey="jdd_id" />
+    </datasources>
+    <record>
+        <property name="jdd_id" fieldname="jdd_id" datatype="text" required="true"/>
+        <property name="jdd_code" fieldname="jdd_code" datatype="text" required="true"/>
+        <property name="jdd_description" fieldname="jdd_description" datatype="text"/>
+        <!--<property name="" fieldname="" datatype="string/int/float/date"
+        required="yes" maxlength="" minlength="" regexp="" sequence=""
+        updatepattern="" insertpattern="" selectpattern=""/>-->
+    </record>
+    <factory>
+        <method name="getJddList" type="select">
+            <order>
+                <orderitem property="jdd_code" way="asc" />
+            </order>
+        </method>
+        <!--<method name="findByStage" type="select/selectfirst/delete/update/php">
+            <parameter name="" />
+            <values>
+                <value property="" value="" />
+            </values>
+            <conditions logic="and/or">
+                <eq property="" value="" />
+            </conditions>
+            <order>
+                <orderitem property="" way="asc/desc" />
+            </order>
+            <limit offset="" count=""/>
+            <body><![CDATA[
+            ]]></body>
+        </method>-->
+    </factory>
+</dao>

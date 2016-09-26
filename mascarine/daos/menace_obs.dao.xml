@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dao xmlns="http://jelix.org/ns/dao/1.0">
+    <datasources>
+        <primarytable name="menace_obs" realname="menace_obs" primarykey="id_obs_menace" />
+    </datasources>
+    <record>
+        <property name="id_obs_menace" fieldname="id_obs_menace" datatype="int" autoincrement="true" default=""/>
+        <property name="id_obs" fieldname="id_obs" datatype="int"/>
+        <property name="type_menace" fieldname="type_menace" datatype="text"/>
+        <property name="valeur_menace" fieldname="valeur_menace" datatype="text"/>
+        <property name="statut_menace" fieldname="statut_menace" datatype="text"/>
+        <property name="remarques_menace" fieldname="remarques_menace" datatype="text"/>
+        <!--<property name="" fieldname="" datatype="string/int/float/date"
+        required="yes" maxlength="" minlength="" regexp="" sequence=""
+        updatepattern="" insertpattern="" selectpattern=""/>-->
+    </record>
+    <factory>
+        <method name="countByObs" type="count">
+            <parameter name="id_obs"/>
+            <conditions logic="and">
+                <eq property="id_obs" expr="$id_obs" />
+            </conditions>
+        </method>
+        <!--<method name="findByStage" type="select/selectfirst/delete/update/php">
+            <parameter name="" />
+            <values>
+                <value property="" value="" />
+            </values>
+            <conditions logic="and/or">
+                <eq property="" value="" />
+            </conditions>
+            <order>
+                <orderitem property="" way="asc/desc" />
+            </order>
+            <limit offset="" count=""/>
+            <body><![CDATA[
+            ]]></body>
+        </method>-->
+    </factory>
+</dao>

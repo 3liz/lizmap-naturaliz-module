@@ -1,0 +1,9 @@
+<events xmlns="http://jelix.org/ns/events/1.0">
+    <listener name="occtaxView">
+       <event name="mainviewGetMaps" />
+   </listener>
+    <listener name="occtaxDockable">
+        <event name="mapDockable" />
+        <event name="mapMiniDockable" />
+    </listener>
+</events>

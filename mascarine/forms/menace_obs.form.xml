@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form xmlns="http://jelix.org/ns/forms/1.1" allowAnyOrigin="true">
+    
+    <menulist ref="type_menace" required="true">
+        <label locale="mascarine~observation.input.type_menace"/>
+        <emptyitem>---</emptyitem>
+        <datasource dao="mascarine~nomenclature" method="findByField" criteria="type_menace"
+                    labelproperty="valeur" valueproperty="code"/>
+    </menulist>
+    
+    <menulist ref="valeur_menace">
+        <label locale="mascarine~observation.input.valeur_menace"/>
+        <emptyitem>---</emptyitem>
+        <datasource dao="mascarine~nomenclature" method="findByField" criteria="valeur_menace"
+                    labelproperty="valeur" valueproperty="code"/>
+    </menulist>
+    
+    <menulist ref="statut_menace">
+        <label locale="mascarine~observation.input.statut_menace"/>
+        <emptyitem>---</emptyitem>
+        <datasource dao="mascarine~nomenclature" method="findByField" criteria="statut_menace"
+                    labelproperty="valeur" valueproperty="code"/>
+    </menulist>
+    
+    <textarea ref="remarques_menace">
+        <label locale="mascarine~observation.input.remarques_menace"/>
+    </textarea>
+    
+    
+    <submit ref="submit">
+        <label>Ajouter</label>
+    </submit>
+</form>

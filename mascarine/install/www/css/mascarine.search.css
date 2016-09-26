@@ -1,0 +1,125 @@
+#obs-spatial-query-buttons button.btn {
+  width: 30px;
+  height: 30px;
+  padding: 2px;
+}
+
+#obs-spatial-query-buttons button.commune {
+    background:url(img/sig/mActionSelectCommune.png) no-repeat 2px 2px #F5F5F5;
+}
+#obs-spatial-query-buttons button.masse_eau {
+    background:url(img/sig/mActionSelectMasseEau.png) no-repeat 2px 2px #F5F5F5;
+}
+#obs-spatial-query-buttons button.maille {
+    background:url(img/sig/mActionSelect.png) no-repeat 2px 2px #F5F5F5;
+}
+#obs-spatial-query-buttons button.circle {
+    background:url(img/sig/mActionSelectCircle.png) no-repeat 2px 2px #F5F5F5;
+}
+#obs-spatial-query-buttons button.polygon {
+    background:url(img/sig/mActionSelectPolygon.png) no-repeat 2px 2px #F5F5F5;
+}
+#obs-spatial-query-buttons button.import {
+    background:url(img/sig/mActionSelectUpload.png) no-repeat 2px 2px #F5F5F5;
+}
+#obs-spatial-query-buttons button.delete {
+    background:url(img/sig/Erase.png) no-repeat 2px 2px #F5F5F5;
+}
+#obs-spatial-query-buttons button.modify {
+    background:url(img/sig/mActionMoveVertex.png) no-repeat 2px 2px #F5F5F5;
+}
+
+#div_form_occtax_search_token,
+#occtax_results_tabs {
+  min-width:370px;
+}
+
+
+/*
+Left Menu button
+*/
+
+#mapmenu .nav-list > li.taxon .icon {
+  background-image:url("img/navbar/occtax_navbar.png");
+  background-position: -75px 0px;
+}
+#mapmenu .nav-list > li.taxon.active .icon,
+#mapmenu .nav-list > li.taxon a:hover .icon {
+  background-image:url("img/navbar/occtax_navbar.png");
+  background-position: -50px 0px;
+}
+
+#mapmenu .nav-list > li.mascarine .icon {
+  background-image:url("img/navbar/occtax_navbar.png");
+  background-position: -25px 0;
+}
+#mapmenu .nav-list > li.mascarine.active .icon,
+#mapmenu .nav-list > li.mascarine a:hover .icon {
+  background-image:url("img/navbar/occtax_navbar.png");
+  background-position: -0px 0px;
+}
+
+#mapmenu .nav-list > li.mascarine_edit .icon {
+  background-image:url("img/navbar/occtax_navbar.png");
+  background-position: -125px 0;
+}
+#mapmenu .nav-list > li.mascarine_edit.active .icon,
+#mapmenu .nav-list > li.mascarine_edit a:hover .icon {
+  background-image:url("img/navbar/occtax_navbar.png");
+  background-position: -100px 0px;
+}
+
+
+
+/*
+Toolbar buttons
+*/
+
+#taxon h3 .icon.search {
+    background-image: url("img/navbar/occtax_navbar.png");
+  background-position: -175px 0px;
+}
+#taxon h3 .icon.description {
+    background-image: url("img/navbar/occtax_navbar.png");
+  background-position: -175px 0px;
+}
+#taxon h3 .icon.result {
+    background-image: url("img/navbar/occtax_navbar.png");
+  background-position: -75px 0px;
+}
+
+#mascarine h3 .icon.search {
+    background-image: url("img/navbar/occtax_navbar.png");
+  background-position: -175px 0px;
+}
+
+#mascarine h3 .icon.description {
+    background-image: url("img/navbar/occtax_navbar.png");
+  background-position: -175px 0px;
+}
+#mascarine h3 .icon.result {
+    background-image: url("img/navbar/occtax_navbar.png");
+  background-position: -25px 0px;
+}
+
+#mascarine_edit h3 .icon {
+    background-image: url("img/navbar/occtax_navbar.png");
+  background-position: -125px 0px;
+}
+
+
+#div_mascarine_taxon_modal  h3 .icon.search {
+    background-image: url("img/navbar/occtax_navbar.png");
+  background-position: -150px 0px;
+}
+#div_mascarine_taxon_modal  h3 .icon.result {
+    background-image: url("img/navbar/occtax_navbar.png");
+  background-position: -200px 0px;
+}
+
+
+
+
+#mascarine_results_stats_table img{
+  max-width:100px !important;
+}

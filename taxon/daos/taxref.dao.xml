@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dao xmlns="http://jelix.org/ns/dao/1.0">
+    <datasources>
+        <primarytable name="taxref" realname="taxref_consolide" primarykey="cd_nom" />
+        <optionalforeigntable name="t_group_categorie_1" realname="t_group_categorie" primarykey="groupe_nom" onforeignkey="group1_inpn" />
+        <optionalforeigntable name="t_group_categorie_2" realname="t_group_categorie" primarykey="groupe_nom" onforeignkey="group2_inpn" />
+    </datasources>
+    <record>
+        <property name="regne" fieldname="regne" datatype="varchar" maxlength="50"/>
+        <property name="phylum" fieldname="phylum" datatype="varchar" maxlength="50"/>
+        <property name="classe" fieldname="classe" datatype="varchar" maxlength="50"/>
+        <property name="ordre" fieldname="ordre" datatype="varchar" maxlength="50"/>
+        <property name="famille" fieldname="famille" datatype="varchar" maxlength="50"/>
+        <property name="group1_inpn" fieldname="group1_inpn" datatype="varchar" maxlength="50"/>
+        <property name="group2_inpn" fieldname="group2_inpn" datatype="varchar" maxlength="50" selectpattern="replace(lower(unaccent(group2_inpn)), ' ', '_')"/>
+        <property name="cd_nom" fieldname="cd_nom" datatype="int" required="true"/>
+        <property name="cd_taxsup" fieldname="cd_taxsup" datatype="int"/>
+        <property name="cd_ref" fieldname="cd_ref" datatype="int"/>
+        <property name="rang" fieldname="rang" datatype="varchar" maxlength="50"/>
+        <property name="lb_nom" fieldname="lb_nom" datatype="varchar" maxlength="255"/>
+        <property name="lb_auteur" fieldname="lb_auteur" datatype="varchar" maxlength="255"/>
+        <property name="nom_complet" fieldname="nom_complet" datatype="varchar" maxlength="255"/>
+        <property name="nom_complet_html" fieldname="nom_complet_html" datatype="varchar" maxlength="255"/>
+        <property name="nom_valide" fieldname="nom_valide" datatype="varchar" maxlength="255"/>
+        <property name="nom_vern" fieldname="nom_vern" datatype="varchar" maxlength="255"/>
+        <property name="nom_vern_eng" fieldname="nom_vern_eng" datatype="varchar" maxlength="255"/>
+        <property name="habitat" fieldname="habitat" datatype="varchar" maxlength="1"/>
+        <property name="fr" fieldname="fr" datatype="varchar" maxlength="1"/>
+        <property name="gf" fieldname="gf" datatype="varchar" maxlength="1"/>
+        <property name="mar" fieldname="mar" datatype="varchar" maxlength="1"/>
+        <property name="gua" fieldname="gua" datatype="varchar" maxlength="1"/>
+        <property name="sm" fieldname="sm" datatype="varchar" maxlength="1"/>
+        <property name="sb" fieldname="sb" datatype="varchar" maxlength="1"/>
+        <property name="spm" fieldname="spm" datatype="varchar" maxlength="1"/>
+        <property name="may" fieldname="may" datatype="varchar" maxlength="1"/>
+        <property name="epa" fieldname="epa" datatype="varchar" maxlength="1"/>
+        <property name="reu" fieldname="reu" datatype="varchar" maxlength="1"/>
+        <property name="taaf" fieldname="taaf" datatype="varchar" maxlength="1"/>
+        <property name="pf" fieldname="pf" datatype="varchar" maxlength="1"/>
+        <property name="nc" fieldname="nc" datatype="varchar" maxlength="1"/>
+        <property name="wf" fieldname="wf" datatype="varchar" maxlength="1"/>
+        <property name="cli" fieldname="cli" datatype="varchar" maxlength="1"/>
+        <property name="url" fieldname="url" datatype="varchar" maxlength="50"/>
+        <property name="cd_nom_fk" fieldname="cd_nom_fk" datatype="int" required="true"/>
+        <property name="statut" fieldname="statut" datatype="varchar" maxlength="15"/>
+        <property name="rarete" fieldname="rarete" datatype="varchar" maxlength="10"/>
+        <property name="endemicite" fieldname="endemicite" datatype="varchar" maxlength="5"/>
+        <property name="invasibilite" fieldname="invasibilite" datatype="varchar" maxlength="5"/>
+        <property name="menace" fieldname="menace" datatype="varchar" maxlength="5"/>
+        <property name="menace_monde" fieldname="menace_monde" datatype="varchar" maxlength="6"/>
+        <property name="protection" fieldname="protection" datatype="varchar" maxlength="5"/>
+        <property name="det_znieff" fieldname="det_znieff" datatype="varchar" maxlength="15"/>
+        <property name="cat_nom_1" fieldname="cat_nom" selectpattern="(regexp_split_to_array(%s, ' '))[1]" datatype="text" required="true" table="t_group_categorie_1"/>
+        <property name="cat_nom_2" fieldname="cat_nom" selectpattern="(regexp_split_to_array(%s, ' '))[1]" datatype="text" required="true" table="t_group_categorie_2"/>
+
+        <!--<property name="" fieldname="" datatype="string/int/float/date"
+        required="yes" maxlength="" minlength="" regexp="" sequence=""
+        updatepattern="" insertpattern="" selectpattern=""/>-->
+    </record>
+    <factory>
+        <!--<method name="findByStage" type="select/selectfirst/delete/update/php">
+            <parameter name="" />
+            <values>
+                <value property="" value="" />
+            </values>
+            <conditions logic="and/or">
+                <eq property="" value="" />
+            </conditions>
+            <order>
+                <orderitem property="" way="asc/desc" />
+            </order>
+            <limit offset="" count=""/>
+            <body><![CDATA[
+            ]]></body>
+        </method>-->
+    </factory>
+</dao>

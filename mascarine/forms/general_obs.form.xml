@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form xmlns="http://jelix.org/ns/forms/1.1" allowAnyOrigin="true">
+    
+    <button ref="valider_obs">
+        <label locale="mascarine~observation.input.valider_obs"/>
+    </button>
+    
+    <menulist ref="type_obs" required="true">
+        <label locale="mascarine~observation.input.type_obs"/>
+        <emptyitem>---</emptyitem>
+        <datasource dao="mascarine~nomenclature" method="findByField" criteria="type_obs"
+                    labelproperty="valeur" valueproperty="code"/>
+    </menulist>
+    
+    <menulist ref="nature_obs">
+        <label locale="mascarine~observation.input.nature_obs"/>
+        <emptyitem>---</emptyitem>
+        <datasource dao="mascarine~nomenclature" method="findByField" criteria="nature_obs"
+                    labelproperty="valeur" valueproperty="code"/>
+    </menulist>
+    
+    <menulist ref="forme_obs">
+        <label locale="mascarine~observation.input.forme_obs"/>
+        <emptyitem>---</emptyitem>
+        <datasource dao="mascarine~nomenclature" method="findByField" criteria="forme_obs"
+                    labelproperty="valeur" valueproperty="code"/>
+    </menulist>
+    
+    <date ref="date_obs" defaultvalue="now" required="true">
+        <label locale="mascarine~observation.input.date_obs"/>
+    </date>
+    
+    <input ref="num_manuscrit">
+        <label locale="mascarine~observation.input.num_manuscrit"/>
+    </input>
+    
+    <menulist ref="id_prog">
+        <label locale="mascarine~observation.input.id_prog"/>
+        <emptyitem>---</emptyitem>
+        <datasource dao="mascarine~programme" method="findAll"
+                    labelproperty="nom_prog" valueproperty="id_prog"/>
+    </menulist>
+    
+    <input ref="expertise_obs">
+        <label locale="mascarine~observation.input.expertise_obs"/>
+    </input>
+    
+    <textarea ref="remarques_obs">
+        <label locale="mascarine~observation.input.remarques_obs"/>
+    </textarea>
+    
+    <textarea ref="remarques_control_obs">
+        <label locale="mascarine~observation.input.remarques_control_obs"/>
+    </textarea>
+    
+</form>

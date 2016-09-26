@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form xmlns="http://jelix.org/ns/forms/1.1" allowAnyOrigin="true">
+    
+    <input ref="coord_x" type="decimal" required="true">
+        <label locale="mascarine~observation.input.coord_x"/>
+    </input>
+    
+    <input ref="coord_y" type="decimal" required="true">
+        <label locale="mascarine~observation.input.coord_y"/>
+    </input>
+    
+    <menulist ref="proj" required="true">
+        <label>Projection</label>
+    </menulist>
+    
+    <submit ref="submit">
+        <label>Ajouter</label>
+    </submit>
+</form>
