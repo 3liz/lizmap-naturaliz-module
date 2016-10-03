@@ -130,7 +130,7 @@ php lizmap/install/installer.php
 Si l'installation s'est bien passée, vous ne devez pas voir d'erreurs affichées dans le log. Si ce n'est pas le cas, vérifier les fichiers de configuration, notamment l'accès à la base de données.
 
 
-## Importer des données
+## Importer les données de référence
 
 L'installateur a créé la structure dans la base de données PostGreSQL (schéma, tables, vues, etc.), mais aucune donnée n'a encore été importée, à part les listes liées à la nomenclature du standard TAXREF et du schéma Occurence de taxons.
 
@@ -138,23 +138,72 @@ L'installateur a créé la structure dans la base de données PostGreSQL (schém
 
 Pour pouvoir effectuer des recherche via le module taxon, vous devez au préalable récupérer les données officielles du TAXREF, puis les importer.
 
-Vous pouvez:
-* Télécharger le fichier TAXREF v9 sur le site de l'INPN : http://inpn.mnhn.fr/telechargement/referentielEspece/referentielTaxo
-* Copier ce fichier dans le répertoire temporaire du serveur, par exemple /tmp/TAXREFv90.txt
+Les fichiers concernant TAXREF, les menaces (listes rouges) et les protections sont téléchargés directement depuis la plateforme SINP (site du MNHN)
 
-Ou bien récupérer l'ensemble des données depuis le projet Gitlab naturaliz-files ( https://projects.3liz.org/clients/naturaliz-files ) :
+#### Taxref
 
-```
-mkdir -P /home/data/referentiel
-cd /home/data/referentiel
-git clone --depth 1 git@projects.3liz.org:clients/naturaliz-files.git naturaliz-files
-```
+Le fichier officiel du taxref, par exemple *TAXREFv90.txt*
+
+* Source: https://inpn.mnhn.fr/telechargement/referentielEspece/taxref/9.0/menu
+* Lien: https://inpn.mnhn.fr/telechargement/referentielEspece/taxref/9.0/zip
+
+#### Menaces (listes rouges)
+
+Le fichier des listes rouges, par exemple *LR_Resultats_Guadeloupe_complet_export.csv*.  On utilise pour remplir la colonne menace de la table t_complement le champ *CATEGORIE_FR* et non *CATEGORIE_MONDE*
+
+* Source: https://inpn.mnhn.fr/telechargement/acces-par-thematique/listes-rouges# Aller dans *Liste rouge Réunion* puis cliquer sur *Publication et résultats* puis sur *Réunion: consulter tous les résultats* Puis *Exporter les données: CSV*
+* Lien (exemple, peut changer): https://inpn.mnhn.fr/telechargement/acces-par-thematique/listes-rouges/FR/territoire/REU?6578706f7274=1&d-7649687-e=1
+
+* Colonnes:
+
+  ```
+  cd_nom integer NOT NULL, -- Identifiant unique du nom scientifique
+  cd_ref integer, -- Identifiant (CD_NOM) du taxon de référence (nom retenu)
+  nom_scientifique text,
+  auteur text,
+  nom_commun text,
+  rang text,
+  famille text,
+  endemisme text,
+  population text,
+  commentaire text,
+  categorie_france text,
+  criteres_france text,
+  tendance text,
+  liste_rouge_source text,
+  annee_publi text,
+  categorie_lr_europe text,
+  categorie_lr_monde text
+  ```
+
+#### Protections
+
+Exemple : PROTECTION_ESPECES_90.csv
+
+On doit spécifier dans le fichier lizmap/var/config/localconfig.ini.php la liste des codes des arrêtés sur les protections des espèces, par exemple GUAM1,GUAO1,GUARA1,DV971,GUAI2 pour la Guadeloupe
+
+* Source: https://inpn.mnhn.fr/telechargement/referentielEspece/reglementation
+* Lien: https://inpn.mnhn.fr/telechargement/referentielEspece/reglementation/zip
+
+* Colonnes:
+
+  ```
+  cd_nom text,
+  cd_protection text,
+  nom_cite text,
+  syn_cite text,
+  nom_francais_cite text,
+  precisions text,
+  cd_nom_cite text
+  ```
+
+#### Lancer l'import des données TAXREF dans l'application
 
 Une fois les données récupérées, vous pouvez l'import de données via la commande suivante:
 
 ```
 cd /srv/lizmap_web_client/
-php lizmap/scripts/script.php taxon~import:taxref /home/data/referentiel/naturaliz-files/csv/TAXREF/9/TAXREFv90.txt /home/data/referentiel/naturaliz-files/csv/MENACE/LR_Resultats_Guadeloupe_complet_export.csv /home/data/referentiel/naturaliz-files/csv/PROTECTION/PROTECTION_ESPECES_90.csv 9
+php lizmap/scripts/script.php taxon~import:taxref /tmp/TAXREFv90.txt /tmp/LR_Resultats_Guadeloupe_export.csv /tmp/PROTECTION/PROTECTION_ESPECES_90.csv 9
 ```
 
 Le premier paramètre passé est le chemin complet vers le fichier CSV contenant les données. Le 2ème est le chemin vers le fichier des menaces (taxons sur listes rouges, filtré pour la région concernée).Le 3ème est le fichier contenant les taxon protégés. Vous pouvez pointer vers d'autres chemins de fichiers, et le script se chargera de copier les données dans le répertoire temporaire puis lancera l'import.
@@ -167,9 +216,6 @@ php lizmap/scripts/script.php help taxon~import:taxref
 ```
 
 **NB** Les fichiers concernant les menaces (listes rouges) et les protections sont téléchargés directement depuis la plateforme SINP:
-
-* **menaces** On utilise pour remplir la colonne *menace* de la table t_complement le champ **CATEGORIE_FR**
-* **protections** On doit spécifier dans le fichier *lizmap/var/config/localconfig.ini.php* la liste des codes des arrêtés sur les protections des espèces (comme indiqué plus haut)
 
 
 ### Import Occurences de taxon : données de références
@@ -190,8 +236,6 @@ Les habitats doivent aussi être récupérés et importés.
 * Liste des habitats marins, par exemple TYPO_ANT_MER ( Liste des habitats marins des Antilles (Martinique, Guadeloupe) )
 * Liste des habitats terrestres, par exemple ceux de la Carte Écologique d'Alain Rousteau
 
-Si vous utilisez le dépôt naturaliz-files de Gitlab, vous avez déjà récupéré ces données de références. Vérifier que les fichiers sont à jour.
-
 Deux scripts permettent d'importer ces données dans la base, un pour les données WFS, et un autre pour les données Shapefile, Excel et CSV:
 
 * Shapefile : les communes, les mailles 1 et 2, les réserves naturelles nationales, et les habitats
@@ -207,7 +251,7 @@ apt-get install gdal-bin
 # Import des données depuis les Shapefile pour les communes, mailles 1 et 2.
 # Import optionnel des réserves naturelles nationales et des habitats
 # Vous devez spécifier le chemin complet vers les fichiers dans cet ordre : communes, mailles 1x1km, mailles 2x2km et optionnellement les réserves et les habitats
-php lizmap/scripts/script.php occtax~import:shapefile "/home/data/referentiel/naturaliz-files/sig/COMMUNE.SHP" "/home/data/referentiel/naturaliz-files/sig/grille_1000m_gwada_dep_ama_poly.shp" "/home/data/referentiel/naturaliz-files/sig/grille_2000m_gwada_dep_ama_poly.shp" "/home/data/referentiel/naturaliz-files/sig/grille_5000.shp" "/home/data/referentiel/naturaliz-files/sig/glp_rnn2012.shp" "/home/data/referentiel/naturaliz-files/csv/habitats/TYPO_ANT_MER_09-01-2011.xls" "/home/data/referentiel/naturaliz-files/csv/habitats/EAR_Guadeloupe.csv"
+php lizmap/scripts/script.php occtax~import:shapefile "/tmp/sig/COMMUNE.SHP" "/tmp/sig/grille_1000m_gwada_dep_ama_poly.shp" "/tmp/sig/grille_2000m_gwada_dep_ama_poly.shp" "/tmp/sig/grille_5000.shp" "/tmp/sig/glp_rnn2012.shp" "/tmp/csv/habitats/TYPO_ANT_MER_09-01-2011.xls" "/tmp/csv/habitats/EAR_Guadeloupe.csv"
 
 # Import des données depuis les serveurs WFS officiels
 # Vous devez préciser l'URL des serveurs WFS pour les données INPN et pour les données Sandre (masses d'eau)
@@ -215,7 +259,7 @@ php lizmap/scripts/script.php occtax~import:wfs http://ws.carmencarto.fr/WFS/119
 
 # Import des données de relief (Modèle numérique de terrain = MNT ) et des lieu-dits en shapefiles
 # Vous devez spécifier les chemins complet vers les fichiers dans cet ordre: MNT, lieux-dits habités, lieux-dits non-habités, oronymes et toponymes divers ( Source IGN )
-php lizmap/scripts/script.php mascarine~import:gdalogr "/home/data/referentiel/naturaliz-files/sig/DEPT971.asc" "/home/data/referentiel/naturaliz-files/sig/LIEU_DIT_HABITE.SHP" "/home/data/referentiel/naturaliz-files/sig/LIEU_DIT_NON_HABITE.SHP" "/home/data/referentiel/naturaliz-files/sig/ORONYME.SHP" "/home/data/referentiel/naturaliz-files/sig/TOPONYME_DIVERS.SHP"
+php lizmap/scripts/script.php mascarine~import:gdalogr "/tmp/sig/DEPT971.asc" "/tmp/sig/LIEU_DIT_HABITE.SHP" "/tmp/sig/LIEU_DIT_NON_HABITE.SHP" "/tmp/sig/ORONYME.SHP" "/tmp/sig/TOPONYME_DIVERS.SHP"
 
 ```
 
