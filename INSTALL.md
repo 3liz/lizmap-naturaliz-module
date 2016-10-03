@@ -2,7 +2,7 @@
 
 Pour pouvoir installer l'application Naturaliz, vous devez au préalable avoir installé un serveur cartographique basé sur Lizmap. Vous pouvez cela utiliser les script de déploiement automatique **lizmap-box** pour cela. Nous considérons dans la suite de ce document que Lizmap Web Client a été installé et est fonctionnel.
 
-## Installer les modules Naturaliz sur une application Lizmap
+## Pré-requis
 
 ### PostGreSQL
 
@@ -44,30 +44,77 @@ password=naturaliz # !!! MODIFIER CE MOT DE PASSE !!!
 EOF
 ```
 
+
+
+## Installer les modules Naturaliz sur une application Lizmap
+
+### Récupérer les modules
+
+```
+cd /tmp/
+git clone git@projects.3liz.org:clients/naturaliz-reunion.git
+cp -R naturaliz-reunion/* /srv/lizmap_web_client/lizmap/lizmap-modules/
+cd /srv/lizmap_web_client/lizmap/lizmap-modules/
+```
+
 ### Adapter les fichiers de configuration pour Lizmap
 
 L'installateur lit certains fichiers de configuration, que vous devez donc créer et adapter à votre environnement avant de lancer l'installation. Des fichiers exemples sont fournis, que vous pouvez copier avant de les modifier.
 
-* vous devez vérifier dans le fichier *profiles.ini.php* les informations de connexion à la base de données PostGreSQL : l'utilisateur doit **avoir des droits élevé pour l'installation**. Dans la section [jdb:jauth], modifier les variables "user" et "password" pour utiliser par exemple l'utilisateur "postgres". Vous pouvez aussi modifier l'hôte de connexion, le port et le nom de la base de données.
+#### Configuration locale
 
-```
-nano lizmap/var/config/profiles.ini.php
-```
+Les modules Naturaliz lisent dans le fichier **lizmap/var/config/localconfig.ini.php** des informations relatives à l'adaptation au contexte local: projection, codes spécifiques, etc. Vous pouvez copier le contenu du fichier **lizmap/lizmap-modules/localconfig.ini.php.dist** et le poser dans le fichier correspondant dans lizmap. Ce fichier doit contenir:
 
-Les modules Naturaliz lisent dans le fichier localconfig.ini.php des informations relatives à l'adaptation au contexte local: projection, codes spécifiques, etc.
-
-* et dans le fichier **localconfig.ini.php**
-  - la colonne des données TAXREF correspondant au lieu principal de l'installation (par exemple "gua" pour la Guadeloupe) : variable **colonne_locale** de la section [taxon]
-  - la liste des codes d'arrêtés de protection pour la zone concernée (par exemple GUAM1,GUAO1,GUARA1,DV971,GUAI2 pour la Guadeloupe ) : variable code_arrete_protection**code_arrete_protection** de la section  [taxon]
-  - le code SRID du système de coordonnées de références des données spatiales du projet : variable **srid** de la section [naturaliz].
-  - le mot de passe de l'utilisateur admin: variable **adminPassword** de la section [naturaliz].
-  - le code officiel (cf standard "Occurence de taxon", champ ) des habitats de la zone d'étude (par exemple GUAEAR )
+* la colonne des données TAXREF correspondant au lieu principal de l'installation (par exemple "gua" pour la Guadeloupe) : variable **colonne_locale** de la section [taxon]
+* la liste des codes d'arrêtés de protection pour la zone concernée (par exemple *GUAM1,GUAO1,GUARA1,DV971,GUAI2* pour la Guadeloupe, ou encode *agri1, agri2, Bubul1, Bulbul2, Bulbul3, Bulbul4, Bulbul5, Bulbul6, Bulbul9, corbasi1, DV974, phelsuma1, phelsuma2, phelsuma3, phelsuma4, phelsuma5, REUEA2, REUEA3, REUEA4, REUEEA, REUEEI, REUI2, REUP* pour La Réunion ) : variable code_arrete_protection**code_arrete_protection** de la section  [taxon]
+* le code SRID du système de coordonnées de références des données spatiales du projet : variable **srid** de la section [naturaliz].
+* le mot de passe de l'utilisateur admin: variable **adminPassword** de la section [naturaliz].
+* le code officiel (cf standard "Occurence de taxon", champ ) des habitats de la zone d'étude (par exemple GUAEAR )
 
 Voir l'exemple localconfig.ini.php.dist à la racine de ce dépôt.
 
 ```
-nano lizmap/var/config/localconfig.ini.php
+cd /srv/lizmap_web_client/
+cp lizmap/lizmap-modules/localconfig.ini.php.dist lizmap/var/config/localconfig.ini.php
+nano lizmap/var/config/localconfig.ini.php # Faire les modifications nécessaires
 ```
+
+Exemple de contenu:
+
+```
+[modules]
+lizmap.installparam=demo
+
+taxon.access=2
+occtax.access=2
+occtax_admin.access=2
+;mascarine.access=2
+;mascarine_admin.access=2
+
+[taxon]
+; champ determinant le statut local : valeures possibles fr, gf, mar, gua, sm, sb, spm, may, epa, reu, taff, pf, nc, wf, cli
+colonne_locale=reu
+; liste des codes des arr  t  s de protection qui concernent la zone de travail
+code_arrete_protection=agri1, agri2, Bubul1, Bulbul2, Bulbul3, Bulbul4, Bulbul5, Bulbul6, Bulbul9, corbasi1, DV974, phelsuma1, phelsuma2, phelsuma3, phelsuma4, phelsuma5, REUEA2, REUE$
+
+[naturaliz]
+; projection de reference
+srid=2975
+appName=Naturaliz
+
+[occtax]
+defaultRepository=
+defaultProject=
+projectName=Occurences de Taxon
+projectDescription=Cette application permet de consulter les observations faunistiques et floristiques.
+projectCss=""
+
+```
+
+#### Configuration des accès à PostgreSQL
+
+Vous devez vérifier dans le fichier **lizmap/var/config/profiles.ini.php** les informations de connexion à la base de données PostGreSQL : l'utilisateur doit **avoir des droits élevé pour l'installation**.
+Dans la section [jdb:jauth], modifier les variables "user" et "password" pour utiliser par exemple l'utilisateur "postgres". Vous pouvez aussi modifier l'hôte de connexion, le port et le nom de la base de données si besoin.
 
 
 ### Lancer l'installation des modules Naturaliz
@@ -76,47 +123,11 @@ Modifiez les droits pour que l'application puisse écrire dans les répertoires 
 
 ```
 cd /srv/lizmap_web_client/
-lizmap/install/set_rights.sh www-data www-data
+lizmap/install/set_rights.sh
 php lizmap/install/installer.php
 ```
 
 Si l'installation s'est bien passée, vous ne devez pas voir d'erreurs affichées dans le log. Si ce n'est pas le cas, vérifier les fichiers de configuration, notamment l'accès à la base de données.
-
-### Configuration LDAP
-
-
-
-Pour le projet Naturaliz, l'authentification doit se faire via ldap.
-Pour cela, il y a un module spécifique ldapdao. Il est activé, mais
-pas l'authentification ldap.
-
-Pour se faire, après l'installation, il faut modifier les fichiers
-lizmap/var/config/admin/config.ini.php et lizmap/var/config/index/config.ini.php,
-en modifiant le nom du fichier pour le plugin auth.
-
-dans lizmap/var/config/admin/config.ini.php :
-
-```
-[coordplugins]
-auth="admin/authldap.coord.ini.php"
-```
-et dans lizmap/var/config/index/config.ini.php
-
-```
-[coordplugins]
-auth="index/authldap.coord.ini.php"
-```
-
-Il faut aussi installer le certificat racine SSL du serveur ldap, sur le serveur
-apache/php, sinon la connexion au ldap ne pourra se faire. En tant que root:
-
-```
-cp lizmap/install/png_ldap.crt /usr/local/share/ca-certificates
-update-ca-certificates
-service nginx restart
-```
-
-
 
 
 ## Importer des données
@@ -134,7 +145,7 @@ Vous pouvez:
 Ou bien récupérer l'ensemble des données depuis le projet Gitlab naturaliz-files ( https://projects.3liz.org/clients/naturaliz-files ) :
 
 ```
-mkdir /home/data/referentiel
+mkdir -P /home/data/referentiel
 cd /home/data/referentiel
 git clone --depth 1 git@projects.3liz.org:clients/naturaliz-files.git naturaliz-files
 ```
@@ -246,3 +257,37 @@ nano lizmap/var/config/profiles.ini.php
 lizmap/install/set_rights.sh www-data www-data
 ```
 
+
+
+## Configuration LDAP
+
+
+Pour le projet Naturaliz, l'authentification doit se faire via ldap.
+Pour cela, il y a un module spécifique ldapdao. Il est activé, mais
+pas l'authentification ldap.
+
+Pour se faire, après l'installation, il faut modifier les fichiers
+lizmap/var/config/admin/config.ini.php et lizmap/var/config/index/config.ini.php,
+en modifiant le nom du fichier pour le plugin auth.
+
+dans lizmap/var/config/admin/config.ini.php :
+
+```
+[coordplugins]
+auth="admin/authldap.coord.ini.php"
+```
+et dans lizmap/var/config/index/config.ini.php
+
+```
+[coordplugins]
+auth="index/authldap.coord.ini.php"
+```
+
+Il faut aussi installer le certificat racine SSL du serveur ldap, sur le serveur
+apache/php, sinon la connexion au ldap ne pourra se faire. En tant que root:
+
+```
+cp lizmap/install/png_ldap.crt /usr/local/share/ca-certificates
+update-ca-certificates
+service nginx restart
+```
