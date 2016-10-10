@@ -82,7 +82,7 @@ CREATE TEMPORARY TABLE redlist (
 ;
 
 COPY redlist
-FROM '{$menace}' DELIMITER E'\t' CSV HEADER;
+FROM '{$menace}' DELIMITER ',' CSV;
 CREATE INDEX ON redlist (cd_nom);
 
 -- INSERT taxon pas encore présents dans t_complement
@@ -114,7 +114,7 @@ CREATE TEMPORARY TABLE protection_espece (
     cd_nom_cite text
 ) ON COMMIT DROP
 ;
-COPY protection_espece FROM '{$protection}' DELIMITER E'\t' HEADER CSV;
+COPY protection_espece FROM '{$protection}' DELIMITER ',' HEADER CSV;
 CREATE INDEX ON protection_espece (cd_nom);
 
 -- INSERT taxon pas encore présents dans t_complement

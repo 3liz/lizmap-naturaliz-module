@@ -139,7 +139,7 @@ class importCtrl extends jControllerCmdLine {
         // Get the list of protection codes
         $code_arrete_protection = $ini->getValue('code_arrete_protection', 'taxon');
         if( !$code_arrete_protection )
-            $code_arrete_protection = 'GUAM1,GUAO1,GUARA1,DV971,GUAI2';
+            $code_arrete_protection = '';
         $code_arrete_protection = array_map( 'trim', explode(',', $code_arrete_protection ) );
         $code_arrete_protection = "'" . implode( "', '" , $code_arrete_protection ) . "'";
         $assign['code_arrete_protection'] = $code_arrete_protection;

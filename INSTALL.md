@@ -185,6 +185,13 @@ On doit spécifier dans le fichier lizmap/var/config/localconfig.ini.php la list
 * Source: https://inpn.mnhn.fr/telechargement/referentielEspece/reglementation
 * Lien: https://inpn.mnhn.fr/telechargement/referentielEspece/reglementation/zip
 
+Attention, on doit convertir le fichier Excel ( ex: PROTECTION_ESPECES_90.xls ) au format CSV (ex: PROTECTION_ESPECES_90.csv ). Pour cela, utiliser LibreOffice pour ouvrir le fichier Excel, et "Enregistrer sous" avec les options suivantes:
+* format CSV
+* Jeu de caractères: Unicode ( UTF-8 )
+* Séparateur de champ: virgule ','
+* Séparateur de texte: guillemet double '"'
+* Conserver la première ligne avec le nom des champs
+
 * Colonnes:
 
   ```
