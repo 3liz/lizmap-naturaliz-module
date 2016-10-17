@@ -267,6 +267,21 @@ Deux scripts permettent d'importer ces données dans la base, un pour les donné
 * Shapefile : les communes, les mailles 1 et 2, les réserves naturelles nationales, et les habitats
 * WFS : les différents espaces naturels disponibles via le serveur, les mailles 10, les masses d'eau
 
+Pour que l'import des données via les serveurs WFS fonctionne, il faut absolument préciser dans le fichier **lizmap/var/config/localconfig.ini.php** les paramètres suivants dans la partie **[occtax]**
+
+```
+; WFS Server url for import
+wfs_url="http://ws.carmencarto.fr/WFS/119/reu_inpn"
+wfs_url_sandre="http://services.sandre.eaufrance.fr/geo/mdo_REU"
+wfs_url_grille="http://ws.carmencarto.fr/WFS/119/reu_grille"
+; typename WFS pour les imports
+znieff1_terre=reu_znieff1
+znieff1_mer=reu_znieff1_mer
+znieff2_terre=reu_znieff2
+znieff2_mer=reu_znieff2_mer
+
+```
+
 Lancer l'import des données via les commandes suivantes:
 
 ```
@@ -281,9 +296,10 @@ php lizmap/scripts/script.php occtax~import:shapefile "/tmp/sig/COMMUNE.SHP" "/t
 
 # Import des données depuis les serveurs WFS officiels
 # Vous devez préciser l'URL des serveurs WFS pour les données INPN et pour les données Sandre (masses d'eau)
-php lizmap/scripts/script.php occtax~import:wfs http://ws.carmencarto.fr/WFS/119/glp_inpn http://services.sandre.eaufrance.fr/geo/mdo_GLP
+php lizmap/scripts/script.php occtax~import:wfs
 
 # Import des données de relief (Modèle numérique de terrain = MNT ) et des lieu-dits en shapefiles
+# ATTENTION: seulement nécessaire si le module mascarine (saisie flore) est utilisé.
 # Vous devez spécifier les chemins complet vers les fichiers dans cet ordre: MNT, lieux-dits habités, lieux-dits non-habités, oronymes et toponymes divers ( Source IGN )
 php lizmap/scripts/script.php mascarine~import:gdalogr "/tmp/sig/DEPT971.asc" "/tmp/sig/LIEU_DIT_HABITE.SHP" "/tmp/sig/LIEU_DIT_NON_HABITE.SHP" "/tmp/sig/ORONYME.SHP" "/tmp/sig/TOPONYME_DIVERS.SHP"
 
