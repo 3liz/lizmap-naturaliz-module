@@ -16,6 +16,5 @@
         <module name="view" />
         <module name="taxon" />
         <module name="occtax" />
-        <module name="mascarine" />
     </dependencies>
 </module>

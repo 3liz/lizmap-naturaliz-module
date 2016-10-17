@@ -6,10 +6,9 @@ Pour pouvoir installer l'application Naturaliz, vous devez au préalable avoir i
 
 ### PostGreSQL
 
-Avant l'installation des modules Naturaliz, vous devez vous assurer d'avoir créé au préalable une base de donnée PostGreSQL, ou d'en avoir déjà une existante. Vous devrez ensuite configurer le fichier de configuration de LizMap contenant les informations de connexion à la base de données PostGreSQL. Ce fichier est situé dans le répertoire **lizmap/var/config** de la racine de l'application Lizmap.
+Avant l'installation des modules Naturaliz, vous devez vous assurer d'avoir créé au préalable une base de donnée PostGreSQL, ou d'en avoir déjà une existante.
 
-Pendant le processus d'installation de l'application, l'utilisateur PostGreSQL spécifié doit avoir les droits super-utilisateur, afin de pouvoir créer la structure (des droits hauts sont requis notamment pour les extensions). Vous pouvez utiliser l'utilisateur postgres. Un utilisateur "naturaliz" avec des droits limités doit aussi être créé pour l'application.
-Modifier les informations (port, nom de la base, etc.). Le code suivant montre un exemple de création de cette base de données et de l'utilisateur.
+Pendant le processus d'installation de l'application, l'utilisateur PostGreSQL spécifié doit avoir les droits super-utilisateur, afin de pouvoir créer la structure (des droits hauts sont requis notamment pour les extensions). Vous pouvez utiliser l'utilisateur postgres. Un utilisateur "naturaliz" avec des droits limités doit aussi être créé pour l'application. Le code suivant montre un exemple de création de cette base de données et de l'utilisateur (Modifier les informations : port, nom de la base, etc.)
 
 ```
 sudo su postgres
@@ -109,13 +108,23 @@ projectName=Occurences de Taxon
 projectDescription=Cette application permet de consulter les observations faunistiques et floristiques.
 projectCss=""
 
+; typename WFS pour les imports
+znieff1_terre=Znieff1
+znieff1_mer=Znieff1_mer
+znieff2_terre=Znieff2
+znieff2_mer=Znieff2_mer
+
 ```
 
 #### Configuration des accès à PostgreSQL
 
-Vous devez vérifier dans le fichier **lizmap/var/config/profiles.ini.php** les informations de connexion à la base de données PostGreSQL : l'utilisateur doit **avoir des droits élevé pour l'installation**.
+Vous devez vérifier dans le fichier **lizmap/var/config/profiles.ini.php** les informations de connexion à la base de données PostGreSQL : l'utilisateur doit **avoir des droits élevé pour l'installation**. Vous pouvez par exemple utiliser l'utilisateur *postgres*
 Dans la section [jdb:jauth], modifier les variables "user" et "password" pour utiliser par exemple l'utilisateur "postgres". Vous pouvez aussi modifier l'hôte de connexion, le port et le nom de la base de données si besoin.
 
+```
+cd /srv/lizmap_web_client/
+nano lizmap/var/config/profiles.ini.php
+```
 
 ### Lancer l'installation des modules Naturaliz
 
@@ -242,6 +251,16 @@ Les habitats doivent aussi être récupérés et importés.
 
 * Liste des habitats marins, par exemple TYPO_ANT_MER ( Liste des habitats marins des Antilles (Martinique, Guadeloupe) )
 * Liste des habitats terrestres, par exemple ceux de la Carte Écologique d'Alain Rousteau
+
+Il faut créer la couche Mailles 2x2 à partir de la couche 1x1, dans QGIS
+* Menu Vecteur / Outils de recherche / Grille vecteur
+* Etendue de la grille : choisir la couche de mailles 1x1km
+* Cliquer sur le bouton "Mettre à jour l'emprise depuis la couche"
+* Paramètres : mettre 2000 dans la case X
+* Cocher "Grille en sortie en tant que polygone"
+* Choisir un fichier de sortie ( le mettre au même endroit que le fichier des mailles 1x1km
+* Lancer le traitement via le bouton OK
+
 
 Deux scripts permettent d'importer ces données dans la base, un pour les données WFS, et un autre pour les données Shapefile, Excel et CSV:
 
