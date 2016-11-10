@@ -1,4 +1,5 @@
--- create extensions
+BEGIN;
+
 CREATE EXTENSION IF NOT EXISTS "postgis";
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
@@ -93,7 +94,6 @@ CREATE TABLE observation (
     CONSTRAINT obs_type_denombrement_valide CHECK ( type_denombrement IN ('Co', 'Es', 'Ca', 'NSP') ),
     CONSTRAINT obs_diffusion_niveau_precision_valide CHECK ( diffusion_niveau_precision IS NULL OR diffusion_niveau_precision IN ( '0', '1', '2', '3', '4', '5' ) ),
     CONSTRAINT obs_dates_valide CHECK (date_debut <= date_fin AND date_debut + heure_debut <= date_fin + heure_fin),
-    CONSTRAINT obs_nature_objet_geo_valide CHECK ( geom IS NOT NULL AND nature_objet_geo IN ('St', 'In', 'NSP') ),
     CONSTRAINT obs_precision_geometrie_valide CHECK ( precision_geometrie IS NULL OR precision_geometrie > 0 ),
     CONSTRAINT obs_altitude_min_max_valide CHECK ( Coalesce( altitude_min, 0 ) <= Coalesce( altitude_max, 0 ) ),
     CONSTRAINT obs_profondeur_min_max_valide CHECK ( Coalesce( profondeur_min, 0 ) <= Coalesce( profondeur_max, 0 ) ),
@@ -103,15 +103,16 @@ CREATE TABLE observation (
     CONSTRAINT obs_restriction_totale_valide CHECK ( restriction_totale IS NULL OR restriction_totale IN ('Oui', 'Non') ),
     CONSTRAINT obs_dee_floutage_valide CHECK ( dee_floutage IS NULL OR dee_floutage IN ('OUI', 'NON') ),
     CONSTRAINT obs_dee_date_derniere_modification_valide CHECK ( dee_date_derniere_modification >= dee_date_transformation ),
-    CONSTRAINT obs_dee_floutage_valide CHECK ( ds_publique != 'Pr' OR ( ds_publique = 'Pr' AND dee_floutage IS NOT NULL ) ),
+    CONSTRAINT obs_dee_floutage_ds_publique_valide CHECK ( ds_publique != 'Pr' OR ( ds_publique = 'Pr' AND dee_floutage IS NOT NULL ) ),
     CONSTRAINT obs_sensi_date_attribution_valide CHECK ( sensi_date_attribution IS NULL OR ( sensi_date_attribution IS NOT NULL AND sensible != '0' AND sensi_niveau != '0' ) ),
     CONSTRAINT obs_sensi_niveau_valide CHECK ( sensi_niveau IN ( '0', '1', '2', '3', '4', '5' ) ),
-    CONSTRAINT obs_sensi_referentiel_valide CHECK ( ( sensi_niveau != '0' AND sensi_referentiel IS NOT NULL) OR sensi_niveau = '0' )
+    CONSTRAINT obs_sensi_referentiel_valide CHECK ( ( sensi_niveau != '0' AND sensi_referentiel IS NOT NULL) OR sensi_niveau = '0' ),
     CONSTRAINT obs_sensi_version_referentiel_valide CHECK ( ( sensi_niveau != '0' AND sensi_version_referentiel IS NOT NULL) OR sensi_niveau = '0' ),
     CONSTRAINT obs_version_taxref_valide CHECK ( cd_nom IS NULL OR ( cd_nom IS NOT NULL AND version_taxref IS NOT NULL) )
 );
 
-SELECT AddGeometryColumn('objet_geographique', 'geom', {$SRID}, 'GEOMETRY', 2);
+SELECT AddGeometryColumn('observation', 'geom', {$SRID}, 'GEOMETRY', 2);
+ALTER TABLE observation ADD CONSTRAINT obs_nature_objet_geo_valide CHECK ( geom IS NOT NULL AND nature_objet_geo IN ('St', 'In', 'NSP') );
 
 COMMENT ON TABLE observation IS 'Une observation a une seule source qui peut être de 3 types différents : terrain, littérature ou collection. Ils ont des attributs communs JddId et JddCode qui précisent le support de la source, par exemple, le nom de la base de données où est gérée la Donnée Source ou le nom de la collection. Si la source est Littérature, un attribut est nécessaire pour préciser les références bibliographiques. En plus des attributs sur la source, des attributs permettent de caractériser la DEE (sensibilité ...) et de caractériser le sujet de l’observation: le nom du taxon observé, le dénombrement.';
 
@@ -233,14 +234,13 @@ COMMENT ON COLUMN observation.geom IS 'Géométrie de l''objet. Il peut être de
 
 -- Table personne
 CREATE TABLE personne (
-    id_personne serial PRIMARY KEY,
+    id_personne serial,
     identite text UNIQUE NOT NULL,
     mail text UNIQUE,
     organisme text NOT NULL,
-    CONSTRAINT personne_identite_valide CHECK ( identite NOT LIKE '%,%' ),
-    CONSTRAINT personne_organisme_valide CHECK ()
+    CONSTRAINT personne_identite_valide CHECK ( identite NOT LIKE '%,%' )
 );
-ALTER TABLE personne ADD PRIMARY KEY id_personne;
+ALTER TABLE personne ADD PRIMARY KEY (id_personne);
 
 COMMENT ON TABLE personne IS 'Liste des personnes participant aux observations. Cette table est remplie de manière automatique lors des imports de données. Il n''est pas assuré que chaque personne ne représente pas plusieurs homonymes.';
 COMMENT ON COLUMN personne.id_personne IS 'Identifiant de la personne (valeur autoincrémentée)';
@@ -370,14 +370,14 @@ CREATE TABLE referentiel_habitat(
     libelle text NOT NULL,
     definition text NOT NULL,
     creation text NOT NULL,
-    modification text NOT NULL,
-)
+    modification text NOT NULL
+);
 ALTER TABLE referentiel_habitat ADD PRIMARY KEY ( ref_habitat );
 
 COMMENT ON TABLE referentiel_habitat IS 'Référentiel d''habitats et typologies. Source: http://standards-sinp.mnhn.fr/nomenclature/';
 COMMENT ON COLUMN referentiel_habitat.ref_habitat IS 'Code du référentiel habitat';
 COMMENT ON COLUMN referentiel_habitat.libelle IS 'Libellé du référentiel habitat';
-COMMENT ON COLUMN referentiel_habitat.description IS 'Description du référentiel habitat';
+COMMENT ON COLUMN referentiel_habitat.definition IS 'Définition du référentiel habitat';
 COMMENT ON COLUMN referentiel_habitat.creation IS 'Date de création du référentiel habitat';
 COMMENT ON COLUMN referentiel_habitat.modification IS 'Date de modification du référentiel habitat';
 
@@ -431,7 +431,7 @@ CREATE TABLE attribut_additionnel (
     cle_obs bigint NOT NULL,
     nom text NOT NULL,
     definition text NOT NULL,
-    valeur text NOT NULL
+    valeur text NOT NULL,
     unite text,
     thematique text NOT NULL,
     "type" text NOT NULL,
@@ -440,7 +440,7 @@ CREATE TABLE attribut_additionnel (
     CONSTRAINT attribut_additionnel_unite_valide CHECK ( ("type" = 'QTA' AND "unite" IS NOT NULL) OR "type" != 'QTA' )
 
 );
-ALTER TABLE attribut_additionnel ADD PRIMARY KEY (cle_obs, parametre);
+ALTER TABLE attribut_additionnel ADD PRIMARY KEY (cle_obs, nom);
 ALTER TABLE attribut_additionnel ADD CONSTRAINT attribut_additionnel_cle_obs_fk FOREIGN KEY (cle_obs) REFERENCES observation (cle_obs) ON DELETE CASCADE;
 
 COMMENT ON TABLE attribut_additionnel IS 'Les attributs additionnels sont des informations non prévues par le cœur de standard qui peuvent être ajoutées si besoin et sous réserve que l’information ajoutée soit décrite de manière satisfaisante directement dans le standard. De plus ces attributs ne doivent pas être utilisés pour modifier le sens d’un attribut du cœur du standard ou d’une extension.';
@@ -494,8 +494,6 @@ CREATE INDEX ON localisation_maille_10 (code_maille);
 CREATE INDEX ON localisation_maille_10 (cle_obs);
 CREATE INDEX ON localisation_maille_05 (code_maille);
 CREATE INDEX ON localisation_maille_05 (cle_obs);
-CREATE INDEX ON localisation_maille_01 (code_maille);
-CREATE INDEX ON localisation_maille_01 (cle_obs);
 CREATE INDEX ON localisation_masse_eau (code_me);
 CREATE INDEX ON localisation_masse_eau (cle_obs);
 
@@ -533,7 +531,7 @@ CREATE TABLE maille_10 (
     version_ref text NOT NULL,
     nom_ref text NOT NULL,
     type_info_geo text NOT NULL,
-    CONSTRAINT commune_type_info_geo_valide CHECK ( type_info_geo IN ('1', '2') )
+    CONSTRAINT maille_10_type_info_geo_valide CHECK ( type_info_geo IN ('1', '2') )
 );
 SELECT AddGeometryColumn('maille_10', 'geom', {$SRID}, 'POLYGON', 2);
 
@@ -543,11 +541,11 @@ COMMENT ON COLUMN maille_10.code_maille IS 'Code de la maille 10km. Ex: 10kmUTM2
 
 COMMENT ON COLUMN maille_10.nom_maille IS 'Code court de la maille 10km. Ex: 510-1660';
 
-COMMENT ON COLUMN maille_10.version_ref IS 'Année de production du référentiel INSEE, qui sert à déterminer quel est le référentiel en vigueur pour le code et le nom de la commune';
+COMMENT ON COLUMN maille_10.version_ref IS 'Version du référentiel en vigueur pour le code et le nom de la maille';
 
 COMMENT ON COLUMN maille_10.nom_ref IS 'Nom de la couche de maille utilisée : Concaténation des éléments des colonnes "couche" et "territoire" de la page http://inpn.mnhn.fr/telechargement/cartes-et-information-geographique/ref On n''utilisera que les grilles nationales (les grilles européennes sont proscrites). Exemple : Grilles nationales (10 km x10 km) TAAF';
 
-COMMENT ON COLUMN commune.type_info_geo IS 'Indique le type d''information géographique suivant la nomenclature TypeInfoGeoValue. Exemple : "1" pour "Géoréférencement", "2" pour "Rattachement"';
+COMMENT ON COLUMN maille_10.type_info_geo IS 'Indique le type d''information géographique suivant la nomenclature TypeInfoGeoValue. Exemple : "1" pour "Géoréférencement", "2" pour "Rattachement"';
 
 COMMENT ON COLUMN maille_10.geom IS 'Géométrie de la maille.';
 
@@ -683,7 +681,7 @@ CREATE TABLE masse_eau (
     type_info_geo text NOT NULL,
     CONSTRAINT masse_eau_version_me_valide CHECK ( version_me IN ('1', '2', '3') ),
     CONSTRAINT masse_eau_date_me_valide CHECK ( date_me < now()::date ),
-    CONSTRAINT commune_type_info_geo_valide CHECK ( type_info_geo IN ('1', '2') )
+    CONSTRAINT masse_eau_type_info_geo_valide CHECK ( type_info_geo IN ('1', '2') )
 );
 SELECT AddGeometryColumn('masse_eau', 'geom', {$SRID}, 'GEOMETRY', 2);
 
@@ -778,3 +776,4 @@ SELECT 1::integer AS cle_obs, ''::text AS nom_cite, '1'::bigint AS cd_nom, '2015
 CREATE OR REPLACE VIEW sig.tpl_observation_brute_centroid AS
 SELECT 1::integer AS cle_obs, ''::text AS nom_cite, '1'::bigint AS cd_nom, '2015-01-01'::text AS date_debut, '1'::integer AS cle_objet, ''::text AS identite_observateur, 'GEO'::text AS source_objet, ''::text AS geojson, st_centroid(ST_GeomFromText('POINT(649878 1785015)', {$SRID}))::geometry(Point, {$SRID}) AS geom;
 
+COMMIT;
