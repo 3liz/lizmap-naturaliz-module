@@ -26,95 +26,122 @@ COMMENT ON COLUMN nomenclature.champ IS 'Description de la valeur';
 -- Table principale des observations
 CREATE TABLE observation (
     cle_obs bigserial NOT NULL PRIMARY KEY,
-    statut_source text NOT NULL,
-    reference_biblio text,
-    jdd_id text,
-    jdd_code text,
-    identifiant_origine text,
-    identifiant_permanent text,
-    ds_publique text NOT NULL,
-    code_idcnp_dispositif text,
+    identifiant_permanent text NOT NULL,
     statut_observation text NOT NULL,
     cd_nom bigint,
     cd_ref bigint,
+    version_taxref text,
     nom_cite text NOT NULL,
-    code_sensible text,
+
     denombrement_min integer,
     denombrement_max integer,
     objet_denombrement text,
     type_denombrement text,
+
     commentaire text,
 
     date_debut date NOT NULL,
     date_fin date NOT NULL,
     heure_debut time with time zone,
     heure_fin time with time zone,
-    date_determination_obs date,
+    date_determination date,
 
     altitude_min numeric(6,2),
+    altitude_moy numeric(6,2),
     altitude_max numeric(6,2),
     profondeur_min numeric(6,2),
+    profondeur_moy numeric(6,2),
     profondeur_max numeric(6,2),
-    toponyme text,
-    code_departement text,
-    x numeric,
-    y numeric,
-    cle_objet bigint,
-    precision numeric,
+
+    code_idcnp_dispositif text,
+    dee_date_derniere_modification timestamp with time zone NOT NULL,
+    dee_date_transformation timestamp with time zone NOT NULL,
+    dee_floutage text,
+    diffusion_niveau_precision text,
+    ds_publique text NOT NULL,
+    identifiant_origine text,
+    jdd_code text,
+    jdd_id text,
+    jdd_metadonnee_dee_id text NOT NULL,
+    jdd_source_id text,
+    organisme_gestionnaire_donnees text NOT NULL,
+    org_transformation text NOT NULL,
+
+    statut_source text NOT NULL,
+    reference_biblio text,
+    sensible text NOT NULL DEFAULT 0,
+    sensi_date_attribution timestamp with time zone,
+    sensi_niveau text NOT NULL DEFAULT 0,
+    sensi_referentiel text,
+    sensi_version_referentiel text,
+
+    precision_geometrie integer,
     nature_objet_geo text,
     restriction_localisation_p text,
     restriction_maille text,
     restriction_commune text,
     restriction_totale text,
-    floutage text NOT NULL,
-
-    identite_observateur text NOT NULL,
-    organisme_observateur text NOT NULL,
-    determinateur text,
-    validateur text,
-    organisme_gestionnaire_donnees text NOT NULL,
-    organisme_standard text,
 
     CONSTRAINT obs_statut_source_valide CHECK ( statut_source IN ( 'Te', 'Co', 'Li', 'NSP' ) ),
     CONSTRAINT obs_reference_biblio_valide CHECK ( (statut_source = 'Li' AND reference_biblio IS NOT NULL) OR statut_source != 'Li' ),
-    CONSTRAINT obs_jdd_id_valide CHECK ( (statut_source IN ('Co', 'Te') AND jdd_id IS NOT NULL) OR statut_source NOT IN ('Co', 'Te') ),
-    CONSTRAINT obs_jdd_code_valide CHECK ( (statut_source IN ('Co', 'Te') AND jdd_code IS NOT NULL) OR statut_source NOT IN ('Co', 'Te') ),
     CONSTRAINT obs_ds_publique_valide CHECK ( ds_publique IN ( 'Pu', 'Re', 'Ac', 'Pr', 'NSP' ) ),
-    CONSTRAINT obs_statut_observation_valide CHECK ( statut_observation IN ( 'Pr', 'No' ) ),
+    CONSTRAINT obs_statut_observation_valide CHECK ( statut_observation IN ( 'Pr', 'No', 'NSP' ) ),
     CONSTRAINT obs_objet_denombrement_valide CHECK (
-        ( (denombrement_min IS NOT NULL OR denombrement_max IS NOT NULL) AND (objet_denombrement = ANY (ARRAY['In'::text, 'NSP'::text])) )
+        ( denombrement_min IS NOT NULL AND denombrement_max IS NOT NULL AND objet_denombrement IN ('COL', 'CPL', 'HAM', 'IND', 'NID', 'NSP', 'PON', 'SURF', 'TIGE', 'TOUF ')  )
         OR (denombrement_min IS NULL AND denombrement_max IS NULL AND objet_denombrement IS NULL)
     ),
     CONSTRAINT obs_type_denombrement_valide CHECK ( type_denombrement IN ('Co', 'Es', 'Ca', 'NSP') ),
-    CONSTRAINT obs_code_sensible_valide CHECK ( code_sensible IN ( '0', '1', '2', '3', '4' ) ),
+    CONSTRAINT obs_diffusion_niveau_precision_valide CHECK ( diffusion_niveau_precision IS NULL OR diffusion_niveau_precision IN ( '0', '1', '2', '3', '4', '5' ) ),
     CONSTRAINT obs_dates_valide CHECK (date_debut <= date_fin AND date_debut + heure_debut <= date_fin + heure_fin),
-    CONSTRAINT obs_nature_objet_geo_valide CHECK ( nature_objet_geo IS NULL OR nature_objet_geo IN ('St', 'In', 'NSP') ),
+    CONSTRAINT obs_nature_objet_geo_valide CHECK ( geom IS NOT NULL AND nature_objet_geo IN ('St', 'In', 'NSP') ),
+    CONSTRAINT obs_precision_geometrie_valide CHECK ( precision_geometrie IS NULL OR precision_geometrie > 0 ),
     CONSTRAINT obs_altitude_min_max_valide CHECK ( Coalesce( altitude_min, 0 ) <= Coalesce( altitude_max, 0 ) ),
     CONSTRAINT obs_profondeur_min_max_valide CHECK ( Coalesce( profondeur_min, 0 ) <= Coalesce( profondeur_max, 0 ) ),
     CONSTRAINT obs_restriction_localisation_p_valide CHECK ( restriction_localisation_p IS NULL OR restriction_localisation_p IN ('Oui', 'Non') ),
     CONSTRAINT obs_restriction_maille_valide CHECK ( restriction_maille IS NULL OR restriction_maille IN ('Oui', 'Non') ),
     CONSTRAINT obs_restriction_commune_valide CHECK ( restriction_commune IS NULL OR restriction_commune IN ('Oui', 'Non') ),
     CONSTRAINT obs_restriction_totale_valide CHECK ( restriction_totale IS NULL OR restriction_totale IN ('Oui', 'Non') ),
-    CONSTRAINT obs_floutage_valide CHECK ( floutage IN ('Oui', 'Non', 'NSP') )
+    CONSTRAINT obs_dee_floutage_valide CHECK ( dee_floutage IS NULL OR dee_floutage IN ('OUI', 'NON') ),
+    CONSTRAINT obs_dee_date_derniere_modification_valide CHECK ( dee_date_derniere_modification >= dee_date_transformation ),
+    CONSTRAINT obs_dee_floutage_valide CHECK ( ds_publique != 'Pr' OR ( ds_publique = 'Pr' AND dee_floutage IS NOT NULL ) ),
+    CONSTRAINT obs_sensi_date_attribution_valide CHECK ( sensi_date_attribution IS NULL OR ( sensi_date_attribution IS NOT NULL AND sensible != '0' AND sensi_niveau != '0' ) ),
+    CONSTRAINT obs_sensi_niveau_valide CHECK ( sensi_niveau IN ( '0', '1', '2', '3', '4', '5' ) ),
+    CONSTRAINT obs_sensi_referentiel_valide CHECK ( ( sensi_niveau != '0' AND sensi_referentiel IS NOT NULL) OR sensi_niveau = '0' )
+    CONSTRAINT obs_sensi_version_referentiel_valide CHECK ( ( sensi_niveau != '0' AND sensi_version_referentiel IS NOT NULL) OR sensi_niveau = '0' ),
+    CONSTRAINT obs_version_taxref_valide CHECK ( cd_nom IS NULL OR ( cd_nom IS NOT NULL AND version_taxref IS NOT NULL) )
 );
+
+SELECT AddGeometryColumn('objet_geographique', 'geom', {$SRID}, 'GEOMETRY', 2);
 
 COMMENT ON TABLE observation IS 'Une observation a une seule source qui peut être de 3 types différents : terrain, littérature ou collection. Ils ont des attributs communs JddId et JddCode qui précisent le support de la source, par exemple, le nom de la base de données où est gérée la Donnée Source ou le nom de la collection. Si la source est Littérature, un attribut est nécessaire pour préciser les références bibliographiques. En plus des attributs sur la source, des attributs permettent de caractériser la DEE (sensibilité ...) et de caractériser le sujet de l’observation: le nom du taxon observé, le dénombrement.';
 
 COMMENT ON COLUMN observation.cle_obs IS 'Attribut technique servant de clé primaire de l’observation. Cet attribut permet de faire le lien avec les autres fichiers fournis lors de l’échange';
 
-COMMENT ON COLUMN observation.statut_source IS 'Indique si la DS de l’observation provient directement du terrain (via un
-document informatisé ou une base de données), d’une collection ou de
-la littérature';
+COMMENT ON COLUMN observation.statut_source IS 'Indique si la DS de l’observation provient directement du terrain (via un document informatisé ou une base de données), d''une collection, de la littérature, ou n''est pas connu';
 
-COMMENT ON COLUMN observation.reference_biblio IS 'Référence de la source de l’observation lorsque celle-ci est de type « Littérature », de préférence au format ISO690. La référence bibliographique doit concerner l’observation même et non uniquement le taxon ou le protocole.';
+COMMENT ON COLUMN observation.reference_biblio IS 'Référence de la source de l’observation lorsque celle-ci est de type « Littérature », au format ISO690 La référence bibliographique doit concerner l''observation même et non uniquement le taxon ou le protocole.';
 
-COMMENT ON COLUMN observation.jdd_id IS 'Un identifiant pour la collection ou le jeu de données terrain d’où provient l’enregistrement. Exemple code IDCNP pour l’INPN : « 00-15 ».';
+COMMENT ON COLUMN observation.sensible IS 'Indique si l''observation est sensible d''après les principes du SINP (cf : GT Donnée Sensible). Cet attribut est voué à disparaître pour la prochaine version du standard, l''attribut "sensibilite" permettant de porter une information plus complète et précise.';
 
-COMMENT ON COLUMN observation.jdd_code IS 'Le nom, l’acronyme, le code ou l’initiale identifiant la collection ou le jeu de données dont l’enregistrement de la Donnée Source provient. Exemple « INPN », « Silène », « BDMAP »';
+COMMENT ON COLUMN observation.sensi_date_attribution IS 'Date à laquelle on a attribué un niveau de sensibilité à la donnée. C''est également la date à laquelle on a consulté le référentiel de sensibilité associé. Cet attribut est OBLIGATOIRE CONDITIONNEL : il DOIT être rempli si un niveau de sensibilité autre que celui par défaut a été renseigné dans l''attribut "sensibilite", et si "sensible" est différent de "0';
 
-COMMENT ON COLUMN observation.identifiant_origine IS 'Identifiant unique de la Donnée Source de l’observation dans la base de données, elle-même caractérisée par jddId et/ou jddCode, où est stockée et initialement gérée la Donnée Source. L’identifiant ne doit pas être la clé primaire technique, susceptible de varier selon les choix de gestion de l’outil de stockage.';
+COMMENT ON COLUMN observation.sensi_niveau IS 'Indique si l''observation ou le regroupement est sensible d''après les principes du SINP et à quel degré. La manière de déterminer la sensibilité est définie dans le guide technique des données sensibles disponible sur la plate-forme naturefrance. Règles : Sans consultation de référentiel de sensibilité, le niveau est par défaut est 0 : DEE non sensible. La sensibilité d''une et une seule DEE d''un regroupement entraîne le même niveau de sensibilité pour le regroupement et pour toutes les observations de ce regroupement.';
 
-COMMENT ON COLUMN observation.identifiant_permanent IS 'Identifiant unique et pérenne de la Donnée Elémentaire d’Echange de l’observation dans le SINP attribué par la plateforme régionale ou thématique.';
+COMMENT ON COLUMN observation.sensi_referentiel IS 'Référentiel de sensibilité consulté lors de l''attribution du niveau de sensibilité. Dans le cas où un référentiel de sensibilité n''existe pas : on inscrit ici le nom de l''organisme qui a assigné une sensibilité différente de 0, à titre transitoire. si un niveau de sensibilité différent de 0 a été renseigné, cet attribut DOIT être rempli';
+
+COMMENT ON COLUMN observation.sensi_version_referentiel IS 'Version du référentiel consulté. Peut être une date si le référentiel n''a pas de numéro de version. Doit être rempli par "NON EXISTANTE" si un référentiel n''existait pas au moment de l''attribution de la sensibilité par un organisme. Autant que possible, on tentera d''utiliser la version en vigueur de ce référentiel.si un niveau de sensibilité différent de 0 a été renseigné, cet attribut DOIT être rempli.';
+
+COMMENT ON COLUMN observation.jdd_id IS 'Identifiant pour la collection ou le jeu de données source d''où provient l''enregistrement. Un regroupement peut ne pas avoir existé dans le jeu de données source, et en conséquence, ne saurait avoir de jddId.';
+
+COMMENT ON COLUMN observation.jdd_metadonnee_dee_id IS 'Identifiant permanent et unique de la fiche métadonnées du jeu de données auquel appartient la donnée. Cet identifiant est attribué par la plateforme';
+
+COMMENT ON COLUMN observation.jdd_source_id IS 'Il peut arriver qu''on réutilise une donnée en provenance d''un autre jeu de données DEE déjà existant au sein du SINP. Cet attribut contient l''identifiant SINP du jeu de données qui est réutilisé.';
+
+COMMENT ON COLUMN observation.jdd_code IS 'Nom, acronyme, ou code de la collection du jeu de données dont provient la donnée source. Exemples : "BDMAP", "FLORA", "BDN".';
+
+COMMENT ON COLUMN observation.identifiant_origine IS 'Identifiant unique de la Donnée Source de l’observation dans la base de données du producteur où est stockée et initialement gérée la Donnée Source. La DS est caractérisée par jddId et/ou jddCode,. L''identifiant ne doit pas être la clé primaire technique, susceptible de varier selon les choix de gestion de l''outil de stockage.';
+
+COMMENT ON COLUMN observation.identifiant_permanent IS 'Identifiant unique et pérenne de la Donnée Elémentaire d’Echange de l''observation dans le SINP attribué par la plate-forme régionale ou thématique. On se réfèrera au document sur les identifiants permanents présents sur la plate-forme NatureFrance : http://www.naturefrance.fr/sites/default/files/fichiers/ressources/pdf/sinp_identifiantpermanent.pdf';
 
 COMMENT ON COLUMN observation.ds_publique IS 'Indique explicitement si la DS de la DEE est publique ou privée. Ce champ définit uniquement les droits nécessaires et suffisants des DS pour produire une DEE : l’attribut DSPublique ne doit être utilisé que pour indiquer si la DEE résultante est susceptible d’être floutée et ne doit pas être utilisé pour d’autres interprétations.';
 
@@ -122,16 +149,16 @@ COMMENT ON COLUMN observation.code_idcnp_dispositif IS 'Code du dispositif de co
 
 COMMENT ON COLUMN observation.statut_observation IS 'Indique si le taxon a été observé directement ou indirectement (indices de présence), ou non observé';
 
-COMMENT ON COLUMN observation.nom_cite IS 'Nom du taxon cité à l’origine par l’observateur. Celui-ci peut être le nom scientifique reprenant idéalement en plus du nom latin, l’auteur et la date. Cependant, si le nom initialement cité est un nom vernaculaire ou un nom scientifique incomplet alors c’est cette information qui doit être indiquée.';
+COMMENT ON COLUMN observation.nom_cite IS 'Nom du taxon cité à l’origine par l’observateur. Celui-ci peut être le nom scientifique reprenant idéalement en plus du nom latin, l’auteur et la date. Cependant, si le nom initialement cité est un nom vernaculaire ou un nom scientifique incomplet alors c’est cette information qui doit être indiquée. C''est l''archivage brut de l''information taxonomique citée, et le nom le plus proche de la source disponible de la donnée. Règles : S''il n''y a pas de nom cité (quelqu''un qui prendrait une photo pour demander ce que c''est à un expert) : noter "Inconnu". Si le nom cité n''a pas été transmis par le producteur, ou qu''il y a eu une perte de cette information liée au système de d''information utilisé (nom cité non stocké par exemple) : noter "Nom perdu".';
 
 COMMENT ON COLUMN observation.cd_nom IS 'Code du taxon « cd_nom » de TaxRef référençant au niveau national le taxon. Le niveau ou rang taxinomique de la DEE doit être celui de la DS.
 Si le Cd_Nom pour le taxon observé existe alors il doit être renseigné. Si le taxon n’a pas de code TaxRef, alors se référer à la méthodologie TaxRef http://inpn.mnhn.fr/programme/referentiel-taxonomique-taxref. Ce champ est doit être considéré comme obligatoire si le taxon est présent dans TAXREF.';
 
-COMMENT ON COLUMN observation.cd_ref IS 'Code du taxon « cd_ref » de TaxRef référençant au niveau national le taxon. Le niveau ou rang taxinomique de la DEE doit être celui de la DS.
-Si le Cd_Ref pour le taxon observé existe alors il doit être renseigné. Si le taxon n’a pas de code TaxRef, alors se référer à la méthodologie TaxRef http://inpn.mnhn.fr/programme/referentiel-taxonomique-taxref. Ce champ doit être considéré comme obligatoire si le taxon est présent dans TAXREF.
-';
+COMMENT ON COLUMN observation.cd_ref IS 'Code du taxon « cd_ref » de TaxRef référençant au niveau national le taxon. Le niveau ou rang taxinomique de la DEE doit être celui de la DS. Si le Cd_Ref pour le taxon observé existe alors il doit être renseigné. Si le taxon n’a pas de code TaxRef, alors se référer à la méthodologie TaxRef http://inpn.mnhn.fr/programme/referentiel-taxonomique-taxref. Ce champ doit être considéré comme obligatoire si le taxon est présent dans TAXREF.';
 
-COMMENT ON COLUMN observation.code_sensible IS 'Du protocole SINP : Ce sont les données répondant aux critères visés à l article L. 124-4 du code de l environnement dont la consultation ou la communication porte atteinte notamment à la protection de l environnement auquel elles se rapportent. ». La caractéristaion de la sensibilité est définie par le GT données sensibles du SINP';
+COMMENT ON COLUMN observation.version_taxref IS 'Version du référentiel TAXREF utilisée pour le cdNom et le cdRef. Autant que possible au moment de l''échange, on tentera d''utiliser le référentiel en vigueur';
+
+COMMENT ON COLUMN observation.diffusion_niveau_precision IS 'Niveau maximal de précision de la diffusion souhaitée par le producteur vers le grand public. Ne concerne que les DEE non sensibles (i.e. données dont le niveau de sensibilité est de 0). Cet attribut indique si le producteur souhaite que sa DEE non sensible soit diffusée comme toutes les autres, à la commune ou à la maille, ou de façon précise. Règle: Il ne peut être utilisé pour diffuser moins précisément des données que dans le cas de données dont au moins une, au sein d''un regroupement, est sensible suivant la définition du GT sensible. Si aucune donnée n''est sensible, alors le niveau maximal de précision de diffusion sera celui par défaut.';
 
 COMMENT ON COLUMN observation.denombrement_min IS 'Nombre minimum d’individus du taxon composant l’observation';
 
@@ -163,34 +190,21 @@ Exemple T19:20+01:00';
 
 COMMENT ON COLUMN observation.heure_fin IS 'Heure et minute dans le système local auxquelles l’observation du taxon a pris fin.';
 
-COMMENT ON COLUMN observation.date_determination_obs IS 'Date de la dernière détermination du taxon de l’observation dans le système grégorien';
+COMMENT ON COLUMN observation.date_determination IS 'Date de la dernière détermination du taxon de l’observation dans le système grégorien';
 
-COMMENT ON COLUMN observation.altitude_min IS 'Altitude Minimum de l’observation en mètre. Si une seule mesure d’altitude moyenne est mesurée : inscrire la valeur dans les deux champs';
+COMMENT ON COLUMN observation.altitude_min IS 'Altitude Minimum de l’observation en mètre.';
 
-COMMENT ON COLUMN observation.altitude_max IS 'Altitude Maximum de l’observation en mètre. Si une seule mesure d’altitude moyenne est mesurée : inscrire la valeur dans les deux champs';
+COMMENT ON COLUMN observation.altitude_moy IS 'Altitude moyenne de l''observation.';
 
-COMMENT ON COLUMN observation.profondeur_min IS 'Profondeur Minimum de l’observation en mètre selon le référentiel des profondeurs indiqué dans les métadonnées. Si une seule mesure de profondeur moyenne est mesurée : inscrire la valeur dans les deux champs';
+COMMENT ON COLUMN observation.altitude_max IS 'Altitude Maximum de l’observation en mètre.';
 
-COMMENT ON COLUMN observation.profondeur_max IS 'Profondeur Maximale de l’observation en mètre selon le référentiel des profondeurs indiqué dans les métadonnées. Si une seule mesure de profondeur moyenne est mesurée : inscrire la valeur dans les deux champs';
+COMMENT ON COLUMN observation.profondeur_min IS 'Profondeur Minimum de l’observation en mètres selon le référentiel des profondeurs indiqué dans les métadonnées (système de référence spatiale verticale).';
 
-COMMENT ON COLUMN observation.toponyme IS 'Nom propre du lieu où a été effectuée l’observation. Si plusieurs toponymes sont notés, ils sont listés dans le même champ et séparés par une virgule «, »
-Référentiel Préconisé : Toponymie des cartes IGN 1/25 000';
+COMMENT ON COLUMN observation.profondeur_moy IS 'Profondeur moyenne de l''observation.';
 
-COMMENT ON COLUMN observation.code_departement IS 'Département sur lequel est localisé le taxon observé.
-Codes départementaux de l’INSEE : http://www.insee.fr/fr/methodes/nomenclatures/cog/departement.asp';
+COMMENT ON COLUMN observation.profondeur_max IS 'Profondeur Maximale de l’observation en mètres selon le référentiel des profondeurs indiqué dans les métadonnées (système de référence spatiale verticale).';
 
-COMMENT ON COLUMN observation.x IS 'Longitude, coordonnée X de l’observation.
-Si les coordonnées sont projetées, alors l’unité est le mètre et le nombre est un entier.
-Si les coordonnées ne sont pas projetées, alors l’unité est le degré décimal, et le nombre a jusqu’à 5 chiffres décimaux.
-Le système de projection est précisé dans les métadonnées.
-Rappel : le point ne doit pas représenter un centroïde (de maille, de commune...). Dans ce cas, il faut véhiculer les fichiers Commune ou Maille.';
-
-COMMENT ON COLUMN observation.y IS 'Latitude, coordonnée Y de l’observation.';
-
-COMMENT ON COLUMN observation.cle_objet IS 'Attribut technique permettant de faire le lien avec l’objet géographique du fichier SIG « St_SIG »
-Si l’observation est localisée par un objet géographique, alors CleObjet doit être renseigné';
-
-COMMENT ON COLUMN observation.precision IS 'Estimation en mètre d’une zone tampon autour de l’objet géographique. Cette précision peut inclure la précision du moyen technique d’acquisition des coordonnées (GPS,...) et/ou du protocole naturaliste.
+COMMENT ON COLUMN observation.precision_geometrie IS 'Estimation en mètre d’une zone tampon autour de l’objet géographique. Cette précision peut inclure la précision du moyen technique d’acquisition des coordonnées (GPS,...) et/ou du protocole naturaliste.
 Ce champ ne peut pas être utilisé pour flouter la donnée.';
 
 COMMENT ON COLUMN observation.nature_objet_geo IS 'Nature de la localisation transmise
@@ -204,46 +218,53 @@ COMMENT ON COLUMN observation.restriction_commune IS 'Indique si l’information
 
 COMMENT ON COLUMN observation.restriction_totale IS 'Indique si l’information de la localisation de l’observation est diffusable ou non.';
 
-COMMENT ON COLUMN observation.floutage IS 'Indique si la donnée a été dégradée ou non';
+COMMENT ON COLUMN observation.dee_date_derniere_modification IS 'Date de dernière modification de la donnée élémentaire d''échange. Postérieure à la date de transformation en DEE, égale dans le cas de l''absence de modification.';
 
-COMMENT ON COLUMN observation.identite_observateur IS 'Prénom et nom de la ou les personnes ayant réalisées l’observation.
-Règle d’écriture : Nom Prénom.
-Si plusieurs personnes ont fait l’observation : concaténer les différentes identités séparées par des virgules «, »
-Si l’observateur requiert l’anonymat, noter « Anonyme », s’il est inconnu
-« NSP »';
+COMMENT ON COLUMN observation.dee_date_transformation IS 'Date de transformation de la donnée source (DSP ou DSR) en donnée élémentaire d''échange (DEE).';
 
-COMMENT ON COLUMN observation.organisme_observateur IS 'Nom de l’organisme ou des organismes du ou des observateurs dans le cadre du/desquels ils ont réalisés l’observation.
-Si l’observation n’a pas été faite dans le cadre d’un organisme, noter
-« indépendant »';
+COMMENT ON COLUMN observation.dee_floutage IS 'Indique si un floutage a été effectué lors de la transformation en DEE. Cela ne concerne que des données d''origine privée.';
 
-COMMENT ON COLUMN observation.determinateur IS 'Prénom, nom et organisme de la ou les personnes ayant réalisé la détermination taxonomique de l’observation
-Règle d’écriture : Nom Prénom (Organisme)
-Si l’identité de l’individu n’est pas transmise : noter l’organisme seul : Organisme
-Si plusieurs personnes ont fait la détermination : concaténer les différents noms séparés par des virgules: Nom1 Prénom1 (Organisme1), Nom2 Prénom2 (Organisme2)';
+COMMENT ON COLUMN observation.organisme_gestionnaire_donnees IS 'Nom de l’organisme qui détient la Donnée Source (DS) de la DEE et qui en a la responsabilité. Si plusieurs organismes sont nécessaires, les séparer par des virgules.';
 
-COMMENT ON COLUMN observation.validateur IS 'Prénom, nom et/ou organisme de la personne ayant réalisée la validation scientifique de l’observation. Si ce champ est vide cela signifie qu’il n’y a pas eu de validation formelle de la détermination taxonomique. Ce champ est susceptible d’évoluer après les conclusions du GT Validation du SINP.
-Règle d’écriture : Nom Prénom (Organisme)
-Si l’identité de l’individu n’est pas transmise : Règle d’écriture : Organisme
-Si plusieurs personnes ont fait la validation : concaténer les différents noms séparés par des virgules: Nom1 Prénom1 (Organisme1), Nom2 Prénom2 (Organisme2)';
+COMMENT ON COLUMN observation.org_transformation IS 'Nom de l''organisme ayant créé la DEE finale (plate-forme ou organisme mandaté par elle). Autant que possible, on utilisera des noms issus de l''annuaire du SINP lorsqu''il sera publié.';
 
-COMMENT ON COLUMN observation.organisme_gestionnaire_donnees IS 'Nom de l’organisme qui détient la Donnée Source (DS) de la DEE et qui en a la responsabilité
-Si l’observation est gérée par une personne propre non liée à un organisme, noter son nom ou « indépendant »';
-
-COMMENT ON COLUMN observation.organisme_standard IS 'Nom(s) de(s) organisme(s) qui ont participés à la standardisation de la DS en DEE (codage, formatage, recherche des données obligatoires)';
+COMMENT ON COLUMN observation.geom IS 'Géométrie de l''objet. Il peut être de type Point, Polygone ou Polyligne ou Multi, mais pas complexe (pas de mélange des types)';
 
 
--- Table objet_geographique
-CREATE TABLE objet_geographique (
-    cle_objet bigserial NOT NULL PRIMARY KEY
+-- Table personne
+CREATE TABLE personne (
+    id_personne serial PRIMARY KEY,
+    identite text UNIQUE NOT NULL,
+    mail text UNIQUE,
+    organisme text NOT NULL,
+    CONSTRAINT personne_identite_valide CHECK ( identite NOT LIKE '%,%' ),
+    CONSTRAINT personne_organisme_valide CHECK ()
 );
-SELECT AddGeometryColumn('objet_geographique', 'geom', {$SRID}, 'GEOMETRY', 2);
+ALTER TABLE personne ADD PRIMARY KEY id_personne;
 
-COMMENT ON TABLE objet_geographique IS 'Geometrie de l’observation d’occurrence de taxon. Elle peut être simple (point, ligne, polygone) ou multiple (multipoint, multiligne, multipolygone). Elle ne peut pas être complexe (point et ligne ou polygone et ligne par exemple). Elle ne représente pas un territoire de rattachement (le centroïde de la commune, la surface d’une maille) mais la localisation réelle de l’observation.';
+COMMENT ON TABLE personne IS 'Liste des personnes participant aux observations. Cette table est remplie de manière automatique lors des imports de données. Il n''est pas assuré que chaque personne ne représente pas plusieurs homonymes.';
+COMMENT ON COLUMN personne.id_personne IS 'Identifiant de la personne (valeur autoincrémentée)';
+COMMENT ON COLUMN personne.identite IS 'Identité de la personne. NOM Prénom (organisme) de la personne ou des personnes concernées. Le nom est en majuscules, le prénom en minuscules, l''organisme entre parenthèses.';
+COMMENT ON COLUMN personne.mail IS 'Email de la personne. Optionnel';
+COMMENT ON COLUMN personne.organisme IS 'Organisme de la personne.
+Règles : "Indépendant" si la personne n''est pas affiliée à un organisme; "Inconnu" si l''affiliation à un organisme n''est pas connue.';
 
-COMMENT ON COLUMN objet_geographique.cle_objet IS 'Clé de l objet géographique';
-COMMENT ON COLUMN objet_geographique.geom IS 'Géométrie de l''objet. Il peut être de type Point, Polygone ou Polyligne';
+-- Table pivot entre observation et personne
+CREATE TABLE observation_personne (
+    cle_obs bigint,
+    id_personne integer,
+    role_personne text ,
+    CONSTRAINT observation_personne_valide CHECK ( role_personne IN ('Obs', 'Det', 'Val') )
 
-ALTER TABLE objet_geographique ADD CONSTRAINT geo_geom_valide CHECK (geom IS NOT NULL);
+);
+ALTER TABLE observation_personne ADD PRIMARY KEY (cle_obs, id_personne, role_personne);
+ALTER TABLE observation_personne ADD CONSTRAINT observation_personne_cle_obs_fk FOREIGN KEY (cle_obs) REFERENCES observation (cle_obs) ON DELETE CASCADE;
+
+COMMENT ON TABLE observation_personne IS 'Table pivot entre les observations et les personnes. Le champ role_personne permet de renseigner le type de relation (voir nomenclature)';
+COMMENT ON COLUMN observation_personne.cle_obs IS 'Indentifiant de l''observation';
+COMMENT ON COLUMN observation_personne.id_personne IS 'Identifiant de la personne';
+COMMENT ON COLUMN observation_personne.role_personne IS 'Rôle de la personne. Voir nomenclature.';
+
 
 -- Table localisation_commune
 CREATE TABLE localisation_commune (
@@ -285,7 +306,7 @@ CREATE TABLE localisation_maille_10 (
 ALTER TABLE localisation_maille_10 ADD PRIMARY KEY (cle_obs, code_maille);
 ALTER TABLE localisation_maille_10 ADD CONSTRAINT localisation_maille_10_cle_obs_fk FOREIGN KEY (cle_obs) REFERENCES observation (cle_obs) ON DELETE CASCADE;
 
-COMMENT ON TABLE localisation_maille_10 IS 'Table de lien entre une table maill_10 (optionnelle) et la table des observations. Elle recense la ou les mailles sur laquelle l’observation a eu lieu';
+COMMENT ON TABLE localisation_maille_10 IS 'Table de lien entre une table maille_10 (optionnelle) et la table des observations. Elle recense la ou les mailles sur laquelle l’observation a eu lieu';
 
 COMMENT ON COLUMN localisation_maille_10.cle_obs IS 'Clé de l observation';
 
@@ -343,44 +364,63 @@ COMMENT ON COLUMN localisation_masse_eau.cle_obs IS 'Identifiant de l'' observat
 COMMENT ON COLUMN localisation_masse_eau.code_me IS 'Code de la ou les masse(s) d’eau à la (aux)quelle(s) l’observation a été rattachée';
 
 
+-- Table listant les référentiels habitat
+CREATE TABLE referentiel_habitat(
+    ref_habitat text NOT NULL,
+    libelle text NOT NULL,
+    definition text NOT NULL,
+    creation text NOT NULL,
+    modification text NOT NULL,
+)
+ALTER TABLE referentiel_habitat ADD PRIMARY KEY ( ref_habitat );
 
--- Table habitat compilant les différents habitat dont corine biotope
+COMMENT ON TABLE referentiel_habitat IS 'Référentiel d''habitats et typologies. Source: http://standards-sinp.mnhn.fr/nomenclature/';
+COMMENT ON COLUMN referentiel_habitat.ref_habitat IS 'Code du référentiel habitat';
+COMMENT ON COLUMN referentiel_habitat.libelle IS 'Libellé du référentiel habitat';
+COMMENT ON COLUMN referentiel_habitat.description IS 'Description du référentiel habitat';
+COMMENT ON COLUMN referentiel_habitat.creation IS 'Date de création du référentiel habitat';
+COMMENT ON COLUMN referentiel_habitat.modification IS 'Date de modification du référentiel habitat';
+
+
+-- Table habitat compilant les différents habitat
 CREATE TABLE habitat (
-ref_habitat text NOT NULL,
-code_habitat text NOT NULL,
-code_habitat_parent text,
-niveau_habitat integer,
-libelle_habitat text,
-description_habitat text,
-tri_habitat smallint
--- , CONSTRAINT habitat_ref_habitat_valide CHECK ( ref_habitat IN ('PVF', 'BRYOSOCIO', 'BBMEDFR', 'PALSPM', 'ANTMER', 'GUYMER', 'REUMER', 'CORINEBIOTOPES', 'PAL', 'EUNIS', 'GMRC', 'CH', 'OSPAR', 'BARC', 'REBENT') )
+    ref_habitat text NOT NULL,
+    code_habitat text NOT NULL,
+    code_habitat_parent text,
+    niveau_habitat integer,
+    libelle_habitat text,
+    description_habitat text,
+    tri_habitat smallint,
+    cd_hab text
+    -- , CONSTRAINT habitat_ref_habitat_valide CHECK ( ref_habitat IN ('PVF', 'BRYOSOCIO', 'BBMEDFR', 'PALSPM', 'ANTMER', 'GUYMER', 'REUMER', 'CORINEBIOTOPES', 'PAL', 'EUNIS', 'GMRC', 'CH', 'OSPAR', 'BARC', 'REBENT') )
 );
+
 ALTER TABLE habitat ADD PRIMARY KEY ( ref_habitat, code_habitat );
 
 COMMENT ON TABLE habitat IS 'Table recensant les habitats. Les codes des différents référentiels sont accessibles sur http://inpn.mnhn.fr/programme/referentiels-habitats ';
 COMMENT ON COLUMN habitat.ref_habitat IS 'Code de référence de l''habitat. Voir la table de nomenclature pour les listes';
-COMMENT ON COLUMN habitat.code_habitat IS 'Code de l''habitat';
-COMMENT ON COLUMN habitat.code_habitat_parent IS 'Code de l''habitat du parent';
+COMMENT ON COLUMN habitat.code_habitat IS 'Code de l''habitat. Correspond au lb_code d''HABREF ie le code unique dans la typologie.';
+COMMENT ON COLUMN habitat.code_habitat_parent IS 'Code de l''habitat du parent, en lien avec le champ code_habitat';
 COMMENT ON COLUMN habitat.niveau_habitat IS 'Niveau de l''habitat';
 COMMENT ON COLUMN habitat.libelle_habitat IS 'Libellé de l''habitat';
 COMMENT ON COLUMN habitat.description_habitat IS 'Description de l''habitat';
 COMMENT ON COLUMN habitat.tri_habitat IS 'Clé de tri de l''habitat';
-
+COMMENT ON COLUMN habitat.cd_hab IS 'Code HABREF de l''habitat. NULL si pas encore dans HABREF';
 
 -- Table de lien habitat / localisaiton
 CREATE TABLE localisation_habitat (
     cle_obs bigint NOT NULL,
+    ref_habitat text NOT NULL,
     code_habitat text NOT NULL
 );
 
-ALTER TABLE localisation_habitat ADD PRIMARY KEY (cle_obs, code_habitat);
+ALTER TABLE localisation_habitat ADD PRIMARY KEY (cle_obs, ref_habitat, code_habitat);
 ALTER TABLE localisation_habitat ADD CONSTRAINT localisation_habitat_cle_obs_fk FOREIGN KEY (cle_obs) REFERENCES observation (cle_obs) ON DELETE CASCADE;
-
 
 COMMENT ON TABLE localisation_habitat IS 'Table de lien etre les tables habitat et localisation';
 
 COMMENT ON COLUMN localisation_habitat.cle_obs IS 'Clé de l observation';
-
+COMMENT ON COLUMN localisation_habitat.ref_habitat IS 'Code référentiel de la bdd habitat où le taxon de l’observation a été identifié. Par exemple HABREF';
 COMMENT ON COLUMN localisation_habitat.code_habitat IS 'Code de l’habitat où le taxon de l’observation a été identifié.';
 
 
@@ -389,8 +429,15 @@ COMMENT ON COLUMN localisation_habitat.code_habitat IS 'Code de l’habitat où 
 -- Table attribut_additionnel
 CREATE TABLE attribut_additionnel (
     cle_obs bigint NOT NULL,
-    parametre text NOT NULL,
+    nom text NOT NULL,
+    definition text NOT NULL,
     valeur text NOT NULL
+    unite text,
+    thematique text NOT NULL,
+    "type" text NOT NULL,
+
+    CONSTRAINT attribut_additionnel_type_valide CHECK ("type" IS NULL OR ( "type" IN ('QTA', 'QUAL') )),
+    CONSTRAINT attribut_additionnel_unite_valide CHECK ( ("type" = 'QTA' AND "unite" IS NOT NULL) OR "type" != 'QTA' )
 
 );
 ALTER TABLE attribut_additionnel ADD PRIMARY KEY (cle_obs, parametre);
@@ -400,13 +447,12 @@ COMMENT ON TABLE attribut_additionnel IS 'Les attributs additionnels sont des in
 
 COMMENT ON COLUMN attribut_additionnel.cle_obs IS 'Cle de l observation';
 
-COMMENT ON COLUMN attribut_additionnel.parametre IS 'Libellé de l’attribut ajouté.
-La définition explicite du libellé du paramètre doit être fournie, avec notamment l’unité.
-Exemple : Température. Définition : Température de l’air relevée au thermomètre électronique en degré Celsius';
-
-COMMENT ON COLUMN attribut_additionnel.valeur IS 'Valeur du paramètre.
-La valeur doit être explicite. Si elle est codée, le libellé du code doit être fourni dans la définition du paramètre.
-Exemple : 17';
+COMMENT ON COLUMN attribut_additionnel.nom IS 'Libellé court et implicite de l''attribut';
+COMMENT ON COLUMN attribut_additionnel.definition IS 'Définition précise et complète de l''attribut';
+COMMENT ON COLUMN attribut_additionnel.valeur IS 'Valeur qualitative ou quantitative de l''attribut';
+COMMENT ON COLUMN attribut_additionnel.type IS 'Indique si l''attribut additionnel est de type quantitatif ou qualitatif.';
+COMMENT ON COLUMN attribut_additionnel.unite IS 'Unité de mesure de l’attribut additionnel. Exemple : degré Celsius, mètre, kilogramme, hectare). Règle : Les unités doivent être exprimées en système international dès que possible (°C, m, kg, ha, etc.)';
+COMMENT ON COLUMN attribut_additionnel.thematique IS 'Thématique relative à l''attribut additionnel (mot-clé). La première lettre doit toujours être en majuscule, le reste en minuscules.';
 
 
 CREATE TABLE jdd (
@@ -448,17 +494,21 @@ CREATE INDEX ON localisation_maille_10 (code_maille);
 CREATE INDEX ON localisation_maille_10 (cle_obs);
 CREATE INDEX ON localisation_maille_05 (code_maille);
 CREATE INDEX ON localisation_maille_05 (cle_obs);
+CREATE INDEX ON localisation_maille_01 (code_maille);
+CREATE INDEX ON localisation_maille_01 (cle_obs);
 CREATE INDEX ON localisation_masse_eau (code_me);
 CREATE INDEX ON localisation_masse_eau (cle_obs);
 
 CREATE INDEX ON nomenclature (champ, code);
 
-CREATE INDEX ON objet_geographique USING GIST (geom);
-
+CREATE INDEX ON observation USING GIST (geom);
 CREATE INDEX ON observation (cd_nom);
 CREATE INDEX ON observation (date_debut, date_fin DESC);
-CREATE INDEX ON observation (cle_objet);
 CREATE INDEX ON observation (jdd_id);
+
+CREATE INDEX ON personne (identite);
+
+CREATE INDEX ON observation_personne (cle_obs);
 
 CREATE INDEX ON habitat (ref_habitat);
 CREATE INDEX ON habitat (code_habitat);
@@ -479,7 +529,11 @@ SET search_path TO sig,public,pg_catalog;
 -- Table maille_10 = 10km
 CREATE TABLE maille_10 (
     code_maille text PRIMARY KEY,
-    nom_maille text
+    nom_maille text,
+    version_ref text NOT NULL,
+    nom_ref text NOT NULL,
+    type_info_geo text NOT NULL,
+    CONSTRAINT commune_type_info_geo_valide CHECK ( type_info_geo IN ('1', '2') )
 );
 SELECT AddGeometryColumn('maille_10', 'geom', {$SRID}, 'POLYGON', 2);
 
@@ -488,6 +542,12 @@ COMMENT ON TABLE maille_10 IS 'Liste des mailles 10km du territoire.';
 COMMENT ON COLUMN maille_10.code_maille IS 'Code de la maille 10km. Ex: 10kmUTM20W510N1660';
 
 COMMENT ON COLUMN maille_10.nom_maille IS 'Code court de la maille 10km. Ex: 510-1660';
+
+COMMENT ON COLUMN maille_10.version_ref IS 'Année de production du référentiel INSEE, qui sert à déterminer quel est le référentiel en vigueur pour le code et le nom de la commune';
+
+COMMENT ON COLUMN maille_10.nom_ref IS 'Nom de la couche de maille utilisée : Concaténation des éléments des colonnes "couche" et "territoire" de la page http://inpn.mnhn.fr/telechargement/cartes-et-information-geographique/ref On n''utilisera que les grilles nationales (les grilles européennes sont proscrites). Exemple : Grilles nationales (10 km x10 km) TAAF';
+
+COMMENT ON COLUMN commune.type_info_geo IS 'Indique le type d''information géographique suivant la nomenclature TypeInfoGeoValue. Exemple : "1" pour "Géoréférencement", "2" pour "Rattachement"';
 
 COMMENT ON COLUMN maille_10.geom IS 'Géométrie de la maille.';
 
@@ -544,7 +604,11 @@ COMMENT ON COLUMN maille_02.geom IS 'Géométrie de la maille.';
 -- Table commune
 CREATE TABLE commune (
     code_commune text PRIMARY KEY,
-    nom_commune text NOT NULL
+    nom_commune text NOT NULL,
+    annee_ref integer NOT NULL,
+    type_info_geo text NOT NULL,
+    CONSTRAINT commune_annee_ref_valide CHECK (annee_ref > 1900 AND annee_ref <= (date_part('year', now()))::integer ),
+    CONSTRAINT commune_type_info_geo_valide CHECK ( type_info_geo IN ('1', '2') )
 );
 SELECT AddGeometryColumn('commune', 'geom', {$SRID}, 'MULTIPOLYGON', 2);
 
@@ -554,12 +618,20 @@ COMMENT ON COLUMN commune.code_commune IS 'Code de la commune suivant le référ
 
 COMMENT ON COLUMN commune.nom_commune IS 'Nom de la commune suivant le référentiel INSEE en vigueur.';
 
+COMMENT ON COLUMN commune.annee_ref IS 'Année de production du référentiel INSEE, qui sert à déterminer quel est le référentiel en vigueur pour le code et le nom de la commune';
+
+COMMENT ON COLUMN commune.type_info_geo IS 'Indique le type d''information géographique suivant la nomenclature TypeInfoGeoValue. Exemple : "1" pour "Géoréférencement", "2" pour "Rattachement"';
+
 COMMENT ON COLUMN commune.geom IS 'Géométrie de la commune.';
 
 -- Table departement
 CREATE TABLE departement (
     code_departement text PRIMARY KEY,
-    nom_departement text NOT NULL
+    nom_departement text NOT NULL,
+    annee_ref integer NOT NULL,
+    type_info_geo text NOT NULL,
+    CONSTRAINT departement_annee_ref_valide CHECK (annee_ref > 1900 AND annee_ref <= (date_part('year', now()))::integer ),
+    CONSTRAINT departement_type_info_geo_valide CHECK ( type_info_geo IN ('1', '2') )
 );
 SELECT AddGeometryColumn('departement', 'geom', {$SRID}, 'MULTIPOLYGON', 2);
 
@@ -568,6 +640,10 @@ COMMENT ON TABLE departement IS 'Liste les départements';
 COMMENT ON COLUMN departement.code_departement IS 'Code du département suivant le référentiel INSEE en vigueur.';
 
 COMMENT ON COLUMN departement.nom_departement IS 'Nom du département suivant le référentiel INSEE en vigueur.';
+
+COMMENT ON COLUMN departement.annee_ref IS 'Année de production du référentiel INSEE, qui sert à déterminer quel est le référentiel en vigueur.';
+
+COMMENT ON COLUMN departement.type_info_geo IS 'Indique le type d''information géographique suivant la nomenclature TypeInfoGeoValue. Exemple : "1" pour "Géoréférencement", "2" pour "Rattachement"';
 
 COMMENT ON COLUMN departement.geom IS 'Géométrie du département.';
 
@@ -578,6 +654,9 @@ CREATE TABLE espace_naturel (
     type_en text NOT NULL,
     nom_en text,
     url text,
+    version_en text NOT NULL,
+    type_info_geo text NOT NULL,
+    CONSTRAINT espace_naturel_type_info_geo_valide CHECK ( type_info_geo IN ('1', '2') ),
     CONSTRAINT en_type_en_valide CHECK (type_en IN ('CPN', 'AAPN', 'RIPN', 'PNM', 'PNR', 'RNN', 'RNC', 'RNR', 'PRN', 'RBD', 'RBI', 'RNCFS', 'RCFS', 'APB', 'MAB', 'SCL', 'RAMSAR', 'ASPIM', 'SCEN', 'ENS', 'OSPAR', 'APIA', 'CARTH', 'ANTAR', 'NAIRO', 'ZHAE', 'BPM', 'N2000', 'ZNIEFF1', 'ZNIEFF2') )
 );
 SELECT AddGeometryColumn('espace_naturel', 'geom', {$SRID}, 'GEOMETRY', 2);
@@ -588,13 +667,23 @@ COMMENT ON COLUMN espace_naturel.code_en IS 'Code de l’espace naturel sur lequ
 
 COMMENT ON COLUMN espace_naturel.type_en IS 'Indique le type d’espace naturel ou de zonage sur lequel a été faite l’observation.';
 
+COMMENT ON COLUMN espace_naturel.version_en IS 'Version du référentiel consulté respectant la norme ISO 8601, sous la forme YYYY-MM-dd (année-mois-jour), YYYY-MM (année-mois), ou YYYY (année).';
+
+COMMENT ON COLUMN espace_naturel.type_info_geo IS 'Indique le type d''information géographique suivant la nomenclature TypeInfoGeoValue. Exemple : "1" pour "Géoréférencement", "2" pour "Rattachement"';
+
 COMMENT ON COLUMN espace_naturel.geom IS 'Géometrie de l''espace naturel.';
 
 
 -- Table masse_eau
 CREATE TABLE masse_eau (
     code_me text PRIMARY KEY,
-    nom_me text UNIQUE NOT NULL
+    nom_me text UNIQUE NOT NULL,
+    version_me integer NOT NULL,
+    date_me date NOT NULL,
+    type_info_geo text NOT NULL,
+    CONSTRAINT masse_eau_version_me_valide CHECK ( version_me IN ('1', '2', '3') ),
+    CONSTRAINT masse_eau_date_me_valide CHECK ( date_me < now()::date ),
+    CONSTRAINT commune_type_info_geo_valide CHECK ( type_info_geo IN ('1', '2') )
 );
 SELECT AddGeometryColumn('masse_eau', 'geom', {$SRID}, 'GEOMETRY', 2);
 
@@ -603,6 +692,12 @@ COMMENT ON TABLE masse_eau IS 'Liste des masses d’eau du territoire.';
 COMMENT ON COLUMN masse_eau.code_me IS 'Code de la masse d’eau.';
 
 COMMENT ON COLUMN masse_eau.nom_me IS 'Nom de la masse d’eau.';
+
+COMMENT ON COLUMN masse_eau.version_me IS 'Version du référentiel masse d''eau utilisé et prélevé sur le site du SANDRE, telle que décrite sur le site du SANDRE. Autant que possible au moment de l''échange, on tentera d''utiliser le référentiel en vigueur (en date du 06/10/2015, 2 pour la version intermédiaire). Exemple : 2, pour Version Intermédiaire 2013.';
+
+COMMENT ON COLUMN masse_eau.date_me IS 'Date de consultation ou de prélèvement du référentiel sur le site du SANDRE. Attention, pour une même version, les informations peuvent changer d''une date à l''autre.';
+
+COMMENT ON COLUMN masse_eau.type_info_geo IS 'Indique le type d''information géographique suivant la nomenclature TypeInfoGeoValue. Exemple : "1" pour "Géoréférencement", "2" pour "Rattachement"';
 
 COMMENT ON COLUMN masse_eau.geom IS 'Géométrie de la masse d’eau.';
 

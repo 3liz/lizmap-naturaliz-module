@@ -2,6 +2,11 @@ SET search_path TO occtax,public,pg_catalog;
 
 TRUNCATE TABLE nomenclature;
 
+-- role_personne
+INSERT INTO nomenclature VALUES ('role_personne', 'Obs', 'Observateur', NULL);
+INSERT INTO nomenclature VALUES ('role_personne', 'Det', 'Déterminateur', NULL);
+INSERT INTO nomenclature VALUES ('role_personne', 'Val', 'Validateur', NULL);
+
 -- statut_source
 INSERT INTO nomenclature VALUES ('statut_source', 'Te', 'Terrain', 'l’observation provient directement d’une base de données ou d’un document issu de la
 prospection sur le terrain');
@@ -36,23 +41,6 @@ INSERT INTO nomenclature VALUES ('type_denombrement', 'Co', 'Compté', 'Dénombr
 INSERT INTO nomenclature VALUES ('type_denombrement', 'Es', 'Estimé', 'Dénombrement qualifié d’estimé lorsque le produit concerné n’a fait l’objet d’aucune action de détermination de cette valeur du paramètre par le biais d’une technique de mesure.');
 INSERT INTO nomenclature VALUES ('type_denombrement', 'Ca', 'Calculé', 'Dénombrement par opération mathématique');
 INSERT INTO nomenclature VALUES ('type_denombrement', 'NSP', 'Ne Sait Pas', 'La méthode de dénombrement n’est pas connue');
-
--- ref_habitat
-INSERT INTO nomenclature VALUES ('ref_habitat', 'PVF', 'Prodrome des végétations de France', NULL);
-INSERT INTO nomenclature VALUES ('ref_habitat', 'BRYOSOCIO', 'Synopsis bryosociologique', NULL);
-INSERT INTO nomenclature VALUES ('ref_habitat', 'BBMEDFR', 'biocénoses benthiques de Méditerranée', NULL);
-INSERT INTO nomenclature VALUES ('ref_habitat', 'PALSPM', 'Habitats de St Pierre et Miquelon', NULL);
-INSERT INTO nomenclature VALUES ('ref_habitat', 'ANTMER', 'Habitats marins des départements d’outre-mer Antilles', NULL);
-INSERT INTO nomenclature VALUES ('ref_habitat', 'GUYMER,', 'Habitats marins des départements d’outre-mer Guyanne', NULL);
-INSERT INTO nomenclature VALUES ('ref_habitat', 'REUMER', 'Habitats marins des départements d’outre-mer Réunion', NULL);
-INSERT INTO nomenclature VALUES ('ref_habitat', 'CORINEBIOTOPES', 'CORINE Biotopes', NULL);
-INSERT INTO nomenclature VALUES ('ref_habitat', 'PAL', 'Classification paléarctique', NULL);
-INSERT INTO nomenclature VALUES ('ref_habitat', 'EUNIS', 'EUNIS Habitas', NULL);
-INSERT INTO nomenclature VALUES ('ref_habitat', 'GMRC', 'Géomorphologie des récifs coralliens', NULL);
-INSERT INTO nomenclature VALUES ('ref_habitat', 'CH', 'Cahier d’habitat', NULL);
-INSERT INTO nomenclature VALUES ('ref_habitat', 'OSPAR', 'Convention OSPAR', NULL);
-INSERT INTO nomenclature VALUES ('ref_habitat', 'BARC', 'Convention de Barcelone', NULL);
-INSERT INTO nomenclature VALUES ('ref_habitat', 'REBENT', 'Habitat benthique côtier (Bretagne)', NULL);
 
 -- nature_objet_geo
 INSERT INTO nomenclature VALUES ('nature_objet_geo', 'St', 'Stationnel', 'Le taxon observé est présent sur l’ensemble de l’objet géographique');
@@ -90,3 +78,4 @@ INSERT INTO nomenclature VALUES ('type_en', 'BPM', 'Bien inscrit sur la liste du
 INSERT INTO nomenclature VALUES ('type_en', 'N2000', 'Natura 2000', NULL);
 INSERT INTO nomenclature VALUES ('type_en', 'ZNIEFF1', 'Zone Naturelle d’Intérêt Ecologique Faunistique et Floristique type 1', NULL);
 INSERT INTO nomenclature VALUES ('type_en', 'ZNIEFF2', 'Zone Naturelle d’Intérêt Ecologique Faunistique et Floristique type 2', NULL);
+

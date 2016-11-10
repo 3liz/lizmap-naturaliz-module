@@ -24,7 +24,12 @@ ogr2ogr -append -a_srs "EPSG:{$srid}" -f PostgreSQL "PG:host={$dbhost} port={$db
 # Utilisation du SHP car WFS sans attributs:
 ogr2ogr -append -s_srs "EPSG:{$srid}" -t_srs "EPSG:{$srid}" -f PostgreSQL "PG:host={$dbhost} port={$dbport} user={$dbuser} password={$dbpassword} dbname={$dbname} active_schema={$dbschema}" "{$reserves_naturelles_nationales}" -nln espace_naturel -lco GEOMETRY_NAME=geom -gt 100000 -sql "SELECT ST_Union(geometry), ID_SPN AS code_en, 'RNN' AS type_en, NOM AS nom_en, 'http://inpn.mnhn.fr/espace/protege/' || ID_SPN AS url FROM {$reserves_naturelles_nationales_name} GROUP BY ID_SPN, NOM" -dialect SQLITE
 
-# HABITATS
+# HABREF
+{if $habref}
+ogr2ogr -append -f PostgreSQL "PG:host={$dbhost} port={$dbport} user={$dbuser} password={$dbpassword} dbname={$dbname} active_schema=occtax" "{$habref}" -nln habitat -gt 100000 -sql "SELECT 'HABREF' AS ref_habitat, CD_HAB AS code_habitat, CD_HAB_SUP AS code_habitat_parent, NIVEAU AS niveau_habitat, CASE WHEN LB_HAB_FR IS NULL OR LB_HAB_FR = '' THEN CASE WHEN Coalesce(LB_HAB_FR_COMPLET, '') != '' THEN LB_HAB_FR_COMPLET ELSE LB_HAB_EN END ELSE LB_HAB_FR END AS libelle_habitat, CASE WHEN Coalesce(LB_DESCRIPTION, '') != '' THEN LB_DESCRIPTION ELSE CASE WHEN Coalesce(LB_HAB_FR_COMPLET, '') != '' THEN LB_HAB_FR_COMPLET WHEN Coalesce(LB_HAB_FR, '') != '' THEN LB_HAB_FR ELSE LB_HAB_EN END END AS description_habitat, CD_HAB AS tri_habitat, CD_HAB AS cd_hab FROM {$habref_name}" -dialect SQLITE
+{/if}
+
+# HABITATS complémentaires
 {if $habitat_mer}
 # Habitats marins
 ogr2ogr -append -f PostgreSQL "PG:host={$dbhost} port={$dbport} user={$dbuser} password={$dbpassword} dbname={$dbname} active_schema=occtax" "{$habitat_mer}" -nln habitat -gt 100000 -sql "SELECT 'ANTMER' AS ref_habitat, CD_HAB AS code_habitat, CD_HAB_SUP AS code_habitat_parent, NIVEAU AS niveau_habitat, LB_HAB_FR AS libelle_habitat, LB_HAB_FR AS description_habitat, CLÉ_TRI AS tri_habitat FROM TYPO_ANT_MER ORDER BY CLÉ_TRI" --config SHAPE_ENCODING ISO-8859-15
@@ -34,4 +39,3 @@ ogr2ogr -append -f PostgreSQL "PG:host={$dbhost} port={$dbport} user={$dbuser} p
 # Habitats terrestres
 ogr2ogr -append -f PostgreSQL "PG:host={$dbhost} port={$dbport} user={$dbuser} password={$dbpassword} dbname={$dbname} active_schema=occtax" "{$habitat_terre}" -nln habitat -gt 100000
 {/if}
-

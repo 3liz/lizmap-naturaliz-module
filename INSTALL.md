@@ -68,6 +68,9 @@ Les modules Naturaliz lisent dans le fichier **lizmap/var/config/localconfig.ini
 * la liste des codes d'arrêtés de protection pour la zone concernée (par exemple *GUAM1,GUAO1,GUARA1,DV971,GUAI2* pour la Guadeloupe, ou encode *agri1, agri2, Bubul1, Bulbul2, Bulbul3, Bulbul4, Bulbul5, Bulbul6, Bulbul9, corbasi1, DV974, phelsuma1, phelsuma2, phelsuma3, phelsuma4, phelsuma5, REUEA2, REUEA3, REUEA4, REUEEA, REUEEI, REUI2, REUP* pour La Réunion ) : variable code_arrete_protection**code_arrete_protection** de la section  [taxon]
 * le code SRID du système de coordonnées de références des données spatiales du projet : variable **srid** de la section [naturaliz].
 * le mot de passe de l'utilisateur admin: variable **adminPassword** de la section [naturaliz].
+
+Pour le module mascarine:
+
 * le code officiel (cf standard "Occurence de taxon", champ ) des habitats de la zone d'étude (par exemple GUAEAR )
 
 Voir l'exemple localconfig.ini.php.dist à la racine de ce dépôt.
@@ -249,6 +252,7 @@ Certaines données doivent être récupérées ailleurs, comme par exemple les c
 
 Les habitats doivent aussi être récupérés et importés.
 
+* Liste des habitats standards HABREF, téléchargeable ici https://inpn.mnhn.fr/telechargement/referentiels/habitats/
 * Liste des habitats marins, par exemple TYPO_ANT_MER ( Liste des habitats marins des Antilles (Martinique, Guadeloupe) )
 * Liste des habitats terrestres, par exemple ceux de la Carte Écologique d'Alain Rousteau
 
@@ -292,7 +296,7 @@ apt-get install gdal-bin
 # Import des données depuis les Shapefile pour les communes, mailles 1 et 2.
 # Import optionnel des réserves naturelles nationales et des habitats
 # Vous devez spécifier le chemin complet vers les fichiers dans cet ordre : communes, mailles 1x1km, mailles 2x2km et optionnellement les réserves et les habitats
-php lizmap/scripts/script.php occtax~import:shapefile "/tmp/sig/COMMUNE.SHP" "/tmp/sig/grille_1000m_gwada_dep_ama_poly.shp" "/tmp/sig/grille_2000m_gwada_dep_ama_poly.shp" "/tmp/sig/grille_5000.shp" "/tmp/sig/glp_rnn2012.shp" "/tmp/csv/habitats/TYPO_ANT_MER_09-01-2011.xls" "/tmp/csv/habitats/EAR_Guadeloupe.csv"
+php lizmap/scripts/script.php occtax~import:shapefile "/tmp/sig/COMMUNE.SHP" "/tmp/sig/grille_1000m_gwada_dep_ama_poly.shp" "/tmp/sig/grille_2000m_gwada_dep_ama_poly.shp" "/tmp/sig/grille_5000.shp" "/tmp/sig/glp_rnn2012.shp" "/tmp/csv/HABREF_20/HABREF_20.csv" "/tmp/csv/habitats/TYPO_ANT_MER_09-01-2011.xls" "/tmp/csv/habitats/EAR_Guadeloupe.csv"
 
 # Import des données depuis les serveurs WFS officiels
 # Vous devez préciser l'URL des serveurs WFS pour les données INPN et pour les données Sandre (masses d'eau)

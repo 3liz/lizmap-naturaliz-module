@@ -1,3 +1,6 @@
+ajouter version_ref, version_en, version_me, annee_ref et autres joyeusetés -> utiliser le localconfig ?
+
+
 <?php
 /**
 * @package   lizmap
@@ -38,6 +41,7 @@ class importCtrl extends jControllerCmdLine {
             'maille_05' => true, // Full path to maille_05 Shapefile
             'maille_10' => true, // Full path to maille_10 Shapefile
             'reserves_naturelles_nationales' => false, // Full path to Shapefile reserves naturelles,
+            'habref' => true, // Full path to the HABREF csv file
             'habitat_mer' => false, // Full path to the marine habitat file : http://inpn.mnhn.fr/telechargement/referentiels/habitats#habitats_marins_om
             'habitat_terre' => false // Full path to the terestrial habitat source
 
@@ -74,10 +78,10 @@ class importCtrl extends jControllerCmdLine {
         Passer le chemin complet vers les fichiers de communes, mailles 1x1km, mailles 2x2km, réserves naturelles nationales et les habitats les habitats. Les réserves sont optionnelles. Les habitats aussi.
 
         Usage :
-        php lizmap/scripts/script.php occtax~import:shapefile [communes] [maille_01] [maille_02] [maille_05] [maille_10] [reserves_naturelles_nationales] [habitat_mer] [habitat_terre]
+        php lizmap/scripts/script.php occtax~import:shapefile [communes] [maille_01] [maille_02] [maille_05] [maille_10] [reserves_naturelles_nationales] [habref] [habitat_mer] [habitat_terre]
 
         Exemple :
-        php lizmap/scripts/script.php occtax~import:shapefile /tmp/communes.shp /tmp/maille_01.shp /tmp/maille_02.shp /tmp/maille_05.shp /tmp/maille_10.shp /tmp/reserves_naturelles_nationales.shp /tmp/TYPO_ANT_MER_09-01-2011.xls /tmp/EAR_Guadeloupe.csv
+        php lizmap/scripts/script.php occtax~import:shapefile /tmp/communes.shp /tmp/maille_01.shp /tmp/maille_02.shp /tmp/maille_05.shp /tmp/maille_10.shp /tmp/reserves_naturelles_nationales.shp /tmp/HABREF_20.csv /tmp/TYPO_ANT_MER_09-01-2011.xls /tmp/EAR_Guadeloupe.csv
         ',
     );
 
@@ -107,6 +111,7 @@ class importCtrl extends jControllerCmdLine {
         TRUNCATE sig.maille_02 RESTART IDENTITY;
         TRUNCATE sig.maille_05 RESTART IDENTITY;
         TRUNCATE sig.maille_10 RESTART IDENTITY;
+        TRUNCATE occtax.habitat RESTART IDENTITY;
         COMMIT;
         ";
 
@@ -243,6 +248,7 @@ class importCtrl extends jControllerCmdLine {
         $maille_05 = $this->param('maille_05');
         $maille_10 = $this->param('maille_10');
         $reserves_naturelles_nationales = $this->param('reserves_naturelles_nationales');
+        $habref = $this->param('habref');
         $habitat_mer = $this->param('habitat_mer');
         $habitat_terre = $this->param('habitat_terre');
 
@@ -274,8 +280,12 @@ class importCtrl extends jControllerCmdLine {
         $assign['maille_10_name'] = pathinfo($maille_10, PATHINFO_FILENAME);
         $assign['reserves_naturelles_nationales'] = $reserves_naturelles_nationales;
         $assign['reserves_naturelles_nationales_name'] = pathinfo($reserves_naturelles_nationales, PATHINFO_FILENAME);
+        $assign['habref'] = $habref;
+        $assign['habref_name'] = pathinfo($habref, PATHINFO_FILENAME);
         $assign['habitat_mer'] = $habitat_mer;
+        $assign['habitat_mer_name'] = pathinfo($habitat_mer, PATHINFO_FILENAME);
         $assign['habitat_terre'] = $habitat_terre;
+        $assign['habitat_terre_name'] = pathinfo($habitat_terre, PATHINFO_FILENAME);
         $assign['dbhost'] = $ini->getValue( 'host', 'jdb:' . $defaultProfile );
         $assign['dbname'] = $ini->getValue( 'database', 'jdb:' . $defaultProfile );
         $assign['dbuser'] = $ini->getValue( 'user', 'jdb:' . $defaultProfile );
@@ -296,6 +306,7 @@ class importCtrl extends jControllerCmdLine {
 
         $output = array();
         $retVal = 1;
+        jLog::log( $script );
         exec( $script, $output, $retVal );
         $outputStr = '';
 
