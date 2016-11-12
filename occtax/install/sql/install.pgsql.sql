@@ -78,10 +78,6 @@ CREATE TABLE observation (
 
     precision_geometrie integer,
     nature_objet_geo text,
-    restriction_localisation_p text,
-    restriction_maille text,
-    restriction_commune text,
-    restriction_totale text,
 
     CONSTRAINT obs_statut_source_valide CHECK ( statut_source IN ( 'Te', 'Co', 'Li', 'NSP' ) ),
     CONSTRAINT obs_reference_biblio_valide CHECK ( (statut_source = 'Li' AND reference_biblio IS NOT NULL) OR statut_source != 'Li' ),
@@ -97,10 +93,6 @@ CREATE TABLE observation (
     CONSTRAINT obs_precision_geometrie_valide CHECK ( precision_geometrie IS NULL OR precision_geometrie > 0 ),
     CONSTRAINT obs_altitude_min_max_valide CHECK ( Coalesce( altitude_min, 0 ) <= Coalesce( altitude_max, 0 ) ),
     CONSTRAINT obs_profondeur_min_max_valide CHECK ( Coalesce( profondeur_min, 0 ) <= Coalesce( profondeur_max, 0 ) ),
-    CONSTRAINT obs_restriction_localisation_p_valide CHECK ( restriction_localisation_p IS NULL OR restriction_localisation_p IN ('Oui', 'Non') ),
-    CONSTRAINT obs_restriction_maille_valide CHECK ( restriction_maille IS NULL OR restriction_maille IN ('Oui', 'Non') ),
-    CONSTRAINT obs_restriction_commune_valide CHECK ( restriction_commune IS NULL OR restriction_commune IN ('Oui', 'Non') ),
-    CONSTRAINT obs_restriction_totale_valide CHECK ( restriction_totale IS NULL OR restriction_totale IN ('Oui', 'Non') ),
     CONSTRAINT obs_dee_floutage_valide CHECK ( dee_floutage IS NULL OR dee_floutage IN ('OUI', 'NON') ),
     CONSTRAINT obs_dee_date_derniere_modification_valide CHECK ( dee_date_derniere_modification >= dee_date_transformation ),
     CONSTRAINT obs_dee_floutage_ds_publique_valide CHECK ( ds_publique != 'Pr' OR ( ds_publique = 'Pr' AND dee_floutage IS NOT NULL ) ),
@@ -211,14 +203,6 @@ Ce champ ne peut pas être utilisé pour flouter la donnée.';
 COMMENT ON COLUMN observation.nature_objet_geo IS 'Nature de la localisation transmise
 Si la couche SIG ou un point (champs x,y) sont échangés alors ce champ doit être renseigné.';
 
-COMMENT ON COLUMN observation.restriction_localisation_p IS 'Indique si l’information de la localisation précise est diffusable ou non.';
-
-COMMENT ON COLUMN observation.restriction_maille IS 'Indique si l’information de la localisation à la maille est diffusable ou non.';
-
-COMMENT ON COLUMN observation.restriction_commune IS 'Indique si l’information de la localisation à la commune est diffusable ou non.';
-
-COMMENT ON COLUMN observation.restriction_totale IS 'Indique si l’information de la localisation de l’observation est diffusable ou non.';
-
 COMMENT ON COLUMN observation.dee_date_derniere_modification IS 'Date de dernière modification de la donnée élémentaire d''échange. Postérieure à la date de transformation en DEE, égale dans le cas de l''absence de modification.';
 
 COMMENT ON COLUMN observation.dee_date_transformation IS 'Date de transformation de la donnée source (DSP ou DSR) en donnée élémentaire d''échange (DEE).';
@@ -269,7 +253,9 @@ COMMENT ON COLUMN observation_personne.role_personne IS 'Rôle de la personne. V
 -- Table localisation_commune
 CREATE TABLE localisation_commune (
     cle_obs bigint NOT NULL,
-    code_commune text NOT NULL
+    code_commune text NOT NULL,
+    type_info_geo text NOT NULL,
+    CONSTRAINT localisation_commune_type_info_geo_valide CHECK ( type_info_geo IN ('1', '2') )
 );
 
 ALTER TABLE localisation_commune ADD PRIMARY KEY (cle_obs, code_commune);
@@ -281,10 +267,14 @@ COMMENT ON COLUMN localisation_commune.cle_obs IS 'Clé de l observation';
 
 COMMENT ON COLUMN localisation_commune.code_commune IS 'Code de la/les commune(s) où a été effectuée l’observation suivant le référentiel INSEE en vigueur.';
 
+COMMENT ON COLUMN localisation_commune.type_info_geo IS 'Indique le type d''information géographique suivant la nomenclature TypeInfoGeoValue. Exemple : "1" pour "Géoréférencement", "2" pour "Rattachement"';
+
 -- Table localisation_departement
 CREATE TABLE localisation_departement (
     cle_obs bigint NOT NULL,
-    code_departement text NOT NULL
+    code_departement text NOT NULL,
+    type_info_geo text NOT NULL,
+    CONSTRAINT localisation_departement_type_info_geo_valide CHECK ( type_info_geo IN ('1', '2') )
 );
 
 ALTER TABLE localisation_departement ADD PRIMARY KEY (cle_obs, code_departement);
@@ -296,11 +286,15 @@ COMMENT ON COLUMN localisation_departement.cle_obs IS 'Clé de l observation';
 
 COMMENT ON COLUMN localisation_departement.code_departement IS 'Code du/des departement(s) où a été effectuée l’observation suivant le référentiel INSEE en vigueur.';
 
+COMMENT ON COLUMN localisation_departement.type_info_geo IS 'Indique le type d''information géographique suivant la nomenclature TypeInfoGeoValue. Exemple : "1" pour "Géoréférencement", "2" pour "Rattachement"';
+
 
 -- Table localisation_maille_10
 CREATE TABLE localisation_maille_10 (
     cle_obs bigint NOT NULL,
-    code_maille text NOT NULL
+    code_maille text NOT NULL,
+    type_info_geo text NOT NULL,
+    CONSTRAINT localisation_maille_10_type_info_geo_valide CHECK ( type_info_geo IN ('1', '2') )
 );
 
 ALTER TABLE localisation_maille_10 ADD PRIMARY KEY (cle_obs, code_maille);
@@ -312,6 +306,8 @@ COMMENT ON COLUMN localisation_maille_10.cle_obs IS 'Clé de l observation';
 
 COMMENT ON COLUMN localisation_maille_10.code_maille IS 'Cellule de la grille de référence nationale 10kmx10km dans laquelle se situe l’observation. Vocabulaire contrôlé : Référentiel « Grille nationale 10kmx10km », lien: http://inpn.mnhn.fr/telechargement/cartes-et-information-
 geographique/ref , champ « CD_SIG »';
+
+COMMENT ON COLUMN localisation_maille_10.type_info_geo IS 'Indique le type d''information géographique suivant la nomenclature TypeInfoGeoValue. Exemple : "1" pour "Géoréférencement", "2" pour "Rattachement"';
 
 
 -- Table localisation_maille_05
@@ -335,7 +331,9 @@ geographique/ref , champ « CD_SIG »';
 -- Table localisation_espace_naturel
 CREATE TABLE localisation_espace_naturel (
     cle_obs bigint NOT NULL,
-    code_en text NOT NULL
+    code_en text NOT NULL,
+    type_info_geo text NOT NULL,
+    CONSTRAINT localisation_espace_naturel_type_info_geo_valide CHECK ( type_info_geo IN ('1', '2') )
 );
 
 ALTER TABLE localisation_espace_naturel ADD PRIMARY KEY (cle_obs, code_en);
@@ -347,11 +345,15 @@ COMMENT ON COLUMN localisation_espace_naturel.cle_obs IS 'Clé de l observation'
 
 COMMENT ON COLUMN localisation_espace_naturel.code_en IS 'Code de l’espace naturel sur lequel a été faite l’observation.';
 
+COMMENT ON COLUMN localisation_espace_naturel.type_info_geo IS 'Indique le type d''information géographique suivant la nomenclature TypeInfoGeoValue. Exemple : "1" pour "Géoréférencement", "2" pour "Rattachement"';
+
 
 -- Table localisation_masse_eau
 CREATE TABLE localisation_masse_eau (
     cle_obs bigint,
-    code_me text
+    code_me text,
+    type_info_geo text NOT NULL,
+    CONSTRAINT localisation_masse_eau_type_info_geo_valide CHECK ( type_info_geo IN ('1', '2') )
 );
 
 ALTER TABLE localisation_masse_eau ADD PRIMARY KEY (cle_obs, code_me);
@@ -362,6 +364,8 @@ COMMENT ON TABLE localisation_masse_eau IS 'Table de lien avec les masses d’ea
 COMMENT ON COLUMN localisation_masse_eau.cle_obs IS 'Identifiant de l'' observation';
 
 COMMENT ON COLUMN localisation_masse_eau.code_me IS 'Code de la ou les masse(s) d’eau à la (aux)quelle(s) l’observation a été rattachée';
+
+COMMENT ON COLUMN localisation_masse_eau.type_info_geo IS 'Indique le type d''information géographique suivant la nomenclature TypeInfoGeoValue. Exemple : "1" pour "Géoréférencement", "2" pour "Rattachement"';
 
 
 -- Table listant les référentiels habitat
@@ -407,7 +411,7 @@ COMMENT ON COLUMN habitat.description_habitat IS 'Description de l''habitat';
 COMMENT ON COLUMN habitat.tri_habitat IS 'Clé de tri de l''habitat';
 COMMENT ON COLUMN habitat.cd_hab IS 'Code HABREF de l''habitat. NULL si pas encore dans HABREF';
 
--- Table de lien habitat / localisaiton
+-- Table de lien habitat / localisation
 CREATE TABLE localisation_habitat (
     cle_obs bigint NOT NULL,
     ref_habitat text NOT NULL,
@@ -530,8 +534,6 @@ CREATE TABLE maille_10 (
     nom_maille text,
     version_ref text NOT NULL,
     nom_ref text NOT NULL,
-    type_info_geo text NOT NULL,
-    CONSTRAINT maille_10_type_info_geo_valide CHECK ( type_info_geo IN ('1', '2') )
 );
 SELECT AddGeometryColumn('maille_10', 'geom', {$SRID}, 'POLYGON', 2);
 
@@ -544,8 +546,6 @@ COMMENT ON COLUMN maille_10.nom_maille IS 'Code court de la maille 10km. Ex: 510
 COMMENT ON COLUMN maille_10.version_ref IS 'Version du référentiel en vigueur pour le code et le nom de la maille';
 
 COMMENT ON COLUMN maille_10.nom_ref IS 'Nom de la couche de maille utilisée : Concaténation des éléments des colonnes "couche" et "territoire" de la page http://inpn.mnhn.fr/telechargement/cartes-et-information-geographique/ref On n''utilisera que les grilles nationales (les grilles européennes sont proscrites). Exemple : Grilles nationales (10 km x10 km) TAAF';
-
-COMMENT ON COLUMN maille_10.type_info_geo IS 'Indique le type d''information géographique suivant la nomenclature TypeInfoGeoValue. Exemple : "1" pour "Géoréférencement", "2" pour "Rattachement"';
 
 COMMENT ON COLUMN maille_10.geom IS 'Géométrie de la maille.';
 
@@ -604,9 +604,7 @@ CREATE TABLE commune (
     code_commune text PRIMARY KEY,
     nom_commune text NOT NULL,
     annee_ref integer NOT NULL,
-    type_info_geo text NOT NULL,
-    CONSTRAINT commune_annee_ref_valide CHECK (annee_ref > 1900 AND annee_ref <= (date_part('year', now()))::integer ),
-    CONSTRAINT commune_type_info_geo_valide CHECK ( type_info_geo IN ('1', '2') )
+    CONSTRAINT commune_annee_ref_valide CHECK (annee_ref > 1900 AND annee_ref <= (date_part('year', now()))::integer )
 );
 SELECT AddGeometryColumn('commune', 'geom', {$SRID}, 'MULTIPOLYGON', 2);
 
@@ -618,18 +616,14 @@ COMMENT ON COLUMN commune.nom_commune IS 'Nom de la commune suivant le référen
 
 COMMENT ON COLUMN commune.annee_ref IS 'Année de production du référentiel INSEE, qui sert à déterminer quel est le référentiel en vigueur pour le code et le nom de la commune';
 
-COMMENT ON COLUMN commune.type_info_geo IS 'Indique le type d''information géographique suivant la nomenclature TypeInfoGeoValue. Exemple : "1" pour "Géoréférencement", "2" pour "Rattachement"';
-
 COMMENT ON COLUMN commune.geom IS 'Géométrie de la commune.';
 
 -- Table departement
 CREATE TABLE departement (
     code_departement text PRIMARY KEY,
     nom_departement text NOT NULL,
-    annee_ref integer NOT NULL,
-    type_info_geo text NOT NULL,
-    CONSTRAINT departement_annee_ref_valide CHECK (annee_ref > 1900 AND annee_ref <= (date_part('year', now()))::integer ),
-    CONSTRAINT departement_type_info_geo_valide CHECK ( type_info_geo IN ('1', '2') )
+    annee_ref integer NOT NULL
+    CONSTRAINT departement_annee_ref_valide CHECK (annee_ref > 1900 AND annee_ref <= (date_part('year', now()))::integer )
 );
 SELECT AddGeometryColumn('departement', 'geom', {$SRID}, 'MULTIPOLYGON', 2);
 
@@ -641,8 +635,6 @@ COMMENT ON COLUMN departement.nom_departement IS 'Nom du département suivant le
 
 COMMENT ON COLUMN departement.annee_ref IS 'Année de production du référentiel INSEE, qui sert à déterminer quel est le référentiel en vigueur.';
 
-COMMENT ON COLUMN departement.type_info_geo IS 'Indique le type d''information géographique suivant la nomenclature TypeInfoGeoValue. Exemple : "1" pour "Géoréférencement", "2" pour "Rattachement"';
-
 COMMENT ON COLUMN departement.geom IS 'Géométrie du département.';
 
 
@@ -653,8 +645,6 @@ CREATE TABLE espace_naturel (
     nom_en text,
     url text,
     version_en text NOT NULL,
-    type_info_geo text NOT NULL,
-    CONSTRAINT espace_naturel_type_info_geo_valide CHECK ( type_info_geo IN ('1', '2') ),
     CONSTRAINT en_type_en_valide CHECK (type_en IN ('CPN', 'AAPN', 'RIPN', 'PNM', 'PNR', 'RNN', 'RNC', 'RNR', 'PRN', 'RBD', 'RBI', 'RNCFS', 'RCFS', 'APB', 'MAB', 'SCL', 'RAMSAR', 'ASPIM', 'SCEN', 'ENS', 'OSPAR', 'APIA', 'CARTH', 'ANTAR', 'NAIRO', 'ZHAE', 'BPM', 'N2000', 'ZNIEFF1', 'ZNIEFF2') )
 );
 SELECT AddGeometryColumn('espace_naturel', 'geom', {$SRID}, 'GEOMETRY', 2);
@@ -667,8 +657,6 @@ COMMENT ON COLUMN espace_naturel.type_en IS 'Indique le type d’espace naturel 
 
 COMMENT ON COLUMN espace_naturel.version_en IS 'Version du référentiel consulté respectant la norme ISO 8601, sous la forme YYYY-MM-dd (année-mois-jour), YYYY-MM (année-mois), ou YYYY (année).';
 
-COMMENT ON COLUMN espace_naturel.type_info_geo IS 'Indique le type d''information géographique suivant la nomenclature TypeInfoGeoValue. Exemple : "1" pour "Géoréférencement", "2" pour "Rattachement"';
-
 COMMENT ON COLUMN espace_naturel.geom IS 'Géometrie de l''espace naturel.';
 
 
@@ -678,10 +666,8 @@ CREATE TABLE masse_eau (
     nom_me text UNIQUE NOT NULL,
     version_me integer NOT NULL,
     date_me date NOT NULL,
-    type_info_geo text NOT NULL,
     CONSTRAINT masse_eau_version_me_valide CHECK ( version_me IN ('1', '2', '3') ),
-    CONSTRAINT masse_eau_date_me_valide CHECK ( date_me < now()::date ),
-    CONSTRAINT masse_eau_type_info_geo_valide CHECK ( type_info_geo IN ('1', '2') )
+    CONSTRAINT masse_eau_date_me_valide CHECK ( date_me < now()::date )
 );
 SELECT AddGeometryColumn('masse_eau', 'geom', {$SRID}, 'GEOMETRY', 2);
 
@@ -694,8 +680,6 @@ COMMENT ON COLUMN masse_eau.nom_me IS 'Nom de la masse d’eau.';
 COMMENT ON COLUMN masse_eau.version_me IS 'Version du référentiel masse d''eau utilisé et prélevé sur le site du SANDRE, telle que décrite sur le site du SANDRE. Autant que possible au moment de l''échange, on tentera d''utiliser le référentiel en vigueur (en date du 06/10/2015, 2 pour la version intermédiaire). Exemple : 2, pour Version Intermédiaire 2013.';
 
 COMMENT ON COLUMN masse_eau.date_me IS 'Date de consultation ou de prélèvement du référentiel sur le site du SANDRE. Attention, pour une même version, les informations peuvent changer d''une date à l''autre.';
-
-COMMENT ON COLUMN masse_eau.type_info_geo IS 'Indique le type d''information géographique suivant la nomenclature TypeInfoGeoValue. Exemple : "1" pour "Géoréférencement", "2" pour "Rattachement"';
 
 COMMENT ON COLUMN masse_eau.geom IS 'Géométrie de la masse d’eau.';
 
