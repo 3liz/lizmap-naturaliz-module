@@ -313,7 +313,9 @@ COMMENT ON COLUMN localisation_maille_10.type_info_geo IS 'Indique le type d''in
 -- Table localisation_maille_05
 CREATE TABLE localisation_maille_05 (
     cle_obs bigint NOT NULL,
-    code_maille text NOT NULL
+    code_maille text NOT NULL,
+    type_info_geo text NOT NULL,
+    CONSTRAINT localisation_maille_05_type_info_geo_valide CHECK ( type_info_geo IN ('1', '2') )
 );
 
 ALTER TABLE localisation_maille_05 ADD PRIMARY KEY (cle_obs, code_maille);
@@ -325,6 +327,8 @@ COMMENT ON COLUMN localisation_maille_05.cle_obs IS 'Clé de l observation';
 
 COMMENT ON COLUMN localisation_maille_05.code_maille IS 'Cellule de la grille de référence nationale 5kmx5km dans laquelle se situe l’observation. Vocabulaire contrôlé : Référentiel « Grille nationale 5kmx5km », lien: http://inpn.mnhn.fr/telechargement/cartes-et-information-
 geographique/ref , champ « CD_SIG »';
+
+COMMENT ON COLUMN localisation_maille_05.type_info_geo IS 'Indique le type d''information géographique suivant la nomenclature TypeInfoGeoValue. Exemple : "1" pour "Géoréférencement", "2" pour "Rattachement"';
 
 
 
@@ -533,7 +537,7 @@ CREATE TABLE maille_10 (
     code_maille text PRIMARY KEY,
     nom_maille text,
     version_ref text NOT NULL,
-    nom_ref text NOT NULL,
+    nom_ref text NOT NULL
 );
 SELECT AddGeometryColumn('maille_10', 'geom', {$SRID}, 'POLYGON', 2);
 
@@ -553,7 +557,9 @@ COMMENT ON COLUMN maille_10.geom IS 'Géométrie de la maille.';
 -- Table maille_05 = 5km
 CREATE TABLE maille_05 (
     code_maille text PRIMARY KEY,
-    nom_maille text
+    nom_maille text,
+    version_ref text NOT NULL,
+    nom_ref text NOT NULL
 );
 SELECT AddGeometryColumn('maille_05', 'geom', {$SRID}, 'POLYGON', 2);
 
@@ -565,12 +571,19 @@ COMMENT ON COLUMN maille_05.nom_maille IS 'Code court de la maille 5km.';
 
 COMMENT ON COLUMN maille_05.geom IS 'Géométrie de la maille.';
 
+COMMENT ON COLUMN maille_05.version_ref IS 'Version du référentiel en vigueur pour le code et le nom de la maille';
+
+COMMENT ON COLUMN maille_05.nom_ref IS 'Nom de la couche de maille utilisée : Concaténation des éléments des colonnes "couche" et "territoire" de la page http://inpn.mnhn.fr/telechargement/cartes-et-information-geographique/ref On n''utilisera que les grilles nationales (les grilles européennes sont proscrites).';
+
+COMMENT ON COLUMN maille_05.geom IS 'Géométrie de la maille.';
 
 -- Table maille_01  = 1km
 CREATE TABLE maille_01 (
     id_maille serial PRIMARY KEY,
     code_maille text UNIQUE,
-    nom_maille text
+    nom_maille text,
+    version_ref text NOT NULL,
+    nom_ref text NOT NULL
 );
 SELECT AddGeometryColumn('maille_01', 'geom', {$SRID}, 'POLYGON', 2);
 
@@ -580,13 +593,19 @@ COMMENT ON COLUMN maille_01.code_maille IS 'Code de la maille 1km.';
 
 COMMENT ON COLUMN maille_01.nom_maille IS 'Code court de la maille 1km. Ex: 510-1660';
 
+COMMENT ON COLUMN maille_01.version_ref IS 'Version du référentiel en vigueur pour le code et le nom de la maille';
+
+COMMENT ON COLUMN maille_01.nom_ref IS 'Nom de la couche de maille utilisée : Concaténation des éléments des colonnes "couche" et "territoire" de la page http://inpn.mnhn.fr/telechargement/cartes-et-information-geographique/ref On n''utilisera que les grilles nationales (les grilles européennes sont proscrites).';
+
 COMMENT ON COLUMN maille_01.geom IS 'Géométrie de la maille.';
 
 -- Table maille_02  = 2km
 CREATE TABLE maille_02 (
     id_maille serial PRIMARY KEY,
     code_maille text UNIQUE,
-    nom_maille text
+    nom_maille text,
+    version_ref text NOT NULL,
+    nom_ref text NOT NULL
 );
 SELECT AddGeometryColumn('maille_02', 'geom', {$SRID}, 'POLYGON', 2);
 
@@ -595,6 +614,10 @@ COMMENT ON TABLE maille_02 IS 'Liste des mailles 2km du territoire.';
 COMMENT ON COLUMN maille_02.code_maille IS 'Code de la maille 1km.';
 
 COMMENT ON COLUMN maille_02.nom_maille IS 'Code court de la maille 2km. Ex: 510-1660';
+
+COMMENT ON COLUMN maille_02.version_ref IS 'Version du référentiel en vigueur pour le code et le nom de la maille';
+
+COMMENT ON COLUMN maille_02.nom_ref IS 'Nom de la couche de maille utilisée : Concaténation des éléments des colonnes "couche" et "territoire" de la page http://inpn.mnhn.fr/telechargement/cartes-et-information-geographique/ref On n''utilisera que les grilles nationales (les grilles européennes sont proscrites).';
 
 COMMENT ON COLUMN maille_02.geom IS 'Géométrie de la maille.';
 

@@ -222,7 +222,7 @@ Une fois les données récupérées, vous pouvez l'import de données via la com
 
 ```
 cd /srv/lizmap_web_client/
-php lizmap/scripts/script.php taxon~import:taxref /tmp/taxref/9/TAXREFv90.txt /tmp/menaces/LR_Resultats_Guadeloupe_export.csv /tmp/protection/ESPECES_REGLEMENTEES/PROTECTION_ESPECES_90.csv 9
+php lizmap/scripts/script.php taxon~import:taxref -source /tmp/taxref/9/TAXREFv90.txt -menace /tmp/menaces/LR_Resultats_Réunion_export_.csv -protection /tmp/protection/ESPECES_REGLEMENTEES/PROTECTION_ESPECES_90.csv -version 9
 ```
 
 Le premier paramètre passé est le chemin complet vers le fichier CSV contenant les données. Le 2ème est le chemin vers le fichier des menaces (taxons sur listes rouges, filtré pour la région concernée).Le 3ème est le fichier contenant les taxon protégés. Vous pouvez pointer vers d'autres chemins de fichiers, et le script se chargera de copier les données dans le répertoire temporaire puis lancera l'import.
@@ -274,10 +274,7 @@ Deux scripts permettent d'importer ces données dans la base, un pour les donné
 Pour que l'import des données via les serveurs WFS fonctionne, il faut absolument préciser dans le fichier **lizmap/var/config/localconfig.ini.php** les paramètres suivants dans la partie **[occtax]**
 
 ```
-; WFS Server url for import
-wfs_url="http://ws.carmencarto.fr/WFS/119/reu_inpn"
-wfs_url_sandre="http://services.sandre.eaufrance.fr/geo/mdo_REU"
-wfs_url_grille="http://ws.carmencarto.fr/WFS/119/reu_grille"
+
 ; typename WFS pour les imports
 znieff1_terre=reu_znieff1
 znieff1_mer=reu_znieff1_mer
@@ -295,18 +292,28 @@ apt-get install gdal-bin
 
 # Import des données depuis les Shapefile pour les communes, mailles 1 et 2.
 # Import optionnel des réserves naturelles nationales et des habitats
-# Vous devez spécifier le chemin complet vers les fichiers dans cet ordre : communes, mailles 1x1km, mailles 2x2km et optionnellement les réserves et les habitats
-php lizmap/scripts/script.php occtax~import:shapefile "/tmp/sig/COMMUNE.SHP" "/tmp/sig/grille_1000m_gwada_dep_ama_poly.shp" "/tmp/sig/grille_2000m_gwada_dep_ama_poly.shp" "/tmp/sig/grille_5000.shp" "/tmp/sig/glp_rnn2012.shp" "/tmp/csv/HABREF_20/HABREF_20.csv" "/tmp/csv/habitats/TYPO_ANT_MER_09-01-2011.xls" "/tmp/csv/habitats/EAR_Guadeloupe.csv"
+# Vous devez spécifier le chemin complet vers les fichiers : communes, mailles 1x1km, mailles 2x2km et optionnellement les réserves et les habitats
+php lizmap/scripts/script.php occtax~import:shapefile -commune "/tmp/sig/COMMUNE.SHP" -maille_01 "/tmp/sig/grille_1000m_gwada_dep_ama_poly.shp" -maille_02 "/tmp/sig/grille_2000m_gwada_dep_ama_poly.shp" -maille_05 "/tmp/sig/grille_5000.shp" -maille_10 "/tmp/sig/grille_10000m" -reserves_naturelles_nationales "/tmp/sig/glp_rnn2012.shp" -habref "/tmp/csv/HABREF_20/HABREF_20.csv" -habitat_mer "/tmp/csv/habitats/TYPO_ANT_MER_09-01-2011.xls" -habitat_terre "/tmp/csv/habitats/EAR_Guadeloupe.csv" -commune_annee_ref "2013" -departement_annee_ref "2013" -maille_01_version_ref "2015" -maille_01_nom_ref "Grille nationale (1km x 1km) Réunion" -maille_02_version_ref "2015" -maille_02_nom_ref "Grille nationale (2km x 2km) Réunion" -maille_05_version_ref "2015" -maille_05_nom_ref "Grille nationale (5km x 5km) Réunion" -maille_10_version_ref "2012" -maille_10_nom_ref "Grille nationale (10km x 10km) Réunion" -rnn_version_en "2010"
 
 # Import des données depuis les serveurs WFS officiels
 # Vous devez préciser l'URL des serveurs WFS pour les données INPN et pour les données Sandre (masses d'eau)
-php lizmap/scripts/script.php occtax~import:wfs
+php lizmap/scripts/script.php occtax~import:wfs -wfs_url "http://ws.carmencarto.fr/WFS/119/reu_inpn" -wfs_url_sandre "http://services.sandre.eaufrance.fr/geo/mdo_REU" -wfs_url_grille "http://ws.carmencarto.fr/WFS/119/reu_grille" -znieff1_terre_version_en "2015-02" -znieff1_mer_version_en "2016-05" -znieff2_terre_version_en "2015-02" -znieff2_mer_version_en "2016-05" -ramsar_version_en "" -cpn_version_en "2015-10" -aapn_version_en "2015-10" -scl_version_en "2016-03" -mab_version_en "" -rb_version_en "2010" -apb_version_en "2012" -cotieres_version_me 2 -cotieres_date_me "2016-11-01" -souterraines_version_me 2 -souterraines_date_me "2016-11-01"
 
+# Pour le module MASCARINE seulement
 # Import des données de relief (Modèle numérique de terrain = MNT ) et des lieu-dits en shapefiles
 # ATTENTION: seulement nécessaire si le module mascarine (saisie flore) est utilisé.
 # Vous devez spécifier les chemins complet vers les fichiers dans cet ordre: MNT, lieux-dits habités, lieux-dits non-habités, oronymes et toponymes divers ( Source IGN )
 php lizmap/scripts/script.php mascarine~import:gdalogr "/tmp/sig/DEPT971.asc" "/tmp/sig/LIEU_DIT_HABITE.SHP" "/tmp/sig/LIEU_DIT_NON_HABITE.SHP" "/tmp/sig/ORONYME.SHP" "/tmp/sig/TOPONYME_DIVERS.SHP"
 
+```
+
+Suppression des référentiels géographiques
+
+```
+# On peut supprimer tout ou partie des données (avant réimport par exemple), via la commande purge, en passant une liste des tables séparées par virgule
+php lizmap/scripts/script.php occtax~import:purge -sig "commune,departement,maille_01,maille_02,maille_05,maille_10,espace_naturel,masse_eau" -occtax "habitat"
+# ou pour une table par exemple
+php lizmap/scripts/script.php occtax~import:purge -sig "espace_naturel"
 ```
 
 ## Finaliser l'installation

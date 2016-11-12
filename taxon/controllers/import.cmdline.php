@@ -11,26 +11,26 @@
 class importCtrl extends jControllerCmdLine {
 
     /**
-    * Options to the command line
-    *  'method_name' => array('-option_name' => true/false)
-    * true means that a value should be provided for the option on the command line
-    */
-    protected $allowed_options = array(
-    );
-
-    /**
-     * Parameters for the command line
+    * Parameters to the command line
      * 'method_name' => array('parameter_name' => true/false)
      * false means that the parameter is optionnal. All parameters which follow an optional parameter
      * is optional
-     */
+    */
     protected $allowed_parameters = array(
+    );
+
+    /**
+     * Options for the command line
+    *  'method_name' => array('-option_name' => true/false)
+    * true means that a value should be provided for the option on the command line
+     */
+    protected $allowed_options = array(
         'taxref' => array(
-            'source' => true,// Chemin complet vers le fichier de données TAXREF au format CSV
-            'menace' => true, // Chemin complet vers le fichier de menaces (listes rouges) au format CSV
-            'protection' => true, // Chemin complet vers le fichier des espèces protégées au format CSV
-            'version' => true, // Version du fichier Taxref. 9 par défaut
-            'dbprofile' => false // Jelix database profile name
+            '-source' => true,// Chemin complet vers le fichier de données TAXREF au format CSV
+            '-menace' => true, // Chemin complet vers le fichier de menaces (listes rouges) au format CSV
+            '-protection' => true, // Chemin complet vers le fichier des espèces protégées au format CSV
+            '-version' => true, // Version du fichier Taxref. 9 par défaut
+            '-dbprofile' => false // Jelix database profile name
         )
     );
 
@@ -48,10 +48,10 @@ class importCtrl extends jControllerCmdLine {
         - Vous pouvez préciser un nom de profil de base de données (comme écrit dans le fichier lizmap/var/config/profiles.ini.php )
 
         Usage :
-        php lizmap/scripts/script.php taxon~import:taxref source menace protection version [dbprofile]
+        php lizmap/scripts/script.php taxon~import:taxref -source [source] -menace [menace] -protection [protection] -version [version] -dbprofile [dbprofile]
 
         Exemple :
-        php lizmap/scripts/script.php taxon~import:taxref /tmp/TAXREFv90.txt /tmp/LR_Resultats_Guadeloupe_complet_export.csv /tmp/PROTECTION_ESPECES_90.csv 9
+        php lizmap/scripts/script.php taxon~import:taxref -source /tmp/TAXREFv90.txt -menace /tmp/LR_Resultats_Guadeloupe_complet_export.csv -protection /tmp/PROTECTION_ESPECES_90.csv -version 9
         '
     );
 
@@ -73,7 +73,7 @@ class importCtrl extends jControllerCmdLine {
         $rep = $this->getResponse(); // cmdline response by default
 
         //~ // Get version number given
-        $version = $this->param('version', '9');
+        $version = $this->option('-version', '9');
 
         // Get import file
         $sqlPath = jApp::getModulePath('taxon') . 'install/sql/import.taxref.' . $version . '.pgsql.sql';
@@ -86,9 +86,9 @@ class importCtrl extends jControllerCmdLine {
         $defaultSourcePath = $tmpFolder . '/TAXREF.txt';
         $menaceSourcePath = $tmpFolder . '/LR_Resultats_Guadeloupe_complet_export.csv';
         $protectionSourcePath = $tmpFolder . '/PROTECTION_ESPECES_90.csv';
-        $source = $this->param( 'source', $defaultSourcePath );
-        $menace = $this->param( 'menace', $menaceSourcePath );
-        $protection = $this->param( 'protection', $protectionSourcePath );
+        $source = $this->option('-source', $defaultSourcePath );
+        $menace = $this->option('-menace', $menaceSourcePath );
+        $protection = $this->option('-protection', $protectionSourcePath );
         if( !file_exists( $source ) )
             throw new jException('taxon~script.import.source.not.found');
         if( !file_exists( $menace ) )
@@ -108,7 +108,7 @@ class importCtrl extends jControllerCmdLine {
 
         // Try to use the optional given db profile
         $cnx = jDb::getConnection( $defaultProfile );
-        $userprofile = $this->param( 'dbprofile', '' );
+        $userprofile = $this->option('-dbprofile', '' );
         if( !empty($userprofile) ){
             try {
                 $cnx = jDb::getConnection( $userprofile );

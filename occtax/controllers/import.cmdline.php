@@ -1,6 +1,3 @@
-ajouter version_ref, version_en, version_me, annee_ref et autres joyeusetés -> utiliser le localconfig ?
-
-
 <?php
 /**
 * @package   lizmap
@@ -14,37 +11,69 @@ ajouter version_ref, version_en, version_me, annee_ref et autres joyeusetés -> 
 class importCtrl extends jControllerCmdLine {
 
     /**
-    * Options to the command line
-    *  'method_name' => array('-option_name' => true/false)
-    * true means that a value should be provided for the option on the command line
-    */
-    protected $allowed_options = array(
-    );
-
-    /**
-     * Parameters for the command line
+    * Parameters to the command line
      * 'method_name' => array('parameter_name' => true/false)
      * false means that the parameter is optionnal. All parameters which follow an optional parameter
      * is optional
-     */
+    */
     protected $allowed_parameters = array(
+    );
+
+    /**
+     * Options for the command line
+    *  'method_name' => array('-option_name' => true/false)
+    * true means that a value should be provided for the option on the command line
+     */
+    protected $allowed_options = array(
         'wfs' => array(
-            'wfs_url' => false, // URL of the INPN WFS server. Example : http://ws.carmencarto.fr/WFS/119/glp_inpn
-            'wfs_url_sandre' => false, // URL of the Sandre WFS server.
-            'wfs_url_grille' => false // URL of the INPN WFS giving the 10x10km grid.
+            '-wfs_url' => true, // URL of the INPN WFS server. Example : http://ws.carmencarto.fr/WFS/119/glp_inpn
+            '-wfs_url_sandre' => true, // URL of the Sandre WFS server.
+            '-wfs_url_grille' => true, // URL of the INPN WFS giving the 10x10km grid.
+
+            '-znieff1_terre_version_en' => true,
+            '-znieff1_mer_version_en' => true,
+            '-znieff2_terre_version_en' => true,
+            '-znieff2_mer_version_en' => true,
+            '-ramsar_version_en' => true,
+            '-cpn_version_en' => true,
+            '-aapn_version_en' => true,
+            '-scl_version_en' => true,
+            '-rb_version_en' => true,
+            '-mab_version_en' => true,
+            '-apb_version_en' => true,
+            '-cotieres_version_me' => true,
+            '-cotieres_date_me' => true,
+            '-souterraines_version_me' => true,
+            '-souterraines_date_me' => true
         ),
 
         'shapefile' => array(
-            'communes' => true, // Full path to commune Shapefile
-            'maille_01' => true, // Full path to maille_01 Shapefile
-            'maille_02' => true, // Full path to maille_02 Shapefile
-            'maille_05' => true, // Full path to maille_05 Shapefile
-            'maille_10' => true, // Full path to maille_10 Shapefile
-            'reserves_naturelles_nationales' => false, // Full path to Shapefile reserves naturelles,
-            'habref' => true, // Full path to the HABREF csv file
-            'habitat_mer' => false, // Full path to the marine habitat file : http://inpn.mnhn.fr/telechargement/referentiels/habitats#habitats_marins_om
-            'habitat_terre' => false // Full path to the terestrial habitat source
+            '-commune' => true, // Full path to commune Shapefile
+            '-maille_01' => true, // Full path to maille_01 Shapefile
+            '-maille_02' => true, // Full path to maille_02 Shapefile
+            '-maille_05' => true, // Full path to maille_05 Shapefile
+            '-maille_10' => true, // Full path to maille_10 Shapefile
+            '-reserves_naturelles_nationales' => true, // Full path to Shapefile reserves naturelles,
+            '-habref' => true, // Full path to the HABREF csv file
+            '-habitat_mer' => false, // Full path to the marine habitat file : http://inpn.mnhn.fr/telechargement/referentiels/habitats#habitats_marins_om
+            '-habitat_terre' => false, // Full path to the terestrial habitat source
 
+            '-commune_annee_ref' => true,
+            '-departement_annee_ref' => true,
+            '-maille_01_version_ref' => true,
+            '-maille_01_nom_ref' => true,
+            '-maille_02_version_ref' => true,
+            '-maille_02_nom_ref' => true,
+            '-maille_05_version_ref' => true,
+            '-maille_05_nom_ref' => true,
+            '-maille_10_version_ref' => true,
+            '-maille_10_nom_ref' => true,
+            '-rnn_version_en' => true
+        ),
+
+        'purge' => array(
+            '-sig' => true, // list of tables to empty. Ex "commune,departement,maille_01,maille_02,maille_05,maille_10,espace_naturel,masse_eau"
+            '-occtax' => true // list of tables to empty in schema occtax  Ex: habitat
         )
     );
 
@@ -56,19 +85,22 @@ class importCtrl extends jControllerCmdLine {
     public $help = array(
 
 
-        'purge' => 'Purge les données des référentiels dans les tables.
+        'purge' => 'Purge les données des référentiels dans les tables. On doit ajouter la liste des tables du schéma sig et du schéma occtax à supprimer
 
         Usage :
-        php lizmap/scripts/script.php occtax~import:purge
+        php lizmap/scripts/script.php occtax~import:purge -sig "commune,departement,maille_01,maille_02,maille_05,maille_10,espace_naturel,masse_eau" -occtax "habitat"
+        Ou pour une seule table
+        php lizmap/scripts/script.php occtax~import:purge -sig commune
         ',
+
 
         'wfs' => 'Import des données des référentiels SIG depuis le WFS.
 
         Usage :
-        php lizmap/scripts/script.php occtax~import:wfs [wfs_url] [wfs_url_sandre] [wfs_url_grille]
+        php lizmap/scripts/script.php occtax~import:wfs -wfs_url [wfs_url] -wfs_url_sandre [wfs_url_sandre] -wfs_url_grille [wfs_url_grille] -znieff1_terre_version_en "2015-02" -znieff1_mer_version_en "2016-05" -znieff2_terre_version_en "2015-02" -znieff2_mer_version_en "2016-05" -ramsar_version_en "" -cpn_version_en "2015-10" -aapn_version_en "2015-10" -scl_version_en "2016-03" -mab_version_en "" -rb_version_en "2010" -apb_version_en "2012" -cotieres_version_me 2 -cotieres_date_me "2016-11-01" -souterraines_version_me 2 -souterraines_date_me "2016-11-01"
 
         Exemple :
-        php lizmap/scripts/script.php occtax~import:wfs http://ws.carmencarto.fr/WFS/119/glp_inpn http://services.sandre.eaufrance.fr/geo/mdo_GLP http://ws.carmencarto.fr/WFS/119/glp_grille
+        php lizmap/scripts/script.php occtax~import:wfs -wfs_url "http://ws.carmencarto.fr/WFS/119/glp_inpn" -wfs_url_sandre "http://services.sandre.eaufrance.fr/geo/mdo_GLP" -wfs_url_grille "http://ws.carmencarto.fr/WFS/119/glp_grille" -znieff1_terre_version_en "2015-02" -znieff1_mer_version_en "2016-05" -znieff2_terre_version_en "2015-02" -znieff2_mer_version_en "2016-05" -ramsar_version_en "" -cpn_version_en "2015-10" -aapn_version_en "2015-10" -scl_version_en "2016-03" -mab_version_en "" -rb_version_en "2010" -apb_version_en "2012" -cotieres_version_me 2 -cotieres_date_me "2016-11-01" -souterraines_version_me 2 -souterraines_date_me "2016-11-01"
         ',
 
 
@@ -78,10 +110,10 @@ class importCtrl extends jControllerCmdLine {
         Passer le chemin complet vers les fichiers de communes, mailles 1x1km, mailles 2x2km, réserves naturelles nationales et les habitats les habitats. Les réserves sont optionnelles. Les habitats aussi.
 
         Usage :
-        php lizmap/scripts/script.php occtax~import:shapefile [communes] [maille_01] [maille_02] [maille_05] [maille_10] [reserves_naturelles_nationales] [habref] [habitat_mer] [habitat_terre]
+        php lizmap/scripts/script.php occtax~import:shapefile -commune [communes] -maille_01 [maille_01] -maille_02 [maille_02] -maille_05 [maille_05] -maille_10 [maille_10]  -reserves_naturelles_nationales [reserves_naturelles_nationales] -habref [habref] -habitat_mer [habitat_mer] -habitat_terre [habitat_terre] -commune_annee_ref "2013" -departement_annee_ref "2013" -maille_01_version_ref "2015" -maille_01_nom_ref "Grille nationale (1km x 1km) Réunion" -maille_02_version_ref "2015" -maille_02_nom_ref "Grille nationale (2km x 2km) Réunion" -maille_05_version_ref "2015" -maille_05_nom_ref "Grille nationale (5km x 5km) Réunion" -maille_10_version_ref "2012" -maille_10_nom_ref "Grille nationale (10km x 10km) Réunion" -rnn_version_en "2010"
 
         Exemple :
-        php lizmap/scripts/script.php occtax~import:shapefile /tmp/communes.shp /tmp/maille_01.shp /tmp/maille_02.shp /tmp/maille_05.shp /tmp/maille_10.shp /tmp/reserves_naturelles_nationales.shp /tmp/HABREF_20.csv /tmp/TYPO_ANT_MER_09-01-2011.xls /tmp/EAR_Guadeloupe.csv
+        php lizmap/scripts/script.php occtax~import:shapefile -commune /tmp/communes.shp maille_01 /tmp/maille_01.shp -maille_02 /tmp/maille_02.shp -maille_05 /tmp/maille_05.shp -maille_10 /tmp/maille_10.shp -reserves_naturelles_nationales /tmp/reserves_naturelles_nationales.shp -habref /tmp/HABREF_20.csv -habitat_mer /tmp/TYPO_ANT_MER_09-01-2011.xls -habitat_terre /tmp/EAR_Guadeloupe.csv -commune_annee_ref "2013" -departement_annee_ref "2013" -maille_01_version_ref "2015" -maille_01_nom_ref "Grille nationale (1km x 1km) Réunion" -maille_02_version_ref "2015" -maille_02_nom_ref "Grille nationale (2km x 2km) Réunion" -maille_05_version_ref "2015" -maille_05_nom_ref "Grille nationale (5km x 5km) Réunion" -maille_10_version_ref "2012" -maille_10_nom_ref "Grille nationale (10km x 10km) Réunion" -rnn_version_en "2010"
         ',
     );
 
@@ -102,18 +134,25 @@ class importCtrl extends jControllerCmdLine {
         // Try to use the optional given db profile
         $cnx = jDb::getConnection( $defaultProfile );
 
-        $sql = "BEGIN;
-        TRUNCATE sig.commune RESTART IDENTITY;
-        TRUNCATE sig.departement RESTART IDENTITY;
-        TRUNCATE sig.espace_naturel RESTART IDENTITY;
-        TRUNCATE sig.masse_eau RESTART IDENTITY;
-        TRUNCATE sig.maille_01 RESTART IDENTITY;
-        TRUNCATE sig.maille_02 RESTART IDENTITY;
-        TRUNCATE sig.maille_05 RESTART IDENTITY;
-        TRUNCATE sig.maille_10 RESTART IDENTITY;
-        TRUNCATE occtax.habitat RESTART IDENTITY;
-        COMMIT;
-        ";
+        $sig = $this->option('-sig');
+        $occtax = $this->option('-occtax');
+
+        $sql = "BEGIN;";
+        if($sig){
+            $tables = array_map('trim', explode(',', $sig));
+            foreach($tables as $table){
+                $sql.= "TRUNCATE sig.".strtolower($table)." RESTART IDENTITY;";
+            }
+        }
+
+        if($occtax){
+            $tables = array_map('trim', explode(',', $occtax));
+            foreach($tables as $table){
+                $sql.= "TRUNCATE occtax.".strtolower($table)." RESTART IDENTITY;";
+            }
+        }
+
+        $sql.= "COMMIT;";
 
         try {
             $cnx->exec( $sql );
@@ -140,24 +179,9 @@ class importCtrl extends jControllerCmdLine {
         $assign = array();
 
         // Get WFS url
-        $wfs_url = $this->param('wfs_url');
-        $wfs_url_sandre = $this->param('wfs_url_sandre');
-        $wfs_url_grille = $this->param('wfs_url_grille');
-
-        if( empty($wfs_url) )
-            $wfs_url = $ini->getValue('wfs_url', 'occtax');
-        if( empty($wfs_url) )
-            $wfs_url = 'http://ws.carmencarto.fr/WFS/119/glp_inpn';
-
-        if( empty($wfs_url_sandre) )
-            $wfs_url_sandre = $ini->getValue('wfs_url_sandre', 'occtax');
-        if( empty($wfs_url_sandre) )
-            $wfs_url_sandre = 'http://services.sandre.eaufrance.fr/geo/mdo_GLP';
-
-        if( empty($wfs_url_grille) )
-            $wfs_url_grille = $ini->getValue('wfs_url_grille', 'occtax');
-        if( empty($wfs_url_grille) )
-            $wfs_url_grille = 'http://ws.carmencarto.fr/WFS/119/glp_grille';
+        $wfs_url = $this->option('-wfs_url');
+        $wfs_url_sandre = $this->option('-wfs_url_sandre');
+        $wfs_url_grille = $this->option('-wfs_url_grille');
 
         $assign['wfs_url'] = $wfs_url;
         $assign['wfs_url_sandre'] = $wfs_url_sandre;
@@ -177,7 +201,7 @@ class importCtrl extends jControllerCmdLine {
         $template = jFile::read( $importFile );
         $tpl = new jTpl();
 
-        // Replace parameters in template
+        // Replace options in template
         $assign['dbhost'] = $pini->getValue( 'host', 'jdb:' . $defaultProfile );
         $assign['dbname'] = $pini->getValue( 'database', 'jdb:' . $defaultProfile );
         $assign['dbuser'] = $pini->getValue( 'user', 'jdb:' . $defaultProfile );
@@ -212,6 +236,24 @@ class importCtrl extends jControllerCmdLine {
             $znieff2_mer = 'Znieff2_mer';
         $assign['znieff2_mer'] = $znieff2_mer;
 
+
+        $assign['znieff1_terre_version_en'] = $this->option('-znieff1_terre_version_en');
+        $assign['znieff1_mer_version_en'] = $this->option('-znieff1_mer_version_en');
+        $assign['znieff2_terre_version_en'] = $this->option('-znieff2_terre_version_en');
+        $assign['znieff2_mer_version_en'] = $this->option('-znieff2_mer_version_en');
+        $assign['ramsar_version_en'] = $this->option('-ramsar_version_en');
+        $assign['cpn_version_en'] = $this->option('-cpn_version_en');
+        $assign['aapn_version_en'] = $this->option('-aapn_version_en');
+        $assign['scl_version_en'] = $this->option('-scl_version_en');
+        $assign['mab_version_en'] = $this->option('-mab_version_en');
+        $assign['rb_version_en'] = $this->option('-rb_version_en');
+        $assign['apb_version_en'] = $this->option('-apb_version_en');
+        $assign['cotieres_version_me'] = $this->option('-cotieres_version_me');
+        $assign['cotieres_date_me'] = $this->option('-cotieres_date_me');
+        $assign['souterraines_version_me'] = $this->option('-souterraines_version_me');
+        $assign['souterraines_date_me'] = $this->option('-souterraines_date_me');
+
+
         // Run import
         $tpl->assign( $assign );
         $command = $tpl->fetchFromString($template, 'text');
@@ -241,16 +283,16 @@ class importCtrl extends jControllerCmdLine {
 
         $rep = $this->getResponse(); // cmdline response by default
 
-        // Get parameters
-        $communes = $this->param('communes');
-        $maille_01 = $this->param('maille_01');
-        $maille_02 = $this->param('maille_02');
-        $maille_05 = $this->param('maille_05');
-        $maille_10 = $this->param('maille_10');
-        $reserves_naturelles_nationales = $this->param('reserves_naturelles_nationales');
-        $habref = $this->param('habref');
-        $habitat_mer = $this->param('habitat_mer');
-        $habitat_terre = $this->param('habitat_terre');
+        // Get options
+        $commune = $this->option('-commune');
+        $maille_01 = $this->option('-maille_01');
+        $maille_02 = $this->option('-maille_02');
+        $maille_05 = $this->option('-maille_05');
+        $maille_10 = $this->option('-maille_10');
+        $reserves_naturelles_nationales = $this->option('-reserves_naturelles_nationales');
+        $habref = $this->option('-habref');
+        $habitat_mer = $this->option('-habitat_mer');
+        $habitat_terre = $this->option('-habitat_terre');
 
         // Get import file
         $importFile = jApp::getModulePath('occtax') . 'install/scripts/import_referentiels_sig_shapefile.tpl';
@@ -268,8 +310,8 @@ class importCtrl extends jControllerCmdLine {
         $assign = array();
 
         // Replace parameters in template
-        $assign['communes'] = $communes;
-        $assign['communes_name'] = pathinfo($communes, PATHINFO_FILENAME);
+        $assign['commune'] = $commune;
+        $assign['commune_name'] = pathinfo($commune, PATHINFO_FILENAME);
         $assign['maille_01'] = $maille_01;
         $assign['maille_01_name'] = pathinfo($maille_01, PATHINFO_FILENAME);
         $assign['maille_02'] = $maille_02;
@@ -299,6 +341,19 @@ class importCtrl extends jControllerCmdLine {
         if( !$srid )
             $srid = '4326';
         $assign['srid'] = $srid;
+
+        $assign['commune_annee_ref'] = $this->option('-commune_annee_ref');
+        $assign['departement_annee_ref'] = $this->option('-departement_annee_ref');
+        $assign['maille_01_version_ref'] = $this->option('-maille_01_version_ref');
+        $assign['maille_01_nom_ref'] = $this->option('-maille_01_nom_ref');
+        $assign['maille_02_version_ref'] = $this->option('-maille_02_version_ref');
+        $assign['maille_02_nom_ref'] = $this->option('-maille_02_nom_ref');
+        $assign['maille_05_version_ref'] = $this->option('-maille_05_version_ref');
+        $assign['maille_05_nom_ref'] = $this->option('-maille_05_nom_ref');
+        $assign['maille_10_version_ref'] = $this->option('-maille_10_version_ref');
+        $assign['maille_10_nom_ref'] = $this->option('-maille_10_nom_ref');
+        $assign['rnn_version_en'] = $this->option('-rnn_version_en');
+
 
         // Run import
         $tpl->assign( $assign );
