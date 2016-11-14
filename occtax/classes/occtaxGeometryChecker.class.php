@@ -130,10 +130,10 @@ class occtaxGeometryChecker {
             $sql = 'SELECT m.code_maille, m.nom_maille, ST_AsGeoJSON(ST_Transform( m.geom , 4326)) AS geojson ';
             $sql.= ' FROM '.$maille.' m';
             $sql.= ', (SELECT ST_Transform(ST_SetSRID(ST_MakePoint('.$this->x.', '.$this->y.'),4326), '. $this->srid .') as geom) as tgeo';
-            $sql.= ', objet_geographique g';
+            $sql.= ', observation o';
             $sql.= ' WHERE True';
             $sql.= ' AND ST_Within( tgeo.geom, m.geom )';
-            $sql.= ' AND ST_Intersects( g.geom, m.geom )';
+            $sql.= ' AND ST_Intersects( o.geom, m.geom )';
         }
         if($this->moduleName == 'mascarine'){
             $sql = 'SELECT m.code_maille, m.nom_maille, ST_AsGeoJSON(ST_Transform( m.geom , 4326)) AS geojson ';

@@ -1,7 +1,7 @@
 <!DOCTYPE qgis-layer-definition>
 <maplayers>
   <maplayer minimumScale="-4.65661e-10" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="0" scaleBasedLabelVisibilityFlag="0">
-    <datasource>dbname='naturaliz' host=localhost port=5432 user='naturaliz' password='' sslmode=disable key='cle_obs' table="( SELECT 1::integer AS cle_obs, ''::text AS nom_cite, '1'::bigint AS cd_nom, '1'::integer AS cle_objet, ''::text AS identite_observateur, 'GEO'::text AS source_objet, ''::text AS geojson, ST_GeomFromText('POLYGON((649878 1785015, 649879 1785011, 649877 1785014, 649878 1785015))', 32620)::geometry(Polygon, 32620) AS geom
+    <datasource>dbname='naturaliz' host=localhost port=5432 user='naturaliz' password='' sslmode=disable key='cle_obs' table="( SELECT 1::integer AS cle_obs, ''::text AS nom_cite, '1'::bigint AS cd_nom, ''::text AS identite_observateur, 'GEO'::text AS source_objet, ''::text AS geojson, ST_GeomFromText('POLYGON((649878 1785015, 649879 1785011, 649877 1785014, 649878 1785015))', 32620)::geometry(Polygon, 32620) AS geom
 )" (geom) sql=</datasource>
     <title></title>
     <abstract></abstract>
@@ -33,9 +33,6 @@
         <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
       </edittype>
       <edittype widgetv2type="TextEdit" name="cd_nom">
-        <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
-      </edittype>
-      <edittype widgetv2type="TextEdit" name="cle_objet">
         <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
       </edittype>
       <edittype widgetv2type="TextEdit" name="identite_observateur">
