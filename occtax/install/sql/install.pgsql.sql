@@ -104,7 +104,10 @@ CREATE TABLE observation (
 );
 
 SELECT AddGeometryColumn('observation', 'geom', {$SRID}, 'GEOMETRY', 2);
-ALTER TABLE observation ADD CONSTRAINT obs_nature_objet_geo_valide CHECK ( geom IS NOT NULL AND nature_objet_geo IN ('St', 'In', 'NSP') );
+ALTER TABLE observation ADD CONSTRAINT obs_nature_objet_geo_valide CHECK ( (geom IS NOT NULL AND nature_objet_geo IN ('St', 'In', 'NSP')) OR geom IS NULL );
+
+
+ALTER TABLE observation ADD COLUMN odata json;
 
 COMMENT ON TABLE observation IS 'Une observation a une seule source qui peut être de 3 types différents : terrain, littérature ou collection. Ils ont des attributs communs JddId et JddCode qui précisent le support de la source, par exemple, le nom de la base de données où est gérée la Donnée Source ou le nom de la collection. Si la source est Littérature, un attribut est nécessaire pour préciser les références bibliographiques. En plus des attributs sur la source, des attributs permettent de caractériser la DEE (sensibilité ...) et de caractériser le sujet de l’observation: le nom du taxon observé, le dénombrement.';
 
@@ -214,6 +217,8 @@ COMMENT ON COLUMN observation.organisme_gestionnaire_donnees IS 'Nom de l’orga
 COMMENT ON COLUMN observation.org_transformation IS 'Nom de l''organisme ayant créé la DEE finale (plate-forme ou organisme mandaté par elle). Autant que possible, on utilisera des noms issus de l''annuaire du SINP lorsqu''il sera publié.';
 
 COMMENT ON COLUMN observation.geom IS 'Géométrie de l''objet. Il peut être de type Point, Polygone ou Polyligne ou Multi, mais pas complexe (pas de mélange des types)';
+
+COMMENT ON COLUMN observation.odata IS 'Field to store temporary data in json format, used for imports';
 
 
 -- Table personne
@@ -464,27 +469,39 @@ COMMENT ON COLUMN attribut_additionnel.thematique IS 'Thématique relative à l'
 
 
 CREATE TABLE jdd (
-jdd_id text NOT NULL PRIMARY KEY,
-jdd_code text NOT NULL,
-jdd_description text
+    jdd_id text NOT NULL PRIMARY KEY,
+    jdd_code text NOT NULL,
+    jdd_description text,
+    jdd_metadonnee_dee_id text NOT NULL
 );
 
 COMMENT ON TABLE jdd IS 'Recense les jeux de données officiels du standard Occurence de taxons. Un jeu de données correspond souvent à une base de données';
 COMMENT ON COLUMN jdd.jdd_id IS 'Un identifiant pour la collection ou le jeu de données terrain d’où provient l’enregistrement. Exemple code IDCNP pour l’INPN : « 00-15 ».';
 COMMENT ON COLUMN jdd.jdd_code IS 'Le nom, l’acronyme, le code ou l’initiale identifiant la collection ou le jeu de données dont l’enregistrement de la Donnée Source provient. Exemple « INPN », « Silène », « BDMAP »';
 COMMENT ON COLUMN jdd.jdd_description IS 'Description du jeu de données';
+COMMENT ON COLUMN jdd.jdd_metadonnee_dee_id IS 'Identifiant permanent et unique de la fiche métadonnées du jeu de données auquel appartient la donnée. Cet identifiant est attribué par la plateforme';
 
 
 
 -- Table lien_observation_identifiant_permanent
 -- utilisée pour ne pas perdre les enregistrements permanents lors d'un réimport et écrasement de données d'un même jdd
 CREATE TABLE lien_observation_identifiant_permanent (
-jdd_id text NOT NULL,
-identifiant_origine text NOT NULL,
-identifiant_permanent text NOT NULL
+    jdd_id text NOT NULL,
+    identifiant_origine text NOT NULL,
+    identifiant_permanent text NOT NULL,
+    dee_date_derniere_modification timestamp with time zone,
+    dee_date_transformation timestamp with time zone
 );
 
 COMMENT ON TABLE lien_observation_identifiant_permanent IS 'Table utilisée pour conserver les identifiants permanents générés lors de l''import des observations. Cela permet de réutiliser les mêmes identifiants permanents lors d''un réimport par écrasement des données.';
+
+COMMENT ON COLUMN lien_observation_identifiant_permanent.jdd_id IS 'Identifiant du jeu de données';
+
+COMMENT ON COLUMN lien_observation_identifiant_permanent.identifiant_origine IS 'Identifiant d''origine de la données';
+
+COMMENT ON COLUMN lien_observation_identifiant_permanent.dee_date_derniere_modification IS 'Date de dernière modification de la donnée élémentaire d''échange. Postérieure à la date de transformation en DEE, égale dans le cas de l''absence de modification.';
+
+COMMENT ON COLUMN lien_observation_identifiant_permanent.dee_date_transformation IS 'Date de transformation de la donnée source (DSP ou DSR) en donnée élémentaire d''échange (DEE).';
 
 
 -- Indexes
@@ -515,6 +532,8 @@ CREATE INDEX ON observation (jdd_id);
 CREATE INDEX ON personne (identite);
 
 CREATE INDEX ON observation_personne (cle_obs);
+CREATE INDEX ON observation_personne (id_personne);
+CREATE INDEX ON observation_personne (role_personne);
 
 CREATE INDEX ON habitat (ref_habitat);
 CREATE INDEX ON habitat (code_habitat);
@@ -724,11 +743,33 @@ CREATE INDEX ON masse_eau USING gist (geom);
 CREATE INDEX ON espace_naturel USING gist (geom);
 CREATE INDEX ON espace_naturel (type_en);
 
--- View to help queries from espace_naturel
+-- View to help query espace_naturel
 CREATE OR REPLACE VIEW occtax.v_localisation_espace_naturel AS
 SELECT len.cle_obs, len.code_en, en.type_en
 FROM occtax.localisation_espace_naturel AS len
 INNER JOIN sig.espace_naturel AS en ON en.code_en = len.code_en;
+
+-- View to help query observateurs, determinateurs, validateurs
+CREATE OR REPLACE VIEW v_observateur AS
+SELECT p.identite, p.mail, p.organisme,
+op.id_personne, op.cle_obs
+FROM observation_personne op
+INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = 'Obs'
+;
+
+CREATE OR REPLACE VIEW v_validateur AS
+SELECT p.identite, p.mail, p.organisme,
+op.id_personne, op.cle_obs
+FROM observation_personne op
+INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = 'Val'
+;
+
+CREATE OR REPLACE VIEW v_determinateur AS
+SELECT p.identite, p.mail, p.organisme,
+op.id_personne, op.cle_obs
+FROM observation_personne op
+INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = 'Det'
+;
 
 -- Function to create a regular grid
 CREATE OR REPLACE FUNCTION st_fishnet(geom_table text, geom_col text, cellsize float8)

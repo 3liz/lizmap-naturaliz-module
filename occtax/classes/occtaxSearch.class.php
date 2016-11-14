@@ -182,9 +182,12 @@ class occtaxSearch {
 
     protected function setSql() {
         // Build SQL query depending on passed parameters
-        $this->selectClause = $this->setSelectClause();
-        $this->fromClause = $this->setFromClause();
-        $this->whereClause = $this->setWhereClause();
+        $this->selectClause = $this->setSelectClause().'
+';
+        $this->fromClause = $this->setFromClause().'
+';
+        $this->whereClause = $this->setWhereClause().'
+';
         $this->groupClause = $this->setGroupClause();
 
         $this->sql = '';
@@ -193,7 +196,7 @@ class occtaxSearch {
         $this->sql.= $this->whereClause;
         $this->sql.= $this->groupClause;
 
-//~ jLog::log($this->sql);
+jLog::log($this->sql);
     }
 
 
@@ -256,6 +259,8 @@ class occtaxSearch {
                     $sql.= ' "' . $table . '" ';
                     $sql.= ' AS ' . $d['alias'] . ' ';
                     $sql.= $d['joinClause'] . ' ';
+                    $sql.= '
+';
                     $t[] = $table;
                 }
             }
@@ -271,7 +276,8 @@ class occtaxSearch {
                         $sql.= ' "' . $q['table'] . '" ';
                         $sql.= ' AS ' . $d['alias'] . ' ';
                         $sql.= $d['joinClause'] . ' ';
-                        $t[] = $q['table'];
+                    $sql.= '
+';                        $t[] = $q['table'];
                     }
                 }
             }
@@ -300,7 +306,8 @@ class occtaxSearch {
                     if( $q['type'] == 'geom' ){
                         $geoFilter = ' , ( SELECT ';
                         $geoFilter.= ' ST_Transform( ST_GeomFromText(' . $cnx->quote($v) . ', 4326), '. $this->srid .') AS fgeom';
-                        $geoFilter.= ' ) AS fg';
+                        $geoFilter.= ' ) AS fg
+';
                         $this->fromClause.= $geoFilter;
                     }
 
@@ -318,6 +325,8 @@ class occtaxSearch {
                             $v = $cnx->quote( '%' . $v .    '%' );
                     }
                     $sql.= ' ' . str_replace('@', $v, $q['clause']);
+                    $sql.= '
+';
                 }
             }
         }

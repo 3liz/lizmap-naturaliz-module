@@ -206,8 +206,8 @@ class serviceCtrl extends jController {
 
         // Get other files
         $topics = array(
-            'sig',
             'commune',
+            'departement',
             'maille',
             'espace_naturel',
             'masse_eau',
@@ -219,8 +219,7 @@ class serviceCtrl extends jController {
         if( !jAcl2::check("visualisation.donnees.brutes") ) {
             $blackTopics = array(
                 'attribut_additionnel',
-                'espace_naturel',
-                'sig'
+                'espace_naturel'
             );
             $topics = array_diff(
                 $topics,

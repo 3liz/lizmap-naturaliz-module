@@ -49,32 +49,33 @@ class occtaxSearchObservation extends occtaxSearch {
                 'o.nom_cite' => 'nom_cite',
                 'o.cd_nom' => 'cd_nom',
                 "to_char(date_debut, 'YYYY-MM-DD') AS date_debut" => 'date_debut',
-                'o.cle_objet'=> 'cle_objet',
-                'o.identite_observateur' => 'identite_observateur',
                 "
                 CASE
-                    WHEN o.cle_objet IS NOT NULL THEN 'GEO'
+                    WHEN o.geom IS NOT NULL THEN 'GEO'
                     WHEN lm05.code_maille IS NOT NULL THEN 'M05'
                     WHEN lm10.code_maille IS NOT NULL THEN 'M10'
                     WHEN lc.code_commune IS NOT NULL THEN 'COM'
                     WHEN lme.code_me IS NOT NULL THEN 'ME'
                     WHEN len.code_en IS NOT NULL THEN 'EN'
-                    WHEN o.code_departement IS NOT NULL THEN 'DEP'
+                    WHEN ld.code_departement IS NOT NULL THEN 'DEP'
                     ELSE 'NO'
                 END AS source_objet
-                " => "source_objet"
+                " => "source_objet",
+                'ST_AsGeoJSON( ST_Transform(o.geom, 4326), 8 ) AS geojson' => 'geom',
+                'o.geom' => 'geom',
             )
         ),
-        'objet_geographique' => array(
-            'alias' => 'g',
+        'v_observateur'  => array(
+            'alias' => 'pobs',
             'required' => True,
-            'join' => ' LEFT JOIN ',
-            'joinClause' => ' ON g.cle_objet = o.cle_objet ',
+            'multi' => True,
+            'join' => ' JOIN ',
+            'joinClause' => " ON pobs.cle_obs = o.cle_obs ",
             'returnFields' => array(
-                'ST_AsGeoJSON( ST_Transform(g.geom, 4326), 8 ) AS geojson' => 'geom',
-                'g.geom' => 'geom',
+                "string_agg(pobs.identite, ', ') AS identite_observateur" => 'identite_observateur'
             )
         ),
+
         'localisation_maille_05'  => array(
             'alias' => 'lm05',
             'required' => True,
@@ -101,6 +102,16 @@ class occtaxSearchObservation extends occtaxSearch {
             'multi' => True,
             'join' => ' LEFT JOIN ',
             'joinClause' => ' ON lc.cle_obs = o.cle_obs ',
+            'returnFields' => array(
+                //~ "string_agg(lc.code_commune, '|') AS code_commune" => ''
+            )
+        ),
+        'localisation_departement'  => array(
+            'alias' => 'ld',
+            'required' => True,
+            'multi' => True,
+            'join' => ' LEFT JOIN ',
+            'joinClause' => ' ON ld.cle_obs = o.cle_obs ',
             'returnFields' => array(
                 //~ "string_agg(lc.code_commune, '|') AS code_commune" => ''
             )
@@ -144,8 +155,8 @@ class occtaxSearchObservation extends occtaxSearch {
             )
         ),
         'geom' => array (
-            'table' => 'objet_geographique',
-            'clause' => ' AND ST_Intersects(g.geom, fg.fgeom ) ',
+            'table' => 'observation',
+            'clause' => ' AND ST_Intersects(o.geom, fg.fgeom ) ',
             'type' => 'geom'
         ),
         'date_min' => array (
@@ -180,8 +191,8 @@ class occtaxSearchObservation extends occtaxSearch {
         ),
 
         'observateur' => array (
-            'table' => 'observation',
-            'clause' => ' AND o.identite_observateur ILIKE ( @ )',
+            'table' => 'v_observateur',
+            'clause' => ' AND o.cle_obs IN (SELECT cle_obs FROM v_observateur vo WHERE vo.identite ILIKE ( @ )  )',
             'type' => 'partial'
         ),
 

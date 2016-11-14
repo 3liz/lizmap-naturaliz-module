@@ -48,6 +48,7 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
         $this->querySelectors['localisation_maille_05']['required'] = False;
         $this->querySelectors['localisation_maille_10']['required'] = False;
         $this->querySelectors['localisation_commune']['required'] = False;
+        $this->querySelectors['localisation_departement']['required'] = False;
         $this->querySelectors['localisation_masse_eau']['required'] = False;
         $this->querySelectors['v_localisation_espace_naturel']['required'] = False;
         $this->querySelectors['observation']['returnFields'] = array(
@@ -55,8 +56,10 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
             'o.nom_cite' => 'nom_cite',
             'o.cd_nom' => 'cd_nom',
             "to_char(date_debut, 'YYYY-MM-DD') AS date_debut" => 'date_debut',
-            'o.cle_objet'=> 'cle_objet',
-            'o.identite_observateur' => 'identite_observateur'
+            'o.geom' => 'geom'
+        );
+        $this->querySelectors['v_observateur']['returnFields'] = array(
+            "string_agg(pobs.identite, ', ') AS identite_observateur" => 'identite_observateur'
         );
         // Remove ORDER BY
         $this->orderClause = '';

@@ -57,7 +57,12 @@ class observationCtrl extends jController {
             foreach($return as $line){
                 $i = 0;
                 foreach($fields['display'] as $attr){
-                    $data[$attr] = $line[$i];
+                    if( array_key_exists($i, $line)){
+                        $data[$attr] = $line[$i];
+                    }
+                    else{
+                        $data[$attr] = '';
+                    }
                     $i++;
                 };
             }
@@ -66,6 +71,7 @@ class observationCtrl extends jController {
         // Get child data
         $topics = array(
             'commune',
+            'departement',
             'maille',
             'espace_naturel',
             'masse_eau',
@@ -77,8 +83,7 @@ class observationCtrl extends jController {
         if( !jAcl2::check("visualisation.donnees.brutes") ) {
             $blackTopics = array(
                 'attribut_additionnel',
-                'espace_naturel',
-                'sig'
+                'espace_naturel'
             );
             $topics = array_diff(
                 $topics,
