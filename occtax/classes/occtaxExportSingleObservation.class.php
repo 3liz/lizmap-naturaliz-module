@@ -14,9 +14,9 @@ class occtaxExportSingleObservation extends occtaxExportObservation {
 
     protected $returnFields = array();
 
-    public function __construct ($id, $params=Null) {
+    public function __construct ($token=Null, $params=Null) {
 
-        parent::__construct($id, $params);
+        parent::__construct($token, $params);
 
     }
 

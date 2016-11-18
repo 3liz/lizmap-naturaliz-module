@@ -18,7 +18,7 @@ class occtaxExportObservation extends occtaxSearchObservation {
 
     protected $displayFields = array();
 
-    protected $csvFields = array(
+    protected $exportedFields = array(
 
         'principal' => array(
             'cle_obs' => "Integer",
@@ -77,7 +77,13 @@ class occtaxExportObservation extends occtaxSearchObservation {
             // geometrie
             'precision_geometrie' => "Real",
             'nature_objet_geo' => "String",
-            'geom' => "String",
+            'geojson' => "String",
+            'source_objet' => "String",
+
+            // referentiels
+            'code_commune' => "String",
+            'code_maille_05' => "String",
+            'code_maille_10' => "String",
 
             // acteurs
             'observateur' => "String",
@@ -143,14 +149,17 @@ class occtaxExportObservation extends occtaxSearchObservation {
         )
     );
 
-    protected $unsensitiveCsvFields = array(
+    protected $unsensitiveExportedFields = array(
         'principal' => array(
             'cle_obs' => "Integer",
             'statut_source' => "String",
             'nom_cite' => "String",
             'date_debut' => "Date",
             'date_fin' => "Date",
-            'organisme_gestionnaire_donnees' => "String"
+            'organisme_gestionnaire_donnees' => "String",
+            'source_objet' => "String",
+            'code_commune' => "String",
+            'code_maille_10' => "String"
         )
     );
 
@@ -217,7 +226,18 @@ class occtaxExportObservation extends occtaxSearchObservation {
                 // geometrie
                 'o.precision_geometrie' => 'precision_geometrie',
                 'o.nature_objet_geo' => 'nature_objet_geo',
-                'ST_AsGeoJSON( ST_Transform(o.geom, 4326), 8 ) AS geojson' => 'geom'
+                '(ST_AsGeoJSON( ST_Transform(o.geom, 4326), 8 ))::json AS geojson' => 'geom',
+                'ST_Transform(o.geom, 4326) AS geom' => 'geom',
+                "CASE
+                    WHEN o.geom IS NOT NULL THEN 'GEO'
+                    WHEN lm05.code_maille IS NOT NULL THEN 'M05'
+                    WHEN lm10.code_maille IS NOT NULL THEN 'M10'
+                    WHEN lc.code_commune IS NOT NULL THEN 'COM'
+                    WHEN lme.code_me IS NOT NULL THEN 'ME'
+                    WHEN len.code_en IS NOT NULL THEN 'EN'
+                    WHEN ld.code_departement IS NOT NULL THEN 'DEP'
+                    ELSE 'NO'
+                END AS source_objet" => "source_objet"
             )
         ),
 
@@ -261,7 +281,7 @@ class occtaxExportObservation extends occtaxSearchObservation {
             'join' => ' LEFT JOIN ',
             'joinClause' => ' ON lm05.cle_obs = o.cle_obs ',
             'returnFields' => array(
-                //~ "string_agg(lm05.code_maille, '|') AS code_maille_05" => 'code_maille_05'
+                "string_agg(lm05.code_maille, '|') AS code_maille_05" => 'code_maille_05'
             )
         ),
         'localisation_maille_10'  => array(
@@ -271,7 +291,7 @@ class occtaxExportObservation extends occtaxSearchObservation {
             'join' => ' LEFT JOIN ',
             'joinClause' => ' ON lm10.cle_obs = o.cle_obs ',
             'returnFields' => array(
-                //~ "string_agg(lm10.code_maille, '|') AS code_maille_10" => 'code_maille_10'
+                "string_agg(lm10.code_maille, '|') AS code_maille_10" => 'code_maille_10'
             )
         ),
         'localisation_commune'  => array(
@@ -281,7 +301,7 @@ class occtaxExportObservation extends occtaxSearchObservation {
             'join' => ' LEFT JOIN ',
             'joinClause' => ' ON lc.cle_obs = o.cle_obs ',
             'returnFields' => array(
-                //~ "string_agg(lc.code_commune, '|') AS code_commune" => ''
+                "string_agg(lc.code_commune, '|') AS code_commune" => 'code_commune'
             )
         ),
         'localisation_departement'  => array(
@@ -291,7 +311,7 @@ class occtaxExportObservation extends occtaxSearchObservation {
             'join' => ' LEFT JOIN ',
             'joinClause' => ' ON ld.cle_obs = o.cle_obs ',
             'returnFields' => array(
-                //~ "string_agg(lc.code_commune, '|') AS code_commune" => ''
+                //"string_agg(lc.code_commune, '|') AS code_commune" => ''
             )
         ),
         'localisation_masse_eau'  => array(
@@ -301,7 +321,7 @@ class occtaxExportObservation extends occtaxSearchObservation {
             'join' => ' LEFT JOIN ',
             'joinClause' => ' ON lme.cle_obs = o.cle_obs ',
             'returnFields' => array(
-                //~ "string_agg(lme.code_me, '|') AS code_me" => ''
+                //"string_agg(lme.code_me, '|') AS code_me" => ''
             )
         ),
         'v_localisation_espace_naturel'  => array(
@@ -318,12 +338,12 @@ class occtaxExportObservation extends occtaxSearchObservation {
     );
 
 
-    public function __construct ($id, $params=Null) {
-        // Set fields from csvFields "principal"
-        $this->returnFields = $this->getCsvFields( 'principal');
+    public function __construct ($token=Null, $params=Null) {
+        // Set fields from exportedFields "principal"
+        $this->returnFields = $this->getExportedFields( 'principal');
         $this->displayFields = $this->returnFields;
 
-        parent::__construct($id, $params);
+        parent::__construct($token, $params);
     }
 
     function setSql() {
@@ -336,7 +356,7 @@ class occtaxExportObservation extends occtaxSearchObservation {
     }
 
 
-    protected function getCommune() {
+    protected function getCommune($response='result') {
 
         $cnx = jDb::getConnection();
         $sql = " SELECT DISTINCT lc.cle_obs, lc.code_commune, c.nom_commune, c.annee_ref, lc.type_info_geo";
@@ -345,12 +365,15 @@ class occtaxExportObservation extends occtaxSearchObservation {
         $sql.= " INNER JOIN ( ";
         $sql.= $this->sql;
         $sql.= " ) AS foo ON foo.cle_obs = lc.cle_obs";
+        if( $response == 'sql' )
+            $result = $sql;
+        else
+            $result = $cnx->query( $sql );
 
-        $result = $cnx->query( $sql );
         return $result;
     }
 
-    protected function getDepartement() {
+    protected function getDepartement($response='result') {
 
         $cnx = jDb::getConnection();
         $sql = " SELECT DISTINCT ld.cle_obs, ld.code_departement, d.nom_departement, d.annee_ref, ld.type_info_geo";
@@ -359,12 +382,14 @@ class occtaxExportObservation extends occtaxSearchObservation {
         $sql.= " INNER JOIN ( ";
         $sql.= $this->sql;
         $sql.= " ) AS foo ON foo.cle_obs = ld.cle_obs";
-
-        $result = $cnx->query( $sql );
+        if( $response == 'sql' )
+            $result = $sql;
+        else
+            $result = $cnx->query( $sql );
         return $result;
     }
 
-    protected function getMaille10() {
+    protected function getMaille10($response='result') {
 
         $cnx = jDb::getConnection();
         $sql = " SELECT DISTINCT lm.cle_obs, lm.code_maille,";
@@ -375,11 +400,14 @@ class occtaxExportObservation extends occtaxSearchObservation {
         $sql.= $this->sql;
         $sql.= " ) AS foo ON foo.cle_obs = lm.cle_obs";
 
-        $result = $cnx->query( $sql );
+        if( $response == 'sql' )
+            $result = $sql;
+        else
+            $result = $cnx->query( $sql );
         return $result;
     }
 
-    protected function getEspaceNaturel() {
+    protected function getEspaceNaturel($response='result') {
 
         $cnx = jDb::getConnection();
         $sql = " SELECT DISTINCT len.cle_obs, en.type_en, len.code_en,";
@@ -389,12 +417,14 @@ class occtaxExportObservation extends occtaxSearchObservation {
         $sql.= " INNER JOIN ( ";
         $sql.= $this->sql;
         $sql.= " ) AS foo ON foo.cle_obs = len.cle_obs";
-
-        $result = $cnx->query( $sql );
+        if( $response == 'sql' )
+            $result = $sql;
+        else
+            $result = $cnx->query( $sql );
         return $result;
     }
 
-    protected function getMasseEau() {
+    protected function getMasseEau($response='result') {
 
         $cnx = jDb::getConnection();
         $sql = " SELECT DISTINCT lme.cle_obs, lme.code_me,";
@@ -404,12 +434,14 @@ class occtaxExportObservation extends occtaxSearchObservation {
         $sql.= " INNER JOIN ( ";
         $sql.= $this->sql;
         $sql.= " ) AS foo ON foo.cle_obs = lme.cle_obs";
-
-        $result = $cnx->query( $sql );
+        if( $response == 'sql' )
+            $result = $sql;
+        else
+            $result = $cnx->query( $sql );
         return $result;
     }
 
-    protected function getHabitat() {
+    protected function getHabitat($response='result') {
 
         $cnx = jDb::getConnection();
         $sql = " SELECT DISTINCT lh.cle_obs, lh.code_habitat, h.ref_habitat";
@@ -418,12 +450,14 @@ class occtaxExportObservation extends occtaxSearchObservation {
         $sql.= " INNER JOIN ( ";
         $sql.= $this->sql;
         $sql.= " ) AS foo ON foo.cle_obs = lh.cle_obs";
-
-        $result = $cnx->query( $sql );
+        if( $response == 'sql' )
+            $result = $sql;
+        else
+            $result = $cnx->query( $sql );
         return $result;
     }
 
-    protected function getAttributAdditionnel() {
+    protected function getAttributAdditionnel($response='result') {
 
         $cnx = jDb::getConnection();
         $sql = " SELECT DISTINCT aa.cle_obs, aa.nom, aa.definition,";
@@ -432,50 +466,61 @@ class occtaxExportObservation extends occtaxSearchObservation {
         $sql.= " INNER JOIN ( ";
         $sql.= $this->sql;
         $sql.= " ) AS foo ON foo.cle_obs = aa.cle_obs";
-
-        $result = $cnx->query( $sql );
+        if( $response == 'sql' )
+            $result = $sql;
+        else
+            $result = $cnx->query( $sql );
         return $result;
     }
 
-    public function getTopicData( $topic ) {
+    public function getTopicData( $topic, $response='result' ) {
         switch( $topic ) {
             case 'commune':
-                $rs = $this->getCommune();
+                $rs = $this->getCommune($response);
                 break;
             case 'departement':
-                $rs = $this->getDepartement();
+                $rs = $this->getDepartement($response);
                 break;
             case 'maille':
-                $rs = $this->getMaille10();
+                $rs = $this->getMaille10($response);
                 break;
             case 'espace_naturel':
-                $rs = $this->getEspaceNaturel();
+                $rs = $this->getEspaceNaturel($response);
                 break;
             case 'masse_eau':
-                $rs = $this->getMasseEau();
+                $rs = $this->getMasseEau($response);
                 break;
             case 'habitat':
-                $rs = $this->getHabitat();
+                $rs = $this->getHabitat($response);
                 break;
             case 'attribut_additionnel':
-                $rs = $this->getAttributAdditionnel();
+                $rs = $this->getAttributAdditionnel($response);
                 break;
             default:
                 return Null;
         }
-        if( $rs->rowCount() )
-            return $rs;
-        else
-            return Null;
+        $return = Null;
+        if( $response == 'result'){
+            if( $rs->rowCount() )
+                $return = $rs;
+        }else{
+            $return = $rs;
+        }
+        return $return;
     }
 
-    public function getCsvFields( $topic, $format='name' ) {
+    public function getExportedFields( $topic, $format='name' ) {
         $return = array();
         if( !jAcl2::check("visualisation.donnees.brutes") and $topic == 'principal' ){
-            $fields = $this->unsensitiveCsvFields['principal'];
+            $fields = $this->unsensitiveExportedFields['principal'];
+
+        // Maille to choose
+        $m = 2;
+        if ( jAcl2::check("visualisation.donnees.maille_01") )
+            $m = '1';
         }
         else{
-            $fields = $this->csvFields[ $topic ];
+            $fields = $this->exportedFields[ $topic ];
         }
         if( $format == 'name' ) {
             // Return name (key)
@@ -493,40 +538,60 @@ class occtaxExportObservation extends occtaxSearchObservation {
         return $return;
     }
 
-    public function writeCsv( $data, $topic, $delimiter=',' ) {
+    public function writeCsv( $topic, $limit=Null, $offset=0, $delimiter=',' ) {
 
-        // Create temporary file
-        $_dirname = '/tmp';
-        $_tmp_file = tempnam($_dirname, 'wrt');
-        if (!($fd = @fopen($_tmp_file, 'wb'))) {
-            $_tmp_file = $_dirname . '/' . uniqid('wrt');
-            if (!($fd = @fopen($_tmp_file, 'wb'))) {
-                throw new jException('jelix~errors.file.write.error', array ($file, $_tmp_file));
-            }
+        $cnx = jDb::getConnection();
+
+        // Create temporary file name
+        $path = '/tmp/' . time() . session_id() . $topic . '.csv';
+        $fp = fopen($path, 'w');
+        fwrite($fp, '');
+        fclose($fp);
+        chmod($path, 0666);
+
+        // Build COPY query
+        $sql = " COPY (
+            SELECT ";
+
+        // Fields
+        $attributes = $this->getExportedFields( $topic );
+        $sql.= implode(', ', $attributes );
+
+        // SQL
+        $sql.= "
+            FROM (
+        ";
+        if($topic == 'principal')
+            $sql.= $this->sql;
+        else{
+            $sql.= $this->getTopicData($topic, 'sql');
         }
 
-        // Get attribute for given topic
-        $attributes = $this->getCsvFields( $topic );
-
-        // Write CSV header
-        fputcsv($fd, $attributes, $delimiter);
-
-
-        // Write CSV data
-        foreach ($data as $line) {
-            if( is_array( $line ) ){
-                $a = $line;
-            }else{
-                $a = array();
-                foreach( $attributes as $att )
-                    $a[] = $line->$att;
+        // Limit and offset
+        if( $limit ){
+            $sql.= "
+            LIMIT ".$limit;
+            if( $offset ){
+                $sql.= "
+                OFFSET ".$offset;
             }
-            // default php csv handle
-            fputcsv($fd, $a, $delimiter);
         }
-        fclose($fd);
+        $sql.= ") foo";
+        $sql.= "
+        )";
 
-        return $_tmp_file;
+        $sql.= "
+        TO " . $cnx->quote($path);
+        $sql.= "
+        WITH CSV DELIMITER " .$cnx->quote($delimiter);
+        $sql.= " HEADER";
+//jLog::log( $sql);
+        $cnx->exec($sql);
+        if( !file_exists($path) ){
+            //jLog::log( "Erreur lors de l'export en CSV");
+            return Null;
+        }
+        return $path;
 
     }
 
@@ -534,7 +599,8 @@ class occtaxExportObservation extends occtaxSearchObservation {
 
         // Create temporary file
         $_dirname = '/tmp';
-        $_tmp_file = tempnam($_dirname, 'wrt');
+        //$_tmp_file = tempnam($_dirname, 'wrt');
+        $_tmp_file = '/tmp/' . time() . session_id() . $topic . '.csvt';
         if (!($fd = @fopen($_tmp_file, 'wb'))) {
             $_tmp_file = $_dirname . '/' . uniqid('wrt');
             if (!($fd = @fopen($_tmp_file, 'wb'))) {
@@ -543,13 +609,100 @@ class occtaxExportObservation extends occtaxSearchObservation {
         }
 
         // Get fields types
-        $types = $this->getCsvFields( $topic, 'type' );
+        $types = $this->getExportedFields( $topic, 'type' );
 
         // Write CSV header
         fputcsv($fd, $types, $delimiter);
 
         fclose($fd);
         return $_tmp_file;
+    }
+
+
+    public function getGeoJSON( $limit=Null, $offset=0) {
+
+        $sql = "
+        WITH source AS (
+        ".$this->sql;
+        if( $limit ){
+            $sql.= " LIMIT ".$limit;
+            if( $offset ){
+                $sql.= " OFFSET ".$offset;
+            }
+        }
+        $sql.= "
+        )
+
+        SELECT row_to_json(fc, True) AS geojson
+        FROM (
+            SELECT
+                'FeatureCollection' As type,
+                array_to_json(array_agg(f)) As features
+            FROM (
+                SELECT
+                    'Feature' As type,
+        ";
+        if( jAcl2::check("visualisation.donnees.brutes") ){
+            $sql.= "lg.geojson::json As geometry,";
+        }else{
+            $sql.= "(SELECT ST_AsGeoJSON(m.geom, 1) FROM sig.maille_10 m WHERE ST_Intersects(lg.geom, m.geom) LIMIT 1)::json As geometry,";
+        }
+
+        $sql.= "
+                    row_to_json(
+                        ( SELECT l FROM
+                            (
+                                SELECT ";
+        $sql.= implode(', ', $this->returnFields );
+        $sql.= "
+                            ) As l
+                        )
+                    ) As properties
+                FROM source As lg
+            ) As f
+        ) As fc";
+//jLog::log($sql);
+
+        $cnx = jDb::getConnection();
+        $q = $cnx->query( $sql );
+        $return = '';
+        foreach( $q as $d){
+            $return =  $d->geojson;
+            break;
+        }
+        return $return;
+
+    }
+
+
+    public function createWfsService(){
+
+        // Get QGIS project template
+        $template = jFile::read(jApp::getModulePath('occtax'). '/install/qgis/wfs_template.qgs');
+        $tpl = new jTpl();
+        $sql = $this->sql;
+        $sql = str_replace( '<', '&lt;', $sql );
+        $sql = str_replace( '"', '\"', $sql );
+        $assign = array(
+            'dbname' => 'naturaliz-reunion',
+            'dbuser' => 'mdouchin',
+            'dbpass' => 'tation',
+            'dbport' => '5433',
+            'sql' => $sql,
+            'ows_server_title' => 'Naturaliz - Requête sur les observations',
+            'ows_server_abstract' => 'Filtres de recherches :
+            '.$this->getSearchDescription()
+        );
+        $tpl->assign($assign);
+        $content = $tpl->fetchFromString($template, 'text');
+
+//faut ajouter occtax. devant les tables
+//faut remplacer le truc geojson par vrai géométrie
+
+        $targetPath = '/tmp/test.qgs';
+        jFile::write( $targetPath, $content );
+        return $targetPath;
+
     }
 
 }

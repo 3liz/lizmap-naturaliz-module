@@ -810,7 +810,7 @@ $(document).ready(function () {
         if(!id)
             return;
         var tokenFormId = $('#div_form_occtax_search_token form').attr('id');
-        var obsUrl = $('#'+tokenFormId).attr('action').replace('getSearchToken', 'getObservation');
+        var obsUrl = $('#'+tokenFormId).attr('action').replace('initSearch', 'getObservation');
         obsUrl = obsUrl.replace('service', 'observation');
         $.get(
             obsUrl,
@@ -1153,10 +1153,13 @@ OccTax.events.on({
           var rLayer = OccTax.layers['resultLayer'];
           OccTax.map.zoomToExtent( rLayer.getDataExtent() );
       });
-      $('#occtax_results_export').click(function() {
-        var exportUrl = $('#'+tokenFormId).attr('action').replace('getSearchToken', 'exportObservation');
+      $('a.btn-export-search').click(function() {
+        var exportUrl = $('#'+tokenFormId).attr('action').replace('initSearch', 'exportObservation');
         exportUrl+= '?token=' + $('#occtax_service_search_stats_form input[name="token"]').val();
+        var eFormat = $(this).text();
+        exportUrl+= '&format=' + eFormat;
         window.open(exportUrl);
+
       });
 
       // Ajout du logo Europe

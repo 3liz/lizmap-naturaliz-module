@@ -16,6 +16,7 @@ class defaultCtrl extends lizMapCtrl {
     protected $forceHiddenProjectVisible = true;
 
     function __construct ( $request){
+
         $monfichier = jApp::configPath('localconfig.ini.php');
         $ini = new jIniFileModifier($monfichier);
 
@@ -32,6 +33,7 @@ class defaultCtrl extends lizMapCtrl {
     *
     */
     function index() {
+
         // Get repository data
         $repository = $this->param('repository');
         // Get the project
@@ -61,6 +63,7 @@ class defaultCtrl extends lizMapCtrl {
 
             $rep->addHeadContent( '<style>' . $ini->getValue('projectCss', 'occtax') . '</style>');
         }
+
         return $rep;
     }
 }

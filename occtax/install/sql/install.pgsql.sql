@@ -504,6 +504,29 @@ COMMENT ON COLUMN lien_observation_identifiant_permanent.dee_date_derniere_modif
 COMMENT ON COLUMN lien_observation_identifiant_permanent.dee_date_transformation IS 'Date de transformation de la donnée source (DSP ou DSR) en donnée élémentaire d''échange (DEE).';
 
 
+-- View to help query observateurs, determinateurs, validateurs
+CREATE OR REPLACE VIEW v_observateur AS
+SELECT p.identite, p.mail, p.organisme,
+op.id_personne, op.cle_obs
+FROM observation_personne op
+INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = 'Obs'
+;
+
+CREATE OR REPLACE VIEW v_validateur AS
+SELECT p.identite, p.mail, p.organisme,
+op.id_personne, op.cle_obs
+FROM observation_personne op
+INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = 'Val'
+;
+
+CREATE OR REPLACE VIEW v_determinateur AS
+SELECT p.identite, p.mail, p.organisme,
+op.id_personne, op.cle_obs
+FROM observation_personne op
+INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = 'Det'
+;
+
+
 -- Indexes
 CREATE INDEX ON attribut_additionnel (cle_obs);
 
@@ -749,27 +772,7 @@ SELECT len.cle_obs, len.code_en, en.type_en
 FROM occtax.localisation_espace_naturel AS len
 INNER JOIN sig.espace_naturel AS en ON en.code_en = len.code_en;
 
--- View to help query observateurs, determinateurs, validateurs
-CREATE OR REPLACE VIEW v_observateur AS
-SELECT p.identite, p.mail, p.organisme,
-op.id_personne, op.cle_obs
-FROM observation_personne op
-INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = 'Obs'
-;
 
-CREATE OR REPLACE VIEW v_validateur AS
-SELECT p.identite, p.mail, p.organisme,
-op.id_personne, op.cle_obs
-FROM observation_personne op
-INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = 'Val'
-;
-
-CREATE OR REPLACE VIEW v_determinateur AS
-SELECT p.identite, p.mail, p.organisme,
-op.id_personne, op.cle_obs
-FROM observation_personne op
-INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = 'Det'
-;
 
 -- Function to create a regular grid
 CREATE OR REPLACE FUNCTION st_fishnet(geom_table text, geom_col text, cellsize float8)

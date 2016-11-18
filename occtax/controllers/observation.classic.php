@@ -10,6 +10,7 @@
 
 class observationCtrl extends jController {
 
+
     /**
      * Get observation detail
      *
@@ -31,10 +32,11 @@ class observationCtrl extends jController {
 
         // Get occtaxSearch instance
         jClasses::inc('occtax~occtaxSearchObservation');
-        $token = md5( $form->id().time().session_id() );
-        $occtaxSearch = new occtaxSearchObservation( $token, $form->getAllData() );
+
+        $occtaxSearch = new occtaxSearchObservation( null, $form->getAllData() );
         jForms::destroy('occtax~search');
         jClasses::inc('occtax~occtaxExportSingleObservation');
+        $token = $occtaxSearch->getToken();
         $occtaxSearch = new occtaxExportSingleObservation( $token, null );
 
         // Get data

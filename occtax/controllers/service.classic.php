@@ -23,11 +23,11 @@ class serviceCtrl extends jController {
 
     }
 
-    function getSearchToken() {
+    function initSearch() {
 
         $rep = $this->getResponse('json');
 
-        // Get form
+        // Create form
         $form = jForms::create('occtax~search');
 
         // Init form from request
@@ -44,10 +44,10 @@ class serviceCtrl extends jController {
             $rep->data = $return;
             return $rep;
         }
+
         // Get occtaxSearch instance
         jClasses::inc('occtax~occtaxSearchObservation');
-        $token = md5( $form->id().time().session_id() );
-        $occtaxSearch = new occtaxSearchObservation( $token, $form->getAllData() );
+        $occtaxSearch = new occtaxSearchObservation( null, $form->getAllData() );
         jForms::destroy('occtax~search');
 
         // Get search description
@@ -55,7 +55,7 @@ class serviceCtrl extends jController {
 
         $rep->data = array(
             'status' => 1,
-            'token' => $token,
+            'token' => $occtaxSearch->getToken(),
             'recordsTotal' => $occtaxSearch->getRecordsTotal(),
             'description' => $description
         );
@@ -82,13 +82,14 @@ class serviceCtrl extends jController {
 
         // Get occtaxSearch from token
         $token = $this->param('token');
-        if( !$token || $token=='' || !isset( $_SESSION['occtaxSearch' . $token] ) ){
+        if( !jCache::get('occtaxSearch' . $token)  ){
             $return['status'] = 0;
             $return['msg'][] = jLocale::get( 'occtax~search.invalid.token' );
             $rep->data = $return;
             return $rep;
         }
         jClasses::inc('occtax~'.$searchClassName);
+
         $occtaxSearch = new $searchClassName( $token, null );
 
         // Get data
@@ -158,6 +159,7 @@ class serviceCtrl extends jController {
         return $this->__search( 'occtaxSearchObservationTaxon' );
     }
 
+
     /**
      * Export observations
      *
@@ -165,35 +167,42 @@ class serviceCtrl extends jController {
     function exportObservation() {
 
         $rep = $this->getResponse('zip');
-        $data = array();
+        $format = $this->param('format', 'geojson');
 
+        $data = array();
         $return = array();
         $attributes = array();
 
         // Get occtaxSearch from token
         $token = $this->param('token');
-        if( !$token || $token=='' || !isset( $_SESSION['occtaxSearch' . $token] ) ){
+        jClasses::inc('occtax~occtaxExportObservation');
+        $occtaxSearch = new occtaxExportObservation( $token, null );
+        if( !$occtaxSearch ){
             $return['status'] = 0;
             $return['msg'][] = jLocale::get( 'occtax~search.invalid.token' );
             $rep->data = $return;
             return $rep;
         }
-        $searchClassName = 'occtaxExportObservation';
-        jClasses::inc('occtax~'.$searchClassName);
-        $occtaxSearch = new $searchClassName( $token, null );
 
         // Get main observation data
         $limit = $this->intParam( 'limit' );
         $offset = $this->intParam( 'offset' );
         $order = $this->param( 'order', '' );
         try {
-            $return = $occtaxSearch->getData( $limit, $offset, $order );
-            $topic = 'principal';
-            $attributes = $occtaxSearch->getCsvFields( $topic );
-            $csv = $occtaxSearch->writeCsv( $return, $topic );
-            $types = $occtaxSearch->getCsvFields( $topic, 'type' );
-            $csvt = $occtaxSearch->writeCsvT( $topic );
-            $data[$topic] = array( $csv, $csvt );
+            if( strtolower($format) == 'csv' ){
+                $topic = 'principal';
+                $csv = $occtaxSearch->writeCsv( $topic, $limit, $offset );
+                $csvt = $occtaxSearch->writeCsvT( $topic );
+                $data[$topic] = array( $csv, $csvt );
+            }elseif( strtolower($format) == 'geojson' ){
+                $geojson = $occtaxSearch->getGeoJSON($limit, $offset);
+                $rep = $this->getResponse('binary');
+                $rep->content = $geojson;
+                $rep->doDownload  =  false;
+                $rep->mimeType = 'text/json; charset=utf-8';
+                $rep->outputFileName = 'export_observations';
+                return $rep;
+            }
         }
         catch( Exception $e ) {
             $rep = $this->getResponse('json');
@@ -228,27 +237,23 @@ class serviceCtrl extends jController {
         }
 
         foreach( $topics as $topic ) {
-            // Get data for the given topic
-            $return = $occtaxSearch->getTopicData( $topic );
-            if( !$return )
-                continue;
-
-            // Get field list
-            $attributes = $occtaxSearch->getCsvFields( $topic );
-
             // Write data to CSV and get csv file path
-            $csv = $occtaxSearch->writeCsv( $return, $topic );
+            $csv = $occtaxSearch->writeCsv($topic );
             $csvt = $occtaxSearch->writeCsvT( $topic );
-
             $data[$topic] = array( $csv, $csvt );
         }
 
         // Add csv files to ZIP
         foreach( $data as $topic=>$files ) {
-            $rep->content->addFile( $files[0], 'st_' . $topic . '.csv' );
-            $rep->content->addFile( $files[1], 'st_' . $topic . '.csvt' );
-            unlink( $files[0] );
-            unlink( $files[1] );
+            if(file_exists($files[0]) ){
+                $rep->content->addFile( $files[0], 'st_' . $topic . '.csv' );
+                unlink( $files[0] );
+            }
+            if(file_exists($files[1]) ){
+                $rep->content->addFile( $files[1], 'st_' . $topic . '.csvt' );
+                unlink( $files[1] );
+            }
+
         }
 
         // Add readme file + search description to ZIP
@@ -283,8 +288,6 @@ class serviceCtrl extends jController {
             }
             $rep->content->addContentFile( 'LISEZ-MOI.txt', $content );
         }
-
-
 
         $rep->zipFilename = 'donnees_echange_observations_naturaliz.zip';
         return $rep;

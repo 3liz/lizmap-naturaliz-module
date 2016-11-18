@@ -4,6 +4,8 @@
         <div id="occtax_search_description_content"></div>
         <button id="occtax-search-modify" type="button" class="btn" name="mod" value="modify">{@occtax~search.button.modify.search@}</button>
         <button id="occtax-search-replay" type="button" class="btn" name="mod" value="replay" style="display:none;">{@occtax~search.button.replay.search@}</button>
+
+
     </div>
 </div>
 
@@ -64,7 +66,7 @@
     </div>
 
     <div id="div_form_occtax_search_token" class="menu-content">
-        {formfull $form, 'occtax~service:getSearchToken', array(), 'htmlbootstrap'}
+        {formfull $form, 'occtax~service:initSearch', array(), 'htmlbootstrap'}
     </div>
 </div>
 
@@ -82,10 +84,20 @@
         <span class="title">
             <span class="icon result"></span>&nbsp;<span class="text">{@occtax~search.result.title@}</span>
             <span class="pull-right" id="occtax_result_button_bar" style="display:none;">
-                <div class="btn-group">
-                    <button id="occtax_results_export" type="button" class="btn btn-mini" style="background:#E6E6E6; padding:2px;"  title="{@occtax~search.result.export.title@}">
+                <div class="btn-group" role="group">
+<!--
+                    <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-expanded="false" title="" data-original-title="{@occtax~search.result.export.title@}">
                         <i class="icon-download"></i>
                     </button>
+-->
+                    <button type="button" class="btn btn-mini dropdown-toggle"  data-toggle="dropdown" aria-expanded="false" style="background:#E6E6E6; padding:2px;" title="{@occtax~search.result.export.title@}">
+                        <i class="icon-download"></i>
+                    </button>
+
+                    <ul class="dropdown-menu pull-right" role="menu">
+                        <li><a href="#" class="btn-export-search">CSV</a></li>
+                        <li><a href="#" class="btn-export-search">GeoJSON</a></li>
+                    </ul>
                 </div>
                 <div class="btn-group">
                     <button id="occtax_results_zoom" type="button" class="btn btn-mini" style="background:#E6E6E6; padding:2px;"  title="{@occtax~search.result.zoom.title@}">
@@ -181,7 +193,7 @@
         </div>
         <h3><span class="title"><span class="icon search"></span>&nbsp;<span class="text">{@taxon~search.form.title@}</span></span></h3>
         <div id="div_form_occtax_taxon_search_token" class="menu-content">
-            {formfull $formTax, 'taxon~service:getSearchToken', array(), 'htmlbootstrap'}
+            {formfull $formTax, 'taxon~service:initSearch', array(), 'htmlbootstrap'}
         </div>
         <h3>
             <span class="title">

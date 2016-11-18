@@ -10,7 +10,7 @@
 
 class occtaxSearch {
 
-    private $id = Null;
+    protected $token = Null;
 
     private $params = array();
 
@@ -44,10 +44,7 @@ class occtaxSearch {
 
     protected $srid = '4326';
 
-    public function __construct ($id, $params=Null) {
-
-        $this->id = $id;
-        $this->params = $params;
+    public function __construct ($token=Null, $params=Null) {
 
         // Get SRID
         $localConfig = jApp::configPath('localconfig.ini.php');
@@ -57,27 +54,40 @@ class occtaxSearch {
             $this->srid = $srid;
 
         // Get parameters from cache if no parameters given
-        if( !$this->params ){
-            $this->fromCache();
+        $cache = jCache::get('occtaxSearch' . $token);
+        if($cache){
+jLog::log( 'cache hit = ' . $token );
+            $this->params = $cache['params'];
+            $this->recordsTotal = $cache['recordsTotal'];
+            $this->token = $token;
+        }else{
+jLog::log( 'no cache hit');
+            $this->token = time().session_id();
+            $this->params = $params;
         }
+
+        if(empty($this->params))
+            return false;
 
         // Build SQL query
         $this->setSql();
 
+jLog::log( $this->sql);
+
         // Get the number of total records
-        if( !$this->recordsTotal and $this->id )
+        if( !$this->recordsTotal and $this->token )
             $this->setRecordsTotal();
 
-        // Store to session
-        $this->toCache();
+        // Store to cache
+        $this->writeToCache();
 
     }
 
     /**
      * Get search id
     */
-    public function id(){
-        return $this->id;
+    public function getToken(){
+        return $this->token;
     }
 
     /**
@@ -196,7 +206,7 @@ class occtaxSearch {
         $this->sql.= $this->whereClause;
         $this->sql.= $this->groupClause;
 
-jLog::log($this->sql);
+//jLog::log($this->sql);
     }
 
 
@@ -223,7 +233,9 @@ jLog::log($this->sql);
             foreach( $fields as $field => $type ){
                 // Build select clause for this table
                 $sql.= $c . $field;
-                $c = ", "; $a = $alias . '.';
+                $c = ",
+                ";
+                $a = $alias . '.';
                 if( $type == 'source_objet' )
                     $a = '';
                 // Add fields to groupByField array
@@ -397,9 +409,11 @@ jLog::log($this->sql);
                 // If property key is one of the columns returned by the query
                 if( property_exists( $line, $field ) ) {
                     $val = $line->$field;
-                    if( $field == 'geojson' )
+                    if( $field == 'geojson' and is_string($val) ){
                         $val = json_decode( $val );
+                    }
                     $item[] = $val;
+                    unset($val);
                 }
                 // else if the key corresponds to a template field
                 if( array_key_exists( $field, $this->tplFields ) ){
@@ -413,6 +427,7 @@ jLog::log($this->sql);
             }
             // Add line
             $d[] = $item;
+            unset($item);
         }
         $data = $d;
         return $data;
@@ -421,29 +436,14 @@ jLog::log($this->sql);
     /**
     * Store information to cache
     */
-    public function toCache(){
-        $_SESSION['occtaxSearch' . $this->id] = array(
-            'id' => $this->id,
+    public function writeToCache(){
+        $cache = array(
             'params' => $this->params,
             'recordsTotal' => $this->recordsTotal
         );
-    }
 
-    /**
-    * Retrieve information from cache
-    */
-    public function fromCache(){
-        if( isset( $_SESSION['occtaxSearch' . $this->id] ) ){
-            $cache = $_SESSION['occtaxSearch' . $this->id];
-            $this->params = $cache['params'];
-            $this->recordsTotal = $cache['recordsTotal'];
+        jCache::set('occtaxSearch' . $this->token, $cache, 0);
 
-            // Set up SQL
-            $this->setSql();
-
-            // Store to cache
-            $this->toCache();
-        }
     }
 
 
