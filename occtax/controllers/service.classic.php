@@ -161,13 +161,84 @@ class serviceCtrl extends jController {
 
 
     /**
-     * Export observations
+     * Export observation as DEE GML file
      *
      */
-    function exportObservation() {
+    function exportDee(){
+
+        $rep = $this->getResponse('json');
+        $data = array();
+        $return = array();
+        $attributes = array();
+
+        // Get occtaxSearch from token
+        $token = $this->param('token');
+        jClasses::inc('occtax~occtaxExportObservation');
+
+        $occtaxSearch = new occtaxExportObservation( $token, null );
+        if( !$occtaxSearch ){
+            $return['status'] = 0;
+            $return['msg'][] = jLocale::get( 'occtax~search.invalid.token' );
+            $rep->data = $return;
+            return $rep;
+        }
 
         $rep = $this->getResponse('zip');
-        $format = $this->param('format', 'geojson');
+
+        $dee = $occtaxSearch->writeDee();
+        $rep->content->addFile( $dee, 'export_dee.gml' );
+        unlink( $dee );
+
+        // Add readme file + search description to ZIP
+        $rep->content->addContentFile( 'LISEZ-MOI.txt', $occtaxSearch->getReadme() );
+
+        $rep->zipFilename = 'donnees_echange_observations_naturaliz.zip';
+
+        return $rep;
+    }
+
+
+    /**
+     * Export observation into GeoJSON
+     *
+     */
+    function exportGeoJSON(){
+
+        $rep = $this->getResponse('json');
+        $data = array();
+        $return = array();
+        $attributes = array();
+
+        // Get occtaxSearch from token
+        $token = $this->param('token');
+        jClasses::inc('occtax~occtaxExportObservation');
+
+        $occtaxSearch = new occtaxExportObservation( $token, null );
+        if( !$occtaxSearch ){
+            $return['status'] = 0;
+            $return['msg'][] = jLocale::get( 'occtax~search.invalid.token' );
+            $rep->data = $return;
+            return $rep;
+        }
+
+        $geojson = $occtaxSearch->getGeoJSON($limit, $offset);
+
+        $rep = $this->getResponse('binary');
+        $rep->content = $geojson;
+        $rep->doDownload  =  true;
+        $rep->mimeType = 'text/json; charset=utf-8';
+        $rep->outputFileName = 'export_observations';
+
+        return $rep;
+    }
+
+    /**
+     * Export observations into CSV
+     *
+     */
+    function exportCsv() {
+
+        $rep = $this->getResponse('zip');
 
         $data = array();
         $return = array();
@@ -189,20 +260,10 @@ class serviceCtrl extends jController {
         $offset = $this->intParam( 'offset' );
         $order = $this->param( 'order', '' );
         try {
-            if( strtolower($format) == 'csv' ){
-                $topic = 'principal';
-                $csv = $occtaxSearch->writeCsv( $topic, $limit, $offset );
-                $csvt = $occtaxSearch->writeCsvT( $topic );
-                $data[$topic] = array( $csv, $csvt );
-            }elseif( strtolower($format) == 'geojson' ){
-                $geojson = $occtaxSearch->getGeoJSON($limit, $offset);
-                $rep = $this->getResponse('binary');
-                $rep->content = $geojson;
-                $rep->doDownload  =  false;
-                $rep->mimeType = 'text/json; charset=utf-8';
-                $rep->outputFileName = 'export_observations';
-                return $rep;
-            }
+            $topic = 'principal';
+            $csv = $occtaxSearch->writeCsv( $topic, $limit, $offset );
+            $csvt = $occtaxSearch->writeCsvT( $topic );
+            $data[$topic] = array( $csv, $csvt );
         }
         catch( Exception $e ) {
             $rep = $this->getResponse('json');
@@ -211,7 +272,6 @@ class serviceCtrl extends jController {
             $rep->data = $return;
             return $rep;
         }
-
 
         // Get other files
         $topics = array(
@@ -257,37 +317,7 @@ class serviceCtrl extends jController {
         }
 
         // Add readme file + search description to ZIP
-        $readme = jApp::configPath('occtax-export-LISEZ-MOI.txt');
-        if( is_file( $readme ) ){
-            $content = jFile::read( $readme );
-            $content.= "\r";
-
-            // Add search description
-            $content.= "Filtres de recherche utilisés :\r\n";
-            $getSearchDescription = $occtaxSearch->getSearchDescription();
-            $content.= strip_tags( $getSearchDescription );
-
-            // Add jdd list
-            $osParams = $occtaxSearch->getParams();
-            $dao_jdd = jDao::get('occtax~jdd');
-            $content.= "\r";
-            $content.= "Jeux de données : \r\n";
-
-            if( array_key_exists( 'jdd_id', $osParams ) and $osParams['jdd_id'] ){
-                $jdd_id = $osParams['jdd_id'];
-                $jdd = $dao_jdd->get( $jdd_id );
-                if( $jdd )
-                    $content.= '  * ' . $jdd->jdd_code . ' ( ' . $jdd->jdd_description . ' )
-';
-            }else{
-                $jdds = $dao_jdd->findAll();
-                foreach( $jdds as $jdd ){
-                    $content.= '  * ' . $jdd->jdd_code . ' ( ' . $jdd->jdd_description . ' )
-';
-                }
-            }
-            $rep->content->addContentFile( 'LISEZ-MOI.txt', $content );
-        }
+        $rep->content->addContentFile( 'LISEZ-MOI.txt', $occtaxSearch->getReadme() );
 
         $rep->zipFilename = 'donnees_echange_observations_naturaliz.zip';
         return $rep;

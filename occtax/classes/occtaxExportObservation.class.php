@@ -281,7 +281,7 @@ class occtaxExportObservation extends occtaxSearchObservation {
             'join' => ' LEFT JOIN ',
             'joinClause' => ' ON lm05.cle_obs = o.cle_obs ',
             'returnFields' => array(
-                "string_agg(lm05.code_maille, '|') AS code_maille_05" => 'code_maille_05'
+                "string_agg(DISTINCT lm05.code_maille, '|') AS code_maille_05" => 'code_maille_05'
             )
         ),
         'localisation_maille_10'  => array(
@@ -291,7 +291,7 @@ class occtaxExportObservation extends occtaxSearchObservation {
             'join' => ' LEFT JOIN ',
             'joinClause' => ' ON lm10.cle_obs = o.cle_obs ',
             'returnFields' => array(
-                "string_agg(lm10.code_maille, '|') AS code_maille_10" => 'code_maille_10'
+                "string_agg(DISTINCT lm10.code_maille, '|') AS code_maille_10" => 'code_maille_10'
             )
         ),
         'localisation_commune'  => array(
@@ -301,7 +301,7 @@ class occtaxExportObservation extends occtaxSearchObservation {
             'join' => ' LEFT JOIN ',
             'joinClause' => ' ON lc.cle_obs = o.cle_obs ',
             'returnFields' => array(
-                "string_agg(lc.code_commune, '|') AS code_commune" => 'code_commune'
+                "string_agg(DISTINCT lc.code_commune, '|') AS code_commune" => 'code_commune'
             )
         ),
         'localisation_departement'  => array(
@@ -311,7 +311,7 @@ class occtaxExportObservation extends occtaxSearchObservation {
             'join' => ' LEFT JOIN ',
             'joinClause' => ' ON ld.cle_obs = o.cle_obs ',
             'returnFields' => array(
-                //"string_agg(lc.code_commune, '|') AS code_commune" => ''
+                //"string_agg(DISTINCT lc.code_departement, '|') AS code_departement" => ''
             )
         ),
         'localisation_masse_eau'  => array(
@@ -321,7 +321,7 @@ class occtaxExportObservation extends occtaxSearchObservation {
             'join' => ' LEFT JOIN ',
             'joinClause' => ' ON lme.cle_obs = o.cle_obs ',
             'returnFields' => array(
-                //"string_agg(lme.code_me, '|') AS code_me" => ''
+                //"string_agg(DISTINCT lme.code_me, '|') AS code_me" => ''
             )
         ),
         'v_localisation_espace_naturel'  => array(
@@ -331,6 +331,7 @@ class occtaxExportObservation extends occtaxSearchObservation {
             'join' => ' LEFT JOIN ',
             'joinClause' => ' ON len.cle_obs = o.cle_obs ',
             'returnFields' => array(
+                //"string_agg(DISTINCT len.code_en, '|') AS code_en" => ''
             )
         ),
 
@@ -674,6 +675,62 @@ class occtaxExportObservation extends occtaxSearchObservation {
 
     }
 
+    public function writeDee(){
+
+        // Create temporary file name
+        $path = '/tmp/' . time() . session_id() . '.dee.tmp';
+        $fp = fopen($path, 'w');
+        fwrite($fp, '');
+        fclose($fp);
+        chmod($path, 0666);
+
+        // Build SQL
+        $cnx = jDb::getConnection();
+        $tpl = new jTpl();
+        $assign = array (
+            'where' => $this->whereClause,
+            'path' => $cnx->quote($path)
+        );
+        $tpl->assign( $assign );
+        $sql = $tpl->fetch('occtax~export_dee_sql');
+
+        // Execute SQL to export DEE file
+        $cnx->exec($sql);
+        if( !file_exists($path) ){
+            return Null;
+        }
+
+        // Add header (use sed for performance)
+        // Done here and not in postgres to avoid xmlagg on a big dataset
+        $tpl = new jTpl();
+        $u = $cnx->query('SELECT CAST(uuid_generate_v4() AS text) AS uuid;');
+        $assign = array(
+            'uuid' => $u->fetch()->uuid
+        );
+        $tpl->assign($assign);
+        $header = $tpl->fetch('occtax~export_dee_header');
+        $headerfile = '/tmp/' . time() . session_id() . '.dee.header';
+        jFile::write($headerfile, $header);
+
+        // Footer
+        $footerfile = '/tmp/' . time() . session_id() . '.dee.footer';
+        jFile::write($footerfile, '
+        </gml:FeatureCollection>');
+
+        // Use bash to concatenate
+        $output = '/tmp/' . time() . session_id() . '.dee';
+        exec('cat "'. $headerfile.'" "'. $path .'" "'. $footerfile .'" > "'.$output . '"');
+        if(file_exists($output)){
+            unlink($path);
+            unlink($headerfile);
+            unlink($footerfile);
+            return $output;
+        }
+
+        return Null;
+
+    }
+
 
     public function createWfsService(){
 
@@ -703,6 +760,42 @@ class occtaxExportObservation extends occtaxSearchObservation {
         jFile::write( $targetPath, $content );
         return $targetPath;
 
+    }
+
+    public function getReadme(){
+        $readme = jApp::configPath('occtax-export-LISEZ-MOI.txt');
+        $content = '';
+        if( is_file( $readme ) ){
+            $content = jFile::read( $readme );
+            $content.= "\r";
+
+            // Add search description
+            $content.= "Filtres de recherche utilisés :\r\n";
+            $getSearchDescription = $this->getSearchDescription();
+            $content.= strip_tags( $getSearchDescription );
+
+            // Add jdd list
+            $osParams = $this->getParams();
+            $dao_jdd = jDao::get('occtax~jdd');
+            $content.= "\r";
+            $content.= "Jeux de données : \r\n";
+
+            if( array_key_exists( 'jdd_id', $osParams ) and $osParams['jdd_id'] ){
+                $jdd_id = $osParams['jdd_id'];
+                $jdd = $dao_jdd->get( $jdd_id );
+                if( $jdd )
+                    $content.= '  * ' . $jdd->jdd_code . ' ( ' . $jdd->jdd_description . ' )
+';
+            }else{
+                $jdds = $dao_jdd->findAll();
+                foreach( $jdds as $jdd ){
+                    $content.= '  * ' . $jdd->jdd_code . ' ( ' . $jdd->jdd_description . ' )
+';
+                }
+            }
+
+        }
+        return $content;
     }
 
 }

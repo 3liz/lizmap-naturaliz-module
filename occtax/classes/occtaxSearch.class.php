@@ -32,7 +32,7 @@ class occtaxSearch {
 
     private $fromClause = '';
 
-    private $whereClause = '';
+    protected $whereClause = '';
 
     private $groupByFields = array();
 

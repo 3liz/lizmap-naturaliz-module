@@ -95,8 +95,11 @@
                     </button>
 
                     <ul class="dropdown-menu pull-right" role="menu">
-                        <li><a href="#" class="btn-export-search">CSV</a></li>
-                        <li><a href="#" class="btn-export-search">GeoJSON</a></li>
+                        <li><a href="" class="btn-export-search">CSV</a></li>
+                        {ifacl2 "visualisation.donnees.brutes"}
+                        <li><a href="" class="btn-export-search">GeoJSON</a></li>
+                        <li><a href="" class="btn-export-search">DEE</a></li>
+                        {/ifacl2}
                     </ul>
                 </div>
                 <div class="btn-group">
