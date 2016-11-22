@@ -97,9 +97,7 @@ Masqué pour simplifier
             <label locale="taxon~search.input.protection"/>
             <emptyitem locale="taxon~search.input.emptyitem"/>
             <datasource dao="taxon~t_nomenclature"
-              method="findByChamp" criteria="protection"
-              labelproperty="code,valeur"  labelseparator=" - "
-              valueproperty="code"/>
+              method="getProtections" labelproperty="valeur" valueproperty="code"/>
         </menulist>
 
 <!--

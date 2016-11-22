@@ -119,18 +119,40 @@ CREATE INDEX ON protection_espece (cd_nom);
 
 -- INSERT taxon pas encore présents dans t_complement
 INSERT INTO t_complement (cd_nom_fk, protection)
-SELECT DISTINCT a.cd_nom::integer, 'EP'
+SELECT DISTINCT a.cd_nom::integer,
+CASE
+    WHEN a.cd_protection IN ({$code_arrete_protection_nationale}) THEN 'EPN'
+    WHEN a.cd_protection IN ({$code_arrete_protection_internationale}) THEN 'EPI'
+    WHEN a.cd_protection IN ({$code_arrete_protection_communautaire}) THEN 'EPC'
+    ELSE 'EP'
+END AS "protection"
 FROM protection_espece a
 WHERE NOT EXISTS (SELECT cd_nom_fk FROM t_complement)
-AND a.cd_protection IN ( {$code_arrete_protection} )
+AND a.cd_protection IN (
+    {$code_arrete_protection_simple},
+    {$code_arrete_protection_nationale},
+    {$code_arrete_protection_internationale},
+    {$code_arrete_protection_communautaire}
+)
 ;
 
 -- UPDATE tous les taxons qui ont une protection
 UPDATE t_complement c
-SET protection = 'EP'
+SET protection =
+CASE
+    WHEN a.cd_protection IN ({$code_arrete_protection_nationale}) THEN 'EPN'
+    WHEN a.cd_protection IN ({$code_arrete_protection_internationale}) THEN 'EPI'
+    WHEN a.cd_protection IN ({$code_arrete_protection_communautaire}) THEN 'EPC'
+    ELSE 'EP'
+END
 FROM protection_espece a
 WHERE c.cd_nom_fk::text = a.cd_nom
-AND a.cd_protection IN ( {$code_arrete_protection} )
+AND a.cd_protection IN (
+    {$code_arrete_protection_simple},
+    {$code_arrete_protection_nationale},
+    {$code_arrete_protection_internationale},
+    {$code_arrete_protection_communautaire}
+)
 ;
 
 

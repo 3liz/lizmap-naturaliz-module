@@ -41,7 +41,7 @@ class serviceCtrl extends jController {
     }
 
 
-    function getSearchToken() {
+    function initSearch() {
 
         $rep = $this->getResponse('json');
 

@@ -137,12 +137,20 @@ class importCtrl extends jControllerCmdLine {
         $assign['colonne_locale'] = $colonne_locale;
 
         // Get the list of protection codes
-        $code_arrete_protection = $ini->getValue('code_arrete_protection', 'taxon');
-        if( !$code_arrete_protection )
-            $code_arrete_protection = '';
-        $code_arrete_protection = array_map( 'trim', explode(',', $code_arrete_protection ) );
-        $code_arrete_protection = "'" . implode( "', '" , $code_arrete_protection ) . "'";
-        $assign['code_arrete_protection'] = $code_arrete_protection;
+        $liste_codes = array(
+                'code_arrete_protection_simple',
+                'code_arrete_protection_nationale',
+                'code_arrete_protection_internationale',
+                'code_arrete_protection_communautaire'
+        );
+        foreach($liste_codes as $code ){
+                $cd = $ini->getValue($code, 'taxon');
+                if( !$cd )
+                    $cd = '';
+                $code_arrete_protection = array_map( 'trim', explode(',', $cd ) );
+                $code_arrete_protection = "'" . implode( "', '" , $code_arrete_protection ) . "'";
+                $assign[$code] = $code_arrete_protection;
+        }
 
         // Run structure changes queries
         // Use try catch because IF NOT EXISTS is not supported by old PG
@@ -162,6 +170,7 @@ class importCtrl extends jControllerCmdLine {
             $cnx->exec( $sql );
         } catch ( Exception $e ) {
             jLog::log( $e->getMessage(), 'error' );
+            jLog::log($sql);
             throw new jException('taxon~script.import.error');
         }
 

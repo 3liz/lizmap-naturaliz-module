@@ -38,6 +38,10 @@ INSERT INTO t_nomenclature VALUES ('menace', 'NE', 'Non évaluée', ' #FFFFFF');
 
 -- protection
 INSERT INTO t_nomenclature VALUES ('protection', 'EP', 'Espèces protégées', NULL);
+INSERT INTO t_nomenclature VALUES ('protection', 'EPN', 'Protection nationale', NULL);
+INSERT INTO t_nomenclature VALUES ('protection', 'EPI', 'Protection internationale', NULL);
+INSERT INTO t_nomenclature VALUES ('protection', 'EPC', 'Protection communautaire (UE)', NULL);
+
 
 -- déterminantn ZNIEFF
 INSERT INTO t_nomenclature VALUES ('det_znieff', '1', 'Niveau 1', NULL);
