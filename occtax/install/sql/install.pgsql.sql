@@ -768,7 +768,7 @@ CREATE INDEX ON espace_naturel (type_en);
 
 -- View to help query espace_naturel
 CREATE OR REPLACE VIEW occtax.v_localisation_espace_naturel AS
-SELECT len.cle_obs, len.code_en, en.type_en
+SELECT len.cle_obs, len.code_en, len.type_info_geo, en.type_en, en.version_en
 FROM occtax.localisation_espace_naturel AS len
 INNER JOIN sig.espace_naturel AS en ON en.code_en = len.code_en;
 

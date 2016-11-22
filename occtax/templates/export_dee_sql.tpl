@@ -167,9 +167,9 @@ xmlelement(
                 name "cont:EspaceNaturel",
                 xmlforest(
                     len.type_info_geo as "cont:typeInfoGeo",
-                    en.version_en as "cont:versionEN",
+                    len.version_en as "cont:versionEN",
                     len .code_en as "cont:codeEN",
-                    en.type_en as "cont:typeEN"
+                    len.type_en as "cont:typeEN"
                 )
             )::text, ''
         ) FILTER (WHERE len.code_en IS NOT NULL))::xml
@@ -375,8 +375,7 @@ LEFT JOIN localisation_masse_eau lme ON lme.cle_obs = o.cle_obs
 LEFT JOIN masse_eau me ON me.code_me = lme.code_me
 LEFT JOIN localisation_maille_10 lm10 ON lm10.cle_obs = o.cle_obs
 LEFT JOIN maille_10 m10 ON m10.code_maille = lm10.code_maille
-LEFT JOIN localisation_espace_naturel len ON len.cle_obs = o.cle_obs
-LEFT JOIN espace_naturel en ON en.code_en = len.code_en
+LEFT JOIN v_localisation_espace_naturel len ON len.cle_obs = o.cle_obs
 LEFT JOIN localisation_habitat lhab ON lhab.cle_obs = o.cle_obs
 LEFT JOIN habitat hab ON hab.code_habitat = lhab.code_habitat AND lhab.ref_habitat = hab.ref_habitat
 LEFT JOIN attribut_additionnel aa ON aa.cle_obs = o.cle_obs

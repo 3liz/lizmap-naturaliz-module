@@ -221,6 +221,8 @@ class serviceCtrl extends jController {
             return $rep;
         }
 
+        $limit = $this->intParam('limit');
+        $offset = $this->intParam('offset');
         $geojson = $occtaxSearch->getGeoJSON($limit, $offset);
 
         $rep = $this->getResponse('binary');
