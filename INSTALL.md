@@ -94,7 +94,7 @@ occtax_admin.access=2
 ;mascarine_admin.access=2
 
 [taxon]
-; champ determinant le statut local : valeures possibles fr, gf, mar, gua, sm, sb, spm, may, epa, reu, taff, pf, nc, wf, cli
+; champ determinant le statut local : valeures possibles fr, gf, mar, gua, sm, sb, spm, may, epa, reu, sa, ta, taff, pf, nc, wf, cli
 colonne_locale=reu
 ; liste des codes des arr  t  s de protection qui concernent la zone de travail
 code_arrete_protection_simple="agri1,agri2,Bubul1,Bulbul2,Bulbul3,Bulbul4,Bulbul5,Bulbul6,Bulbul9,corbasi1,phelsuma1,phelsuma2,phelsuma3,phelsuma4,phelsuma5,PV97,REUEEA,REUEEI,REUP"
@@ -158,10 +158,10 @@ Les fichiers concernant TAXREF, les menaces (listes rouges) et les protections s
 
 #### Taxref
 
-Le fichier officiel du taxref, par exemple *TAXREFv90.txt*
+Le fichier officiel du taxref, par exemple *TAXREFv10.0.txt*
 
-* Source: https://inpn.mnhn.fr/telechargement/referentielEspece/taxref/9.0/menu
-* Lien: https://inpn.mnhn.fr/telechargement/referentielEspece/taxref/9.0/zip
+* Source: https://inpn.mnhn.fr/telechargement/referentielEspece/taxref/10.0/menu
+* Lien: https://inpn.mnhn.fr/telechargement/referentielEspece/taxref/10.0/zip
 
 #### Menaces (listes rouges)
 
@@ -194,15 +194,15 @@ Le fichier des listes rouges, par exemple *LR_Resultats_Guadeloupe_complet_expor
 
 #### Protections
 
-Exemple : PROTECTION_ESPECES_90.csv
+Exemple : PROTECTION_ESPECES_10.csv
 
 On doit spécifier dans le fichier lizmap/var/config/localconfig.ini.php la liste des codes des arrêtés sur les protections des espèces, par exemple GUAM1,GUAO1,GUARA1,DV971,GUAI2 pour la Guadeloupe
 
 * Source: https://inpn.mnhn.fr/telechargement/referentielEspece/reglementation
 * Lien: https://inpn.mnhn.fr/telechargement/referentielEspece/reglementation/zip
 
-Attention, on doit convertir le fichier Excel ( ex: PROTECTION_ESPECES_90.xls ) au format CSV (ex: PROTECTION_ESPECES_90.csv ). Pour cela, utiliser LibreOffice pour ouvrir le fichier Excel, et "Enregistrer sous" avec les options suivantes:
-* format CSV
+Attention, on doit convertir le fichier Excel ( ex: PROTECTION_ESPECES_10.xls ) au format CSV (ex: PROTECTION_ESPECES_10.csv ). Pour cela, utiliser LibreOffice pour ouvrir le fichier Excel, et "Enregistrer sous" avec les options suivantes:
+* format Texte CSV (.csv)
 * Jeu de caractères: Unicode ( UTF-8 )
 * Séparateur de champ: virgule ','
 * Séparateur de texte: guillemet double '"'
@@ -226,11 +226,11 @@ Une fois les données récupérées, vous pouvez l'import de données via la com
 
 ```
 cd /srv/lizmap_web_client/
-php lizmap/scripts/script.php taxon~import:taxref -source /tmp/taxref/9/TAXREFv90.txt -menace /tmp/menaces/LR_Resultats_Réunion_export_.csv -protection /tmp/protection/ESPECES_REGLEMENTEES/PROTECTION_ESPECES_90.csv -version 9
+php lizmap/scripts/script.php taxon~import:taxref -source /tmp/taxref/10/TAXREFv10.0.txt -menace /tmp/menaces/LR_Resultats_Réunion_export_.csv -protection /tmp/protection/ESPECES_REGLEMENTEES/PROTECTION_ESPECES_10.csv -version 10
 ```
 
 Le premier paramètre passé est le chemin complet vers le fichier CSV contenant les données. Le 2ème est le chemin vers le fichier des menaces (taxons sur listes rouges, filtré pour la région concernée).Le 3ème est le fichier contenant les taxon protégés. Vous pouvez pointer vers d'autres chemins de fichiers, et le script se chargera de copier les données dans le répertoire temporaire puis lancera l'import.
-Le dernier paramètre est la version du fichier TAXREF (7, 8 ou 9 sont possibles).
+Le dernier paramètre est la version du fichier TAXREF (7, 8, 9 ou 10 sont possibles).
 
 Vous pouvez voir l'aide de la commande via:
 

@@ -34,6 +34,8 @@ CREATE TABLE taxref (
   may character varying(1),
   epa character varying(1),
   reu character varying(1),
+  sa character varying(1),
+  ta character varying(1),
   taaf character varying(1),
   pf character varying(1),
   nc character varying(1),
@@ -80,6 +82,8 @@ COMMENT ON COLUMN taxref.spm IS 'Statut biogéographique à Saint-Pierre et Miqu
 COMMENT ON COLUMN taxref.may IS 'Statut biogéographique à Mayotte (clé vers TAXREF_STATUTS)';
 COMMENT ON COLUMN taxref.epa IS 'Statut biogéographique aux Îles Éparses (clé vers TAXREF_STATUTS)';
 COMMENT ON COLUMN taxref.reu IS 'Statut biogéographique à la Réunion (clé vers TAXREF_STATUTS)';
+COMMENT ON COLUMN taxref.sa IS 'Statut biogéographique aux îles subantarctiques ( (clé vers TAXREF_STATUTS)';
+COMMENT ON COLUMN taxref.ta IS 'Statut biogéographique en Terre Adélie (clé vers TAXREF_STATUTS)';
 COMMENT ON COLUMN taxref.taaf IS 'Statut biogéographique aux TAAF (clé vers TAXREF_STATUTS)';
 COMMENT ON COLUMN taxref.pf IS 'Statut biogéographique en Polynésie française (clé vers TAXREF_STATUTS)';
 COMMENT ON COLUMN taxref.nc IS 'Statut biogéographique en Nouvelle-Calédonie (clé vers TAXREF_STATUTS)';
@@ -260,6 +264,8 @@ CREATE TABLE taxref_local
   may character varying(1), -- Statut biogéographique à Mayotte (clé vers TAXREF_STATUTS)
   epa character varying(1), -- Statut biogéographique aux Îles Éparses (clé vers TAXREF_STATUTS)
   reu character varying(1), -- Statut biogéographique à la Réunion (clé vers TAXREF_STATUTS)
+  sa character varying(1), -- Statut biogéographique aux îles subantarctiques (clé vers TAXREF_STATUTS)
+  ta character varying(1), -- Statut biogéographique en Terre Adélie (clé vers TAXREF_STATUTS)
   taaf character varying(1), -- Statut biogéographique aux TAAF (clé vers TAXREF_STATUTS)
   pf character varying(1), -- Statut biogéographique en Polynésie française (clé vers TAXREF_STATUTS)
   nc character varying(1), -- Statut biogéographique en Nouvelle-Calédonie (clé vers TAXREF_STATUTS)
@@ -310,6 +316,8 @@ COMMENT ON COLUMN taxref_local.spm IS 'Statut biogéographique à Saint-Pierre e
 COMMENT ON COLUMN taxref_local.may IS 'Statut biogéographique à Mayotte (clé vers TAXREF_STATUTS)';
 COMMENT ON COLUMN taxref_local.epa IS 'Statut biogéographique aux Îles Éparses (clé vers TAXREF_STATUTS)';
 COMMENT ON COLUMN taxref_local.reu IS 'Statut biogéographique à la Réunion (clé vers TAXREF_STATUTS)';
+COMMENT ON COLUMN taxref_local.sa IS 'Statut biogéographique îles subantarctiques (clé vers TAXREF_STATUTS)';
+COMMENT ON COLUMN taxref_local.ta IS 'Statut biogéographique en Terre Adélie (clé vers TAXREF_STATUTS)';
 COMMENT ON COLUMN taxref_local.taaf IS 'Statut biogéographique aux TAAF (clé vers TAXREF_STATUTS)';
 COMMENT ON COLUMN taxref_local.pf IS 'Statut biogéographique en Polynésie française (clé vers TAXREF_STATUTS)';
 COMMENT ON COLUMN taxref_local.nc IS 'Statut biogéographique en Nouvelle-Calédonie (clé vers TAXREF_STATUTS)';
@@ -347,9 +355,9 @@ COMMENT ON COLUMN taxon_sensible.nom_valide IS 'Nom valide du taxon, ajouté pou
 CREATE OR REPLACE VIEW taxref_consolide AS
 SELECT *
 FROM (
-        SELECT regne, phylum, classe, ordre, famille, group1_inpn, group2_inpn, cd_nom, cd_taxsup, cd_ref, rang, lb_nom, lb_auteur, nom_complet, nom_complet_html, nom_valide, nom_vern, nom_vern_eng, habitat, fr, gf, mar, gua, sm, sb, spm, may, epa, reu, taaf, pf, nc, wf, cli, url FROM taxref_valide
+        SELECT regne, phylum, classe, ordre, famille, group1_inpn, group2_inpn, cd_nom, cd_taxsup, cd_ref, rang, lb_nom, lb_auteur, nom_complet, nom_complet_html, nom_valide, nom_vern, nom_vern_eng, habitat, fr, gf, mar, gua, sm, sb, spm, may, epa, reu, sa, ta, taaf, pf, nc, wf, cli, url FROM taxref_valide
         UNION ALL
-        SELECT regne, phylum, classe, ordre, famille, group1_inpn, group2_inpn, cd_nom, cd_taxsup, cd_ref, rang, lb_nom, lb_auteur, nom_complet, nom_complet_html, nom_valide, nom_vern, nom_vern_eng, habitat, fr, gf, mar, gua, sm, sb, spm, may, epa, reu, taaf, pf, nc, wf, cli, url FROM taxref_local
+        SELECT regne, phylum, classe, ordre, famille, group1_inpn, group2_inpn, cd_nom, cd_taxsup, cd_ref, rang, lb_nom, lb_auteur, nom_complet, nom_complet_html, nom_valide, nom_vern, nom_vern_eng, habitat, fr, gf, mar, gua, sm, sb, spm, may, epa, reu, sa, ta, taaf, pf, nc, wf, cli, url FROM taxref_local
 ) AS t
 LEFT JOIN t_complement AS c ON c.cd_nom_fk = t.cd_nom;
 
