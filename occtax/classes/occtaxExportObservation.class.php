@@ -8,9 +8,9 @@
 * @license    All rights reserved
 */
 
-jClasses::inc('occtax~occtaxSearchObservation');
+jClasses::inc('occtax~occtaxSearchObservationBrutes');
 
-class occtaxExportObservation extends occtaxSearchObservation {
+class occtaxExportObservation extends occtaxSearchObservationBrutes {
 
     protected $returnFields = array();
 
@@ -53,37 +53,22 @@ class occtaxExportObservation extends occtaxSearchObservation {
             'profondeur_max' => "Real(6.2)",
 
             // source
-            'code_idcnp_dispositif' => "String",
-            'dee_date_derniere_modification' => "String",
-            'dee_date_transformation' => "String",
             'dee_floutage' => "String",
-            'diffusion_niveau_precision' => "String",
-            'ds_publique' => "String",
             'identifiant_origine' => "String",
             'jdd_code' => "String",
             'jdd_id' => "String",
-            'jdd_metadonnee_dee_id' => "String",
-            'jdd_source_id' => "String",
             'organisme_gestionnaire_donnees' => "String",
             'org_transformation' => "String",
             'statut_source' => "String",
             'reference_biblio' => "String",
             'sensible' => "String",
-            'sensi_date_attribution' => "String",
             'sensi_niveau' => "String",
-            'sensi_referentiel' => "String",
-            'sensi_version_referentiel' => "String",
 
             // geometrie
             'precision_geometrie' => "Real",
             'nature_objet_geo' => "String",
             'geojson' => "String",
-            'source_objet' => "String",
-
-            // referentiels
-            'code_commune' => "String",
-            'code_maille_05' => "String",
-            'code_maille_10' => "String",
+            'wkt' => "String",
 
             // acteurs
             'observateur' => "String",
@@ -157,9 +142,7 @@ class occtaxExportObservation extends occtaxSearchObservation {
             'date_debut' => "Date",
             'date_fin' => "Date",
             'organisme_gestionnaire_donnees' => "String",
-            'source_objet' => "String",
-            'code_commune' => "String",
-            'code_maille_10' => "String"
+            'wkt' => "String"
         )
     );
 
@@ -202,42 +185,23 @@ class occtaxExportObservation extends occtaxSearchObservation {
                 'o.profondeur_max' => 'profondeur_max',
 
                 // source
-                'o.code_idcnp_dispositif'=> 'code_idcnp_dispositif',
-                'o.dee_date_derniere_modification'=> 'dee_date_derniere_modification',
-                'o.dee_date_transformation'=> 'dee_date_transformation',
                 'o.dee_floutage' => 'dee_floutage',
-                'o.diffusion_niveau_precision' => 'diffusion_niveau_precision',
-                'o.ds_publique'=> 'ds_publique',
                 'o.identifiant_origine'=> 'identifiant_origine',
                 'o.jdd_code'=> 'jdd_code',
                 'o.jdd_id'=> 'jdd_id',
-                'o.jdd_metadonnee_dee_id'=> 'jdd_metadonnee_dee_id',
-                'o.jdd_source_id'=> 'jdd_source_id',
                 'o.organisme_gestionnaire_donnees' => 'organisme_gestionnaire_donnees',
                 'o.org_transformation' => 'org_transformation',
                 'o.statut_source' => 'statut_source',
                 'o.reference_biblio'=> 'reference_biblio',
                 'o.sensible' => 'sensible',
-                'o.sensi_date_attribution' => 'sensi_date_attribution',
                 'o.sensi_niveau' => 'sensi_niveau',
-                'o.sensi_referentiel' => 'sensi_referentiel',
-                'o.sensi_version_referentiel' => 'sensi_version_referentiel',
 
                 // geometrie
                 'o.precision_geometrie' => 'precision_geometrie',
                 'o.nature_objet_geo' => 'nature_objet_geo',
                 '(ST_AsGeoJSON( ST_Transform(o.geom, 4326), 8 ))::json AS geojson' => 'geom',
+                '(ST_AsText( ST_Transform(o.geom, 4326) )) AS wkt' => 'geom',
                 'ST_Transform(o.geom, 4326) AS geom' => 'geom',
-                "CASE
-                    WHEN o.geom IS NOT NULL THEN 'GEO'
-                    WHEN lm05.code_maille IS NOT NULL THEN 'M05'
-                    WHEN lm10.code_maille IS NOT NULL THEN 'M10'
-                    WHEN lc.code_commune IS NOT NULL THEN 'COM'
-                    WHEN lme.code_me IS NOT NULL THEN 'ME'
-                    WHEN len.code_en IS NOT NULL THEN 'EN'
-                    WHEN ld.code_departement IS NOT NULL THEN 'DEP'
-                    ELSE 'NO'
-                END AS source_objet" => "source_objet"
             )
         ),
 
@@ -274,49 +238,19 @@ class occtaxExportObservation extends occtaxSearchObservation {
         ),
 
         // spatial
-        'localisation_maille_05'  => array(
-            'alias' => 'lm05',
-            'required' => True,
-            'multi' => True,
-            'join' => ' LEFT JOIN ',
-            'joinClause' => ' ON lm05.cle_obs = o.cle_obs ',
-            'returnFields' => array(
-                "string_agg(DISTINCT lm05.code_maille, '|') AS code_maille_05" => 'code_maille_05'
-            )
-        ),
-        'localisation_maille_10'  => array(
-            'alias' => 'lm10',
-            'required' => True,
-            'multi' => True,
-            'join' => ' LEFT JOIN ',
-            'joinClause' => ' ON lm10.cle_obs = o.cle_obs ',
-            'returnFields' => array(
-                "string_agg(DISTINCT lm10.code_maille, '|') AS code_maille_10" => 'code_maille_10'
-            )
-        ),
         'localisation_commune'  => array(
             'alias' => 'lc',
-            'required' => True,
+            'required' => false,
             'multi' => True,
             'join' => ' LEFT JOIN ',
             'joinClause' => ' ON lc.cle_obs = o.cle_obs ',
             'returnFields' => array(
-                "string_agg(DISTINCT lc.code_commune, '|') AS code_commune" => 'code_commune'
-            )
-        ),
-        'localisation_departement'  => array(
-            'alias' => 'ld',
-            'required' => True,
-            'multi' => True,
-            'join' => ' LEFT JOIN ',
-            'joinClause' => ' ON ld.cle_obs = o.cle_obs ',
-            'returnFields' => array(
-                //"string_agg(DISTINCT lc.code_departement, '|') AS code_departement" => ''
+                //"string_agg(DISTINCT lc.code_commune, '|') AS code_commune" => 'code_commune'
             )
         ),
         'localisation_masse_eau'  => array(
             'alias' => 'lme',
-            'required' => True,
+            'required' => False,
             'multi' => True,
             'join' => ' LEFT JOIN ',
             'joinClause' => ' ON lme.cle_obs = o.cle_obs ',
@@ -326,7 +260,7 @@ class occtaxExportObservation extends occtaxSearchObservation {
         ),
         'v_localisation_espace_naturel'  => array(
             'alias' => 'len',
-            'required' => True,
+            'required' => False,
             'multi' => False,
             'join' => ' LEFT JOIN ',
             'joinClause' => ' ON len.cle_obs = o.cle_obs ',
@@ -356,189 +290,6 @@ class occtaxExportObservation extends occtaxSearchObservation {
         return $cnx->query( $this->sql );
     }
 
-
-    protected function getCommune($response='result') {
-
-        $cnx = jDb::getConnection();
-        $sql = " SELECT DISTINCT lc.cle_obs, lc.code_commune, c.nom_commune, c.annee_ref, lc.type_info_geo";
-        $sql.= " FROM localisation_commune AS lc";
-        $sql.= " INNER JOIN commune c ON c.code_commune = lc.code_commune";
-        $sql.= " INNER JOIN ( ";
-        $sql.= $this->sql;
-        $sql.= " ) AS foo ON foo.cle_obs = lc.cle_obs";
-        if( $response == 'sql' )
-            $result = $sql;
-        else
-            $result = $cnx->query( $sql );
-
-        return $result;
-    }
-
-    protected function getDepartement($response='result') {
-
-        $cnx = jDb::getConnection();
-        $sql = " SELECT DISTINCT ld.cle_obs, ld.code_departement, d.nom_departement, d.annee_ref, ld.type_info_geo";
-        $sql.= " FROM localisation_departement AS ld";
-        $sql.= " INNER JOIN departement d ON d.code_departement = ld.code_departement";
-        $sql.= " INNER JOIN ( ";
-        $sql.= $this->sql;
-        $sql.= " ) AS foo ON foo.cle_obs = ld.cle_obs";
-        if( $response == 'sql' )
-            $result = $sql;
-        else
-            $result = $cnx->query( $sql );
-        return $result;
-    }
-
-    protected function getMaille10($response='result') {
-
-        $cnx = jDb::getConnection();
-        $sql = " SELECT DISTINCT lm.cle_obs, lm.code_maille,";
-        $sql.= " m.version_ref, m.nom_ref, lm.type_info_geo";
-        $sql.= " FROM localisation_maille_10 AS lm";
-        $sql.= " INNER JOIN maille_10 m ON lm.code_maille = m.code_maille";
-        $sql.= " INNER JOIN ( ";
-        $sql.= $this->sql;
-        $sql.= " ) AS foo ON foo.cle_obs = lm.cle_obs";
-
-        if( $response == 'sql' )
-            $result = $sql;
-        else
-            $result = $cnx->query( $sql );
-        return $result;
-    }
-
-    protected function getEspaceNaturel($response='result') {
-
-        $cnx = jDb::getConnection();
-        $sql = " SELECT DISTINCT len.cle_obs, en.type_en, len.code_en,";
-        $sql.= " en.nom_en, en.version_en, len.type_info_geo";
-        $sql.= " FROM localisation_espace_naturel AS len";
-        $sql.= " INNER JOIN espace_naturel en ON en.code_en = len.code_en";
-        $sql.= " INNER JOIN ( ";
-        $sql.= $this->sql;
-        $sql.= " ) AS foo ON foo.cle_obs = len.cle_obs";
-        if( $response == 'sql' )
-            $result = $sql;
-        else
-            $result = $cnx->query( $sql );
-        return $result;
-    }
-
-    protected function getMasseEau($response='result') {
-
-        $cnx = jDb::getConnection();
-        $sql = " SELECT DISTINCT lme.cle_obs, lme.code_me,";
-        $sql.= " me.version_me, me.date_me, lme.type_info_geo";
-        $sql.= " FROM localisation_masse_eau AS lme";
-        $sql.= " INNER JOIN masse_eau me ON me.code_me = lme.code_me";
-        $sql.= " INNER JOIN ( ";
-        $sql.= $this->sql;
-        $sql.= " ) AS foo ON foo.cle_obs = lme.cle_obs";
-        if( $response == 'sql' )
-            $result = $sql;
-        else
-            $result = $cnx->query( $sql );
-        return $result;
-    }
-
-    protected function getHabitat($response='result') {
-
-        $cnx = jDb::getConnection();
-        $sql = " SELECT DISTINCT lh.cle_obs, lh.code_habitat, h.ref_habitat";
-        $sql.= " FROM localisation_habitat AS lh";
-        $sql.= " INNER JOIN habitat h ON h.code_habitat = lh.code_habitat AND h.ref_habitat = lh.ref_habitat";
-        $sql.= " INNER JOIN ( ";
-        $sql.= $this->sql;
-        $sql.= " ) AS foo ON foo.cle_obs = lh.cle_obs";
-        if( $response == 'sql' )
-            $result = $sql;
-        else
-            $result = $cnx->query( $sql );
-        return $result;
-    }
-
-    protected function getAttributAdditionnel($response='result') {
-
-        $cnx = jDb::getConnection();
-        $sql = " SELECT DISTINCT aa.cle_obs, aa.nom, aa.definition,";
-        $sql.= " aa.valeur, aa.unite, aa.thematique, aa.type";
-        $sql.= " FROM attribut_additionnel AS aa";
-        $sql.= " INNER JOIN ( ";
-        $sql.= $this->sql;
-        $sql.= " ) AS foo ON foo.cle_obs = aa.cle_obs";
-        if( $response == 'sql' )
-            $result = $sql;
-        else
-            $result = $cnx->query( $sql );
-        return $result;
-    }
-
-    public function getTopicData( $topic, $response='result' ) {
-        switch( $topic ) {
-            case 'commune':
-                $rs = $this->getCommune($response);
-                break;
-            case 'departement':
-                $rs = $this->getDepartement($response);
-                break;
-            case 'maille':
-                $rs = $this->getMaille10($response);
-                break;
-            case 'espace_naturel':
-                $rs = $this->getEspaceNaturel($response);
-                break;
-            case 'masse_eau':
-                $rs = $this->getMasseEau($response);
-                break;
-            case 'habitat':
-                $rs = $this->getHabitat($response);
-                break;
-            case 'attribut_additionnel':
-                $rs = $this->getAttributAdditionnel($response);
-                break;
-            default:
-                return Null;
-        }
-        $return = Null;
-        if( $response == 'result'){
-            if( $rs->rowCount() )
-                $return = $rs;
-        }else{
-            $return = $rs;
-        }
-        return $return;
-    }
-
-    public function getExportedFields( $topic, $format='name' ) {
-        $return = array();
-        if( !jAcl2::check("visualisation.donnees.brutes") and $topic == 'principal' ){
-            $fields = $this->unsensitiveExportedFields['principal'];
-
-        // Maille to choose
-        $m = 2;
-        if ( jAcl2::check("visualisation.donnees.maille_01") )
-            $m = '1';
-        }
-        else{
-            $fields = $this->exportedFields[ $topic ];
-        }
-        if( $format == 'name' ) {
-            // Return name (key)
-            foreach( $fields as $k=>$v) {
-                $return[] = $k;
-            }
-        }
-        else {
-            // Return field type (val)
-            foreach( $fields as $k=>$v) {
-                $return[] = $v;
-            }
-        }
-
-        return $return;
-    }
-
     public function writeCsv( $topic, $limit=Null, $offset=0, $delimiter=',' ) {
 
         $cnx = jDb::getConnection();
@@ -556,6 +307,9 @@ class occtaxExportObservation extends occtaxSearchObservation {
 
         // Fields
         $attributes = $this->getExportedFields( $topic );
+        if($topic == 'principal')
+            $attributes = array_diff($attributes, array('geojson'));
+
         $sql.= implode(', ', $attributes );
 
         // SQL
@@ -586,7 +340,7 @@ class occtaxExportObservation extends occtaxSearchObservation {
         $sql.= "
         WITH CSV DELIMITER " .$cnx->quote($delimiter);
         $sql.= " HEADER";
-//jLog::log( $sql);
+
         $cnx->exec($sql);
         if( !file_exists($path) ){
             //jLog::log( "Erreur lors de l'export en CSV");
@@ -654,7 +408,11 @@ class occtaxExportObservation extends occtaxSearchObservation {
                         ( SELECT l FROM
                             (
                                 SELECT ";
-        $sql.= implode(', ', $this->returnFields );
+        $attributes = $attributes = array_diff(
+            $this->returnFields,
+            array('geojson', 'wkt')
+        );
+        $sql.= implode(', ', $attributes );
         $sql.= "
                             ) As l
                         )
@@ -675,128 +433,87 @@ class occtaxExportObservation extends occtaxSearchObservation {
 
     }
 
-    public function writeDee(){
-
-        // Create temporary file name
-        $path = '/tmp/' . time() . session_id() . '.dee.tmp';
-        $fp = fopen($path, 'w');
-        fwrite($fp, '');
-        fclose($fp);
-        chmod($path, 0666);
-
-        // Build SQL
-        $cnx = jDb::getConnection();
-        $tpl = new jTpl();
-        $assign = array (
-            'where' => $this->whereClause,
-            'path' => $cnx->quote($path)
-        );
-        $tpl->assign( $assign );
-        $sql = $tpl->fetch('occtax~export_dee_sql');
-
-        // Execute SQL to export DEE file
-        $cnx->exec($sql);
-        if( !file_exists($path) ){
-            return Null;
-        }
-
-        // Add header (use sed for performance)
-        // Done here and not in postgres to avoid xmlagg on a big dataset
-        $tpl = new jTpl();
-        $u = $cnx->query('SELECT CAST(uuid_generate_v4() AS text) AS uuid;');
-        $assign = array(
-            'uuid' => $u->fetch()->uuid
-        );
-        $tpl->assign($assign);
-        $header = $tpl->fetch('occtax~export_dee_header');
-        $headerfile = '/tmp/' . time() . session_id() . '.dee.header';
-        jFile::write($headerfile, $header);
-
-        // Footer
-        $footerfile = '/tmp/' . time() . session_id() . '.dee.footer';
-        jFile::write($footerfile, '
-        </gml:FeatureCollection>');
-
-        // Use bash to concatenate
-        $output = '/tmp/' . time() . session_id() . '.dee';
-        exec('cat "'. $headerfile.'" "'. $path .'" "'. $footerfile .'" > "'.$output . '"');
-        if(file_exists($output)){
-            unlink($path);
-            unlink($headerfile);
-            unlink($footerfile);
-            return $output;
-        }
-
-        return Null;
-
-    }
 
 
-    public function createWfsService(){
 
-        // Get QGIS project template
-        $template = jFile::read(jApp::getModulePath('occtax'). '/install/qgis/wfs_template.qgs');
-        $tpl = new jTpl();
-        $sql = $this->sql;
-        $sql = str_replace( '<', '&lt;', $sql );
-        $sql = str_replace( '"', '\"', $sql );
-        $assign = array(
-            'dbname' => 'naturaliz-reunion',
-            'dbuser' => 'mdouchin',
-            'dbpass' => 'tation',
-            'dbport' => '5433',
-            'sql' => $sql,
-            'ows_server_title' => 'Naturaliz - Requête sur les observations',
-            'ows_server_abstract' => 'Filtres de recherches :
-            '.$this->getSearchDescription()
-        );
-        $tpl->assign($assign);
-        $content = $tpl->fetchFromString($template, 'text');
+    public function getGML( $describeUrl, $limit=Null, $offset=0) {
 
-//faut ajouter occtax. devant les tables
-//faut remplacer le truc geojson par vrai géométrie
-
-        $targetPath = '/tmp/test.qgs';
-        jFile::write( $targetPath, $content );
-        return $targetPath;
-
-    }
-
-    public function getReadme(){
-        $readme = jApp::configPath('occtax-export-LISEZ-MOI.txt');
-        $content = '';
-        if( is_file( $readme ) ){
-            $content = jFile::read( $readme );
-            $content.= "\r";
-
-            // Add search description
-            $content.= "Filtres de recherche utilisés :\r\n";
-            $getSearchDescription = $this->getSearchDescription();
-            $content.= strip_tags( $getSearchDescription );
-
-            // Add jdd list
-            $osParams = $this->getParams();
-            $dao_jdd = jDao::get('occtax~jdd');
-            $content.= "\r";
-            $content.= "Jeux de données : \r\n";
-
-            if( array_key_exists( 'jdd_id', $osParams ) and $osParams['jdd_id'] ){
-                $jdd_id = $osParams['jdd_id'];
-                $jdd = $dao_jdd->get( $jdd_id );
-                if( $jdd )
-                    $content.= '  * ' . $jdd->jdd_code . ' ( ' . $jdd->jdd_description . ' )
-';
-            }else{
-                $jdds = $dao_jdd->findAll();
-                foreach( $jdds as $jdd ){
-                    $content.= '  * ' . $jdd->jdd_code . ' ( ' . $jdd->jdd_description . ' )
-';
-                }
+        $sql = "
+        WITH source AS (
+        ".$this->sql;
+        if( $limit ){
+            $sql.= " LIMIT ".$limit;
+            if( $offset ){
+                $sql.= " OFFSET ".$offset;
             }
-
         }
-        return $content;
+        $sql.= "
+        )
+
+        SELECT xmlagg(
+            xmlelement(
+                name \"gml:featureMember\",
+                xmlelement(
+                    name \"qgs:export_observation\",
+                    xmlattributes(source.cle_obs AS \"gml:id\"),
+
+                    -- box
+                    xmlelement(
+                        name \"gml:boundedBy\",
+                        ST_AsGMl(2, geom, 6, 32)::xml
+                    ),
+
+                    -- geometry
+                    xmlelement(
+                        name \"qgs:geometry\",
+                        ST_AsGMl(2, geom, 6)::xml
+                    ),
+
+                    -- fields
+                        xmlforest (
+        ";
+        $attributes = $attributes = array_diff(
+            $this->returnFields,
+            array('geojson', 'wkt')
+        );
+        $attributes =  array_map(function($el){ return $el . ' AS "qgs:'.$el.'"'; }, $attributes);
+        $sql.= implode(', ', $attributes );
+        $sql.= "
+                        )
+
+                )
+            )
+
+        ) AS gml
+        FROM source";
+//jLog::log($sql);
+
+        $cnx = jDb::getConnection();
+        $q = $cnx->query( $sql );
+        $featureMembers = '';
+        $boundedBy = '';
+
+        // Get feature members
+        foreach( $q as $d){
+            $featureMembers =  $d->gml;
+            break;
+        }
+
+        // Build full XML
+        $tpl = new jTpl();
+        $assign = array();
+        $assign['url'] = $describeUrl;
+        $assign['boundedBy'] = $boundedBy;
+        $assign['featureMembers'] = $featureMembers;
+        $tpl->assign($assign);
+
+        $return = $tpl->fetch('occtax~wfs_getfeature_gml');
+
+        return $return;
+
     }
+
+
 
 }
 

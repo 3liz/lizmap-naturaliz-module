@@ -14,6 +14,20 @@ class occtaxSearch {
 
     private $params = array();
 
+    private $taxon_params = array();
+
+    private $taxon_params_list = array(
+        "cd_ref",
+        "filter",
+        "group",
+        "habitat",
+        "statut",
+        "endemicite",
+        "invasibilite",
+        "menace",
+        "protection"
+    );
+
     private $recordsTotal = Null;
 
     protected $returnFields = array();
@@ -54,14 +68,12 @@ class occtaxSearch {
             $this->srid = $srid;
 
         // Get parameters from cache if no parameters given
-        $cache = jCache::get('occtaxSearch' . $token);
+        $cache = $this->getFromCache($token);
         if($cache){
-jLog::log( 'cache hit = ' . $token );
             $this->params = $cache['params'];
             $this->recordsTotal = $cache['recordsTotal'];
             $this->token = $token;
         }else{
-jLog::log( 'no cache hit');
             $this->token = time().session_id();
             $this->params = $params;
         }
@@ -69,10 +81,34 @@ jLog::log( 'no cache hit');
         if(empty($this->params))
             return false;
 
+        // Taxon params : 2 things
+        // 1/ Get taxon search params if a taxon token has been given via param "search_token"
+        jClasses::inc('taxon~taxonSearch');
+        if ( array_key_exists( 'search_token', $this->params ) && $this->params['search_token'] ) {
+            $taxon_token = $this->params['search_token'];
+            $taxonSearch = new taxonSearch( $taxon_token );
+            $this->taxon_params = $taxonSearch->getParams();
+            foreach($this->taxon_params as $k=>$v){
+                if(!empty($v))
+                    $this->params[$k] = $v;
+            }
+        }else{
+
+            // 2/ Build a taxon search and get token if params given
+            $given_taxon_params = array();
+            foreach($this->params as $k=>$v){
+                if(in_array($k, $this->taxon_params_list))
+                    $given_taxon_params[$k] = $v;
+            }
+            if( count($this->taxon_params) == 0 and count($given_taxon_params) > 0 ){
+                $taxonSearch = new taxonSearch( $this->token, $given_taxon_params );
+                $this->taxon_params = $taxonSearch->getParams();
+                $this->params['search_token'] = $taxonSearch->id();
+            }
+        }
+
         // Build SQL query
         $this->setSql();
-
-jLog::log( $this->sql);
 
         // Get the number of total records
         if( !$this->recordsTotal and $this->token )
@@ -100,7 +136,7 @@ jLog::log( $this->sql);
     /**
      * Get search description
     */
-    public function getSearchDescription(){
+    public function getSearchDescription($format='html'){
         $tpl = new jTpl();
         $filters = array();
         $qf = $this->queryFilters;
@@ -115,8 +151,47 @@ jLog::log( $this->sql);
         if( $this->recordsTotal > 1 )
             $s = 's';
         $tpl->assign('s', $s  );
-        $description = $tpl->fetch('occtax~searchDescription');
+        if($format=='html')
+            $description = $tpl->fetch('occtax~searchDescription');
+        else
+            $description = $tpl->fetch('occtax~searchDescription_text');
         return $description;
+    }
+
+    public function getReadme(){
+        $readme = jApp::configPath('occtax-export-LISEZ-MOI.txt');
+        $content = '';
+        if( is_file( $readme ) ){
+            $content = jFile::read( $readme );
+            $content.= "\r";
+
+            // Add search description
+            $content.= "Filtres de recherche utilisés :\r\n";
+            $getSearchDescription = $this->getSearchDescription();
+            $content.= strip_tags( $getSearchDescription );
+
+            // Add jdd list
+            $osParams = $this->getParams();
+            $dao_jdd = jDao::get('occtax~jdd');
+            $content.= "\r";
+            $content.= "Jeux de données : \r\n";
+
+            if( array_key_exists( 'jdd_id', $osParams ) and $osParams['jdd_id'] ){
+                $jdd_id = $osParams['jdd_id'];
+                $jdd = $dao_jdd->get( $jdd_id );
+                if( $jdd )
+                    $content.= '  * ' . $jdd->jdd_code . ' ( ' . $jdd->jdd_description . ' )
+';
+            }else{
+                $jdds = $dao_jdd->findAll();
+                foreach( $jdds as $jdd ){
+                    $content.= '  * ' . $jdd->jdd_code . ' ( ' . $jdd->jdd_description . ' )
+';
+                }
+            }
+
+        }
+        return $content;
     }
 
     private function getValueLabel( $k, $v ){
@@ -221,7 +296,11 @@ jLog::log( $this->sql);
         $groupByFields = array();
         foreach( $this->querySelectors as $table => $tdata ){
             // Add select fields
+            if( !array_key_exists('returnFields', $tdata) )
+                continue;
             $fields = $tdata['returnFields'];
+            if( count($fields) == 0 )
+                continue;
 
             // Check if "group by" needed and add fields to groupByFields
             $multi = array_key_exists( 'multi', $tdata );
@@ -433,17 +512,40 @@ jLog::log( $this->sql);
         return $data;
     }
 
+    ///**
+    //* Store information to cache
+    //*/
+    //public function writeToCache(){
+        //$cache = array(
+            //'params' => $this->params,
+            //'recordsTotal' => $this->recordsTotal
+        //);
+
+        //jCache::set('occtaxSearch' . $this->token, $cache, 0);
+
+    //}
+
+
     /**
     * Store information to cache
     */
     public function writeToCache(){
-        $cache = array(
+        $_SESSION['occtaxSearch' . $this->token] = array(
+            'id' => $this->id,
             'params' => $this->params,
             'recordsTotal' => $this->recordsTotal
         );
+    }
 
-        jCache::set('occtaxSearch' . $this->token, $cache, 0);
-
+    /**
+    * Retrieve information from cache
+    */
+    public function getFromCache($token){
+        if( !empty($token) and isset( $_SESSION['occtaxSearch' . $token] ) ){
+            $cache = $_SESSION['occtaxSearch' . $token];
+            return $cache;
+        }
+        return Null;
     }
 
 

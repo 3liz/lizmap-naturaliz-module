@@ -176,7 +176,7 @@ $(document).ready(function () {
             $('#occtax_taxon_select_list').append(li);
             li.find('.close').click(function(){
                 deleteTaxonToSearch( $(this).attr('value') );
-                return false;
+                //return false;
             });
         }
     }
@@ -395,7 +395,7 @@ $(document).ready(function () {
               onQueryFeatureAdded( mailleSelect, function() {
                 $('#div_form_occtax_search_token form').submit();
               });
-              return false;
+              //return false;
           });
           $('#'+tableId+' tbody tr').hover(function(){
               var tr = $(this);
@@ -566,7 +566,7 @@ $(document).ready(function () {
       });
       $('#'+formId+'_reinit').click(function(){
           $('#'+formId+'_cd_ref').val( '' );
-          return false;
+          //return false;
       });
       $('#'+formId+'_filter > div').hide();
       $('#'+formId+'_filter > legend').html('<button class="btn" data-toggle="button">'+$('#'+formId+'_filter > legend').text()+'<span class="caret"></span></button>');
@@ -584,7 +584,7 @@ $(document).ready(function () {
         $('#occtax_taxon_select_list').hide();
         $('#occtax_taxon_select_params').html( description ).show();
         $('#div_occtax_taxon_modal').modal('toggle');
-        return false;
+        //return false;
       });
     }
 
@@ -721,7 +721,7 @@ $(document).ready(function () {
       });
       $('#'+formId+'_reinit').click(function(){
           $('#'+formId+'_cd_ref').val( '' );
-          return false;
+          //return false;
       });
       $('#'+formId+'_filter > div').hide();
       $('#'+formId+'_filter > legend').html('<button class="btn" data-toggle="button">'+$('#'+formId+'_filter > legend').text()+'<span class="caret"></span></button>');
@@ -824,7 +824,7 @@ $(document).ready(function () {
                 $('#sub-dock').html( data ).css('width','auto').css('height', '100%').css( 'left', sLeft ).show();
                 $('#sub-dock i.close').click(function(){
                     $('#sub-dock').hide();
-                    return false;
+                    //return false;
                 });
 
             }
@@ -1000,7 +1000,7 @@ OccTax.events.on({
                 OccTax.oneCtrlAtATime( dataValue, 'query', 'resultLayer');//, 'resultLayer'
                 //$('#map').css('cursor','pointer');
             }
-            return false;
+            //return false;
         });
 
 
@@ -1069,7 +1069,7 @@ OccTax.events.on({
         $('#occtax_search_result').hide();
         $('#occtax-search-replay').toggle();
         $(this).toggle();
-        return false;
+        //return false;
       });
       $('#occtax-search-replay').click(function(){
         $('#occtax_search_input').hide();
@@ -1077,7 +1077,7 @@ OccTax.events.on({
         $('#occtax_search_result').show();
         $('#occtax-search-modify').toggle();
         $(this).toggle();
-        return false;
+        //return false;
       });
 
       // Get search token corresponding to form inputs
@@ -1094,10 +1094,14 @@ OccTax.events.on({
             function(tData) {
                 if (tData.status == 1) {
                     // Display description div
-                    $('#occtax_search_description_content').html(tData.description);
+                    var dHtml = tData.description;
+                    $('#occtax_search_description_content').html(dHtml);
                     $('#occtax_search_description').show();
                     $('#occtax-search-modify').show();
                     $('#occtax-search-replay').hide();
+
+                    // Change wfs export URL
+                    $('a.btn-get-wfs').attr('href', tData.wfsUrl);
 
                     // Hide form div
                     $('#occtax_search_input').hide();
@@ -1129,7 +1133,7 @@ OccTax.events.on({
       //FIXME
       $('#'+tokenFormId+'_reinit').click(function(){
           clearTaxonToSearch();
-          return false;
+          //return false;
       });
 
       addResultsStatsTable();
@@ -1151,7 +1155,7 @@ OccTax.events.on({
         rLayer.addFeatures( OccTax.getResultFeatures( self.val()) );
         rLayer.setVisibility(true);
         rLayer.refresh();
-        return false;
+        //return false;
       });
       $('#occtax_results_tabs a').on('shown', function (e) {
           if ( $(e.target).attr('id') == 'occtax_results_observation_table_tab' )
@@ -1162,7 +1166,7 @@ OccTax.events.on({
       $('#occtax_results_zoom').click(function() {
           var rLayer = OccTax.layers['resultLayer'];
           OccTax.map.zoomToExtent( rLayer.getDataExtent() );
-          return False;
+          //return False;
       });
       $('a.btn-export-search').click(function() {
         var eFormat = $(this).text();
@@ -1173,8 +1177,10 @@ OccTax.events.on({
           exportUrl = exportUrl.replace('initSearch', 'exportGeoJSON');
         else
           exportUrl = exportUrl.replace('initSearch', 'exportCsv');
+
         exportUrl+= '?token=' + $('#occtax_service_search_stats_form input[name="token"]').val();
         exportUrl+= '&format=' + eFormat;
+
         window.open(exportUrl);
         return false;
 

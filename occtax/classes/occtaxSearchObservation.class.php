@@ -52,7 +52,6 @@ class occtaxSearchObservation extends occtaxSearch {
                 "
                 CASE
                     WHEN o.geom IS NOT NULL THEN 'GEO'
-                    WHEN lm05.code_maille IS NOT NULL THEN 'M05'
                     WHEN lm10.code_maille IS NOT NULL THEN 'M10'
                     WHEN lc.code_commune IS NOT NULL THEN 'COM'
                     WHEN lme.code_me IS NOT NULL THEN 'ME'
@@ -76,16 +75,6 @@ class occtaxSearchObservation extends occtaxSearch {
             )
         ),
 
-        'localisation_maille_05'  => array(
-            'alias' => 'lm05',
-            'required' => True,
-            'multi' => True,
-            'join' => ' LEFT JOIN ',
-            'joinClause' => ' ON lm05.cle_obs = o.cle_obs ',
-            'returnFields' => array(
-                //~ "string_agg(lm05.code_maille, '|') AS code_maille_05" => 'code_maille_05'
-            )
-        ),
         'localisation_maille_10'  => array(
             'alias' => 'lm10',
             'required' => True,
@@ -223,19 +212,19 @@ class occtaxSearchObservation extends occtaxSearch {
     /**
      * Get search description
     */
-    public function getSearchDescription(){
+    public function getSearchDescription($format='html'){
         $description = '';
         $params = $this->getParams();
         if ( $params ) {
             // Get search description for TAXON list
-            if ( array_key_exists( 'search_token', $params ) && $params['search_token'] ) {
+            if ( count($this->taxon_params) > 0 ){
                 $token = $params['search_token'];
                 jClasses::inc('taxon~taxonSearch');
                 $taxonSearch = new taxonSearch( $token );
                 $description.= $taxonSearch->getSearchDescription();
             }
             // Get description for the other filter via parent class
-            $description.= parent::getSearchDescription();
+            $description.= parent::getSearchDescription($format);
         }
         return $description;
     }

@@ -35,9 +35,9 @@ class observationCtrl extends jController {
 
         $occtaxSearch = new occtaxSearchObservation( null, $form->getAllData() );
         jForms::destroy('occtax~search');
-        jClasses::inc('occtax~occtaxExportSingleObservation');
+        jClasses::inc('occtax~occtaxSearchSingleObservation');
         $token = $occtaxSearch->getToken();
-        $occtaxSearch = new occtaxExportSingleObservation( $token, null );
+        $occtaxSearch = new occtaxSearchSingleObservation( $token, null );
 
         // Get data
         $limit = 1;
@@ -95,11 +95,11 @@ class observationCtrl extends jController {
 
         $children = array();
         foreach( $topics as $topic ) {
+
             // Get data for the given topic
             $return = $occtaxSearch->getTopicData( $topic );
             if( !$return )
                 continue;
-
             $children[$topic] = $return;
         }
 

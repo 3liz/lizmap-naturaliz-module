@@ -8,9 +8,9 @@
 * @license    All rights reserved
 */
 
-jClasses::inc('occtax~occtaxExportObservation');
+jClasses::inc('occtax~occtaxSearchObservationBrutes');
 
-class occtaxExportSingleObservation extends occtaxExportObservation {
+class occtaxSearchSingleObservation extends occtaxSearchObservationBrutes {
 
     protected $returnFields = array();
 

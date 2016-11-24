@@ -47,17 +47,37 @@ class serviceCtrl extends jController {
 
         // Get occtaxSearch instance
         jClasses::inc('occtax~occtaxSearchObservation');
-        $occtaxSearch = new occtaxSearchObservation( null, $form->getAllData() );
+        $params = $form->getAllData();
+
+        $occtaxSearch = new occtaxSearchObservation( null, $params );
         jForms::destroy('occtax~search');
 
         // Get search description
         $description = $occtaxSearch->getSearchDescription();
 
+        // WFS link
+        $wfsParams = array_merge(
+            $occtaxSearch->getParams(),
+            array(
+                'service'=> 'WMS',
+                'request'=> 'GetCapabilities',
+                'version' => '1.0.0'
+            )
+        );
+        $blackWfsParams = array(
+            'reinit',
+            'submit'
+        );
+        foreach($blackWfsParams as $b)
+            unset($wfsParams[$b]);
+        $wfsUrl = jUrl::getFull('occtax~wfs:index', $wfsParams );
+
         $rep->data = array(
             'status' => 1,
             'token' => $occtaxSearch->getToken(),
             'recordsTotal' => $occtaxSearch->getRecordsTotal(),
-            'description' => $description
+            'description' => $description,
+            'wfsUrl' => $wfsUrl
         );
 
         return $rep;
@@ -82,7 +102,7 @@ class serviceCtrl extends jController {
 
         // Get occtaxSearch from token
         $token = $this->param('token');
-        if( !jCache::get('occtaxSearch' . $token)  ){
+        if( !$token || $token=='' || !isset( $_SESSION['occtaxSearch' . $token] ) ){
             $return['status'] = 0;
             $return['msg'][] = jLocale::get( 'occtax~search.invalid.token' );
             $rep->data = $return;
@@ -129,8 +149,8 @@ class serviceCtrl extends jController {
           return $this->__search( 'occtaxSearchObservationMaille' );
         else if ( $groupBy == 't' )
           return $this->__search( 'occtaxSearchObservationTaxon' );
-        else if ( $groupBy == 'e' )
-          return $this->__search( 'occtaxExportObservation' );
+        //else if ( $groupBy == 'e' )
+          //return $this->__search( 'occtaxExportObservation' );
         else
           return $this->__search( 'occtaxSearchObservation' );
     }
@@ -173,9 +193,9 @@ class serviceCtrl extends jController {
 
         // Get occtaxSearch from token
         $token = $this->param('token');
-        jClasses::inc('occtax~occtaxExportObservation');
+        jClasses::inc('occtax~occtaxSearchObservationBrutes');
 
-        $occtaxSearch = new occtaxExportObservation( $token, null );
+        $occtaxSearch = new occtaxSearchObservationBrutes( $token, null );
         if( !$occtaxSearch ){
             $return['status'] = 0;
             $return['msg'][] = jLocale::get( 'occtax~search.invalid.token' );
@@ -426,6 +446,7 @@ class serviceCtrl extends jController {
 
         return $rep;
     }
+
 
 }
 
