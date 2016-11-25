@@ -68,8 +68,13 @@ class serviceCtrl extends jController {
             'reinit',
             'submit'
         );
-        foreach($blackWfsParams as $b)
+        foreach($blackWfsParams as $b){
             unset($wfsParams[$b]);
+        }
+        foreach($wfsParams as $k=>$v){
+            if(empty($v))
+                unset($wfsParams[$k]);
+        }
         $wfsUrl = jUrl::getFull('occtax~wfs:index', $wfsParams );
 
         $rep->data = array(
