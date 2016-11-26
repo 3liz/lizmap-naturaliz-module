@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dao xmlns="http://jelix.org/ns/dao/1.0">
+    <datasources>
+        <primarytable name="demande" realname="demande" primarykey="id" />
+    </datasources>
+    <record>
+        <property name="id" fieldname="id" datatype="int" autoincrement="true" default=""/>
+        <property name="usr_login" fieldname="usr_login" datatype="varchar" required="true" maxlength="50"/>
+        <property name="id_structure" fieldname="id_structure" datatype="int" required="true"/>
+        <property name="motif" fieldname="motif" datatype="text" required="true"/>
+        <property name="type_demande" fieldname="type_demande" datatype="text" required="true"/>
+        <property name="date_demande" fieldname="date_demande" datatype="date" required="true"/>
+        <property name="date_acces" fieldname="date_acces" datatype="date"/>
+        <property name="commentaire" fieldname="commentaire" datatype="text"/>
+        <property name="date_validite_min" fieldname="date_validite_min" datatype="date"/>
+        <property name="date_validite_max" fieldname="date_validite_max" datatype="date"/>
+        <property name="cd_ref" fieldname="cd_ref" datatype="_int"/>
+        <property name="group1_inpn" fieldname="group1_inpn" datatype="_text"/>
+        <property name="group2_inpn" fieldname="group2_inpn" datatype="_text"/>
+        <property name="date_creation" fieldname="date_creation" datatype="date" default="now()"/>
+        <property name="libelle_geom" fieldname="libelle_geom" datatype="text" required="true"/>
+        <property name="geom" fieldname="geom" datatype="geometry" selectpattern="ST_AsText(geom)"/>
+        <!--<property name="" fieldname="" datatype="string/int/float/date"
+        required="yes" maxlength="" minlength="" regexp="" sequence=""
+        updatepattern="" insertpattern="" selectpattern=""/>-->
+    </record>
+    <factory>
+        <method name="findByLogin" type="select">
+            <parameter name="login" />
+            <conditions logic="and">
+                <eq property="usr_login" expr="$login" />
+            </conditions>
+        </method>
+        <method name="findActiveDemandesByLogin" type="select">
+            <parameter name="login" />
+            <conditions logic="and">
+                <eq property="usr_login" expr="$login" />
+                <lteq property="date_validite_min" value="now()" />
+                <gteq property="date_validite_max" value="now()" />
+            </conditions>
+        </method>
+        <!--<method name="findByStage" type="select/selectfirst/delete/update/php">
+            <parameter name="" />
+            <values>
+                <value property="" value="" />
+            </values>
+            <conditions logic="and/or">
+                <eq property="" value="" />
+            </conditions>
+            <order>
+                <orderitem property="" way="asc/desc" />
+            </order>
+            <limit offset="" count=""/>
+            <body><![CDATA[
+            ]]></body>
+        </method>-->
+    </factory>
+</dao>

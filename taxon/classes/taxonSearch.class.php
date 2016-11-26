@@ -357,9 +357,11 @@ class taxonSearch {
                 }
             }
         }
-
     }
 
+    function getConditions(){
+        return $this->conditions;
+    }
 
     /**
     * Calculate the total number of records
@@ -378,16 +380,18 @@ class taxonSearch {
     * @param $order Order for the query. Default:  nom_valide:asc
     * @return List of matching taxons
     */
-    function getData( $limit=20, $offset=0, $order='nom_valide:asc' ) {
+    function getData( $limit=20, $offset=0, $order='nom_valide:asc', $withTemplateFields=True ) {
 
         // First set order
-        $orderCol = 'nom_valide'; $orderDir = 'asc';
-        $orderExp = explode( ':', $order );
-        if( count( $orderExp ) == 2 ){
-            $orderCol = $orderExp[0];
-            $orderDir = $orderExp[1];
+        if($order){
+            $orderCol = 'nom_valide'; $orderDir = 'asc';
+            $orderExp = explode( ':', $order );
+            if( count( $orderExp ) == 2 ){
+                $orderCol = $orderExp[0];
+                $orderDir = $orderExp[1];
+            }
+            $this->conditions->addItemOrder( $orderCol, $orderDir );
         }
-        $this->conditions->addItemOrder( $orderCol, $orderDir );
 
         $result = $this->dao->findBy( $this->conditions, $offset, $limit );
         $data = $result->fetchAll();
@@ -404,32 +408,34 @@ class taxonSearch {
             }
 
             // Get template fields
-            foreach( $this->tplFields as $field=>$template ) {
-                $tpl = new jTpl();
-                $assign = array();
-                if( $field == 'illustration' ){
-                    $illustrationPath = '/css/illustrations/' . $line->cd_nom. '.jpg';
-                    $imageUrl = '';
-                    if( file_exists( jApp::wwwPath() . $illustrationPath) )
-                        $illustration = $illustrationPath;
-                    else
-                        $illustration = '';
-                    $assign['illustration'] = $illustration;
-                }
-                if( $field == 'redlist' ){
-                    $daoN = jDao::get( 'taxon~t_nomenclature' );
-                    $men = $daoN->get( 'menace', $line->menace );
-                    $libmenace = $line->menace;
-                    if( $men )
-                        $libmenace = $men->valeur;
-                    $assign['libmenace'] = $libmenace;
+            if( $withTemplateFields ){
+                foreach( $this->tplFields as $field=>$template ) {
+                    $tpl = new jTpl();
+                    $assign = array();
+                    if( $field == 'illustration' ){
+                        $illustrationPath = '/css/illustrations/' . $line->cd_nom. '.jpg';
+                        $imageUrl = '';
+                        if( file_exists( jApp::wwwPath() . $illustrationPath) )
+                            $illustration = $illustrationPath;
+                        else
+                            $illustration = '';
+                        $assign['illustration'] = $illustration;
+                    }
+                    if( $field == 'redlist' ){
+                        $daoN = jDao::get( 'taxon~t_nomenclature' );
+                        $men = $daoN->get( 'menace', $line->menace );
+                        $libmenace = $line->menace;
+                        if( $men )
+                            $libmenace = $men->valeur;
+                        $assign['libmenace'] = $libmenace;
 
-                }
+                    }
 
-                $assign['line'] = $line;
-                $tpl->assign( $assign );
-                $val = $tpl->fetchFromString($template, 'html');
-                $item[] = $val;
+                    $assign['line'] = $line;
+                    $tpl->assign( $assign );
+                    $val = $tpl->fetchFromString($template, 'html');
+                    $item[] = $val;
+                }
             }
 
             $d[] = $item;

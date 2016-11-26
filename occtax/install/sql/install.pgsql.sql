@@ -503,6 +503,67 @@ COMMENT ON COLUMN lien_observation_identifiant_permanent.dee_date_derniere_modif
 
 COMMENT ON COLUMN lien_observation_identifiant_permanent.dee_date_transformation IS 'Date de transformation de la donnée source (DSP ou DSR) en donnée élémentaire d''échange (DEE).';
 
+-- Table structure
+CREATE TABLE "structure" (
+    id_structure serial PRIMARY KEY,
+    nom_structure text NOT NULL
+);
+
+COMMENT ON TABLE "structure" IS 'Structures listées dans l''application. Les demandes sont rattachées à une structure.';
+COMMENT ON COLUMN "structure".id_structure IS 'Identifiant de la structure.';
+COMMENT ON COLUMN "structure".nom_structure IS 'Nom de la structure.';
+
+-- Table demande
+CREATE TABLE demande (
+    id serial PRIMARY KEY,
+    usr_login character varying(50) NOT NULL,
+    id_structure integer NOT NULL,
+    motif text NOT NULL,
+    type_demande text NOT NULL,
+    date_demande date NOT NULL,
+    date_acces date,
+    commentaire text,
+    date_validite_min date,
+    date_validite_max date,
+    cd_ref bigint[],
+    group1_inpn text[],
+    group2_inpn text[],
+    -- code_commune text[],
+    -- code_masse_eau text[],
+    -- code_maille text[],
+    date_creation date DEFAULT now(),
+    libelle_geom text NOT NULL
+);
+SELECT AddGeometryColumn('demande', 'geom', {$SRID}, 'GEOMETRY', 2);
+
+ALTER TABLE occtax.demande ADD CONSTRAINT demande_user_login_fk
+FOREIGN KEY (usr_login) REFERENCES jlx_user (usr_login)
+ON DELETE CASCADE;
+ALTER TABLE occtax.demande ADD CONSTRAINT demande_id_structure_fk
+FOREIGN KEY (id_structure) REFERENCES "structure" (id_structure)
+ON DELETE RESTRICT;
+
+ALTER TABLE demande ADD CONSTRAINT demande_valide
+CHECK ( Coalesce(cd_ref::text, date_validite_min::text, date_validite_max::text, group1_inpn::text, group2_inpn::text, geom::text, '') != '' )
+;
+
+COMMENT ON TABLE demande IS 'Liste des demandes d''acccès à l''application. Cette table permet de restreindre les accès aux données, par date, taxon, etc.';
+COMMENT ON COLUMN demande.id IS 'Identifiant auto de la demande (clé primaire)';
+COMMENT ON COLUMN demande.usr_login IS 'Login de l''utilisateur qui fait la demande, pour lequel activer une restriction. On peut avoir plusieurs lignes pour la demande. Clé étrangère vers publi.jlx_user';
+COMMENT ON COLUMN demande.id_structure IS 'Identifiant de la structure ayant émis la demande. Clé étrangère vers table structure';
+COMMENT ON COLUMN demande.motif IS 'Motif de la demande d''accès aux données fourni par le demandeur';
+COMMENT ON COLUMN demande.type_demande IS 'Type de demande selon la typologie de la charte du SINP (exemple : mission régalienne, publication scientifique, etc.)';
+COMMENT ON COLUMN demande.date_demande IS 'Date d''émission de la demande (découplée de la date de création, qui est elle renseignée automatiquement';
+COMMENT ON COLUMN demande.date_acces  IS 'Date d''ouverture de l''accès au demandeur (c''est-à-dire date de communication des identifiants de connexion à l''application.';
+COMMENT ON COLUMN demande.commentaire IS 'Remarques générales sur la demande.';
+COMMENT ON COLUMN demande.date_validite_min IS 'Date minimale de validité de la demande. Les accès sont bloqués si le demandeur consulte l''application avant cette date, pour cette demande.';
+COMMENT ON COLUMN demande.date_validite_max IS 'Date maximale de validité de la demande. Les accès sont bloqués si le demandeur consulte l''application après cette date, pour cette demande.';
+COMMENT ON COLUMN demande.cd_ref IS 'Tableau des identifiants cd_ref des taxons pour lesquels restreindre l''accès aux données';
+COMMENT ON COLUMN demande.group1_inpn IS 'Noms des groupes INPN de type 1. Clé étrangère vers table taxon.t_group_categorie.groupe_nom';
+COMMENT ON COLUMN demande.group2_inpn IS 'Noms des groupes INPN de type 2. Clé étrangère vers table taxon.t_group_categorie.groupe_nom';
+COMMENT ON COLUMN demande.date_creation IS 'Date de création de la ligne dans la table (automatique si aucune valeur passée)';
+COMMENT ON COLUMN demande.libelle_geom IS 'Description littérale de la zone géographique sur laquelle porte la demande';
+COMMENT ON COLUMN demande.geom IS 'Géométrie dans laquelle restreindre les observations consultables. On fait une intersection entre les observation et cette géométrie.';
 
 -- View to help query observateurs, determinateurs, validateurs
 CREATE OR REPLACE VIEW v_observateur AS
@@ -566,6 +627,7 @@ CREATE INDEX ON jdd (jdd_code);
 
 CREATE INDEX ON lien_observation_identifiant_permanent (jdd_id, identifiant_origine);
 
+CREATE INDEX ON demande (usr_login);
 -----------------------
 -- Tables SIG
 -----------------------

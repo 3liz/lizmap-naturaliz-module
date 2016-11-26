@@ -136,6 +136,7 @@ class occtaxSearchObservation extends occtaxSearch {
         'cd_nom' => array (
             'table' => 'observation',
             'clause' => ' AND o.cd_ref IN (@)',
+            //'clause' => ' AND o.cd_ref = ANY ( ARRAY[ @ ] )',
             'type'=> 'integer',
             'label'=> array(
                 'dao'=>'taxon~taxref',
@@ -231,28 +232,44 @@ class occtaxSearchObservation extends occtaxSearch {
 
     protected function setWhereClause(){
         $sql = parent::setWhereClause();
+
+        // sensibilité
         if( !jAcl2::check("visualisation.donnees.sensibles") ){
             $sql.= " AND o.cd_nom NOT IN (SELECT cd_nom FROM taxon.taxon_sensible) ";
         }
 
+        // taxons
         $params = $this->getParams();
         if ( $params ) {
+            // Get taxon from taxon search
             if ( array_key_exists( 'search_token', $params ) && $params['search_token'] ) {
                 $token = $params['search_token'];
                 jClasses::inc('taxon~taxonSearch');
+
                 $taxonSearch = new taxonSearch( $token );
                 $tsFields = $taxonSearch->getFields();
-                $tsRowIdIdx = array_search( 'cd_ref', $tsFields['return'] );
-                $tsData = $taxonSearch->getData( $taxonSearch->getRecordsTotal(), 0 );
-                $taxons = array();
-                foreach( $tsData as $d ) {
-                    $taxons[] = $d[ $tsRowIdIdx ];
+
+                $conditions = $taxonSearch->getConditions();
+                $tsql = array();
+                foreach($conditions->condition->conditions as $condition){
+                    $csql = '"' . $condition['field_id'];
+                    $csql.= '" ' . $condition['operator'];
+                    $value = $condition['value'];
+                    if(is_array($value)){
+                        $values = array_map( function($item){return $this->myquote($item);}, $value );
+                        $csql.= ' ( ' . implode(',', $values)  .' ) ';
+                    }else{
+                        $csql.= ' ' . $this->myquote($value) . ' ';
+                    }
+
+                    $tsql[] = $csql;
                 }
-                $sql.= ' ' . str_replace(
-                    '@',
-                    implode( ', ', $taxons ),
-                    $this->queryFilters['cd_nom']['clause']
-                );
+
+                if( count($tsql) > 0 ){
+                    $taxonSql = " AND o.cd_ref IN (SELECT cd_ref FROM taxon.taxref_consolide WHERE ";
+                    $taxonSql.= implode( ' AND ', $tsql  ) . " ) ";
+                    $sql.= $taxonSql;
+                }
             }
         }
         return $sql;

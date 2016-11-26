@@ -12,14 +12,16 @@ class occtaxSearch {
 
     protected $token = Null;
 
-    private $params = array();
+    protected $params = array();
 
-    private $taxon_params = array();
+    protected $taxon_params = array();
 
-    private $taxon_params_list = array(
+    protected $taxon_params_list = array(
         "cd_ref",
         "filter",
         "group",
+        "group1_inpn",
+        "group2_inpn",
         "habitat",
         "statut",
         "endemicite",
@@ -28,7 +30,7 @@ class occtaxSearch {
         "protection"
     );
 
-    private $recordsTotal = Null;
+    protected $recordsTotal = Null;
 
     protected $returnFields = array();
 
@@ -58,7 +60,12 @@ class occtaxSearch {
 
     protected $srid = '4326';
 
-    public function __construct ($token=Null, $params=Null) {
+    protected $demande = Null;
+
+    public function __construct ($token=Null, $params=Null, $demande=Null) {
+
+        // Set demande to avoid inifite loop while fetching sql for demande
+        $this->demande = $demande;
 
         // Get SRID
         $localConfig = jApp::configPath('localconfig.ini.php');
@@ -103,19 +110,24 @@ class occtaxSearch {
             if( count($this->taxon_params) == 0 and count($given_taxon_params) > 0 ){
                 $taxonSearch = new taxonSearch( $this->token, $given_taxon_params );
                 $this->taxon_params = $taxonSearch->getParams();
+
                 $this->params['search_token'] = $taxonSearch->id();
             }
         }
+
+//jLog::log(json_encode($this->params));
+//jLog::log(json_encode($this->taxon_params));
 
         // Build SQL query
         $this->setSql();
 
         // Get the number of total records
-        if( !$this->recordsTotal and $this->token )
+        if( !$this->recordsTotal and $this->token and !$this->demande )
             $this->setRecordsTotal();
 
         // Store to cache
-        $this->writeToCache();
+        if(!$this->demande)
+            $this->writeToCache();
 
     }
 
@@ -281,7 +293,7 @@ class occtaxSearch {
         $this->sql.= $this->whereClause;
         $this->sql.= $this->groupClause;
 
-//jLog::log($this->sql);
+jLog::log($this->sql);
     }
 
 
@@ -379,13 +391,18 @@ class occtaxSearch {
     }
 
 
-    private function myquote($term){
+    protected function myquote($term){
         $cnx = jDb::getConnection();
-        return $cnx->quote($term);
+        return $cnx->quote(trim($term));
+    }
+
+    public function getWhereClause(){
+        return $this->whereClause;
     }
 
     protected function setWhereClause(){
-        $sql = " WHERE 2>1 ";
+        $sql = " WHERE True ";
+        $cnx = jDb::getConnection();
 
         if( $this->params ){
             $qf = $this->queryFilters;
@@ -405,7 +422,7 @@ class occtaxSearch {
 
                     if( is_array( $v ) ){
                         if( in_array( $q['type'], array( 'string', 'timestamp', 'geom' ) ) )
-                            $v = array_map( 'myquote', $v );
+                            $v = array_map( function($item){return $this->myquote($item);}, $v );
                         $v = implode( ', ', $v );
                     }
                     else{
@@ -422,7 +439,74 @@ class occtaxSearch {
             }
         }
 
+        // Add restriction coming from demande table
+        if( jAuth::isConnected() and !$this->demande ){
+            $sql.= $this->getWhereClauseDemande();
+        }
+
         return $sql;
+    }
+
+    private function getWhereClauseDemande(){
+        $return = '';
+        $table_demandes = array();
+
+        // Get user info
+        $user = jAuth::getUserSession();
+        $login = $user->login;
+
+        // Get demande for user
+        $dao_demande = jDao::get('occtax~demande');
+        $demandes = $dao_demande->findByLogin($login);
+        $actives_demandes = $dao_demande->findActiveDemandesByLogin($login);
+
+        $fieds = array(
+            "text" => array(''),
+            "integer" => array(),
+            "geom" => array()
+        );
+        foreach($demandes as $demande){
+
+            $dparams = array();
+            if($demande->cd_ref)
+                $dparams['cd_nom'] = explode( ',', trim($demande->cd_ref, '{}') );
+            if($demande->group1_inpn)
+                $dparams['group1_inpn'] = explode( ',', trim($demande->group1_inpn, '{}') );
+            if($demande->group2_inpn)
+                $dparams['group2_inpn'] = explode( ',', trim($demande->group2_inpn, '{}') );
+            if($demande->date_validite_min)
+                $dparams['date_min'] = $demande->date_validite_min;
+            if($demande->date_validite_max)
+                $dparams['date_max'] = $demande->date_validite_max;
+
+            $dsearch = new occtaxSearchObservation( null, $dparams, 1 );
+            $wc = preg_replace(
+                '/WHERE +True( +AND +)?/i',
+                '',
+                $dsearch->getWhereClause()
+            );
+
+            if($demande->geom){
+                $cnx = jDb::getConnection();
+                $wc_geom = ' ST_Intersects(o.geom, ST_GeomFromText(' . $cnx->quote($demande->geom) . ', '. $this->srid .')) ' ;
+                if(!(empty(trim($wc)))){
+                    $wc.= " AND " . $wc_geom;
+                }else{
+                    $wc.= $wc_geom;
+                }
+            }
+
+            if(!empty(trim($wc))){
+                $table_demandes[] = ' ( ' . $wc . ' ) ';
+            }
+
+        }
+        if( count($table_demandes)>0 ){
+            $return = implode( ' OR ', $table_demandes);
+            $return = ' AND ( ' . $return . ' ) ';
+
+        }
+        return $return;
     }
 
 
@@ -512,26 +596,12 @@ class occtaxSearch {
         return $data;
     }
 
-    ///**
-    //* Store information to cache
-    //*/
-    //public function writeToCache(){
-        //$cache = array(
-            //'params' => $this->params,
-            //'recordsTotal' => $this->recordsTotal
-        //);
-
-        //jCache::set('occtaxSearch' . $this->token, $cache, 0);
-
-    //}
-
-
     /**
     * Store information to cache
     */
     public function writeToCache(){
         $_SESSION['occtaxSearch' . $this->token] = array(
-            'id' => $this->id,
+            'token' => $this->token,
             'params' => $this->params,
             'recordsTotal' => $this->recordsTotal
         );
