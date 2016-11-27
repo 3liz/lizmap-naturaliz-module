@@ -233,126 +233,157 @@ var OccTax = function() {
 
 lizMap.events.on({
     'uicreated':function(evt){
-      //console.log('uicreated');
-    OccTax.map = lizMap.map;
-    // Style des couches
-    // ----------------------------------------------------------------------
-    OccTax.resultLayerContext = {
-        getPointRadius:function(feat) {
-            var res = OccTax.map.getResolution();
+          //console.log('uicreated');
+        OccTax.map = lizMap.map;
+        // Style des couches
+        // ----------------------------------------------------------------------
+        OccTax.resultLayerContext = {
+            getPointRadius:function(feat) {
+                var res = OccTax.map.getResolution();
 
-            if(feat.attributes.rayon > 0){
-                //~ return feat.attributes.rayon; //
-                return Math.round(feat.attributes.rayon / res); //pour rayon en mètre
-            }else{
-                return (OccTax.map.getZoom() + 1) * 1.5;
+                if(feat.attributes.rayon > 0){
+                    //~ return feat.attributes.rayon; //
+                    return Math.round(feat.attributes.rayon / res); //pour rayon en mètre
+                }else{
+                    return (OccTax.map.getZoom() + 1) * 1.5;
+                }
+            },
+            getPointColor:function(feat) {
+                if (!feat.attributes.color)
+                  feat.attributes.color = '#'+Math.floor(Math.random()*16777215).toString(16);
+                return feat.attributes.color;
+            },
+            getStrokeWidth:function(feat) {
+                mySw = (OccTax.map.getZoom() + 1) * 1.5;
+                if(mySw < 3){mySw = 3;}
+                return mySw;
+            },
+            getPointRadiusSelect:function(feat) {
+                var res = OccTax.map.getResolution();
+
+                if(feat.attributes.rayon > 0){
+                    //~ return feat.attributes.rayon; //
+                    return Math.round(feat.attributes.rayon / res) * 1.5; //pour rayon en mètre
+                }else{
+                    return (OccTax.map.getZoom() + 1) * 1.5 * 1.5;
+                }
+            },
+            getStrokeWidthSelect:function(feat) {
+                mySw = (OccTax.map.getZoom() + 1) * 1.5 * 2;
+                if(mySw < 3){mySw = 3 * 2;}
+                return mySw;
+            },
+            getGraphicName:function(feat) {
+                var graphic = 'circle';
+                if(
+                    feat.attributes.source_objet &&
+                    feat.attributes.source_objet.indexOf('maille') == 0 // starts with maille -> square
+                )
+                    graphic = 'square';
+                return graphic;
+
             }
-        },
-        getPointColor:function(feat) {
-            if (!feat.attributes.color)
-              feat.attributes.color = '#'+Math.floor(Math.random()*16777215).toString(16);
-            return feat.attributes.color;
-        },
-        getStrokeWidth:function(feat) {
-            mySw = (OccTax.map.getZoom() + 1) * 1.5;
-            if(mySw < 3){mySw = 3;}
-            return mySw;
-        },
-        getPointRadiusSelect:function(feat) {
-            var res = OccTax.map.getResolution();
+        };
 
-            if(feat.attributes.rayon > 0){
-                //~ return feat.attributes.rayon; //
-                return Math.round(feat.attributes.rayon / res) * 1.5; //pour rayon en mètre
-            }else{
-                return (OccTax.map.getZoom() + 1) * 1.5 * 1.5;
+        var resultLayerTemplateDefault = {
+            pointRadius: "${getPointRadius}",
+            fillColor: "${getPointColor}",
+            fillOpacity: 1,
+            strokeColor: "${getPointColor}",
+            strokeOpacity: 1,
+            strokeDashstyle: "solid",
+            strokeWidth: "${getStrokeWidth}",
+            graphicName: "${getGraphicName}"
+        };
+        OccTax.resultLayerStyleDefault = new OpenLayers.Style(
+            resultLayerTemplateDefault, {context: OccTax.resultLayerContext}
+        );
+
+        var resultLayerTemplateSelect = {
+            pointRadius: "${getPointRadius}",
+            fillColor: "${getPointColor}",
+            fillOpacity: 1,
+            strokeColor: "blue",
+            strokeOpacity: 1,
+            strokeDashstyle: "solid",
+            strokeWidth: "${getStrokeWidthSelect}",
+            graphicName: "${getGraphicName}"
+        };
+        OccTax.resultLayerStyleSelect = new OpenLayers.Style(
+            resultLayerTemplateSelect, {context: OccTax.resultLayerContext}
+        );
+
+        OccTax.resultLayerStyleMap = new OpenLayers.StyleMap({
+            "default": OccTax.resultLayerStyleDefault,
+            "select" : OccTax.resultLayerStyleSelect
+        });
+
+        // Style des outils de dessin et sélection
+        // -------------------------------------------------------------------------
+        OccTax.drawStyle = new OpenLayers.Style({
+            pointRadius:7,
+            fillColor: "#94EF05",
+            fillOpacity: 0.3,
+            strokeColor: "yellow",
+            strokeOpacity: 1,
+            strokeWidth: 3
+        });
+
+        OccTax.drawStyleTemp = new OpenLayers.Style({
+            pointRadius:7,
+            fillColor: "orange",
+            fillOpacity: 0.3,
+            strokeColor: "blue",
+            strokeOpacity: 1,
+            strokeWidth: 3
+        });
+
+        OccTax.drawStyleSelect = new OpenLayers.Style({
+            pointRadius:7,
+            fillColor: "blue",
+            fillOpacity: 0.3,
+            strokeColor: "blue",
+            strokeOpacity: 1,
+            strokeWidth: 3
+        });
+
+        OccTax.drawStyleMap = new OpenLayers.StyleMap({
+            "default":   OccTax.drawStyle,
+            "temporary": OccTax.drawStyleTemp,
+            "select" :   OccTax.drawStyleSelect
+        });
+
+        OccTax.init();
+
+
+
+
+    },
+
+    // Adapt dock size to display metadata
+    dockopened: function(e) {
+        if ( e.id == 'metadata' ) {
+            // Change dock size
+            $('#dock')
+            .css('max-width', 'none')
+            .css('width', '90%')
+            ;
+
+            // Replace metadata content
+            if( $('#occtax-metadata').length ){
+                var ohtml = $('#occtax-metadata').html();
+                $('#metadata').html(ohtml);
             }
-        },
-        getStrokeWidthSelect:function(feat) {
-            mySw = (OccTax.map.getZoom() + 1) * 1.5 * 2;
-            if(mySw < 3){mySw = 3 * 2;}
-            return mySw;
-        },
-        getGraphicName:function(feat) {
-            var graphic = 'circle';
-            if(
-                feat.attributes.source_objet &&
-                feat.attributes.source_objet.indexOf('maille') == 0 // starts with maille -> square
-            )
-                graphic = 'square';
-            return graphic;
-
         }
-    };
+    },
 
-    var resultLayerTemplateDefault = {
-        pointRadius: "${getPointRadius}",
-        fillColor: "${getPointColor}",
-        fillOpacity: 1,
-        strokeColor: "${getPointColor}",
-        strokeOpacity: 1,
-        strokeDashstyle: "solid",
-        strokeWidth: "${getStrokeWidth}",
-        graphicName: "${getGraphicName}"
-    };
-    OccTax.resultLayerStyleDefault = new OpenLayers.Style(
-        resultLayerTemplateDefault, {context: OccTax.resultLayerContext}
-    );
-
-    var resultLayerTemplateSelect = {
-        pointRadius: "${getPointRadius}",
-        fillColor: "${getPointColor}",
-        fillOpacity: 1,
-        strokeColor: "blue",
-        strokeOpacity: 1,
-        strokeDashstyle: "solid",
-        strokeWidth: "${getStrokeWidthSelect}",
-        graphicName: "${getGraphicName}"
-    };
-    OccTax.resultLayerStyleSelect = new OpenLayers.Style(
-        resultLayerTemplateSelect, {context: OccTax.resultLayerContext}
-    );
-
-    OccTax.resultLayerStyleMap = new OpenLayers.StyleMap({
-        "default": OccTax.resultLayerStyleDefault,
-        "select" : OccTax.resultLayerStyleSelect
-    });
-
-    // Style des outils de dessin et sélection
-    // -------------------------------------------------------------------------
-    OccTax.drawStyle = new OpenLayers.Style({
-        pointRadius:7,
-        fillColor: "#94EF05",
-        fillOpacity: 0.3,
-        strokeColor: "yellow",
-        strokeOpacity: 1,
-        strokeWidth: 3
-    });
-
-    OccTax.drawStyleTemp = new OpenLayers.Style({
-        pointRadius:7,
-        fillColor: "orange",
-        fillOpacity: 0.3,
-        strokeColor: "blue",
-        strokeOpacity: 1,
-        strokeWidth: 3
-    });
-
-    OccTax.drawStyleSelect = new OpenLayers.Style({
-        pointRadius:7,
-        fillColor: "blue",
-        fillOpacity: 0.3,
-        strokeColor: "blue",
-        strokeOpacity: 1,
-        strokeWidth: 3
-    });
-
-    OccTax.drawStyleMap = new OpenLayers.StyleMap({
-        "default":   OccTax.drawStyle,
-        "temporary": OccTax.drawStyleTemp,
-        "select" :   OccTax.drawStyleSelect
-    });
-
-      OccTax.init();
+    dockclosed: function(e) {
+        if ( e.id == 'metadata' ) {
+            $('#dock')
+            .css('max-width', '30%')
+            .css('width', 'none')
+            ;
+        }
     }
+
 });

@@ -9,7 +9,7 @@
 
 <menulist ref="defaultProject" required="true">
   <label locale="admin~admin.form.admin_services.defaultProject.label"/>
-  <datasource class="occtax_admin~listOcctaxProjectDatasource" />
+  <datasource class="occtax_admin~listOcctaxProjectDatasource" criteriafrom="defaultRepository"/>
 </menulist>
 
 <input ref="projectName" type="string">

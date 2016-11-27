@@ -6,8 +6,8 @@
             if ($coord->moduleName == 'occtax') {
                 $project = $event->getParam( 'project' );
                 $repository = $event->getParam( 'repository' );
-                $lrep = lizmap::getProject( $repository . '~' .$project );
-                $configOptions = $lrep->getOptions();
+                $lproj = lizmap::getProject( $repository . '~' .$project );
+                $configOptions = $lproj->getOptions();
                 $bp = jApp::config()->urlengine['basePath'];
 
                 // Create search form
@@ -61,26 +61,38 @@
                 // OVERRIDE METADATA
                 $metadataTpl = new jTpl();
                 // Get the WMS information
-                $wmsInfo = $lrep->getWMSInformation();
+                $wmsInfo = $lproj->getWMSInformation();
                 // WMS GetCapabilities Url
                 $wmsGetCapabilitiesUrl = jAcl2::check(
                     'lizmap.tools.displayGetCapabilitiesLinks',
                     $repository
                 );
                 if ( $wmsGetCapabilitiesUrl ) {
-                    $wmsGetCapabilitiesUrl = $lrep->getData('wmsGetCapabilitiesUrl');
+                    $wmsGetCapabilitiesUrl = $lproj->getData('wmsGetCapabilitiesUrl');
                 }
 
                 // Get local configuration (application name, projects name, etc.)
                 $localConfig = jApp::configPath('localconfig.ini.php');
                 $ini = new jIniFileModifier($localConfig);
 
-                $wmsInfo['WMSServiceTitle'] = $ini->getValue('projectName', 'occtax');
-                $wmsInfo['WMSServiceAbstract'] = html_entity_decode( $ini->getValue('projectDescription', 'occtax') );
+                // Get description
+                //$wmsInfo['WMSServiceTitle'] = $ini->getValue('projectName', 'occtax');
+                $projectDescriptionConfig = $ini->getValue('projectDescription', 'occtax');
+                $projectDescription = html_entity_decode( $projectDescriptionConfig );
+
+                // Read file beside QGIS project if existing
+                if($content = jFile::read( $lproj->getQgisPath() . '.html') ){
+                    $projectDescription = $content;
+                }
+
+                // Put dynamic content in WMSServiceTitle
+                // (not in abstract to avoid autoreplacement of line break with <br>
+                // The occtax.js Javascript will use this as a source to replace #metadata content
+                $wmsInfo['WMSServiceTitle'] = '<div id="occtax-metadata">'.$projectDescription.'</div>';
 
                 $metadataTpl->assign(array_merge(array(
                     'repository'=>$repository,
-                    'project'=>$lrep->getKey(),
+                    'project'=>$lproj->getKey(),
                     'wmsGetCapabilitiesUrl' => $wmsGetCapabilitiesUrl
                 ), $wmsInfo));
                 $dock = new lizmapMapDockItem(
@@ -100,8 +112,8 @@
             if ($coord->moduleName == 'occtax') {
                 $project = $event->getParam( 'project' );
                 $repository = $event->getParam( 'repository' );
-                $lrep = lizmap::getProject( $repository . '~' .$project );
-                $configOptions = $lrep->getOptions();
+                $lproj = lizmap::getProject( $repository . '~' .$project );
+                $configOptions = $lproj->getOptions();
                 $bp = jApp::config()->urlengine['basePath'];
 
                 // Override lizmap default print dock
