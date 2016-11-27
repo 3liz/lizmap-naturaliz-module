@@ -355,7 +355,8 @@ lizMap.events.on({
 
         OccTax.init();
 
-
+        // Hide home button
+        $('#mapmenu li.home').hide();
 
 
     },
