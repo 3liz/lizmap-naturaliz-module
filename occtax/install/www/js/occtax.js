@@ -358,6 +358,9 @@ lizMap.events.on({
         // Hide home button
         $('#mapmenu li.home').hide();
 
+        // Show observation search
+        $('#button-occtax').click();
+
 
     },
 

@@ -76,6 +76,20 @@ CREATE TABLE observation (
     sensi_referentiel text,
     sensi_version_referentiel text,
 
+    obs_methode text NOT NULL,
+    occ_etat_biologique text NOT NULL,
+    occ_naturalite text NOT NULL,
+    occ_sexe text NOT NULL,
+    occ_stade_de_vie text NOT NULL,
+    occ_statut_biogeographique text NOT NULL,
+    occ_statut_biologique text NOT NULL,
+    preuve_existante text NOT NULL,
+    preuve_numerique text,
+    preuve_non_numerique text,
+    obs_contexte text,
+    obs_description text,
+    occ_methode_determination text,
+
     precision_geometrie integer,
     nature_objet_geo text,
 
@@ -100,7 +114,9 @@ CREATE TABLE observation (
     CONSTRAINT obs_sensi_niveau_valide CHECK ( sensi_niveau IN ( '0', '1', '2', '3', '4', '5' ) ),
     CONSTRAINT obs_sensi_referentiel_valide CHECK ( ( sensi_niveau != '0' AND sensi_referentiel IS NOT NULL) OR sensi_niveau = '0' ),
     CONSTRAINT obs_sensi_version_referentiel_valide CHECK ( ( sensi_niveau != '0' AND sensi_version_referentiel IS NOT NULL) OR sensi_niveau = '0' ),
-    CONSTRAINT obs_version_taxref_valide CHECK ( cd_nom IS NULL OR ( cd_nom IS NOT NULL AND version_taxref IS NOT NULL) )
+    CONSTRAINT obs_version_taxref_valide CHECK ( cd_nom IS NULL OR ( cd_nom IS NOT NULL AND version_taxref IS NOT NULL) ),
+    CONSTRAINT obs_preuve_existante_valide CHECK ( ( preuve_existante = '1' AND preuve_numerique IS NOT NULL AND preuve_non_numerique IS NULL) OR (preuve_existante != '1' AND preuve_numerique IS NULL AND preuve_non_numerique IS NOT NULL) )
+
 );
 
 SELECT AddGeometryColumn('observation', 'geom', {$SRID}, 'GEOMETRY', 2);
@@ -220,6 +236,31 @@ COMMENT ON COLUMN observation.geom IS 'Géométrie de l''objet. Il peut être de
 
 COMMENT ON COLUMN observation.odata IS 'Field to store temporary data in json format, used for imports';
 
+COMMENT ON COLUMN observation.obs_description IS 'Description libre de l''observation, aussi succincte et précise que possible.';
+
+COMMENT ON COLUMN observation.obs_methode IS 'Indique de quelle manière on a pu constater la présence d''un sujet d''observation. La valeur "Inconnu" peut être utilisée dans la nomenclature associée (code 21 de la nomenclature "ObservationMethodeValue"). Exemple : 21, pour "inconnu".';
+
+COMMENT ON COLUMN observation.occ_etat_biologique IS 'Code de l''état biologique de l''organisme au moment de l''observation. La valeur "inconnu" peut être utilisée dans la nomenclature OccurrenceEtatBiologiqueValue), de même pour la valeur "Non renseigné". associée (code 0 de la nomenclature. Exemple : 2 correspondant à "Observé vivant"';
+
+COMMENT ON COLUMN observation.occ_methode_determination IS 'Description de la méthode utilisée pour déterminer le taxon lors de l''observation. Exemple : observation des antennes à la loupe, détermination ADN, comparaison à une collection de référence, connaissance d''expert -préciser le nom-, bibliographie';
+
+COMMENT ON COLUMN observation.occ_naturalite IS 'Naturalité de l''occurrence, conséquence de l''influence anthropique directe qui la caractérise. Elle peut être déterminée immédiatement par simple observation, y compris par une personne n''ayant pas de formation dans le domaine de la biologie considéré. La valeur "inconnu" peut être utilisée dans la nomenclature associée (code 0 de la nomenclature "OccurrenceNaturaliteValue")';
+
+COMMENT ON COLUMN observation.occ_sexe IS 'Sexe du sujet de l''observation. La valeur "inconnu" peut être utilisée dans la nomenclature associée. Voir OccurrenceSexeValue, dans les nomenclatures. Exemple : 4, correspondant à "hermaphrodite".';
+
+COMMENT ON COLUMN observation.occ_stade_de_vie IS 'Stade de développement du sujet de l''observation. On se reportera à la nomenclature "OccurrenceStadeDeVieValue". La valeur "Inconnu" y est présente (code 0). Exemple : 16, pour sub-imago.';
+
+COMMENT ON COLUMN observation.occ_statut_biogeographique IS 'Le statut biogéographique couvre une notion de présence (présence/absence), et d''origine (indigénat ou introduction). Il est similaire au statut biogéographique du guide méthodologique TAXREF mais s''applique au niveau local : il s''agit d''une information qui ne peut être renseignée que suite à une déduction à dire d''expert. La valeur "Inconnu/Cryptogène" est présente dans la nomenclature associée (voir "OccurrenceStatutBioGeographiqueValue"). Exemple : "0", correspondant à "Inconnu/Cryptogène"';
+
+COMMENT ON COLUMN observation.occ_statut_biologique IS 'Comportement général de l''individu sur le site d''observation. On peut utiliser les codes 0, 1, ou 2 de la nomenclature "OccurrenceStatutBiologiqueValue" pour signifier "Inconnu", "Non renseigné", ou "Non déterminable". Exemple : "3" pour "Reproduction", indique que l''individu est sur un site de reproduction.';
+
+COMMENT ON COLUMN observation.preuve_existante IS 'Indique si une preuve existe ou non. Par preuve on entend un objet physique ou numérique permettant de démontrer l''existence de l''occurrence et/ou d''en vérifier l''exactitude. Ne peut prendre que la valeur "Oui" si preuveNumerique ou preuveNonNumerique sont renseignés.';
+
+COMMENT ON COLUMN observation.preuve_numerique IS 'Adresse web à laquelle on pourra trouver la preuve numérique ou l''archive contenant toutes les preuves numériques (image(s), sonogramme(s), film(s), séquence(s) génétique(s)...). L''adresse DOIT commencer par http://, https:// ou ftp://.';
+
+COMMENT ON COLUMN observation.obs_contexte IS 'Description libre du contexte de l''observation, aussi succincte et précise que possible. Exemple : pied d''une falaise, au crépuscule, animal se nourrissant, piège à 10 m d''un drap blanc.';
+
+COMMENT ON COLUMN observation.preuve_non_numerique IS 'Adresse ou nom de la personne ou de l''organisme qui permettrait de retrouver la preuve non numérique de l''observation.';
 
 -- Table personne
 CREATE TABLE personne (

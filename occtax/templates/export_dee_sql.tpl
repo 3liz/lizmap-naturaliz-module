@@ -12,19 +12,19 @@ xmlelement(
         XMLELEMENT(
             name "cont:DescriptifSujet",
             xmlforest (
-                'bob' as "cont:preuveNonNumerique",
-                'bob' AS "cont:obsContexte",
-                'bob' AS "cont:preuveNumerique",
-                'bob' AS "cont:preuveExistante",
-                'bob' AS "cont:occStatutBiologique",
-                'bob' AS "cont:occStatutBiogeographique",
-                'bob' AS "cont:occStadeDeVie",
-                'bob' AS "cont:occSexe",
-                'bob' AS "cont:occNaturalite",
-                'bob' AS "cont:occMethodeDetermination",
-                'bob' AS "cont:occEtatBiologique",
-                'bob' AS "cont:obsMethode",
-                'bob' AS "cont:obsDescription"
+                o.preuve_non_numerique as "cont:preuveNonNumerique",
+                o.obs_contexte AS "cont:obsContexte",
+                o.preuve_numerique AS "cont:preuveNumerique",
+                o.preuve_existante AS "cont:preuveExistante",
+                o.occ_statut_biologique AS "cont:occStatutBiologique",
+                o.occ_statut_biogeographique AS "cont:occStatutBiogeographique",
+                o.occ_stade_de_vie AS "cont:occStadeDeVie",
+                o.occ_sexe AS "cont:occSexe",
+                p.occ_naturalite AS "cont:occNaturalite",
+                o.occ_methode_determination AS "cont:occMethodeDetermination",
+                o.occ_etat_biologique AS "cont:occEtatBiologique",
+                o.obs_methode AS "cont:obsMethode",
+                o.obs_description AS "cont:obsDescription"
             )
         )
     ),
