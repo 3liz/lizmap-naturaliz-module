@@ -115,7 +115,9 @@ CREATE TABLE observation (
     CONSTRAINT obs_sensi_referentiel_valide CHECK ( ( sensi_niveau != '0' AND sensi_referentiel IS NOT NULL) OR sensi_niveau = '0' ),
     CONSTRAINT obs_sensi_version_referentiel_valide CHECK ( ( sensi_niveau != '0' AND sensi_version_referentiel IS NOT NULL) OR sensi_niveau = '0' ),
     CONSTRAINT obs_version_taxref_valide CHECK ( cd_nom IS NULL OR ( cd_nom IS NOT NULL AND version_taxref IS NOT NULL) ),
-    CONSTRAINT obs_preuve_existante_valide CHECK ( ( preuve_existante = '1' AND preuve_numerique IS NOT NULL AND preuve_non_numerique IS NULL) OR (preuve_existante != '1' AND preuve_numerique IS NULL AND preuve_non_numerique IS NOT NULL) )
+    CONSTRAINT obs_preuve_numerique_valide CHECK ( ( preuve_existante = '1' AND preuve_non_numerique IS NULL AND preuve_numerique IS NOT NULL  ) OR (preuve_existante != '1' ) ),
+    CONSTRAINT obs_preuve_non_numerique_valide CHECK ( ( preuve_existante = '1' AND preuve_numerique IS NULL AND preuve_non_numerique IS NOT NULL  ) OR (preuve_existante != '1' ) )
+
 
 );
 
@@ -629,6 +631,27 @@ INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = '
 ;
 
 
+-- imports
+CREATE TABLE jdd_correspondance_taxon (
+    jdd_id text,
+    taxon_origine text,
+    cd_nom integer,
+    version_taxref text
+);
+
+ALTER TABLE jdd_correspondance_taxon ADD PRIMARY KEY (jdd_id, taxon_origine);
+
+COMMENT ON TABLE jdd_correspondance_taxon IS 'Table de correspondance entre les codes d''espèces d''origine trouvés dans les jeux de données et le code cd_nom TAXREF';
+
+COMMENT ON COLUMN jdd_correspondance_taxon.jdd_id IS 'Identifiant du jeu de données';
+COMMENT ON COLUMN jdd_correspondance_taxon.taxon_origine IS 'Code du taxon dans le jeu de données d''origine';
+COMMENT ON COLUMN jdd_correspondance_taxon.cd_nom IS 'Code officiel du taxref (cd_nom)';
+COMMENT ON COLUMN jdd_correspondance_taxon.version_taxref IS 'Version du taxref utilisé';
+
+
+
+
+
 -- Indexes
 CREATE INDEX ON attribut_additionnel (cle_obs);
 
@@ -669,6 +692,9 @@ CREATE INDEX ON jdd (jdd_code);
 CREATE INDEX ON lien_observation_identifiant_permanent (jdd_id, identifiant_origine);
 
 CREATE INDEX ON demande (usr_login);
+
+CREATE INDEX ON jdd_correspondance_taxon (jdd_id);
+
 -----------------------
 -- Tables SIG
 -----------------------
