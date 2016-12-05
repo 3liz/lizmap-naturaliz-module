@@ -34,6 +34,11 @@ class wfsCtrl extends jController {
 
         $rep = $this->getResponse('redirect');
 
+        if(!jAcl2::check("visualisation.donnees.brutes")){
+            jMessage::add(jLocale::get('view~default.repository.access.denied'), 'AuthorizationRequired');
+            return $this->serviceException();
+        }
+
         // Get parameters
         if(!$this->getServiceParameters())
           return $this->serviceException();
@@ -61,7 +66,7 @@ class wfsCtrl extends jController {
     * @param $param request parameter.
     * @return Request parameter value.
     */
-    protected function iParam($param){
+    private function iParam($param){
 
         $pParams = jApp::coord()->request->params;
         foreach($pParams as $k=>$v){
@@ -77,7 +82,7 @@ class wfsCtrl extends jController {
     * @param $SERVICE the OGC service
     * @return XML OGC Service Exception.
     */
-    function serviceException(){
+    public function serviceException(){
         $messages = jMessage::getAll();
         if (!$messages) {
             $messages = array();
@@ -101,7 +106,7 @@ class wfsCtrl extends jController {
   *
   * @return array List of needed variables : $params, $lizmapProject, $lizmapRepository, $lizmapCache.
   */
-  protected function getServiceParameters(){
+  private function getServiceParameters(){
 
     // Get and normalize the passed parameters
     $pParams = jApp::coord()->request->params;
@@ -113,7 +118,6 @@ class wfsCtrl extends jController {
     jClasses::inc('occtax~occtaxExportObservation');
     $occtaxSearch = new occtaxExportObservation( null, $params );
     $this->search = $occtaxSearch;
-
 
     // Define class private properties
     $this->params = $params;
@@ -127,7 +131,7 @@ class wfsCtrl extends jController {
   * GetCapabilities
   * @return JSON configuration file for the specified project.
   */
-  function GetCapabilities(){
+  protected function GetCapabilities(){
         $service = strtolower($this->params['service']);
 
         $rep = $this->getResponse('binary');
@@ -159,7 +163,7 @@ class wfsCtrl extends jController {
   * DescribeFeatureType
   * @return JSON configuration file for the specified project.
   */
-  function DescribeFeatureType(){
+  protected function DescribeFeatureType(){
         $service = strtolower($this->params['service']);
 
         $rep = $this->getResponse('binary');
@@ -184,7 +188,7 @@ class wfsCtrl extends jController {
   /**
   * GetFeature
   */
-  function GetFeature(){
+  private function GetFeature(){
         $service = strtolower($this->params['service']);
 
         $rep = $this->getResponse('binary');

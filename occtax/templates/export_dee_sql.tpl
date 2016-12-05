@@ -20,7 +20,7 @@ xmlelement(
                 o.occ_statut_biogeographique AS "cont:occStatutBiogeographique",
                 o.occ_stade_de_vie AS "cont:occStadeDeVie",
                 o.occ_sexe AS "cont:occSexe",
-                p.occ_naturalite AS "cont:occNaturalite",
+                o.occ_naturalite AS "cont:occNaturalite",
                 o.occ_methode_determination AS "cont:occMethodeDetermination",
                 o.occ_etat_biologique AS "cont:occEtatBiologique",
                 o.obs_methode AS "cont:obsMethode",
@@ -101,13 +101,13 @@ xmlelement(
             xmlelement(
                 name "cont:Commune",
                 xmlforest(
-                    lcom.type_info_geo as "cont:typeInfoGeo",
+                    lc.type_info_geo as "cont:typeInfoGeo",
                     com.annee_ref as "cont:anneeRef",
                     com.nom_commune as "cont:nomCommune",
-                    lcom.code_commune as "cont:codeCommune"
+                    lc.code_commune as "cont:codeCommune"
                 )
             )::text, ''
-        ) FILTER (WHERE lcom.code_commune IS NOT NULL))::xml
+        ) FILTER (WHERE lc.code_commune IS NOT NULL))::xml
     ),
 
 -- Source
@@ -369,8 +369,8 @@ LEFT JOIN v_validateur pval ON pval.cle_obs = o.cle_obs
 LEFT JOIN v_determinateur pdet ON pdet.cle_obs = o.cle_obs
 LEFT JOIN localisation_departement ldep ON ldep.cle_obs = o.cle_obs
 LEFT JOIN departement dep ON dep.code_departement = ldep.code_departement
-LEFT JOIN localisation_commune lcom ON lcom.cle_obs = o.cle_obs
-LEFT JOIN commune com ON com.code_commune = lcom.code_commune
+LEFT JOIN localisation_commune lc ON lc.cle_obs = o.cle_obs
+LEFT JOIN commune com ON com.code_commune = lc.code_commune
 LEFT JOIN localisation_masse_eau lme ON lme.cle_obs = o.cle_obs
 LEFT JOIN masse_eau me ON me.code_me = lme.code_me
 LEFT JOIN localisation_maille_10 lm10 ON lm10.cle_obs = o.cle_obs
@@ -380,7 +380,8 @@ LEFT JOIN localisation_habitat lhab ON lhab.cle_obs = o.cle_obs
 LEFT JOIN habitat hab ON hab.code_habitat = lhab.code_habitat AND lhab.ref_habitat = hab.ref_habitat
 LEFT JOIN attribut_additionnel aa ON aa.cle_obs = o.cle_obs
 
--- WHERE pobs.identite ILIKE '%alain%'
+{$geoFilter}
+
 {$where}
 
 GROUP BY o.cle_obs

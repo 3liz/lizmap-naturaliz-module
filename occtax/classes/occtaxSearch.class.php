@@ -91,13 +91,15 @@ class occtaxSearch {
         // Taxon params : 2 things
         // 1/ Get taxon search params if a taxon token has been given via param "search_token"
         jClasses::inc('taxon~taxonSearch');
-        if ( array_key_exists( 'search_token', $this->params ) && $this->params['search_token'] ) {
+        if ( array_key_exists( 'search_token', $this->params ) && !empty($this->params['search_token']) ) {
             $taxon_token = $this->params['search_token'];
             $taxonSearch = new taxonSearch( $taxon_token );
             $this->taxon_params = $taxonSearch->getParams();
-            foreach($this->taxon_params as $k=>$v){
-                if(!empty($v))
-                    $this->params[$k] = $v;
+            if(count($this->taxon_params)>0){
+                foreach($this->taxon_params as $k=>$v){
+                    if(!empty($v))
+                        $this->params[$k] = $v;
+                }
             }
         }else{
 
@@ -405,15 +407,12 @@ class occtaxSearch {
         $cnx = jDb::getConnection();
 
         if( $this->params ){
-            $qf = $this->queryFilters;
             foreach( $this->params as $k=>$v ){
-                if( array_key_exists( $k, $qf ) and array_key_exists( 'table', $qf[$k] ) and $v ){
-                    $q = $qf[$k];
-
+                if( array_key_exists( $k, $this->queryFilters ) and array_key_exists( 'table', $this->queryFilters[$k] ) and $v ){
+                    $q = $this->queryFilters[$k];
                     // IF filter by uploaded geojson
                     if( $q['type'] == 'geom' ){
-                        $geoFilter = ' , ( SELECT ';
-                        $geoFilter.= ' ST_Transform( ST_GeomFromText(' . $cnx->quote($v) . ', 4326), '. $this->srid .') AS fgeom';
+                        $geoFilter= ', (SELECT ST_Transform( ST_GeomFromText(' . $cnx->quote($v) . ', 4326), '. $this->srid .') AS fgeom';
                         $geoFilter.= ' ) AS fg
 ';
                         $this->fromClause.= $geoFilter;
@@ -461,11 +460,6 @@ class occtaxSearch {
         $demandes = $dao_demande->findByLogin($login);
         $actives_demandes = $dao_demande->findActiveDemandesByLogin($login);
 
-        $fieds = array(
-            "text" => array(''),
-            "integer" => array(),
-            "geom" => array()
-        );
         foreach($demandes as $demande){
             $sql_demande = array();
 

@@ -74,6 +74,21 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
             'sensi_referentiel' => "String",
             'sensi_version_referentiel' => "String",
 
+            // Descriptif sujet
+            'obs_methode' => "String",
+            'occ_etat_biologique' => "String",
+            'occ_naturalite' => "String",
+            'occ_sexe' => "String",
+            'occ_stade_de_vie' => "String",
+            'occ_statut_biogeographique' => "String",
+            'occ_statut_biologique' => "String",
+            'preuve_existante' => "String",
+            'preuve_numerique' => "String",
+            'preuve_non_numerique' => "String",
+            'obs_contexte' => "String",
+            'obs_description' => "String",
+            'occ_methode_determination' => "String",
+
             // geometrie
             'precision_geometrie' => "Real",
             'nature_objet_geo' => "String",
@@ -551,8 +566,23 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         // Build SQL
         $cnx = jDb::getConnection();
         $tpl = new jTpl();
-        $assign = array (
+
+        // Add subtable if geom query via intersection
+        $geoFilter = '';
+        if( $this->params
+            and array_key_exists( 'geom', $this->queryFilters )
+            and array_key_exists( 'geom', $this->params )
+            and !empty($this->queryFilters['geom'])
+        ){
+            $v = $this->params['geom'];
+            $geoFilter= ', (SELECT ST_Transform( ST_GeomFromText(' . $cnx->quote($v) . ', 4326), '. $this->srid .') AS fgeom';
+            $geoFilter.= ' ) AS fg
+            ';
+        }
+
+        $assign = array(
             'where' => $this->whereClause,
+            'geoFilter' => $geoFilter,
             'path' => $cnx->quote($path)
         );
         $tpl->assign( $assign );

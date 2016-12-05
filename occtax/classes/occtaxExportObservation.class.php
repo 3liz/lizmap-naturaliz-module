@@ -64,6 +64,21 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             'sensible' => "String",
             'sensi_niveau' => "String",
 
+            // Descriptif sujet
+            'obs_methode' => "String",
+            'occ_etat_biologique' => "String",
+            'occ_naturalite' => "String",
+            'occ_sexe' => "String",
+            'occ_stade_de_vie' => "String",
+            'occ_statut_biogeographique' => "String",
+            'occ_statut_biologique' => "String",
+            'preuve_existante' => "String",
+            'preuve_numerique' => "String",
+            'preuve_non_numerique' => "String",
+            'obs_contexte' => "String",
+            'obs_description' => "String",
+            'occ_methode_determination' => "String",
+
             // geometrie
             'precision_geometrie' => "Real",
             'nature_objet_geo' => "String",
@@ -195,6 +210,21 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 'o.reference_biblio'=> 'reference_biblio',
                 'o.sensible' => 'sensible',
                 'o.sensi_niveau' => 'sensi_niveau',
+
+                // descriptif sujet
+                'o.preuve_non_numerique' => 'preuve_non_numerique',
+                'o.obs_contexte' => 'obs_contexte',
+                'o.preuve_numerique' => 'preuve_numerique',
+                'o.preuve_existante' => 'preuve_existante',
+                'o.occ_statut_biologique' => 'occ_statut_biologique',
+                'o.occ_statut_biogeographique' => 'occ_statut_biogeographique',
+                'o.occ_stade_de_vie' => 'occ_stade_de_vie',
+                'o.occ_sexe' => 'occ_sexe',
+                'o.occ_naturalite' => 'occ_naturalite',
+                'o.occ_methode_determination' => 'occ_methode_determination',
+                'o.occ_etat_biologique' => 'occ_etat_biologique',
+                'o.obs_methode' => 'obs_methode',
+                'o.obs_description' => 'obs_description',
 
                 // geometrie
                 'o.precision_geometrie' => 'precision_geometrie',

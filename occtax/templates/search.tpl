@@ -96,8 +96,8 @@
 
                     <ul class="dropdown-menu pull-right" role="menu">
                         <li><a href="" class="btn-export-search">CSV</a></li>
-                        <li><a href="" class="btn-get-wfs" target="_blank">WFS</a></li>
                         {ifacl2 "visualisation.donnees.brutes"}
+                        <li><a href="" class="btn-get-wfs" target="_blank">WFS</a></li>
                         <li><a href="" class="btn-export-search">GeoJSON</a></li>
                         <li><a href="" class="btn-export-search">DEE</a></li>
                         {/ifacl2}
