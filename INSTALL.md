@@ -2,58 +2,31 @@
 
 Pour pouvoir installer l'application Naturaliz, vous devez au préalable avoir installé un serveur cartographique basé sur Lizmap. Vous pouvez cela utiliser les script de déploiement automatique **lizmap-box** pour cela. Nous considérons dans la suite de ce document que Lizmap Web Client a été installé et est fonctionnel.
 
-## Pré-requis
-
-### PostGreSQL
-
-Avant l'installation des modules Naturaliz, vous devez vous assurer d'avoir créé au préalable une base de donnée PostGreSQL, ou d'en avoir déjà une existante.
-
-Pendant le processus d'installation de l'application, l'utilisateur PostGreSQL spécifié doit avoir les droits super-utilisateur, afin de pouvoir créer la structure (des droits hauts sont requis notamment pour les extensions). Vous pouvez utiliser l'utilisateur postgres. Un utilisateur "naturaliz" avec des droits limités doit aussi être créé pour l'application. Le code suivant montre un exemple de création de cette base de données et de l'utilisateur (Modifier les informations : port, nom de la base, etc.)
-
-```
-sudo su postgres
-# informations de connexion à modifier
-DBPORT=5432
-DBNAME=naturaliz
-DBUSER=naturaliz
-DBPASS=naturaliz # !!! MODIFIER CE MOT DE PASSE !!!
-
-# création de l'utilisateur avec droits limités
-createuser $DBUSER -p $DBPORT --no-createdb --no-createrole --no-superuser
-psql -d template1 -p $DBPORT -c "ALTER USER "$DBUSER" WITH ENCRYPTED PASSWORD '"$DBPASS"' ;"
-# création de la base de donnée
-createdb -E UTF8 -p $DBPORT -O $DBUSER $DBNAME
-psql -d $DBNAME -p $DBPORT -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'
-psql -d $DBNAME -p $DBPORT -c 'CREATE EXTENSION IF NOT EXISTS postgis;'
-exit
-
-```
+Naturaliz s'appuie sur PostgreSQL pour stocker les données d'observations, mais aussi pour stocker les données liés aux utilisateurs (logins et mot de passe). Il faut donc préciser lors de l'installation via **lizmap-box** qu'on souhaite installer ces données des utilisateurs dans la base de données. Par exemple via les variable **lizmap_jauth_driver** passées dans la ligne de commande.
 
 
-Créer un fichier pg_service.conf pour faciliter les accès au bases de données. Attention, sous Windows, le fichier de services doit répondre à certains critères pour être utilisable. Voir https://docs.qgis.org/2.14/fr/docs/user_manual/working_with_vector/supported_data.html#service-connection-file
+## Pré-requis PostGreSQL
 
-```
-cat > /etc/postgresql-common/pg_service.conf << EOF
-[naturaliz]
-host=127.0.0.1 # Adapter l'hôte si la bdd est externe
-dbname=naturaliz
-user=naturaliz
-port=5432
-password=naturaliz # !!! MODIFIER CE MOT DE PASSE !!!
-EOF
-```
+### Base de données et utilisateurs
 
+Avant l'installation des modules Naturaliz, vous devez vous assurer d'avoir créé au préalable une base de donnée PostGreSQL, ou d'en avoir déjà une existante. Si vous avez utilisé les scripts **lizmap-box**, une base de données **lizmap** a été créée.
+
+Pendant le processus d'installation de l'application, l'utilisateur PostGreSQL spécifié doit avoir les droits super-utilisateur, afin de pouvoir créer la structure (des droits hauts sont requis notamment pour les extensions). Vous pouvez utiliser l'utilisateur **postgres** pendant la phase d'installation.
 
 
 ## Installer les modules Naturaliz sur une application Lizmap
 
 ### Récupérer les modules
 
+Vous pouvez le faire via l'outil git, en se connectant avec vos identifiants de la plateforme git (Gitlab ou Github). Ou bien vous rendre sur la plateforme, et télécharger au format ZIP, puis coller le ZIP dans le répertoire /tmp/ et dézipper.
+
+Dans l'exemple suivant, nous utilisons la plateforme Gitlab de 3liz, avec accès https: https://projects.3liz.org/clients/naturaliz-reunion.git
+
 ```
 cd /tmp/
-git clone git@projects.3liz.org:clients/naturaliz-reunion.git
-cp -R naturaliz-reunion/* /srv/lizmap_web_client/lizmap/lizmap-modules/
-cd /srv/lizmap_web_client/lizmap/lizmap-modules/
+git clone https://projects.3liz.org/clients/naturaliz-reunion.git naturaliz
+cp -R /tmp/naturaliz/* /srv/lizmap_web_client/lizmap/lizmap-modules/
+ls -lh /srv/lizmap_web_client/lizmap/lizmap-modules/
 ```
 
 ### Adapter les fichiers de configuration pour Lizmap
@@ -84,14 +57,20 @@ nano lizmap/var/config/localconfig.ini.php # Faire les modifications nécessaire
 Exemple de contenu:
 
 ```
+;<?php die(''); ?>
+;for security reasons , don't remove or modify the first line
+
+; put here configuration variables that are specific to this installation
+
+
 [modules]
 lizmap.installparam=demo
 
 taxon.access=2
 occtax.access=2
 occtax_admin.access=2
-;mascarine.access=2
-;mascarine_admin.access=2
+;mascarine.access=0
+;mascarine_admin.access=0
 
 [taxon]
 ; champ determinant le statut local : valeures possibles fr, gf, mar, gua, sm, sb, spm, may, epa, reu, sa, ta, taff, pf, nc, wf, cli
@@ -126,7 +105,11 @@ znieff2_mer=Znieff2_mer
 #### Configuration des accès à PostgreSQL
 
 Vous devez vérifier dans le fichier **lizmap/var/config/profiles.ini.php** les informations de connexion à la base de données PostGreSQL : l'utilisateur doit **avoir des droits élevé pour l'installation**. Vous pouvez par exemple utiliser l'utilisateur *postgres*
+
 Dans la section [jdb:jauth], modifier les variables "user" et "password" pour utiliser par exemple l'utilisateur "postgres". Vous pouvez aussi modifier l'hôte de connexion, le port et le nom de la base de données si besoin.
+
+Si vous avez installé Lizmap via **lizmap-box**, vous devez remplacer l'utilisateur *lizmap* par *postgres* et remplacer le mot de passe par celui entré pour postgres.
+
 
 ```
 cd /srv/lizmap_web_client/
@@ -144,6 +127,37 @@ php lizmap/install/installer.php
 ```
 
 Si l'installation s'est bien passée, vous ne devez pas voir d'erreurs affichées dans le log. Si ce n'est pas le cas, vérifier les fichiers de configuration, notamment l'accès à la base de données.
+
+Exemple de retour convenable:
+
+```
+Installation start..
+[notice] Installation starts for the entry point index
+All modules dependencies are ok
+Module taxon installed
+Module occtax installed
+Module occtax_admin installed
+All modules are installed or upgraded for the entry point index
+[notice] Installation starts for the entry point admin
+All modules dependencies are ok
+Module taxon installed
+Module occtax installed
+Module occtax_admin installed
+All modules are installed or upgraded for the entry point admin
+[notice] Installation starts for the entry point script
+All modules dependencies are ok
+Module taxon installed
+Module occtax installed
+Module occtax_admin installed
+All modules are installed or upgraded for the entry point script
+Installation ended.
+
+```
+
+Une fois cette étape validée, l'application naturaliz est bien installée. Il faut maintenant
+
+* importer des données de référence
+* importer des données d'observation faunistiques ou floristiques
 
 
 ## Importer les données de référence
@@ -322,28 +336,47 @@ php lizmap/scripts/script.php occtax~import:purge -sig "espace_naturel"
 
 ## Finaliser l'installation
 
-### Modifier l'utilisateur de la base de données
+### PostgreSQL: ajouter un utilisateur naturaliz aux droits limités
 
-La base est installée et les données importées. Vous pouvez maintenant
+La base est installée et les données importées. Vous pouvez maintenant:
 
-* modifier donner les droits d'accès à la base de données, aux tables et fonctions pour l'utilisateur naturaliz,
+* créer un utilisateur **naturaliz**
+* donner les **droits** d'accès à la base de données, aux tables et aux fonctions.
 
 ```
-sudo su - postgres
+su postgres
+
+# informations de connexion A ADAPTER
 DBPORT=5432
-DBNAME=naturaliz
+DBNAME=lizmap
 DBUSER=naturaliz
+DBPASS=naturaliz # !!! MODIFIER CE MOT DE PASSE !!!
+
+# création de l'utilisateur avec droits limités
+createuser $DBUSER -p $DBPORT --no-createdb --no-createrole --no-superuser
+psql -d template1 -p $DBPORT -c "ALTER USER "$DBUSER" WITH ENCRYPTED PASSWORD '"$DBPASS"' ;"
+
+# Ajout des droits sur les objets de la base pour naturaliz
 psql -d $DBNAME -p $DBPORT -c "GRANT CONNECT ON DATABASE $DBNAME TO $DBUSER;"
-psql -d $DBNAME -p $DBPORT -c "GRANT USAGE ON SCHEMA public,taxon,sig,occtax,mascarine TO $DBUSER";
+psql -d $DBNAME -p $DBPORT -c "GRANT USAGE ON SCHEMA public,taxon,sig,occtax TO $DBUSER";
 psql -d $DBNAME -p $DBPORT -c "GRANT SELECT ON ALL TABLES IN SCHEMA occtax,sig,taxon TO $DBUSER;"
-psql -d $DBNAME -p $DBPORT -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public,mascarine TO $DBUSER;"
+psql -d $DBNAME -p $DBPORT -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO $DBUSER;"
 psql -d $DBNAME -p $DBPORT -c "GRANT INSERT ON ALL TABLES IN SCHEMA occtax TO $DBUSER;"
-psql -d $DBNAME -p $DBPORT -c "GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public,occtax,sig,taxon,mascarine TO $DBUSER;"
-psql -d $DBNAME -p $DBPORT -c "GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public,occtax,sig,taxon,mascarine TO $DBUSER;"
+psql -d $DBNAME -p $DBPORT -c "GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public,occtax,sig,taxon TO $DBUSER;"
+psql -d $DBNAME -p $DBPORT -c "GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public,occtax,sig,taxon TO $DBUSER;"
+psql -d $DBNAME -p $DBPORT -c "ALTER ROLE $DBUSER SET search_path TO taxon,occtax,sig,public;"
+
+# Pour le module mascarine (optionnel)
+psql -d $DBNAME -p $DBPORT -c "GRANT USAGE ON SCHEMA mascarine TO $DBUSER";
+psql -d $DBNAME -p $DBPORT -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA mascarine TO $DBUSER;"
+psql -d $DBNAME -p $DBPORT -c "GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA mascarine TO $DBUSER;"
+psql -d $DBNAME -p $DBPORT -c "GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA mascarine TO $DBUSER;"
 psql -d $DBNAME -p $DBPORT -c "ALTER ROLE $DBUSER SET search_path TO taxon,occtax,mascarine,sig,public;"
 exit
 
 ```
+
+
 
 
 * puis modifier le fichier de configuration des profils pour remplacer l'utilisateur "postgres" par l'utilisateur avec droits limités "naturaliz":
@@ -354,16 +387,33 @@ cd /srv/lizmap_web_client/
 # modifier le paramètre user et password de la section [jdb:jauth] du fichier de profiles
 nano lizmap/var/config/profiles.ini.php
 
-# rétablir les droits
+# rétablir les droits de l'application Lizmap
 lizmap/install/set_rights.sh www-data www-data
 ```
 
+## Activer les modules dans l'interface d'administration
+
+Les modules **occtax_admin** et **mascarine_admin** doivent être déclarés dans la configuration de Lizmap, pour permettre leur visualisation dans l'interface graphique. Pour cela, il faut modifier le fichier **lizmap/var/config/mainconfig.ini.php** et ajouter **, occtax_admin~*@classic** à la variable **admin** de la section **[simple_urlengine_entrypoints]**
+
+```
+cd /srv/lizmap_web_client/
+nano lizmap/var/config/mainconfig.ini.php
+
+# remplacer la ligne
+admin="jacl2db~*@classic, jacl2db_admin~*@classic, jauthdb_admin~*@classic, master_admin~*@classic, admin~*@classic, jauth~*@classic"
+# par
+admin="jacl2db~*@classic, jacl2db_admin~*@classic, jauthdb_admin~*@classic, master_admin~*@classic, admin~*@classic, jauth~*@classic, occtax_admin~*@classic"
+
+# Si vous avez aussi activé le module mascarine, vous devez aussi l'ajouter, pour avoir
+admin="jacl2db~*@classic, jacl2db_admin~*@classic, jauthdb_admin~*@classic, master_admin~*@classic, admin~*@classic, jauth~*@classic, occtax_admin~*@classic, mascarine_admin~*@classic"
+
+```
 
 
 ## Configuration LDAP
 
 
-Pour le projet Naturaliz, l'authentification doit se faire via ldap.
+Pour le projet Naturaliz, l'authentification peut se faire via ldap.
 Pour cela, il y a un module spécifique ldapdao. Il est activé, mais
 pas l'authentification ldap.
 
