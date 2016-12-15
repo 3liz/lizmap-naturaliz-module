@@ -9,22 +9,23 @@ lizmap.installparam=demo
 taxon.access=2
 occtax.access=2
 occtax_admin.access=2
-;mascarine.access=2
-;mascarine_admin.access=2
+;mascarine.access=0
+;mascarine_admin.access=0
 
 
 [taxon]
 ; champ determinant le statut local : valeures possibles fr, gf, mar, gua, sm, sb, spm, may, epa, reu, taff, pf, nc, wf, cli
-colonne_locale=gua
-; liste des codes des arrêtés de protection qui concernent la zone de travail
-code_arrete_protection=GUAM1,GUAO1,GUARA1,DV971,GUAI2
-; guadeloupe: GUAM1,GUAO1,GUARA1,DV971,GUAI2
-; reunion: agri1, agri2, Bubul1, Bulbul2, Bulbul3, Bulbul4, Bulbul5, Bulbul6, Bulbul9, corbasi1, DV974, phelsuma1, phelsuma2, phelsuma3, phelsuma4, phelsuma5, REUEA2, REUEA3, REUEA4, REUEEA, REUEEI, REUI2, REUP
+colonne_locale=reu
+
+; liste des codes des arr  t  s de protection qui concernent la zone de travail
+code_arrete_protection_simple="agri1,agri2,Bubul1,Bulbul2,Bulbul3,Bulbul4,Bulbul5,Bulbul6,Bulbul9,corbasi1,phelsuma1,phelsuma2,phelsuma3,phelsuma4,phelsuma5,PV97,REUEEA,REUEEI,REUP"
+code_arrete_protection_internationale="CCA,CCB,CCC,CCD,IAAP,IAO2,IAO3,IAO4,IBA2,IBA3,IBE1,IBE2,IBE3,IBOAE,IBO1,IBO2,IOS5"
+code_arrete_protection_communautaire="CDH2,CDH4,CDH5,CDO1,CDO21,CDO22,CDO31,CDO32"
+code_arrete_protection_nationale="DV974,NM,NMAMmar2,NM2,NO3,NO4,NO6,NTAA1,NTM1,NTM8,OC3,REUEA2,REUEA3,REUEA4,REUI2"
 
 [naturaliz]
-; projection de référence
-srid=32620
-adminPassword="naturaliz"
+; projection de reference
+srid=2975
 appName=Naturaliz
 
 [occtax]
@@ -34,15 +35,11 @@ projectName=Occurences de Taxon
 projectDescription=Cette application permet de consulter les observations faunistiques et floristiques.
 projectCss=""
 
-; WFS Server url for import
-wfs_url="http://ws.carmencarto.fr/WFS/119/glp_inpn"
-wfs_url_sandre="http://services.sandre.eaufrance.fr/geo/mdo_GLP"
-wfs_url_grille="http://ws.carmencarto.fr/WFS/119/glp_grille"
-; typename des znieff, car diffère selon les serveurs WFS Carmen
-znieff1_terre=Znieff1
-znieff1_mer=Znieff1_mer
-znieff2_terre=Znieff2
-znieff2_mer=Znieff2_mer
+; typename WFS pour les imports
+znieff1_terre=reu_znieff1
+znieff1_mer=reu_znieff1_mer
+znieff2_terre=reu_znieff2
+znieff2_mer=reu_znieff2_mer
 
 [mascarine]
 defaultRepository=
