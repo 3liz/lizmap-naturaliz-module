@@ -33,7 +33,7 @@ class gestionModuleInstaller extends jInstallerModule {
             $db->exec($sql);
 
             // Add data for lists
-            //$this->execSQLScript('sql/data');
+            $this->execSQLScript('sql/data');
 
             // Add gestion to search_path
             $profileConfig = jApp::configPath('profiles.ini.php');
