@@ -10,10 +10,9 @@ CREATE TABLE demande (
     motif text NOT NULL,
     type_demande text NOT NULL,
     date_demande date NOT NULL,
-    date_acces date,
     commentaire text,
-    date_validite_min date,
-    date_validite_max date,
+    date_validite_min date NOT NULL,
+    date_validite_max date NOT NULL,
     cd_ref bigint[],
     group1_inpn text[],
     group2_inpn text[],
@@ -21,6 +20,7 @@ CREATE TABLE demande (
     libelle_geom text NOT NULL
 );
 SELECT AddGeometryColumn('demande', 'geom', {$SRID}, 'GEOMETRY', 2);
+ALTER TABLE demande ALTER COLUMN geom SET NOT NULL;
 
 ALTER TABLE demande ADD CONSTRAINT demande_user_login_fk
 FOREIGN KEY (usr_login) REFERENCES jlx_user (usr_login)
@@ -30,7 +30,7 @@ FOREIGN KEY (id_organisme) REFERENCES occtax."organisme" (id_organisme)
 ON DELETE RESTRICT;
 
 ALTER TABLE demande ADD CONSTRAINT demande_valide
-CHECK ( Coalesce(cd_ref::text, date_validite_min::text, date_validite_max::text, group1_inpn::text, group2_inpn::text, geom::text, '') != '' )
+CHECK ( Coalesce(cd_ref::text, group1_inpn::text, group2_inpn::text, '') != '' )
 ;
 
 COMMENT ON TABLE demande IS 'Liste des demandes d''acccès à l''application. Cette table permet de restreindre les accès aux données, par date, taxon, etc.';
@@ -40,7 +40,7 @@ COMMENT ON COLUMN demande.id_organisme IS 'Identifiant de l''organisme ayant ém
 COMMENT ON COLUMN demande.motif IS 'Motif de la demande d''accès aux données fourni par le demandeur';
 COMMENT ON COLUMN demande.type_demande IS 'Type de demande selon la typologie de la charte du SINP (exemple : mission régalienne, publication scientifique, etc.)';
 COMMENT ON COLUMN demande.date_demande IS 'Date d''émission de la demande (découplée de la date de création, qui est elle renseignée automatiquement';
-COMMENT ON COLUMN demande.date_acces  IS 'Date d''ouverture de l''accès au demandeur (c''est-à-dire date de communication des identifiants de connexion à l''application.';
+
 COMMENT ON COLUMN demande.commentaire IS 'Remarques générales sur la demande.';
 COMMENT ON COLUMN demande.date_validite_min IS 'Date minimale de validité de la demande. Les accès sont bloqués si le demandeur consulte l''application avant cette date, pour cette demande.';
 COMMENT ON COLUMN demande.date_validite_max IS 'Date maximale de validité de la demande. Les accès sont bloqués si le demandeur consulte l''application après cette date, pour cette demande.';
@@ -71,14 +71,14 @@ CREATE TABLE acteur(
 ALTER TABLE acteur ADD CONSTRAINT acteur_id_organisme_fkey
 FOREIGN KEY (id_organisme)
 REFERENCES gestion.organisme(id_organisme) MATCH SIMPLE
-ON UPDATE CASCADE
+ON UPDATE RESTRICT
 ON DELETE RESTRICT
 ;
 
 ALTER TABLE acteur ADD CONSTRAINT acteur_usr_login_fkey
 FOREIGN KEY (usr_login)
 REFERENCES public.jlx_user(usr_login) MATCH SIMPLE
-ON UPDATE CASCADE
+ON UPDATE RESTRICT
 ON DELETE RESTRICT
 ;
 

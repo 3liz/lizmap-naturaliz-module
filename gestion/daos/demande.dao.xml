@@ -10,16 +10,15 @@
         <property name="motif" fieldname="motif" datatype="text" required="true"/>
         <property name="type_demande" fieldname="type_demande" datatype="text" required="true"/>
         <property name="date_demande" fieldname="date_demande" datatype="date" required="true"/>
-        <property name="date_acces" fieldname="date_acces" datatype="date"/>
         <property name="commentaire" fieldname="commentaire" datatype="text"/>
-        <property name="date_validite_min" fieldname="date_validite_min" datatype="date"/>
-        <property name="date_validite_max" fieldname="date_validite_max" datatype="date"/>
+        <property name="date_validite_min" fieldname="date_validite_min" datatype="date" required="true"/>
+        <property name="date_validite_max" fieldname="date_validite_max" datatype="date" required="true"/>
         <property name="cd_ref" fieldname="cd_ref" datatype="_int"/>
         <property name="group1_inpn" fieldname="group1_inpn" datatype="_text"/>
         <property name="group2_inpn" fieldname="group2_inpn" datatype="_text"/>
         <property name="date_creation" fieldname="date_creation" datatype="date" default="now()"/>
         <property name="libelle_geom" fieldname="libelle_geom" datatype="text" required="true"/>
-        <property name="geom" fieldname="geom" datatype="geometry" selectpattern="ST_AsText(geom)"/>
+        <property name="geom" fieldname="geom" datatype="geometry" selectpattern="ST_AsText(geom)" required="true"/>
         <!--<property name="" fieldname="" datatype="string/int/float/date"
         required="yes" maxlength="" minlength="" regexp="" sequence=""
         updatepattern="" insertpattern="" selectpattern=""/>-->
