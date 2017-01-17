@@ -22,7 +22,7 @@ class occtaxModuleInstaller extends jInstallerModule {
         // Copy CSS and JS files
         $this->copyDirectoryContent('www', jApp::wwwPath());
 
-        // Install occtax structure into database if needed
+        // Install occtax schema into database if needed
         if ($this->firstDbExec()) {
 
             // Add occtax schema and tables

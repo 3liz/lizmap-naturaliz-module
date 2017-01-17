@@ -440,74 +440,15 @@ class occtaxSearch {
 
         // Add restriction coming from demande table
         if( jAuth::isConnected() and !$this->demande ){
-            $sql.= $this->getWhereClauseDemande();
+            $filters = jEvent::notify('getOcctaxFilters')->getResponse();
+            foreach($filters as $filter){
+                $sql.= $filter;
+            }
+            //jLog::log(json_encode($filters));
         }
 
         return $sql;
     }
-
-    private function getWhereClauseDemande(){
-        $return = '';
-        $table_demandes = array();
-        $cnx = jDb::getConnection();
-
-        // Get user info
-        $user = jAuth::getUserSession();
-        $login = $user->login;
-
-        // Get demande for user
-        $dao_demande = jDao::get('occtax~demande');
-        $demandes = $dao_demande->findByLogin($login);
-        $actives_demandes = $dao_demande->findActiveDemandesByLogin($login);
-
-        foreach($demandes as $demande){
-            $sql_demande = array();
-
-            // First build occtax search with demande params
-            $dparams = array();
-            if($demande->cd_ref)
-                $dparams['cd_nom'] = explode( ',', trim($demande->cd_ref, '{}') );
-            if($demande->group1_inpn)
-                $dparams['group1_inpn'] = explode( ',', trim($demande->group1_inpn, '{}') );
-            if($demande->group2_inpn)
-                $dparams['group2_inpn'] = explode( ',', trim($demande->group2_inpn, '{}') );
-
-            $dsearch = new occtaxSearchObservation( null, $dparams, 1 );
-            $sql_demande[] = preg_replace(
-                '/WHERE +True( +AND +)?/i',
-                '',
-                $dsearch->getWhereClause()
-            );
-
-            // Add geometry filter if set
-            if($demande->geom){
-                $cnx = jDb::getConnection();
-                $sql_geom = ' ST_Intersects(o.geom, ST_GeomFromText(' . $cnx->quote($demande->geom) . ', '. $this->srid .')) ' ;
-                $sql_demande[] = $sql_geom;
-            }
-
-            // Add validity dates
-            if($demande->date_validite_min){
-                $sql_demande[] = ' ' . $cnx->quote($demande->date_validite_min) . '::date <= now()::date' ;
-            }
-            if($demande->date_validite_max){
-                $sql_demande[] = ' now()::date <= ' . $cnx->quote($demande->date_validite_max) . '::date ' ;
-            }
-
-            // Build full sql for this demand
-            if(count($sql_demande) > 0){
-                $table_demandes[] = ' ( ' . implode( ' AND ', $sql_demande) . ' ) ';
-            }
-
-        }
-        if( count($table_demandes)>0 ){
-            $return = implode( ' OR ', $table_demandes);
-            $return = ' AND ( ' . $return . ' ) ';
-//jLog::log($return);
-        }
-        return $return;
-    }
-
 
     protected function setGroupClause(){
         $groupClause = '';

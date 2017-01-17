@@ -6,7 +6,7 @@
     <record>
         <property name="id" fieldname="id" datatype="int" autoincrement="true" default=""/>
         <property name="usr_login" fieldname="usr_login" datatype="varchar" required="true" maxlength="50"/>
-        <property name="id_structure" fieldname="id_structure" datatype="int" required="true"/>
+        <property name="id_organisme" fieldname="id_organisme" datatype="int" required="true"/>
         <property name="motif" fieldname="motif" datatype="text" required="true"/>
         <property name="type_demande" fieldname="type_demande" datatype="text" required="true"/>
         <property name="date_demande" fieldname="date_demande" datatype="date" required="true"/>
