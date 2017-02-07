@@ -14,6 +14,9 @@
 <div id="div_form_taxon_search_token" class="menu-content">
 {formfull $form, 'taxon~service:initSearch', array(), 'htmlbootstrap'}
 </div>
+
+<div id="div_taxon_search_description" style="display:none;"></div>
+
 <h3><span class="title"><span class="icon result"></span>&nbsp;<span class="text">{@taxon~search.result.title@}</span></span></h3>
 <div id="div_table_taxon_results" class="menu-content">
     {zone 'taxon~datatable', array('classId'=>'taxon~taxonSearch','tableId'=>'table_taxon_results')}

@@ -360,6 +360,7 @@ lizMap.events.on({
 
         // Show observation search
         $('#button-occtax').click();
+        $('#button-taxon').parent('li.taxon').hide();
 
 
     },

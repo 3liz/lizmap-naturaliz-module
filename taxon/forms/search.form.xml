@@ -121,4 +121,11 @@ Masqué pour simplifier
     <label locale="taxon~search.input.submit"/>
   </submit>
 
+  <submit ref="obsfilter">
+    <label locale="taxon~search.input.filter"/>
+  </submit>
+
+  <submit ref="back">
+    <label locale="taxon~search.input.back"/>
+  </submit>
 </form>

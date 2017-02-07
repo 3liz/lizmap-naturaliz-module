@@ -225,7 +225,8 @@ class occtaxSearch {
             foreach( $v as $i ){
                 $item = $dao->$method($i);
                 if( $item ){
-                    $label.= $sep . $item->$qfl['column'];
+                    $col = (string)$qfl['column'];
+                    $label.= $sep . $item->$col;
                     $sep = ', ';
                 }else{
                     $label.= $v;
@@ -233,8 +234,10 @@ class occtaxSearch {
             }
         }else{
             $item = $dao->$method($v);
-            if($item)
-                $label = $item->$qfl['column'];
+            if($item){
+                $col = (string)$qfl['column'];
+                $label = $item->$col;
+            }
             else
                 $label = $v;
         }

@@ -281,7 +281,8 @@ class taxonSearch {
             foreach( $v as $i ){
                 $item = $dao->get($i);
                 if( $item ){
-                    $label.= $sep . $item->$qfl['column'];
+                    $col = (string)$qfl['column'];
+                    $label.= $sep . $item->$col;
                     $sep = ', ';
                 }else{
                     $label.= $v;
@@ -300,14 +301,17 @@ class taxonSearch {
             }
             $list = $dao->findBy( $daoConditions, 0, 1 );
             $item = $list->fetch();
+            $col = (string)$qfl['column'];
             if($item)
-                $label = $item->$qfl['column'];
+                $label = $item->$col;
             else
                 $label = $v;
         }else{
             $item = $dao->get($v);
-            if($item)
-                $label = $item->$qfl['column'];
+            if($item){
+                $col = (string)$qfl['column'];
+                $label = $item->$col;
+            }
             else
                 $label = $v;
         }
@@ -350,10 +354,7 @@ class taxonSearch {
             // Add filter
             foreach( $this->params as $k=>$v ){
                 if( in_array( $k, $this->queryFields ) and $v ) {
-                    if( $k == 'group2_inpn')
-                        $this->conditions->addCondition( $k, 'IN', $v );
-                    else
-                        $this->conditions->addCondition( $k, '=', $v );
+                    $this->conditions->addCondition( $k, 'IN', $v );
                 }
             }
         }

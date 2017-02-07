@@ -13,13 +13,14 @@
     <h3><span class="title"><span class="icon search"></span>&nbsp;<span class="text">{@occtax~search.form.title@}</span></span></h3>
     <div id="occtax_taxon_select_div" class="control-group">
       <label class="jforms-label control-label">
-        <button type="button" data-toggle="modal" data-target="#div_occtax_taxon_modal" class="btn" style="padding:2px;">{@occtax~search.button.add.taxon@}</button>
+        <button type="button" id="occtax_taxon_select_toggle" class="btn" style="padding:2px;">{@occtax~search.button.add.taxon@}</button>
       </label>
       <div class="controls">
         <ul id="occtax_taxon_select_list" style="width:220px; height:80px; overflow-x:auto; margin:0px;
          background-color:#FFF; border:solid #CCC 1px; border-radius:4px;">
         </ul>
         <div id="occtax_taxon_select_params" style="display:none;"></div>
+        <button id="clearTaxonSearch" class="btn btn-mini">x</button>
       </div>
     </div>
     <div id="obs-spatial-query-buttons" class="controls">
@@ -180,60 +181,4 @@
       </div>
     </div>
 </div>
-
-
-<div id="div_occtax_taxon_modal" class="modal hide fade">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h3>Filtrer les taxons</h3>
-    </div>
-    <div class="modal-body">
-
-        <div style="display:none;">
-          <form id="form_occtax_taxon_service_autocomplete" method="post" action="{jurl 'taxon~service:autocomplete'}">
-            <input type="text" name="limit" value="10"></input>
-            <input type="text" name="term"></input>
-          </form>
-        </div>
-        <h3><span class="title"><span class="icon search"></span>&nbsp;<span class="text">{@taxon~search.form.title@}</span></span></h3>
-        <div id="div_form_occtax_taxon_search_token" class="menu-content">
-            {formfull $formTax, 'taxon~service:initSearch', array(), 'htmlbootstrap'}
-        </div>
-        <h3>
-            <span class="title">
-                <span class="icon result"></span>&nbsp;<span class="text">{@taxon~search.result.title@}</span>
-                <span class="pull-right">
-                    <div class="btn-group">
-                        <button id="occtax_results_add_taxon_button"
-                                type="button" class="btn btn-mini" style="background:#E6E6E6; paddding:2px; width:20px; height:20px;"
-                                title="Ajouter la recherche">
-                            <i class="icon-plus-sign"></i>
-                        </button>
-                    </div>
-                </span>
-            </span>
-        </h3>
-        <div id="occtax_results_add_taxon_table_div" class="menu-content">
-            <form id="form_occtax_taxon_service_search" method="post" action="{jurl 'taxon~service:search'}" style="display:none;">
-                <input type="text" name="token"></input>
-                <input type="text" name="limit"></input>
-                <input type="text" name="offset"></input>
-                <input type="text" name="order"></input>
-            </form>
-            <div id="occtax_results_add_taxon_description" style="display:none;"></div>
-            {zone 'taxon~datatable', array('classId'=>'occtax~taxonSearchOcctax','tableId'=>'occtax_results_add_taxon_table', 'localeModule'=>'taxon')}
-        </div>
-    </div>
-    <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-    </div>
-</div>
-
-<script>
-{literal}
-$(document).ready(function() {
-  $('body').append($('#div_occtax_taxon_modal'));
-});
-{/literal}
-</script>
 
