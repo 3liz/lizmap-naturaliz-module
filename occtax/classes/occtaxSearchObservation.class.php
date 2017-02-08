@@ -259,9 +259,12 @@ class occtaxSearchObservation extends occtaxSearch {
                         $values = array_map( function($item){return $this->myquote($item);}, $value );
                         $csql.= ' ( ' . implode(',', $values)  .' ) ';
                     }else{
+                        if($condition['operator'] == 'IN')
+                            $csql.= ' ( ';
                         $csql.= ' ' . $this->myquote($value) . ' ';
+                        if($condition['operator'] == 'IN')
+                            $csql.= ' ) ';
                     }
-
                     $tsql[] = $csql;
                 }
 

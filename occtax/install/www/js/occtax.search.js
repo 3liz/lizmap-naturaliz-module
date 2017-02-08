@@ -516,6 +516,27 @@ $(document).ready(function () {
     }
 
 
+    function manageTaxonSubmit(aCallBack){
+      var formId = $('#div_form_taxon_search_token form').attr('id');
+      var self = $('#'+formId);
+      aCallBack = typeof aCallBack !== 'undefined' ?  aCallBack : null;
+
+      $.getJSON(self.attr('action'), self.serialize(),
+        function(tData) {
+
+          //(tData);
+          if (tData.status == 1) {
+            $('#form_taxon_service_search input[name="token"]').val(tData.token);
+            $('#table_taxon_results').DataTable().ajax.reload();
+            $('#div_taxon_search_description').html( tData.description );
+
+            if(aCallBack){
+              aCallBack();
+            }
+          }
+        });
+    }
+
     function initFormTaxon() {
       var formId = $('#div_form_taxon_search_token form').attr('id');
       $('#'+formId+'_autocomplete').autocomplete({
@@ -554,50 +575,62 @@ $(document).ready(function () {
           return false;
         }
       }).autocomplete( "widget" ).css("z-index","1050");
+
+      // Manage taxon form submit
       $('#'+formId+'_autocomplete').autocomplete( "instance" )._renderItem = function( ul, item ) {
         return $( "<li>" )
         .append( $("<a>").html(  $("<a>").html( '<img src="'+ jFormsJQ.config.basePath + 'css/images/taxon/' + item.groupe + '.png" width="15" height="15"/>&nbsp;' + item.label )  ) )
         .appendTo( ul );
       };
+      // Search taxon and display results
       $('#'+formId).submit(function(){
-        var self = $(this);
-        $.getJSON(self.attr('action'), self.serialize(),
-          function(tData) {
-            //(tData);
-            if (tData.status == 1) {
-              $('#form_taxon_service_search input[name="token"]').val(tData.token);
-              $('#table_taxon_results').DataTable().ajax.reload();
-              $('#div_taxon_search_description').html( tData.description );
-            }
-          });
+        manageTaxonSubmit();
         return false;
       });
+      // Reinit search form
       $('#'+formId+'_reinit').click(function(){
           $('#'+formId+'_cd_ref').val( '' );
-          //return false;
+          $('#jforms_taxon_search input[name="autocomplete"]').val('')
+          $('#jforms_taxon_search select option').prop('selected', function() {
+            return this.defaultSelected;
+          });
+          return false;
       });
+      // Go back to occtax panel (do nothing else)
       $('#'+formId+'_back').click(function(){
           $('#button-occtax').click();
           return false;
       });
-      $('#'+formId+'_obsfilter').click(function(){
-        // check if a search has been run
-        var token = $('#form_taxon_service_search input[name="token"]').val();
-        var cdref = $('#jforms_taxon_search input[name="cd_ref"]').val();
-        if(!token && !cdref){
-          msg = "Vous devez lancer une recherche sur les taxons pour pouvoir filtrer les observations.";
-          lizMap.addMessage( msg, 'error', true );
-          return false;
-        }
-        var description = $('#div_taxon_search_description').html();
-        clearTaxonFromSearch();
-        $('#div_form_occtax_search_token form [name="search_token"]').val( token );
-        $('#occtax_taxon_select_list').hide();
-        $('#occtax_taxon_select_params').html( description ).show();
-        $('#button-occtax').click();
-        $('#div_form_occtax_search_token form').submit();
+      // Search taxon & display result in taxon panel
+      $('#'+formId+'_submit').click(function(){
+        manageTaxonSubmit();
         return false;
       });
+
+      // Search taxon, and run the corresponding filter in occtax panel
+      $('#'+formId+'_obsfilter').click(function(){
+
+        manageTaxonSubmit(function(){
+          // check if a search has been run
+          var token = $('#form_taxon_service_search input[name="token"]').val();
+          var cdref = $('#jforms_taxon_search input[name="cd_ref"]').val();
+          if(!token && !cdref){
+            msg = "Vous devez lancer une recherche sur les taxons pour pouvoir filtrer les observations.";
+            lizMap.addMessage( msg, 'error', true );
+            return false;
+          }
+          var description = $('#div_taxon_search_description').html();
+          clearTaxonFromSearch();
+          $('#div_form_occtax_search_token form [name="search_token"]').val( token );
+          $('#occtax_taxon_select_list').hide();
+          $('#occtax_taxon_select_params').html( description ).show();
+          $('#button-occtax').click();
+          $('#div_form_occtax_search_token form').submit();
+
+        });
+        return false;
+      });
+
 
       $('#'+formId+'_filter > div').hide();
       $('#'+formId+'_filter > legend').html('<button class="btn" data-toggle="button">'+$('#'+formId+'_filter > legend').text()+'<span class="caret"></span></button>');
