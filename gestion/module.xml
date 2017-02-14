@@ -12,6 +12,9 @@
     </info>
     <dependencies>
         <jelix minversion="1.6.0" maxversion="1.6.*"/>
+        <module name="lizmap" />
+        <module name="view" />
+        <module name="taxon" />
         <module name="occtax" />
     </dependencies>
 </module>

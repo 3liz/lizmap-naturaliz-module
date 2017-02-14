@@ -240,7 +240,7 @@ Une fois les données récupérées, vous pouvez l'import de données via la com
 
 ```
 cd /srv/lizmap_web_client/
-php lizmap/scripts/script.php taxon~import:taxref -source /tmp/taxref/10/TAXREFv10.0.txt -menace /tmp/menaces/LR_Resultats_Réunion_export_.csv -protection /tmp/protection/ESPECES_REGLEMENTEES/PROTECTION_ESPECES_10.csv -version 10
+php lizmap/scripts/script.php taxon~import:taxref -source /tmp/referentiels/taxref/10/TAXREFv10.0.txt -menace /tmp/referentiels/menaces/LR_Resultats_Réunion_export_.csv -protection /tmp/referentiels/protection/ESPECES_REGLEMENTEES_10/PROTECTION_ESPECES_10.csv -version 10
 ```
 
 Le premier paramètre passé est le chemin complet vers le fichier CSV contenant les données. Le 2ème est le chemin vers le fichier des menaces (taxons sur listes rouges, filtré pour la région concernée).Le 3ème est le fichier contenant les taxon protégés. Vous pouvez pointer vers d'autres chemins de fichiers, et le script se chargera de copier les données dans le répertoire temporaire puis lancera l'import.
@@ -311,7 +311,12 @@ apt-get install gdal-bin
 # Import des données depuis les Shapefile pour les communes, mailles 1 et 2.
 # Import optionnel des réserves naturelles nationales et des habitats
 # Vous devez spécifier le chemin complet vers les fichiers : communes, mailles 1x1km, mailles 2x2km et optionnellement les réserves et les habitats
+
+# Exemple 1/ Guadeloupe
 php lizmap/scripts/script.php occtax~import:shapefile -commune "/tmp/sig/COMMUNE.SHP" -maille_01 "/tmp/sig/grille_1000m_gwada_dep_ama_poly.shp" -maille_02 "/tmp/sig/grille_2000m_gwada_dep_ama_poly.shp" -maille_05 "/tmp/sig/grille_5000.shp" -maille_10 "/tmp/sig/grille_10000m" -reserves_naturelles_nationales "/tmp/sig/glp_rnn2012.shp" -habref "/tmp/csv/HABREF_20/HABREF_20.csv" -habitat_mer "/tmp/csv/habitats/TYPO_ANT_MER_09-01-2011.xls" -habitat_terre "/tmp/csv/habitats/EAR_Guadeloupe.csv" -commune_annee_ref "2013" -departement_annee_ref "2013" -maille_01_version_ref "2015" -maille_01_nom_ref "Grille nationale (1km x 1km) Réunion" -maille_02_version_ref "2015" -maille_02_nom_ref "Grille nationale (2km x 2km) Réunion" -maille_05_version_ref "2015" -maille_05_nom_ref "Grille nationale (5km x 5km) Réunion" -maille_10_version_ref "2012" -maille_10_nom_ref "Grille nationale (10km x 10km) Réunion" -rnn_version_en "2010"
+
+# Exemple 2/ La Réunion
+php lizmap/scripts/script.php occtax~import:shapefile -commune "/tmp/referentiels/sig/COMMUNE.SHP" -maille_01 "/tmp/referentiels/sig/REU_UTM40S1X1.shp" -maille_02 "/tmp/referentiels/sig/REU_UTM40S2X2.shp" -maille_05 "/tmp/referentiels/sig/REU_UTM40S5X5.shp" -maille_10 "/tmp/referentiels/sig/REU_UTM40S10X10.shp" -reserves_naturelles_nationales "/tmp/referentiels/sig/RN.shp" -habref "/tmp/referentiels/habitats/HABREF_20/HABREF_20.csv" -commune_annee_ref "2013" -departement_annee_ref "2013" -maille_01_version_ref "2015" -maille_01_nom_ref "Grille nationale (1km x 1km) Réunion" -maille_02_version_ref "2015" -maille_02_nom_ref "Grille nationale (2km x 2km) Réunion" -maille_05_version_ref "2015" -maille_05_nom_ref "Grille nationale (5km x 5km) Réunion" -maille_10_version_ref "2012" -maille_10_nom_ref "Grille nationale (10km x 10km) Réunion" -rnn_version_en "2010"
 
 # Import des données depuis les serveurs WFS officiels
 # Vous devez préciser l'URL des serveurs WFS pour les données INPN et pour les données Sandre (masses d'eau)

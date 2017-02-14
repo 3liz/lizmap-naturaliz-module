@@ -91,7 +91,7 @@ CREATE TABLE acteur(
 );
 ALTER TABLE acteur ADD CONSTRAINT acteur_id_organisme_fkey
 FOREIGN KEY (id_organisme)
-REFERENCES gestion.organisme(id_organisme) MATCH SIMPLE
+REFERENCES occtax.organisme(id_organisme) MATCH SIMPLE
 ON UPDATE RESTRICT
 ON DELETE RESTRICT
 ;
