@@ -114,9 +114,10 @@ CREATE TABLE observation (
     CONSTRAINT obs_sensi_niveau_valide CHECK ( sensi_niveau IN ( '0', '1', '2', '3', '4', '5' ) ),
     CONSTRAINT obs_sensi_referentiel_valide CHECK ( ( sensi_niveau != '0' AND sensi_referentiel IS NOT NULL) OR sensi_niveau = '0' ),
     CONSTRAINT obs_sensi_version_referentiel_valide CHECK ( ( sensi_niveau != '0' AND sensi_version_referentiel IS NOT NULL) OR sensi_niveau = '0' ),
-    CONSTRAINT obs_version_taxref_valide CHECK ( cd_nom IS NULL OR ( cd_nom IS NOT NULL AND version_taxref IS NOT NULL) ),
-    CONSTRAINT obs_preuve_numerique_valide CHECK ( ( preuve_existante = '1' AND preuve_non_numerique IS NULL AND preuve_numerique IS NOT NULL  ) OR (preuve_existante != '1' ) ),
-    CONSTRAINT obs_preuve_non_numerique_valide CHECK ( ( preuve_existante = '1' AND preuve_numerique IS NULL AND preuve_non_numerique IS NOT NULL  ) OR (preuve_existante != '1' ) )
+    CONSTRAINT obs_version_taxref_valide CHECK ( cd_nom IS NULL OR ( cd_nom IS NOT NULL AND version_taxref IS NOT NULL) )
+--,
+--    CONSTRAINT obs_preuve_numerique_valide CHECK ( ( preuve_existante = '1' AND preuve_non_numerique IS NULL AND preuve_numerique IS NOT NULL  ) OR (preuve_existante != '1' ) ),
+--    CONSTRAINT obs_preuve_non_numerique_valide CHECK ( ( preuve_existante = '1' AND preuve_numerique IS NULL AND preuve_non_numerique IS NOT NULL  ) OR (preuve_existante != '1' ) )
 
 
 );
@@ -594,24 +595,8 @@ CREATE TABLE jdd_import (
     nb_donnees_source smallint,
     nb_donnees_import smallint,
     date_obs_min date,
-    date_obs_max date,
-    acteur_referent integer not null,
-    acteur_importateur integer not null
+    date_obs_max date
 );
-
-ALTER TABLE jdd_import ADD CONSTRAINT jdd_import_acteur_referent_fkey
-FOREIGN KEY (acteur_referent)
-REFERENCES acteur(id_acteur) MATCH SIMPLE
-ON UPDATE CASCADE
-ON DELETE RESTRICT
-;
-
-ALTER TABLE jdd_import ADD CONSTRAINT jdd_import_acteur_importateur_fkey
-FOREIGN KEY (acteur_importateur)
-REFERENCES acteur(id_acteur) MATCH SIMPLE
-ON UPDATE CASCADE
-ON DELETE RESTRICT
-;
 
 ALTER TABLE jdd_import ADD CONSTRAINT jdd_import_jdd_id_fkey
 FOREIGN KEY (jdd_id)
@@ -631,8 +616,6 @@ COMMENT ON COLUMN jdd_import.nb_donnees_source IS 'Nombre d''items dans le jeu d
 COMMENT ON COLUMN jdd_import.nb_donnees_import IS 'Nombre de données réellement importé pendant l''import dans la table occtax.observation (si des clauses WHERE ont été utilisées pour filtrer sur certaines observations)';
 COMMENT ON COLUMN jdd_import.date_obs_min IS 'Date minimale des observations importées pour le jdd';
 COMMENT ON COLUMN jdd_import.date_obs_max IS 'Date maximale des observations importées pour le jdd';
-COMMENT ON COLUMN jdd_import.acteur_referent IS 'Acteur référent (celui qui est responsable des données, par exemple dans son pôle thématique). En lien avec la table gestion.acteur';
-COMMENT ON COLUMN jdd_import.acteur_importateur IS 'Acteur qui a réalisé l''import des données dans la base. En lien avec la table acteur.';
 
 
 -- table jdd_correspondance_taxon

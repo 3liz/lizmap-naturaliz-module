@@ -118,6 +118,28 @@ COMMENT ON COLUMN acteur.remarque IS 'Remarque sur l''acteur (texte libre)';
 COMMENT ON COLUMN acteur.bulletin_information IS 'Indique si l''acteur souhaite recevoir le bulletin d''information par courriel.';
 COMMENT ON COLUMN acteur.reunion_sinp IS 'Indique si l''acteur participe aux réunion du SINP local.';
 
+-- Ajout de champs dans la table occtax.jdd_import
+ALTER TABLE occtax.jdd_import
+ADD COLUMN acteur_referent integer not null;
+COMMENT ON COLUMN jdd_import.acteur_referent IS 'Acteur référent (celui qui est responsable des données, par exemple dans son pôle thématique). En lien avec la table gestion.acteur';
+
+ALTER TABLE occtax.jdd_import
+ADD COLUMN acteur_importateur integer not null;
+COMMENT ON COLUMN jdd_import.acteur_importateur IS 'Acteur qui a réalisé l''import des données dans la base. En lien avec la table acteur.';
+
+ALTER TABLE occtax.jdd_import ADD CONSTRAINT jdd_import_acteur_referent_fkey
+FOREIGN KEY (acteur_referent)
+REFERENCES gestion.acteur(id_acteur) MATCH SIMPLE
+ON UPDATE CASCADE
+ON DELETE RESTRICT
+;
+
+ALTER TABLE occtax.jdd_import ADD CONSTRAINT jdd_import_acteur_importateur_fkey
+FOREIGN KEY (acteur_importateur)
+REFERENCES gestion.acteur(id_acteur) MATCH SIMPLE
+ON UPDATE CASCADE
+ON DELETE RESTRICT
+;
 
 
 -- INDEXES
