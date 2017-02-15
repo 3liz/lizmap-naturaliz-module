@@ -1,6 +1,6 @@
 <div style="display:none;">
   <form id="form_taxon_service_autocomplete" method="post" action="{jurl 'taxon~service:autocomplete'}">
-    <input type="text" name="limit" value="10"></input>
+    <input type="text" name="limit" value="50"></input>
     <input type="text" name="term"></input>
   </form>
   <form id="form_taxon_service_search" method="post" action="{jurl 'taxon~service:search'}">
