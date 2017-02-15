@@ -331,8 +331,8 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
         fclose($fp);
         chmod($path, 0666);
 
-        // Build COPY query
-        $sql = " COPY (
+        // Build query
+        $sql = "
             SELECT ";
 
         // Fields
@@ -362,16 +362,33 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             }
         }
         $sql.= ") foo";
-        $sql.= "
+
+        // Use COPY: DEACTIVATED BECAUSE NEEDS SUPERUSER PG RIGHTS
+        $sqlcopy = " COPY (" . $sql ;
+        $sqlcopy.= "
         )";
-
-        $sql.= "
+        $sqlcopy.= "
         TO " . $cnx->quote($path);
-        $sql.= "
+        $sqlcopy.= "
         WITH CSV DELIMITER " .$cnx->quote($delimiter);
-        $sql.= " HEADER";
+        $sqlcopy.= " HEADER";
+        //$cnx->exec($sql);
 
-        $cnx->exec($sql);
+        // Write header
+        $fd = fopen($path, 'w');
+        fputcsv($fd, $attributes, $delimiter);
+
+        // Fetch data and fill in the file
+        $res = $cnx->query($sql);
+        foreach($res as $line){
+            $ldata = array();
+            foreach($attributes as $att){
+                $ldata[] = $line->$att;
+            }
+            fputcsv($fd, $ldata, $delimiter);
+        }
+        fclose($fd);
+
         if( !file_exists($path) ){
             //jLog::log( "Erreur lors de l'export en CSV");
             return Null;
