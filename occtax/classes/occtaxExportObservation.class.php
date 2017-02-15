@@ -497,7 +497,8 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
         $sql.= "
         )
 
-        SELECT xmlagg(
+        SELECT 
+        -- xmlagg(
             xmlelement(
                 name \"gml:featureMember\",
                 xmlelement(
@@ -531,7 +532,8 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 )
             )
 
-        ) AS gml
+--        ) 
+        AS gml
         FROM source";
 //jLog::log($sql);
 
@@ -542,8 +544,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
 
         // Get feature members
         foreach( $q as $d){
-            $featureMembers =  $d->gml;
-            break;
+            $featureMembers.=  $d->gml;
         }
 
         // Build full XML

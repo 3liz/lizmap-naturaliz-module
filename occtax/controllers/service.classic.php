@@ -254,7 +254,7 @@ class serviceCtrl extends jController {
         $rep->content = $geojson;
         $rep->doDownload  =  true;
         $rep->mimeType = 'text/json; charset=utf-8';
-        $rep->outputFileName = 'export_observations';
+        $rep->outputFileName = 'export_observations.geojson';
 
         return $rep;
     }

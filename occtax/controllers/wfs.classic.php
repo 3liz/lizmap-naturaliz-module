@@ -153,7 +153,7 @@ class wfsCtrl extends jController {
 
         $rep->content = $data;
         $rep->doDownload  =  false;
-        $rep->outputFileName  =  'naturaliz_'.$service.'_capabilities';
+        $rep->outputFileName  =  'naturaliz_'.$service.'_capabilities.xml';
 
     return $rep;
   }
@@ -180,7 +180,7 @@ class wfsCtrl extends jController {
 
         $rep->content = $data;
         $rep->doDownload  =  false;
-        $rep->outputFileName  =  'naturaliz_'.$service.'_capabilities';
+        $rep->outputFileName  =  'naturaliz_'.$service.'_capabilities.xml';
 
     return $rep;
   }
@@ -205,7 +205,7 @@ class wfsCtrl extends jController {
         $data = $this->search->getGML($describeUrl);
         $rep->content = $data;
         $rep->doDownload  =  false;
-        $rep->outputFileName  =  'naturaliz_'.$service.'_capabilities';
+        $rep->outputFileName  =  'naturaliz_'.$service.'_data.gml';
 
     return $rep;
   }
