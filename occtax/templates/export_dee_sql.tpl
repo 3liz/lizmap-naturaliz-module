@@ -1,4 +1,4 @@
-COPY (
+-- COPY (
 
 WITH observations AS (
 SELECT
@@ -396,6 +396,6 @@ SELECT
     )::text AS "xml"
 FROM observations
 
-)  TO {$path};
+--)  TO {$path};
 
 

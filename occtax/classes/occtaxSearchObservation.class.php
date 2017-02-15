@@ -267,7 +267,7 @@ class occtaxSearchObservation extends occtaxSearch {
                     }
                     $tsql[] = $csql;
                 }
-
+//jLog::log(json_encode($tsql));
                 if( count($tsql) > 0 ){
                     $taxonSql = " AND o.cd_ref IN (SELECT cd_ref FROM taxon.taxref_consolide WHERE ";
                     $taxonSql.= implode( ' AND ', $tsql  ) . " ) ";

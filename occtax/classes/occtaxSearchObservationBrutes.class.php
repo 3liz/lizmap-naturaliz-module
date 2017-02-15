@@ -589,7 +589,12 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $sql = $tpl->fetch('occtax~export_dee_sql');
 
         // Execute SQL to export DEE file
-        $cnx->exec($sql);
+        $res = $cnx->query($sql);
+        $fd = fopen($path, 'w');
+        foreach($res as $line){
+            fwrite($fd, $line->xml);
+        }
+        fclose($fd);
         if( !file_exists($path) ){
             return Null;
         }
