@@ -351,10 +351,11 @@ class taxonSearch {
 
         // Filter via form params
         if( $this->params ){
+            $cnx = jDb::getConnection();
             // Add filter
             foreach( $this->params as $k=>$v ){
                 if( in_array( $k, $this->queryFields ) and $v ) {
-                    $this->conditions->addCondition( $k, 'IN', $v );
+                    $this->conditions->addCondition( $k, '=', $v);
                 }
             }
         }
