@@ -121,7 +121,7 @@ INSERT INTO t_group_categorie VALUES ('Coraux', 'Octocoralliaires', 'group2_inpn
 INSERT INTO t_group_categorie VALUES ('Coraux', 'Scléractiniaires', 'group2_inpn', 'Animalia');
 INSERT INTO t_group_categorie VALUES ('Crustacés', 'Crustacés', 'group2_inpn', 'Animalia');
 INSERT INTO t_group_categorie VALUES ('Fougères', 'Fougères', 'group2_inpn', 'Plantae');
-INSERT INTO t_group_categorie VALUES ('Gymnospermes (plantes à graine: conifères)', 'Gymnospermes', 'group2_inpn', 'Plantae');
+INSERT INTO t_group_categorie VALUES ('Gymnospermes (plantes à graines nues: conifères)', 'Gymnospermes', 'group2_inpn', 'Plantae');
 INSERT INTO t_group_categorie VALUES ('Hydrozoaires (méduses)', 'Hydrozoaires', 'group2_inpn', 'Animalia');
 INSERT INTO t_group_categorie VALUES ('Insectes (papillons, mouches, abeilles)', 'Entognathes', 'group2_inpn', 'Animalia');
 INSERT INTO t_group_categorie VALUES ('Insectes (papillons, mouches, abeilles)', 'Insectes', 'group2_inpn', 'Animalia');
