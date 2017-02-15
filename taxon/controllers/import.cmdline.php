@@ -136,6 +136,17 @@ class importCtrl extends jControllerCmdLine {
             $colonne_locale = 'fr';
         $assign['colonne_locale'] = $colonne_locale;
 
+        // Get endemicite description
+        $endemicite_description_endemique = $ini->getValue('endemicite_description_endemique', 'taxon');
+        if( !$endemicite_description_endemique )
+            $endemicite_description_endemique = '';
+        $assign['endemicite_description_endemique'] = $endemicite_description_endemique;
+
+        $endemicite_description_subendemique = $ini->getValue('endemicite_description_subendemique', 'taxon');
+        if( !$endemicite_description_subendemique )
+            $endemicite_description_subendemique = '';
+        $assign['endemicite_description_subendemique'] = $endemicite_description_subendemique;
+
         // Get the list of protection codes
         $liste_codes = array(
                 'code_arrete_protection_simple',

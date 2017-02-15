@@ -38,6 +38,7 @@ L'installateur lit certains fichiers de configuration, que vous devez donc crée
 Les modules Naturaliz lisent dans le fichier **lizmap/var/config/localconfig.ini.php** des informations relatives à l'adaptation au contexte local: projection, codes spécifiques, etc. Vous pouvez copier le contenu du fichier **lizmap/lizmap-modules/localconfig.ini.php.dist** et le poser dans le fichier correspondant dans lizmap. Ce fichier doit contenir:
 
 * la colonne des données TAXREF correspondant au lieu principal de l'installation (par exemple "gua" pour la Guadeloupe) : variable **colonne_locale** de la section [taxon]
+* une description pour les zones correspondant à l'endémicité (endémique et subendémique): variables **endemicite_description_endemique** (ex: Réunion) et **endemicite_description_subendemique** (Ex: Mascareignes)
 * la liste des codes d'arrêtés de protection pour la zone concernée: variables **code_arrete_protection_simple**, **code_arrete_protection_internationale**, **code_arrete_protection_nationale**, **code_arrete_protection_communautaire** de la section  [taxon]
 * le code SRID du système de coordonnées de références des données spatiales du projet : variable **srid** de la section [naturaliz].
 * le mot de passe de l'utilisateur admin: variable **adminPassword** de la section [naturaliz].
@@ -75,6 +76,9 @@ occtax_admin.access=2
 [taxon]
 ; champ determinant le statut local : valeures possibles fr, gf, mar, gua, sm, sb, spm, may, epa, reu, sa, ta, taff, pf, nc, wf, cli
 colonne_locale=reu
+endemicite_description_endemique=Réunion
+endemicite_description_subendemique=Mascareignes
+
 ; liste des codes des arr  t  s de protection qui concernent la zone de travail
 code_arrete_protection_simple="agri1,agri2,Bubul1,Bulbul2,Bulbul3,Bulbul4,Bulbul5,Bulbul6,Bulbul9,corbasi1,phelsuma1,phelsuma2,phelsuma3,phelsuma4,phelsuma5,PV97,REUEEA,REUEEI,REUP"
 code_arrete_protection_internationale="CCA,CCB,CCC,CCD,IAAP,IAO2,IAO3,IAO4,IBA2,IBA3,IBE1,IBE2,IBE3,IBOAE,IBO1,IBO2,IOS5"

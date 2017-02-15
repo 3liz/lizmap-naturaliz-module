@@ -13,8 +13,8 @@ INSERT INTO t_nomenclature VALUES ('rarete', 'R', 'Rare', NULL);
 INSERT INTO t_nomenclature VALUES ('rarete', 'C', 'Commun', NULL);
 
 -- endémicité
-INSERT INTO t_nomenclature VALUES ('endemicite', 'G', 'Guadeloupe', NULL);
-INSERT INTO t_nomenclature VALUES ('endemicite', 'PA', 'Petites-Antilles', NULL);
+INSERT INTO t_nomenclature VALUES ('endemicite', 'E', 'Endémique', NULL);
+INSERT INTO t_nomenclature VALUES ('endemicite', 'S', 'Subendémique', NULL);
 
 -- invasibilité
 INSERT INTO t_nomenclature VALUES ('invasibilite', 'EM', 'Envahissant majeur', NULL);

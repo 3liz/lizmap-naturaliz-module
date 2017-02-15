@@ -52,12 +52,16 @@ CASE
 END AS rarete,
 -- endemicite
 CASE
-        WHEN {$colonne_locale} IN ('E', 'Z') THEN 'G'
-        WHEN {$colonne_locale} IN ('S') THEN 'PA'
+        WHEN {$colonne_locale} IN ('E', 'Z') THEN 'E'
+        WHEN {$colonne_locale} IN ('S') THEN 'S'
         ELSE NULL
 END AS endemicite
 FROM taxref_valide
 ;
+
+-- Adaptation de la nomenclature au contexte local
+UPDATE t_nomenclature SET description = '{$endemicite_description_endemique}' WHERE champ = 'endemicite' AND code = 'E';
+UPDATE t_nomenclature SET description = '{$endemicite_description_subendemique}' WHERE champ = 'endemicite' AND code = 'S';
 
 -- MENACES = TAXON DES LISTES ROUGES
 CREATE TEMPORARY TABLE redlist (
