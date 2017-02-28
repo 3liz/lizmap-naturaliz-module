@@ -52,10 +52,6 @@ ALTER TABLE demande ADD CONSTRAINT demande_id_organisme_fk
 FOREIGN KEY (id_organisme) REFERENCES occtax."organisme" (id_organisme)
 ON DELETE RESTRICT;
 
-ALTER TABLE demande ADD CONSTRAINT demande_id_acteur_fk
-FOREIGN KEY (id_acteur) REFERENCES occtax."acteur" (id_acteur)
-ON DELETE RESTRICT;
-
 ALTER TABLE demande ADD CONSTRAINT demande_valide
 CHECK ( Coalesce(cd_ref::text, group1_inpn::text, group2_inpn::text, '') != '' )
 ;
@@ -102,6 +98,9 @@ ON UPDATE RESTRICT
 ON DELETE RESTRICT
 ;
 
+ALTER TABLE demande ADD CONSTRAINT demande_id_acteur_fk
+FOREIGN KEY (id_acteur) REFERENCES "acteur" (id_acteur)
+ON DELETE RESTRICT;
 
 COMMENT ON TABLE acteur IS 'Liste les acteurs liés à l''application. Cette table sert à stocker les personnes ressource: responsables des imports de données, référents des jeux de données, etc.';
 COMMENT ON COLUMN acteur.id_acteur IS 'Identifiant de l''acteur (entier auto-incrémenté)';

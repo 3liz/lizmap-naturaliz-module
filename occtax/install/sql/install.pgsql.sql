@@ -99,7 +99,7 @@ CREATE TABLE observation (
     CONSTRAINT obs_statut_observation_valide CHECK ( statut_observation IN ( 'Pr', 'No', 'NSP' ) ),
     CONSTRAINT obs_objet_denombrement_valide CHECK (
         ( denombrement_min IS NOT NULL AND denombrement_max IS NOT NULL AND objet_denombrement IN ('COL', 'CPL', 'HAM', 'IND', 'NID', 'NSP', 'PON', 'SURF', 'TIGE', 'TOUF ')  )
-        OR (denombrement_min IS NULL AND denombrement_max IS NULL AND objet_denombrement IS NULL)
+        OR (denombrement_min IS NULL AND denombrement_max IS NULL AND Coalesce(objet_denombrement, 'NSP') = 'NSP')
     ),
     CONSTRAINT obs_type_denombrement_valide CHECK ( type_denombrement IN ('Co', 'Es', 'Ca', 'NSP') ),
     CONSTRAINT obs_diffusion_niveau_precision_valide CHECK ( diffusion_niveau_precision IS NULL OR diffusion_niveau_precision IN ( '0', '1', '2', '3', '4', '5' ) ),
