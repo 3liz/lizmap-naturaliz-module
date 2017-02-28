@@ -157,7 +157,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             'date_debut' => "Date",
             'date_fin' => "Date",
             'organisme_gestionnaire_donnees' => "String",
-            'wkt' => "String"
+            //'wkt' => "String"
         )
     );
 
@@ -497,7 +497,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
         $sql.= "
         )
 
-        SELECT 
+        SELECT
         -- xmlagg(
             xmlelement(
                 name \"gml:featureMember\",
@@ -532,7 +532,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 )
             )
 
---        ) 
+--        )
         AS gml
         FROM source";
 //jLog::log($sql);
