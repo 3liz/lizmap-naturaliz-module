@@ -88,7 +88,7 @@ CREATE TABLE acteur(
     fonction text,
     id_organisme integer NOT NULL,
     remarque text,
-    bulletin_information boolean default FALSE,
+    bulletin_information boolean default TRUE,
     reunion_sinp boolean default FALSE
 );
 ALTER TABLE acteur ADD CONSTRAINT acteur_id_organisme_fkey
