@@ -77,12 +77,25 @@
 
                 // Get description
                 //$wmsInfo['WMSServiceTitle'] = $ini->getValue('projectName', 'occtax');
+                $projectDescription = '';
                 $projectDescriptionConfig = $ini->getValue('projectDescription', 'occtax');
-                $projectDescription = html_entity_decode( $projectDescriptionConfig );
+                if( !empty($projectDescriptionConfig) ){
+                    $projectDescription = html_entity_decode( $projectDescriptionConfig );
+                }
 
-                // Read file beside QGIS project if existing
-                if($content = jFile::read( $lproj->getQgisPath() . '.html') ){
-                    $projectDescription = $content;
+                // Read file beside QGIS project if existing and override previous description
+                $presentation = jFile::read( $lproj->getQgisPath() . '.presentation.html');
+                $legal = jFile::read( $lproj->getQgisPath() . '.legal.html');
+                $stat = Null;
+                $dtpl = new jTpl();
+                $dassign = array(
+                    'presentation' => $presentation,
+                    'stat' => $stat,
+                    'legal' => $legal
+                );
+                $dtpl->assign($dassign);
+                if( $presentation or $stat or $legal ){
+                    $projectDescription = $dtpl->fetch('application_metadata');
                 }
 
                 // Put dynamic content in WMSServiceTitle
