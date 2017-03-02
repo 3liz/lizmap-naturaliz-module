@@ -191,10 +191,18 @@ class serviceCtrl extends jController {
      */
     function exportDee(){
 
+
         $rep = $this->getResponse('json');
         $data = array();
         $return = array();
         $attributes = array();
+
+        if( !jAcl2::check("visualisation.donnees.brutes") ) {
+            $return['status'] = 0;
+            $return['msg'][] = jLocale::get( 'occtax~search.form.error.right' );
+            $rep->data = $return;
+            return $rep;
+        }
 
         // Get occtaxSearch from token
         $token = $this->param('token');
@@ -228,6 +236,14 @@ class serviceCtrl extends jController {
      *
      */
     function exportGeoJSON(){
+
+
+        if( !jAcl2::check("visualisation.donnees.brutes") ) {
+            $return['status'] = 0;
+            $return['msg'][] = jLocale::get( 'occtax~search.form.error.right' );
+            $rep->data = $return;
+            return $rep;
+        }
 
         $rep = $this->getResponse('json');
         $data = array();
@@ -412,6 +428,14 @@ class serviceCtrl extends jController {
             'status' => 0,
             'msg' => array()
         );
+
+
+        if( !jAcl2::check("requete.spatiale.import") ) {
+            $return['status'] = 0;
+            $return['msg'][] = jLocale::get( 'occtax~search.form.error.right' );
+            $rep->data = $return;
+            return $rep;
+        }
 
         $form = jForms::get("occtax~upload_geojson");
         if( !$form )

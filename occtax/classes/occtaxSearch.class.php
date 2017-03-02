@@ -122,7 +122,7 @@ class occtaxSearch {
 
         // Build SQL query
         $this->setSql();
-//jLog::log($this->sql);
+jLog::log($this->sql);
         // Get the number of total records
         if( !$this->recordsTotal and $this->token and !$this->demande )
             $this->setRecordsTotal();
@@ -324,18 +324,20 @@ class occtaxSearch {
 
             // Get table alias
             $alias = $tdata['alias'];
-
             // Add fields to select and optionnally groupByFields
             foreach( $fields as $field => $type ){
+
                 // Build select clause for this table
                 $sql.= $c . $field;
                 $c = ",
                 ";
                 $a = $alias . '.';
-                if( $type == 'source_objet' )
+                if( $type == 'source_objet' ) // remove source_objet from SELECT
                     $a = '';
+
                 // Add fields to groupByField array
                 if( !$multi ){
+
                     if( !is_array( $type ) ){
                         $gField = $a . $type;
                         $groupByFields[] = $gField;

@@ -110,7 +110,7 @@ CREATE TABLE observation (
     CONSTRAINT obs_dee_floutage_valide CHECK ( dee_floutage IS NULL OR dee_floutage IN ('OUI', 'NON') ),
     CONSTRAINT obs_dee_date_derniere_modification_valide CHECK ( dee_date_derniere_modification >= dee_date_transformation ),
     CONSTRAINT obs_dee_floutage_ds_publique_valide CHECK ( ds_publique != 'Pr' OR ( ds_publique = 'Pr' AND dee_floutage IS NOT NULL ) ),
-    CONSTRAINT obs_sensi_date_attribution_valide CHECK ( sensi_date_attribution IS NULL OR ( sensi_date_attribution IS NOT NULL AND sensible != '0' AND sensi_niveau != '0' ) ),
+    CONSTRAINT obs_sensi_date_attribution_valide CHECK ( ( sensi_date_attribution IS NULL AND Coalesce(sensi_niveau, '0') = '0' ) OR  ( sensi_date_attribution IS NOT NULL  ) ),
     CONSTRAINT obs_sensi_niveau_valide CHECK ( sensi_niveau IN ( '0', '1', '2', '3', '4', '5' ) ),
     CONSTRAINT obs_sensi_referentiel_valide CHECK ( ( sensi_niveau != '0' AND sensi_referentiel IS NOT NULL) OR sensi_niveau = '0' ),
     CONSTRAINT obs_sensi_version_referentiel_valide CHECK ( ( sensi_niveau != '0' AND sensi_version_referentiel IS NOT NULL) OR sensi_niveau = '0' ),
@@ -938,5 +938,47 @@ SELECT 1::integer AS cle_obs, ''::text AS nom_cite, '1'::bigint AS cd_nom, '2015
 
 CREATE OR REPLACE VIEW sig.tpl_observation_brute_centroid AS
 SELECT 1::integer AS cle_obs, ''::text AS nom_cite, '1'::bigint AS cd_nom, '2015-01-01'::text AS date_debut, ''::text AS identite_observateur, 'GEO'::text AS source_objet, ''::text AS geojson, st_centroid(ST_GeomFromText('POINT(649878 1785015)', {$SRID}))::geometry(Point, {$SRID}) AS geom;
+
+
+-- Vue matérialisée pour connaître la diffusion des données
+CREATE MATERIALIZED VIEW observation_diffusion AS
+SELECT
+o.cle_obs,
+CASE
+    WHEN sensi_niveau = '0' --non sensible : précision maximale, sauf si diffusion_niveau_precision est NOT NULL ou != 5
+        THEN
+        CASE
+            WHEN diffusion_niveau_precision = '0' -- tout sauf geom
+                THEN '["d", "m10", "e", "c", "z"]'::jsonb
+            WHEN diffusion_niveau_precision = '1' -- commune
+                THEN '["c"]'::jsonb
+            WHEN diffusion_niveau_precision = '2' -- maille 10
+                THEN '["m"]'::jsonb
+            WHEN diffusion_niveau_precision = '3' -- département
+                THEN '["d"]'::jsonb
+            WHEN diffusion_niveau_precision = '4' -- non diffusé
+                THEN NULL
+            WHEN diffusion_niveau_precision = '5' -- diffusion telle quelle. Si donnée existe, on fourni
+                THEN '["g", "d", "m10", "e", "c", "z"]'::jsonb
+            ELSE '["g", "d", "m10", "e", "c", "z"]'::jsonb
+        END
+    WHEN sensi_niveau = '1' -- département, maille 10, espace naturel, commune, znieff
+        THEN '["d", "m10", "e", "c", "z"]'::jsonb
+    WHEN sensi_niveau = '2' -- département, maille 10
+        THEN '["d", "m10"]'::jsonb
+    WHEN sensi_niveau = '3' -- département
+        THEN '["d"]'::jsonb
+    WHEN sensi_niveau = '4' -- non diffusé
+        THEN NULL
+    ELSE NULL
+END as diffusion
+
+FROM observation o
+;
+
+CREATE INDEX IF NOT EXISTS observation_diffusion_cle_obs_idx ON observation_diffusion (diffusion);
+CREATE INDEX IF NOT EXISTS observation_diffusion_diffusion_idx ON observation_diffusion (cle_obs);
+REFRESH MATERIALIZED view observation_diffusion;
+
 
 COMMIT;

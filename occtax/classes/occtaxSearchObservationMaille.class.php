@@ -55,9 +55,25 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
             'o.cle_obs'=> 'cle_obs',
             'o.nom_cite' => 'nom_cite',
             'o.cd_nom' => 'cd_nom',
-            "to_char(date_debut, 'YYYY-MM-DD') AS date_debut" => 'date_debut',
-            'o.geom' => 'geom'
+            "to_char(date_debut, 'YYYY-MM-DD') AS date_debut" => 'date_debut'
         );
+
+
+        // Change geometry exported value for users depending on sensibiliy
+        if( !jAcl2::check("visualisation.donnees.brutes") ){
+            $this->querySelectors['observation']['returnFields']["
+                CASE
+                    WHEN od.diffusion ? 'g' THEN geom
+                    ELSE NULL
+                END AS geom
+            "] = 'geom';
+
+        }else{
+            $this->querySelectors['observation']['returnFields']['o.geom'] = 'geom';
+        }
+
+
+
         $this->querySelectors['v_observateur']['returnFields'] = array(
             "string_agg(pobs.identite, ', ') AS identite_observateur" => 'identite_observateur'
         );
@@ -92,7 +108,7 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
             END AS color
         ";
 
-        $sql.= ", ST_AsGeoJSON( ST_Transform( ST_Centroid(m.geom), 4326 ), 8 ) AS geojson";
+        $sql.= ", ST_AsGeoJSON( ST_Transform( ST_Centroid(m.geom), 4326 ), 6 ) AS geojson";
         $sql.= " FROM (";
         $sql.= $this->sql;
         $sql.= " ) AS f";

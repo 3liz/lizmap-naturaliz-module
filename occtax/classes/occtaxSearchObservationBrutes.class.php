@@ -377,6 +377,12 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $sql.= " INNER JOIN ( ";
         $sql.= $this->sql;
         $sql.= " ) AS foo ON foo.cle_obs = lc.cle_obs";
+
+        // Keep only data where diffusion is possible
+        if( !jAcl2::check("visualisation.donnees.brutes") ){
+            $sql.= " AND foo.diffusion ? 'c' ";
+        }
+
         if( $response == 'sql' )
             $result = $sql;
         else
@@ -394,6 +400,11 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $sql.= " INNER JOIN ( ";
         $sql.= $this->sql;
         $sql.= " ) AS foo ON foo.cle_obs = ld.cle_obs";
+
+        // Keep only data where diffusion is possible
+        if( !jAcl2::check("visualisation.donnees.brutes") ){
+            $sql.= " AND foo.diffusion ? 'd' ";
+        }
 
         if( $response == 'sql' )
             $result = $sql;
@@ -413,6 +424,11 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $sql.= $this->sql;
         $sql.= " ) AS foo ON foo.cle_obs = lm.cle_obs";
 
+        // Keep only data where diffusion is possible
+        if( !jAcl2::check("visualisation.donnees.brutes") ){
+            $sql.= " AND foo.diffusion ? 'm10' ";
+        }
+
         if( $response == 'sql' )
             $result = $sql;
         else
@@ -430,6 +446,12 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $sql.= " INNER JOIN ( ";
         $sql.= $this->sql;
         $sql.= " ) AS foo ON foo.cle_obs = len.cle_obs";
+
+        // Keep only data where diffusion is possible
+        if( !jAcl2::check("visualisation.donnees.brutes") ){
+            $sql.= " AND foo.diffusion ? 'e' ";
+        }
+
         if( $response == 'sql' )
             $result = $sql;
         else
@@ -447,6 +469,12 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $sql.= " INNER JOIN ( ";
         $sql.= $this->sql;
         $sql.= " ) AS foo ON foo.cle_obs = lme.cle_obs";
+
+        // Keep only data where diffusion is possible
+        if( !jAcl2::check("visualisation.donnees.brutes") ){
+            $sql.= " AND foo.diffusion ? 'e' ";
+        }
+
         if( $response == 'sql' )
             $result = $sql;
         else

@@ -229,11 +229,25 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 // geometrie
                 'o.precision_geometrie' => 'precision_geometrie',
                 'o.nature_objet_geo' => 'nature_objet_geo',
-                '(ST_AsGeoJSON( ST_Transform(o.geom, 4326), 8 ))::json AS geojson' => 'geom',
+
+                 // reprojection needed for GeoJSON standard
+                '(ST_AsGeoJSON( ST_Transform(o.geom, 4326), 6 ))::json AS geojson' => 'geom',
                 '(ST_AsText( ST_Transform(o.geom, 4326) )) AS wkt' => 'geom',
                 'ST_Transform(o.geom, 4326) AS geom' => 'geom',
+
             )
         ),
+
+        'observation_diffusion'  => array(
+            'alias' => 'od',
+            'required' => True,
+            'join' => ' JOIN ',
+            'joinClause' => " ON od.cle_obs = o.cle_obs ",
+            'returnFields' => array(
+                "od.diffusion" => 'diffusion'
+            )
+        ),
+
 
         // personnes
         'v_observateur'  => array(

@@ -49,21 +49,34 @@ class occtaxSearchObservation extends occtaxSearch {
                 'o.nom_cite' => 'nom_cite',
                 'o.cd_nom' => 'cd_nom',
                 "to_char(date_debut, 'YYYY-MM-DD') AS date_debut" => 'date_debut',
-                "
-                CASE
+
+                "CASE
                     WHEN o.geom IS NOT NULL THEN 'GEO'
                     WHEN lm10.code_maille IS NOT NULL THEN 'M10'
                     WHEN lc.code_commune IS NOT NULL THEN 'COM'
                     WHEN lme.code_me IS NOT NULL THEN 'ME'
                     WHEN len.code_en IS NOT NULL THEN 'EN'
                     WHEN ld.code_departement IS NOT NULL THEN 'DEP'
-                    ELSE 'NO'
+                    ELSE ''
                 END AS source_objet
                 " => "source_objet",
-                'ST_AsGeoJSON( ST_Transform(o.geom, 4326), 8 ) AS geojson' => 'geom',
-                'o.geom' => 'geom',
+
+                'ST_AsGeoJSON( ST_Transform(o.geom, 4326), 6 ) AS geojson' => 'geom',
+                'o.geom' => 'geom'
+
             )
         ),
+        'observation_diffusion'  => array(
+            'alias' => 'od',
+            'required' => True,
+            'join' => ' JOIN ',
+            'joinClause' => " ON od.cle_obs = o.cle_obs ",
+            'returnFields' => array(
+                "od.diffusion" => 'diffusion'
+            )
+        ),
+
+
         'v_observateur'  => array(
             'alias' => 'pobs',
             'required' => True,
@@ -211,6 +224,15 @@ class occtaxSearchObservation extends occtaxSearch {
 
 
     /**
+     * construct - Change geometry value depending on logged user
+    */
+    public function __construct ($token=Null, $params=Null) {
+
+        parent::__construct($token, $params);
+    }
+
+
+    /**
      * Get search description
     */
     public function getSearchDescription($format='html'){
@@ -234,9 +256,9 @@ class occtaxSearchObservation extends occtaxSearch {
         $sql = parent::setWhereClause();
 
         // sensibilité
-        if( !jAcl2::check("visualisation.donnees.sensibles") ){
-            $sql.= " AND o.cd_nom NOT IN (SELECT cd_nom FROM taxon.taxon_sensible) ";
-        }
+        //if( !jAcl2::check("visualisation.donnees.sensibles") ){
+            //$sql.= " AND o.cd_nom NOT IN (SELECT cd_nom FROM taxon.taxon_sensible) ";
+        //}
 
         // taxons
         $params = $this->getParams();
