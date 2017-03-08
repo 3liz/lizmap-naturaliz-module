@@ -43,6 +43,9 @@ znieff1_mer=reu_znieff1_mer
 znieff2_terre=reu_znieff2
 znieff2_mer=reu_znieff2_mer
 
+; liste de niveaux de validite à restreindre pour le grand public
+validite_niveaux_grand_public=1,2
+
 [mascarine]
 defaultRepository=
 defaultProject=

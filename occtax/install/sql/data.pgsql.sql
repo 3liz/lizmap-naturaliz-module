@@ -79,3 +79,10 @@ INSERT INTO nomenclature VALUES ('type_en', 'N2000', 'Natura 2000', NULL);
 INSERT INTO nomenclature VALUES ('type_en', 'ZNIEFF1', 'Zone Naturelle d’Intérêt Ecologique Faunistique et Floristique type 1', NULL);
 INSERT INTO nomenclature VALUES ('type_en', 'ZNIEFF2', 'Zone Naturelle d’Intérêt Ecologique Faunistique et Floristique type 2', NULL);
 
+-- validite_niveau
+INSERT INTO nomenclature VALUES ('validite_niveau', '1', 'Certain', NULL);
+INSERT INTO nomenclature VALUES ('validite_niveau', '2', 'Probable', NULL);
+INSERT INTO nomenclature VALUES ('validite_niveau', '3', 'Douteux', NULL);
+INSERT INTO nomenclature VALUES ('validite_niveau', '4', 'Invalide', NULL);
+INSERT INTO nomenclature VALUES ('validite_niveau', '5', 'Non réalisable', NULL);
+INSERT INTO nomenclature VALUES ('validite_niveau', '6', 'Non évalué', NULL);

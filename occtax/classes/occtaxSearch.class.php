@@ -42,6 +42,8 @@ class occtaxSearch {
 
     protected $displayFields = array();
 
+    protected $validite_niveaux_grand_public = '1';
+
     protected $sql = '';
 
     private $selectClause = '';
@@ -116,6 +118,13 @@ class occtaxSearch {
                 $this->params['search_token'] = $taxonSearch->id();
             }
         }
+
+        // Niveaux de validité des observations accessibles au grand public
+        $vniv = $ini->getValue('validite_niveaux_grand_public', 'occtax');
+        if( !$vniv )
+            $vniv = '1';
+        $vniv = implode( ', ', array_map(function($item){return $this->myquote($item);}, explode(',', $vniv)));
+        $this->validite_niveaux_grand_public = $vniv;
 
 //jLog::log(json_encode($this->params));
 //jLog::log(json_encode($this->taxon_params));

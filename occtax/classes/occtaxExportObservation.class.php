@@ -226,6 +226,9 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 'o.obs_methode' => 'obs_methode',
                 'o.obs_description' => 'obs_description',
 
+                // validite
+                'o.validite_niveau' => "validite_niveau",
+
                 // geometrie
                 'o.precision_geometrie' => 'precision_geometrie',
                 'o.nature_objet_geo' => 'nature_objet_geo',

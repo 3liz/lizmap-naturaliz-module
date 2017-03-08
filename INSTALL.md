@@ -44,6 +44,7 @@ Les modules Naturaliz lisent dans le fichier **lizmap/var/config/localconfig.ini
 * la liste des codes d'arrêtés de protection pour la zone concernée: variables **code_arrete_protection_simple**, **code_arrete_protection_internationale**, **code_arrete_protection_nationale**, **code_arrete_protection_communautaire** de la section  [taxon]
 * le code SRID du système de coordonnées de références des données spatiales du projet : variable **srid** de la section [naturaliz].
 * le mot de passe de l'utilisateur admin: variable **adminPassword** de la section [naturaliz].
+* la liste des niveaux de validité, séparés par virgule, pour filtrer les observations pour le grand public, c'est-à-dire que seules les observations qui ont un niveau de validité correspondant à un des éléments de la liste pourront être visibles pour le grand public. Variable **validite_niveaux_grand_public** de la section [occtax]. Par exemple validite_niveaux_grand_public=1,2
 
 Pour le module mascarine:
 

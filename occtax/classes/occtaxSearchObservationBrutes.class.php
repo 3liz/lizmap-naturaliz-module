@@ -381,6 +381,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         // Keep only data where diffusion is possible
         if( !jAcl2::check("visualisation.donnees.brutes") ){
             $sql.= " AND foo.diffusion ? 'c' ";
+            $sql.= " AND foo.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
         }
 
         if( $response == 'sql' )
@@ -404,6 +405,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         // Keep only data where diffusion is possible
         if( !jAcl2::check("visualisation.donnees.brutes") ){
             $sql.= " AND foo.diffusion ? 'd' ";
+            $sql.= " AND foo.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
         }
 
         if( $response == 'sql' )
@@ -427,6 +429,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         // Keep only data where diffusion is possible
         if( !jAcl2::check("visualisation.donnees.brutes") ){
             $sql.= " AND foo.diffusion ? 'm10' ";
+            $sql.= " AND foo.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
         }
 
         if( $response == 'sql' )
@@ -450,6 +453,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         // Keep only data where diffusion is possible
         if( !jAcl2::check("visualisation.donnees.brutes") ){
             $sql.= " AND foo.diffusion ? 'e' ";
+            $sql.= " AND foo.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
         }
 
         if( $response == 'sql' )
@@ -473,6 +477,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         // Keep only data where diffusion is possible
         if( !jAcl2::check("visualisation.donnees.brutes") ){
             $sql.= " AND foo.diffusion ? 'e' ";
+            $sql.= " AND foo.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
         }
 
         if( $response == 'sql' )

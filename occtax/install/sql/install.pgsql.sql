@@ -90,6 +90,9 @@ CREATE TABLE observation (
     obs_description text[],
     occ_methode_determination text[],
 
+    validite_niveau text,
+    validite_date_validation date,
+
     precision_geometrie integer,
     nature_objet_geo text,
 
@@ -262,6 +265,10 @@ COMMENT ON COLUMN observation.preuve_numerique IS 'Adresse web à laquelle on po
 COMMENT ON COLUMN observation.obs_contexte IS 'Description libre du contexte de l''observation, aussi succincte et précise que possible. Exemple : pied d''une falaise, au crépuscule, animal se nourrissant, piège à 10 m d''un drap blanc.';
 
 COMMENT ON COLUMN observation.preuve_non_numerique IS 'Adresse ou nom de la personne ou de l''organisme qui permettrait de retrouver la preuve non numérique de l''observation.';
+
+COMMENT ON COLUMN observation.validite_niveau IS 'Niveau de validité scientifique de l''observation';
+
+COMMENT ON COLUMN observation.validite_date_validation IS 'Date de réalisation de la validation scientifique de l''observation';
 
 -- Table personne
 CREATE TABLE personne (

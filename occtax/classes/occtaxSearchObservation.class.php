@@ -255,10 +255,16 @@ class occtaxSearchObservation extends occtaxSearch {
     protected function setWhereClause(){
         $sql = parent::setWhereClause();
 
+        // commenté car on utilise maintenant le principe de diffusion et de sensibilité
         // sensibilité
         //if( !jAcl2::check("visualisation.donnees.sensibles") ){
             //$sql.= " AND o.cd_nom NOT IN (SELECT cd_nom FROM taxon.taxon_sensible) ";
         //}
+
+        // Show only validated data for unlogged users
+        if( !jAcl2::check("visualisation.donnees.brutes") ){
+            $sql.= " AND o.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
+        }
 
         // taxons
         $params = $this->getParams();
