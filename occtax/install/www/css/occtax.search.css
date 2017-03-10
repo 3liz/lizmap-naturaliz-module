@@ -50,12 +50,18 @@ Left Menu button
 
 #mapmenu .nav-list > li.occtax .icon {
   background-image:url("img/navbar/occtax_navbar.png");
+/*
   background-position: -25px 0;
+*/
+  background-position: -175px 0;
 }
 #mapmenu .nav-list > li.occtax.active .icon,
 #mapmenu .nav-list > li.occtax a:hover .icon {
   background-image:url("img/navbar/occtax_navbar.png");
+/*
   background-position: -0px 0px;
+*/
+  background-position: -150px 0px;
 }
 
 
