@@ -371,7 +371,7 @@ lizMap.events.on({
             // Change dock size
             $('#dock')
             .css('max-width', 'none')
-            .css('width', '90%')
+            .css('width', '50%')
             ;
 
             // Replace metadata content

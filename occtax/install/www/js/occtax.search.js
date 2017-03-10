@@ -1102,8 +1102,8 @@ OccTax.events.on({
       // Hide taxon menu icon in menubar
       $('#button-taxon').parent('li.taxon').hide();
 
-      // Ajout du logo Europe
-      $('#attribution-box').append('<img src="'+ jFormsJQ.config.basePath + 'css/img/logo_europe_mini.jpg" title="KaruNati est cofinancé par l’Union européenne. L’Europe s’engage en Guadeloupe avec le FEDER" />');
+      // Ajout du logo
+      //$('#attribution-box').append('<img src="'+ jFormsJQ.config.basePath + 'css/img/logo_europe_mini.jpg" title="KaruNati est cofinancé par l’Union européenne. L’Europe s’engage en Guadeloupe avec le FEDER" />');
 
 
     }
