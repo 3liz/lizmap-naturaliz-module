@@ -4,13 +4,11 @@ Left Menu button
 */
 
 #mapmenu .nav-list > li.occtax_stats .icon {
-  background-image:url("img/navbar/occtax_navbar.png");
-  background-position: -175px 0px;
+  background-image: url(img/navbar/icone_compare_blanc.png);
 }
 #mapmenu .nav-list > li.occtax_stats.active .icon,
 #mapmenu .nav-list > li.occtax_stats a:hover .icon {
-  background-image:url("img/navbar/occtax_navbar.png");
-  background-position: -150px 0px;
+  background-image: url(img/navbar/icone_compare.png);
 }
 
 
@@ -18,17 +16,6 @@ Left Menu button
 Toolbar buttons
 */
 
-
-#occtax_stats h3 .icon.search {
-    background-image: url("img/navbar/occtax_navbar.png");
-  background-position: -175px 0px;
-}
-
 #occtax_stats h3 .icon.description {
-    background-image: url("img/navbar/occtax_navbar.png");
-  background-position: -175px 0px;
-}
-#occtax_stats h3 .icon.result {
-    background-image: url("img/navbar/occtax_navbar.png");
-  background-position: -25px 0px;
+    background-image: url(img/navbar/icone_compare_blanc.png);
 }
