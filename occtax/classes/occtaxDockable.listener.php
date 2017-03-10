@@ -10,6 +10,7 @@
                 $configOptions = $lproj->getOptions();
                 $bp = jApp::config()->urlengine['basePath'];
 
+                // TAXON dock
                 // Create search form
                 $searchForm = jForms::create("taxon~search");
 
@@ -28,10 +29,10 @@
                 );
                 $event->add($dock);
 
+                // OCCTAX dock
                 $form = jForms::create("occtax~search");
                 $formUpload = jForms::create("occtax~upload_geojson");
                 $formTax = jForms::create("taxon~search");
-
 
                 // Remove some fields via rights
                 if( !jAcl2::check("requete.jdd.observation") ){
@@ -57,6 +58,21 @@
                     $bp.'js/occtax.search.js'
                 );
                 $event->add($dock);
+
+                // STATS dock
+                $assign = array(
+                );
+                $content = array( 'occtax~stats', $assign );
+                $dock = new lizmapMapDockItem(
+                    'occtax_stats',
+                    jLocale::get("occtax~stats.dock.title"),
+                    $content,
+                    9,
+                    $bp.'css/occtax.stats.css',
+                    $bp.'js/occtax.stats.js'
+                );
+                $event->add($dock);
+
 
                 // OVERRIDE METADATA
                 $metadataTpl = new jTpl();
