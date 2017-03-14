@@ -949,6 +949,50 @@ CREATE OR REPLACE VIEW sig.tpl_observation_brute_centroid AS
 SELECT 1::integer AS cle_obs, ''::text AS nom_cite, '1'::bigint AS cd_nom, '2015-01-01'::text AS date_debut, ''::text AS identite_observateur, 'GEO'::text AS source_objet, ''::text AS geojson, st_centroid(ST_GeomFromText('POINT(649878 1785015)', {$SRID}))::geometry(Point, {$SRID}) AS geom;
 
 
+-- Fonction pour calculer la sensibilité des données
+CREATE OR REPLACE FUNCTION occtax_update_sensibilite_observations(referentiel text, version_referentiel TEXT, jdd_id TEXT, menaces text[], protections TEXT[], cd_nom BIGINT[])
+RETURNS INTEGER AS
+$BODY$
+DECLARE sql_text TEXT;
+DECLARE row_count_value INTEGER;
+BEGIN
+
+sql_text := '
+UPDATE occtax.observation o
+SET (sensi_referentiel, sensi_version_referentiel, sensi_date_attribution, sensi_niveau )
+= (
+    $1 ,
+    $2,
+    now(),
+    CASE
+        WHEN menace = ANY ($4) OR protection = ANY ($5) OR o.cd_nom = ANY ($6)
+            THEN 2 -- maille 10
+        ELSE 0 -- geom ou maille_01 ou maille_02 selon profil
+    END
+)
+FROM taxon.t_complement t
+WHERE o.cd_nom = t.cd_nom_fk
+';
+
+IF jdd_id IS NOT NULL THEN
+    sql_text := sql_text || ' AND o.jdd_id = $3';
+END IF;
+
+RAISE NOTICE '%s' , sql_text;
+
+EXECUTE format(sql_text)
+USING referentiel, version_referentiel, jdd_id, menaces, protections, cd_nom;
+
+GET DIAGNOSTICS row_count_value = ROW_COUNT;
+
+RETURN row_count_value;
+
+END
+$BODY$
+LANGUAGE plpgsql VOLATILE
+COST 100;
+
+
 -- Vue matérialisée pour connaître la diffusion des données
 CREATE MATERIALIZED VIEW observation_diffusion AS
 SELECT
@@ -987,7 +1031,7 @@ FROM observation o
 
 CREATE INDEX IF NOT EXISTS observation_diffusion_cle_obs_idx ON observation_diffusion (diffusion);
 CREATE INDEX IF NOT EXISTS observation_diffusion_diffusion_idx ON observation_diffusion (cle_obs);
-REFRESH MATERIALIZED view observation_diffusion;
+
 
 
 COMMIT;
