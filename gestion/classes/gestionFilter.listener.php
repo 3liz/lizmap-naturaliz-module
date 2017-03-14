@@ -53,6 +53,11 @@ class gestionFilterListener extends jEventListener{
                 $sql_demande[] = $sql_geom;
             }
 
+            // Add validite filter
+            if($demande->validite_niveau){
+                $sql_demande[] = ' validite_niveau = ANY (' . $cnx->quote($demande->validite_niveau) .'::text[] )';
+            }
+
             // Add validity dates
             if($demande->date_validite_min){
                 $sql_demande[] = ' ' . $cnx->quote($demande->date_validite_min) . '::date <= now()::date' ;
@@ -70,7 +75,7 @@ class gestionFilterListener extends jEventListener{
         if( count($table_demandes)>0 ){
             $filter = implode( ' OR ', $table_demandes);
             $filter = ' AND ( ' . $filter . ' ) ';
-
+//jLog::log($filter);
         }
         return $filter;
     }

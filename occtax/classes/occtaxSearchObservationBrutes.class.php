@@ -349,12 +349,12 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
     );
 
 
-    public function __construct ($token=Null, $params=Null) {
+    public function __construct ($token=Null, $params=Null, $demande=Null) {
         // Set fields from exportedFields "principal"
         $this->returnFields = $this->getExportedFields( 'principal');
         $this->displayFields = $this->returnFields;
 
-        parent::__construct($token, $params);
+        parent::__construct($token, $params, $demande);
     }
 
     function setSql() {

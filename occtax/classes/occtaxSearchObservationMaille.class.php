@@ -38,7 +38,7 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
         'filter' => array( 'type' => 'string', 'sortable' => 0)
     );
 
-    public function __construct ($token=Null, $params=Null) {
+    public function __construct ($token=Null, $params=Null, $demande=Null) {
         // Set maille depending on rights
         // do it first because parent::__construct do setSql
         if ( jAcl2::check("visualisation.donnees.maille_01") )
@@ -81,7 +81,7 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
         $this->orderClause = '';
 
 
-        parent::__construct($token, $params);
+        parent::__construct($token, $params, $demande);
     }
 
     protected function setSql() {

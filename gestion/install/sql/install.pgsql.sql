@@ -39,7 +39,9 @@ CREATE TABLE demande (
     group1_inpn text[],
     group2_inpn text[],
     date_creation date DEFAULT now(),
-    libelle_geom text NOT NULL
+    libelle_geom text NOT NULL,
+    validite_niveau text[] NOT NULL DEFAULT ARRAY['1', '2', '3', '4', '5']::text[]
+
 );
 SELECT AddGeometryColumn('demande', 'geom', {$SRID}, 'GEOMETRY', 2);
 ALTER TABLE demande ALTER COLUMN geom SET NOT NULL;
@@ -73,6 +75,7 @@ COMMENT ON COLUMN demande.group1_inpn IS 'Noms des groupes INPN de type 1. Clé 
 COMMENT ON COLUMN demande.group2_inpn IS 'Noms des groupes INPN de type 2. Clé étrangère vers table taxon.t_group_categorie.groupe_nom';
 COMMENT ON COLUMN demande.date_creation IS 'Date de création de la ligne dans la table (automatique si aucune valeur passée)';
 COMMENT ON COLUMN demande.libelle_geom IS 'Description littérale de la zone géographique sur laquelle porte la demande';
+COMMENT ON COLUMN demande.validite_niveau IS 'Liste de niveaux de validité accessible à la personne, sous la forme d''un tableau.';
 COMMENT ON COLUMN demande.geom IS 'Géométrie dans laquelle restreindre les observations consultables. On fait une intersection entre les observation et cette géométrie.';
 
 
@@ -101,6 +104,8 @@ ON DELETE RESTRICT
 ALTER TABLE demande ADD CONSTRAINT demande_id_acteur_fk
 FOREIGN KEY (id_acteur) REFERENCES "acteur" (id_acteur)
 ON DELETE RESTRICT;
+
+ALTER TABLE acteur ADD UNIQUE (nom, prenom, id_organisme);
 
 COMMENT ON TABLE acteur IS 'Liste les acteurs liés à l''application. Cette table sert à stocker les personnes ressource: responsables des imports de données, référents des jeux de données, etc.';
 COMMENT ON COLUMN acteur.id_acteur IS 'Identifiant de l''acteur (entier auto-incrémenté)';

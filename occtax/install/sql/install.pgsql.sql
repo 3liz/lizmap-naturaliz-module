@@ -558,6 +558,8 @@ CREATE TABLE "organisme" (
     id_organisme serial PRIMARY KEY,
     nom_organisme text NOT NULL
 );
+ALTER TABLE "organisme" ADD UNIQUE (nom_organisme);
+
 
 COMMENT ON TABLE "organisme" IS 'Organismes listés dans l''application. Par exemple, les organismes liés aux observations peuvent être liés à cette table. Ou les demandes du module optionnel de gestion sont rattachées à un organisme.';
 COMMENT ON COLUMN "organisme".id_organisme IS 'Identifiant de l''organisme.';

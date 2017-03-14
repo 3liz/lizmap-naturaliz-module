@@ -43,7 +43,7 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
         'filter' => array( 'type' => 'string', 'sortable' => 0)
     );
 
-    public function __construct ($token=Null, $params=Null) {
+    public function __construct ($token=Null, $params=Null, $demande=Null) {
 
         // Remove unnecessary LEFT JOIN to improve performances
         $this->querySelectors['localisation_maille_05']['required'] = False;
@@ -65,7 +65,7 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
         $this->orderClause = '';
 
 
-        parent::__construct($token, $params);
+        parent::__construct($token, $params, $demande);
     }
 
     function setSql() {

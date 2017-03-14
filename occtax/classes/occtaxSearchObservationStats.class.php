@@ -44,7 +44,7 @@ class occtaxSearchObservationStats extends occtaxSearchObservation {
         'nb_taxon_determinant' => array( 'type' => 'num', 'sortable' => "true")
     );
 
-    public function __construct ($token=Null, $params=Null) {
+    public function __construct ($token=Null, $params=Null, $demande=Null) {
         // Set maille depending on rights
         // do it first because parent::__construct do setSql
         if ( jAcl2::check("visualisation.donnees.maille_01") )
@@ -69,7 +69,7 @@ class occtaxSearchObservationStats extends occtaxSearchObservation {
         // Remove ORDER BY
         $this->orderClause = '';
 
-        parent::__construct($token, $params);
+        parent::__construct($token, $params, $demande);
     }
 
     protected function setSql() {

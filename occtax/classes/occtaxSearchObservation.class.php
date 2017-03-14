@@ -226,9 +226,9 @@ class occtaxSearchObservation extends occtaxSearch {
     /**
      * construct - Change geometry value depending on logged user
     */
-    public function __construct ($token=Null, $params=Null) {
+    public function __construct ($token=Null, $params=Null, $demande=Null) {
 
-        parent::__construct($token, $params);
+        parent::__construct($token, $params, $demande);
     }
 
 
