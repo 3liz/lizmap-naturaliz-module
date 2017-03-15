@@ -109,3 +109,8 @@ Toolbar buttons
 #occtax_results_stats_table img{
   max-width:100px !important;
 }
+
+
+table.dataTable {
+  width: 100% !important;
+}
