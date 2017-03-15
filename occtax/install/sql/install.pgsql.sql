@@ -274,8 +274,11 @@ COMMENT ON COLUMN observation.validite_date_validation IS 'Date de réalisation 
 CREATE TABLE personne (
     id_personne serial,
     identite text UNIQUE NOT NULL,
+    prenom text,
+    nom text,
     mail text UNIQUE,
     organisme text NOT NULL,
+    anonymiser boolean,
     CONSTRAINT personne_identite_valide CHECK ( identite NOT LIKE '%,%' )
 );
 ALTER TABLE personne ADD PRIMARY KEY (id_personne);
@@ -283,9 +286,12 @@ ALTER TABLE personne ADD PRIMARY KEY (id_personne);
 COMMENT ON TABLE personne IS 'Liste des personnes participant aux observations. Cette table est remplie de manière automatique lors des imports de données. Il n''est pas assuré que chaque personne ne représente pas plusieurs homonymes.';
 COMMENT ON COLUMN personne.id_personne IS 'Identifiant de la personne (valeur autoincrémentée)';
 COMMENT ON COLUMN personne.identite IS 'Identité de la personne. NOM Prénom (organisme) de la personne ou des personnes concernées. Le nom est en majuscules, le prénom en minuscules, l''organisme entre parenthèses.';
+COMMENT ON COLUMN personne.prenom IS 'Prénom de la personne.';
+COMMENT ON COLUMN personne.nom IS 'Nom de la personne.';
 COMMENT ON COLUMN personne.mail IS 'Email de la personne. Optionnel';
 COMMENT ON COLUMN personne.organisme IS 'Organisme de la personne.
 Règles : "Indépendant" si la personne n''est pas affiliée à un organisme; "Inconnu" si l''affiliation à un organisme n''est pas connue.';
+COMMENT ON COLUMN personne.anonymiser IS 'Si vrai, alors on ne doit pas diffuser le nom de l''observateur ou autre rôle dans le détail des observations.';
 
 -- Table pivot entre observation et personne
 CREATE TABLE observation_personne (
@@ -570,21 +576,21 @@ COMMENT ON COLUMN "organisme".nom_organisme IS 'Nom de l''organisme.';
 
 -- View to help query observateurs, determinateurs, validateurs
 CREATE OR REPLACE VIEW v_observateur AS
-SELECT p.identite, p.mail, p.organisme,
+SELECT CASE WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE p.identite END AS identite, p.mail, p.organisme,
 op.id_personne, op.cle_obs
 FROM observation_personne op
 INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = 'Obs'
 ;
 
 CREATE OR REPLACE VIEW v_validateur AS
-SELECT p.identite, p.mail, p.organisme,
+SELECT CASE WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE p.identite END AS identite, p.mail, p.organisme,
 op.id_personne, op.cle_obs
 FROM observation_personne op
 INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = 'Val'
 ;
 
 CREATE OR REPLACE VIEW v_determinateur AS
-SELECT p.identite, p.mail, p.organisme,
+SELECT CASE WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE p.identite END AS identite, p.mail, p.organisme,
 op.id_personne, op.cle_obs
 FROM observation_personne op
 INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = 'Det'
