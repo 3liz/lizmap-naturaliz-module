@@ -261,16 +261,25 @@ class occtaxSearchObservation extends occtaxSearch {
             //$sql.= " AND o.cd_nom NOT IN (SELECT cd_nom FROM taxon.taxon_sensible) ";
         //}
 
-        // Dot not query sensitive data if user has queried via maille
+        // Dot not query sensitive data if user has queried via spatial tools
+        // to avoid guessing position of sensitive data
         if( !jAcl2::check("visualisation.donnees.brutes") ){
             $qf = $this->queryFilters;
             $blackQueryParams = array('code_maille', 'code_masse_eau', 'code_commune');
-            //$blackQueryParams = array();
+            $qMatch = array(
+                'code_maille_10' => 'm10',
+                'code_commune' => 'c'
+            );
             foreach( $this->params as $k=>$v ){
                 if( array_key_exists( $k, $qf ) and $v and $qf[$k]['type'] != 'geom' ){
                     if( in_array($k, $blackQueryParams) ){
-                        // todo
-                        $sql.= " AND diffusion ? 'g' ";
+                        // Keep only data with open diffusion
+                        $sql.= " AND ( diffusion ? 'g' ";
+                        // Keep also some more data based on query type
+                        if( array_key_exists($k, $qMatch) ){
+                            $sql.= " OR diffusion ? '".$qMatch[$k]."' ";
+                        }
+                        $sql.= ' ) ';
                     }
                 }
             }

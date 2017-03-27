@@ -1019,7 +1019,7 @@ CASE
             WHEN diffusion_niveau_precision = '1' -- commune
                 THEN '["c"]'::jsonb
             WHEN diffusion_niveau_precision = '2' -- maille 10
-                THEN '["m"]'::jsonb
+                THEN '["m10"]'::jsonb
             WHEN diffusion_niveau_precision = '3' -- département
                 THEN '["d"]'::jsonb
             WHEN diffusion_niveau_precision = '4' -- non diffusé
@@ -1028,7 +1028,7 @@ CASE
                 THEN '["g", "d", "m10", "e", "c", "z"]'::jsonb
             ELSE '["g", "d", "m10", "e", "c", "z"]'::jsonb
         END
-    WHEN sensi_niveau = '1' -- département, maille 10, espace naturel, commune, znieff
+    WHEN sensi_niveau = '1' -- tout sauf geom : département, maille 10, espace naturel, commune, znieff
         THEN '["d", "m10", "e", "c", "z"]'::jsonb
     WHEN sensi_niveau = '2' -- département, maille 10
         THEN '["d", "m10"]'::jsonb
