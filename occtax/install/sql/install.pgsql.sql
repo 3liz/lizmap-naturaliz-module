@@ -577,21 +577,21 @@ COMMENT ON COLUMN "organisme".nom_organisme IS 'Nom de l''organisme.';
 -- View to help query observateurs, determinateurs, validateurs
 CREATE OR REPLACE VIEW v_observateur AS
 SELECT CASE WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE p.identite END AS identite, p.mail, p.organisme,
-op.id_personne, op.cle_obs
+op.id_personne, op.cle_obs, p.prenom, p.nom, p.anonymiser
 FROM observation_personne op
 INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = 'Obs'
 ;
 
 CREATE OR REPLACE VIEW v_validateur AS
 SELECT CASE WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE p.identite END AS identite, p.mail, p.organisme,
-op.id_personne, op.cle_obs
+op.id_personne, op.cle_obs, p.prenom, p.nom, p.anonymiser
 FROM observation_personne op
 INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = 'Val'
 ;
 
 CREATE OR REPLACE VIEW v_determinateur AS
 SELECT CASE WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE p.identite END AS identite, p.mail, p.organisme,
-op.id_personne, op.cle_obs
+op.id_personne, op.cle_obs, p.prenom, p.nom, p.anonymiser
 FROM observation_personne op
 INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = 'Det'
 ;
