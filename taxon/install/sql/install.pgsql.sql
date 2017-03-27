@@ -61,7 +61,8 @@ COMMENT ON COLUMN taxref.famille IS 'Famille à laquelle le taxon appartient';
 COMMENT ON COLUMN taxref.group1_inpn IS 'Libellé Groupe 1 INPN pour ce taxon';
 COMMENT ON COLUMN taxref.group2_inpn IS 'Libellé Groupe 1 INPN';
 COMMENT ON COLUMN taxref.cd_nom IS 'Identifiant unique du nom scientifique';
-COMMENT ON COLUMN taxref.cd_taxsup IS 'Identifiant (CD_NOM) du taxon supérieur';
+COMMENT ON COLUMN taxref.cd_taxsup IS 'Identifiant (CD_NOM) du taxon supérieur calculé dans la classification simplifiée ';
+COMMENT ON COLUMN taxref.cd_sup IS 'Identifiant (CD_NOM) du taxon directement supérieur';
 COMMENT ON COLUMN taxref.cd_ref IS 'Identifiant (CD_NOM) du taxon de référence (nom retenu)';
 COMMENT ON COLUMN taxref.rang IS 'Rang taxonomique (lien vers TAXREF_RANG)';
 COMMENT ON COLUMN taxref.lb_nom IS 'Nom scientifique du taxon (sans l’autorité)';
@@ -244,6 +245,7 @@ CREATE TABLE taxref_local
   group2_inpn text, -- Libellé Groupe 1 INPN
   cd_nom integer NOT NULL, -- Identifiant unique du nom scientifique
   cd_taxsup integer, -- Identifiant (CD_NOM) du taxon supérieur
+  cd_sup integer,
   cd_ref integer NOT NULL, -- Identifiant (CD_NOM) du taxon de référence (nom retenu)
   rang text, -- Rang taxonomique (lien vers TAXREF_RANG)
   lb_nom text, -- Nom scientifique du taxon (sans l’autorité)
@@ -295,7 +297,8 @@ COMMENT ON COLUMN taxref_local.famille IS 'Famille à laquelle le taxon appartie
 COMMENT ON COLUMN taxref_local.group1_inpn IS 'Libellé Groupe 1 INPN pour ce taxon';
 COMMENT ON COLUMN taxref_local.group2_inpn IS 'Libellé Groupe 1 INPN';
 COMMENT ON COLUMN taxref_local.cd_nom IS 'Identifiant unique du nom scientifique';
-COMMENT ON COLUMN taxref_local.cd_taxsup IS 'Identifiant (CD_NOM) du taxon supérieur';
+COMMENT ON COLUMN taxref_local.cd_taxsup IS 'Identifiant (CD_NOM) du taxon supérieur calculé dans la classification simplifiée ';
+COMMENT ON COLUMN taxref_local.cd_sup IS 'Identifiant (CD_NOM) du taxon directement supérieur';
 COMMENT ON COLUMN taxref_local.cd_ref IS 'Identifiant (CD_NOM) du taxon de référence (nom retenu)';
 COMMENT ON COLUMN taxref_local.rang IS 'Rang taxonomique (lien vers TAXREF_RANG)';
 COMMENT ON COLUMN taxref_local.lb_nom IS 'Nom scientifique du taxon (sans l’autorité)';
