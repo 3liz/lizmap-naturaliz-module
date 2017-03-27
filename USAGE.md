@@ -1,5 +1,6 @@
 # Naturaliz - Guide d'utilisation des modules
 
+
 ## Taxon
 
 Module de gestion des données TAXREF
@@ -12,7 +13,20 @@ Module de gestion des données au format Occurence de Taxon
 
 ### Gestion des listes rouges et des espèces protégées
 
-todo
+
+### Import des données d'observation
+
+
+### Export des données
+
+Vous pouvez exporter les données au format DEE via l'application en utilisant la ligne de commande.
+Vous pouvez préciser en option le chemin vers le fichier à exporter, via l'option *-output*
+
+```
+cd /srv/lizmap_web_client/
+php lizmap/scripts/script.php occtax~export:dee -output /tmp/donnees_dee.xml
+```
+
 
 ## Mascarine
 

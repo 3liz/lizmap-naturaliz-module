@@ -186,52 +186,6 @@ class serviceCtrl extends jController {
 
 
     /**
-     * Export observation as DEE GML file
-     *
-     */
-    function exportDee(){
-
-
-        $rep = $this->getResponse('json');
-        $data = array();
-        $return = array();
-        $attributes = array();
-
-        if( !jAcl2::check("visualisation.donnees.brutes") ) {
-            $return['status'] = 0;
-            $return['msg'][] = jLocale::get( 'occtax~search.form.error.right' );
-            $rep->data = $return;
-            return $rep;
-        }
-
-        // Get occtaxSearch from token
-        $token = $this->param('token');
-        jClasses::inc('occtax~occtaxSearchObservationBrutes');
-
-        $occtaxSearch = new occtaxSearchObservationBrutes( $token, null );
-        if( !$occtaxSearch ){
-            $return['status'] = 0;
-            $return['msg'][] = jLocale::get( 'occtax~search.invalid.token' );
-            $rep->data = $return;
-            return $rep;
-        }
-
-        $rep = $this->getResponse('zip');
-
-        $dee = $occtaxSearch->writeDee();
-        $rep->content->addFile( $dee, 'export_dee.gml' );
-        unlink( $dee );
-
-        // Add readme file + search description to ZIP
-        $rep->content->addContentFile( 'LISEZ-MOI.txt', $occtaxSearch->getReadme() );
-
-        $rep->zipFilename = 'donnees_echange_observations_naturaliz.zip';
-
-        return $rep;
-    }
-
-
-    /**
      * Export observation into GeoJSON
      *
      */

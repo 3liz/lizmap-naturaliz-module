@@ -587,7 +587,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
     }
 
 
-    public function writeDee(){
+    public function writeDee($output=null){
 
         // Create temporary file name
         $path = '/tmp/' . time() . session_id() . '.dee.tmp';
@@ -650,16 +650,29 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         </gml:FeatureCollection>');
 
         // Use bash to concatenate
-        $output = '/tmp/' . time() . session_id() . '.dee';
-        exec('cat "'. $headerfile.'" "'. $path .'" "'. $footerfile .'" > "'.$output . '"');
-        if(file_exists($output)){
+        if(!$output){
+            $output = '/tmp/' . time() . session_id() . '.xml';
+        }
+        try{
+            exec('cat "'. $headerfile.'" "'. $path .'" "'. $footerfile .'" > "'.$output . '"');
+        }catch ( Exception $e ) {
+            jLog::log( $e->getMessage(), 'error' );
+            echo $e->getMessage() . "\n";
+        }
+
+        try{
             unlink($path);
             unlink($headerfile);
             unlink($footerfile);
+        }catch ( Exception $e ) {
+            jLog::log( $e->getMessage(), 'error' );
+            echo $e->getMessage() . "\n";
+        }
+        if(file_exists($output)){
             return $output;
         }
 
-        return Null;
+        return null;
 
     }
 
