@@ -269,7 +269,7 @@ class occtaxSearchObservation extends occtaxSearch {
             foreach( $this->params as $k=>$v ){
                 if( array_key_exists( $k, $qf ) and $v and $qf[$k]['type'] != 'geom' ){
                     if( in_array($k, $blackQueryParams) ){
-                        //jLog::log('bloqué');
+                        // todo
                         $sql.= " AND diffusion ? 'g' ";
                     }
                 }
