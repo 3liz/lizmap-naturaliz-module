@@ -261,6 +261,21 @@ class occtaxSearchObservation extends occtaxSearch {
             //$sql.= " AND o.cd_nom NOT IN (SELECT cd_nom FROM taxon.taxon_sensible) ";
         //}
 
+        // Dot not query sensitive data if user has queried via maille
+        if( !jAcl2::check("visualisation.donnees.brutes") ){
+            $qf = $this->queryFilters;
+            $blackQueryParams = array('code_maille', 'code_masse_eau', 'code_commune');
+            //$blackQueryParams = array();
+            foreach( $this->params as $k=>$v ){
+                if( array_key_exists( $k, $qf ) and $v and $qf[$k]['type'] != 'geom' ){
+                    if( in_array($k, $blackQueryParams) ){
+                        //jLog::log('bloqué');
+                        $sql.= " AND diffusion ? 'g' ";
+                    }
+                }
+            }
+        }
+
         // Show only validated data for unlogged users
         if( !jAcl2::check("visualisation.donnees.brutes") ){
             $sql.= " AND o.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";

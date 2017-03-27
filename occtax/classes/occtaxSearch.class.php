@@ -131,7 +131,7 @@ class occtaxSearch {
 
         // Build SQL query
         $this->setSql();
-jLog::log($this->sql);
+//jLog::log($this->sql);
         // Get the number of total records
         if( !$this->recordsTotal and $this->token and !$this->demande )
             $this->setRecordsTotal();
