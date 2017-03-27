@@ -35,21 +35,30 @@ AND rang IN ('AGES','ES','SMES','MES','SSES','NAT','HYB',
 
 -- Donnees complementaires
 TRUNCATE TABLE t_complement RESTART IDENTITY;
-INSERT INTO t_complement (cd_nom_fk, statut, rarete, endemicite)
+INSERT INTO t_complement
+(
+    cd_nom_fk,
+    statut,
+--    rarete,
+    endemicite
+)
 SELECT cd_nom,
+
 -- statut
 CASE
         WHEN {$colonne_locale} IN ('I', 'J', 'M') THEN 'E'
         WHEN {$colonne_locale} IN ('P', 'S', 'E') THEN 'I'
         ELSE NULL
 END AS statut,
--- rarete
-CASE
-        WHEN {$colonne_locale} IN ('B', 'M') THEN 'R'
-        WHEN {$colonne_locale} IN ('E', 'I', 'J', 'P', 'S') THEN 'C'
-        WHEN {$colonne_locale} IN ('C') THEN 'E'
-        ELSE NULL
-END AS rarete,
+
+-- rarete : COMMENTE CAR SUJET A DEBAT
+-- CASE
+        -- WHEN {$colonne_locale} IN ('B', 'M') THEN 'R'
+        -- WHEN {$colonne_locale} IN ('E', 'I', 'J', 'P', 'S') THEN 'C'
+        -- WHEN {$colonne_locale} IN ('C') THEN 'E'
+        -- ELSE NULL
+-- END AS rarete,
+
 -- endemicite
 CASE
         WHEN {$colonne_locale} IN ('E', 'Z') THEN 'E'
@@ -63,36 +72,16 @@ FROM taxref_valide
 UPDATE t_nomenclature SET description = '{$endemicite_description_endemique}' WHERE champ = 'endemicite' AND code = 'E';
 UPDATE t_nomenclature SET description = '{$endemicite_description_subendemique}' WHERE champ = 'endemicite' AND code = 'S';
 
--- MENACES = TAXON DES LISTES ROUGES
-CREATE TEMPORARY TABLE redlist (
-    cd_nom integer NOT NULL, -- Identifiant unique du nom scientifique
-    cd_ref integer, -- Identifiant (CD_NOM) du taxon de référence (nom retenu)
-    nom_scientifique text,
-    auteur text,
-    nom_commun text,
-    rang text,
-    famille text,
-    endemisme text,
-    population text,
-    commentaire text,
-    categorie_france text,
-    criteres_france text,
-    tendance text,
-    liste_rouge_source text,
-    annee_publi text,
-    categorie_lr_europe text,
-    categorie_lr_monde text
-) ON COMMIT DROP
-;
 
-COPY redlist
+-- Menaces
+TRUNCATE menaces RESTART IDENTITY;
+COPY menaces
 FROM '{$menace}' DELIMITER ',' CSV;
-CREATE INDEX ON redlist (cd_nom);
 
 -- INSERT taxon pas encore présents dans t_complement
 INSERT INTO t_complement (cd_nom_fk, menace)
 SELECT DISTINCT b.cd_nom, a.categorie_france
-FROM redlist a
+FROM menaces a
 INNER JOIN taxref b ON a.cd_nom = b.cd_nom
 WHERE NOT EXISTS (SELECT cd_nom_fk FROM t_complement)
 ;
@@ -100,7 +89,7 @@ WHERE NOT EXISTS (SELECT cd_nom_fk FROM t_complement)
 -- UPDATE tous les taxons qui ont une menace
 UPDATE t_complement c
 SET menace = a.categorie_france
-FROM redlist a
+FROM menaces a
 INNER JOIN taxref b ON a.cd_nom = b.cd_nom
 WHERE c.cd_nom_fk = b.cd_nom
 AND a.categorie_france IS NOT NULL
@@ -108,18 +97,9 @@ AND a.categorie_france IS NOT NULL
 
 
 -- PROTECTION
-CREATE TEMPORARY TABLE protection_espece (
-    cd_nom text,
-    cd_protection text,
-    nom_cite text,
-    syn_cite text,
-    nom_francais_cite text,
-    precisions text,
-    cd_nom_cite text
-) ON COMMIT DROP
-;
-COPY protection_espece FROM '{$protection}' DELIMITER ',' HEADER CSV;
-CREATE INDEX ON protection_espece (cd_nom);
+TRUNCATE TABLE protections RESTART IDENTITY;
+COPY protections FROM '{$protection}' DELIMITER ',' HEADER CSV;
+
 
 -- INSERT taxon pas encore présents dans t_complement
 INSERT INTO t_complement (cd_nom_fk, protection)
@@ -130,7 +110,7 @@ CASE
     WHEN a.cd_protection IN ({$code_arrete_protection_communautaire}) THEN 'EPC'
     ELSE 'EP'
 END AS "protection"
-FROM protection_espece a
+FROM protections a
 WHERE NOT EXISTS (SELECT cd_nom_fk FROM t_complement)
 AND a.cd_protection IN (
     {$code_arrete_protection_simple},
@@ -149,7 +129,7 @@ CASE
     WHEN a.cd_protection IN ({$code_arrete_protection_communautaire}) THEN 'EPC'
     ELSE 'EP'
 END
-FROM protection_espece a
+FROM protections a
 WHERE c.cd_nom_fk::text = a.cd_nom
 AND a.cd_protection IN (
     {$code_arrete_protection_simple},

@@ -43,7 +43,7 @@
         </menulist>
 
 <!--
-Désactivé car redondant
+Désactivé car redondant et sujet à débat
         <menulist ref="rarete">
             <label locale="taxon~search.input.rarete"/>
             <emptyitem locale="taxon~search.input.emptyitem"/>

@@ -364,6 +364,45 @@ FROM (
 ) AS t
 LEFT JOIN t_complement AS c ON c.cd_nom_fk = t.cd_nom;
 
+-- statuts de protection
+CREATE TABLE protections (
+    cd_nom text,
+    cd_protection text,
+    nom_cite text,
+    syn_cite text,
+    nom_francais_cite text,
+    precisions text,
+    cd_nom_cite text
+)
+;
+COMMENT ON TABLE protections IS 'Statuts de protection des espèces. Source: fichier du TAXREF listant les protections, par exemple : PROTECTION_ESPECES_10.csv. L''import ne conserve que les données pour les codes d''arrêtés spécifiés dans la configuration de l''application';
+CREATE INDEX ON protections (cd_nom);
+
+-- MENACES = TAXON DES LISTES ROUGES
+CREATE TABLE menaces (
+    cd_nom integer NOT NULL, -- Identifiant unique du nom scientifique
+    cd_ref integer, -- Identifiant (CD_NOM) du taxon de référence (nom retenu)
+    nom_scientifique text,
+    auteur text,
+    nom_commun text,
+    rang text,
+    famille text,
+    endemisme text,
+    population text,
+    commentaire text,
+    categorie_france text,
+    criteres_france text,
+    tendance text,
+    liste_rouge_source text,
+    annee_publi text,
+    categorie_lr_europe text,
+    categorie_lr_monde text
+)
+;
+COMMENT ON TABLE menaces IS 'Données sur les menaces, issues des listes rouges';
+CREATE INDEX ON menaces (cd_nom);
+
+
 
 -- TRIGGERS
 
