@@ -75,8 +75,15 @@ class gestionFilterListener extends jEventListener{
         if( count($table_demandes)>0 ){
             $filter = implode( ' OR ', $table_demandes);
             $filter = ' AND ( ' . $filter . ' ) ';
-//jLog::log($filter);
+        }else{
+            // Remove all rights to see any observation if the user has no line in demande table, and is not admin
+            if( !jAcl2::check("occtax.admin.config.gerer") ){
+                $filter = ' AND False ';
+            }
         }
+//jLog::log($filter);
+
+
         return $filter;
     }
 

@@ -17,6 +17,14 @@ Module de gestion des données au format Occurence de Taxon
 ### Import des données d'observation
 
 
+## Gestion
+
+Gestion des accès via table demande. Nous avons simplifié l'utilisation des groupes pour gérer les accès:
+
+* Groupe admins = les super-utilisateurs de l'application (plateforme régionale) qui peuvent accéder à toutes les données sans restriction
+* Groupe acteurs = les personnes qui peuvent voir les données brutes, mais filtrées selon certains critères, comme les taxons, la validité
+* Groupe virtuel anonymous = les personnes non connectées à l'application.
+
 ### Export des données
 
 Vous pouvez exporter les données au format DEE via l'application en utilisant la ligne de commande.
