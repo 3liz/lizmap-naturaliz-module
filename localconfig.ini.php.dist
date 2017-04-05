@@ -46,6 +46,10 @@ znieff2_mer=reu_znieff2_mer
 ; liste de niveaux de validite à restreindre pour le grand public
 validite_niveaux_grand_public=1,2
 
+; taille maximum en m2 des polygones dessinés pour rechercher des observations
+; -1 permet une taille illimitée
+maxAreaQuery=32000000
+
 [mascarine]
 defaultRepository=
 defaultProject=

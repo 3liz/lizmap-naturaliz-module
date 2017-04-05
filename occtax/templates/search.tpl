@@ -181,3 +181,8 @@
     </div>
 </div>
 
+<script type="text/javascript" >
+{literal}
+  var occtaxClientConfig = {/literal}{$occtaxClientConfig}{literal};
+{/literal}
+</script>

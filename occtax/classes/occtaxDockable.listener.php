@@ -42,10 +42,22 @@
                     $form->deactivate( 'observateur' );
                 }
 
+                // Get configuration for some client side occtax parameters
+                // Get local configuration (application name, projects name, etc.)
+                $localConfig = jApp::configPath('localconfig.ini.php');
+                $ini = new jIniFileModifier($localConfig);
+                $maxAreaQuery = $ini->getValue('maxAreaQuery', 'occtax');
+                if( empty($maxAreaQuery) )
+                    $maxAreaQuery = 32000000;
+                $occtaxClientConfig = array(
+                    'maxAreaQuery'=> (integer)$maxAreaQuery
+                );
+
                 $assign = array(
                     'form' => $form,
                     'formUpload' => $formUpload,
-                    'formTax' => $formTax
+                    'formTax' => $formTax,
+                    'occtaxClientConfig' => json_encode($occtaxClientConfig)
                 );
                 $content = array( 'occtax~search', $assign );
 

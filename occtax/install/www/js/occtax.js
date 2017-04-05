@@ -6,17 +6,7 @@ var OccTax = function() {
     map: null,
     layers: {},
     controls: {},
-    config: {
-        "maxGpxFileSizeKo": 1500,
-        "maxAreaNewObservation": 1000000,
-        "maxLengthNewObservation": 6000,
-        "maxAreaQuery": 32000000,
-
-        "warnTooManyObject": 300,
-        "forbidTooManyObject": 500,
-
-        "maxObservationDocumentFileSizeKo": 1000
-    },
+    config: {},
 
     /**
      *  Initialise TOUTES les couches de dessin
@@ -95,7 +85,7 @@ var OccTax = function() {
      * Valide et réduit la taille d'une géométrie si celle-ci dépasse maxAreaQuery
      */
     validGeometryFeature: function( feature ){
-        if(feature.geometry.getArea() >= OccTax.config.maxAreaQuery) {
+        if(OccTax.config.maxAreaQuery > 0 && feature.geometry.getArea() >= OccTax.config.maxAreaQuery) {
             //mascarineService.displayMessage( 'error', "L'aire ne peut pas dépasser "+ OccTax.config.maxAreaQuery / 1000000 +" km² !");
             // suppression de la géométrie et on réduit le cercle à la surface max
             var myRadius = Math.sqrt( OccTax.config.maxAreaQuery / Math.PI );
@@ -352,6 +342,8 @@ lizMap.events.on({
             "temporary": OccTax.drawStyleTemp,
             "select" :   OccTax.drawStyleSelect
         });
+
+        OccTax.config = occtaxClientConfig;
 
         OccTax.init();
 

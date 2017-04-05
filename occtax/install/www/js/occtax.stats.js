@@ -1,7 +1,6 @@
-OccTax.events.on({
+lizMap.events.on({
     'uicreated':function(evt){
       console.log('OccTax uicreated in stats');
-
 
     }
 });
