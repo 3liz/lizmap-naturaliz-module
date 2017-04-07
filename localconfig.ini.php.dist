@@ -35,7 +35,44 @@ defaultRepository=
 defaultProject=
 projectName=Occurences de Taxon
 projectDescription=Cette application permet de consulter les observations faunistiques et floristiques.
-projectCss=""
+projectCss="
+#header {
+    background: url('/css/img/bandeau.png') #8DB129 repeat;
+}
+
+#auth, #title {
+  background: transparent;
+}
+#title {
+  margin-left:150px;
+}
+#title h2{
+  color: #344116;
+  margin-left: 100px;
+  font-size:1.5em;
+}
+
+#metadata {
+  background:transparent;
+  color: white;
+}
+#metadata div {
+  background:transparent;
+  font-size: 16px;
+}
+#metadata h2 {
+  font-size: 18px;
+  color: orange;
+}
+#metadata h3 {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+#metadata a {
+  color: orange;
+}
+
+"
 
 ; typename WFS pour les imports
 znieff1_terre=reu_znieff1
