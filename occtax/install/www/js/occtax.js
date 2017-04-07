@@ -360,11 +360,10 @@ lizMap.events.on({
     // Adapt dock size to display metadata
     dockopened: function(e) {
         if ( e.id == 'metadata' ) {
-            // Change dock size
-            $('#dock')
-            .css('max-width', 'none')
-            .css('width', '50%')
-            ;
+            //$('#dock')
+            //.css('max-width', 'none')
+            //.css('width', '50%')
+            //;
 
             // Replace metadata content
             if( $('#occtax-metadata').length ){
@@ -372,15 +371,16 @@ lizMap.events.on({
                 $('#metadata').html(ohtml);
             }
         }
-    },
-
-    dockclosed: function(e) {
-        if ( e.id == 'metadata' ) {
-            $('#dock')
-            .css('max-width', '30%')
-            .css('width', 'none')
-            ;
-        }
     }
+    //,
+
+    //dockclosed: function(e) {
+        //if ( e.id == 'metadata' ) {
+            //$('#dock')
+            //.css('max-width', '30%')
+            //.css('width', 'none')
+            //;
+        //}
+    //}
 
 });
