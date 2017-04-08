@@ -1,6 +1,7 @@
 var OccTax = function() {
   occTaxObservationResult = null;
-  occTaxMailleResult = null;
+  occTaxMailleResult_m02 = null;
+  occTaxMailleResult_m10 = null;
   // creating the OccTax object
   var obj = {
     map: null,
@@ -100,9 +101,9 @@ var OccTax = function() {
     /**
      * Fournis les résultats sous forme d'un tableau de features
      */
+/*
     getMaille: function( rowId ){
         var results = occTaxMailleResult;
-
         var feature = null;
 
         // Get data
@@ -136,16 +137,25 @@ var OccTax = function() {
         }
         return feature;
     },
+*/
 
     /**
      * Fournis les résultats sous forme d'un tableau de features
      */
     getResultFeatures: function( type ){
-        var results = occTaxMailleResult;
-        if (type == 'observation')
-          results = occTaxObservationResult
+
+        var results = [];
+        if (type == 'm10')
+            results = occTaxMailleResult_m10;
+        else if (type == 'm02')
+            results = occTaxMailleResult_m02;
+        else if (type == 'observation')
+            results = occTaxObservationResult;
+
         var format = new OpenLayers.Format.GeoJSON();
         var features = [];
+        if (!results)
+            return null;
 
         // Get data
         var fields = results['fields'];
@@ -153,7 +163,10 @@ var OccTax = function() {
           return features;
         var geoIdx = fields['return'].indexOf( 'geojson' );
 
-        var th = $('#occtax_results_'+type+'_table th');
+        var th = $('#occtax_results_observation_table th');
+        if (type == 'm10')
+          th = $('#occtax_results_maille_table_'+type+' th');
+
         var displayFieldsHead = {};
         for( var i=0, len=th.length; i<len; i++ ) {
             var h = $(th[i]);
@@ -203,7 +216,7 @@ var OccTax = function() {
   // initializing the OccTax events
   obj.events = new OpenLayers.Events(
       obj, null,
-      ['uicreated','mailledatareceived','observationdatareceived'],
+      ['uicreated','mailledatareceived_m02','mailledatareceived_m10','observationdatareceived'],
       true,
       {includeXY: true}
     );
@@ -212,9 +225,13 @@ var OccTax = function() {
         if ('results' in evt )
           occTaxObservationResult = evt.results;
     }
-   ,'mailledatareceived':function(evt){
+   ,'mailledatareceived_m02':function(evt){
         if ('results' in evt )
-          occTaxMailleResult = evt.results;
+          occTaxMailleResult_m02 = evt.results;
+    }
+   ,'mailledatareceived_m10':function(evt){
+        if ('results' in evt )
+          occTaxMailleResult_m10 = evt.results;
     }
   });
   return obj;

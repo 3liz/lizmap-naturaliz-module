@@ -41,8 +41,8 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
     public function __construct ($token=Null, $params=Null, $demande=Null) {
         // Set maille depending on rights
         // do it first because parent::__construct do setSql
-        if ( jAcl2::check("visualisation.donnees.maille_01") )
-            $this->maille = 'maille_01';
+        //if ( jAcl2::check("visualisation.donnees.maille_01") )
+            //$this->maille = 'maille_01';
 
         // Remove unnecessary LEFT JOIN to improve performances
         $this->querySelectors['localisation_maille_05']['required'] = False;
@@ -82,15 +82,22 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
 
 
         parent::__construct($token, $params, $demande);
+
     }
 
     protected function setSql() {
         parent::setSql();
 
         // Get maille type (1 or 2)
-        $m = substr( $this->maille, -1 );
+        $m = 1;
+        if($this->maille == 'maille_02')
+            $m = 2;
 
-        $sql = ' SELECT m.id_maille AS mid, m.nom_maille AS maille, ';
+        if($this->maille == 'maille_10')
+            $m = 10;
+
+
+        $sql = ' SELECT m.code_maille AS mid, m.nom_maille AS maille, ';
         $sql.= " count(f.cle_obs) AS nbobs, count(DISTINCT f.cd_nom) AS nbtax, ";
 
         $sql.= "
@@ -114,13 +121,13 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
         $sql.= " ) AS f";
         $sql.= ' INNER JOIN "' . $this->maille .'" AS m ';
         $sql.= ' ON ST_Intersects( m.geom, f.geom  ) ';
-        $sql.= ' GROUP BY m.id_maille, m.nom_maille, m.geom';
+        $sql.= ' GROUP BY m.code_maille, m.nom_maille, m.geom';
 
         $this->sql = $sql;
     }
 
     protected function getResult( $limit=50, $offset=0, $order="" ) {
-//~ jLog::log($this->sql);
+jLog::log($this->sql);
         $cnx = jDb::getConnection();
         return $cnx->query( $this->sql );
     }

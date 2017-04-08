@@ -15,12 +15,13 @@ class occtaxGeometryChecker {
     protected $srid = Null;
     protected $moduleName = Null;
 
-    function __construct($x, $y, $srid, $moduleName){
+    function __construct($x, $y, $srid, $moduleName, $type_maille=null){
 
         $this->x = $x;
         $this->y = $y;
         $this->srid = $srid;
         $this->moduleName = $moduleName;
+        $this->type_maille = $type_maille;
 
     }
 
@@ -123,8 +124,10 @@ class occtaxGeometryChecker {
             return $return;
 
         $maille = 'maille_02';
-        if ( jAcl2::check("visualisation.donnees.maille_01") )
-          $maille = 'maille_01';
+        //if ( jAcl2::check("visualisation.donnees.maille_01") )
+          //$maille = 'maille_01';
+        if( $this->type_maille == 'm10')
+            $maille = 'maille_10';
 
         if($this->moduleName == 'occtax'){
             $sql = 'SELECT m.code_maille, m.nom_maille, ST_AsGeoJSON(ST_Transform( m.geom , 4326)) AS geojson ';
@@ -142,7 +145,7 @@ class occtaxGeometryChecker {
             $sql.= ' WHERE ST_Within( tgeo.geom, m.geom )';
         }
 
-
+//jLog::log($sql);
         $cnx = jDb::getConnection();
         $result = $cnx->limitQuery( $sql, 0, 1 );
         $d = $result->fetch();

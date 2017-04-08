@@ -60,6 +60,7 @@ $(document).ready(function () {
             $('#jforms_occtax_search_code_commune').val('');
             $('#jforms_occtax_search_code_masse_eau').val('');
             $('#jforms_occtax_search_code_maille').val('');
+            $('#jforms_occtax_search_type_maille').val('');
         } else {
             // query geom
             if (feature.geometry.CLASS_NAME === 'OpenLayers.Geometry.Point') {
@@ -67,8 +68,12 @@ $(document).ready(function () {
                 //console.log( myPoint.x, myPoint.y );
                 if ( activeButton.hasClass('maille') ) {
                     var form = $('#form_occtax_service_maille');
+                    var type_maille = 'm02';
+                    if(activeButton.hasClass('m10')){
+                      type_maille = 'm10';
+                    }
                     $.post(form.attr('action')
-                      ,{x:myPoint.x, y:myPoint.y}
+                      ,{x:myPoint.x, y:myPoint.y, type_maille: type_maille}
                       , function( data ) {
                           if ( data.status == 1 ) {
                               var format = new OpenLayers.Format.GeoJSON();
@@ -77,6 +82,7 @@ $(document).ready(function () {
                               $('#jforms_occtax_search_code_commune').val('');
                               $('#jforms_occtax_search_code_masse_eau').val('');
                               $('#jforms_occtax_search_code_maille').val( data.result.code_maille );
+                              $('#jforms_occtax_search_type_maille').val( type_maille );
                               theLayer.destroyFeatures(feature);
                               geom.transform('EPSG:4326', OccTax.map.projection);
                               theLayer.addFeatures( [new OpenLayers.Feature.Vector( geom)] );
@@ -103,6 +109,7 @@ $(document).ready(function () {
                               $('#jforms_occtax_search_code_commune').val( data.result.code_commune );
                               $('#jforms_occtax_search_code_masse_eau').val('');
                               $('#jforms_occtax_search_code_maille').val( '' );
+                              $('#jforms_occtax_search_type_maille').val( '' );
                               theLayer.destroyFeatures(feature);
                               geom.transform('EPSG:4326', OccTax.map.projection);
                               theLayer.addFeatures( [new OpenLayers.Feature.Vector( geom)] );
@@ -129,6 +136,7 @@ $(document).ready(function () {
                               $('#jforms_occtax_search_code_commune').val( '' );
                               $('#jforms_occtax_search_code_masse_eau').val( data.result.code_me );
                               $('#jforms_occtax_search_code_maille').val( '' );
+                              $('#jforms_occtax_search_type_maille').val( '' );
                               theLayer.destroyFeatures(feature);
                               geom.transform('EPSG:4326', OccTax.map.projection);
                               theLayer.addFeatures( [new OpenLayers.Feature.Vector( geom)] );
@@ -158,6 +166,7 @@ $(document).ready(function () {
             $('#jforms_occtax_search_code_commune').val('');
             $('#jforms_occtax_search_code_masse_eau').val('');
             $('#jforms_occtax_search_code_maille').val('');
+            $('#jforms_occtax_search_type_maille').val('');
         }
     }
 
@@ -327,8 +336,8 @@ $(document).ready(function () {
         });
     }
 
-    function addResultsMailleTable() {
-      var tableId = 'occtax_results_maille_table';
+    function addResultsMailleTable(type_maille) {
+      var tableId = 'occtax_results_maille_table_' + type_maille;
       // Get maille fields to display
       var returnFields = $('#'+tableId+'').attr('data-value').split(',');
       var DT_RowId = $('#'+tableId+' thead tr').attr('data-value');
@@ -343,7 +352,7 @@ $(document).ready(function () {
             "language": {url:lizUrls["dataTableLanguage"]},
             "columns": DT_Columns,
             "ajax": function (param, callback, settings) {
-                var searchForm = $('#occtax_service_search_maille_form');
+                var searchForm = $('#occtax_service_search_maille_form_' + type_maille);
 
                 $.getJSON(searchForm.attr('action'), searchForm.serialize(),
                     function( results ) {
@@ -357,8 +366,7 @@ $(document).ready(function () {
                             tData.recordsFiltered = results.recordsFiltered;
 
                             // Trigger event that a new result has come
-                            OccTax.events.triggerEvent('mailledatareceived', {'results':results});
-
+                            OccTax.events.triggerEvent('mailledatareceived_'+type_maille, {'results':results});
                             for( var i=0, len=results.data.length; i<len; i++ ) {
 
                               // Add data to table
@@ -379,8 +387,8 @@ $(document).ready(function () {
                           }
                           $('#'+tableId+' a').unbind('click');
                           callback( tData );
-                          if ( $('#occtax_results_draw_maille').hasClass('active') )
-                              $('#occtax_results_draw_maille').click();
+                          $('#occtax_results_draw_maille_m02').click();
+//ajouter un carre autour de tous les ronds
                     }
                 );
             }
@@ -396,7 +404,7 @@ $(document).ready(function () {
               var mId = tr.attr('id');
               //var maille = OccTax.getMaille( mId );
               var maille = OccTax.layers.resultLayer.getFeatureByFid(mId);
-              $('#obs-spatial-query-maille').click();
+              $('#obs-spatial-query-maille-' + type_maille).click();
               var mailleSelect = maille.clone();
               OccTax.layers['queryLayer'].addFeatures([mailleSelect]);
               onQueryFeatureAdded( mailleSelect, function() {
@@ -408,7 +416,7 @@ $(document).ready(function () {
               var tr = $(this);
               var mId = tr.attr('id');
               var maille = OccTax.layers.resultLayer.getFeatureByFid(mId);
-              OccTax.controls['select']['highlightCtrl'].highlight( maille );
+              OccTax.controls['select']['highlightCtrl'].highlight( maille  );
           },function(){
               var tr = $(this);
               var mId = tr.attr('id');
@@ -876,6 +884,7 @@ OccTax.events.on({
                 $('#jforms_occtax_search_code_commune').val('');
                 $('#jforms_occtax_search_code_masse_eau').val('');
                 $('#jforms_occtax_search_code_maille').val('');
+                $('#jforms_occtax_search_type_maille').val('');
                 $('#jforms_occtax_search_type_en').val('');
                 $('#obs-spatial-query-buttons button').removeClass('active');
                 return false;
@@ -896,6 +905,7 @@ OccTax.events.on({
                     $('#jforms_occtax_search_code_commune').val('');
                     $('#jforms_occtax_search_code_masse_eau').val('');
                     $('#jforms_occtax_search_code_maille').val('');
+                    $('#jforms_occtax_search_type_maille').val('');
                     OccTax.controls['query']['modifyPolygonLayerCtrl'].deactivate();
                     OccTax.controls['query']['modifyPolygonLayerCtrl'].moveLayerBack();
                     return false;
@@ -1020,8 +1030,10 @@ OccTax.events.on({
                     $('#occtax_results_stats_table').DataTable().ajax.reload();
                     $('#occtax_service_search_taxon_form input[name="token"]').val(tData.token).change();
                     $('#occtax_results_taxon_table').DataTable().ajax.reload();
-                    $('#occtax_service_search_maille_form input[name="token"]').val(tData.token).change();
-                    $('#occtax_results_maille_table').DataTable().ajax.reload();
+                    $('#occtax_service_search_maille_form_m02 input[name="token"]').val(tData.token).change();
+                    $('#occtax_results_maille_table_m02').DataTable().ajax.reload();
+                    $('#occtax_service_search_maille_form_m10 input[name="token"]').val(tData.token).change();
+                    $('#occtax_results_maille_table_m10').DataTable().ajax.reload();
                     $('#occtax_service_search_form input[name="token"]').val(tData.token).change();
                     $('#occtax_results_observation_table').DataTable().ajax.reload();
                     // Show result div
@@ -1047,7 +1059,8 @@ OccTax.events.on({
 
       addResultsStatsTable();
       addResultsTaxonTable();
-      addResultsMailleTable();
+      addResultsMailleTable('m02');
+      addResultsMailleTable('m10');
       addResultsObservationTable();
 
       initFormTaxon();
@@ -1055,19 +1068,35 @@ OccTax.events.on({
 
       $('#occtax_results_draw .btn').click(function() {
         var self = $(this);
+
         // Get layer
         var rLayer = OccTax.layers['resultLayer'];
+
         rLayer.destroyFeatures();
+
         rLayer.addFeatures( OccTax.getResultFeatures( self.val()) );
         rLayer.setVisibility(true);
         rLayer.refresh();
         //return false;
       });
+
+      // Click on hidden draw buttons when changing displayed tab
       $('#occtax_results_tabs a').on('shown', function (e) {
-          if ( $(e.target).attr('id') == 'occtax_results_observation_table_tab' )
-            $('#occtax_results_draw_observation').click();
-          else if ( $(e.relatedTarget).attr('id') == 'occtax_results_observation_table_tab' )
-            $('#occtax_results_draw_maille').click();
+
+          var tid = $(e.target).attr('id');
+          console.log( tid );
+          var drawButton = 'occtax_results_draw_maille_m02';
+          if(tid == 'occtax_results_maille_table_tab_m02'){
+            drawButton = 'occtax_results_draw_maille_m02';
+          }
+          if(tid == 'occtax_results_maille_table_tab_m10'){
+            drawButton = 'occtax_results_draw_maille_m10';
+          }
+          if(tid == 'occtax_results_observation_table_tab'){
+            drawButton = 'occtax_results_draw_observation';
+          }
+          $('#' + drawButton).click();
+
       });
       $('#occtax_results_zoom').click(function() {
           var rLayer = OccTax.layers['resultLayer'];

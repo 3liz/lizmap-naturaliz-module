@@ -113,6 +113,7 @@ class serviceCtrl extends jController {
             $rep->data = $return;
             return $rep;
         }
+
         jClasses::inc('occtax~'.$searchClassName);
 
         $occtaxSearch = new $searchClassName( $token, null );
@@ -173,7 +174,11 @@ class serviceCtrl extends jController {
      *
      */
     function searchGroupByMaille() {
-        return $this->__search( 'occtaxSearchObservationMaille' );
+        $class = 'occtaxSearchObservationMaille';
+        if($this->param('type_maille', 'm02') == 'm10'){
+            $class = 'occtaxSearchObservationMaille10';
+        }
+        return $this->__search( $class );
     }
 
     /**
@@ -362,9 +367,10 @@ class serviceCtrl extends jController {
         // Get x and y params
         $x = $this->floatParam('x');
         $y = $this->floatParam('y');
+        $type_maille = $this->param('type_maille');
 
         jClasses::inc('occtax~occtaxGeometryChecker');
-        $mgc = new occtaxGeometryChecker($x, $y, $this->srid, 'occtax');
+        $mgc = new occtaxGeometryChecker($x, $y, $this->srid, 'occtax', $type_maille);
         $return = $mgc->getMaille();
 
         // Return data

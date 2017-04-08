@@ -67,6 +67,9 @@
             <label locale="occtax~search.input.code_maille"/>
         </hidden>
 
+        <hidden ref="type_maille">
+        </hidden>
+
         <hidden ref="geom">
             <label locale="occtax~search.input.geom"/>
         </hidden>
