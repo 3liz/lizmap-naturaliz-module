@@ -30,7 +30,9 @@ class importCtrl extends jControllerCmdLine {
             '-menace' => true, // Chemin complet vers le fichier de menaces (listes rouges) au format CSV
             '-protection' => true, // Chemin complet vers le fichier des espèces protégées au format CSV
             '-version' => true, // Version du fichier Taxref. 10 par défaut
-            '-dbprofile' => false // Jelix database profile name
+            '-correctionsql' => true, // Path to SQL file to correct some taxref data
+            '-correctioncsv' => true, // Path to CSV file to correct some taxref data
+            '-dbprofile' => true // Jelix database profile name
         )
     );
 
@@ -45,6 +47,8 @@ class importCtrl extends jControllerCmdLine {
         - Vous devez préciser le chemin vers le fichier CSV séparé par tabulation et encodé en UTF-8, contenant les menaces (taxons issu des listes rouges, filtrés sur la région) : à télécharger sur le site de l INPN
         - Vous devez préciser le chemin vers le fichier CSV séparé par tabulation et encodé en UTF-8, contenant les espèces protégées : à télécharger sur le site de l INPN
         - Vous devez préciser la version via le paramètre version : 7, 8, 9 ou 10.
+        - Vous pouvez donner un fichier SQL à lancer après import du taxref pour corriger certaines données. On peut utiliser un csv source à préciser ensuite : -correctionsql
+        - Si le script de correction SQL attend un fichier CSV, vous pouvez fournir son chemin ici : -correctioncsv
         - Vous pouvez préciser un nom de profil de base de données (comme écrit dans le fichier lizmap/var/config/profiles.ini.php )
 
         Usage :
@@ -175,8 +179,27 @@ class importCtrl extends jControllerCmdLine {
         // Run import query
         $tpl->assign( $assign );
         $sql = $tpl->fetchFromString($sqlTpl, 'text');
+
         $sqlAfter = $tpl->fetchFromString($sqlTplAfter, 'text');
-        $sql = $sql . $sqlAfter;
+
+        // Optionnaly correction sql
+        $sqlCorrection = '';
+        $cor_sql = $this->option('-correctionsql', '' );
+        $cor_csv = $this->option('-correctioncsv', '' );
+        if( !empty($cor_sql) and !empty($cor_sql)
+            and is_file($cor_sql) and is_file($cor_csv)
+        ){
+            $target_csv = $tmpFolder . '/taxref_correction.csv';
+            copy($cor_csv, $target_csv );
+            $tpl_c = new jTpl();
+            $assign_c = array();
+            $assign_c['source'] = $target_csv ;
+            $tpl_c->assign( $assign_c );
+            $sqlCorrection = $tpl_c->fetchFromString(jFile::read($cor_sql), 'text');
+        }
+
+        $sql = $sql . $sqlCorrection . $sqlAfter;
+
         try {
             $cnx->exec( $sql );
         } catch ( Exception $e ) {

@@ -262,6 +262,8 @@ php lizmap/scripts/script.php taxon~import:taxref -source /tmp/referentiels/taxr
 Le premier paramètre passé est le chemin complet vers le fichier CSV contenant les données. Le 2ème est le chemin vers le fichier des menaces (taxons sur listes rouges, filtré pour la région concernée).Le 3ème est le fichier contenant les taxon protégés. Vous pouvez pointer vers d'autres chemins de fichiers, et le script se chargera de copier les données dans le répertoire temporaire puis lancera l'import.
 Le dernier paramètre est la version du fichier TAXREF (7, 8, 9 ou 10 sont possibles).
 
+Parfois, il peut être utile de modifier certaines données du TAXREF (par exemple pour compléter les noms vernaculaires locaux). Pour cela, vous pouvez utiliser 2 options -correctionsql et -correctioncsv qui permettent de fournir un fichier SQL et un fichier CSV source (utilisé dans le fichier SQL).
+
 Vous pouvez voir l'aide de la commande via:
 
 ```
