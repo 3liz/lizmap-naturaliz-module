@@ -71,20 +71,6 @@
                 );
                 $event->add($dock);
 
-                // STATS dock
-                $assign = array(
-                );
-                $content = array( 'occtax~stats', $assign );
-                $dock = new lizmapMapDockItem(
-                    'occtax_stats',
-                    jLocale::get("occtax~stats.dock.title"),
-                    $content,
-                    9,
-                    $bp.'css/occtax.stats.css',
-                    $bp.'js/occtax.stats.js'
-                );
-                $event->add($dock);
-
 
                 // OVERRIDE METADATA
                 $metadataTpl = new jTpl();
@@ -114,15 +100,13 @@
                 // Read file beside QGIS project if existing and override previous description
                 $presentation = jFile::read( $lproj->getQgisPath() . '.presentation.html');
                 $legal = jFile::read( $lproj->getQgisPath() . '.legal.html');
-                $stat = Null;
                 $dtpl = new jTpl();
                 $dassign = array(
                     'presentation' => $presentation,
-                    'stat' => $stat,
                     'legal' => $legal
                 );
                 $dtpl->assign($dassign);
-                if( $presentation or $stat or $legal ){
+                if( $presentation or $legal ){
                     $projectDescription = $dtpl->fetch('application_metadata');
                 }
 
