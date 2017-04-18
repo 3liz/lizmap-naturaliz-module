@@ -64,6 +64,8 @@ class occtaxSearch {
 
     protected $demande = Null;
 
+    protected $legend_classes = array();
+
     public function __construct ($token=Null, $params=Null, $demande=Null) {
 
         // Set demande to avoid inifite loop while fetching sql for demande
@@ -126,9 +128,6 @@ class occtaxSearch {
         $vniv = implode( ', ', array_map(function($item){return $this->myquote($item);}, explode(',', $vniv)));
         $this->validite_niveaux_grand_public = $vniv;
 
-//jLog::log(json_encode($this->params));
-//jLog::log(json_encode($this->taxon_params));
-
         // Build SQL query
         $this->setSql();
 //jLog::log($this->sql);
@@ -156,6 +155,26 @@ class occtaxSearch {
       return $this->params;
     }
 
+
+    /**
+     * Set legend classes for grid from configuration
+    */
+    protected function setLegendClasses(){
+        // Get min, max, and colors for classes
+        $localConfig = jApp::configPath('localconfig.ini.php');
+        $ini = new jIniFileModifier($localConfig);
+        $legend_classes = $ini->getValue('legend_class', 'occtax');
+        if( !$legend_classes or empty($legend_classes) ){
+            $legend_classes = array();
+            $legend_classes[] = "De 1 à 10 observations; 1; 10; #FFFBC3";
+            $legend_classes[] = "De 11 à 100 observations; 11; 100; #FFFF00";
+            $legend_classes[] = "De 101 à 500 observations; 101; 500; #FFAD00";
+            $legend_classes[] = "Supérieur à 500 observations; 501; 1000000; #FF5500";
+        }
+        $this->legend_classes = $legend_classes;
+    }
+
+
     /**
      * Get search description
     */
@@ -174,10 +193,20 @@ class occtaxSearch {
         if( $this->recordsTotal > 1 )
             $s = 's';
         $tpl->assign('s', $s  );
-        if($format=='html')
+
+        if($format=='html'){
+            // Add legend classes
+            $this->setLegendClasses();
+            $legend_classes = array();
+            foreach($this->legend_classes as $class){
+                $legend_classes[] = array_map( 'trim', explode(';', $class) );
+            }
+            $tpl->assign('legend_classes', $legend_classes );
             $description = $tpl->fetch('occtax~searchDescription');
-        else
+        }
+        else{
             $description = $tpl->fetch('occtax~searchDescription_text');
+        }
         return $description;
     }
 

@@ -120,3 +120,16 @@ Toolbar buttons
 table.dataTable {
   width: 100% !important;
 }
+
+
+table.occtax-legend-table {
+  padding: 5px;
+  font-size:0.9em;
+  border-collapse:separate;
+  border-spacing:2px;
+  width:50%;
+}
+
+table.occtax-legend-table td{
+  padding: 0px 5px;
+}

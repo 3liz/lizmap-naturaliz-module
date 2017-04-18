@@ -4,8 +4,6 @@
         <div id="occtax_search_description_content"></div>
         <button id="occtax-search-modify" type="button" class="btn" name="mod" value="modify">{@occtax~search.button.modify.search@}</button>
         <button id="occtax-search-replay" type="button" class="btn" name="mod" value="replay" style="display:none;">{@occtax~search.button.replay.search@}</button>
-
-
     </div>
 </div>
 
@@ -154,18 +152,6 @@
         mailles 2
 -->
         <div id="occtax_results_maille_table_div_m02" class="tab-pane active">
-          <b>{@occtax~search.legende.mailles.title@}</b>
-          <dl class="dl-horizontal">
-            <dt><img src="{$j_basepath}css/img/legend/a.png"/></dt>
-            <dd>{@occtax~search.legende.mailles.a@}</dd>
-            <dt><img src="{$j_basepath}css/img/legend/b.png"/></dt>
-            <dd>{@occtax~search.legende.mailles.b@}</dd>
-            <dt><img src="{$j_basepath}css/img/legend/c.png"/></dt>
-            <dd>{@occtax~search.legende.mailles.c@}</dd>
-            <dt><img src="{$j_basepath}css/img/legend/d.png"/></dt>
-            <dd>{@occtax~search.legende.mailles.d@}</dd>
-          </dl>
-
           <form id="occtax_service_search_maille_form_m02" method="post" action="{jurl 'occtax~service:searchGroupByMaille'}" style="display:none;">
             <input type="text" name="token"></input>
             <input type="text" name="type_maille" value="m02"></input>
@@ -178,18 +164,6 @@
         mailles 10
 -->
         <div id="occtax_results_maille_table_div_m10" class="tab-pane">
-          <b>{@occtax~search.legende.mailles.title@}</b>
-          <dl class="dl-horizontal">
-            <dt><img src="{$j_basepath}css/img/legend/a.png"/></dt>
-            <dd>{@occtax~search.legende.mailles.a@}</dd>
-            <dt><img src="{$j_basepath}css/img/legend/b.png"/></dt>
-            <dd>{@occtax~search.legende.mailles.b@}</dd>
-            <dt><img src="{$j_basepath}css/img/legend/c.png"/></dt>
-            <dd>{@occtax~search.legende.mailles.c@}</dd>
-            <dt><img src="{$j_basepath}css/img/legend/d.png"/></dt>
-            <dd>{@occtax~search.legende.mailles.d@}</dd>
-          </dl>
-
           <form id="occtax_service_search_maille_form_m10" method="post" action="{jurl 'occtax~service:searchGroupByMaille'}" style="display:none;">
             <input type="text" name="token"></input>
             <input type="text" name="type_maille" value="m10"></input>

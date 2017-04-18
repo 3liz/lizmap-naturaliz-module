@@ -280,7 +280,7 @@ lizMap.events.on({
                 if(mySw < 3){mySw = 3;}
                 // Draw square underneath maille features
                 if('square' in feat.attributes){
-                    mySw = 1;
+                    mySw = 0.5;
                 }
                 return mySw;
             },

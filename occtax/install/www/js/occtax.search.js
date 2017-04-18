@@ -1,5 +1,5 @@
 $(document).ready(function () {
-
+    $('#div_form_occtax_search_token form div.jforms-submit-buttons').hide()
     function getDatatableColumns( tableId ){
       var DT_Columns = $('#'+tableId+' thead tr th').map(
         function(){
@@ -1065,6 +1065,8 @@ OccTax.events.on({
 
       initFormTaxon();
       addTaxonTable();
+
+      $('#div_form_occtax_search_token form div.jforms-submit-buttons').show()
 
       $('#occtax_results_draw .btn').click(function() {
         var self = $(this);

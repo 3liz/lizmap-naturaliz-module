@@ -47,6 +47,7 @@ Les modules Naturaliz lisent dans le fichier **lizmap/var/config/localconfig.ini
 * la liste des niveaux de validité, séparés par virgule, pour filtrer les observations pour le grand public, c'est-à-dire que seules les observations qui ont un niveau de validité correspondant à un des éléments de la liste pourront être visibles pour le grand public. Variable **validite_niveaux_grand_public** de la section [occtax]. Par exemple validite_niveaux_grand_public=1,2
 * la liste de niveaux de validite à restreindre pour le grand public, séparés par virgule : **validite_niveaux_grand_public** par exemple 1,2
 * la taille maximale du polygone ou cercle de requête que l'utilisateur peut dessiner sur la carte: **maxAreaQuery** . On met une valeur en m2, ou -1 pour désactiver le contrôle
+* la configuration des classes de légende pour les affichages par maille: **legend_class**. On peut utiliser autant de legend_class[] que nécessaire, et on doit les écrire avec les informations suivantes séparées par point-virgule: intitulé de la classe; borne inférieure; borne supérieure; couleur. Ex: legend_class[]="De 1 à 10 observations; 1; 10; #FFFBC3"
 
 
 Pour le module mascarine:
@@ -91,13 +92,6 @@ code_arrete_protection_internationale="CCA,CCB,CCC,CCD,IAAP,IAO2,IAO3,IAO4,IBA2,
 code_arrete_protection_communautaire="CDH2,CDH4,CDH5,CDO1,CDO21,CDO22,CDO31,CDO32"
 code_arrete_protection_nationale="DV974,NM,NMAMmar2,NM2,NO3,NO4,NO6,NTAA1,NTM1,NTM8,OC3,REUEA2,REUEA3,REUEA4,REUI2"
 
-; liste de niveaux de validite à restreindre pour le grand public
-validite_niveaux_grand_public=1,2
-
-; taille maximum en m2 des polygones dessinés pour rechercher des observations
-; -1 permet une taille illimitée
-maxAreaQuery=-1
-
 [naturaliz]
 ; projection de reference
 srid=2975
@@ -115,6 +109,22 @@ znieff1_terre=Znieff1
 znieff1_mer=Znieff1_mer
 znieff2_terre=Znieff2
 znieff2_mer=Znieff2_mer
+
+; liste de niveaux de validite à restreindre pour le grand public
+validite_niveaux_grand_public=1,2
+
+; taille maximum en m2 des polygones dessinés pour rechercher des observations
+; -1 permet une taille illimitée
+maxAreaQuery=-1
+
+; configuration des classes de légende pour les mailles
+; on doit mettre, dans l'ordre et séparé par point-virgule:
+; intitulé de la classe; borne inférieure; borne supérieure; couleur
+legend_class[]="De 1 à 10 observations; 1; 10; #FFFBC3"
+legend_class[]="De 11 à 100 observations; 11; 100; #FFFF00"
+legend_class[]="De 101 à 500 observations; 101; 500; #FFAD00"
+legend_class[]="Supérieur à 500 observations; 501; 1000000; #FF5500"
+
 
 ```
 

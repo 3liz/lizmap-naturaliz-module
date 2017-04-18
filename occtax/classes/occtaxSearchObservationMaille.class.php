@@ -80,7 +80,6 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
         // Remove ORDER BY
         $this->orderClause = '';
 
-
         parent::__construct($token, $params, $demande);
 
     }
@@ -96,22 +95,34 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
         if($this->maille == 'maille_10')
             $m = 10;
 
-
+        // Build SQL
         $sql = ' SELECT m.code_maille AS mid, m.nom_maille AS maille, ';
         $sql.= " count(f.cle_obs) AS nbobs, count(DISTINCT f.cd_nom) AS nbtax, ";
 
         $sql.= "
             CASE
-                WHEN count(DISTINCT f.cle_obs) = 1 THEN 200
-                WHEN count(DISTINCT f.cle_obs) >= 2 AND count(DISTINCT f.cle_obs) <= 5 THEN 270
-                WHEN count(DISTINCT f.cle_obs) >= 6 AND count(DISTINCT f.cle_obs) <= 20 THEN 340
+            ";
+
+        $this->setLegendClasses();
+        foreach($this->legend_classes as $class){
+            $c = array_map( 'trim', explode(';', $class) );
+            $sql.= "
+            WHEN count(DISTINCT f.cle_obs) >= $c[1] AND count(DISTINCT f.cle_obs) <= $c[2] THEN 200
+            ";
+        }
+        $sql.= "
                 ELSE 410
             END * " . $m . " AS rayon,
             CASE
-                WHEN count(DISTINCT f.cle_obs) = 1 THEN '#FFFBC3'::text
-                WHEN count(DISTINCT f.cle_obs) >= 2 AND count(DISTINCT f.cle_obs) <= 5 THEN '#FFFF00'::text
-                WHEN count(DISTINCT f.cle_obs) >= 6 AND count(DISTINCT f.cle_obs) <= 20 THEN '#FFAD00'::text
-                ELSE '#FF5500'::text
+            ";
+        foreach($this->legend_classes as $class){
+            $c = array_map( 'trim', explode(';', $class) );
+            $sql.= "
+                WHEN count(DISTINCT f.cle_obs) >= $c[1] AND count(DISTINCT f.cle_obs) <= $c[2] THEN '$c[3]'::text
+            ";
+        }
+        $sql.= "
+                ELSE 'black'::text
             END AS color
         ";
 
@@ -131,5 +142,6 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
         $cnx = jDb::getConnection();
         return $cnx->query( $this->sql );
     }
+
 }
 
