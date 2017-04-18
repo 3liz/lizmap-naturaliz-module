@@ -164,6 +164,8 @@ var OccTax = function() {
         var geoIdx = fields['return'].indexOf( 'geojson' );
 
         var th = $('#occtax_results_observation_table th');
+        if (type == 'm02')
+          th = $('#occtax_results_maille_table_'+type+' th');
         if (type == 'm10')
           th = $('#occtax_results_maille_table_'+type+' th');
 
@@ -183,8 +185,14 @@ var OccTax = function() {
             var attributes = {};
             for( j in fields['return']) {
                 attributes[ fields['return'][j] ] = d[j];
-                if( fields['return'][j] in fields['display'] )
+
+                // Do not add text in tooltip for some properties
+                if( fields['return'][j] =='filter' || fields['return'][j] == 'detail' )
+                    continue;
+                if( fields['return'][j] in fields['display']
+                ){
                   messageText.push( displayFieldsHead[fields['return'][j]]+' '+d[j] );
+                }
             }
             attributes['message_text'] = messageText.join(', ');
             if( geom ) {
@@ -247,13 +255,20 @@ lizMap.events.on({
         OccTax.resultLayerContext = {
             getPointRadius:function(feat) {
                 var res = OccTax.map.getResolution();
-
+                var rad = 0;
                 if(feat.attributes.rayon > 0){
                     //~ return feat.attributes.rayon; //
-                    return Math.round(feat.attributes.rayon / res); //pour rayon en mètre
+                    rad = Math.round(feat.attributes.rayon / res); //pour rayon en mètre
                 }else{
-                    return (OccTax.map.getZoom() + 1) * 1.5;
+                    rad = (OccTax.map.getZoom() + 1) * 1.5;
                 }
+                // Draw square underneath maille features
+                if('square' in feat.attributes){
+                    var square = feat.attributes.square / 2;
+                    rad = Math.round(square / res);
+                }
+                return rad;
+
             },
             getPointColor:function(feat) {
                 if (!feat.attributes.color)
@@ -263,21 +278,34 @@ lizMap.events.on({
             getStrokeWidth:function(feat) {
                 mySw = (OccTax.map.getZoom() + 1) * 1.5;
                 if(mySw < 3){mySw = 3;}
+                // Draw square underneath maille features
+                if('square' in feat.attributes){
+                    mySw = 1;
+                }
                 return mySw;
             },
             getPointRadiusSelect:function(feat) {
                 var res = OccTax.map.getResolution();
-
+                var rad = 0;
                 if(feat.attributes.rayon > 0){
                     //~ return feat.attributes.rayon; //
-                    return Math.round(feat.attributes.rayon / res) * 1.5; //pour rayon en mètre
+                    rad = Math.round(feat.attributes.rayon / res) * 1.5; //pour rayon en mètre
                 }else{
-                    return (OccTax.map.getZoom() + 1) * 1.5 * 1.5;
+                    rad = (OccTax.map.getZoom() + 1) * 1.5 * 1.5;
                 }
+                // Hide square underneath maille features on select
+                if('square' in feat.attributes){
+                    rad = 0;
+                }
+                return rad;
             },
             getStrokeWidthSelect:function(feat) {
                 mySw = (OccTax.map.getZoom() + 1) * 1.5 * 2;
                 if(mySw < 3){mySw = 3 * 2;}
+                // Hide square underneath maille features on select
+                if('square' in feat.attributes){
+                    mySw = 0;
+                }
                 return mySw;
             },
             getGraphicName:function(feat) {
@@ -285,17 +313,29 @@ lizMap.events.on({
                 if(
                     feat.attributes.source_objet &&
                     feat.attributes.source_objet.indexOf('maille') == 0 // starts with maille -> square
-                )
+                ){
                     graphic = 'square';
+                }
+                // Draw square underneath maille features
+                if('square' in feat.attributes){
+                    graphic = 'square';
+                }
                 return graphic;
-
+            },
+            getFillOpacity:function(feat) {
+                var fo = 1;
+                // Draw square underneath maille features
+                if('square' in feat.attributes){
+                    fo = 0.2;
+                }
+                return fo;
             }
         };
 
         var resultLayerTemplateDefault = {
             pointRadius: "${getPointRadius}",
             fillColor: "${getPointColor}",
-            fillOpacity: 1,
+            fillOpacity: "${getFillOpacity}",
             strokeColor: "${getPointColor}",
             strokeOpacity: 1,
             strokeDashstyle: "solid",
@@ -309,7 +349,7 @@ lizMap.events.on({
         var resultLayerTemplateSelect = {
             pointRadius: "${getPointRadius}",
             fillColor: "${getPointColor}",
-            fillOpacity: 1,
+            fillOpacity: "${getFillOpacity}",
             strokeColor: "blue",
             strokeOpacity: 1,
             strokeDashstyle: "solid",

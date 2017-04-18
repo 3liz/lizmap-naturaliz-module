@@ -34,10 +34,10 @@
         </button>
         {/ifacl2}
         {ifnotacl2 "requete.spatiale.maille_01"}
-        <button type="button" id="obs-spatial-query-maille-m02" data-value="queryPoint" class="btn maille m02" title="Sélectionner une maille" alt="Sélectionner une maille en cliquant sur la carte">
+        <button type="button" id="obs-spatial-query-maille-m02" data-value="queryPoint" class="btn maille m02" title="Sélectionner une maille 2x2km" alt="Sélectionner une maille en cliquant sur la carte">
         </button>
         {/ifnotacl2}
-        <button type="button" id="obs-spatial-query-maille-m10" data-value="queryPoint" class="btn maille m10" title="Sélectionner une maille" alt="Sélectionner une maille 10 en cliquant sur la carte">
+        <button type="button" id="obs-spatial-query-maille-m10" data-value="queryPoint" class="btn maille m10" title="Sélectionner une maille 10x10km" alt="Sélectionner une maille 10 en cliquant sur la carte">
         </button>
         {ifacl2 "requete.spatiale.cercle"}
         <button type="button" id="obs-spatial-query-circle" data-value="queryCircle" class="btn circle" title="Tracer un cercle" alt="Cliquer sur la carte puis tirer en maintenant le bouton enfoncé pour tracer le cercle.">
@@ -128,8 +128,8 @@
       <ul id="occtax_results_tabs" class="nav nav-tabs">
         <li><a id="occtax_results_stats_table_tab" href="#occtax_results_stats_table_div" data-toggle="tab">{@occtax~search.result.stats@}</a></li>
         <li><a id="occtax_results_taxon_table_tab" href="#occtax_results_taxon_table_div" data-toggle="tab">{@occtax~search.result.taxon@}</a></li>
-        <li class="active"><a id="occtax_results_maille_table_tab_m02" href="#occtax_results_maille_table_div_m02" data-toggle="tab">{@occtax~search.result.maille@}</a></li>
-        <li><a id="occtax_results_maille_table_tab_m10" href="#occtax_results_maille_table_div_m10" data-toggle="tab">{@occtax~search.result.maille@}</a></li>
+        <li class="active"><a id="occtax_results_maille_table_tab_m02" href="#occtax_results_maille_table_div_m02" data-toggle="tab">{@occtax~search.result.maille.m02@}</a></li>
+        <li><a id="occtax_results_maille_table_tab_m10" href="#occtax_results_maille_table_div_m10" data-toggle="tab">{@occtax~search.result.maille.m10@}</a></li>
         {ifacl2 "visualisation.donnees.brutes"}
         <li><a id="occtax_results_observation_table_tab" href="#occtax_results_observation_table_div" data-toggle="tab">{@occtax~search.result.observation@}</a></li>
         {/ifacl2}

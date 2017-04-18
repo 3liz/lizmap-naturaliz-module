@@ -5,6 +5,6 @@
 {/foreach}
 {$sep}{@occtax~search.description.total.number.is@} : {$nb} {@occtax~search.description.total.number.observation@}{$s}
 
-{ifnotacl2 visualisation.donnees.brutes}
+{ifnotacl2 "visualisation.donnees.brutes"}
     {@occtax~search.description.sensitive.data.not.shown@}
 {/ifnotacl2}

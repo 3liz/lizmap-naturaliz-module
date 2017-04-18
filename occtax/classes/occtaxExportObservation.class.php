@@ -115,6 +115,12 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             'type_info_geo' => "String",
         ),
 
+
+        'maille_02' => array(
+            'cle_obs' => "Integer",
+            'code_maille' => "String",
+        ),
+
         'espace_naturel' => array(
             'cle_obs' => "Integer",
             'type_en' => "String",

@@ -280,6 +280,7 @@ class serviceCtrl extends jController {
             'commune',
             'departement',
             'maille',
+            'maille_02',
             'espace_naturel',
             'masse_eau',
             'habitat',

@@ -1,15 +1,15 @@
 <div class="dock-content">
 
   <ul class="nav nav-tabs">
+
     {if $presentation}
     <li class="active"><a data-toggle="tab" href="#occtax-presentation">Présentation</a></li>
     {/if}
-    {if $stat}
-    <li><a data-toggle="tab" href="#occtax-mentions">Statistiques</a></li>
-    {/if}
+
     {if $legal}
     <li><a data-toggle="tab" href="#occtax-mentions">Mentions légales</a></li>
     {/if}
+
   </ul>
 
   <div class="tab-content">

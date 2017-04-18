@@ -125,6 +125,11 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
             'type_info_geo' => "String",
         ),
 
+        'maille_02' => array(
+            'cle_obs' => "Integer",
+            'code_maille' => "String",
+        ),
+
         'espace_naturel' => array(
             'cle_obs' => "Integer",
             'type_en' => "String",
@@ -439,6 +444,27 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         return $result;
     }
 
+    protected function getMaille02($response='result') {
+
+        $cnx = jDb::getConnection();
+        $sql = " SELECT DISTINCT foo.cle_obs, m.code_maille";
+        $sql.= " FROM maille_02 m";
+        $sql.= " INNER JOIN ( ";
+        $sql.= $this->sql;
+        $sql.= " ) AS foo ON ST_Intersects(ST_Transform(foo.geom, $this->srid), m.geom)"; // need to retransform
+
+        // Keep only data where diffusion is possible
+        if( !jAcl2::check("visualisation.donnees.brutes") ){
+            $sql.= " AND foo.diffusion ? 'g' ";
+            $sql.= " AND foo.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
+        }
+        if( $response == 'sql' )
+            $result = $sql;
+        else
+            $result = $cnx->query( $sql );
+        return $result;
+    }
+
     protected function getEspaceNaturel($response='result') {
 
         $cnx = jDb::getConnection();
@@ -531,6 +557,9 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
             case 'maille':
                 $rs = $this->getMaille10($response);
                 break;
+            case 'maille_02':
+                $rs = $this->getMaille02($response);
+                break;
             case 'espace_naturel':
                 $rs = $this->getEspaceNaturel($response);
                 break;
@@ -560,16 +589,10 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $return = array();
         if( !jAcl2::check("visualisation.donnees.brutes") and $topic == 'principal' ){
             $fields = $this->unsensitiveExportedFields['principal'];
-
-        // Maille to choose
-        $m = 2;
-        if ( jAcl2::check("visualisation.donnees.maille_01") )
-            $m = '1';
         }
         else{
             $fields = $this->exportedFields[ $topic ];
         }
-
         if( $format == 'name' ) {
             // Return name (key)
             foreach( $fields as $k=>$v) {

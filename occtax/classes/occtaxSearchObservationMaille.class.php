@@ -127,7 +127,7 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
     }
 
     protected function getResult( $limit=50, $offset=0, $order="" ) {
-jLog::log($this->sql);
+//jLog::log($this->sql);
         $cnx = jDb::getConnection();
         return $cnx->query( $this->sql );
     }

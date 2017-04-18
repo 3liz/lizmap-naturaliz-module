@@ -1073,8 +1073,28 @@ OccTax.events.on({
         var rLayer = OccTax.layers['resultLayer'];
 
         rLayer.destroyFeatures();
+        var the_features = OccTax.getResultFeatures( self.val());
 
-        rLayer.addFeatures( OccTax.getResultFeatures( self.val()) );
+        // For mailles, add features to draw the underlying maille
+        if( self.val() == 'm02' || self.val() == 'm10' ){
+          var sq_features = OccTax.getResultFeatures( self.val());
+          if(sq_features){
+            var square = 2000;
+            if(self.val() == 'm10'){
+              square = 10000;
+            }
+            for(var i=0, len=sq_features.length; i<len; i++){
+              var f = sq_features[i];
+              f.fid += 'sq';
+              f.attributes.square = square;
+              f.attributes.color = '#ffffff';
+            }
+            rLayer.addFeatures( sq_features );
+          }
+        }
+        // Add raw features (circles for mailles)
+        rLayer.addFeatures( the_features );
+
         rLayer.setVisibility(true);
         rLayer.refresh();
         //return false;
@@ -1084,7 +1104,7 @@ OccTax.events.on({
       $('#occtax_results_tabs a').on('shown', function (e) {
 
           var tid = $(e.target).attr('id');
-          console.log( tid );
+          //console.log( tid );
           var drawButton = 'occtax_results_draw_maille_m02';
           if(tid == 'occtax_results_maille_table_tab_m02'){
             drawButton = 'occtax_results_draw_maille_m02';
