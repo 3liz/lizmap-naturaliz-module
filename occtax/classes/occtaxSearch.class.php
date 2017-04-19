@@ -66,6 +66,10 @@ class occtaxSearch {
 
     protected $legend_classes = array();
 
+    protected $legend_min_radius = 100;
+
+    protected $legend_max_radius = 410;
+
     public function __construct ($token=Null, $params=Null, $demande=Null) {
 
         // Set demande to avoid inifite loop while fetching sql for demande
@@ -172,6 +176,12 @@ class occtaxSearch {
             $legend_classes[] = "Supérieur à 500 observations; 501; 1000000; #FF5500";
         }
         $this->legend_classes = $legend_classes;
+        $legend_min_radius = $ini->getValue('legend_min_radius', 'occtax');
+        $legend_max_radius = $ini->getValue('legend_max_radius', 'occtax');
+        if($legend_min_radius)
+            $this->legend_min_radius = $legend_min_radius;
+        if($legend_max_radius)
+            $this->legend_max_radius = $legend_max_radius;
     }
 
 

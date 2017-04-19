@@ -95,7 +95,10 @@ legend_class[]="De 11 à 100 observations; 11; 100; #FFFF00"
 legend_class[]="De 101 à 500 observations; 101; 500; #FFAD00"
 legend_class[]="Supérieur à 500 observations; 501; 1000000; #FF5500"
 
-
+; rayon min et max pour les ronds représentant les mailles
+; ( pour tenir dans un carré de 1000 m)
+legend_min_radius=100
+legend_max_radius=410
 
 [mascarine]
 defaultRepository=

@@ -103,16 +103,28 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
             CASE
             ";
 
+        // Get legend classes parameters
         $this->setLegendClasses();
+        $nb = count($this->legend_classes);
+
+        // Radius
+        $inter = $this->legend_max_radius - $this->legend_min_radius;
+        $step = $inter / $nb;
+        $x = 0;
         foreach($this->legend_classes as $class){
+            $rad = $this->legend_min_radius + $x * $step;
             $c = array_map( 'trim', explode(';', $class) );
             $sql.= "
-            WHEN count(DISTINCT f.cle_obs) >= $c[1] AND count(DISTINCT f.cle_obs) <= $c[2] THEN 200
+            WHEN count(DISTINCT f.cle_obs) >= $c[1] AND count(DISTINCT f.cle_obs) <= $c[2] THEN $rad
             ";
+            $x++;
         }
         $sql.= "
-                ELSE 410
-            END * " . $m . " AS rayon,
+                ELSE " . $this->legend_max_radius . "
+            END * $m AS rayon,";
+
+        // Color
+        $sql.= "
             CASE
             ";
         foreach($this->legend_classes as $class){

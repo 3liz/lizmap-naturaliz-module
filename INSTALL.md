@@ -48,7 +48,7 @@ Les modules Naturaliz lisent dans le fichier **lizmap/var/config/localconfig.ini
 * la liste de niveaux de validite à restreindre pour le grand public, séparés par virgule : **validite_niveaux_grand_public** par exemple 1,2
 * la taille maximale du polygone ou cercle de requête que l'utilisateur peut dessiner sur la carte: **maxAreaQuery** . On met une valeur en m2, ou -1 pour désactiver le contrôle
 * la configuration des classes de légende pour les affichages par maille: **legend_class**. On peut utiliser autant de legend_class[] que nécessaire, et on doit les écrire avec les informations suivantes séparées par point-virgule: intitulé de la classe; borne inférieure; borne supérieure; couleur. Ex: legend_class[]="De 1 à 10 observations; 1; 10; #FFFBC3"
-
+* Les rayons min et max pour les cercles représentant les mailles : **legend_min_radius** et **legend_max_radius**. L'application calcule automatiquement le rayon pour une classe à partir de ces 2 valeurs et du nombre de classes. Les valeurs doivent être indiquées pour que le cercle tienne dans un carré de 1000m de côté. L'application calcule le rayon en fonction de la maille ( X2 pour les mailles 2km, X10 pour les mailles de 10km, etc.. Par exemple 100 et 410 m respectivement.
 
 Pour le module mascarine:
 
@@ -125,6 +125,10 @@ legend_class[]="De 11 à 100 observations; 11; 100; #FFFF00"
 legend_class[]="De 101 à 500 observations; 101; 500; #FFAD00"
 legend_class[]="Supérieur à 500 observations; 501; 1000000; #FF5500"
 
+; rayon min et max pour les ronds représentant les mailles
+; ( pour tenir dans un carré de 1000 m)
+legend_min_radius=100
+legend_max_radius=410
 
 ```
 

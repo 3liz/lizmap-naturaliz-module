@@ -426,18 +426,21 @@ lizMap.events.on({
             if( $('#occtax-metadata').length ){
                 var ohtml = $('#occtax-metadata').html();
                 $('#metadata').html(ohtml);
+                $('#dock-content').css('overflow', 'hidden')
             }
         }
     }
-    //,
-
-    //dockclosed: function(e) {
-        //if ( e.id == 'metadata' ) {
+    ,
+    dockclosed: function(e) {
+        if ( e.id == 'metadata' ) {
             //$('#dock')
             //.css('max-width', '30%')
             //.css('width', 'none')
             //;
-        //}
-    //}
+
+            $('#dock-content').css('overflow', 'auto')
+
+        }
+    }
 
 });
