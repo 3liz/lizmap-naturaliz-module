@@ -748,6 +748,19 @@ $(document).ready(function () {
         );
     }
 
+    function clearSpatialSearch(){
+        OccTax.emptyDrawqueryLayer('resultLayer');
+        OccTax.deactivateAllDrawqueryControl();
+        $('#jforms_occtax_search_geom').val('');
+        $('#jforms_occtax_search_code_commune').val('');
+        $('#jforms_occtax_search_code_masse_eau').val('');
+        $('#jforms_occtax_search_code_maille').val('');
+        $('#jforms_occtax_search_type_maille').val('');
+        $('#jforms_occtax_search_type_en').val('');
+        $('#obs-spatial-query-buttons button').removeClass('active');
+    }
+
+
 OccTax.events.on({
     'uicreated':function(evt){
         //~ console.log('OccTax uicreated');
@@ -878,15 +891,7 @@ OccTax.events.on({
             }
 
             if ( dataValue == 'deleteGeom' ) {
-                OccTax.emptyDrawqueryLayer('resultLayer');
-                OccTax.deactivateAllDrawqueryControl();
-                $('#jforms_occtax_search_geom').val('');
-                $('#jforms_occtax_search_code_commune').val('');
-                $('#jforms_occtax_search_code_masse_eau').val('');
-                $('#jforms_occtax_search_code_maille').val('');
-                $('#jforms_occtax_search_type_maille').val('');
-                $('#jforms_occtax_search_type_en').val('');
-                $('#obs-spatial-query-buttons button').removeClass('active');
+                clearSpatialSearch();
                 return false;
             }
             if ( dataValue == 'importPolygon' ) {
@@ -1054,8 +1059,11 @@ OccTax.events.on({
       //FIXME
       $('#'+tokenFormId+'_reinit').click(function(){
           clearTaxonFromSearch();
+          clearSpatialSearch();
           //return false;
       });
+
+
 
       addResultsStatsTable();
       addResultsTaxonTable();
