@@ -441,6 +441,10 @@ lizMap.events.on({
             $('#dock-content').css('overflow', 'auto')
 
         }
+        if ( e.id == 'occtax' ) {
+            // Hide subdock with obs detail
+            $('#sub-dock').hide();
+        }
     }
 
 });
