@@ -267,7 +267,6 @@ class occtaxSearch {
         $dao = jDao::get( $qfl['dao']);
         $method = $qfl['method'];
         $label = '';
-
         if( is_array($v) ){
             $sep = '';
             foreach( $v as $i ){

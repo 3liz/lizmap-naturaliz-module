@@ -41,6 +41,9 @@
                 if( !jAcl2::check("requete.observateur.observation") ){
                     $form->deactivate( 'observateur' );
                 }
+                if( !jAcl2::check("visualisation.donnees.brutes") ){
+                    $form->deactivate( 'validite_niveau' );
+                }
 
                 // Get configuration for some client side occtax parameters
                 // Get local configuration (application name, projects name, etc.)

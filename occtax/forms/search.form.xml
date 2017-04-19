@@ -14,6 +14,15 @@
               valueproperty="jdd_id"/>
         </menulist>
 
+        <menulist ref="validite_niveau">
+            <label locale="occtax~search.input.validite_niveau"/>
+            <emptyitem locale="occtax~search.input.emptyitem"/>
+            <datasource dao="occtax~nomenclature"
+              method="findByChamp" criteria="validite_niveau"
+              labelproperty="valeur"
+              valueproperty="code"/>
+        </menulist>
+
         <listbox ref="cd_nom" multiple="true" readonly="false" size="3">
             <label locale="occtax~search.input.cd_nom"/>
         </listbox>

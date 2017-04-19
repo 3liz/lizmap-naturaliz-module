@@ -29,6 +29,13 @@
                 <eq property="champ" value="type_en" />
             </conditions>
         </method>
+        <method name="getValiditeNiveau" type="selectfirst">
+            <parameter name="code" />
+            <conditions logic="and">
+                <eq property="code" expr="$code" />
+                <eq property="champ" value="validite_niveau" />
+            </conditions>
+        </method>
         <!--<method name="findByStage" type="select/selectfirst/delete/update/php">
             <parameter name="" />
             <values>

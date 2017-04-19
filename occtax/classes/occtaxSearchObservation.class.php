@@ -220,6 +220,17 @@ class occtaxSearchObservation extends occtaxSearch {
                 'column'=>'jdd_code'
             )
         ),
+
+        'validite_niveau' => array (
+            'table' => 'observation',
+            'clause' => ' AND o.validite_niveau IN ( @ )',
+            'type' => 'string',
+            'label'=> array(
+                'dao'=>'occtax~nomenclature',
+                'method'=>'getValiditeNiveau',
+                'column'=>'valeur'
+            )
+        ),
     );
 
 
@@ -319,7 +330,6 @@ class occtaxSearchObservation extends occtaxSearch {
                     }
                     $tsql[] = $csql;
                 }
-//jLog::log(json_encode($tsql));
                 if( count($tsql) > 0 ){
                     $taxonSql = " AND o.cd_ref IN (SELECT cd_ref FROM taxon.taxref_consolide WHERE ";
                     $taxonSql.= implode( ' AND ', $tsql  ) . " ) ";
@@ -327,6 +337,7 @@ class occtaxSearchObservation extends occtaxSearch {
                 }
             }
         }
+//jLog::log(json_encode($sql));
         return $sql;
 
     }
