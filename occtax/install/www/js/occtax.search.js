@@ -1130,7 +1130,9 @@ OccTax.events.on({
       });
       $('#occtax_results_zoom').click(function() {
           var rLayer = OccTax.layers['resultLayer'];
-          OccTax.map.zoomToExtent( rLayer.getDataExtent() );
+          if( rLayer.features.length > 0 ){
+            OccTax.map.zoomToExtent( rLayer.getDataExtent() );
+          }
           //return False;
       });
       $('a.btn-export-search').click(function() {
