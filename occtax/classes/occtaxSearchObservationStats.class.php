@@ -22,7 +22,7 @@ class occtaxSearchObservationStats extends occtaxSearchObservation {
         //~ 'nb_maille',  // deactivate as the query is not optimized
         'nb_taxon_present',
         'nb_taxon_protege',
-        'nb_taxon_determinant'
+        //'nb_taxon_determinant' // deactivate
     );
 
     protected $tplFields = array(
@@ -41,7 +41,7 @@ class occtaxSearchObservationStats extends occtaxSearchObservation {
         //~ 'nb_maille' => array( 'type' => 'num', 'sortable' => "true"),
         'nb_taxon_present' => array( 'type' => 'num', 'sortable' => "true"),
         'nb_taxon_protege' => array( 'type' => 'num', 'sortable' => "true"),
-        'nb_taxon_determinant' => array( 'type' => 'num', 'sortable' => "true")
+        //'nb_taxon_determinant' => array( 'type' => 'num', 'sortable' => "true")
     );
 
     public function __construct ($token=Null, $params=Null, $demande=Null) {
@@ -82,15 +82,15 @@ class occtaxSearchObservationStats extends occtaxSearchObservation {
         $sql.= " Count(DISTINCT f.cle_obs) AS nbobs,";
         //~ $sql.= " Count(DISTINCT m.id_maille) AS nb_maille,";
         $sql.= " Count(DISTINCT f.cd_nom) AS nb_taxon_present,";
-        $sql.= " Count(DISTINCT t1.cd_nom) AS nb_taxon_protege,";
-        $sql.= " Count(DISTINCT t2.cd_nom) AS nb_taxon_determinant";
+        $sql.= " Count(DISTINCT t1.cd_nom) AS nb_taxon_protege";
+        //$sql.= ", Count(DISTINCT t2.cd_nom) AS nb_taxon_determinant";
         $sql.= " FROM (";
         $sql.= $this->sql;
         $sql.= " ) AS f";
         //~ $sql.= ' LEFT JOIN "' . $this->maille .'" AS m ON ST_Intersects( f.geom, m.geom ) ';
         $sql.= " LEFT JOIN taxref_consolide AS t ON t.cd_nom = f.cd_nom";
         $sql.= " LEFT JOIN taxref_consolide AS t1 ON t1.cd_nom = f.cd_nom AND t1.protection IN ('EP')";
-        $sql.= " LEFT JOIN taxref_consolide AS t2 ON t2.cd_nom = f.cd_nom AND t2.det_znieff IN ('1')";
+        //$sql.= " LEFT JOIN taxref_consolide AS t2 ON t2.cd_nom = f.cd_nom AND t2.det_znieff IN ('1')";
         $sql.= " LEFT JOIN t_group_categorie tgc1 ON tgc1.groupe_nom = t.group1_inpn AND tgc1.groupe_type = 'group1_inpn'";
         $sql.= " LEFT JOIN t_group_categorie tgc2 ON tgc2.groupe_nom = t.group2_inpn AND tgc2.groupe_type = 'group2_inpn'";
         $sql.= " GROUP BY tgc1.cat_nom, tgc2.cat_nom";
