@@ -129,13 +129,14 @@ div.dataTables_paginate.paging_simple_numbers > ul {
 }
 
 table.occtax-legend-table {
-  padding: 5px;
-  font-size:0.9em;
-  border-collapse:separate;
-  border-spacing:2px;
+  padding: 0px;
+  font-size:0.8em;
+  border-collapse:collapse;
+  border-spacing:0px;
   width:50%;
+  line-height: 0px;
 }
 
 table.occtax-legend-table td{
-  padding: 0px 5px;
+  padding: 0px;
 }
