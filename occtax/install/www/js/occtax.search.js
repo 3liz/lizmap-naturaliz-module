@@ -224,6 +224,13 @@ $(document).ready(function () {
             "dom":'ipt',
             "pageLength":50,
             "language": {url:lizUrls["dataTableLanguage"]},
+            "oLanguage": {
+              "sInfo": "Affichage des groupes _START_ à _END_ sur _TOTAL_ groupes taxonomiques",
+              "oPaginate" : {
+                "sPrevious": "Précédent",
+                "sNext": "Suivant"
+              }
+            },
             "columns": DT_Columns,
             "ajax": function (param, callback, settings) {
                 var searchForm = $('#occtax_service_search_stats_form');
@@ -278,6 +285,13 @@ $(document).ready(function () {
             "dom":'ipt',
             "pageLength":50,
             "language": {url:lizUrls["dataTableLanguage"]},
+            "oLanguage": {
+              "sInfo": "Affichage des taxons _START_ à _END_ sur _TOTAL_ taxons",
+              "oPaginate" : {
+                "sPrevious": "Précédent",
+                "sNext": "Suivant"
+              }
+            },
             "columns": DT_Columns,
             "ajax": function (param, callback, settings) {
                 var searchForm = $('#occtax_service_search_taxon_form');
@@ -350,6 +364,13 @@ $(document).ready(function () {
             "dom":'ipt',
             "pageLength":50,
             "language": {url:lizUrls["dataTableLanguage"]},
+            "oLanguage": {
+              "sInfo": "Affichage des mailles _START_ à _END_ sur _TOTAL_ mailles",
+              "oPaginate" : {
+                "sPrevious": "Précédent",
+                "sNext": "Suivant"
+              }
+            },
             "columns": DT_Columns,
             "ajax": function (param, callback, settings) {
                 var searchForm = $('#occtax_service_search_maille_form_' + type_maille);
@@ -444,6 +465,13 @@ $(document).ready(function () {
             "searching": false,
             "dom":'ipt',
             "language": {url:lizUrls["dataTableLanguage"]},
+            "oLanguage": {
+              "sInfo": "Affichage des observations _START_ à _END_ sur _TOTAL_ observations",
+              "oPaginate" : {
+                "sPrevious": "Précédent",
+                "sNext": "Suivant"
+              }
+            },
             "processing": true,
             "serverSide": true,
             "columns": DT_Columns,

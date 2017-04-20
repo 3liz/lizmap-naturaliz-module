@@ -121,6 +121,12 @@ table.dataTable {
   width: 100% !important;
 }
 
+div.dataTables_paginate.paging_simple_numbers {
+  padding: 0px;
+}
+div.dataTables_paginate.paging_simple_numbers > ul {
+  margin: 0px;
+}
 
 table.occtax-legend-table {
   padding: 5px;
