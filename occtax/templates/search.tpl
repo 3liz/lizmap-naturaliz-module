@@ -27,14 +27,9 @@
         </button>
         <button type="button" id="obs-spatial-query-masse_eau" data-value="queryPoint" class="btn masse_eau" title="Sélectionner une masse d'eau" alt="Cliquer sur la carte pour sélectionner la masse d'eau">
         </button>
-        {ifacl2 "requete.spatiale.maille_01"}
-        <button type="button" id="obs-spatial-query-maille" data-value="queryPoint" class="btn maille" title="Sélectionner une maille" alt="Sélectionner une maille en cliquant sur la carte">
-        </button>
-        {/ifacl2}
-        {ifnotacl2 "requete.spatiale.maille_01"}
         <button type="button" id="obs-spatial-query-maille-m02" data-value="queryPoint" class="btn maille m02" title="Sélectionner une maille 2x2km" alt="Sélectionner une maille en cliquant sur la carte">
         </button>
-        {/ifnotacl2}
+
         <button type="button" id="obs-spatial-query-maille-m10" data-value="queryPoint" class="btn maille m10" title="Sélectionner une maille 10x10km" alt="Sélectionner une maille 10 en cliquant sur la carte">
         </button>
         {ifacl2 "requete.spatiale.cercle"}
