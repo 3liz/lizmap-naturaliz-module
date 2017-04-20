@@ -35,6 +35,9 @@
                 <eq property="code" expr="$code" />
                 <eq property="champ" value="validite_niveau" />
             </conditions>
+            <order>
+                <orderitem property="code" way="asc" />
+            </order>
         </method>
         <!--<method name="findByStage" type="select/selectfirst/delete/update/php">
             <parameter name="" />
