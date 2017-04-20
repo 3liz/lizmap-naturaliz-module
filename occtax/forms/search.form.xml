@@ -45,11 +45,11 @@
     <group ref="when">
         <label locale="occtax~search.group.when"/>
 
-        <date ref="date_min" defaultvalue="2000-01-01">
+        <date ref="date_min" defaultvalue="">
             <label locale="occtax~search.input.date_min"/>
         </date>
 
-        <date ref="date_max" defaultvalue="now">
+        <date ref="date_max" defaultvalue="">
             <label locale="occtax~search.input.date_max"/>
         </date>
 
