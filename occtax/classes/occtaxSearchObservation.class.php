@@ -246,7 +246,7 @@ class occtaxSearchObservation extends occtaxSearch {
     /**
      * Get search description
     */
-    public function getSearchDescription($format='html'){
+    public function getSearchDescription($format='html', $drawLegend=true){
         $description = '';
         $params = $this->getParams();
         if ( $params ) {
@@ -258,7 +258,7 @@ class occtaxSearchObservation extends occtaxSearch {
                 $description.= $taxonSearch->getSearchDescription();
             }
             // Get description for the other filter via parent class
-            $description.= parent::getSearchDescription($format);
+            $description.= parent::getSearchDescription($format, $drawLegend);
         }
         return $description;
     }

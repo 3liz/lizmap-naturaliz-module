@@ -935,16 +935,19 @@ CREATE OR REPLACE VIEW sig.tpl_observation_maille AS
 SELECT id_maille AS mid, nom_maille AS maille, 10 AS nbobs, 3 AS nbtax, 410 AS rayon, 'red'::text AS color, ''::text AS geojson, ST_Centroid( geom ) AS geom FROM maille_02;
 
 CREATE OR REPLACE VIEW sig.tpl_observation_brute_point AS
-SELECT 1::integer AS cle_obs, ''::text AS nom_cite, '1'::bigint AS cd_nom, '2015-01-01'::text AS date_debut, ''::text AS identite_observateur, 'GEO'::text AS source_objet, ''::text AS geojson, ST_GeomFromText('POINT(649878 1785015)', {$SRID})::geometry(Point, {$SRID}) AS geom;
+SELECT 1::integer AS cle_obs, ''::text AS nom_cite, '1'::bigint AS cd_nom, '2015-01-01'::text AS date_debut, ''::text AS identite_observateur, 'GEO'::text AS source_objet, ''::text AS geojson,
+ST_Transform(ST_GeomFromText('POINT(55.46293 -21.014125)', 4326),{$SRID})::geometry(Point, {$SRID}) AS geom;
 
 CREATE OR REPLACE VIEW sig.tpl_observation_brute_linestring AS
-SELECT 1::integer AS cle_obs, ''::text AS nom_cite, '1'::bigint AS cd_nom, '2015-01-01'::text AS date_debut, ''::text AS identite_observateur, 'GEO'::text AS source_objet, ''::text AS geojson, ST_GeomFromText('LINESTRING(649878 1785015, 649871 1785011, 649877 1785014)', {$SRID})::geometry(Linestring, {$SRID}) AS geom;
+SELECT 1::integer AS cle_obs, ''::text AS nom_cite, '1'::bigint AS cd_nom, '2015-01-01'::text AS date_debut, ''::text AS identite_observateur, 'GEO'::text AS source_objet, ''::text AS geojson,
+ST_Transform(ST_GeomFromText('LINESTRING(55.46293 -21.014125, 55.462173 -21.014414, 55.462135 -21.014444)', 4326), {$SRID})::geometry(Linestring, {$SRID}) AS geom;
 
 CREATE OR REPLACE VIEW sig.tpl_observation_brute_polygon AS
-SELECT 1::integer AS cle_obs, ''::text AS nom_cite, '1'::bigint AS cd_nom, '2015-01-01'::text AS date_debut, ''::text AS identite_observateur, 'GEO'::text AS source_objet, ''::text AS geojson, ST_GeomFromText('POLYGON((649878 1785015, 649879 1785011, 649877 1785014, 649878 1785015))', {$SRID})::geometry(Polygon, {$SRID}) AS geom;
+SELECT 1::integer AS cle_obs, ''::text AS nom_cite, '1'::bigint AS cd_nom, '2015-01-01'::text AS date_debut, ''::text AS identite_observateur, 'GEO'::text AS source_objet, ''::text AS geojson,
+ST_Transform(ST_GeomFromText('POLYGON((55.46293 -21.014125, 55.462173 -21.014414, 55.462135 -21.014444, 55.46293 -21.014125))', 4326),{$SRID})::geometry(Polygon, {$SRID}) AS geom;
 
 CREATE OR REPLACE VIEW sig.tpl_observation_brute_centroid AS
-SELECT 1::integer AS cle_obs, ''::text AS nom_cite, '1'::bigint AS cd_nom, '2015-01-01'::text AS date_debut, ''::text AS identite_observateur, 'GEO'::text AS source_objet, ''::text AS geojson, st_centroid(ST_GeomFromText('POINT(649878 1785015)', {$SRID}))::geometry(Point, {$SRID}) AS geom;
+SELECT 1::integer AS cle_obs, ''::text AS nom_cite, '1'::bigint AS cd_nom, '2015-01-01'::text AS date_debut, ''::text AS identite_observateur, 'GEO'::text AS source_objet, ''::text AS geojson, st_centroid(ST_GeomFromText('POINT(55.462135 -21.014444)', {$SRID}))::geometry(Point, {$SRID}) AS geom;
 
 
 -- Fonction pour calculer la sensibilité des données

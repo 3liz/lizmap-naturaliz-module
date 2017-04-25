@@ -188,7 +188,7 @@ class occtaxSearch {
     /**
      * Get search description
     */
-    public function getSearchDescription($format='html'){
+    public function getSearchDescription($format='html', $drawLegend=true){
         $tpl = new jTpl();
         $filters = array();
         $qf = $this->queryFilters;
@@ -204,7 +204,7 @@ class occtaxSearch {
             $s = 's';
         $tpl->assign('s', $s  );
 
-        if($format=='html'){
+        if($format=='html' and $drawLegend){
             // Add legend classes
             $this->setLegendClasses();
             $legend_classes = array();

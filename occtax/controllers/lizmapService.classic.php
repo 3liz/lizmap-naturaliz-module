@@ -40,7 +40,21 @@ class lizmapServiceCtrl extends serviceCtrl {
             )
         ),
 
-        'm' => array(
+        'm02' => array(
+            'layers' => array(
+                'observation_maille'
+            ),
+            'attributeTable' => array(
+                'source' => 'observation_maille',
+                'columns' => array (
+                    "maille" => "Code maille",
+                    "nbobs" => "Nombre d'observations",
+                    "nbtax" => "Nombre de taxons",
+                )
+            )
+
+        ),
+        'm10' => array(
             'layers' => array(
                 'observation_maille'
             ),
@@ -75,109 +89,133 @@ class lizmapServiceCtrl extends serviceCtrl {
     // Create temporary project from template if needed
     // And modify layers datasource via passed token and datatype
     $token = $this->params['token'];
-    $datatype = $this->params['datatype']; // m = maille , b = données brutes
+    $datatype = $this->params['datatype']; // m02 = maille 2 , m10 = maille 10, b = données brutes
     $dynamic = Null;
     if( $token and $datatype ) {
-        if( !jAcl2::check("visualisation.donnees.brutes") and $datatype != 'm' )
-            $datatype = 'm';
 
-        // Maille to choose
-        $m = 2;
-        if ( jAcl2::check("visualisation.donnees.maille_01") )
-            $m = '1';
+        if( !jAcl2::check("visualisation.donnees.brutes") and $datatype == 'b' )
+            $datatype = 'm02';
 
+        // Get source project params
         $project = $this->iParam('project');
         $repository = $this->iParam('repository');
         $lrep = lizmap::getRepository($repository);
-
         $ser = lizmap::getServices();
-        $cacheRootDirectory = $ser->cacheRootDirectory;
-        if(!is_writable($cacheRootDirectory) or !is_dir($cacheRootDirectory)){
-            $cacheRootDirectory = sys_get_temp_dir();
-        }
         $random = time();
+
+        // Set temporary project path
+        //$cacheRootDirectory = $ser->cacheRootDirectory;
+        //if(!is_writable($cacheRootDirectory) or !is_dir($cacheRootDirectory)){
+            //$cacheRootDirectory = sys_get_temp_dir();
+        //}
         //$tempProjectPath = $cacheRootDirectory . '/' . $project . '_' . $token . '_' . $datatype .'_' . $random . '.qgs';
+
         // Store template project in same directory as original one to keep references to layers and media files
         $tempProjectPath = realpath($lrep->getPath()) . '/' . $project . '_' . $token . '_' . $datatype .'_' . $random . '.qgs';
 
-        // get QGIS project path
+        // Get source project path and read content
         $projectTemplatePath = realpath($lrep->getPath()) . '/' . $project . ".qgs";
         $projectTemplate = jFile::read($projectTemplatePath);
 
-        // Replace datasource for observation_maille
-        $source = "SELECT * FROM tpl_observation_maille";
-        jClasses::inc('occtax~occtaxSearchObservationMaille');
-        $occtaxSearch = new occtaxSearchObservationMaille( $token, null );
-        $target = $occtaxSearch->getSql();
-        $target = str_replace( '<', '&lt;', $target );
-        $target = str_replace( '"', '\"', $target );
-        $target = str_replace(
-            'FROM (',
-            ', ST_Centroid(m.geom) AS geom FROM (',
-            $target
-        );
-        $newProjectContent = str_replace(
-            $source,
-            $target,
-            $projectTemplate
-        );
+        // First set the temp content as the source
+        $newProjectContent = $projectTemplate;
 
-        // Replace attribute table source
-        if( $datatype == 'm' ) {
+        // Replace datasource for observation_maille
+        if( $datatype == 'm02' or $datatype == 'm10'){
+            if( $datatype == 'm10' ){
+                jClasses::inc('occtax~occtaxSearchObservationMaille10');
+                $occtaxSearch = new occtaxSearchObservationMaille10( $token, null );
+            }
+            else{
+                jClasses::inc('occtax~occtaxSearchObservationMaille');
+                $occtaxSearch = new occtaxSearchObservationMaille( $token, null );
+            }
+
+            $target = $occtaxSearch->getSql();
+            $target = str_replace( '<', '&lt;', $target );
+            $target = str_replace( '"', '\"', $target );
+            $target = str_replace(
+                'FROM (',
+                ', ST_Centroid(m.geom) AS geom FROM (',
+                $target
+            );
+            $source = "SELECT * FROM tpl_observation_maille";
+            $newProjectContent = str_replace(
+                $source,
+                $target,
+                $newProjectContent
+            );
+
+            // Replace attribute table source
+            // todo
             $newProjectContent = str_replace(
                 'vectorLayer="observation_brute_centroid"',
                 'vectorLayer="observation_maille"',
                 $newProjectContent
             );
-            // Set attribute tables columns
+
+            // Replace width of square under maille for maille 10
+            if( $datatype == 'm10' ){
+                $newProjectContent = str_replace(
+                    '<prop k="size_dd_expression" v="2000"/>',
+                    '<prop k="size_dd_expression" v="10000"/>',
+                    $newProjectContent
+                );
+            }
+
+
+
         }
 
-        // Limit and offset
-        $lo = '';
-        $limit = (integer)$this->iParam('limit');
-        $offset = (integer)$this->iParam('offset');
-        if( !$limit or $limit <=0)
-            $limit = 50;
-        $lo.= " LIMIT " . $limit;
-        if( $offset > 0 )
-            $lo.= " OFFSET " . $offset;
+        // Données brutes
+        if( $datatype == 'b'){
+             // Limit and offset
+            $lo = '';
+            $limit = (integer)$this->iParam('limit');
+            $offset = (integer)$this->iParam('offset');
+            if( !$limit or $limit <=0)
+                $limit = 50;
+            $lo.= " LIMIT " . $limit;
+            if( $offset > 0 )
+                $lo.= " OFFSET " . $offset;
 
-        // Get target SQL
-        jClasses::inc('occtax~occtaxSearchObservation');
-        $occtaxSearch = new occtaxSearchObservation( $token, null );
-        $target = $occtaxSearch->getSql();
-        $target.= $lo;
-        $target = str_replace( '<', '&lt;', $target );
-        $target = str_replace( '"', '\"', $target );
+            // Get target SQL
+            jClasses::inc('occtax~occtaxSearchObservation');
+            $occtaxSearch = new occtaxSearchObservation( $token, null );
+            $target = $occtaxSearch->getSql();
+            $target.= $lo;
+            $target = str_replace( '<', '&lt;', $target );
+            $target = str_replace( '"', '\"', $target );
 
-        // Replace source SQL by target depending on geometry type
-        foreach( $this->data[$datatype]['originSql'] as $geomtype=>$source ){
+            // Replace source SQL by target depending on geometry type
+            foreach( $this->data[$datatype]['originSql'] as $geomtype=>$source ){
+                $targetFinal = str_replace(
+                    'WHERE 2>1',
+                    "WHERE 2>1 AND GeometryType( g.geom ) IN ('" . $geomtype . "', 'MULTI" . $geomtype . "')",
+                    $target
+                );
+                $newProjectContent = str_replace(
+                    $source,
+                    $targetFinal,
+                    $newProjectContent
+                );
+            }
+
+            // Replace observation_brute_centroid (used for attribute table)
+            // So that we have a layer containing all data for all geometry types
+            // This layer will be used for the attribute table
             $targetFinal = str_replace(
-                'WHERE 2>1',
-                "WHERE 2>1 AND GeometryType( g.geom ) IN ('" . $geomtype . "', 'MULTI" . $geomtype . "')",
+                'g.geom FROM',
+                'ST_Centroid(g.geom) AS geom FROM',
                 $target
             );
+            $source = "SELECT * FROM tpl_observation_brute_centroid";
             $newProjectContent = str_replace(
                 $source,
                 $targetFinal,
                 $newProjectContent
             );
         }
-
-        // Replace observation_brute_centroid (used for attribute table)
-        // So that we have a layer containing all data for all geometry types
-        // This layer will be used for the attribute table
-        $targetFinal = str_replace(
-            'g.geom FROM',
-            'ST_Centroid(g.geom) AS geom FROM',
-            $target
-        );
-        $source = "SELECT * FROM tpl_observation_brute_centroid";
-        $newProjectContent = str_replace(
-            $source,
-            $targetFinal,
-            $newProjectContent
-        );
 
         // Set attribute table with correct source and columns
         $displayColumns = '<displayColumns>';
@@ -196,12 +234,12 @@ class lizmapServiceCtrl extends serviceCtrl {
             $displayColumns.= $tpl->fetchFromString( $tplText, 'text' );
         }
         $displayColumns.= '</displayColumns>';
-        $newProjectContent = str_replace(
-            "<displayColumns/>",
+        $newProjectContent = preg_replace(
+            "#<displayColumns>.*</displayColumns>#s",
             $displayColumns,
             $newProjectContent
         );
-        if( $datatype == 'm' ) {
+        if( $datatype == 'm02' or $datatype == 'm10' ) {
             $newProjectContent = str_replace(
                 'vectorLayer="observation_brute_centroid"',
                 'vectorLayer="observation_maille"',
@@ -210,12 +248,28 @@ class lizmapServiceCtrl extends serviceCtrl {
         }
 
         // Get search description via token
-        $getSearchDescription = $occtaxSearch->getSearchDescription();
+        $descriptionFormat = 'html';
+        $descriptionDrawLegend = true;
+        if( $datatype == 'b' ) {
+            $descriptionDrawLegend = false;
+        }
+        $getSearchDescription = $occtaxSearch->getSearchDescription($descriptionFormat, $descriptionDrawLegend);
         $getSearchDescription = '
-        Filtres actifs' . $getSearchDescription;
+        <style>
+            div{
+                font-family: Serif;
+                font-size:0.12cm !important;
+            }
+            table, td {
+                font-family: Serif;
+                font-size:0.11cm;
+            }
+            </style>
+        <div>
+        ' . $getSearchDescription . '</div>';
         $getSearchDescription = htmlspecialchars( $getSearchDescription );
         $newProjectContent = str_replace(
-            'Filtres actifs',
+            'Pas de filtres actifs',
             $getSearchDescription,
             $newProjectContent
         );
@@ -259,6 +313,13 @@ class lizmapServiceCtrl extends serviceCtrl {
         $this->params['layers'] = implode( ',', $displayLayers ) . "," . $this->params['layers'];
         $this->params['map0:layers'] = implode( ',', $displayLayers ) . "," . $this->params['map0:layers'];
 
+        // QGIS 2.18 expects layers in reversed order compared to 2.14
+        $reverseLayers = false;
+        if($reverseLayers){
+            $this->params['layers'] = implode( ',', array_reverse(explode(',', $this->params['layers']), true) );
+            $this->params['map0:layers'] = implode( ',', array_reverse(explode(',', $this->params['map0:layers']), true) );
+        }
+
         $dynamic = $tempProjectPath;
 
     }
@@ -287,7 +348,7 @@ class lizmapServiceCtrl extends serviceCtrl {
     curl_close($ch);
 
     // Delete temp file
-    unlink($tempProjectPath);
+    //unlink($tempProjectPath);
 
     $rep = $this->getResponse('binary');
     $rep->mimeType = $mime;
