@@ -437,13 +437,28 @@ lizMap.events.on({
             //.css('max-width', '30%')
             //.css('width', 'none')
             //;
-
             $('#dock-content').css('overflow', 'auto')
 
         }
         if ( e.id == 'occtax' ) {
             // Hide subdock with obs detail
             $('#sub-dock').hide();
+        }
+    }
+    ,
+    minidockopened: function(e) {
+        if ( e.id == 'print' ) {
+            // Deactivate Occtax layers controls
+            // Needed because they prevent print drag control from working
+            OccTax.controls.select.selectCtrl.deactivate();
+            OccTax.controls.select.highlightCtrl.deactivate()
+        }
+    },
+    dockclosed: function(e) {
+        if ( e.id == 'print' ) {
+            // Activate Occtax controls
+            OccTax.controls.select.selectCtrl.activate();
+            OccTax.controls.select.highlightCtrl.activate()
         }
     }
 

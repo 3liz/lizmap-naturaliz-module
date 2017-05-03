@@ -940,6 +940,9 @@ OccTax.events.on({
         });
 
         $('#obs-spatial-query-buttons button').button().click(function(){
+            // Deactivate print if active
+            $('#mapmenu li.print.active a').click();
+
             var self = $(this);
             var dataValue = self.attr('data-value');
 
