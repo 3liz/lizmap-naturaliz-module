@@ -140,3 +140,22 @@ table.occtax-legend-table {
 table.occtax-legend-table td{
   padding: 0px;
 }
+
+
+#bottom-dock ul.nav-tabs > li > a {
+  border:none;
+/*
+  background:none;
+*/
+  font-weight:bold;
+  color:rgb(200,200,200);
+}
+#bottom-dock ul.nav-tabs > li.active > a,
+#bottom-dock ul.nav-tabs > li > a:hover {
+  border:none;
+/*
+  background:none;
+*/
+  font-weight:bold;
+  color:rgb(50,50,50);;
+}

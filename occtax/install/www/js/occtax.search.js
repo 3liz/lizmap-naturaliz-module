@@ -222,7 +222,10 @@ $(document).ready(function () {
             "lengthChange": false,
             "searching": false,
             "dom":'ipt',
-            "pageLength":50,
+            //"pageLength":50,
+            "paging": false,
+            "deferRender": true,
+            "scrollY": '90%',
             "language": {url:lizUrls["dataTableLanguage"]},
             "oLanguage": {
               "sInfo": "Affichage des groupes _START_ à _END_ sur _TOTAL_ groupes taxonomiques",
@@ -264,6 +267,7 @@ $(document).ready(function () {
                               else
                                 lizMap.addMessage( 'Error', 'error', true );
                           }
+                          refreshOcctaxDatatableSize('#occtax_results_stats_table_div');
                           callback( tData );
                     }
                 );
@@ -281,9 +285,12 @@ $(document).ready(function () {
       var displayFields = datatableColumns[1];
       $('#'+tableId+'').DataTable( {
             "lengthChange": false,
-            "searching": false,
-            "dom":'ipt',
-            "pageLength":50,
+            "searching": true,
+            "dom":'ipft',
+            "pageLength":1000,
+            "paging": false,
+            "deferRender": true,
+            "scrollY": '90%',
             "language": {url:lizUrls["dataTableLanguage"]},
             "oLanguage": {
               "sInfo": "Affichage des taxons _START_ à _END_ sur _TOTAL_ taxons",
@@ -325,6 +332,7 @@ $(document).ready(function () {
                             else
                                 lizMap.addMessage( 'Error', 'error', true );
                           }
+                          refreshOcctaxDatatableSize('#occtax_results_taxon_table_div');
                           callback( tData );
                     }
                 );
@@ -360,9 +368,12 @@ $(document).ready(function () {
       var displayFields = datatableColumns[1];
       $('#'+tableId+'').DataTable( {
             "lengthChange": false,
-            "searching": false,
-            "dom":'ipt',
-            "pageLength":50,
+            "searching": true,
+            "dom":'ipft',
+            //"pageLength":50,
+            "paging": false,
+            "deferRender": true,
+            "scrollY": '90%',
             "language": {url:lizUrls["dataTableLanguage"]},
             "oLanguage": {
               "sInfo": "Affichage des mailles _START_ à _END_ sur _TOTAL_ mailles",
@@ -408,8 +419,11 @@ $(document).ready(function () {
                           }
                           $('#'+tableId+' a').unbind('click');
                           callback( tData );
-                          $('#occtax_results_draw_maille_m02').click();
-//ajouter un carre autour de tous les ronds
+                          refreshOcctaxDatatableSize('#occtax_results_maille_table_div_'+type_maille);
+                          // Refresh maille on map
+                          $('#occtax_results_draw_maille_m02.btn').click();
+
+
                     }
                 );
             }
@@ -444,6 +458,7 @@ $(document).ready(function () {
               var maille = OccTax.layers.resultLayer.getFeatureByFid(mId);
               OccTax.controls['select']['highlightCtrl'].unhighlight( maille );
           });
+
         });
     }
 
@@ -461,7 +476,10 @@ $(document).ready(function () {
       // Display data via datatable
       $('#'+tableId+'').DataTable( {
             "lengthChange": false,
-            "pageLength":50,
+            "pageLength":100,
+            "paging": true,
+            "deferRender": true,
+            "scrollY": '90%',
             "searching": false,
             "dom":'ipt',
             "language": {url:lizUrls["dataTableLanguage"]},
@@ -484,6 +502,10 @@ $(document).ready(function () {
               searchForm.find('input[name="order"]').val(
                 DT_Columns[param.order[0]['column']]['data'] + ':' + param.order[0]['dir']
               );
+               //Get new token if needed
+              //if( param.search.value != '' ){
+                //return false;
+              //}
               $.getJSON(searchForm.attr('action'), searchForm.serialize(),
                 function( results ) {
                   //console.log( results );
@@ -520,6 +542,8 @@ $(document).ready(function () {
                   callback( tData );
                   if ( $('#occtax_results_draw_observation').hasClass('active') )
                     $('#occtax_results_draw_observation').click();
+
+                  refreshOcctaxDatatableSize('#occtax_results_observation_table_div');
                 });
             }
         });
@@ -766,12 +790,10 @@ $(document).ready(function () {
             {'id': id},
             function( data ) {
                 var sLeft = lizMap.getDockRightPosition();
-                $('#sub-dock').html( data ).css('width','auto').css('height', '100%').css( 'left', sLeft ).show();
-                $('#sub-dock i.close').click(function(){
-                    $('#sub-dock').hide();
-                    //return false;
-                });
-
+                $('#occtax_search_input').hide();
+                $('#occtax-search-modify').show();
+                $('#occtax_search_result').show();
+                $('#occtax_search_observation_detail').html( data ).show();
             }
         );
     }
@@ -788,6 +810,14 @@ $(document).ready(function () {
         $('#obs-spatial-query-buttons button').removeClass('active');
     }
 
+
+    function refreshOcctaxDatatableSize(container){
+      var dtable = $(container).find('table.dataTable');
+      dtable.DataTable().tables().columns.adjust();
+      $('#bottom-dock').addClass('visible');
+      var h = $(container).height() - 70;
+      dtable.parent('div.dataTables_scrollBody').height(h);
+    }
 
 OccTax.events.on({
     'uicreated':function(evt){
@@ -1019,7 +1049,7 @@ OccTax.events.on({
         $('#occtax_search_input').show();
         $('#occtax_search_description').show();
         $('#occtax_search_result').hide();
-        $('#occtax-search-replay').toggle();
+        //$('#occtax-search-replay').toggle();
         $(this).toggle();
         //return false;
       });
@@ -1027,7 +1057,7 @@ OccTax.events.on({
         $('#occtax_search_input').hide();
         $('#occtax_search_description').show();
         $('#occtax_search_result').show();
-        $('#occtax-search-modify').toggle();
+        //$('#occtax-search-modify').toggle();
         $(this).toggle();
         //return false;
       });
@@ -1049,14 +1079,14 @@ OccTax.events.on({
                     var dHtml = tData.description;
                     $('#occtax_search_description_content').html(dHtml);
                     $('#occtax_search_description').show();
-                    $('#occtax-search-modify').show();
-                    $('#occtax-search-replay').hide();
+                    //$('#occtax-search-modify').show();
+                    //$('#occtax-search-replay').hide();
 
                     // Change wfs export URL
                     $('a.btn-get-wfs').attr('href', tData.wfsUrl);
 
                     // Hide form div
-                    $('#occtax_search_input').hide();
+                    //$('#occtax_search_input').hide();
 
                     // Run and display searched data
                     $('#occtax_service_search_stats_form input[name="token"]').val(tData.token).change();
@@ -1072,6 +1102,14 @@ OccTax.events.on({
                     // Show result div
                     $('#occtax_search_result').show();
                     $('#occtax_result_button_bar').show();
+
+
+                    // Open bottom if needed
+                    $('#mapmenu li.occtax_tables:not(.active) a').click();
+                    // Refresh size
+                    var mycontainer = '#occtax_results_stats_table_div';
+                    refreshOcctaxDatatableSize(mycontainer);
+
                 }
             }
         );
@@ -1138,11 +1176,17 @@ OccTax.events.on({
         //return false;
       });
 
+
       // Click on hidden draw buttons when changing displayed tab
       $('#occtax_results_tabs a').on('shown', function (e) {
 
           var tid = $(e.target).attr('id');
-          //console.log( tid );
+
+          // Refresh datatable display ( set height used with scrollY )
+          var container = $(e.target).attr('href');
+          refreshOcctaxDatatableSize(container);
+
+          // Draw geometries corresponding to displayed tab
           var drawButton = 'occtax_results_draw_maille_m02';
           if(tid == 'occtax_results_maille_table_tab_m02'){
             drawButton = 'occtax_results_draw_maille_m02';
@@ -1190,10 +1234,12 @@ OccTax.events.on({
 
       // Hide taxon menu icon in menubar
       $('#button-taxon').parent('li.taxon').hide();
+      // Hide occtax table menu icon
+      $('#mapmenu li.occtax_tables').hide();
+
 
       // Ajout du logo
       //$('#attribution-box').append('<img src="'+ jFormsJQ.config.basePath + 'css/img/logo_europe_mini.jpg" title="KaruNati est cofinancé par l’Union européenne. L’Europe s’engage en Guadeloupe avec le FEDER" />');
-
 
     }
 });

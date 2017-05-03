@@ -23,7 +23,7 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
     );
 
     protected $tplFields = array(
-        'groupe' => '<img src="{$j_basepath}css/images/taxon/{$line->categorie}.png" width="30px" title="{$line->categorie}"/>',
+        'groupe' => '<img src="{$j_basepath}css/images/taxon/{$line->categorie}.png" width="20px" title="{$line->categorie}"/>',
 
         'inpn' => '<a href="http://inpn.mnhn.fr/espece/cd_nom/{$line->cd_nom}" target="_blank" title="{@occtax~search.output.inpn.title@}"><i class="icon-info-sign">&nbsp;</i></a>',
 

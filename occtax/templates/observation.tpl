@@ -2,7 +2,6 @@
     <h3>
         <span class="title">
             <span class="text">{@occtax~observation.fiche.title@}</span>
-                <i class="pull-right close icon-remove icon-white"></i>
             </span>
     </h3>
 

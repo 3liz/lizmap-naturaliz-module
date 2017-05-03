@@ -162,6 +162,36 @@
             }
 
         }
+
+
+        function onmapBottomDockable ( $event ) {
+            $coord = jApp::coord();
+            if ($coord->moduleName == 'occtax') {
+                $project = $event->getParam( 'project' );
+                $repository = $event->getParam( 'repository' );
+                $lproj = lizmap::getProject( $repository . '~' .$project );
+                $configOptions = $lproj->getOptions();
+                $bp = jApp::config()->urlengine['basePath'];
+
+
+                // OCCTAX bottom dock
+                $assign = array(
+                );
+                $content = array( 'occtax~results', $assign );
+
+                $dock = new lizmapMapDockItem(
+                    'occtax_tables',
+                    jLocale::get("occtax~search.dock.title"),
+                    $content,
+                    10,
+                    NULL,
+                    NULL
+                );
+                $event->add($dock);
+            }
+
+        }
+
     }
 
 ?>
