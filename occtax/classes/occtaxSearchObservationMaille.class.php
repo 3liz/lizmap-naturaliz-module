@@ -61,9 +61,14 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
 
         // Change geometry exported value for users depending on sensibiliy
         if( !jAcl2::check("visualisation.donnees.brutes") ){
+            $question = "WHEN od.diffusion ? 'g' ";
+            if($this->maille == 'maille_10'){
+                $question.= " OR od.diffusion ? 'm10' ";
+            }
             $this->querySelectors['observation']['returnFields']["
                 CASE
-                    WHEN od.diffusion ? 'g' THEN geom
+                    $question
+                    THEN geom
                     ELSE NULL
                 END AS geom
             "] = 'geom';
