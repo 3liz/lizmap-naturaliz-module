@@ -1,40 +1,12 @@
 -- Ajout des données de recherche plein texte
 BEGIN;
-TRUNCATE taxref_fts RESTART IDENTITY CASCADE;
 
--- Noms valides
-INSERT INTO taxref_fts (cd_nom, cd_ref, val, nom_valide, poids, group2_inpn, vec)
-SELECT cd_nom, cd_ref, nom_valide, nom_valide, 6,
-group2_inpn, to_tsvector( unaccent(coalesce(nom_valide,'')) )
-FROM taxref
-WHERE cd_nom = cd_ref
-AND rang IN ('AGES','ES','SMES','MES','SSES','NAT','HYB',
-'CVAR','VAR','SVAR','FO','SSFO','FOES','LIN','CLO','CAR','RACE','MO','AB')
-;
-
--- Noms vernaculaires
-INSERT INTO taxref_fts (cd_nom, cd_ref, val, nom_valide, poids, group2_inpn, vec)
-SELECT cd_nom, cd_ref, nom_vern, nom_valide, 4,
-group2_inpn, to_tsvector( unaccent(coalesce(nom_vern,'')) )
-FROM taxref
-WHERE cd_nom = cd_ref AND nom_vern IS NOT NULL AND nom_vern != ''
-AND rang IN ('AGES','ES','SMES','MES','SSES','NAT','HYB',
-'CVAR','VAR','SVAR','FO','SSFO','FOES','LIN','CLO','CAR','RACE','MO','AB')
-;
-
--- Noms synonymes
-INSERT INTO taxref_fts (cd_nom, cd_ref, val, nom_valide, poids, group2_inpn, vec)
-SELECT cd_nom, cd_ref, nom_complet, nom_valide, 2,
-group2_inpn, to_tsvector( unaccent(coalesce(nom_complet,'')) )
-FROM taxref
-WHERE cd_nom != cd_ref
-AND rang IN ('AGES','ES','SMES','MES','SSES','NAT','HYB',
-'CVAR','VAR','SVAR','FO','SSFO','FOES','LIN','CLO','CAR','RACE','MO','AB')
-;
-
+-- Mise à jour des vues matérialisées
+REFRESH MATERIALIZED VIEW taxref_valide;
+REFRESH MATERIALIZED VIEW taxref_fts;
 
 -- Donnees complementaires
-TRUNCATE TABLE t_complement RESTART IDENTITY;
+DELETE FROM t_complement WHERE cd_nom IN (SELECT cd_nom FROM taxref);
 INSERT INTO t_complement
 (
     cd_nom_fk,
@@ -140,5 +112,6 @@ AND a.cd_protection IN (
 ;
 
 
+REFRESH MATERIALIZED VIEW taxref_consolide;
 
 COMMIT;

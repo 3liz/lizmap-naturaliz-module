@@ -1,4 +1,5 @@
 {assign $a = implode( ',', $fields['return']) }
+<div class="scroll-container">
 <table id="{$tableId}" class="table table-striped table-bordered" data-value="{$a}">
     <thead>
         <tr data-value="{$fields['row_id']}">
@@ -10,3 +11,4 @@
         </tr>
     </thead>
 </table>
+</div>

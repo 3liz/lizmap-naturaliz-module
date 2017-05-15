@@ -979,7 +979,7 @@ IF jdd_id IS NOT NULL THEN
     sql_text := sql_text || ' AND o.jdd_id = $3';
 END IF;
 
-RAISE NOTICE '%s' , sql_text;
+RAISE NOTICE '%' , sql_text;
 
 EXECUTE format(sql_text)
 USING referentiel, version_referentiel, jdd_id, menaces, protections, cd_nom;

@@ -53,7 +53,7 @@ class taxonSearch {
 
         'redlist' => '<span class="redlist {$line->menace}" title="{@taxon~search.output.redlist.title@} : {$libmenace}">{$line->menace}</span>',
 
-        'inpn' => '<a href="http://inpn.mnhn.fr/espece/cd_nom/{$line->cd_nom}" target="_blank" title="{@taxon~search.output.inpn.title@}"><i class="icon-info-sign">&nbsp;</i></a>',
+        'inpn' => '<a href="{$line->url}" target="_blank" title="{@taxon~search.output.inpn.title@}"><i class="icon-info-sign">&nbsp;</i></a>',
 
         'illustration' => '{if $illustration}<a href="{$illustration}" target="_blank" title="{@taxon~search.output.illustration.title@}"><i class="icon-picture">&nbsp;</i></a>{else}-{/if}',
 

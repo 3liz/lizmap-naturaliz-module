@@ -25,7 +25,7 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
     protected $tplFields = array(
         'groupe' => '<img src="{$j_basepath}css/images/taxon/{$line->categorie}.png" width="20px" title="{$line->categorie}"/>',
 
-        'inpn' => '<a href="http://inpn.mnhn.fr/espece/cd_nom/{$line->cd_nom}" target="_blank" title="{@occtax~search.output.inpn.title@}"><i class="icon-info-sign">&nbsp;</i></a>',
+        'inpn' => '<a href="{$line->url}" target="_blank" title="{@taxon~search.output.inpn.title@}"><i class="icon-info-sign">&nbsp;</i></a>',
 
         'filter' => '<a class="filterByTaxon" href="#" title="{@occtax~search.output.filter.taxon.title@}"><i class="icon-filter"></i></a>'
 
@@ -73,6 +73,7 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
 
         $sql = " SELECT f.cd_nom, t.nom_valide, count(DISTINCT cle_obs) AS nbobs,";
         $sql.= " t.nom_vern,";
+        $sql.= " t.url,";
         $sql.= " (regexp_split_to_array( Coalesce( g1.cat_nom, g2.cat_nom) , ' '))[1] AS categorie";
         $sql.= " FROM (";
         $sql.= $this->sql;
@@ -80,14 +81,14 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
         $sql.= " INNER JOIN taxref_consolide t ON t.cd_nom = f.cd_nom";
         $sql.= " LEFT JOIN t_group_categorie g1 ON g1.groupe_nom = t.group1_inpn";
         $sql.= " LEFT JOIN t_group_categorie g2 ON g2.groupe_nom = t.group2_inpn";
-        $sql.= ' GROUP BY f.cd_nom, t.nom_valide, categorie, t.nom_vern';
+        $sql.= ' GROUP BY f.cd_nom, t.nom_valide, categorie, t.nom_vern, t.url';
         $sql.= ' ORDER BY t.nom_valide';
 
         $this->sql = $sql;
     }
 
     protected function getResult( $limit=50, $offset=0, $order='' ) {
-        //~ jLog::log($this->sql);
+        //jLog::log($this->sql);
         $cnx = jDb::getConnection();
         return $cnx->query( $this->sql );
     }

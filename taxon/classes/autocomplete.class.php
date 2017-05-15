@@ -47,6 +47,7 @@ class autocomplete {
     function query( $sql, $filterParams, $profile=null ) {
         $cnx = jDb::getConnection( $profile );
         $resultset = $cnx->prepare( $sql );
+
         $resultset->execute( $filterParams );
         return $resultset->fetchAll();
     }
@@ -59,7 +60,6 @@ class autocomplete {
     function getData($term, $limit=15) {
 
         $sql = $this->getSql();
-
         return $this->query( $sql, array( $term, $limit) );
     }
 

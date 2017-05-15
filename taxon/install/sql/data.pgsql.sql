@@ -1,5 +1,19 @@
 SET search_path = taxon, public, pg_catalog;
 
+-- Ligne taxref dans taxref_local_source
+DELETE FROM taxref_local_source WHERE id=0;
+INSERT INTO taxref_local_source
+(id, code, titre, description, info_url, taxon_url)
+SELECT
+0 AS id,
+'TAXREF' AS code,
+'Référentiel taxonomique pour la faune et la flore de France métropolitaine et outre-mer' AS titre,
+NULL AS description,
+'https://inpn.mnhn.fr/accueil/index' AS info_url,
+'https://inpn.mnhn.fr/espece/cd_nom/{$id}' AS taxon_url
+;
+
+
 TRUNCATE t_nomenclature RESTART IDENTITY;
 
 -- t_nomenclature

@@ -92,148 +92,29 @@ COMMENT ON COLUMN taxref.wf IS 'Statut biogéographique à Wallis et Futuna (cl�
 COMMENT ON COLUMN taxref.cli IS 'Statut biogéographique à Clipperton (clé vers TAXREF_STATUTS)';
 COMMENT ON COLUMN taxref.url IS 'Permalien INPN = ‘http://inpn.mnhn.fr/espece/cd_nom/’ + CD_NOM';
 
--- Ajout d'une table pour les taxons valides
-DROP TABLE IF EXISTS taxref_valide;
-CREATE TABLE taxref_valide AS
-SELECT * FROM taxref
-WHERE cd_nom = cd_ref
-AND rang IN ('AGES','ES','SMES','MES','SSES','NAT','HYB','CVAR','VAR','SVAR','FO','SSFO','FOES','LIN','CLO','CAR','RACE','MO','AB');
-
-ALTER TABLE taxref_valide ADD PRIMARY KEY (cd_nom);
-
-CREATE INDEX ON taxref_valide (group1_inpn);
-CREATE INDEX ON taxref_valide (group2_inpn);
-CREATE INDEX ON taxref_valide (cd_ref);
-CREATE INDEX ON taxref_valide (cd_nom);
 
 
--- Ajout des capacités de recherche plein texte
-DROP TEXT SEARCH CONFIGURATION IF EXISTS french_text_search;
-CREATE TEXT SEARCH CONFIGURATION french_text_search (COPY = french);
-CREATE EXTENSION IF NOT EXISTS unaccent;
-CREATE EXTENSION IF NOT EXISTS pg_trgm;
-ALTER TEXT SEARCH CONFIGURATION french_text_search ALTER MAPPING FOR hword, hword_part, word, asciihword, asciiword, hword_asciipart WITH unaccent, french_stem;
-
--- Moteur de recherche défini par défaut
-SET default_text_search_config TO french_text_search;
-
--- Création de la table de stockage des vecteurs pour la recherche plein texte sur taxref
-DROP TABLE IF EXISTS taxref_fts;
-CREATE TABLE taxref_fts
-(
+-- Table pour stocker des informations sur les bdd de taxon locales
+CREATE TABLE taxref_local_source (
   id serial PRIMARY KEY,
-  cd_nom bigint,
-  cd_ref bigint,
-  val text,
-  nom_valide text,
-  poids smallint,
-  group2_inpn text,
-  vec tsvector
-);
-
-COMMENT ON TABLE taxref_fts IS 'Stockage des informations de recherche plein texte basé sur les champs de la table taxref';
-COMMENT ON COLUMN taxref_fts.id IS 'Clé primaire autoincrémentée';
-COMMENT ON COLUMN taxref_fts.cd_nom IS 'Identifiant du taxon (cd_nom) en lien avec la table taxref';
-COMMENT ON COLUMN taxref_fts.cd_ref IS 'Identifiant du taxon valide (cd_ref)';
-COMMENT ON COLUMN taxref_fts.val IS 'Valeur à afficher (nom du taxon, group1_inpn, etc.)';
-COMMENT ON COLUMN taxref_fts.nom_valide IS 'Nom valide correspondant';
-COMMENT ON COLUMN taxref_fts.poids IS 'Importance de l objet dans la recherche, fonction du type';
-COMMENT ON COLUMN taxref_fts.group2_inpn IS 'Groupe INPN - utilisé pour afficher des icônes';
-COMMENT ON COLUMN taxref_fts.vec IS 'Vecteur de la recherche plein texte';
-
--- Ajout de l'index
-CREATE INDEX ON taxref_fts USING gin(vec);
-CREATE INDEX ON taxref_fts (group2_inpn);
-
-
-
--- Ajout de la table t_complement
-DROP TABLE IF EXISTS t_complement;
-CREATE TABLE t_complement
-(
-  cd_nom_fk integer,
-  statut character varying(15),
-  rarete character varying(10),
-  endemicite character varying(5),
-  invasibilite character varying(5),
-  menace character varying(5),
-  menace_monde character varying(6),
-  protection character varying(5),
-  det_znieff character varying(15),
-  CONSTRAINT t_complement_pkey PRIMARY KEY (cd_nom_fk),
-  CONSTRAINT cd_nom FOREIGN KEY (cd_nom_fk)
-      REFERENCES taxref (cd_nom) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
-)
-WITH (
-  OIDS=FALSE
-);
-
-COMMENT ON TABLE t_complement IS 'Stockage des données complémentaires sur les taxons, non présents dans TAXREF : données locales (endémicité, invasibilité, etc.), déterminants ZNIEFF';
-
-COMMENT ON COLUMN t_complement.cd_nom_fk IS 'Identifiant du taxon, lien avec taxref.cd_nom';
-COMMENT ON COLUMN t_complement.statut IS 'Statut local';
-COMMENT ON COLUMN t_complement.rarete IS 'Rareté locale du taxon';
-COMMENT ON COLUMN t_complement.endemicite IS 'Endémicité locale du taxon';
-COMMENT ON COLUMN t_complement.invasibilite IS 'Invasibilité locale du taxon';
-COMMENT ON COLUMN t_complement.menace IS 'Menace locale sur le taxon';
-COMMENT ON COLUMN t_complement.menace_monde IS 'Menace mondiale sur le taxon';
-COMMENT ON COLUMN t_complement.protection IS 'Statut de protection local';
-COMMENT ON COLUMN t_complement.det_znieff IS 'Déterminant ZNIEFF';
-
-CREATE INDEX ON t_complement (cd_nom_fk);
-CREATE INDEX ON t_complement (det_znieff);
-CREATE INDEX ON t_complement (endemicite);
-CREATE INDEX ON t_complement (invasibilite);
-CREATE INDEX ON t_complement (menace);
-CREATE INDEX ON t_complement (protection);
-CREATE INDEX ON t_complement (rarete);
-CREATE INDEX ON t_complement (statut);
-
-
--- Nomenclature
-DROP TABLE IF EXISTS t_nomenclature;
-CREATE TABLE t_nomenclature
-(
-  champ text NOT NULL, -- Description de la valeur
-  code text NOT NULL, -- Code associé à une valeur
-  valeur text, -- Libellé court. Joue le rôle de valeur
+  code text NOT NULL,
+  titre text NOT NULL,
   description text,
-  CONSTRAINT t_nomenclature_pkey PRIMARY KEY (champ, code)
-)
-WITH (
-  OIDS=FALSE
+  info_url text NOT NULL,
+  taxon_url text NOT NULL
 );
+COMMENT ON TABLE taxref_local_source IS 'Stockage des informations sur les sources de données des taxons';
+COMMENT ON COLUMN taxref_local_source.id IS 'Identifiant automatique';
+COMMENT ON COLUMN taxref_local_source.code IS 'Code court de la base de données. Par exemple: CBNM';
+COMMENT ON COLUMN taxref_local_source.titre IS 'Titre de la base de données. Par exemple: Index de la flore vasculaire de La Réunion';
+COMMENT ON COLUMN taxref_local_source.description IS 'Description de la base de données. Optionnelle';
+COMMENT ON COLUMN taxref_local_source.info_url IS 'URL vers une page décrivant la base de données source. Ex: http://mascarine.cbnm.org/';
+COMMENT ON COLUMN taxref_local_source.taxon_url IS 'URL vers la fiche d''un taxon dans la base de données source. Le texte {$id} sera remplacé par l''identifiant d''origine du taxon dans la bdd source. Ex: http://mascarine.cbnm.org/index.php/flore/index-de-la-flore/nom?code_taxref={$id}';
 
-COMMENT ON TABLE t_nomenclature IS 'Stockage de la t_nomenclature pour les champs des tables qui ont des listes de valeurs prédéfinies.';
-COMMENT ON COLUMN t_nomenclature.champ IS 'Description de la valeur';
-COMMENT ON COLUMN t_nomenclature.code IS 'Code associé à une valeur';
-COMMENT ON COLUMN t_nomenclature.valeur IS 'Libellé court. Joue le rôle de valeur';
-COMMENT ON COLUMN t_nomenclature.description IS 'Libellé court. Joue le rôle de valeur';
-
-CREATE INDEX ON t_nomenclature (champ, code);
-
-
--- Table t_group_categorie : groupes personnalisés pour le filtre des taxons
-DROP TABLE IF EXISTS t_group_categorie CASCADE;
-CREATE TABLE t_group_categorie (
-    cat_nom text,
-    groupe_nom text,
-    groupe_type text,
-    regne text,
-    CONSTRAINT t_group_categorie_regne_valide CHECK ( regne IN ( 'Plantae', 'Animalia', 'Fungi', 'Chromista', 'Bacteria', 'Protozoa' ) )
-);
-ALTER TABLE t_group_categorie ADD PRIMARY KEY (cat_nom, groupe_nom);
-
-COMMENT ON TABLE t_group_categorie IS 'Liste des catégories de groupes de taxons affichées dans la liste déroulante du filtre de recherche.';
-COMMENT ON COLUMN t_group_categorie.cat_nom IS 'Libellé à afficher pour le groupe';
-COMMENT ON COLUMN t_group_categorie.groupe_nom IS 'Nom du groupe INPN correspondant';
-COMMENT ON COLUMN t_group_categorie.groupe_type IS 'Type de groupe INPN : group1_inpn ou group2_inpn';
-COMMENT ON COLUMN t_group_categorie.regne IS 'Le règne du groupe INPN';
 
 
 -- Table de stockage des taxons locaux non présents dans le TAXREF officiel
-DROP TABLE IF EXISTS taxref_local;
+DROP TABLE IF EXISTS taxref_local CASCADE;
 CREATE TABLE taxref_local
 (
   regne text, -- Règne auquel le taxon appartient
@@ -275,8 +156,7 @@ CREATE TABLE taxref_local
   cli character varying(1), -- Statut biogéographique à Clipperton (clé vers TAXREF_STATUTS)
   url text, -- Permalien INPN = ‘http://inpn.mnhn.fr/espece/cd_nom/’ + CD_NOM
   cd_nom_valide bigint -- Cd_nom du taxon valide une fois que le taxon est apparu dans taxref
-  CONSTRAINT taxref_local_cd_nom_valid CHECK ( cd_nom < 0 ),
-  CONSTRAINT taxref_local_cd_nom_cd_ref_identical CHECK ( cd_ref = cd_nom )
+  CONSTRAINT taxref_local_cd_nom_valid CHECK ( cd_nom < 0 )
 )
 WITH (
   OIDS=FALSE
@@ -327,7 +207,7 @@ COMMENT ON COLUMN taxref_local.nc IS 'Statut biogéographique en Nouvelle-Caléd
 COMMENT ON COLUMN taxref_local.wf IS 'Statut biogéographique à Wallis et Futuna (clé vers TAXREF_STATUTS)';
 COMMENT ON COLUMN taxref_local.cli IS 'Statut biogéographique à Clipperton (clé vers TAXREF_STATUTS)';
 COMMENT ON COLUMN taxref_local.url IS 'Permalien INPN = ‘http://inpn.mnhn.fr/espece/cd_nom/’ + CD_NOM';
-COMMENT ON COLUMN taxref_local.url IS 'cd_nom du taxon valide, à renseigner après import d''un nouveau TAXREF, pour pouvoir modifier ensuite les observations qui faisaient référence au cd_nom négatif provisoire de la ligne. Penser à supprimer la ligne une fois les modifications faites sur les observations';
+COMMENT ON COLUMN taxref_local.cd_nom_valide IS 'cd_nom du taxon valide, à renseigner après import d''un nouveau TAXREF, pour pouvoir modifier ensuite les observations qui faisaient référence au cd_nom négatif provisoire de la ligne. Penser à supprimer la ligne une fois les modifications faites sur les observations';
 
 CREATE INDEX taxref_local_cd_nom_idx ON taxref_local USING btree (cd_nom);
 CREATE INDEX taxref_local_cd_ref_idx ON taxref_local USING btree  (cd_ref);
@@ -338,6 +218,199 @@ CREATE INDEX taxref_local_regne_idx ON taxref_local USING btree (regne);
 CREATE INDEX ON taxref (habitat);
 CREATE INDEX ON taxref_valide (habitat);
 CREATE INDEX ON taxref_local (habitat);
+
+
+-- Colonnes pour stocker les informations spécifiques pour taxref_local
+ALTER TABLE taxref_local ADD COLUMN local_bdd_id integer NOT NULL;
+ALTER TABLE taxref_local ADD COLUMN local_identifiant_origine text NOT NULL;
+ALTER TABLE taxref_local ADD COLUMN local_identifiant_origine_ref text;
+COMMENT ON COLUMN taxref_local.local_bdd_id IS 'Base de données source. Ce champ est une clé étrangère liée à la table taxref_local_source';
+COMMENT ON COLUMN taxref_local.local_identifiant_origine IS 'Identifiant du taxon (équivalent cd_nom) dans la base de données d''origine.';
+COMMENT ON COLUMN taxref_local.local_identifiant_origine_ref IS 'Identifiant du taxon de référence (équivalent cd_ref) dans la base de données d''origine.';
+
+ALTER TABLE taxref_local
+ADD CONSTRAINT taxref_local_bdd_id FOREIGN KEY (local_bdd_id)
+REFERENCES taxref_local_source (id) MATCH SIMPLE
+ON UPDATE RESTRICT ON DELETE RESTRICT
+;
+
+
+
+-- Ajout d'une vue pour les taxons valides
+DROP MATERIALIZED VIEW IF EXISTS taxref_valide CASCADE;
+CREATE MATERIALIZED VIEW taxref_valide AS
+WITH taxref_mnhn_et_local AS (
+  SELECT regne, phylum, classe, ordre, famille, group1_inpn, group2_inpn,
+  cd_nom, cd_taxsup, cd_ref, rang, lb_nom, lb_auteur, nom_complet,
+  nom_complet_html, nom_valide, nom_vern, nom_vern_eng, habitat,
+  fr, gf, mar, gua, sm, sb, spm, may, epa, reu, sa, ta, taaf, pf, nc, wf, cli, url
+  FROM taxref
+  UNION ALL
+  SELECT regne, phylum, classe, ordre, famille, group1_inpn, group2_inpn,
+  cd_nom, cd_taxsup, cd_ref, rang, lb_nom, lb_auteur, nom_complet,
+  nom_complet_html, nom_valide, nom_vern, nom_vern_eng, habitat,
+  fr, gf, mar, gua, sm, sb, spm, may, epa, reu, sa, ta, taaf, pf, nc, wf, cli, url
+  FROM taxref_local
+)
+SELECT
+regne, phylum, classe, ordre, famille, group1_inpn, group2_inpn,
+cd_nom, cd_taxsup, cd_ref, rang, lb_nom, lb_auteur, nom_complet,
+nom_complet_html, nom_valide, nom_vern, nom_vern_eng, habitat,
+fr, gf, mar, gua, sm, sb, spm, may, epa, reu, sa, ta, taaf, pf, nc, wf, cli, url
+FROM taxref_mnhn_et_local
+WHERE True
+AND cd_nom = cd_ref
+AND rang IN ('AGES','ES','SMES','MES','SSES','NAT','HYB','CVAR',
+'VAR','SVAR','FO','SSFO','FOES','LIN','CLO','CAR','RACE','MO','AB');
+
+
+-- ALTER TABLE taxref_valide ADD PRIMARY KEY (cd_nom);
+CREATE INDEX ON taxref_valide (group1_inpn);
+CREATE INDEX ON taxref_valide (group2_inpn);
+CREATE INDEX ON taxref_valide (cd_ref);
+CREATE INDEX ON taxref_valide (cd_nom);
+
+
+-- Ajout des capacités de recherche plein texte
+DROP TEXT SEARCH CONFIGURATION IF EXISTS french_text_search;
+CREATE TEXT SEARCH CONFIGURATION french_text_search (COPY = french);
+CREATE EXTENSION IF NOT EXISTS unaccent;
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+ALTER TEXT SEARCH CONFIGURATION french_text_search ALTER MAPPING FOR hword, hword_part, word, asciihword, asciiword, hword_asciipart WITH unaccent, french_stem;
+
+-- Moteur de recherche défini par défaut
+SET default_text_search_config TO french_text_search;
+
+-- Création de la table de stockage des vecteurs pour la recherche plein texte sur taxref
+DROP MATERIALIZED VIEW IF EXISTS taxref_fts;
+CREATE MATERIALIZED VIEW taxref_fts AS
+WITH taxref_mnhn_et_local AS (
+  SELECT cd_nom, cd_ref, nom_valide, nom_vern, nom_complet, group2_inpn, rang
+  FROM taxref
+  UNION ALL
+  SELECT cd_nom, cd_ref, nom_valide, nom_vern, nom_complet, group2_inpn, rang
+  FROM taxref_local
+)
+-- Noms valides
+SELECT cd_nom::bigint, cd_ref::bigint, nom_valide AS val, nom_valide, 6::smallint AS poids,
+group2_inpn, to_tsvector( unaccent(coalesce(nom_valide,'')) )::tsvector AS vec
+FROM taxref_mnhn_et_local
+WHERE cd_nom = cd_ref
+AND rang IN ('AGES','ES','SMES','MES','SSES','NAT','HYB',
+'CVAR','VAR','SVAR','FO','SSFO','FOES','LIN','CLO','CAR','RACE','MO','AB')
+-- Noms vernaculaires
+UNION ALL
+SELECT cd_nom::bigint, cd_ref::bigint, nom_vern AS val, nom_valide, 4::smallint AS poids,
+group2_inpn, to_tsvector( unaccent(coalesce(nom_vern,'')) )::tsvector AS vec
+FROM taxref_mnhn_et_local
+WHERE cd_nom = cd_ref AND nom_vern IS NOT NULL AND nom_vern != ''
+AND rang IN ('AGES','ES','SMES','MES','SSES','NAT','HYB',
+'CVAR','VAR','SVAR','FO','SSFO','FOES','LIN','CLO','CAR','RACE','MO','AB')
+-- Noms synonymes
+UNION ALL
+SELECT cd_nom::bigint, cd_ref::bigint, nom_complet AS val, nom_valide, 2::smallint,
+group2_inpn, to_tsvector( unaccent(coalesce(nom_complet,'')) )::tsvector AS vec
+FROM taxref_mnhn_et_local
+WHERE cd_nom != cd_ref
+AND rang IN ('AGES','ES','SMES','MES','SSES','NAT','HYB',
+'CVAR','VAR','SVAR','FO','SSFO','FOES','LIN','CLO','CAR','RACE','MO','AB')
+;
+
+COMMENT ON MATERIALIZED VIEW taxref_fts IS 'Stockage des informations de recherche plein texte basé sur les champs de la table taxref';
+COMMENT ON COLUMN taxref_fts.cd_nom IS 'Identifiant du taxon (cd_nom) en lien avec la table taxref';
+COMMENT ON COLUMN taxref_fts.cd_ref IS 'Identifiant du taxon valide (cd_ref)';
+COMMENT ON COLUMN taxref_fts.val IS 'Valeur à afficher (nom du taxon, group1_inpn, etc.)';
+COMMENT ON COLUMN taxref_fts.nom_valide IS 'Nom valide correspondant';
+COMMENT ON COLUMN taxref_fts.poids IS 'Importance de l objet dans la recherche, fonction du type';
+COMMENT ON COLUMN taxref_fts.group2_inpn IS 'Groupe INPN - utilisé pour afficher des icônes';
+COMMENT ON COLUMN taxref_fts.vec IS 'Vecteur de la recherche plein texte';
+
+-- Ajout de l'index
+CREATE INDEX ON taxref_fts USING gin(vec);
+CREATE INDEX ON taxref_fts (group2_inpn);
+
+
+-- Ajout de la table t_complement
+DROP TABLE IF EXISTS t_complement CASCADE;
+CREATE TABLE t_complement
+(
+  cd_nom_fk integer,
+  statut character varying(15),
+  rarete character varying(10),
+  endemicite character varying(5),
+  invasibilite character varying(5),
+  menace character varying(5),
+  menace_monde character varying(6),
+  protection character varying(5),
+  det_znieff character varying(15),
+  CONSTRAINT t_complement_pkey PRIMARY KEY (cd_nom_fk)
+)
+WITH (
+  OIDS=FALSE
+);
+
+COMMENT ON TABLE t_complement IS 'Stockage des données complémentaires sur les taxons, non présents dans TAXREF : données locales (endémicité, invasibilité, etc.), déterminants ZNIEFF';
+
+COMMENT ON COLUMN t_complement.cd_nom_fk IS 'Identifiant du taxon, lien avec taxref.cd_nom';
+COMMENT ON COLUMN t_complement.statut IS 'Statut local';
+COMMENT ON COLUMN t_complement.rarete IS 'Rareté locale du taxon';
+COMMENT ON COLUMN t_complement.endemicite IS 'Endémicité locale du taxon';
+COMMENT ON COLUMN t_complement.invasibilite IS 'Invasibilité locale du taxon';
+COMMENT ON COLUMN t_complement.menace IS 'Menace locale sur le taxon';
+COMMENT ON COLUMN t_complement.menace_monde IS 'Menace mondiale sur le taxon';
+COMMENT ON COLUMN t_complement.protection IS 'Statut de protection local';
+COMMENT ON COLUMN t_complement.det_znieff IS 'Déterminant ZNIEFF';
+
+CREATE INDEX ON t_complement (cd_nom_fk);
+CREATE INDEX ON t_complement (det_znieff);
+CREATE INDEX ON t_complement (endemicite);
+CREATE INDEX ON t_complement (invasibilite);
+CREATE INDEX ON t_complement (menace);
+CREATE INDEX ON t_complement (protection);
+CREATE INDEX ON t_complement (rarete);
+CREATE INDEX ON t_complement (statut);
+
+
+-- Nomenclature
+DROP TABLE IF EXISTS t_nomenclature CASCADE;
+CREATE TABLE t_nomenclature
+(
+  champ text NOT NULL, -- Description de la valeur
+  code text NOT NULL, -- Code associé à une valeur
+  valeur text, -- Libellé court. Joue le rôle de valeur
+  description text,
+  CONSTRAINT t_nomenclature_pkey PRIMARY KEY (champ, code)
+)
+WITH (
+  OIDS=FALSE
+);
+
+COMMENT ON TABLE t_nomenclature IS 'Stockage de la t_nomenclature pour les champs des tables qui ont des listes de valeurs prédéfinies.';
+COMMENT ON COLUMN t_nomenclature.champ IS 'Description de la valeur';
+COMMENT ON COLUMN t_nomenclature.code IS 'Code associé à une valeur';
+COMMENT ON COLUMN t_nomenclature.valeur IS 'Libellé court. Joue le rôle de valeur';
+COMMENT ON COLUMN t_nomenclature.description IS 'Libellé court. Joue le rôle de valeur';
+
+CREATE INDEX ON t_nomenclature (champ, code);
+
+
+-- Table t_group_categorie : groupes personnalisés pour le filtre des taxons
+DROP TABLE IF EXISTS t_group_categorie CASCADE;
+CREATE TABLE t_group_categorie (
+    cat_nom text,
+    groupe_nom text,
+    groupe_type text,
+    regne text,
+    CONSTRAINT t_group_categorie_regne_valide CHECK ( regne IN ( 'Plantae', 'Animalia', 'Fungi', 'Chromista', 'Bacteria', 'Protozoa' ) )
+);
+ALTER TABLE t_group_categorie ADD PRIMARY KEY (cat_nom, groupe_nom);
+
+COMMENT ON TABLE t_group_categorie IS 'Liste des catégories de groupes de taxons affichées dans la liste déroulante du filtre de recherche.';
+COMMENT ON COLUMN t_group_categorie.cat_nom IS 'Libellé à afficher pour le groupe';
+COMMENT ON COLUMN t_group_categorie.groupe_nom IS 'Nom du groupe INPN correspondant';
+COMMENT ON COLUMN t_group_categorie.groupe_type IS 'Type de groupe INPN : group1_inpn ou group2_inpn';
+COMMENT ON COLUMN t_group_categorie.regne IS 'Le règne du groupe INPN';
+
 
 
 -- Table de stockage des taxons sensibles
@@ -354,15 +427,25 @@ COMMENT ON COLUMN taxon_sensible.cd_nom IS 'Identifiant du taxon.';
 COMMENT ON COLUMN taxon_sensible.nom_valide IS 'Nom valide du taxon, ajouté pour faciliter la lecture (optionnel)';
 
 
+
 -- Vue de consolidation des données TAXREF officielles valides, locales et complémentaires
-CREATE OR REPLACE VIEW taxref_consolide AS
-SELECT *
+DROP MATERIALIZED VIEW IF EXISTS taxon.taxref_consolide CASCADE;
+CREATE MATERIALIZED VIEW taxon.taxref_consolide AS
+SELECT
+t.*, c.*
 FROM (
-        SELECT regne, phylum, classe, ordre, famille, group1_inpn, group2_inpn, cd_nom, cd_taxsup, cd_ref, rang, lb_nom, lb_auteur, nom_complet, nom_complet_html, nom_valide, nom_vern, nom_vern_eng, habitat, fr, gf, mar, gua, sm, sb, spm, may, epa, reu, sa, ta, taaf, pf, nc, wf, cli, url FROM taxref_valide
-        UNION ALL
-        SELECT regne, phylum, classe, ordre, famille, group1_inpn, group2_inpn, cd_nom, cd_taxsup, cd_ref, rang, lb_nom, lb_auteur, nom_complet, nom_complet_html, nom_valide, nom_vern, nom_vern_eng, habitat, fr, gf, mar, gua, sm, sb, spm, may, epa, reu, sa, ta, taaf, pf, nc, wf, cli, url FROM taxref_local
+        SELECT regne, phylum, classe, ordre, famille, group1_inpn, group2_inpn, cd_nom, cd_taxsup, cd_ref, rang, lb_nom, lb_auteur, nom_complet, nom_complet_html, nom_valide, nom_vern, nom_vern_eng, habitat, fr, gf, mar, gua, sm, sb, spm, may, epa, reu, sa, ta, taaf, pf, nc, wf, cli, url
+        FROM taxref_valide
 ) AS t
-LEFT JOIN t_complement AS c ON c.cd_nom_fk = t.cd_nom;
+LEFT JOIN t_complement AS c ON c.cd_nom_fk = t.cd_nom
+;
+
+CREATE INDEX ON taxref_consolide (regne);
+CREATE INDEX ON taxref_consolide (group1_inpn);
+CREATE INDEX ON taxref_consolide (group2_inpn);
+CREATE INDEX ON taxref_consolide (cd_ref);
+CREATE INDEX ON taxref_consolide (cd_nom);
+
 
 -- statuts de protection
 CREATE TABLE protections (
@@ -405,53 +488,3 @@ CREATE INDEX ON menaces (cd_nom);
 
 
 -- TRIGGERS
-
--- Mise à jour automatique de la recherche plein texte des taxons si modification du contenu de taxref_local
-CREATE OR REPLACE FUNCTION taxon.update_taxon_fts()
-RETURNS trigger AS
-$BODY$
-DECLARE
-myrecord record;
-BEGIN
-
-    -- DELETE
-    IF TG_OP = 'DELETE' THEN
-        DELETE FROM taxon.taxref_fts WHERE cd_nom = OLD.cd_nom AND cd_nom < 0;
-
-    -- INSERT
-    ELSEIF TG_OP = 'INSERT' THEN
-        -- nom valide
-        INSERT INTO taxon.taxref_fts (cd_nom, cd_ref, val, nom_valide, poids, group2_inpn, vec)
-        VALUES ( NEW.cd_nom, NEW.cd_ref, NEW.nom_valide, NEW.nom_valide, 6, NEW.group2_inpn, to_tsvector( unaccent(coalesce(NEW.nom_valide,'')) ) );
-        -- nom vernaculaire
-        INSERT INTO taxon.taxref_fts (cd_nom, cd_ref, val, nom_valide, poids, group2_inpn, vec)
-        VALUES ( NEW.cd_nom, NEW.cd_ref, NEW.nom_vern, NEW.nom_valide, 4, NEW.group2_inpn, to_tsvector( unaccent(coalesce(NEW.nom_vern,'')) ) );
-
-    -- UPDATE
-    ELSE
-        -- nom valide
-        UPDATE taxon.taxref_fts
-        SET (cd_nom, cd_ref, val, nom_valide, poids, group2_inpn, vec) =
-        ( NEW.cd_nom, NEW.cd_ref, NEW.nom_valide, NEW.nom_valide, 6, NEW.group2_inpn, to_tsvector( unaccent(coalesce(NEW.nom_valide,'')) ) )
-        WHERE cd_nom = NEW.cd_nom AND cd_ref = NEW.cd_ref AND poids = 6;
-        -- nom vernaculaire
-        UPDATE taxon.taxref_fts
-        SET (cd_nom, cd_ref, val, nom_valide, poids, group2_inpn, vec) =
-        ( NEW.cd_nom, NEW.cd_ref, NEW.nom_vern, NEW.nom_valide, 4, NEW.group2_inpn, to_tsvector( unaccent(coalesce(NEW.nom_vern,'')) ) )
-        WHERE cd_nom = NEW.cd_nom AND cd_ref = NEW.cd_ref AND poids = 4;
-
-    END IF;
-
-    RETURN NULL;
-
-END;
-$BODY$
-LANGUAGE plpgsql VOLATILE
-COST 100;
-
-COMMENT ON FUNCTION taxon.update_taxon_fts() IS 'Cette fonction trigger permet de remplacer mettre à jour automatiquement la table de recherche plein texte taxref_fts lorsque des lignes sont ajoutées, modifiées ou supprimées dans la table taxref_local. Ainsi les recherches réalisées via l''outil d''autocomplétion sont toujours à jour avec les données';
-
-CREATE TRIGGER trg_update_taxon_fts_from_taxref_local
-AFTER UPDATE OR INSERT OR DELETE ON taxon.taxref_local
-FOR EACH ROW
-EXECUTE PROCEDURE taxon.update_taxon_fts();
