@@ -80,7 +80,8 @@ CASE
     WHEN a.cd_protection IN ({$code_arrete_protection_nationale}) THEN 'EPN'
     WHEN a.cd_protection IN ({$code_arrete_protection_internationale}) THEN 'EPI'
     WHEN a.cd_protection IN ({$code_arrete_protection_communautaire}) THEN 'EPC'
-    ELSE 'EP'
+    WHEN a.cd_protection IN ({$code_arrete_protection_simple}) THEN 'EPA'
+    ELSE NULL
 END AS "protection"
 FROM protections a
 WHERE NOT EXISTS (SELECT cd_nom_fk FROM t_complement)
@@ -99,7 +100,8 @@ CASE
     WHEN a.cd_protection IN ({$code_arrete_protection_nationale}) THEN 'EPN'
     WHEN a.cd_protection IN ({$code_arrete_protection_internationale}) THEN 'EPI'
     WHEN a.cd_protection IN ({$code_arrete_protection_communautaire}) THEN 'EPC'
-    ELSE 'EP'
+    WHEN a.cd_protection IN ({$code_arrete_protection_simple}) THEN 'EPA'
+    ELSE NULL
 END
 FROM protections a
 WHERE c.cd_nom_fk::text = a.cd_nom

@@ -26,7 +26,7 @@
         <method name="getProtections" type="select">
             <conditions logic="and">
                 <eq property="champ" value="protection" />
-                <neq property="code" value="EP" />
+                <neq property="code" value="EPA" />
             </conditions>
             <order>
                 <orderitem property="valeur" way="asc" />
