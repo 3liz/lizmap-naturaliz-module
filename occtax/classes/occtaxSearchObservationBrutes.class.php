@@ -75,19 +75,11 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
             'sensi_version_referentiel' => "String",
 
             // Descriptif sujet
-            'obs_methode' => "String",
-            'occ_etat_biologique' => "String",
-            'occ_naturalite' => "String",
-            'occ_sexe' => "String",
-            'occ_stade_de_vie' => "String",
-            'occ_statut_biogeographique' => "String",
-            'occ_statut_biologique' => "String",
-            'preuve_existante' => "String",
-            'preuve_numerique' => "String",
-            'preuve_non_numerique' => "String",
-            'obs_contexte' => "String",
-            'obs_description' => "String",
-            'occ_methode_determination' => "String",
+            'descriptif_sujet' => "String",
+
+            // Validité
+            'validite_niveau' => 'String',
+            'validite_date_validitation' => 'String',
 
             // geometrie
             'precision_geometrie' => "Real",
@@ -239,6 +231,12 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
                 'o.sensi_referentiel' => 'sensi_referentiel',
                 'o.sensi_version_referentiel' => 'sensi_version_referentiel',
 
+                // descriptif du sujet
+                'o.descriptif_sujet::json AS descriptif_sujet' => 'descriptif_sujet',
+
+                // validite
+                'o.validite_niveau' => 'validite_niveau',
+
                 // geometrie
                 'o.precision_geometrie' => 'precision_geometrie',
                 'o.nature_objet_geo' => 'nature_objet_geo',
@@ -255,7 +253,15 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
                 END AS source_objet" => "source_objet"
             )
         ),
-
+        'observation_diffusion'  => array(
+            'alias' => 'od',
+            'required' => True,
+            'join' => ' JOIN ',
+            'joinClause' => " ON od.cle_obs = o.cle_obs ",
+            'returnFields' => array(
+                "od.diffusion" => 'diffusion'
+            )
+        ),
         // personnes
         'v_observateur'  => array(
             'alias' => 'pobs',
@@ -364,7 +370,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
 
     function setSql() {
         parent::setSql();
-
+//jLog::log($this->sql);
     }
 
     protected function getResult( $limit=50, $offset=0, $order="" ) {

@@ -11,6 +11,12 @@
 class observationCtrl extends jController {
 
 
+    function __construct( $request ){
+        parent::__construct( $request );
+    }
+
+
+
     /**
      * Get observation detail
      *
@@ -30,21 +36,22 @@ class observationCtrl extends jController {
         if( $id )
             $form->setData('cle_obs', $id);
 
-        // Get occtaxSearch instance
+        // Get occtaxSearch instance and token
         jClasses::inc('occtax~occtaxSearchObservation');
-
         $occtaxSearch = new occtaxSearchObservation( null, $form->getAllData() );
         jForms::destroy('occtax~search');
-        jClasses::inc('occtax~occtaxSearchSingleObservation');
         $token = $occtaxSearch->getToken();
-        $occtaxSearch = new occtaxSearchSingleObservation( $token, null );
+
+        // Get specific occtax search for single obs, using the token
+        jClasses::inc('occtax~occtaxSearchSingleObservation');
+        $occtaxSearchSingleObservation = new occtaxSearchSingleObservation( $token, null );
 
         // Get data
         $limit = 1;
         $offset = 0;
         try {
-            $return = $occtaxSearch->getData( $limit, $offset );
-            $fields = $occtaxSearch->getFields();
+            $return = $occtaxSearchSingleObservation->getData( $limit, $offset );
+            $fields = $occtaxSearchSingleObservation->getFields();
             $attributes = $fields['display'];
         }
         catch( Exception $e ) {
@@ -55,6 +62,7 @@ class observationCtrl extends jController {
         }
 
         $data = array();
+
         if( count( $return ) > 0 ) {
             foreach($return as $line){
                 $i = 0;
@@ -95,19 +103,29 @@ class observationCtrl extends jController {
 
         $children = array();
         foreach( $topics as $topic ) {
-
             // Get data for the given topic
-            $return = $occtaxSearch->getTopicData( $topic );
+            $return = $occtaxSearchSingleObservation->getTopicData( $topic );
             if( !$return )
                 continue;
             $children[$topic] = $return;
         }
 
+        // Build content from template
         $tpl = new jTpl();
         $tpl->assign('data', $data);
         $tpl->assign('children', $children);
-        $content = $tpl->fetch('occtax~observation');
 
+        // Fields to display ( here again, to manage json properties for descriptfi_sujet )
+        $localConfig = jApp::configPath('localconfig.ini.php');
+        $ini = new jIniFileModifier($localConfig);
+        $observation_card_fields = array();
+        if($observation_card_fields = $ini->getValue('observation_card_fields', 'occtax')){
+            $observation_card_fields = array_map('trim', explode(',', $observation_card_fields));
+        }
+        $tpl->assign('observation_card_fields', $observation_card_fields);
+
+        // Get content
+        $content = $tpl->fetch('occtax~observation');
         $rep->addContent( $content );
 
         return $rep;
