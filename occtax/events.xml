@@ -6,8 +6,6 @@
         <event name="mapDockable" />
         <event name="mapMiniDockable" />
         <event name="mapBottomDockable" />
-<!--
         <event name="mapRightDockable" />
--->
     </listener>
 </events>

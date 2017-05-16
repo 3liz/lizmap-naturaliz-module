@@ -159,3 +159,31 @@ table.occtax-legend-table td{
   font-weight:bold;
   color:rgb(50,50,50);;
 }
+
+
+/*
+Bottom dock
+*/
+#occtax-bottom-main {
+    float: left;
+    width: 100%;
+    height: 100%;
+}
+#occtax-bottom-main.reduced {
+    width: 65%;
+}
+#occtax-bottom-detail {
+  background-color:RGBA(87, 105, 32, 0.8);
+  margin-left: 65%;
+  overflow: auto;
+  height: 100%;
+  padding-left: 10px;
+}
+#occtax-bottom-detail.visible {
+  width: auto;
+}
+button#occtax-bottom-hide-detail{
+  position:absolute;
+  top:5px;
+  right:5px;
+}

@@ -115,11 +115,6 @@
       </div>
     </div>
 
-    <div id="occtax_search_observation_detail" style="display:none;">
-        <h3><span class="title"><span class="icon search"></span>&nbsp;<span class="text">{@occtax~search.form.title@}</span></span></h3>
-    </div>
-
-
 </div>
 
 <script type="text/javascript" >

@@ -63,7 +63,13 @@
             <input type="text" name="order"></input>
             <input type="text" name="group"></input>
           </form>
-          {zone 'taxon~datatable', array('classId'=>'occtax~occtaxSearchObservation','tableId'=>'occtax_results_observation_table')}
+
+
+          <div id="occtax-bottom-main">
+            {zone 'taxon~datatable', array('classId'=>'occtax~occtaxSearchObservation','tableId'=>'occtax_results_observation_table')}
+          </div>
+          <div id="occtax-bottom-detail">
+          </div>
         </div>
         {/ifacl2}
       </div>

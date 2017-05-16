@@ -789,11 +789,28 @@ $(document).ready(function () {
             obsUrl,
             {'id': id},
             function( data ) {
-                var sLeft = lizMap.getDockRightPosition();
-                $('#occtax_search_input').hide();
-                $('#occtax-search-modify').show();
-                $('#occtax_search_result').show();
-                $('#occtax_search_observation_detail').html( data ).show();
+                //var sLeft = lizMap.getDockRightPosition();
+                //$('#occtax_search_input').hide();
+                //$('#occtax-search-modify').show();
+                //$('#occtax_search_result').show();
+                $('#occtax-bottom-hide-detail').show();
+                $('#occtax-bottom-main').addClass('reduced');
+                data = '<button id="occtax-bottom-hide-detail" class="btn btn-mini btn-primary">Masquer</button>' + data;
+                $('#occtax-bottom-detail')
+                .html( data )
+                .addClass('visible');
+
+                // Toggle detail observation panel
+                $('#occtax-bottom-hide-detail').click(function(){
+                  //$(this).hide();
+                  $(this).remove();
+                  $('#occtax-bottom-main').toggleClass('reduced');
+                  $('#occtax-bottom-detail').toggleClass('visible');
+                });
+
+                //lizMap.addDock('occtax_observation_detail', 'Détail de l\'observation', 'right-dock', data, 'icon-comment');
+                //$('#occtax_observation_detail').html(data);
+                //$('#mapmenu li.occtax_observation_detail:not(.active) a').click();
             }
         );
     }

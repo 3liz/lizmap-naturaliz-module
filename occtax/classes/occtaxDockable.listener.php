@@ -163,6 +163,10 @@
 
         }
 
+        function onmapRightDockable ( $event ) {
+
+        }
+
 
         function onmapBottomDockable ( $event ) {
             $coord = jApp::coord();
