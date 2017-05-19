@@ -447,7 +447,7 @@ lizMap.events.on({
     }
     ,
     minidockopened: function(e) {
-        if ( e.id == 'print' ) {
+        if ( e.id == 'print' || e.id == 'tooltip' ) {
             // Deactivate Occtax layers controls
             // Needed because they prevent print drag control from working
             OccTax.controls.select.selectCtrl.deactivate();
@@ -455,7 +455,7 @@ lizMap.events.on({
         }
     },
     dockclosed: function(e) {
-        if ( e.id == 'print' ) {
+        if ( e.id == 'print' || e.id == 'tooltip' ) {
             // Activate Occtax controls
             OccTax.controls.select.selectCtrl.activate();
             OccTax.controls.select.highlightCtrl.activate()
