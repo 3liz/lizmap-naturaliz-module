@@ -320,7 +320,7 @@ class serviceCtrl extends jController {
         }
 
         // Add readme file + search description to ZIP
-        $rep->content->addContentFile( 'LISEZ-MOI.txt', $occtaxSearch->getReadme() );
+        $rep->content->addContentFile( 'LISEZ-MOI.txt', $occtaxSearch->getReadme('text') );
 
         $rep->zipFilename = 'donnees_echange_observations_naturaliz.zip';
         return $rep;

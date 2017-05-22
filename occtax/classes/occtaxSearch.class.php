@@ -220,7 +220,7 @@ class occtaxSearch {
         return $description;
     }
 
-    public function getReadme(){
+    public function getReadme($format='html'){
         $readme = jApp::configPath('occtax-export-LISEZ-MOI.txt');
         $content = '';
         if( is_file( $readme ) ){
@@ -229,7 +229,7 @@ class occtaxSearch {
 
             // Add search description
             $content.= "Filtres de recherche utilisés :\r\n";
-            $getSearchDescription = $this->getSearchDescription();
+            $getSearchDescription = $this->getSearchDescription($format);
             $content.= strip_tags( $getSearchDescription );
 
             // Add jdd list
