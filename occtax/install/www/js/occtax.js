@@ -411,6 +411,13 @@ lizMap.events.on({
         $('#button-occtax').click();
         $('#button-taxon').parent('li.taxon').hide();
 
+        // Change deconnect URL
+        var deconnectUrl = $('a[href$="=/index.php/view/"]');
+        if( deconnectUrl.length == 1 ){
+            var duVal = deconnectUrl.attr('href');
+            deconnectUrl.attr('href', duVal.replace('view', 'occtax'));
+        }
+
 
     },
 
