@@ -159,6 +159,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
     protected $unsensitiveExportedFields = array(
         'principal' => array(
             'cle_obs' => "Integer",
+            'identifiant_permanent' => "String",
             'statut_source' => "String",
             'nom_cite' => "String",
             'date_debut' => "Date",
@@ -593,11 +594,14 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
 
     public function getExportedFields( $topic, $format='name' ) {
         $return = array();
+        $fields = array();
         if( !jAcl2::check("visualisation.donnees.brutes") and $topic == 'principal' ){
             $fields = $this->unsensitiveExportedFields['principal'];
         }
         else{
-            $fields = $this->exportedFields[ $topic ];
+            if( array_key_exists($topic, $this->exportedFields) ){
+                $fields = $this->exportedFields[ $topic ];
+            }
         }
         if( $format == 'name' ) {
             // Return name (key)

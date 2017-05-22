@@ -53,31 +53,33 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             'profondeur_max' => "Real(6.2)",
 
             // source
+            'code_idcnp_dispositif' => "String",
+            'dee_date_derniere_modification' => "String",
+            'dee_date_transformation' => "String",
             'dee_floutage' => "String",
+            'diffusion_niveau_precision' => "String",
+            'ds_publique' => "String",
             'identifiant_origine' => "String",
             'jdd_code' => "String",
             'jdd_id' => "String",
+            'jdd_metadonnee_dee_id' => "String",
+            'jdd_source_id' => "String",
             'organisme_gestionnaire_donnees' => "String",
             'org_transformation' => "String",
             'statut_source' => "String",
             'reference_biblio' => "String",
             'sensible' => "String",
+            'sensi_date_attribution' => "String",
             'sensi_niveau' => "String",
+            'sensi_referentiel' => "String",
+            'sensi_version_referentiel' => "String",
 
             // Descriptif sujet
-            'obs_methode' => "String",
-            'occ_etat_biologique' => "String",
-            'occ_naturalite' => "String",
-            'occ_sexe' => "String",
-            'occ_stade_de_vie' => "String",
-            'occ_statut_biogeographique' => "String",
-            'occ_statut_biologique' => "String",
-            'preuve_existante' => "String",
-            'preuve_numerique' => "String",
-            'preuve_non_numerique' => "String",
-            'obs_contexte' => "String",
-            'obs_description' => "String",
-            'occ_methode_determination' => "String",
+            'descriptif_sujet' => "String",
+
+            // Validité
+            'validite_niveau' => 'String',
+            'validite_date_validitation' => 'String',
 
             // geometrie
             'precision_geometrie' => "Real",
@@ -158,6 +160,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
     protected $unsensitiveExportedFields = array(
         'principal' => array(
             'cle_obs' => "Integer",
+            'identifiant_permanent' => "String",
             'statut_source' => "String",
             'nom_cite' => "String",
             'date_debut' => "Date",
@@ -166,6 +169,10 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             //'wkt' => "String"
         )
     );
+
+    private $observation_exported_fields = array();
+
+    private $observation_exported_children = array();
 
     protected $querySelectors = array(
         'observation' => array(
@@ -206,34 +213,32 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 'o.profondeur_max' => 'profondeur_max',
 
                 // source
+                'o.code_idcnp_dispositif'=> 'code_idcnp_dispositif',
+                'o.dee_date_derniere_modification'=> 'dee_date_derniere_modification',
+                'o.dee_date_transformation'=> 'dee_date_transformation',
                 'o.dee_floutage' => 'dee_floutage',
+                'o.diffusion_niveau_precision' => 'diffusion_niveau_precision',
+                'o.ds_publique'=> 'ds_publique',
                 'o.identifiant_origine'=> 'identifiant_origine',
                 'o.jdd_code'=> 'jdd_code',
                 'o.jdd_id'=> 'jdd_id',
+                'o.jdd_metadonnee_dee_id'=> 'jdd_metadonnee_dee_id',
+                'o.jdd_source_id'=> 'jdd_source_id',
                 'o.organisme_gestionnaire_donnees' => 'organisme_gestionnaire_donnees',
                 'o.org_transformation' => 'org_transformation',
                 'o.statut_source' => 'statut_source',
                 'o.reference_biblio'=> 'reference_biblio',
                 'o.sensible' => 'sensible',
+                'o.sensi_date_attribution' => 'sensi_date_attribution',
                 'o.sensi_niveau' => 'sensi_niveau',
+                'o.sensi_referentiel' => 'sensi_referentiel',
+                'o.sensi_version_referentiel' => 'sensi_version_referentiel',
 
-                // descriptif sujet
-                'o.preuve_non_numerique' => 'preuve_non_numerique',
-                'o.obs_contexte' => 'obs_contexte',
-                'o.preuve_numerique' => 'preuve_numerique',
-                'o.preuve_existante' => 'preuve_existante',
-                'o.occ_statut_biologique' => 'occ_statut_biologique',
-                'o.occ_statut_biogeographique' => 'occ_statut_biogeographique',
-                'o.occ_stade_de_vie' => 'occ_stade_de_vie',
-                'o.occ_sexe' => 'occ_sexe',
-                'o.occ_naturalite' => 'occ_naturalite',
-                'o.occ_methode_determination' => 'occ_methode_determination',
-                'o.occ_etat_biologique' => 'occ_etat_biologique',
-                'o.obs_methode' => 'obs_methode',
-                'o.obs_description' => 'obs_description',
+                // descriptif du sujet
+                'o.descriptif_sujet::json AS descriptif_sujet' => 'descriptif_sujet',
 
                 // validite
-                'o.validite_niveau' => "validite_niveau",
+                'o.validite_niveau' => 'validite_niveau',
 
                 // geometrie
                 'o.precision_geometrie' => 'precision_geometrie',
@@ -326,7 +331,43 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
     );
 
 
+
+
     public function __construct ($token=Null, $params=Null, $demande=Null) {
+
+        // Limit fields to export (ie to "display in the card" in this class)
+        $localConfig = jApp::configPath('localconfig.ini.php');
+        $ini = new jIniFileModifier($localConfig);
+        if($observation_exported_fields = $ini->getValue('observation_exported_fields', 'occtax')){
+            $this->observation_exported_fields = array_map('trim', explode(',', $observation_exported_fields));
+        }
+        if($observation_exported_children = $ini->getValue('observation_exported_children', 'occtax')){
+            $this->observation_exported_children = array_map('trim', explode(',', $observation_exported_children));
+        }
+
+        // Override exported fields
+        foreach( $this->exportedFields['principal'] as $field => $type ){
+            if(!in_array($field, $this->observation_exported_fields)){
+                unset($this->exportedFields['principal'][$field]);
+            }
+        }
+
+        // Override unsensitive exported fields
+        foreach( $this->unsensitiveExportedFields['principal'] as $field => $type ){
+            if(!in_array($field, $this->observation_exported_fields)){
+                unset($this->unsensitiveExportedFields['principal'][$field]);
+            }
+        }
+
+        // Remove children
+        foreach( $this->exportedFields as $topic => $data ){
+            if($topic == 'principal')
+                continue;
+            if(!in_array($topic, $this->observation_exported_children)){
+                unset($this->exportedFields[$topic]);
+            }
+        }
+
         // Set fields from exportedFields "principal"
         $this->returnFields = $this->getExportedFields( 'principal');
         $this->displayFields = $this->returnFields;
@@ -344,6 +385,10 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
     }
 
     public function writeCsv( $topic, $limit=Null, $offset=0, $delimiter=',' ) {
+        // Do not export topic if not defined in localConfig
+        if( $topic!= 'principal' and !in_array($topic, $this->observation_exported_children) ){
+            return Null;
+        }
 
         $cnx = jDb::getConnection();
 
@@ -421,6 +466,10 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
     }
 
     public function writeCsvT( $topic, $delimiter=',' ) {
+        // Do not export topic if not defined in localConfig
+        if( $topic!= 'principal' and !in_array($topic, $this->observation_exported_children) ){
+            return Null;
+        }
 
         // Create temporary file
         $_dirname = '/tmp';

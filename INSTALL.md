@@ -39,16 +39,17 @@ L'installateur lit certains fichiers de configuration, que vous devez donc crée
 
 Les modules Naturaliz lisent dans le fichier **lizmap/var/config/localconfig.ini.php** des informations relatives à l'adaptation au contexte local: projection, codes spécifiques, etc. Vous pouvez copier le contenu du fichier **lizmap/lizmap-modules/localconfig.ini.php.dist** et le poser dans le fichier correspondant dans lizmap. Ce fichier doit contenir:
 
-* la colonne des données TAXREF correspondant au lieu principal de l'installation (par exemple "gua" pour la Guadeloupe) : variable **colonne_locale** de la section [taxon]
-* une description pour les zones correspondant à l'endémicité (endémique et subendémique): variables **endemicite_description_endemique** (ex: Réunion) et **endemicite_description_subendemique** (Ex: Mascareignes)
-* la liste des codes d'arrêtés de protection pour la zone concernée: variables **code_arrete_protection_simple**, **code_arrete_protection_internationale**, **code_arrete_protection_nationale**, **code_arrete_protection_communautaire** de la section  [taxon]
-* le code SRID du système de coordonnées de références des données spatiales du projet : variable **srid** de la section [naturaliz].
-* le mot de passe de l'utilisateur admin: variable **adminPassword** de la section [naturaliz].
-* la liste des niveaux de validité, séparés par virgule, pour filtrer les observations pour le grand public, c'est-à-dire que seules les observations qui ont un niveau de validité correspondant à un des éléments de la liste pourront être visibles pour le grand public. Variable **validite_niveaux_grand_public** de la section [occtax]. Par exemple validite_niveaux_grand_public=1,2
-* la liste de niveaux de validite à restreindre pour le grand public, séparés par virgule : **validite_niveaux_grand_public** par exemple 1,2
-* la taille maximale du polygone ou cercle de requête que l'utilisateur peut dessiner sur la carte: **maxAreaQuery** . On met une valeur en m2, ou -1 pour désactiver le contrôle
-* la configuration des classes de légende pour les affichages par maille: **legend_class**. On peut utiliser autant de legend_class[] que nécessaire, et on doit les écrire avec les informations suivantes séparées par point-virgule: intitulé de la classe; borne inférieure; borne supérieure; couleur. Ex: legend_class[]="De 1 à 10 observations; 1; 10; #FFFBC3"
-* Les rayons min et max pour les cercles représentant les mailles : **legend_min_radius** et **legend_max_radius**. L'application calcule automatiquement le rayon pour une classe à partir de ces 2 valeurs et du nombre de classes. Les valeurs doivent être indiquées pour que le cercle tienne dans un carré de 1000m de côté. L'application calcule le rayon en fonction de la maille ( X2 pour les mailles 2km, X10 pour les mailles de 10km, etc.. Par exemple 100 et 410 m respectivement.
+* la **colonne locale des données TAXREF** correspondant au lieu principal de l'installation (par exemple "gua" pour la Guadeloupe) : variable **colonne_locale** de la section [taxon]
+* un **intitulé** pour les zones correspondant à l'endémicité (endémique et subendémique): variables **endemicite_description_endemique** (ex: Réunion) et **endemicite_description_subendemique** (Ex: Mascareignes)
+* la **liste des codes d'arrêtés de protection** pour la zone concernée: variables **code_arrete_protection_simple**, **code_arrete_protection_internationale**, **code_arrete_protection_nationale**, **code_arrete_protection_communautaire** de la section  [taxon]
+* le **code SRID** du système de coordonnées de références des données spatiales du projet : variable **srid** de la section [naturaliz].
+* le **mot de passe de l'utilisateur admin**: variable **adminPassword** de la section [naturaliz].
+* la **liste des niveaux de validité**, séparés par virgule, pour filtrer les observations pour le grand public, c'est-à-dire que seules les observations qui ont un niveau de validité correspondant à un des éléments de la liste pourront être visibles pour le grand public. Variable **validite_niveaux_grand_public** de la section [occtax]. Par exemple validite_niveaux_grand_public=1,2
+* la **taille maximale du polygone ou cercle de requête** que l'utilisateur peut dessiner sur la carte: **maxAreaQuery** . On met une valeur en m2, ou -1 pour désactiver le contrôle
+* la **configuration des classes de légende** pour les affichages par maille: **legend_class**. On peut utiliser autant de legend_class[] que nécessaire, et on doit les écrire avec les informations suivantes séparées par point-virgule: intitulé de la classe; borne inférieure; borne supérieure; couleur. Ex: legend_class[]="De 1 à 10 observations; 1; 10; #FFFBC3"
+* Les **rayons min et max pour les cercles représentant les mailles** : **legend_min_radius** et **legend_max_radius**. L'application calcule automatiquement le rayon pour une classe à partir de ces 2 valeurs et du nombre de classes. Les valeurs doivent être indiquées pour que le cercle tienne dans un carré de 1000m de côté. L'application calcule le rayon en fonction de la maille ( X2 pour les mailles 2km, X10 pour les mailles de 10km, etc.. Par exemple 100 et 410 m respectivement.
+* La **liste des champs à afficher ou à exporter** dans la fiche d'observation (détail) et l'export en CSV ou WFS: **observation_card_fields**, **observation_card_children**, **observation_exported_fields**, **observation_exported_children**
+
 
 Pour le module mascarine:
 
@@ -129,6 +130,20 @@ legend_class[]="Supérieur à 500 observations; 501; 1000000; #FF5500"
 ; ( pour tenir dans un carré de 1000 m)
 legend_min_radius=100
 legend_max_radius=410
+
+; liste blanche des champs à afficher dans la fiche d'observation
+observation_card_fields=cle_obs, identifiant_permanent, statut_observation, nom_cite, denombrement_min, denombrement_max, objet_denombrement, commentaire, date_debut, date_fin, date_determination, ds_publique, jdd_metadonnee_dee_id, organisme_gestionnaire_donnees, statut_source, sensi_niveau, observateur, determinateur, validateur, descriptif_sujet, obs_methode, occ_etat_biologique, occ_naturalite, occ_sexe, occ_stade_de_vie, occ_statut_biologique, obs_contexte, obs_description, occ_methode_determination, validite_niveau, validite_date_validation, precision_geometrie
+
+; liste blanche des données filles à afficher
+;observation_card_children=commune, departement, maille_02, maille, espace_naturel, masse_eau, habitat, attribut_additionnel
+observation_card_children=commune, departement, maille_02, maille, espace_naturel, masse_eau, habitat
+
+; liste blanche des champs à afficher dans la fiche d'observation
+observation_exported_fields=cle_obs, identifiant_permanent, statut_observation, nom_cite, denombrement_min, denombrement_max, objet_denombrement, commentaire, date_debut, date_fin, date_determination, ds_publique, jdd_metadonnee_dee_id, organisme_gestionnaire_donnees, statut_source, sensi_niveau, observateur, determinateur, validateur, descriptif_sujet, validite_niveau, validite_date_validation, precision_geometrie
+
+; liste blanche des données filles à afficher
+;observation_card_children=commune, departement, maille_02, maille, espace_naturel, masse_eau, habitat, attribut_additionnel
+observation_exported_children=commune, departement, maille_02, maille, espace_naturel, masse_eau, habitat
 
 ```
 
