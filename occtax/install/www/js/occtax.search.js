@@ -326,6 +326,16 @@ $(document).ready(function () {
                               }
                               tData.data.push( r );
                             }
+
+                            // Set number of taxons in description
+                            var dhtml = $('#occtax_search_description_content').html();
+                            $('#occtax_search_description_content').html(
+                              dhtml.replace(
+                                '<span style="display:none">nb_taxon',
+                                '<span> / ' + results.data.length
+                              )
+                            );
+
                           } else {
                             if ( results.msg.length != 0 )
                                 lizMap.addMessage( results.msg.join('<br/>'), 'error', true );
@@ -333,6 +343,7 @@ $(document).ready(function () {
                                 lizMap.addMessage( 'Error', 'error', true );
                           }
                           refreshOcctaxDatatableSize('#occtax_results_taxon_table_div');
+
                           callback( tData );
                     }
                 );

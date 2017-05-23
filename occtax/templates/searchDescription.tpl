@@ -9,7 +9,11 @@
 &nbsp;{@occtax~search.description.no.filters@}
 {/if}
 
-<p><b>{@occtax~search.description.total.number.is@}</b> : {$nb} {@occtax~search.description.total.number.observation@}{$s}</p>
+<p>
+    <b>{@occtax~search.description.total.number.is@}</b> : {$nb} {@occtax~search.description.total.number.observation@}{$s}
+    <span style="display:none">nb_taxon {@occtax~search.description.total.number.taxon@}{$s}</span>
+
+</p>
 
 {ifnotacl2 "visualisation.donnees.brutes"}
 <p>
