@@ -332,7 +332,7 @@ $(document).ready(function () {
                             $('#occtax_search_description_content').html(
                               dhtml.replace(
                                 '<span style="display:none">nb_taxon',
-                                '<span> / ' + results.data.length
+                                '<span> / ' + results.data.length.toLocaleString()
                               )
                             );
 

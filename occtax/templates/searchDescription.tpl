@@ -10,7 +10,7 @@
 {/if}
 
 <p>
-    <b>{@occtax~search.description.total.number.is@}</b> : {$nb} {@occtax~search.description.total.number.observation@}{$s}
+    <b>{@occtax~search.description.total.number.is@}</b> : {$nb|number_format} {@occtax~search.description.total.number.observation@}{$s}
     <span style="display:none">nb_taxon {@occtax~search.description.total.number.taxon@}{$s}</span>
 
 </p>
