@@ -1137,7 +1137,7 @@ OccTax.events.on({
 
                     // Open bottom if needed
                     $('#mapmenu li.occtax_tables:not(.active) a').click();
-                    // Refresh size
+                    // Refresh <size
                     var mycontainer = '#occtax_results_stats_table_div';
                     refreshOcctaxDatatableSize(mycontainer);
 
@@ -1271,6 +1271,14 @@ OccTax.events.on({
 
       // Ajout du logo
       //$('#attribution-box').append('<img src="'+ jFormsJQ.config.basePath + 'css/img/logo_europe_mini.jpg" title="KaruNati est cofinancé par l’Union européenne. L’Europe s’engage en Guadeloupe avec le FEDER" />');
+
+      // Refresh datatable size when bottom dock changes
+    lizMap.events.on({
+        bottomdocksizechanged: function(evt) {
+           var mycontainer = $('#occtax_tables div.bottom-content.active');
+           refreshOcctaxDatatableSize(mycontainer);
+        }
+    });
 
     }
 });
