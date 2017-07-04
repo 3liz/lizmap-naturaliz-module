@@ -1,3 +1,4 @@
+DROP SCHEMA IF EXISTS taxon CASCADE;
 CREATE SCHEMA taxon;
 SET search_path = taxon, public, pg_catalog;
 
@@ -216,7 +217,6 @@ CREATE INDEX taxref_local_group2_inpn_idx ON taxref_local USING btree (group2_in
 CREATE INDEX taxref_local_regne_idx ON taxref_local USING btree (regne);
 
 CREATE INDEX ON taxref (habitat);
-CREATE INDEX ON taxref_valide (habitat);
 CREATE INDEX ON taxref_local (habitat);
 
 
@@ -269,7 +269,7 @@ CREATE INDEX ON taxref_valide (group1_inpn);
 CREATE INDEX ON taxref_valide (group2_inpn);
 CREATE INDEX ON taxref_valide (cd_ref);
 CREATE INDEX ON taxref_valide (cd_nom);
-
+CREATE INDEX ON taxref_valide (habitat);
 
 -- Ajout des capacités de recherche plein texte
 DROP TEXT SEARCH CONFIGURATION IF EXISTS french_text_search;

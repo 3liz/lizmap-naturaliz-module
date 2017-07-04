@@ -6,7 +6,7 @@ REFRESH MATERIALIZED VIEW taxref_valide;
 REFRESH MATERIALIZED VIEW taxref_fts;
 
 -- Donnees complementaires
-DELETE FROM t_complement WHERE cd_nom IN (SELECT cd_nom FROM taxref);
+DELETE FROM t_complement WHERE cd_nom_fk IN (SELECT cd_nom FROM taxref);
 INSERT INTO t_complement
 (
     cd_nom_fk,

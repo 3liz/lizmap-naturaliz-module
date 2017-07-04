@@ -231,26 +231,7 @@ COMMENT ON COLUMN observation.validite_niveau IS 'Niveau de validité scientifiq
 
 COMMENT ON COLUMN observation.validite_date_validation IS 'Date de réalisation de la validation scientifique de l''observation';
 
-COMMENT ON COLUMN observation.descriptif_sujet IS 'Donnée sur le descriptif_sujet, au format JSON. On peut stocker un objet de la forme
-''[
-{
-    "obs_methode": "21",
-    "occ_etat_biologique": "0",
-    "occ_naturalite": "0",
-    "occ_sexe": "0",
-    "occ_stade_de_vie": "0",
-    "occ_statut_biogeographique": "0",
-    "occ_statut_biologique": "0",
-    "preuve_existante": "0",
-    "preuve_numerique": null,
-    "preuve_non_numerique": null,
-    "obs_contexte": null,
-    "obs_description": null,
-    "occ_methode_determination": null
-}
-]''::jsonb
-
-';
+COMMENT ON COLUMN observation.descriptif_sujet IS 'Donnée sur le descriptif_sujet, au format JSON.';
 COMMENT ON COLUMN observation.donnee_complementaire IS 'Données complémentaires issues de la source de données, mais en dehors du format Occurences de taxon. Gardé ici pour conservation. Au format JSON';
 
 
@@ -951,6 +932,7 @@ SELECT 1::integer AS cle_obs, ''::text AS nom_cite, '1'::bigint AS cd_nom, '2015
 
 
 -- Fonction pour calculer la sensibilité des données
+SET search_path TO occtax,sig,public,pg_catalog;
 CREATE OR REPLACE FUNCTION occtax_update_sensibilite_observations(referentiel text, version_referentiel TEXT, jdd_id TEXT, menaces text[], protections TEXT[], cd_nom BIGINT[])
 RETURNS INTEGER AS
 $BODY$
@@ -1027,7 +1009,7 @@ CASE
     ELSE NULL
 END as diffusion
 
-FROM observation o
+FROM occtax.observation o
 ;
 
 CREATE INDEX IF NOT EXISTS observation_diffusion_cle_obs_idx ON observation_diffusion (diffusion);
