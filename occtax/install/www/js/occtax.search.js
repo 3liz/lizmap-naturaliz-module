@@ -813,34 +813,14 @@ $(document).ready(function () {
             obsUrl,
             {'id': id},
             function( data ) {
-                var sLeft = lizMap.getDockRightPosition();
-                $('#sub-dock').html( data ).css('width','auto').css('height', '100%').css( 'left', sLeft ).show();
-                $('#sub-dock i.close').click(function(){
-                    $('#sub-dock').hide();
-                    //return false;
-                });
+                // Show observation car h3 and div
+                $('#occtax_search_observation_card').prev('h3.occtax_search:first').show();
+                $('#occtax_search_observation_card').html( data ).show();
+                // Hide description && result div
+                $('#occtax_search_result').hide();
+                $('#occtax_search_description').hide();
 
-                //$('#occtax_search_input').hide();
-                //$('#occtax-search-modify').show();
-                //$('#occtax_search_result').show();
-                //$('#occtax-bottom-hide-detail').show();
-                //$('#occtax-bottom-main').addClass('reduced');
-                //data = '<button id="occtax-bottom-hide-detail" class="btn btn-mini btn-primary">Masquer</button>' + data;
-                //$('#occtax-bottom-detail')
-                //.html( data )
-                //.addClass('visible');
 
-                // // Toggle detail observation panel
-                //$('#occtax-bottom-hide-detail').click(function(){
-                //  $(this).hide();
-                  //$(this).remove();
-                  //$('#occtax-bottom-main').toggleClass('reduced');
-                  //$('#occtax-bottom-detail').toggleClass('visible');
-                //});
-
-                //lizMap.addDock('occtax_observation_detail', 'Détail de l\'observation', 'right-dock', data, 'icon-comment');
-                //$('#occtax_observation_detail').html(data);
-                //$('#mapmenu li.occtax_observation_detail:not(.active) a').click();
             }
         );
     }
@@ -1138,6 +1118,7 @@ OccTax.events.on({
                     var dHtml = tData.description;
                     $('#occtax_search_description_content').html(dHtml);
                     $('#occtax_search_description').show();
+                    $('#occtax_search_description').prev('h3.occtax_search').show();
                     $('#occtax-search-modify').show();
                     $('#occtax-search-replay').hide();
 
@@ -1158,13 +1139,15 @@ OccTax.events.on({
                     $('#occtax_results_maille_table_m10').DataTable().ajax.reload();
                     $('#occtax_service_search_form input[name="token"]').val(tData.token).change();
                     $('#occtax_results_observation_table').DataTable().ajax.reload();
+
                     // Show result div
                     $('#occtax_search_result').show();
+                    $('#occtax_search_result').prev('h3.occtax_search').show();
                     $('#occtax_result_button_bar').show();
 
-
-                    // Open bottom if needed
-                    //$('#mapmenu li.occtax_tables:not(.active) a').click();
+                    // Hide observation card div and h3
+                    $('#occtax_search_observation_card').prev('h3.occtax_search').hide();
+                    $('#occtax_search_observation_card').hide();
 
                     // Refresh size
                     var mycontainer = '#occtax_results_stats_table_div';
@@ -1287,9 +1270,20 @@ OccTax.events.on({
 
       // Toggle search div via h3
       $('h3.occtax_search').click(function(){
-        $(this).next('div:first').toggle();
+        // Toggle next div visibility
+        var ndiv = $(this).next('div:first');
+        ndiv.toggle();
+        if(
+          ndiv.attr('id') == 'occtax_search_observation_card'
+          && ! ndiv.is(':visible')
+        ){
+          // Reopen results div id needed
+          $('#occtax_search_result').show();
+          $('#occtax_search_description').show();
+        }
         var tid = $('#occtax_search_result div.tab-pane.active').attr('id');
-        //console.log(tid);
+
+        // Refresh size of datatable table (for scrolling)
         refreshOcctaxDatatableSize('#' + tid);
       });
 

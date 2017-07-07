@@ -76,7 +76,7 @@ FORMULAIRE DE RECHERCHE
 RESUME DE LA RECHERCHE ET DES RESULTATS
 -->
 
-<h3 class="occtax_search"><span class="title"><span class="icon description"></span>&nbsp;<span class="text">{@occtax~search.description.title@}</span></span></h3>
+<h3 class="occtax_search" style="display:none;"><span class="title"><span class="icon description"></span>&nbsp;<span class="text">{@occtax~search.description.title@}</span></span></h3>
 
 <div id="occtax_search_description" style="display:none;">
 
@@ -115,7 +115,7 @@ RESUME DE LA RECHERCHE ET DES RESULTATS
 RESULTATS DE RECHERCHE (TABLEAUX)
 -->
 
-<h3 class="occtax_search"><span class="title"><span class="icon search"></span>&nbsp;<span class="text">{@occtax~search.result.title@}</span></span></h3>
+<h3 class="occtax_search" style="display:none;"><span class="title"><span class="icon search"></span>&nbsp;<span class="text">{@occtax~search.result.title@}</span></span></h3>
 
 <div id="occtax_search_result" style="display:none;">
 
@@ -205,6 +205,18 @@ RESULTATS DE RECHERCHE (TABLEAUX)
  </div>
 
 </div>
+
+
+<!--
+FICHE OBSERVATION
+-->
+
+<h3 class="occtax_search" style="display:none;"><span class="title"><span class="icon description"></span>&nbsp;<span class="text">{@occtax~observation.fiche.title@}</span></span></h3>
+
+<div id="occtax_search_observation_card" style="display:none;">
+
+</div>
+
 
 
 <script type="text/javascript" >
