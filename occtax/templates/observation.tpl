@@ -2,7 +2,8 @@
     <h3>
         <span class="title">
             <span class="text">{@occtax~observation.fiche.title@}</span>
-            </span>
+             <i class="pull-right close icon-remove icon-white"></i>
+        </span>
     </h3>
 
     <div style="height:100%;overflow:auto;">

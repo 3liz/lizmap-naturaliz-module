@@ -65,11 +65,16 @@
           </form>
 
 
+<!--
           <div id="occtax-bottom-main">
+-->
             {zone 'taxon~datatable', array('classId'=>'occtax~occtaxSearchObservation','tableId'=>'occtax_results_observation_table')}
+<!--
           </div>
+
           <div id="occtax-bottom-detail">
           </div>
+-->
         </div>
         {/ifacl2}
       </div>

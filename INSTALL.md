@@ -367,6 +367,12 @@ php lizmap/scripts/script.php occtax~import:shapefile -commune "/tmp/referentiel
 
 # Import des données depuis les serveurs WFS officiels
 # Vous devez préciser l'URL des serveurs WFS pour les données INPN et pour les données Sandre (masses d'eau)
+
+# Exemple 1/ La Guadeloupe
+php lizmap/scripts/script.php occtax~import:wfs -wfs_url http://ws.carmencarto.fr/WFS/119/glp_inpn -wfs_url_sandre http://services.sandre.eaufrance.fr/geo/mdo_GLP -wfs_url_grille "http://ws.carmencarto.fr/WFS/119/glp_grille" -znieff1_terre_version_en "2015-02" -znieff1_mer_version_en "2016-05" -znieff2_terre_version_en "2015-02" -znieff2_mer_version_en "2016-05" -ramsar_version_en "" -cpn_version_en "2015-10" -aapn_version_en "2015-10" -scl_version_en "2016-03" -mab_version_en "" -rb_version_en "2010" -apb_version_en "2012" -cotieres_version_me 2 -cotieres_date_me "2016-11-01" -souterraines_version_me 2 -souterraines_date_me "2016-11-01"
+
+
+# Exemple 2/ La Réunion
 php lizmap/scripts/script.php occtax~import:wfs -wfs_url "http://ws.carmencarto.fr/WFS/119/reu_inpn" -wfs_url_sandre "http://services.sandre.eaufrance.fr/geo/mdo_REU" -wfs_url_grille "http://ws.carmencarto.fr/WFS/119/reu_grille" -znieff1_terre_version_en "2015-02" -znieff1_mer_version_en "2016-05" -znieff2_terre_version_en "2015-02" -znieff2_mer_version_en "2016-05" -ramsar_version_en "" -cpn_version_en "2015-10" -aapn_version_en "2015-10" -scl_version_en "2016-03" -mab_version_en "" -rb_version_en "2010" -apb_version_en "2012" -cotieres_version_me 2 -cotieres_date_me "2016-11-01" -souterraines_version_me 2 -souterraines_date_me "2016-11-01"
 
 # Pour le module MASCARINE seulement

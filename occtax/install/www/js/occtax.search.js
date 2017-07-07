@@ -225,8 +225,9 @@ $(document).ready(function () {
             //"pageLength":50,
             "paging": false,
             "deferRender": true,
-            "scrollY": '90%',
-            "language": {url:lizUrls["dataTableLanguage"]},
+            "scrollY": '100%',
+            "scrollX": '95%',
+            "language": {url: jFormsJQ.config.basePath + lizUrls["dataTableLanguage"]},
             "oLanguage": {
               "sInfo": "Affichage des groupes _START_ à _END_ sur _TOTAL_ groupes taxonomiques",
               "oPaginate" : {
@@ -285,13 +286,14 @@ $(document).ready(function () {
       var displayFields = datatableColumns[1];
       $('#'+tableId+'').DataTable( {
             "lengthChange": false,
-            "searching": true,
+            "searching": false,
             "dom":'ipft',
             "pageLength":1000,
             "paging": false,
             "deferRender": true,
-            "scrollY": '90%',
-            "language": {url:lizUrls["dataTableLanguage"]},
+            "scrollY": '100%',
+            "scrollX": '95%',
+            "language": {url: jFormsJQ.config.basePath +  lizUrls["dataTableLanguage"]},
             "oLanguage": {
               "sInfo": "Affichage des taxons _START_ à _END_ sur _TOTAL_ taxons",
               "oPaginate" : {
@@ -379,13 +381,14 @@ $(document).ready(function () {
       var displayFields = datatableColumns[1];
       $('#'+tableId+'').DataTable( {
             "lengthChange": false,
-            "searching": true,
+            "searching": false,
             "dom":'ipft',
             //"pageLength":50,
             "paging": false,
             "deferRender": true,
-            "scrollY": '90%',
-            "language": {url:lizUrls["dataTableLanguage"]},
+            "scrollY": '100%',
+            "scrollX": '95%',
+            "language": {url: jFormsJQ.config.basePath +  lizUrls["dataTableLanguage"]},
             "oLanguage": {
               "sInfo": "Affichage des mailles _START_ à _END_ sur _TOTAL_ mailles",
               "oPaginate" : {
@@ -490,10 +493,11 @@ $(document).ready(function () {
             "pageLength":100,
             "paging": true,
             "deferRender": true,
-            "scrollY": '90%',
+            "scrollY": '100%',
+            "scrollX": '95%',
             "searching": false,
             "dom":'ipt',
-            "language": {url:lizUrls["dataTableLanguage"]},
+            "language": {url:jFormsJQ.config.basePath + lizUrls["dataTableLanguage"]},
             "oLanguage": {
               "sInfo": "Affichage des observations _START_ à _END_ sur _TOTAL_ observations",
               "oPaginate" : {
@@ -725,7 +729,7 @@ $(document).ready(function () {
             "lengthChange": false,
             "searching": false,
             "dom":'ipt',
-            "language": {url:lizUrls["dataTableLanguage"]},
+            "language": {url:jFormsJQ.config.basePath + lizUrls["dataTableLanguage"]},
             "processing": true,
             "serverSide": true,
             "columns": DT_Columns,
@@ -800,24 +804,30 @@ $(document).ready(function () {
             obsUrl,
             {'id': id},
             function( data ) {
-                //var sLeft = lizMap.getDockRightPosition();
+                var sLeft = lizMap.getDockRightPosition();
+                $('#sub-dock').html( data ).css('width','auto').css('height', '100%').css( 'left', sLeft ).show();
+                $('#sub-dock i.close').click(function(){
+                    $('#sub-dock').hide();
+                    //return false;
+                });
+
                 //$('#occtax_search_input').hide();
                 //$('#occtax-search-modify').show();
                 //$('#occtax_search_result').show();
-                $('#occtax-bottom-hide-detail').show();
-                $('#occtax-bottom-main').addClass('reduced');
-                data = '<button id="occtax-bottom-hide-detail" class="btn btn-mini btn-primary">Masquer</button>' + data;
-                $('#occtax-bottom-detail')
-                .html( data )
-                .addClass('visible');
+                //$('#occtax-bottom-hide-detail').show();
+                //$('#occtax-bottom-main').addClass('reduced');
+                //data = '<button id="occtax-bottom-hide-detail" class="btn btn-mini btn-primary">Masquer</button>' + data;
+                //$('#occtax-bottom-detail')
+                //.html( data )
+                //.addClass('visible');
 
-                // Toggle detail observation panel
-                $('#occtax-bottom-hide-detail').click(function(){
-                  //$(this).hide();
-                  $(this).remove();
-                  $('#occtax-bottom-main').toggleClass('reduced');
-                  $('#occtax-bottom-detail').toggleClass('visible');
-                });
+                // // Toggle detail observation panel
+                //$('#occtax-bottom-hide-detail').click(function(){
+                //  $(this).hide();
+                  //$(this).remove();
+                  //$('#occtax-bottom-main').toggleClass('reduced');
+                  //$('#occtax-bottom-detail').toggleClass('visible');
+                //});
 
                 //lizMap.addDock('occtax_observation_detail', 'Détail de l\'observation', 'right-dock', data, 'icon-comment');
                 //$('#occtax_observation_detail').html(data);
@@ -842,9 +852,18 @@ $(document).ready(function () {
     function refreshOcctaxDatatableSize(container){
       var dtable = $(container).find('table.dataTable');
       dtable.DataTable().tables().columns.adjust();
-      $('#bottom-dock').addClass('visible');
-      var h = $(container).height() - 70;
+      //$('#bottom-dock').addClass('visible');
+      var h = $("#occtax").height()
+      h = h - $('#occtax h3.occtax_search').height() * 3;
+      h = h - $("#occtax_search_description:visible").height();
+      h = h - $("#occtax_results_tabs").height();
+      h = h - $("#occtax_results_observation_table_paginate:visible").height();
+      h = h - 130;
       dtable.parent('div.dataTables_scrollBody').height(h);
+      // Width
+      w = dtable.parent('div.dataTables_scrollBody').width();
+      dtable.parent('div.dataTables_scrollBody').width(w - 50);
+      dtable.DataTable().tables().columns.adjust();
     }
 
 OccTax.events.on({
@@ -1078,9 +1097,9 @@ OccTax.events.on({
       // Toggle pannel display
       $('#occtax-search-modify').click(function(){
         $('#occtax_search_input').show();
-        $('#occtax_search_description').show();
+        $('#occtax_search_description').hide();
         $('#occtax_search_result').hide();
-        //$('#occtax-search-replay').toggle();
+        $('#occtax-search-replay').toggle();
         $(this).toggle();
         //return false;
       });
@@ -1088,7 +1107,7 @@ OccTax.events.on({
         $('#occtax_search_input').hide();
         $('#occtax_search_description').show();
         $('#occtax_search_result').show();
-        //$('#occtax-search-modify').toggle();
+        $('#occtax-search-modify').toggle();
         $(this).toggle();
         //return false;
       });
@@ -1110,14 +1129,14 @@ OccTax.events.on({
                     var dHtml = tData.description;
                     $('#occtax_search_description_content').html(dHtml);
                     $('#occtax_search_description').show();
-                    //$('#occtax-search-modify').show();
-                    //$('#occtax-search-replay').hide();
+                    $('#occtax-search-modify').show();
+                    $('#occtax-search-replay').hide();
 
                     // Change wfs export URL
                     $('a.btn-get-wfs').attr('href', tData.wfsUrl);
 
                     // Hide form div
-                    //$('#occtax_search_input').hide();
+                    $('#occtax_search_input').hide();
 
                     // Run and display searched data
                     $('#occtax_service_search_stats_form input[name="token"]').val(tData.token).change();
@@ -1136,8 +1155,9 @@ OccTax.events.on({
 
 
                     // Open bottom if needed
-                    $('#mapmenu li.occtax_tables:not(.active) a').click();
-                    // Refresh <size
+                    //$('#mapmenu li.occtax_tables:not(.active) a').click();
+
+                    // Refresh size
                     var mycontainer = '#occtax_results_stats_table_div';
                     refreshOcctaxDatatableSize(mycontainer);
 
@@ -1256,6 +1276,14 @@ OccTax.events.on({
 
       });
 
+      // Toggle search div via h3
+      $('h3.occtax_search').click(function(){
+        $(this).next('div:first').toggle();
+        var tid = $('#occtax_search_result div.tab-pane.active').attr('id');
+        console.log(tid);
+        refreshOcctaxDatatableSize('#' + tid);
+      });
+
 
       // Clear Taxon search with button
       $('#clearTaxonSearch').click(function(){
@@ -1266,7 +1294,7 @@ OccTax.events.on({
       // Hide taxon menu icon in menubar
       $('#button-taxon').parent('li.taxon').hide();
       // Hide occtax table menu icon
-      $('#mapmenu li.occtax_tables').hide();
+      //$('#mapmenu li.occtax_tables').hide();
 
 
       // Ajout du logo

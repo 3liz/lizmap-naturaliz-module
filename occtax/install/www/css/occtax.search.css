@@ -142,6 +142,19 @@ table.occtax-legend-table td{
 }
 
 
+/*
+Occtax search dock
+*/
+div#occtax {
+  height: 98%;
+  overflow-x:hidden;
+}
+h3.occtax_search {
+  cursor: pointer;
+  border-bottom: 1px dotted white;
+}
+
+
 #bottom-dock ul.nav-tabs > li > a {
   border:none;
 /*
