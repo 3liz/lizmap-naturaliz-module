@@ -229,6 +229,8 @@ $(document).ready(function () {
             "scrollX": '95%',
             "language": {url: jFormsJQ.config.basePath + lizUrls["dataTableLanguage"]},
             "oLanguage": {
+              "sInfoEmpty": "",
+              "sEmptyTable": "Aucun résultat",
               "sInfo": "Affichage des groupes _START_ à _END_ sur _TOTAL_ groupes taxonomiques",
               "oPaginate" : {
                 "sPrevious": "Précédent",
@@ -262,6 +264,7 @@ $(document).ready(function () {
                               }
                               tData.data.push( r );
                             }
+
                           } else {
                               if ( results.msg.length != 0 )
                                 lizMap.addMessage( results.msg.join('<br/>'), 'error', true );
@@ -295,6 +298,8 @@ $(document).ready(function () {
             "scrollX": '95%',
             "language": {url: jFormsJQ.config.basePath +  lizUrls["dataTableLanguage"]},
             "oLanguage": {
+              "sInfoEmpty": "",
+              "sEmptyTable": "Aucun résultat",
               "sInfo": "Affichage des taxons _START_ à _END_ sur _TOTAL_ taxons",
               "oPaginate" : {
                 "sPrevious": "Précédent",
@@ -390,6 +395,8 @@ $(document).ready(function () {
             "scrollX": '95%',
             "language": {url: jFormsJQ.config.basePath +  lizUrls["dataTableLanguage"]},
             "oLanguage": {
+              "sInfoEmpty": "",
+              "sEmptyTable": "Aucun résultat",
               "sInfo": "Affichage des mailles _START_ à _END_ sur _TOTAL_ mailles",
               "oPaginate" : {
                 "sPrevious": "Précédent",
@@ -499,6 +506,8 @@ $(document).ready(function () {
             "dom":'ipt',
             "language": {url:jFormsJQ.config.basePath + lizUrls["dataTableLanguage"]},
             "oLanguage": {
+              "sInfoEmpty": "",
+              "sEmptyTable": "Aucun résultat",
               "sInfo": "Affichage des observations _START_ à _END_ sur _TOTAL_ observations",
               "oPaginate" : {
                 "sPrevious": "Précédent",
@@ -1280,7 +1289,7 @@ OccTax.events.on({
       $('h3.occtax_search').click(function(){
         $(this).next('div:first').toggle();
         var tid = $('#occtax_search_result div.tab-pane.active').attr('id');
-        console.log(tid);
+        //console.log(tid);
         refreshOcctaxDatatableSize('#' + tid);
       });
 
