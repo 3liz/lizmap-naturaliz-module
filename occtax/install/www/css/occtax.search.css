@@ -133,7 +133,7 @@ table.occtax-legend-table {
   font-size:0.8em;
   border-collapse:collapse;
   border-spacing:0px;
-  width:50%;
+  min-width:50%;
   line-height: 0px;
 }
 
