@@ -85,22 +85,22 @@
 </div>
 
 
-{if array_key_exists('descriptif_sujet', $data) and !empty($data['descriptif_sujet'])}
+
 <h3 class="dock-subtitle">{@occtax~observation.title.descriptif.sujet@}</h3>
 <div class="dock-content">
-
+{if array_key_exists('descriptif_sujet', $data) and !empty($data['descriptif_sujet'])}
     {assign $descriptif_sujet = json_decode($data['descriptif_sujet'])}
 
     <ul class="nav nav-tabs">
-    {assign $i = 0}
+    {assign $i = 1}
     {foreach $descriptif_sujet as $ds}
-      <li><a data-toggle="tab" href="#descriptif_sujet_{$i}">Descriptif du sujet {$i}</a></li>
+      <li><a data-toggle="tab" href="#descriptif_sujet_{$i}">{@occtax~observation.output.descriptif_sujet@} {$i}</a></li>
     {assign $i = $i + 1}
     {/foreach}
     </ul>
 
     <div class="tab-content">
-    {assign $i = 0}
+    {assign $i = 1}
     {foreach $descriptif_sujet as $ds}
       <div id="descriptif_sujet_{$i}" class="tab-pane">
         <table class="table table-condensed table-striped">
@@ -117,8 +117,10 @@
     {assign $i = $i + 1}
     {/foreach}
     </div>
-</div>
+{else}
+Pas d'individu décrit
 {/if}
+</div>
 
 
 
