@@ -442,6 +442,7 @@ $(document).ready(function () {
                           callback( tData );
                           refreshOcctaxDatatableSize('#occtax_results_maille_table_div_'+type_maille);
                           // Refresh maille on map
+                          // usefull to refresh map features
                           $('#occtax_results_draw_maille_m02.btn').click();
 
 
@@ -1119,6 +1120,11 @@ OccTax.events.on({
         $('#occtax_results_stats_table_tab').tab('show');
         // deactivate geometry button
         $('#obs-spatial-query-buttons button.active').click();
+
+        // Remove previous features : remove feature in all layers except queryLayer
+        OccTax.emptyDrawqueryLayer('queryLayer');
+        OccTax.events.triggerEvent('mailledatareceived_' + 'm02', {'results':null});
+        OccTax.events.triggerEvent('mailledatareceived_' + 'm10', {'results':null});
 
         $.getJSON(self.attr('action'), self.serialize(),
             function(tData) {
