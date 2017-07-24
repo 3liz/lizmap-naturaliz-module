@@ -739,6 +739,15 @@ $(document).ready(function () {
             "searching": false,
             "dom":'ipt',
             "language": {url:jFormsJQ.config.basePath + lizUrls["dataTableLanguage"]},
+            "oLanguage": {
+              "sInfoEmpty": "",
+              "sEmptyTable": "Aucun résultat",
+              "sInfo": "Affichage des taxons _START_ à _END_ sur _TOTAL_ taxons",
+              "oPaginate" : {
+                "sPrevious": "Précédent",
+                "sNext": "Suivant"
+              }
+            },
             "processing": true,
             "serverSide": true,
             "columns": DT_Columns,
