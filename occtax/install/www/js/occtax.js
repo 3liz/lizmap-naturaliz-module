@@ -260,7 +260,7 @@ lizMap.events.on({
                     //~ return feat.attributes.rayon; //
                     rad = Math.round(feat.attributes.rayon / res); //pour rayon en mètre
                 }else{
-                    rad = (OccTax.map.getZoom() + 1) * 1.5;
+                    rad = (OccTax.map.getZoom() + 1) * 1.5 * 3;
                 }
                 // Draw square underneath maille features
                 if('square' in feat.attributes){
@@ -340,7 +340,8 @@ lizMap.events.on({
             strokeOpacity: 1,
             strokeDashstyle: "solid",
             strokeWidth: "${getStrokeWidth}",
-            graphicName: "${getGraphicName}"
+            graphicName: "${getGraphicName}",
+            cursor: "pointer"
         };
         OccTax.resultLayerStyleDefault = new OpenLayers.Style(
             resultLayerTemplateDefault, {context: OccTax.resultLayerContext}
@@ -354,7 +355,8 @@ lizMap.events.on({
             strokeOpacity: 1,
             strokeDashstyle: "solid",
             strokeWidth: "${getStrokeWidthSelect}",
-            graphicName: "${getGraphicName}"
+            graphicName: "${getGraphicName}",
+            cursor: "pointer"
         };
         OccTax.resultLayerStyleSelect = new OpenLayers.Style(
             resultLayerTemplateSelect, {context: OccTax.resultLayerContext}

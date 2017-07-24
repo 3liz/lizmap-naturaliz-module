@@ -814,6 +814,7 @@ $(document).ready(function () {
     }
 
     function getObservationDetail( id ) {
+      //console.log(id);
         if(!id)
             return;
         var tokenFormId = $('#div_form_occtax_search_token form').attr('id');
@@ -1056,8 +1057,10 @@ OccTax.events.on({
                   //console.log(evt);
                     lizMap.addMessage(evt.feature.attributes.message_text,'info',true).attr('id','occtax-highlight-message');
                     var tr = $('tr#'+evt.feature.fid);
-                    if (tr.length != 0 )
+                    if (tr.length != 0 ){
                         tr.addClass('info');
+                    }
+
                 },
                 featureunhighlighted: function(evt){
                     $('#occtax-highlight-message').fadeOut('slow', function(){
@@ -1073,11 +1076,37 @@ OccTax.events.on({
             clickout: true,
             eventListeners: {
                 featureselected: function(evt) {
-                    var tr = $('tr#'+evt.feature.fid);
-                    var dockContent = $('#dock-content');
-                    if ( tr.length != 0 )
-                        dockContent.animate({scrollTop: tr.offset().top + dockContent.scrollTop() - dockContent.offset().top - tr.height() });
+                  console.log(evt);
+
+                },
+                featurehighlighted: function(evt) {
+                  //console.log(evt);
+                  var tr = $('tr#'+evt.feature.fid);
+                  if (tr.length != 0 ){
+                    // on masque le message du haut
+                    $('#occtax-highlight-message').remove();
+
+                    // on affiche la fiche de détail de l'observation
+                    var ac = $('#occtax_search_result div.tab-pane.active').attr('id');
+                    if(ac == 'occtax_results_observation_table_div'){
+                      getObservationDetail(evt.feature.fid);
+                    }
+
+                    // on scroll dans le tableau : Le scroll ne fonctionne pas !
+                    //var pos = tr.offset().top;
+                    //my.animate({
+                      //scrollTop: pos
+                    //}, 300);
+                  }
+                },
+                featureunhighlighted: function(evt){
+                  // on réaffiche le panneau des résultats
+                  var ac = $('#occtax_search_result div.tab-pane.active').attr('id');
+                  if(ac == 'occtax_results_observation_table_div'){
+                    $('#occtax_search_observation_card').prev('h3.occtax_search').click();
+                  }
                 }
+
             }
         });
         OccTax.map.addControl( highlightCtrl );
