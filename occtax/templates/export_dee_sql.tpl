@@ -9,25 +9,29 @@ xmlelement(
 -- Descriptif sujet
     XMLELEMENT(
         name "cont:EstDecritPar",
-        XMLELEMENT(
-            name "cont:DescriptifSujet",
-            xmlforest (
-                o.preuve_non_numerique as "cont:preuveNonNumerique",
-                o.obs_contexte AS "cont:obsContexte",
-                o.preuve_numerique AS "cont:preuveNumerique",
-                o.preuve_existante AS "cont:preuveExistante",
-                o.occ_statut_biologique AS "cont:occStatutBiologique",
-                o.occ_statut_biogeographique AS "cont:occStatutBiogeographique",
-                o.occ_stade_de_vie AS "cont:occStadeDeVie",
-                o.occ_sexe AS "cont:occSexe",
-                o.occ_naturalite AS "cont:occNaturalite",
-                o.occ_methode_determination AS "cont:occMethodeDetermination",
-                o.occ_etat_biologique AS "cont:occEtatBiologique",
-                o.obs_methode AS "cont:obsMethode",
-                o.obs_description AS "cont:obsDescription"
-            )
-        )
-    ),
+        (string_agg( distinct
+            XMLELEMENT(
+                name "cont:DescriptifSujet",
+                xmlforest (
+                    dsi->'occ_sexe' AS "cont:occSexe",
+                    dsi->'obs_methode' AS "cont:obsMethode",
+                    dsi->'obs_contexte' AS "cont:obsContexte",
+                    dsi->'occ_naturalite' AS "cont:occNaturalite",
+                    dsi->'obs_description' AS "cont:obsDescription",
+                    dsi->'occ_stade_de_vie' AS "cont:occStadeDeVie",
+                    dsi->'occ_etat_biologique' AS "cont:occEtatBiologique",
+                    dsi->'occ_statut_biologique' AS "cont:occStatutBiologique",
+                    dsi->'occ_statut_biogeographique' AS "cont:occStatutBiogeographique",
+                    dsi->'occ_methode_determination' AS "cont:occMethodeDetermination",
+                    dsi->'preuve_existante' AS "cont:preuveExistante",
+                    dsi->'preuve_non_numerique' as "cont:preuveNonNumerique",
+                    dsi->'preuve_numerique' AS "cont:preuveNumerique"
+                )
+            )::text, ''
+        )  FILTER (WHERE dsi->'occ_sexe' IS NOT NULL))::xml
+    )
+
+    ,
 
 -- Attributs additionels
     XMLELEMENT(
@@ -259,7 +263,7 @@ xmlelement(
 -- Observateurs
     XMLELEMENT(
         name "cont:observateur",
-        xmlagg(
+        (string_agg( distinct
             xmlelement(
                 name "cont:PersonneType",
                 xmlconcat(
@@ -278,8 +282,8 @@ xmlelement(
                         pobs.identite as "cont:identite"
                     )
                 )
-            )
-        ) FILTER (WHERE pobs.id_personne IS NOT NULL)
+            )::text, ''
+        ) FILTER (WHERE pobs.id_personne IS NOT NULL))::xml
     ),
 
 -- profondeurs
@@ -379,7 +383,7 @@ LEFT JOIN v_localisation_espace_naturel len ON len.cle_obs = o.cle_obs
 LEFT JOIN localisation_habitat lhab ON lhab.cle_obs = o.cle_obs
 LEFT JOIN habitat hab ON hab.code_habitat = lhab.code_habitat AND lhab.ref_habitat = hab.ref_habitat
 LEFT JOIN attribut_additionnel aa ON aa.cle_obs = o.cle_obs
-
+LEFT JOIN LATERAL jsonb_array_elements(o.descriptif_sujet) AS ds(dsi) ON TRUE
 {$geoFilter}
 
 {$where}
