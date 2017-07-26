@@ -14,9 +14,12 @@ FORMULAIRE DE RECHERCHE
         <ul id="occtax_taxon_select_list" style="width:220px; height:65px; overflow-x:auto; margin:0px;
          background-color:#FFF; border:solid #CCC 1px; border-radius:4px;">
         </ul><button id="clearTaxonSearch" class="btn btn-mini">x</button>
+
         <div id="occtax_taxon_select_params" style="display:none;"></div>
+
       </div>
     </div>
+
     <div id="obs-spatial-query-buttons" class="controls">
       <div class="btn-group" data-toggle="buttons-radio">
         <button type="button" id="obs-spatial-query-commune" data-value="queryPoint" class="btn commune" title="Sélectionner une commune" alt="Cliquer sur la carte pour sélectionner la commune">
@@ -222,5 +225,11 @@ FICHE OBSERVATION
 <script type="text/javascript" >
 {literal}
   var occtaxClientConfig = {/literal}{$occtaxClientConfig}{literal};
+
+  $('#obs-spatial-query-buttons').css('margin-left','30px');
+  $('#obs-spatial-query-buttons').prepend('Géométrie').css('font-size', '1.2em');
+  $('#occtax_search_input legend').css('font-weight', 'bold');
+  $('#obs-spatial-query-buttons button').tooltip();
+
 {/literal}
 </script>
