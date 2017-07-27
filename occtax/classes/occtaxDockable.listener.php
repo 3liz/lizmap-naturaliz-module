@@ -50,10 +50,21 @@
                 $localConfig = jApp::configPath('localconfig.ini.php');
                 $ini = new jIniFileModifier($localConfig);
                 $maxAreaQuery = $ini->getValue('maxAreaQuery', 'occtax');
+                $menuOrder = $ini->getValue('menuOrder', 'occtax');
                 if( empty($maxAreaQuery) )
                     $maxAreaQuery = 32000000;
+                if( empty($menuOrder) )
+                    $menuOrder = 'home, taxon, metadata, switcher, occtax, dataviz, print, measure, permaLink';
+
+                $menuOrder = array_map('trim', explode(',', $menuOrder));
+                $mi = 0; $mo = array();
+                foreach($menuOrder as $menu){
+                    $mo[$menu] = $mi;
+                    $mi++;
+                }
                 $occtaxClientConfig = array(
-                    'maxAreaQuery'=> (integer)$maxAreaQuery
+                    'maxAreaQuery'=> (integer)$maxAreaQuery,
+                    'menuOrder' => $mo
                 );
 
                 $assign = array(

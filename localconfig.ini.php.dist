@@ -123,6 +123,9 @@ observation_exported_fields=cle_obs, identifiant_permanent, statut_observation, 
 ;observation_card_children=commune, departement, maille_02, maille, espace_naturel, masse_eau, habitat, attribut_additionnel
 observation_exported_children=commune, departement, maille_02, maille, espace_naturel, masse_eau, habitat
 
+; ordre des items de menu Lizmap (barre de menu de gauche)
+menuOrder=home, taxon, metadata, switcher, occtax, dataviz, print, measure, permaLink
+
 
 
 [mascarine]

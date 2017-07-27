@@ -49,6 +49,7 @@ Les modules Naturaliz lisent dans le fichier **lizmap/var/config/localconfig.ini
 * la **configuration des classes de légende** pour les affichages par maille: **legend_class**. On peut utiliser autant de legend_class[] que nécessaire, et on doit les écrire avec les informations suivantes séparées par point-virgule: intitulé de la classe; borne inférieure; borne supérieure; couleur. Ex: legend_class[]="De 1 à 10 observations; 1; 10; #FFFBC3"
 * Les **rayons min et max pour les cercles représentant les mailles** : **legend_min_radius** et **legend_max_radius**. L'application calcule automatiquement le rayon pour une classe à partir de ces 2 valeurs et du nombre de classes. Les valeurs doivent être indiquées pour que le cercle tienne dans un carré de 1000m de côté. L'application calcule le rayon en fonction de la maille ( X2 pour les mailles 2km, X10 pour les mailles de 10km, etc.. Par exemple 100 et 410 m respectivement.
 * La **liste des champs à afficher ou à exporter** dans la fiche d'observation (détail) et l'export en CSV ou WFS: **observation_card_fields**, **observation_card_children**, **observation_exported_fields**, **observation_exported_children**
+* L'ordre d'affichage des items dans la barre de menu de gauche: **menuOrder**. Par exemple `menuOrder=home, taxon, metadata, switcher, occtax, dataviz, print, measure, permaLink`
 
 
 Pour le module mascarine:
@@ -144,6 +145,9 @@ observation_exported_fields=cle_obs, identifiant_permanent, statut_observation, 
 ; liste blanche des données filles à afficher
 ;observation_card_children=commune, departement, maille_02, maille, espace_naturel, masse_eau, habitat, attribut_additionnel
 observation_exported_children=commune, departement, maille_02, maille, espace_naturel, masse_eau, habitat
+
+; ordre des items de menu Lizmap (barre de menu de gauche)
+menuOrder=home, taxon, metadata, switcher, occtax, dataviz, print, measure, permaLink
 
 ```
 

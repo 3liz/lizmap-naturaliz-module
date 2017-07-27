@@ -866,6 +866,17 @@ $(document).ready(function () {
       dtable.DataTable().tables().columns.adjust();
     }
 
+    function moveLizmapMenuLi( liorder ){
+      var ul = $("#mapmenu ul.nav-list");
+      var li = ul.children("li");
+      li.detach().sort(function(a, b) {
+        var a_place = liorder[$(a).find('a:first').attr('href').replace('#', '')];
+        var b_place = liorder[$(b).find('a:first').attr('href').replace('#', '')];
+        return a_place > b_place
+      });
+      ul.append(li);
+    }
+
 OccTax.events.on({
     'uicreated':function(evt){
         //~ console.log('OccTax uicreated');
@@ -1346,6 +1357,10 @@ OccTax.events.on({
 
       // Ajout du logo
       //$('#attribution-box').append('<img src="'+ jFormsJQ.config.basePath + 'css/img/logo_europe_mini.jpg" title="KaruNati est cofinancé par l’Union européenne. L’Europe s’engage en Guadeloupe avec le FEDER" />');
+
+
+      // Déplacement des icônes Lizmap de la barre de menu de gauche
+      moveLizmapMenuLi(occtaxClientConfig.menuOrder);
 
       // Refresh datatable size when bottom dock changes
     lizMap.events.on({
