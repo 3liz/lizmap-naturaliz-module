@@ -147,6 +147,13 @@ div.dataTables_paginate.paging_simple_numbers > ul {
   font-size: 0.8em;
 }
 
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled,
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled a,
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover {
+  cursor: default;
+}
+
+
 table.occtax-legend-table {
   padding: 0px;
   font-size:0.8em;

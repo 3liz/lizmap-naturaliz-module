@@ -267,7 +267,7 @@ lizMap.events.on({
                     var square = feat.attributes.square / 2;
                     rad = Math.round(square / res);
                 }
-console.log(rad);
+
                 return rad;
 
             },
