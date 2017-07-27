@@ -20,6 +20,32 @@ defaultProject=
 
 En plus d'une publication classique, il y a quelques points à prendre en compte dans le projet QGIS support.
 
+#### Informations sur le projet
+
+L'application Naturaliz permet d'utiliser des fichiers HTML externes pour remplacer le contenu du panneau d'information du projet.
+
+Pour cela, il faut créer des fichiers HTML pour chaque section:
+
+* **Présentation de la plateforme**: peut contenir une description du SINP, des acteurs locaux, de l'application.
+* **Mentions légales**: décrit les informatinos légales (déclaration CNIL), propriétés des données, conditions de diffusions, etc.
+
+Ces fichiers doivent porter le nom du projet, ainsi qu'un nom défini. Par exemple, si le projet QGIS s'appelle naturaliz.qgs, alors les fichiers devront s'appeler:
+
+* **naturaliz.qgs.presentation.html** pour la présentation de l'application
+* **naturaliz.qgs.legal.html** pour les informations légales
+
+Pour créer ces fichiers HTML, nous conseillons d'écrire un texte simple, au format Markdown, puis de l'exporter en HTML via l'application **Remarkable** (disponible sous Linux: http://remarkableapp.github.io/) ou via un convertisseur en ligne, par exemple http://parsedown.org/demo
+
+
+#### Statistiques globales.
+
+L'application permet d'afficher un à plusieurs graphiques, basés sur les données de la base. Pour cela, on utilise l'outil Dataviz, disponible depuis Lizmap Web Client 3.2.
+
+Chaque graphique s'appuie sur une couche du projet QGIS. On peut donc créer des couches à partir d'une requête, via le gestionnaire de bases de données de QGIS, puis utiliser cette couche comme source pour le graphique.
+
+Quatre exemples sont proposés dans les sources de naturaliz. On peut les ouvrir via les fichiers QLR qui se trouvent dans le répertoire `occtax/install/qgis/statistiques/`, avec le menu QGIS `Couches / Ajouter depuis un fichier de définition de couche (QLR)`
+
+
 #### Impression
 
 Certaines couches doivent être ajoutées pour permettre à l'application d'imprimer les résultats de requête visibles sur l'application Web. En effet, ces résultats, visibles sur le navigateur, ne sont pas dans des couches du projet QGIS, et QGIS ne peut donc pas normalement imprimer ces données.
@@ -41,21 +67,7 @@ Voir l'aide de QGIS sur les services :
 * Côté serveur : http://docs.qgis.org/testing/en/docs/user_manual/working_with_ogc/ogc_server_support.html#connection-to-service-file
 
 
-#### Informations sur le projet
 
-L'application Naturaliz permet d'utiliser des fichiers HTML externes pour remplacer le contenu du panneau d'information du projet.
-
-Pour cela, il faut créer des fichiers HTML pour chaque section:
-
-* **Présentation de la plateforme**: peut contenir une description du SINP, des acteurs locaux, de l'application.
-* **Mentions légales**: décrit les informatinos légales (déclaration CNIL), propriétés des données, conditions de diffusions, etc.
-
-Ces fichiers doivent porter le nom du projet, ainsi qu'un nom défini. Par exemple, si le projet QGIS s'appelle naturaliz.qgs, alors les fichiers devront s'appeler:
-
-* **naturaliz.qgs.presentation.html** pour la présentation de l'application
-* **naturaliz.qgs.legal.html** pour les informations légales
-
-Pour créer ces fichiers HTML, nous conseillons d'écrire un texte simple, au format Markdown, puis de l'exporter en HTML via l'application **Remarkable** (disponible sous Linux: http://remarkableapp.github.io/) ou via un convertisseur en ligne, par exemple http://parsedown.org/demo
 
 
 ## Module Taxon
