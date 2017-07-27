@@ -260,13 +260,14 @@ lizMap.events.on({
                     //~ return feat.attributes.rayon; //
                     rad = Math.round(feat.attributes.rayon / res); //pour rayon en mètre
                 }else{
-                    rad = (OccTax.map.getZoom() + 1) * 1.5 * 3;
+                    rad = (OccTax.map.getZoom() + 1); // * 1.5
                 }
                 // Draw square underneath maille features
                 if('square' in feat.attributes){
                     var square = feat.attributes.square / 2;
                     rad = Math.round(square / res);
                 }
+console.log(rad);
                 return rad;
 
             },
@@ -291,7 +292,7 @@ lizMap.events.on({
                     //~ return feat.attributes.rayon; //
                     rad = Math.round(feat.attributes.rayon / res) * 1.5; //pour rayon en mètre
                 }else{
-                    rad = (OccTax.map.getZoom() + 1) * 1.5 * 1.5;
+                    rad = (OccTax.map.getZoom() + 1) * 1.5;
                 }
                 // Hide square underneath maille features on select
                 if('square' in feat.attributes){
