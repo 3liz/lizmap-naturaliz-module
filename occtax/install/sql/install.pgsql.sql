@@ -239,15 +239,18 @@ COMMENT ON COLUMN observation.donnee_complementaire IS 'Données complémentaire
 -- Table personne
 CREATE TABLE personne (
     id_personne serial,
-    identite text UNIQUE NOT NULL,
+    identite text NOT NULL,
     prenom text,
     nom text,
-    mail text UNIQUE,
+    mail text,
     organisme text NOT NULL,
     anonymiser boolean,
     CONSTRAINT personne_identite_valide CHECK ( identite NOT LIKE '%,%' )
 );
 ALTER TABLE personne ADD PRIMARY KEY (id_personne);
+ALTER TABLE occtax.personne ADD CONSTRAINT personne_mail_key UNIQUE (mail);
+ALTER TABLE occtax.personne ADD CONSTRAINT personne_identite_mail_key UNIQUE (identite, mail);
+
 
 COMMENT ON TABLE personne IS 'Liste des personnes participant aux observations. Cette table est remplie de manière automatique lors des imports de données. Il n''est pas assuré que chaque personne ne représente pas plusieurs homonymes.';
 COMMENT ON COLUMN personne.id_personne IS 'Identifiant de la personne (valeur autoincrémentée)';
@@ -493,7 +496,8 @@ CREATE TABLE jdd (
     jdd_id text NOT NULL PRIMARY KEY,
     jdd_code text NOT NULL,
     jdd_description text,
-    jdd_metadonnee_dee_id text NOT NULL
+    jdd_metadonnee_dee_id text NOT NULL,
+    jdd_cadre text
 );
 
 COMMENT ON TABLE jdd IS 'Recense les jeux de données officiels du standard Occurence de taxons. Un jeu de données correspond souvent à une base de données';
@@ -501,6 +505,7 @@ COMMENT ON COLUMN jdd.jdd_id IS 'Un identifiant pour la collection ou le jeu de 
 COMMENT ON COLUMN jdd.jdd_code IS 'Le nom, l’acronyme, le code ou l’initiale identifiant la collection ou le jeu de données dont l’enregistrement de la Donnée Source provient. Exemple « INPN », « Silène », « BDMAP »';
 COMMENT ON COLUMN jdd.jdd_description IS 'Description du jeu de données';
 COMMENT ON COLUMN jdd.jdd_metadonnee_dee_id IS 'Identifiant permanent et unique de la fiche métadonnées du jeu de données auquel appartient la donnée. Cet identifiant est attribué par la plateforme';
+COMMENT ON COLUMN jdd.jdd_cadre IS 'Cadre d''acquisition qui permet de regrouper des jdd de même producteur. Ex: on peut avoir un jdd_id par annee pour le même cadre d''acquisition';
 
 
 
@@ -607,6 +612,7 @@ COMMENT ON COLUMN jdd_import.date_obs_max IS 'Date maximale des observations imp
 -- table jdd_correspondance_taxon
 CREATE TABLE jdd_correspondance_taxon (
     jdd_id text,
+    jdd_cadre text,
     taxon_origine text,
     cd_nom integer,
     version_taxref text
@@ -617,6 +623,7 @@ ALTER TABLE jdd_correspondance_taxon ADD PRIMARY KEY (jdd_id, taxon_origine);
 COMMENT ON TABLE jdd_correspondance_taxon IS 'Table de correspondance entre les codes d''espèces d''origine trouvés dans les jeux de données et le code cd_nom TAXREF';
 
 COMMENT ON COLUMN jdd_correspondance_taxon.jdd_id IS 'Identifiant du jeu de données';
+COMMENT ON COLUMN jdd_correspondance_taxon.jdd_cadre IS 'Cadre d''acquisition qui permet de regrouper des jdd de même producteur. Ex: on peut avoir un jdd_id par annee pour le même cadre d''acquisition';
 COMMENT ON COLUMN jdd_correspondance_taxon.taxon_origine IS 'Code du taxon dans le jeu de données d''origine';
 COMMENT ON COLUMN jdd_correspondance_taxon.cd_nom IS 'Code officiel du taxref (cd_nom)';
 COMMENT ON COLUMN jdd_correspondance_taxon.version_taxref IS 'Version du taxref utilisé';
@@ -649,6 +656,7 @@ CREATE INDEX ON observation USING GIST (geom);
 CREATE INDEX ON observation (cd_nom);
 CREATE INDEX ON observation (date_debut, date_fin DESC);
 CREATE INDEX ON observation (jdd_id);
+CREATE INDEX ON observation USING GIN (descriptif_sujet);
 
 CREATE INDEX ON personne (identite);
 
@@ -1038,7 +1046,7 @@ INSERT INTO occtax.localisation_commune
 SELECT DISTINCT
     o.cle_obs,
     c.code_commune,
-    ''1'' AS type_info_geo
+    ''2'' AS type_info_geo
 FROM occtax.observation o
 INNER JOIN sig.commune c ON ST_Intersects( o.geom, c.geom )
 WHERE 2>1
@@ -1069,7 +1077,7 @@ INSERT INTO occtax.localisation_maille_10
 SELECT DISTINCT
     o.cle_obs,
     m.code_maille,
-    ''1'' AS type_info_geo
+    ''2'' AS type_info_geo
 FROM occtax.observation o
 INNER JOIN sig.maille_10 m ON ST_Intersects( o.geom, m.geom )
 WHERE 2>1
@@ -1085,7 +1093,7 @@ INSERT INTO occtax.localisation_maille_05
 SELECT DISTINCT
     o.cle_obs,
     m.code_maille,
-    ''1'' AS type_info_geo
+    ''2'' AS type_info_geo
 FROM occtax.observation o
 INNER JOIN sig.maille_05 m ON ST_Intersects( o.geom, m.geom )
 WHERE 2>1
@@ -1101,7 +1109,7 @@ INSERT INTO occtax.localisation_masse_eau
 SELECT DISTINCT
     o.cle_obs,
     m.code_me,
-    ''1'' AS type_info_geo
+    ''2'' AS type_info_geo
 FROM occtax.observation o
 INNER JOIN sig.masse_eau m ON ST_Intersects( o.geom, m.geom )
 WHERE 2>1
@@ -1117,7 +1125,7 @@ INSERT INTO occtax.localisation_espace_naturel
 SELECT DISTINCT
     o.cle_obs,
     en.code_en,
-    ''1'' AS type_info_geo
+    ''2'' AS type_info_geo
 FROM occtax.observation o
 INNER JOIN sig.espace_naturel en ON ST_Intersects( o.geom, en.geom )
 WHERE 2>1
