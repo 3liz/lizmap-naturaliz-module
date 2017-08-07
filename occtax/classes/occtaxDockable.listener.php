@@ -86,62 +86,63 @@
                 $event->add($dock);
 
 
-                // OVERRIDE METADATA
-                $metadataTpl = new jTpl();
-                // Get the WMS information
-                $wmsInfo = $lproj->getWMSInformation();
-                // WMS GetCapabilities Url
-                $wmsGetCapabilitiesUrl = jAcl2::check(
-                    'lizmap.tools.displayGetCapabilitiesLinks',
-                    $repository
-                );
-                if ( $wmsGetCapabilitiesUrl ) {
-                    $wmsGetCapabilitiesUrl = $lproj->getData('wmsGetCapabilitiesUrl');
-                }
 
                 // Get local configuration (application name, projects name, etc.)
                 $localConfig = jApp::configPath('localconfig.ini.php');
                 $ini = new jIniFileModifier($localConfig);
 
-                // Get description
-                //$wmsInfo['WMSServiceTitle'] = $ini->getValue('projectName', 'occtax');
-                $projectDescription = '';
+                // PRESENTATION
+                $presentationTpl = new jTpl();
+                $presentation = '';
                 $projectDescriptionConfig = $ini->getValue('projectDescription', 'occtax');
                 if( !empty($projectDescriptionConfig) ){
-                    $projectDescription = html_entity_decode( $projectDescriptionConfig );
+                    $presentation = html_entity_decode( $projectDescriptionConfig );
                 }
 
-                // Read file beside QGIS project if existing and override previous description
-                $presentation = jFile::read( $lproj->getQgisPath() . '.presentation.html');
-                $legal = jFile::read( $lproj->getQgisPath() . '.legal.html');
+                // Read file beside QGIS project if existing
+                // This overrides previous presentation !!
+                $presentationSource = jFile::read( $lproj->getQgisPath() . '.presentation.html');
                 $dtpl = new jTpl();
                 $dassign = array(
-                    'presentation' => $presentation,
-                    'legal' => $legal
+                    'presentation' => $presentationSource
                 );
                 $dtpl->assign($dassign);
-                if( $presentation or $legal ){
-                    $projectDescription = $dtpl->fetch('application_metadata');
+                if( $presentationSource ){
+                    $presentation = $dtpl->fetch('presentation');
                 }
 
-                // Put dynamic content in WMSServiceTitle
-                // (not in abstract to avoid autoreplacement of line break with <br>
-                // The occtax.js Javascript will use this as a source to replace #metadata content
-                $wmsInfo['WMSServiceTitle'] = '<div id="occtax-metadata">'.$projectDescription.'</div>';
+                // Add presentation dock only if we have data
+                if(!empty($presentation)){
+                    $dock = new lizmapMapDockItem(
+                        'occtax-presentation',
+                        'Présentation',
+                        $presentation,
+                        2
+                    );
+                    $event->add($dock);
+                }
 
-                $metadataTpl->assign(array_merge(array(
-                    'repository'=>$repository,
-                    'project'=>$lproj->getKey(),
-                    'wmsGetCapabilitiesUrl' => $wmsGetCapabilitiesUrl
-                ), $wmsInfo));
-                $dock = new lizmapMapDockItem(
-                    'metadata',
-                    jLocale::get('view~map.metadata.link.label'),
-                    $metadataTpl->fetch('view~map_metadata'),
-                    2
+
+                // MENTIONS LEGALES
+                $legal = '';
+                $legalSource = jFile::read( $lproj->getQgisPath() . '.legal.html');
+                $dtpl = new jTpl();
+                $dassign = array(
+                    'legal' => $legalSource
                 );
-                $event->add($dock);
-
+                $dtpl->assign($dassign);
+                if( $legalSource ){
+                    $legal = $dtpl->fetch('mentions_legales');
+                }
+                if(!empty($legal)){
+                    $dock = new lizmapMapDockItem(
+                        'occtax-legal',
+                        'Mentions légales',
+                        $legal,
+                        2
+                    );
+                    $event->add($dock);
+                }
             }
         }
 

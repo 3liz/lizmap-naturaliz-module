@@ -1,0 +1,3 @@
+{if $presentation}
+    {$presentation}
+{/if}

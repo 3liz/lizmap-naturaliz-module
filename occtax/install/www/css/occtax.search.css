@@ -44,6 +44,7 @@
 Left Menu button
 */
 
+/* taxon */
 #mapmenu .nav-list > li.taxon .icon {
   background-image:url("img/navbar/occtax_navbar.png");
   background-position: -175px 0px;
@@ -54,20 +55,46 @@ Left Menu button
   background-position: -150px 0px;
 }
 
+/* occtax */
 #mapmenu .nav-list > li.occtax .icon {
   background-image:url("img/navbar/occtax_navbar.png");
-/*
-  background-position: -25px 0;
-*/
   background-position: -175px 0;
 }
 #mapmenu .nav-list > li.occtax.active .icon,
 #mapmenu .nav-list > li.occtax a:hover .icon {
   background-image:url("img/navbar/occtax_navbar.png");
-/*
-  background-position: -0px 0px;
-*/
   background-position: -150px 0px;
+}
+
+
+/* presentation */
+#mapmenu .nav-list > li.occtax-presentation .icon {
+  background-position: -125px 0;
+}
+#mapmenu .nav-list > li.occtax-presentation.active .icon,
+#mapmenu .nav-list > li.occtax-presentation a:hover .icon {
+  background-position: -100px 0px;
+}
+
+/* mentions légales */
+/*
+Left Menu button
+*/
+
+#mapmenu .nav-list > li.occtax-legal .icon {
+  background-image: url(img/navbar/src/legal-icon-white.png);
+}
+#mapmenu .nav-list > li.occtax-legal.active .icon,
+#mapmenu .nav-list > li.occtax-legal a:hover .icon {
+  background-image: url(img/navbar/src/legal-icon-dark.png);
+}
+
+#occtax-legal h3 .icon {
+    background-image: url(img/navbar/src/legal-icon-white.png);
+}
+#occtax-legal-content {
+    overflow: auto;
+    height: 100%;
 }
 
 
@@ -225,4 +252,37 @@ button#occtax-bottom-hide-detail{
   position:absolute;
   top:5px;
   right:5px;
+}
+
+
+
+/*
+New dock presentatin et mentions legales*/
+#occtax-presentation,
+#occtax-legal
+ {
+  background:transparent;
+  color: white;
+  padding: 7px;
+  font-size: 0.9em;
+}
+#occtax-presentation div,
+#occtax-legal div {
+  background:transparent;
+  font-size: 16px;
+}
+
+#occtax-presentation h2,
+#occtax-legal h2 {
+  font-size: 18px;
+  color: orange;
+}
+#occtax-presentation h3,
+#occtax-legal h3 {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+#occtax-presentation a,
+#occtax-legal a {
+  color: orange;
 }

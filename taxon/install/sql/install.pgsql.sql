@@ -260,8 +260,9 @@ fr, gf, mar, gua, sm, sb, spm, may, epa, reu, sa, ta, taaf, pf, nc, wf, cli, url
 FROM taxref_mnhn_et_local
 WHERE True
 AND cd_nom = cd_ref
-AND rang IN ('AGES','ES','SMES','MES','SSES','NAT','HYB','CVAR',
-'VAR','SVAR','FO','SSFO','FOES','LIN','CLO','CAR','RACE','MO','AB');
+AND rang IN ('FM', 'GN', 'AGES', 'ES', 'SSES', 'NAT', 'VAR', 'SVAR', 'FO', 'SSFO', 'RACE', 'CAR', 'AB');
+
+
 
 
 -- ALTER TABLE taxref_valide ADD PRIMARY KEY (cd_nom);
@@ -296,25 +297,27 @@ SELECT cd_nom::bigint, cd_ref::bigint, nom_valide AS val, nom_valide, 6::smallin
 group2_inpn, to_tsvector( unaccent(coalesce(nom_valide,'')) )::tsvector AS vec
 FROM taxref_mnhn_et_local
 WHERE cd_nom = cd_ref
-AND rang IN ('AGES','ES','SMES','MES','SSES','NAT','HYB',
-'CVAR','VAR','SVAR','FO','SSFO','FOES','LIN','CLO','CAR','RACE','MO','AB')
+AND rang IN ('FM', 'GN', 'AGES', 'ES', 'SSES', 'NAT', 'VAR', 'SVAR', 'FO', 'SSFO', 'RACE', 'CAR', 'AB')
+
+
 -- Noms vernaculaires
 UNION ALL
 SELECT cd_nom::bigint, cd_ref::bigint, nom_vern AS val, nom_valide, 4::smallint AS poids,
 group2_inpn, to_tsvector( unaccent(coalesce(nom_vern,'')) )::tsvector AS vec
 FROM taxref_mnhn_et_local
 WHERE cd_nom = cd_ref AND nom_vern IS NOT NULL AND nom_vern != ''
-AND rang IN ('AGES','ES','SMES','MES','SSES','NAT','HYB',
-'CVAR','VAR','SVAR','FO','SSFO','FOES','LIN','CLO','CAR','RACE','MO','AB')
+AND rang IN ('FM', 'GN', 'AGES', 'ES', 'SSES', 'NAT', 'VAR', 'SVAR', 'FO', 'SSFO', 'RACE', 'CAR', 'AB')
+
+
 -- Noms synonymes
 UNION ALL
 SELECT cd_nom::bigint, cd_ref::bigint, nom_complet AS val, nom_valide, 2::smallint,
 group2_inpn, to_tsvector( unaccent(coalesce(nom_complet,'')) )::tsvector AS vec
 FROM taxref_mnhn_et_local
 WHERE cd_nom != cd_ref
-AND rang IN ('AGES','ES','SMES','MES','SSES','NAT','HYB',
-'CVAR','VAR','SVAR','FO','SSFO','FOES','LIN','CLO','CAR','RACE','MO','AB')
+AND rang IN ('FM', 'GN', 'AGES', 'ES', 'SSES', 'NAT', 'VAR', 'SVAR', 'FO', 'SSFO', 'RACE', 'CAR', 'AB')
 ;
+
 
 COMMENT ON MATERIALIZED VIEW taxref_fts IS 'Stockage des informations de recherche plein texte basé sur les champs de la table taxref';
 COMMENT ON COLUMN taxref_fts.cd_nom IS 'Identifiant du taxon (cd_nom) en lien avec la table taxref';

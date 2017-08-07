@@ -1358,9 +1358,15 @@ OccTax.events.on({
       // Ajout du logo
       //$('#attribution-box').append('<img src="'+ jFormsJQ.config.basePath + 'css/img/logo_europe_mini.jpg" title="KaruNati est cofinancé par l’Union européenne. L’Europe s’engage en Guadeloupe avec le FEDER" />');
 
+      // Masquer le metadata
+      $('#mapmenu li.metadata').hide();
 
       // Déplacement des icônes Lizmap de la barre de menu de gauche
       moveLizmapMenuLi(occtaxClientConfig.menuOrder);
+
+
+      // Modification du mot "Rechercher"
+      $('#search-query').attr('placeholder', 'Rechercher un lieu');
 
       // Refresh datatable size when bottom dock changes
     lizMap.events.on({
