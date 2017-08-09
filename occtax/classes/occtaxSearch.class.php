@@ -464,7 +464,12 @@ class occtaxSearch {
                     $q = $this->queryFilters[$k];
                     // IF filter by uploaded geojson
                     if( $q['type'] == 'geom' ){
-                        $geoFilter= ', (SELECT ST_Transform( ST_GeomFromText(' . $cnx->quote($v) . ', 4326), '. $this->srid .') AS fgeom';
+                        $wktgeom = $v;
+                        if( preg_match('#\%#', $v) ){
+                            // On vient du WFS. Il faut decoder
+                            $wktgeom = urldecode($v);
+                        }
+                        $geoFilter= ', (SELECT ST_Transform( ST_GeomFromText(' . $cnx->quote($wktgeom) . ', 4326), '. $this->srid .') AS fgeom';
                         $geoFilter.= ' ) AS fg
 ';
                         $this->fromClause.= $geoFilter;

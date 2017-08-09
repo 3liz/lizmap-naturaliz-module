@@ -201,6 +201,7 @@ class wfsCtrl extends jController {
                 'outputformat' => 'XMLSCHEMA'
             )
         );
+
         $describeUrl = urlencode(jUrl::getFull('occtax~wfs:index', $params));
         $data = $this->search->getGML($describeUrl);
         $rep->content = $data;

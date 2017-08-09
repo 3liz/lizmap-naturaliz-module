@@ -90,12 +90,13 @@ observation_card_fields=cle_obs, identifiant_permanent, statut_observation, nom_
 ;observation_card_children=commune, departement, maille_02, maille, espace_naturel, masse_eau, habitat, attribut_additionnel
 observation_card_children=commune, departement, maille_02, maille, espace_naturel, masse_eau, habitat
 
-; liste blanche des champs à afficher dans la fiche d'observation
+; liste blanche des champs à exporter
 observation_exported_fields=cle_obs, identifiant_permanent, statut_observation, nom_cite, denombrement_min, denombrement_max, objet_denombrement, commentaire, date_debut, date_fin, date_determination, ds_publique, jdd_metadonnee_dee_id, organisme_gestionnaire_donnees, statut_source, sensi_niveau, observateur, determinateur, validateur, descriptif_sujet, validite_niveau, validite_date_validation, precision_geometrie
 
-; liste blanche des données filles à afficher
+; liste blanche des données filles à exporter
 ;observation_card_children=commune, departement, maille_02, maille, espace_naturel, masse_eau, habitat, attribut_additionnel
 observation_exported_children=commune, departement, maille_02, maille, espace_naturel, masse_eau, habitat
+
 
 ; ordre des items de menu Lizmap (barre de menu de gauche)
 menuOrder=home, occtax-presentation, switcher, occtax, dataviz, print, measure, permaLink, occtax-legal, taxon, metadata
