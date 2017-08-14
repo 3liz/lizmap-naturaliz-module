@@ -920,23 +920,28 @@ COST 100;
 
 
 -- Vues nécessaires pour la fonction d'impression
+DROP VIEW IF EXISTS sig.tpl_observation_maille;
 CREATE OR REPLACE VIEW sig.tpl_observation_maille AS
-SELECT id_maille AS mid, nom_maille AS maille, 10 AS nbobs, 3 AS nbtax, 410 AS rayon, 'red'::text AS color, ''::text AS geojson, ST_Centroid( geom ) AS geom FROM maille_02;
+SELECT id_maille AS mid, nom_maille AS maille, 10 AS nbobs, 3 AS nbtax, 410 AS rayon, 'red'::text AS color, ''::text AS geojson, ST_Centroid( geom )::geometry(POINT, {$SRID}) AS geom FROM sig.maille_02;
 
+DROP VIEW IF EXISTS sig.tpl_observation_brute_point;
 CREATE OR REPLACE VIEW sig.tpl_observation_brute_point AS
 SELECT 1::integer AS cle_obs, ''::text AS nom_cite, '1'::bigint AS cd_nom, '2015-01-01'::text AS date_debut, ''::text AS identite_observateur, 'GEO'::text AS source_objet, ''::text AS geojson,
-ST_Transform(ST_GeomFromText('POINT(55.46293 -21.014125)', 4326),{$SRID})::geometry(Point, {$SRID}) AS geom;
+(SELECT geom FROM occtax.observation ORDER BY random() LIMIT 1 )::geometry(Point, {$SRID}) AS geom;
 
+DROP VIEW IF EXISTS sig.tpl_observation_brute_linestring;
 CREATE OR REPLACE VIEW sig.tpl_observation_brute_linestring AS
 SELECT 1::integer AS cle_obs, ''::text AS nom_cite, '1'::bigint AS cd_nom, '2015-01-01'::text AS date_debut, ''::text AS identite_observateur, 'GEO'::text AS source_objet, ''::text AS geojson,
-ST_Transform(ST_GeomFromText('LINESTRING(55.46293 -21.014125, 55.462173 -21.014414, 55.462135 -21.014444)', 4326), {$SRID})::geometry(Linestring, {$SRID}) AS geom;
+(SELECT ST_ExteriorRing(ST_Buffer(geom, 1000)) AS geom FROM occtax.observation ORDER BY random() LIMIT 1)::geometry(Linestring, {$SRID}) AS geom;
 
+DROP VIEW IF EXISTS sig.tpl_observation_brute_polygon;
 CREATE OR REPLACE VIEW sig.tpl_observation_brute_polygon AS
 SELECT 1::integer AS cle_obs, ''::text AS nom_cite, '1'::bigint AS cd_nom, '2015-01-01'::text AS date_debut, ''::text AS identite_observateur, 'GEO'::text AS source_objet, ''::text AS geojson,
-ST_Transform(ST_GeomFromText('POLYGON((55.46293 -21.014125, 55.462173 -21.014414, 55.462135 -21.014444, 55.46293 -21.014125))', 4326),{$SRID})::geometry(Polygon, {$SRID}) AS geom;
+(SELECT ST_Buffer(geom, 1000) AS geom FROM occtax.observation ORDER BY random() LIMIT 1)::geometry(Polygon, {$SRID}) AS geom;
 
+DROP VIEW IF EXISTS sig.tpl_observation_brute_centroid;
 CREATE OR REPLACE VIEW sig.tpl_observation_brute_centroid AS
-SELECT 1::integer AS cle_obs, ''::text AS nom_cite, '1'::bigint AS cd_nom, '2015-01-01'::text AS date_debut, ''::text AS identite_observateur, 'GEO'::text AS source_objet, ''::text AS geojson, st_centroid(ST_GeomFromText('POINT(55.462135 -21.014444)', {$SRID}))::geometry(Point, {$SRID}) AS geom;
+SELECT 1::integer AS cle_obs, ''::text AS nom_cite, '1'::bigint AS cd_nom, '2015-01-01'::text AS date_debut, ''::text AS identite_observateur, 'GEO'::text AS source_objet, ''::text AS geojson, (SELECT geom FROM occtax.observation ORDER BY random() LIMIT 1)::geometry(Point, {$SRID}) AS geom;
 
 
 -- Fonction pour calculer la sensibilité des données

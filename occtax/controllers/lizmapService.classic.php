@@ -103,13 +103,6 @@ class lizmapServiceCtrl extends serviceCtrl {
         $ser = lizmap::getServices();
         $random = time();
 
-        // Set temporary project path
-        //$cacheRootDirectory = $ser->cacheRootDirectory;
-        //if(!is_writable($cacheRootDirectory) or !is_dir($cacheRootDirectory)){
-            //$cacheRootDirectory = sys_get_temp_dir();
-        //}
-        //$tempProjectPath = $cacheRootDirectory . '/' . $project . '_' . $token . '_' . $datatype .'_' . $random . '.qgs';
-
         // Store template project in same directory as original one to keep references to layers and media files
         $tempProjectPath = realpath($lrep->getPath()) . '/' . $project . '_' . $token . '_' . $datatype .'_' . $random . '.qgs';
 
@@ -253,41 +246,24 @@ class lizmapServiceCtrl extends serviceCtrl {
         if( $datatype == 'b' ) {
             $descriptionDrawLegend = false;
         }
-        $getSearchDescription = $occtaxSearch->getSearchDescription($descriptionFormat, $descriptionDrawLegend);
-        $getSearchDescription = '
+        $getSearchDescription = '';
+        $getSearchDescription.= '
         <style>
             div{
                 font-family: Serif;
-                font-size:0.12cm !important;
+                font-size: 0.6em !important;
             }
             table, td {
                 font-family: Serif;
-                font-size:0.11cm;
+                font-size:0.9em !important;
             }
-            </style>
-        <div>
-        ' . $getSearchDescription . '</div>';
+        </style>
+        ';
+        $getSearchDescription.= '<div>' . $occtaxSearch->getSearchDescription($descriptionFormat, $descriptionDrawLegend) . '</div>';
         $getSearchDescription = htmlspecialchars( $getSearchDescription );
         $newProjectContent = str_replace(
             'Pas de filtres actifs',
             $getSearchDescription,
-            $newProjectContent
-        );
-
-        // Replace logo
-        $logoUrl = jUrl::getFull(
-            'view~media:getMedia',
-            array(
-                'repository' => $repository,
-                'project' => $project,
-                'path' => 'media/logo_parc.png'
-            )
-        );
-        $logoUrl = str_replace( '&', '&amp;', $logoUrl );
-        $logoUrl = str_replace( '%2F', '/', $logoUrl );
-        $newProjectContent = str_replace(
-            './media/logo_parc.png',
-            $logoUrl,
             $newProjectContent
         );
 
@@ -310,14 +286,18 @@ class lizmapServiceCtrl extends serviceCtrl {
         $mapParam = $tempProjectPath;
         $this->params['map'] = $mapParam;
 
-        $this->params['layers'] = implode( ',', $displayLayers ) . "," . $this->params['layers'];
-        $this->params['map0:layers'] = implode( ',', $displayLayers ) . "," . $this->params['map0:layers'];
-
         // QGIS 2.18 expects layers in reversed order compared to 2.14
-        $reverseLayers = false;
-        if($reverseLayers){
-            $this->params['layers'] = implode( ',', array_reverse(explode(',', $this->params['layers']), true) );
-            $this->params['map0:layers'] = implode( ',', array_reverse(explode(',', $this->params['map0:layers']), true) );
+        // Do it only for added layers (it's already take into account in last point releases of Lizmap)
+        $lizservices = lizmap::getServices();
+        $qgisServerVersion = (integer)str_replace('.', '', $lizservices->qgisServerVersion);
+        if( $qgisServerVersion >= 218 ){
+            $displayLayers = array_reverse($displayLayers );
+            $this->params['layers'] = $this->params['layers'] . "," . implode( ',', $displayLayers );
+            $this->params['map0:layers'] = $this->params['map0:layers'] . "," . implode( ',', $displayLayers );
+        }
+        else{
+            $this->params['layers'] = implode( ',', $displayLayers ) . "," . $this->params['layers'];
+            $this->params['map0:layers'] = implode( ',', $displayLayers ) . "," . $this->params['map0:layers'];
         }
 
         $dynamic = $tempProjectPath;

@@ -8,31 +8,13 @@
   </layer-tree-group>
   <maplayers>
     <maplayer minimumScale="-4.65661e-10" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="0" scaleBasedLabelVisibilityFlag="0">
-      <extent>
-        <xmin>649878</xmin>
-        <ymin>1785015</ymin>
-        <xmax>649878</xmax>
-        <ymax>1785015</ymax>
-      </extent>
       <id>observation_brute_centroid</id>
-      <datasource>service='naturaliz' sslmode=disable key='cle_obs' table="( SELECT * FROM tpl_observation_brute_centroid
+      <datasource>service='naturaliz' sslmode=disable key='cle_obs' table="( SELECT * FROM sig.tpl_observation_brute_centroid
 )" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
       <layername>observation_brute_centroid</layername>
-      <srs>
-        <spatialrefsys>
-          <proj4>+proj=utm +zone=20 +datum=WGS84 +units=m +no_defs</proj4>
-          <srsid>3104</srsid>
-          <srid>32620</srid>
-          <authid>EPSG:32620</authid>
-          <description>WGS 84 / UTM zone 20N</description>
-          <projectionacronym>utm</projectionacronym>
-          <ellipsoidacronym>WGS84</ellipsoidacronym>
-          <geographicflag>false</geographicflag>
-        </spatialrefsys>
-      </srs>
       <provider encoding="System">postgres</provider>
       <previewExpression></previewExpression>
       <vectorjoins/>

@@ -8,31 +8,13 @@
   </layer-tree-group>
   <maplayers>
     <maplayer minimumScale="-4.65661e-10" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="0" scaleBasedLabelVisibilityFlag="0">
-      <extent>
-        <xmin>315000</xmin>
-        <ymin>7633000</ymin>
-        <xmax>381000</xmax>
-        <ymax>7691000</ymax>
-      </extent>
       <id>o20170424180456328285377022</id>
-      <datasource>service='naturaliz' sslmode=disable key='mid' table="(SELECT * FROM tpl_observation_maille
+      <datasource>service='naturaliz' sslmode=disable key='mid' table="(SELECT * FROM sig.tpl_observation_maille
 )" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
       <layername>observation_maille</layername>
-      <srs>
-        <spatialrefsys>
-          <proj4>+proj=utm +zone=40 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>942</srsid>
-          <srid>2975</srid>
-          <authid>EPSG:2975</authid>
-          <description>RGR92 / UTM zone 40S</description>
-          <projectionacronym>utm</projectionacronym>
-          <ellipsoidacronym>GRS80</ellipsoidacronym>
-          <geographicflag>false</geographicflag>
-        </spatialrefsys>
-      </srs>
       <provider encoding="System">postgres</provider>
       <previewExpression>COALESCE( "mid", '&lt;NULL>' )</previewExpression>
       <vectorjoins/>

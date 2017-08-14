@@ -48,6 +48,23 @@ Quatre exemples sont proposés dans les sources de naturaliz. On peut les ouvrir
 
 #### Impression
 
+
+L'impression se base sur la fonctionnalité de QGIS, à travers un composeur d'impression. Vous devez donc créer un nouveau composeur, et aussi ajouter certaines couches pour la visualisation du résultat des requêtes.
+
+##### Créer un composeur d'impression
+
+L'impression se base sur un **modèle de composeur** qui comporte certaines spécificités. Vous pouvez ajouter à votre projet QGIS un composeur d'impression à partir du modèle `composeur_impression.qpt` situé dans le répertoire `naturaliz/occtax/install/`, via le menu `Projet / Gestionnaire de composeurs`.
+
+Une fois le composeur créé vous pouvez adapter:
+* Le logo utilisé: vous devez absolument utiliser un logo situé dans le répertoire `media` situé à côté du projet QGIS
+* Le titre : configurer le contenu textuel pour ce titre
+
+Le bloc texte avec la mention "Pas de filtres actifs" **ne doit pas être modifié**, car il sera rempli automatiquement par l'application (avec la légende et les critères de recherche).
+
+En page 2, le tableau de données **ne doit pas être modifié**. En effet il sera configuré de manière automatique par l'application.
+
+##### Couches pour afficher les résultats des requêtes
+
 Certaines couches doivent être ajoutées pour permettre à l'application d'imprimer les résultats de requête visibles sur l'application Web. En effet, ces résultats, visibles sur le navigateur, ne sont pas dans des couches du projet QGIS, et QGIS ne peut donc pas normalement imprimer ces données.
 
 Pour cela, il faut ajouter 4 couches pour gérer les différents types de résultats (mailles ou données brutes), et gérer les différents types de géométrie (point, lignes, polygones), et leur donner un style adéquat. Dans les sources de l'application, vous pouvez trouver des fichiers QLR qui répondent à ce besoin (voir le répertoire `naturaliz/occtax/install/print` )
@@ -58,16 +75,66 @@ Pour cela, il faut ajouter 4 couches pour gérer les différents types de résul
 * observation_brute_polygon
 * observation_maille
 
-Ces couches peuvent être ajoutées dans un groupe nommé **Hidden**, à la racine de l'arbre des couches du projet QGIS, pour être exploitables mais non visibles dans l'application web.
+Ces couches peuvent être ajoutées dans un groupe nommé **Hidden**, à la racine de l'arbre des couches du projet QGIS, pour être exploitables mais non visibles dans l'application web. Par contre, il faut **absolument** que ce groupe soit placé au-dessus des autres couches dans la légende (pour qu'elles soient visibles à l'impression).
 
-Pour qu'elles fonctionnent, il faut utiliser une connexion PostgreSQL vers la base à l'aide d'un **service PostgreSQL**, nommé **naturaliz**
+Après avoir ajouté ces couches, il faut **absolument spécifier leur système de projection** (par exemple : EPSG:2975). Vous pouvez pour cela par exemple faire un clic-droit sur le groupe qui les contient, et choisir `Définir le SCR du groupe`.
+
+Pour qu'elles fonctionnent, il faut utiliser une connexion PostgreSQL vers la base à l'aide d'un **service PostgreSQL**, nommé **naturaliz**, et que l'utilisateur configuré dans ce service ait bien accès aux vues du schéma sig.
 
 Voir l'aide de QGIS sur les services :
 * Côté bureautique : https://docs.qgis.org/2.18/en/docs/user_manual/working_with_vector/supported_data.html#service-connection-file
 * Côté serveur : http://docs.qgis.org/testing/en/docs/user_manual/working_with_ogc/ogc_server_support.html#connection-to-service-file
 
 
+## Import de données
 
+Lors de l'installation, une structure de données conforme au standard "Occurences de taxon" a été créée dans la base de données. Pour pouvoir exploiter l'application, il faut importer des données d'observations.
+
+## Jeux de données
+
+todo: expliquer la notion et les tables utilisées
+
+### Gestion de la validité des données
+
+Validite niveau et date -> expliquer grand public limité via localconfig et loggués limités via demande
+
+### Gestion de la sensibilité des données
+
+Sensibilité -> montrer requete pour faire un update des champs de sensibilité à partir de critères
+Voir fonction https://projects.3liz.org/clients/naturaliz-reunion/issues/48
+
+
+## Gestion des personnes (observateurs)
+
+## Gestion de la localisation spatiale
+
+### Identifiants permanents
+
+décrire la table lien identifiant permanent
+
+DONNEES SOURCES
+id  observateurs    x
+1   bob 1
+2   martin  2
+
+OCCTAX.OBSERVATION
+cle_obs identifiant_permanent   identifiant_origine
+34  AABB-CCERER 1
+45  FFGSDSGF-HHFDH  2
+
+lien_observation_identifiant_permanent
+jdd_id  identifiant_origine identifiant_permanent
+pnrun   1   AABB-CCERER
+pnrun   2   FFGSDSGF-HHFDH
+
+
+Quand on supprime toutes les données d'un JDD avant réimport
+* on crée un identifiant_permanent seulement pour celles qui n'en ont pas (on se base sur l'id du jdd source comme identifiant_origine et sur la table lien_observation_identifiant_permanent )
+* toutes les données du jeu source déjà importée, qui avaient été modifiée entre 2 imports, vont bien être réimportées avec leurs données à jour
+* on modifie le cle_obs de notre bdd, et donc si c'est utilisé par d'autre bdd (qui importent nos données) alors elles peuvent perdre le lien ! Ces bdd de destination doivent donc se baser sur l'identifiant_permanent et le champ `cle_obs` (qui rentre dans leur identifiant d'origine) pour faire la correspondance. Notre champ `identifiant_permanent` est donc enregistré dans leur champ `identifiant_origine` (pour les données provenant de notre bdd dans leur bdd)
+
+
+On peut créer autant de jdd, que d'année, par exemple, pour éviter la suppression de toutes les données qui étaient dans la base de données.
 
 
 ## Module Taxon
@@ -84,17 +151,6 @@ Module de gestion des données au format Occurence de Taxon
 ### Gestion des listes rouges et des espèces protégées
 
 
-### Import des données d'observation
-
-
-### Gestion de la validité des données
-
-Validite niveau et date -> expliquer grand public limité via localconfig et loggués limités via demande
-
-### Gestion de la sensibilité des données
-
-Sensibilité -> montrer requete pour faire un update des champs de sensibilité à partir de critères
-Voir fonction https://projects.3liz.org/clients/naturaliz-reunion/issues/48
 
 
 ## Module Gestion
@@ -123,6 +179,10 @@ php lizmap/scripts/script.php occtax~export:dee -output /tmp/donnees_dee.xml
 ```
 
 
+
+
+
+
 ## Module Mascarine
 
 Module de saisie d'observation floristiques en suivant les bordereaux d'inventaire conçus par le Conservatoire Botanique National de Mascarin (CBN-CBIE Mascarine, La Réunion)
@@ -136,4 +196,8 @@ Une fois validée, les observations de Mascarine peuvent être automatiquement e
 ```
 SELECT mascarine.export_validated_mascarine_observation_into_occtax(o.id_obs) FROM mascarine.m_observation o WHERE validee_obs = 1 AND blablalba;
 ```
+
+
+
+## TODO
 
