@@ -328,7 +328,7 @@ class lizmapServiceCtrl extends serviceCtrl {
     curl_close($ch);
 
     // Delete temp file
-    //unlink($tempProjectPath);
+    unlink($tempProjectPath);
 
     $rep = $this->getResponse('binary');
     $rep->mimeType = $mime;
