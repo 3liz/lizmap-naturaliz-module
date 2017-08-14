@@ -139,7 +139,47 @@ On peut créer autant de jdd, que d'année, par exemple, pour éviter la suppres
 
 ## Module Taxon
 
-Module de gestion des données TAXREF
+### Structure du schéma taxon
+
+Le schéma taxon de la base de données comporte des tables, vues et fonctions qui permettent à l'application de fonctionner (stockage des cd_nom et cd_ref pour les observations, recherche de taxons par critères, recherche plein texte pour trouver une espèce, etc.).
+
+Nous décrivons certaines tables, vues et fonctions.
+
+#### taxref_valide
+
+Vue matérialisée pour récupérer uniquement les taxons valides (cd_nom = cd_ref) dans la table taxref et dans la table taxref_local.
+
+Elle fait une union entre les 2 tables source et ne conserve que les taxons des rangs FM, GN, AGES, ES, SSES, NAT, VAR, SVAR, FO, SSFO, RACE, CAR, AB.
+
+Elle doit être rafraîchie dès qu'on réalise un import dans une ou l'autre des tables sources: `REFRESH MATERIALIZED VIEW taxref_valide;`
+
+#### taxref_consolide
+
+Vue matérialisée pour gérer l'association des données du TAXREF (taxref) et des taxons locaux (taxref_local) avec les données complémentaires sur les statuts, la protection, les menaces (t_complement).
+
+Seuls les taxons valides sont présents dans cette table (car elle dépend de la vue matérialisée taxref_valide )
+
+Elle est principalement utilisée pour récupérer les cd_ref des sous-ensembles de taxons à filtrer lorsqu'on chercher des observations. Par exemple, voici une sous-requête pour trouver les observations avec des taxons en danger (o est l'alias de la table occtax.observation):
+
+```
+AND o.cd_ref IN (SELECT cd_ref FROM taxon.taxref_consolide WHERE "menace" = 'EN'  )
+```
+
+C'est une vue matérialisée, c'est-à-dire une vue qui se comporte comme une table, et qu'on doit mettre à jour suite à un import de taxons (dans taxref ou taxref_local), ou suite à la mise à jour de taxref_valide, via `REFRESH MATERIALIZED VIEW taxref_consolide;`
+
+#### taxref_fts
+
+Vue matérialisée pour le stockage des informations de recherche plein texte visible dans l'application naturaliz.
+
+Cette vue se base sur une UNION des taxons, valides ou non, des tables taxref et taxref_local. On n'a gardé que les taxons des rangs FM, GN, AGES, ES, SSES, NAT, VAR, SVAR, FO, SSFO, RACE, CAR, AB
+
+Un champ poids permet de prioriser la recherche dans cet ordre, avec les poids respectifs 6, 4 et 2:
+* noms (nom_valide) des taxons valides (cd_nom = cd_ref)
+* noms vernaculaires (nom_vern) des taxons valides (cd_nom = cd_ref)
+* noms (nom_complet) des taxons synonymes (cd_nom != cd_ref)
+
+Cette vue doit être rafraîchie dès qu'on modifie les données dans les tables taxref et/ou taxref_local: `REFRESH MATERIALIZED VIEW taxref_fts`
+
 
 
 
