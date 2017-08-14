@@ -98,7 +98,7 @@ COMMENT ON COLUMN taxref.url IS 'Permalien INPN = ‘http://inpn.mnhn.fr/espece/
 -- Table pour stocker des informations sur les bdd de taxon locales
 CREATE TABLE taxref_local_source (
   id serial PRIMARY KEY,
-  code text NOT NULL,
+  code text UNIQUE NOT NULL,
   titre text NOT NULL,
   description text,
   info_url text NOT NULL,
@@ -106,7 +106,7 @@ CREATE TABLE taxref_local_source (
 );
 COMMENT ON TABLE taxref_local_source IS 'Stockage des informations sur les sources de données des taxons';
 COMMENT ON COLUMN taxref_local_source.id IS 'Identifiant automatique';
-COMMENT ON COLUMN taxref_local_source.code IS 'Code court de la base de données. Par exemple: CBNM';
+COMMENT ON COLUMN taxref_local_source.code IS 'Code court de la base de données. Par exemple: CBNM. Doit être unique'.;
 COMMENT ON COLUMN taxref_local_source.titre IS 'Titre de la base de données. Par exemple: Index de la flore vasculaire de La Réunion';
 COMMENT ON COLUMN taxref_local_source.description IS 'Description de la base de données. Optionnelle';
 COMMENT ON COLUMN taxref_local_source.info_url IS 'URL vers une page décrivant la base de données source. Ex: http://mascarine.cbnm.org/';
@@ -221,17 +221,17 @@ CREATE INDEX ON taxref_local (habitat);
 
 
 -- Colonnes pour stocker les informations spécifiques pour taxref_local
-ALTER TABLE taxref_local ADD COLUMN local_bdd_id integer NOT NULL;
+ALTER TABLE taxref_local ADD COLUMN local_bdd_code text NOT NULL;
 ALTER TABLE taxref_local ADD COLUMN local_identifiant_origine text NOT NULL;
 ALTER TABLE taxref_local ADD COLUMN local_identifiant_origine_ref text;
-COMMENT ON COLUMN taxref_local.local_bdd_id IS 'Base de données source. Ce champ est une clé étrangère liée à la table taxref_local_source';
+COMMENT ON COLUMN taxref_local.local_bdd_code IS 'Base de données source. Ce champ est une clé étrangère liée à la table taxref_local_source, vers le champ code';
 COMMENT ON COLUMN taxref_local.local_identifiant_origine IS 'Identifiant du taxon (équivalent cd_nom) dans la base de données d''origine.';
 COMMENT ON COLUMN taxref_local.local_identifiant_origine_ref IS 'Identifiant du taxon de référence (équivalent cd_ref) dans la base de données d''origine.';
 
 ALTER TABLE taxref_local
-ADD CONSTRAINT taxref_local_bdd_id FOREIGN KEY (local_bdd_id)
-REFERENCES taxref_local_source (id) MATCH SIMPLE
-ON UPDATE RESTRICT ON DELETE RESTRICT
+ADD CONSTRAINT taxref_local_bdd_code FOREIGN KEY (local_bdd_code)
+REFERENCES taxref_local_source (code) MATCH SIMPLE
+ON UPDATE CASCADE ON DELETE RESTRICT
 ;
 
 
