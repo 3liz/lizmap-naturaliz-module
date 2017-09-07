@@ -994,32 +994,38 @@ CREATE MATERIALIZED VIEW observation_diffusion AS
 SELECT
 o.cle_obs,
 CASE
-    WHEN sensi_niveau = '0' --non sensible : précision maximale, sauf si diffusion_niveau_precision est NOT NULL ou != 5
-        THEN
+    --non sensible : précision maximale, sauf si diffusion_niveau_precision est NOT NULL ou != 5
+    WHEN sensi_niveau = '0' THEN
         CASE
-            WHEN diffusion_niveau_precision = '0' -- tout sauf geom
-                THEN '["d", "m10", "e", "c", "z"]'::jsonb
-            WHEN diffusion_niveau_precision = '1' -- commune
-                THEN '["c"]'::jsonb
-            WHEN diffusion_niveau_precision = '2' -- maille 10
-                THEN '["m10"]'::jsonb
-            WHEN diffusion_niveau_precision = '3' -- département
-                THEN '["d"]'::jsonb
-            WHEN diffusion_niveau_precision = '4' -- non diffusé
-                THEN NULL
-            WHEN diffusion_niveau_precision = '5' -- diffusion telle quelle. Si donnée existe, on fourni
-                THEN '["g", "d", "m10", "e", "c", "z"]'::jsonb
-            ELSE '["g", "d", "m10", "e", "c", "z"]'::jsonb
+            WHEN o.ds_publique IN ('Ac', 'Pu', 'Re') THEN '["g", "d", "m10", "e", "c", "z"]'::jsonb
+            ELSE
+                CASE
+                    -- tout sauf geom
+                    WHEN diffusion_niveau_precision = '0' THEN '["d", "m10", "e", "c", "z"]'::jsonb
+                    -- commune et département
+                    WHEN diffusion_niveau_precision = '1' THEN '["d", "c"]'::jsonb
+                    -- maille 10 et département
+                    WHEN diffusion_niveau_precision = '2' THEN '["d", "m10"]'::jsonb
+                    -- département
+                    WHEN diffusion_niveau_precision = '3'  THEN '["d"]'::jsonb
+                    -- non diffusé
+                    WHEN diffusion_niveau_precision = '4' THEN NULL::jsonb
+                    -- diffusion telle quelle. Si donnée existe, on fourni
+                    WHEN diffusion_niveau_precision = '5'  THEN '["g", "d", "m10", "e", "c", "z"]'::jsonb
+                    ELSE '["g", "d", "m10", "e", "c", "z"]'::jsonb
+                END
         END
-    WHEN sensi_niveau = '1' -- tout sauf geom : département, maille 10, espace naturel, commune, znieff
-        THEN '["d", "m10", "e", "c", "z"]'::jsonb
-    WHEN sensi_niveau = '2' -- département, maille 10
-        THEN '["d", "m10"]'::jsonb
-    WHEN sensi_niveau = '3' -- département
-        THEN '["d"]'::jsonb
-    WHEN sensi_niveau = '4' -- non diffusé
-        THEN NULL
-    ELSE NULL
+    -- 1 = tout sauf geom : département, maille 10, espace naturel, commune, znieff
+    WHEN sensi_niveau = '1' THEN '["d", "m10", "e", "c", "z"]'::jsonb
+    -- 2 = département, maille 10
+    WHEN sensi_niveau = '2' THEN '["d", "m10"]'::jsonb
+    -- 3 = département
+    WHEN sensi_niveau = '3' THEN '["d"]'::jsonb
+    -- 4 = non diffusé
+    WHEN sensi_niveau = '4' THEN NULL::jsonb
+
+    -- aucune valeur
+    ELSE NULL::jsonb
 END as diffusion
 
 FROM occtax.observation o
