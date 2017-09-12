@@ -119,6 +119,11 @@ lizMap.events.on({
           });
       }
 
+      if ( 'qgisServerVersion' in config.options && config.options.qgisServerVersion != '2.14' ) {
+        printLayers.reverse();
+        styleLayers.reverse();
+      }
+
       url += '&'+dragCtrl.layout.mapId+':LAYERS='+printLayers.join(',');
       url += '&'+dragCtrl.layout.mapId+':STYLES='+styleLayers.join(',');
 
