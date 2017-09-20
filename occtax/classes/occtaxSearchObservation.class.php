@@ -84,7 +84,7 @@ class occtaxSearchObservation extends occtaxSearch {
             'join' => ' JOIN ',
             'joinClause' => " ON pobs.cle_obs = o.cle_obs ",
             'returnFields' => array(
-                "string_agg(pobs.identite, ', ') AS identite_observateur" => 'identite_observateur'
+                "string_agg(DISTINCT pobs.identite, ', ') AS identite_observateur" => 'identite_observateur'
             )
         ),
 
