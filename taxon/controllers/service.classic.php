@@ -60,7 +60,12 @@ class serviceCtrl extends jController {
 
         // Add field depending on given "group" value
         $dao_group = jDao::get('taxon~t_group_categorie');
-        $groups = $dao_group->getGroupsInpn( $form->getData( 'group' ) );
+        $fgroup = $form->getData( 'group' );
+        if(is_array($fgroup)){
+            $groups = $dao_group->getGroupsInpnFromTable( $fgroup );
+        }else{
+            $groups = $dao_group->getGroupsInpn( $fgroup );
+        }
         $gr1 = array();
         $gr2 = array();
         foreach( $groups as $group ){
@@ -69,6 +74,7 @@ class serviceCtrl extends jController {
             else
                 $gr2[] = $group->groupe_nom;
         }
+
         if( count( $gr1 ) > 0 ){
             $ctrl = new jFormsControlHidden( 'group1_inpn' );
             $form->addControl( $ctrl );

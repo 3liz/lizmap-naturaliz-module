@@ -213,7 +213,7 @@ class taxonSearch {
         $this->id = $id;
         $this->params = $params;
 
-        // Set dao
+        // Set dao : taxon~taxref = taxref_consolide + t_group_categorie (1) + t_group_categorie (2)
         $this->dao = jDao::get( 'taxon~taxref' );
 
         // Get parameters from cache if no parameters given
@@ -257,7 +257,16 @@ class taxonSearch {
         $qf = $this->queryFilters;
         foreach( $this->params as $k=>$v ){
             if( array_key_exists( $k, $qf ) and $v ){
-                $filters[$k] = $this->getValueLabel($k, $v);
+                if(is_array($v)){
+                    $fa = array();
+                    foreach($v as $vv){
+                        $fa[] = $this->getValueLabel($k, $vv);
+                    }
+                    $filters[$k] = implode( ', ', $fa );;
+                }
+                else{
+                    $filters[$k] = $this->getValueLabel($k, $v);
+                }
             }
         }
         $tpl->assign('filters', $filters);
@@ -346,22 +355,51 @@ class taxonSearch {
     * and set the object property
     */
     function setConditions() {
-        $conditions = jDao::createConditions();
-        $this->conditions = $conditions;
+        $this->conditions = jDao::createConditions();
 
         // Filter via form params
         if( $this->params ){
-            $cnx = jDb::getConnection();
             // Add filter
+            // On devrait ajouter un group OR via conditions->startGroup('OR')
+            // pour group1_inpn et group2_inpn
+            // mais cela vide $conditions (bug)
+            // conséquence : si on fait un filtre sur champi et sur coraux, pas de réponse car AND
+            // "taxref"."group1_inpn" IN ('Ascomycètes','Basidiomycètes') AND "taxref"."group2_inpn" IN ('Octocoralliaires','Scléractiniaires')
+
             foreach( $this->params as $k=>$v ){
+                // Do it only if the parameter is in queryFields
                 if( in_array( $k, $this->queryFields ) and $v ) {
-                    $this->conditions->addCondition( $k, '=', $v);
+                    $this->setConditionForParam($k, $v);
                 }
             }
         }
     }
 
+    /**
+     * Adds a condition in $this->conditions
+     * foreach parameter
+     * */
+    function setConditionForParam($k, $v){
+
+        // If the parameter value is an array, handle it
+        if(is_array( $v )){
+            if(count($v) == 1 and !empty($v[0])){
+                $this->conditions->addCondition( $k, '=', $v[0]);
+            }
+            if(count($v) > 1){
+                //$aval = array_map( function($item){$cnx = jDb::getConnection();return $cnx->quote(trim($item));}, $v );
+                // on ne le fait pas car jelix le fait. Il suffit de lui passer un tableau, et il fait le quote dans la construction de la requête
+                $this->conditions->addCondition( $k, 'IN', $v);
+            }
+        }
+        // the parameter is a simple value
+        else{
+            $this->conditions->addCondition( $k, '=', $v);
+        }
+    }
+
     function getConditions(){
+//jLog::log(json_encode($this->conditions));
         return $this->conditions;
     }
 

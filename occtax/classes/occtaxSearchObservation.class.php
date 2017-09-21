@@ -313,22 +313,28 @@ class occtaxSearchObservation extends occtaxSearch {
                 $tsFields = $taxonSearch->getFields();
 
                 $conditions = $taxonSearch->getConditions();
+
                 $tsql = array();
                 foreach($conditions->condition->conditions as $condition){
                     $csql = '"' . $condition['field_id'];
                     $csql.= '" ' . $condition['operator'];
+
                     $value = $condition['value'];
                     if(is_array($value)){
                         $values = array_map( function($item){return $this->myquote($item);}, $value );
+                        // on doit faire le quote ici car on ne passe pas par jelix pour construire le sql
                         $csql.= ' ( ' . implode(',', $values)  .' ) ';
                     }else{
-                        if($condition['operator'] == 'IN')
+                        if($condition['operator'] == 'IN'){
                             $csql.= ' ( ';
+                        }
                         $csql.= ' ' . $this->myquote($value) . ' ';
-                        if($condition['operator'] == 'IN')
+                        if($condition['operator'] == 'IN'){
                             $csql.= ' ) ';
+                        }
                     }
                     $tsql[] = $csql;
+
                 }
                 if( count($tsql) > 0 ){
                     $taxonSql = " AND o.cd_ref IN (SELECT cd_ref FROM taxon.taxref_consolide WHERE ";

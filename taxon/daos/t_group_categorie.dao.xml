@@ -33,6 +33,12 @@
                 <eq property="cat_nom" expr="$cat_nom"/>
             </conditions>
         </method>
+        <method name="getGroupsInpnFromTable" type="select">
+            <parameter name="cat_nom"/>
+            <conditions logic="and">
+                <in property="cat_nom" expr="$cat_nom"/>
+            </conditions>
+        </method>
         <method name="getGroupsInpnByRegne" type="select">
             <parameter name="cat_nom"/>
             <parameter name="regne"/>

@@ -25,13 +25,15 @@ class gestionFilterListener extends jEventListener{
 
             // First build occtax search with demande params
             $dparams = array();
-            if($demande->cd_ref)
+            if($demande->cd_ref){
                 $dparams['cd_nom'] = explode( ',', trim($demande->cd_ref, '{}') );
-            if($demande->group1_inpn)
+            }
+            if($demande->group1_inpn){
                 $dparams['group1_inpn'] = explode( ',', trim($demande->group1_inpn, '{}') );
-            if($demande->group2_inpn)
+            }
+            if($demande->group2_inpn){
                 $dparams['group2_inpn'] = explode( ',', trim($demande->group2_inpn, '{}') );
-
+            }
             jClasses::inc('occtax~occtaxSearchObservation');
             $dsearch = new occtaxSearchObservation( null, $dparams, 1 );
             $sql_demande[] = preg_replace(

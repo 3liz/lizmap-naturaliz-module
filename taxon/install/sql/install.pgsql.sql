@@ -106,7 +106,7 @@ CREATE TABLE taxref_local_source (
 );
 COMMENT ON TABLE taxref_local_source IS 'Stockage des informations sur les sources de données des taxons';
 COMMENT ON COLUMN taxref_local_source.id IS 'Identifiant automatique';
-COMMENT ON COLUMN taxref_local_source.code IS 'Code court de la base de données. Par exemple: CBNM. Doit être unique'.;
+COMMENT ON COLUMN taxref_local_source.code IS 'Code court de la base de données. Par exemple: CBNM. Doit être unique';
 COMMENT ON COLUMN taxref_local_source.titre IS 'Titre de la base de données. Par exemple: Index de la flore vasculaire de La Réunion';
 COMMENT ON COLUMN taxref_local_source.description IS 'Description de la base de données. Optionnelle';
 COMMENT ON COLUMN taxref_local_source.info_url IS 'URL vers une page décrivant la base de données source. Ex: http://mascarine.cbnm.org/';
