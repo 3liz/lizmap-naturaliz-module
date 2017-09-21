@@ -20,14 +20,15 @@ Pendant le processus d'installation de l'application, l'utilisateur PostGreSQL s
 
 ### Récupérer les modules
 
-Vous pouvez le faire via l'outil git, en se connectant avec vos identifiants de la plateforme git (Gitlab ou Github). Ou bien vous rendre sur la plateforme, et télécharger au format ZIP, puis coller le ZIP dans le répertoire /tmp/ et dézipper.
+Vous pouvez le faire via l'outil git, en se connectant avec vos identifiants de la plateforme git (Gitlab ou Github). Ou bien vous rendre sur la plateforme, et télécharger au format ZIP, puis coller le ZIP dans le répertoire /root/ et dézipper.
 
 Dans l'exemple suivant, nous utilisons la plateforme Gitlab de 3liz, avec accès https: https://projects.3liz.org/clients/naturaliz-reunion.git
 
 ```
-cd /tmp/
+cd /root/
 git clone https://projects.3liz.org/clients/naturaliz-reunion.git naturaliz
-cp -R /tmp/naturaliz/* /srv/lizmap_web_client/lizmap/lizmap-modules/
+# copier les modules dans le répertoire lizmap-modules de lizmap
+cp -R /root/naturaliz/* /srv/lizmap_web_client/lizmap/lizmap-modules/
 ls -lh /srv/lizmap_web_client/lizmap/lizmap-modules/
 ```
 
@@ -139,11 +140,11 @@ observation_card_fields=cle_obs, identifiant_permanent, statut_observation, nom_
 ;observation_card_children=commune, departement, maille_02, maille, espace_naturel, masse_eau, habitat, attribut_additionnel
 observation_card_children=commune, departement, maille_02, maille, espace_naturel, masse_eau, habitat
 
-; liste blanche des champs à afficher dans la fiche d'observation
+; liste blanche des champs à exporter dans la fiche d'observation
 observation_exported_fields=cle_obs, identifiant_permanent, statut_observation, nom_cite, denombrement_min, denombrement_max, objet_denombrement, commentaire, date_debut, date_fin, date_determination, ds_publique, jdd_metadonnee_dee_id, organisme_gestionnaire_donnees, statut_source, sensi_niveau, observateur, determinateur, validateur, descriptif_sujet, validite_niveau, validite_date_validation, precision_geometrie
 
-; liste blanche des données filles à afficher
-;observation_card_children=commune, departement, maille_02, maille, espace_naturel, masse_eau, habitat, attribut_additionnel
+; liste blanche des données filles à exporter
+;observation_exported_children=commune, departement, maille_02, maille, espace_naturel, masse_eau, habitat, attribut_additionnel
 observation_exported_children=commune, departement, maille_02, maille, espace_naturel, masse_eau, habitat
 
 ; ordre des items de menu Lizmap (barre de menu de gauche)
@@ -289,7 +290,7 @@ Une fois les données récupérées, vous pouvez l'import de données via la com
 
 ```
 cd /srv/lizmap_web_client/
-php lizmap/scripts/script.php taxon~import:taxref -source /tmp/referentiels/taxref/10/TAXREFv10.0.txt -menace /tmp/referentiels/menaces/LR_Resultats_Réunion_export_.csv -protection /tmp/referentiels/protection/ESPECES_REGLEMENTEES_10/PROTECTION_ESPECES_10.csv -version 10
+php lizmap/scripts/script.php taxon~import:taxref -source /root/referentiels/taxref/10/TAXREFv10.0.txt -menace /root/referentiels/menaces/LR_Resultats_Réunion_export_.csv -protection /root/referentiels/protection/ESPECES_REGLEMENTEES_10/PROTECTION_ESPECES_10.csv -version 10
 ```
 
 Le premier paramètre passé est le chemin complet vers le fichier CSV contenant les données. Le 2ème est le chemin vers le fichier des menaces (taxons sur listes rouges, filtré pour la région concernée).Le 3ème est le fichier contenant les taxon protégés. Vous pouvez pointer vers d'autres chemins de fichiers, et le script se chargera de copier les données dans le répertoire temporaire puis lancera l'import.
@@ -364,10 +365,10 @@ apt-get install gdal-bin
 # Vous devez spécifier le chemin complet vers les fichiers : communes, mailles 1x1km, mailles 2x2km et optionnellement les réserves et les habitats
 
 # Exemple 1/ Guadeloupe
-php lizmap/scripts/script.php occtax~import:shapefile -commune "/tmp/sig/COMMUNE.SHP" -maille_01 "/tmp/sig/grille_1000m_gwada_dep_ama_poly.shp" -maille_02 "/tmp/sig/grille_2000m_gwada_dep_ama_poly.shp" -maille_05 "/tmp/sig/grille_5000.shp" -maille_10 "/tmp/sig/grille_10000m" -reserves_naturelles_nationales "/tmp/sig/glp_rnn2012.shp" -habref "/tmp/csv/HABREF_20/HABREF_20.csv" -habitat_mer "/tmp/csv/habitats/TYPO_ANT_MER_09-01-2011.xls" -habitat_terre "/tmp/csv/habitats/EAR_Guadeloupe.csv" -commune_annee_ref "2013" -departement_annee_ref "2013" -maille_01_version_ref "2015" -maille_01_nom_ref "Grille nationale (1km x 1km) Réunion" -maille_02_version_ref "2015" -maille_02_nom_ref "Grille nationale (2km x 2km) Réunion" -maille_05_version_ref "2015" -maille_05_nom_ref "Grille nationale (5km x 5km) Réunion" -maille_10_version_ref "2012" -maille_10_nom_ref "Grille nationale (10km x 10km) Réunion" -rnn_version_en "2010"
+php lizmap/scripts/script.php occtax~import:shapefile -commune "/root/sig/COMMUNE.SHP" -maille_01 "/root/sig/grille_1000m_gwada_dep_ama_poly.shp" -maille_02 "/root/sig/grille_2000m_gwada_dep_ama_poly.shp" -maille_05 "/root/sig/grille_5000.shp" -maille_10 "/root/sig/grille_10000m" -reserves_naturelles_nationales "/root/sig/glp_rnn2012.shp" -habref "/root/csv/HABREF_20/HABREF_20.csv" -habitat_mer "/root/csv/habitats/TYPO_ANT_MER_09-01-2011.xls" -habitat_terre "/root/csv/habitats/EAR_Guadeloupe.csv" -commune_annee_ref "2013" -departement_annee_ref "2013" -maille_01_version_ref "2015" -maille_01_nom_ref "Grille nationale (1km x 1km) Réunion" -maille_02_version_ref "2015" -maille_02_nom_ref "Grille nationale (2km x 2km) Réunion" -maille_05_version_ref "2015" -maille_05_nom_ref "Grille nationale (5km x 5km) Réunion" -maille_10_version_ref "2012" -maille_10_nom_ref "Grille nationale (10km x 10km) Réunion" -rnn_version_en "2010"
 
 # Exemple 2/ La Réunion
-php lizmap/scripts/script.php occtax~import:shapefile -commune "/tmp/referentiels/sig/COMMUNE.SHP" -maille_01 "/tmp/referentiels/sig/REU_UTM40S1X1.shp" -maille_02 "/tmp/referentiels/sig/REU_UTM40S2X2.shp" -maille_05 "/tmp/referentiels/sig/REU_UTM40S5X5.shp" -maille_10 "/tmp/referentiels/sig/REU_UTM40S10X10.shp" -reserves_naturelles_nationales "/tmp/referentiels/sig/RN.shp" -habref "/tmp/referentiels/habitats/HABREF_20/HABREF_20.csv" -commune_annee_ref "2013" -departement_annee_ref "2013" -maille_01_version_ref "2015" -maille_01_nom_ref "Grille nationale (1km x 1km) Réunion" -maille_02_version_ref "2015" -maille_02_nom_ref "Grille nationale (2km x 2km) Réunion" -maille_05_version_ref "2015" -maille_05_nom_ref "Grille nationale (5km x 5km) Réunion" -maille_10_version_ref "2012" -maille_10_nom_ref "Grille nationale (10km x 10km) Réunion" -rnn_version_en "2010"
+php lizmap/scripts/script.php occtax~import:shapefile -commune "/root/referentiels/sig/COMMUNE.SHP" -maille_01 "/root/referentiels/sig/REU_UTM40S1X1.shp" -maille_02 "/root/referentiels/sig/REU_UTM40S2X2.shp" -maille_05 "/root/referentiels/sig/REU_UTM40S5X5.shp" -maille_10 "/root/referentiels/sig/REU_UTM40S10X10.shp" -reserves_naturelles_nationales "/root/referentiels/sig/RN.shp" -habref "/root/referentiels/habitats/HABREF_20/HABREF_20.csv" -commune_annee_ref "2013" -departement_annee_ref "2013" -maille_01_version_ref "2015" -maille_01_nom_ref "Grille nationale (1km x 1km) Réunion" -maille_02_version_ref "2015" -maille_02_nom_ref "Grille nationale (2km x 2km) Réunion" -maille_05_version_ref "2015" -maille_05_nom_ref "Grille nationale (5km x 5km) Réunion" -maille_10_version_ref "2012" -maille_10_nom_ref "Grille nationale (10km x 10km) Réunion" -rnn_version_en "2010"
 
 # Import des données depuis les serveurs WFS officiels
 # Vous devez préciser l'URL des serveurs WFS pour les données INPN et pour les données Sandre (masses d'eau)
@@ -383,7 +384,7 @@ php lizmap/scripts/script.php occtax~import:wfs -wfs_url "http://ws.carmencarto.
 # Import des données de relief (Modèle numérique de terrain = MNT ) et des lieu-dits en shapefiles
 # ATTENTION: seulement nécessaire si le module mascarine (saisie flore) est utilisé.
 # Vous devez spécifier les chemins complet vers les fichiers dans cet ordre: MNT, lieux-dits habités, lieux-dits non-habités, oronymes et toponymes divers ( Source IGN )
-php lizmap/scripts/script.php mascarine~import:gdalogr "/tmp/sig/DEPT971.asc" "/tmp/sig/LIEU_DIT_HABITE.SHP" "/tmp/sig/LIEU_DIT_NON_HABITE.SHP" "/tmp/sig/ORONYME.SHP" "/tmp/sig/TOPONYME_DIVERS.SHP"
+php lizmap/scripts/script.php mascarine~import:gdalogr "/root/sig/DEPT971.asc" "/root/sig/LIEU_DIT_HABITE.SHP" "/root/sig/LIEU_DIT_NON_HABITE.SHP" "/root/sig/ORONYME.SHP" "/root/sig/TOPONYME_DIVERS.SHP"
 
 ```
 
