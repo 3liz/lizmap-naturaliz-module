@@ -1031,8 +1031,10 @@ END as diffusion
 FROM occtax.observation o
 ;
 
-CREATE INDEX IF NOT EXISTS observation_diffusion_cle_obs_idx ON observation_diffusion (diffusion);
-CREATE INDEX IF NOT EXISTS observation_diffusion_diffusion_idx ON observation_diffusion (cle_obs);
+DROP INDEX IF EXISTS observation_diffusion_cle_obs_idx;
+DROP INDEX IF EXISTS observation_diffusion_diffusion_idx;
+CREATE INDEX observation_diffusion_cle_obs_idx ON observation_diffusion (diffusion);
+CREATE INDEX observation_diffusion_diffusion_idx ON observation_diffusion (cle_obs);
 
 
 -- Fonction pour calculer les relations entre les observations et les données spatiales
