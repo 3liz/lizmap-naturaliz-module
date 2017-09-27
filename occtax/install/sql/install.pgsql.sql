@@ -360,6 +360,26 @@ geographique/ref , champ « CD_SIG »';
 COMMENT ON COLUMN localisation_maille_05.type_info_geo IS 'Indique le type d''information géographique suivant la nomenclature TypeInfoGeoValue. Exemple : "1" pour "Géoréférencement", "2" pour "Rattachement"';
 
 
+-- Table localisation_maille_02
+CREATE TABLE localisation_maille_02 (
+    cle_obs bigint NOT NULL,
+    code_maille text NOT NULL,
+    type_info_geo text NOT NULL,
+    CONSTRAINT localisation_maille_02_type_info_geo_valide CHECK ( type_info_geo IN ('1', '2') )
+);
+
+ALTER TABLE localisation_maille_02 ADD PRIMARY KEY (cle_obs, code_maille);
+ALTER TABLE localisation_maille_02 ADD CONSTRAINT localisation_maille_02_cle_obs_fk FOREIGN KEY (cle_obs) REFERENCES observation (cle_obs) ON DELETE CASCADE;
+
+COMMENT ON TABLE localisation_maille_02 IS 'Table de lien entre une table maille_02 (optionnelle) et la table des observations. Elle recense la ou les mailles sur laquelle l’observation a eu lieu';
+
+COMMENT ON COLUMN localisation_maille_02.cle_obs IS 'Clé de l observation';
+
+COMMENT ON COLUMN localisation_maille_02.code_maille IS 'Cellule de la grille de référence nationale 2x2 km dans laquelle se situe l’observation. Vocabulaire contrôlé : Référentiel « Grille nationale 02kmx02km », lien: http://inpn.mnhn.fr/telechargement/cartes-et-information-
+geographique/ref , champ « CD_SIG »';
+
+COMMENT ON COLUMN localisation_maille_02.type_info_geo IS 'Indique le type d''information géographique suivant la nomenclature TypeInfoGeoValue. Exemple : "1" pour "Géoréférencement", "2" pour "Rattachement"';
+
 
 -- Table localisation_espace_naturel
 CREATE TABLE localisation_espace_naturel (
@@ -647,6 +667,8 @@ CREATE INDEX ON localisation_maille_10 (code_maille);
 CREATE INDEX ON localisation_maille_10 (cle_obs);
 CREATE INDEX ON localisation_maille_05 (code_maille);
 CREATE INDEX ON localisation_maille_05 (cle_obs);
+CREATE INDEX ON localisation_maille_02 (code_maille);
+CREATE INDEX ON localisation_maille_02 (cle_obs);
 CREATE INDEX ON localisation_masse_eau (code_me);
 CREATE INDEX ON localisation_masse_eau (cle_obs);
 
@@ -997,30 +1019,45 @@ CASE
     --non sensible : précision maximale, sauf si diffusion_niveau_precision est NOT NULL ou != 5
     WHEN sensi_niveau = '0' THEN
         CASE
-            WHEN o.ds_publique IN ('Ac', 'Pu', 'Re') THEN '["g", "d", "m10", "e", "c", "z"]'::jsonb
+            WHEN o.ds_publique IN ('Ac', 'Pu', 'Re') THEN '["g", "d", "m10", "m02", "e", "c", "z"]'::jsonb
             ELSE
                 CASE
-                    -- tout sauf geom
-                    WHEN diffusion_niveau_precision = '0' THEN '["d", "m10", "e", "c", "z"]'::jsonb
+                    -- tout sauf geom :
+                    WHEN diffusion_niveau_precision = '0' THEN '["d", "m10", "m02", "e", "c", "z"]'::jsonb
+
                     -- commune et département
                     WHEN diffusion_niveau_precision = '1' THEN '["d", "c"]'::jsonb
+
                     -- maille 10 et département
                     WHEN diffusion_niveau_precision = '2' THEN '["d", "m10"]'::jsonb
+
+                    -- maille 02, maille_10 et département
+                    WHEN diffusion_niveau_precision = 'm02' THEN '["d", "m10", "m02"]'::jsonb
+
                     -- département
                     WHEN diffusion_niveau_precision = '3'  THEN '["d"]'::jsonb
+
                     -- non diffusé
                     WHEN diffusion_niveau_precision = '4' THEN NULL::jsonb
+
                     -- diffusion telle quelle. Si donnée existe, on fourni
-                    WHEN diffusion_niveau_precision = '5'  THEN '["g", "d", "m10", "e", "c", "z"]'::jsonb
-                    ELSE '["g", "d", "m10", "e", "c", "z"]'::jsonb
+                    WHEN diffusion_niveau_precision = '5'  THEN '["g", "d", "m10", "m02", "e", "c", "z"]'::jsonb
+                    ELSE '["g", "d", "m10", "m02", "e", "c", "z"]'::jsonb
                 END
         END
+
     -- 1 = tout sauf geom : département, maille 10, espace naturel, commune, znieff
-    WHEN sensi_niveau = '1' THEN '["d", "m10", "e", "c", "z"]'::jsonb
+    WHEN sensi_niveau = '1' THEN '["d", "m10", "m02", "e", "c", "z"]'::jsonb
+
     -- 2 = département, maille 10
     WHEN sensi_niveau = '2' THEN '["d", "m10"]'::jsonb
+
+    -- m02 = département, maille 10, maille 2
+    WHEN sensi_niveau = 'm02' THEN '["d", "m10", "m02"]'::jsonb
+
     -- 3 = département
     WHEN sensi_niveau = '3' THEN '["d"]'::jsonb
+
     -- 4 = non diffusé
     WHEN sensi_niveau = '4' THEN NULL::jsonb
 
@@ -1107,6 +1144,22 @@ SELECT DISTINCT
     ''2'' AS type_info_geo
 FROM occtax.observation o
 INNER JOIN sig.maille_05 m ON ST_Intersects( o.geom, m.geom )
+WHERE 2>1
+AND o.jdd_id = ANY ( $1 )
+;
+
+-- -- -- localisation_maille_02
+DELETE FROM occtax.localisation_maille_02
+WHERE cle_obs IN (
+    SELECT cle_obs FROM occtax.observation WHERE jdd_id = ANY ( $1 )
+);
+INSERT INTO occtax.localisation_maille_02
+SELECT DISTINCT
+    o.cle_obs,
+    m.code_maille,
+    ''2'' AS type_info_geo
+FROM occtax.observation o
+INNER JOIN sig.maille_02 m ON ST_Intersects( o.geom, m.geom )
 WHERE 2>1
 AND o.jdd_id = ANY ( $1 )
 ;

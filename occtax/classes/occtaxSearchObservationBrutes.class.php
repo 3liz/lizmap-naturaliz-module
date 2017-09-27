@@ -454,17 +454,20 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
     protected function getMaille02($response='result') {
 
         $cnx = jDb::getConnection();
-        $sql = " SELECT DISTINCT foo.cle_obs, m.code_maille";
-        $sql.= " FROM maille_02 m";
+        $sql = " SELECT DISTINCT lm.cle_obs, lm.code_maille,";
+        $sql.= " m.version_ref, m.nom_ref, lm.type_info_geo";
+        $sql.= " FROM localisation_maille_02 AS lm";
+        $sql.= " INNER JOIN maille_02 m ON lm.code_maille = m.code_maille";
         $sql.= " INNER JOIN ( ";
         $sql.= $this->sql;
-        $sql.= " ) AS foo ON ST_Intersects(ST_Transform(foo.geom, $this->srid), m.geom)"; // need to retransform
+        $sql.= " ) AS foo ON foo.cle_obs = lm.cle_obs";
 
         // Keep only data where diffusion is possible
         if( !jAcl2::check("visualisation.donnees.brutes") ){
-            $sql.= " AND foo.diffusion ? 'g' ";
+            $sql.= " AND ( foo.diffusion ? 'm02' OR foo.diffusion ? 'g' )";
             $sql.= " AND foo.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
         }
+
         if( $response == 'sql' )
             $result = $sql;
         else

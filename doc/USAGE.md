@@ -103,6 +103,54 @@ Validite niveau et date -> expliquer grand public limité via localconfig et log
 Sensibilité -> montrer requete pour faire un update des champs de sensibilité à partir de critères
 Voir fonction https://projects.3liz.org/clients/naturaliz-reunion/issues/48
 
+#### Fonction de modification de la sensibilité des données
+
+#### Vue matérialisée pour gérer la diffusion des données à partir de cette sensibilité
+
+Les requêtes effectuées dans l'application font une jointure entre la table `observation` et la vue matérialisée `observation_diffusion`, pour
+
+* l'export des données rattachées (communes, mailles 10 et 02, départements, etc.)
+* le filtrage des données lorsque l'utilisateur a fait une requête par maille ou commune. On ne liste (ou n'exporte) que les données qui dont la diffusion correspond au type de requête spatiale utilisée
+
+        if( !jAcl2::check("visualisation.donnees.brutes") ){
+            $qf = $this->queryFilters;
+            $blackQueryParams = array('code_maille', 'code_masse_eau', 'code_commune');
+            $qMatch = array(
+                'code_maille_10' => 'm10',
+                'code_commune' => 'c'
+            );
+            foreach( $this->params as $k=>$v ){
+                if( array_key_exists( $k, $qf ) and $v and $qf[$k]['type'] != 'geom' ){
+                    if( in_array($k, $blackQueryParams) ){
+                        // Keep only data with open diffusion
+                        $sql.= " AND ( diffusion ? 'g' ";
+                        // Keep also some more data based on query type
+                        if( array_key_exists($k, $qMatch) ){
+                            $sql.= " OR diffusion ? '".$qMatch[$k]."' ";
+                        }
+                        $sql.= ' ) ';
+                    }
+                }
+            }
+        }
+
+* l'affichage par maille 2 n'est possible que si on peut voir les données geo 'g'
+
+        // Change geometry exported value for users depending on sensibiliy
+        if( !jAcl2::check("visualisation.donnees.brutes") ){
+            $question = "WHEN od.diffusion ? 'g' ";
+            if($this->maille == 'maille_10'){
+                $question.= " OR od.diffusion ? 'm10' ";
+            }
+            $this->querySelectors['observation']['returnFields']["
+                CASE
+                    $question
+                    THEN geom
+                    ELSE NULL
+                END AS geom
+            "] = 'geom';
+
+        }
 
 ## Gestion des personnes (observateurs)
 
@@ -113,6 +161,15 @@ Lorsqu'on a importé un jeu de données, il faut raffraîchir les rattachements 
 ```
 SELECT occtax_update_spatial_relationships(
     ARRAY['jdd-test', 'autre-jdd-test'],
+    '974'
+);
+```
+
+Pour le faire sur toutes les observations
+
+```
+SELECT occtax_update_spatial_relationships(
+    (SELECT array_agg(DISTINCT jdd_id) FROM occtax.observation),
     '974'
 );
 ```
