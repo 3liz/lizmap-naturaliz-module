@@ -1,4 +1,3 @@
-<b>{@occtax~search.description.active.filters@} :</b>
 {if count($filters)>0}
 <ul>
 {foreach $filters as $k=>$v}
