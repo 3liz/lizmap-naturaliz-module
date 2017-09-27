@@ -79,7 +79,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
 
             // Validité
             'validite_niveau' => 'String',
-            'validite_date_validitation' => 'String',
+            'validite_date_validation' => 'String',
 
             // geometrie
             'precision_geometrie' => "Real",
@@ -156,21 +156,6 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         )
     );
 
-    protected $unsensitiveExportedFields = array(
-        'principal' => array(
-            'cle_obs' => "Integer",
-            'identifiant_permanent' => "String",
-            'statut_source' => "String",
-            'nom_cite' => "String",
-            'date_debut' => "Date",
-            'date_fin' => "Date",
-            'organisme_gestionnaire_donnees' => "String",
-            'source_objet' => "String",
-            'code_commune' => "String",
-            'code_departement' => "String",
-            'code_maille_10' => "String"
-        )
-    );
 
     protected $querySelectors = array(
         'observation' => array(
@@ -237,6 +222,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
 
                 // validite
                 'o.validite_niveau' => 'validite_niveau',
+                'o.validite_date_validation' => 'validite_date_validation',
 
                 // geometrie
                 'o.precision_geometrie' => 'precision_geometrie',
@@ -361,8 +347,21 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
     );
 
 
+    protected $observation_exported_fields = array();
+
+    protected $observation_exported_fields_unsensitive = array();
+
+    protected $observation_exported_children = array();
+
+    protected $observation_card_fields = array();
+
+    protected $observation_card_fields_unsensitive = array();
+
+    protected $observation_card_children = array();
+
+
     public function __construct ($token=Null, $params=Null, $demande=Null) {
-        // Set fields from exportedFields "principal"
+        // Set fields from  Fields "principal"
         $this->returnFields = $this->getExportedFields( 'principal');
         $this->displayFields = $this->returnFields;
 
@@ -599,7 +598,12 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $return = array();
         $fields = array();
         if( !jAcl2::check("visualisation.donnees.brutes") and $topic == 'principal' ){
-            $fields = $this->unsensitiveExportedFields['principal'];
+            // Get fields from exportdFields which are listed in unsensitive
+            foreach($this->exportedFields[ $topic ] as $field=>$type){
+                if(in_array($field, $this->observation_exported_fields_unsensitive)){
+                    $fields[$field] = $type;
+                }
+            }
         }
         else{
             if( array_key_exists($topic, $this->exportedFields) ){
@@ -620,6 +624,47 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         }
 
         return $return;
+    }
+
+
+    public function limitFields($variable = 'observation_exported_fields', $children_variable = 'observation_exported_children', $variable_unsensitive='observation_exported_fields_unsensitive'){
+
+        // Get configuration from ini file
+        $localConfig = jApp::configPath('localconfig.ini.php');
+        $ini = new jIniFileModifier($localConfig);
+
+        // Get values
+        if($limited_fields = $ini->getValue($variable, 'occtax')){
+            $this->$variable = array_map('trim', explode(',', $limited_fields));
+        }
+        // Get unsensitive
+        if($limited_fields_unsensitive = $ini->getValue($variable_unsensitive, 'occtax')){
+            $this->$variable_unsensitive = array_map('trim', explode(',', $limited_fields_unsensitive));
+        }
+        // Get children
+        if($limited_children = $ini->getValue($children_variable, 'occtax')){
+            $this->$children_variable = array_map('trim', explode(',', $limited_children));
+        }
+
+        // Override exported fields
+        foreach( $this->exportedFields['principal'] as $field => $type ){
+            if(!in_array($field, $this->$variable)){
+                unset($this->exportedFields['principal'][$field]);
+            }
+        }
+
+        // Remove children
+        foreach( $this->exportedFields as $topic => $data ){
+            if($topic == 'principal')
+                continue;
+            if(!in_array($topic, $this->$children_variable)){
+                unset($this->exportedFields[$topic]);
+            }
+        }
+
+        // Set fields from exportedFields "principal"
+        $this->returnFields = $this->getExportedFields( 'principal');
+        $this->displayFields = $this->returnFields;
     }
 
 

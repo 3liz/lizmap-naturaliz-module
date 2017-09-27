@@ -79,7 +79,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
 
             // Validité
             'validite_niveau' => 'String',
-            'validite_date_validitation' => 'String',
+            'validite_date_validation' => 'String',
 
             // geometrie
             'precision_geometrie' => "Real",
@@ -160,22 +160,11 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
         )
     );
 
-    protected $unsensitiveExportedFields = array(
-        'principal' => array(
-            'cle_obs' => "Integer",
-            'identifiant_permanent' => "String",
-            'statut_source' => "String",
-            'nom_cite' => "String",
-            'date_debut' => "Date",
-            'date_fin' => "Date",
-            'organisme_gestionnaire_donnees' => "String",
-            //'wkt' => "String"
-        )
-    );
+    protected $observation_exported_fields = array();
 
-    private $observation_exported_fields = array();
+    protected $observation_exported_fields_unsensitive = array();
 
-    private $observation_exported_children = array();
+    protected $observation_exported_children = array();
 
     protected $querySelectors = array(
         'observation' => array(
@@ -242,6 +231,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
 
                 // validite
                 'o.validite_niveau' => 'validite_niveau',
+                'o.validite_date_validation' => 'validite_date_validation',
 
                 // geometrie
                 'o.precision_geometrie' => 'precision_geometrie',
@@ -338,42 +328,12 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
 
     public function __construct ($token=Null, $params=Null, $demande=Null) {
 
-        // Limit fields to export (ie to "display in the card" in this class)
-        $localConfig = jApp::configPath('localconfig.ini.php');
-        $ini = new jIniFileModifier($localConfig);
-        if($observation_exported_fields = $ini->getValue('observation_exported_fields', 'occtax')){
-            $this->observation_exported_fields = array_map('trim', explode(',', $observation_exported_fields));
-        }
-        if($observation_exported_children = $ini->getValue('observation_exported_children', 'occtax')){
-            $this->observation_exported_children = array_map('trim', explode(',', $observation_exported_children));
-        }
-
-        // Override exported fields
-        foreach( $this->exportedFields['principal'] as $field => $type ){
-            if(!in_array($field, $this->observation_exported_fields)){
-                unset($this->exportedFields['principal'][$field]);
-            }
-        }
-
-        // Override unsensitive exported fields
-        foreach( $this->unsensitiveExportedFields['principal'] as $field => $type ){
-            if(!in_array($field, $this->observation_exported_fields)){
-                unset($this->unsensitiveExportedFields['principal'][$field]);
-            }
-        }
-
-        // Remove children
-        foreach( $this->exportedFields as $topic => $data ){
-            if($topic == 'principal')
-                continue;
-            if(!in_array($topic, $this->observation_exported_children)){
-                unset($this->exportedFields[$topic]);
-            }
-        }
-
-        // Set fields from exportedFields "principal"
-        $this->returnFields = $this->getExportedFields( 'principal');
-        $this->displayFields = $this->returnFields;
+        // Limit fields to export (ie to export in this class)
+        $this->limitFields(
+            'observation_exported_fields',
+            'observation_exported_fields_unsensitive',
+            'observation_exported_children'
+        );
 
         parent::__construct($token, $params, $demande);
     }

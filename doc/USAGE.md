@@ -276,8 +276,49 @@ Un exemple de script SQL est disponible dans les sources de l'application, et mo
 
 ### Export des données
 
+#### Depuis l'application
+
+L'application permet d'exporter les données résultats d'une requête sous plusieurs formats. La liste des champs exportés est définie dans le fichier de configuration local de l'application `lizmap/var/config/localconfig.ini.php`, dans les variables suivantes :
+
+```
+; liste blanche des champs à exporter
+observation_exported_fields=cle_obs, identifiant_permanent, identifiant_origine, statut_observation, cd_nom, cd_ref, version_taxref, nom_cite, nom_valide, nom_vern, group1_inpn, group2_inpn, denombrement_min, denombrement_max, type_denombrement, objet_denombrement, commentaire, date_debut, heure_debut, date_fin, heure_fin, altitude_moy, profondeur_moy, date_determination, ds_publique, jdd_metadonnee_dee_id, dee_date_derniere_modification, jdd_code, reference_biblio, organisme_gestionnaire_donnees, statut_source, sensi_niveau, observateur, determinateur, validateur, descriptif_sujet, validite_niveau, validite_date_validation, precision_geometrie, nature_objet_geo
+
+; liste blanche des champs à exporter pour le grand public
+observation_exported_fields_unsensitive=cle_obs, identifiant_permanent, statut_source, nom_cite, date_debut, date_fin, organisme_gestionnaire_donnees, source_objet, code_commune, code_departement, code_maille_10
+
+; liste blanche des données filles à exporter
+;observation_exported_children=commune, departement, maille_02, maille_10, espace_naturel, masse_eau, habitat, attribut_additionnel
+observation_exported_children=commune, departement, maille_02, maille_10, espace_naturel, masse_eau, habitat
+
+```
+
+Ces variables influencent la liste des champs exportés (CSV, WFS) et aussi la liste des champs visibles dans la
+
+
+### Fiche de détail d'une observation
+
+L'application permet d'afficher pour chaque observation une fiche. Les champs contenus dans cette fiche, ainsi que les données rattachées, sont définis dans le fichier de configuration local de l'application `lizmap/var/config/localconfig.ini.php`, dans les variables suivantes :
+
+```
+; liste blanche des champs à afficher dans la fiche d'observation
+observation_card_fields=cle_obs,statut_observation, nom_cite, denombrement_min, denombrement_max, objet_denombrement, commentaire, date_debut, date_fin, date_determination, ds_publique, jdd_metadonnee_dee_id, organisme_gestionnaire_donnees, statut_source, sensi_niveau, observateur, determinateur, validateur, descriptif_sujet, obs_methode, occ_etat_biologique, occ_naturalite, occ_sexe, occ_stade_de_vie, occ_statut_biologique, obs_contexte, obs_description, occ_methode_determination, validite_niveau, validite_date_validation, precision_geometrie
+
+; liste blanche des champs à afficher pour le grand public dans la fiche
+observation_card_fields_unsensitive=cle_obs, identifiant_permanent, statut_source, nom_cite, date_debut, date_fin, organisme_gestionnaire_donnees, source_objet, code_commune, code_departement, code_maille_10
+
+; liste blanche des données filles à afficher dans la fiche
+;observation_card_children=commune, departement, maille_02, maille_10, espace_naturel, masse_eau, habitat, attribut_additionnel
+observation_card_children=commune, departement, maille_02, maille_10, espace_naturel, masse_eau, habitat
+```
+
+
+#### Export DEE
+
 Vous pouvez exporter les données au format DEE via l'application en utilisant la ligne de commande.
 Vous pouvez préciser en option le chemin vers le fichier à exporter, via l'option *-output*
+
+Pour cet export, la variable de configuration `observation_exported_fields` n'a pas d'impact : tous les champs sont exportés.
 
 ```
 cd /srv/lizmap_web_client/

@@ -117,6 +117,12 @@
     {assign $i = $i + 1}
     {/foreach}
     </div>
+
+    <script>
+    {literal}
+    $('a[href="#descriptif_sujet_1"]').click();
+    {/literal}
+    </script>
 {else}
 Pas d'individu décrit
 {/if}

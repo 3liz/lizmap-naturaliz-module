@@ -122,6 +122,7 @@ class observationCtrl extends jController {
         if($observation_card_fields = $ini->getValue('observation_card_fields', 'occtax')){
             $observation_card_fields = array_map('trim', explode(',', $observation_card_fields));
         }
+
         $tpl->assign('observation_card_fields', $observation_card_fields);
 
         // Get content
