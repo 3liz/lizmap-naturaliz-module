@@ -1038,11 +1038,9 @@ CREATE INDEX observation_diffusion_diffusion_idx ON observation_diffusion (cle_o
 
 
 -- Fonction pour calculer les relations entre les observations et les données spatiales
-
 CREATE OR REPLACE FUNCTION occtax.occtax_update_spatial_relationships(
-    jdd_id text,
-    code_departement TEXT
-)
+    jdd_id text[],
+    code_departement text)
   RETURNS integer AS
 $BODY$
 DECLARE sql_text TEXT;
@@ -1053,7 +1051,7 @@ sql_text := '
 -- -- localisation_commune
 DELETE FROM occtax.localisation_commune
 WHERE cle_obs IN (
-    SELECT cle_obs FROM occtax.observation WHERE jdd_id = $1
+    SELECT cle_obs FROM occtax.observation WHERE jdd_id = ANY ( $1 )
 );
 INSERT INTO occtax.localisation_commune
 SELECT DISTINCT
@@ -1063,13 +1061,13 @@ SELECT DISTINCT
 FROM occtax.observation o
 INNER JOIN sig.commune c ON ST_Intersects( o.geom, c.geom )
 WHERE 2>1
-AND o.jdd_id = $1
+AND o.jdd_id = ANY ( $1 )
 ;
 
 -- Départements
 DELETE FROM occtax.localisation_departement
 WHERE cle_obs IN (
-    SELECT cle_obs FROM occtax.observation WHERE jdd_id = $1
+    SELECT cle_obs FROM occtax.observation WHERE jdd_id = ANY ( $1 )
 );
 INSERT INTO occtax.localisation_departement
 SELECT
@@ -1078,13 +1076,13 @@ SELECT
     ''2'' AS type_info_geo
 FROM occtax.observation o
 WHERE TRUE
-AND o.jdd_id = $1
+AND o.jdd_id = ANY ( $1 )
 ;
 
 -- -- -- localisation_maille_10
 DELETE FROM occtax.localisation_maille_10
 WHERE cle_obs IN (
-    SELECT cle_obs FROM occtax.observation WHERE jdd_id = $1
+    SELECT cle_obs FROM occtax.observation WHERE jdd_id = ANY ( $1 )
 );
 INSERT INTO occtax.localisation_maille_10
 SELECT DISTINCT
@@ -1094,13 +1092,13 @@ SELECT DISTINCT
 FROM occtax.observation o
 INNER JOIN sig.maille_10 m ON ST_Intersects( o.geom, m.geom )
 WHERE 2>1
-AND o.jdd_id = $1
+AND o.jdd_id = ANY ( $1 )
 ;
 
 -- -- -- localisation_maille_05
 DELETE FROM occtax.localisation_maille_05
 WHERE cle_obs IN (
-    SELECT cle_obs FROM occtax.observation WHERE jdd_id = $1
+    SELECT cle_obs FROM occtax.observation WHERE jdd_id = ANY ( $1 )
 );
 INSERT INTO occtax.localisation_maille_05
 SELECT DISTINCT
@@ -1110,13 +1108,13 @@ SELECT DISTINCT
 FROM occtax.observation o
 INNER JOIN sig.maille_05 m ON ST_Intersects( o.geom, m.geom )
 WHERE 2>1
-AND o.jdd_id = $1
+AND o.jdd_id = ANY ( $1 )
 ;
 
 -- -- -- localisation_masse_eau
 DELETE FROM occtax.localisation_masse_eau
 WHERE cle_obs IN (
-    SELECT cle_obs FROM occtax.observation WHERE jdd_id = $1
+    SELECT cle_obs FROM occtax.observation WHERE jdd_id = ANY ( $1 )
 );
 INSERT INTO occtax.localisation_masse_eau
 SELECT DISTINCT
@@ -1126,13 +1124,13 @@ SELECT DISTINCT
 FROM occtax.observation o
 INNER JOIN sig.masse_eau m ON ST_Intersects( o.geom, m.geom )
 WHERE 2>1
-AND o.jdd_id = $1
+AND o.jdd_id = ANY ( $1 )
 ;
 
 -- -- -- localisation_espace_naturel
 DELETE FROM occtax.localisation_espace_naturel
 WHERE cle_obs IN (
-    SELECT cle_obs FROM occtax.observation WHERE jdd_id = $1
+    SELECT cle_obs FROM occtax.observation WHERE jdd_id = ANY ( $1 )
 );
 INSERT INTO occtax.localisation_espace_naturel
 SELECT DISTINCT
@@ -1142,24 +1140,20 @@ SELECT DISTINCT
 FROM occtax.observation o
 INNER JOIN sig.espace_naturel en ON ST_Intersects( o.geom, en.geom )
 WHERE 2>1
-AND o.jdd_id = $1
+AND o.jdd_id = ANY ( $1 )
 ;
 
 ';
 
-
-RAISE NOTICE '%s' , sql_text;
+-- RAISE NOTICE '%s' , sql_text;
 
 EXECUTE format(sql_text)
 USING jdd_id, code_departement;
-
--- GET DIAGNOSTICS row_count_value = ROW_COUNT;
--- RETURN row_count_value;
 RETURN 1;
 END
 $BODY$
-LANGUAGE plpgsql VOLATILE
-COST 100;
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
 
 
 
