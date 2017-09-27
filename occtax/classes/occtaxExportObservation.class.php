@@ -109,7 +109,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             'type_info_geo' => "String",
         ),
 
-        'maille' => array(
+        'maille_10' => array(
             'cle_obs' => "Integer",
             'code_maille' => "String",
             'version_ref' => "String",
@@ -431,16 +431,18 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
         }
         $sql.= ") foo";
 
+//jLog::log($sql);
+
         // Use COPY: DEACTIVATED BECAUSE NEEDS SUPERUSER PG RIGHTS
-        $sqlcopy = " COPY (" . $sql ;
-        $sqlcopy.= "
-        )";
-        $sqlcopy.= "
-        TO " . $cnx->quote($path);
-        $sqlcopy.= "
-        WITH CSV DELIMITER " .$cnx->quote($delimiter);
-        $sqlcopy.= " HEADER";
-        //$cnx->exec($sql);
+        //$sqlcopy = " COPY (" . $sql ;
+        //$sqlcopy.= "
+        //)";
+        //$sqlcopy.= "
+        //TO " . $cnx->quote($path);
+        //$sqlcopy.= "
+        //WITH CSV DELIMITER " .$cnx->quote($delimiter);
+        //$sqlcopy.= " HEADER";
+        //$cnx->exec($sqlcopy);
 
         // Write header
         $fd = fopen($path, 'w');

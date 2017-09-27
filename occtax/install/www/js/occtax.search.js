@@ -1,4 +1,5 @@
 $(document).ready(function () {
+
     $('#div_form_occtax_search_token form div.jforms-submit-buttons').hide()
     function getDatatableColumns( tableId ){
       var DT_Columns = $('#'+tableId+' thead tr th').map(
@@ -1214,6 +1215,7 @@ OccTax.events.on({
 
         return false;
       });
+
       $('#'+tokenFormId+'_where').append( $('#obs-spatial-query-buttons') );
       //~ $('#'+tokenFormId+'_where .jforms-table-group').hide();
       $('#'+tokenFormId+'_what').append( $('#occtax_taxon_select_div') );
@@ -1367,6 +1369,9 @@ OccTax.events.on({
 
       // Modification du mot "Rechercher"
       $('#search-query').attr('placeholder', 'Rechercher un lieu');
+
+      //console.log('montre');
+      $('div.jforms-submit-buttons').show()
 
       // Refresh datatable size when bottom dock changes
     lizMap.events.on({

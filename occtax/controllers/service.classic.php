@@ -290,7 +290,7 @@ class serviceCtrl extends jController {
         $topics = array(
             'commune',
             'departement',
-            'maille',
+            'maille_10',
             'maille_02',
             'espace_naturel',
             'masse_eau',

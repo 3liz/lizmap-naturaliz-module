@@ -109,7 +109,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
             'type_info_geo' => "String",
         ),
 
-        'maille' => array(
+        'maille_10' => array(
             'cle_obs' => "Integer",
             'code_maille' => "String",
             'version_ref' => "String",
@@ -561,7 +561,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
             case 'departement':
                 $rs = $this->getDepartement($response);
                 break;
-            case 'maille':
+            case 'maille_10':
                 $rs = $this->getMaille10($response);
                 break;
             case 'maille_02':

@@ -231,5 +231,8 @@ FICHE OBSERVATION
   $('#occtax_search_input legend').css('font-weight', 'bold');
   $('#obs-spatial-query-buttons button').tooltip();
 
+  //console.log('cache');
+  $('div.jforms-submit-buttons').hide();
+
 {/literal}
 </script>
