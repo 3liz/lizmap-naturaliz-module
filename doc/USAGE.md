@@ -106,7 +106,16 @@ Voir fonction https://projects.3liz.org/clients/naturaliz-reunion/issues/48
 
 ## Gestion des personnes (observateurs)
 
-## Gestion de la localisation spatiale
+### Gestion de la localisation spatiale
+
+Lorsqu'on a importé un jeu de données, il faut raffraîchir les rattachements des observations aux données spatiales (mailles, espaces naturels, communes, etc.). Pour cela, il suffit d'utiliser la fonction PostgreSQL `occtax.occtax_update_spatial_relationships(text[], text)` . Elle attend 2 variables en entrée : un tableau TEXT[] contenant la liste des jdd_id sur lesquels lancer la modification, et le code du département. Par exemple:
+
+```
+SELECT occtax_update_spatial_relationships(
+    ARRAY['jdd-test', 'autre-jdd-test'],
+    '974'
+);
+```
 
 ### Identifiants permanents
 
