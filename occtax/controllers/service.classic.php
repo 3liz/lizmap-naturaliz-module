@@ -261,11 +261,12 @@ class serviceCtrl extends jController {
         $limit = $this->intParam( 'limit' );
         $offset = $this->intParam( 'offset' );
         $order = $this->param( 'order', '' );
+        $principal = array();
         try {
             $topic = 'principal';
             $csv = $occtaxSearch->writeCsv( $topic, $limit, $offset );
             $csvt = $occtaxSearch->writeCsvT( $topic );
-            $data[$topic] = array( $csv, $csvt );
+            $principal = array( $csv, $csvt );
         }
         catch( Exception $e ) {
             $rep = $this->getResponse('json');
@@ -273,6 +274,16 @@ class serviceCtrl extends jController {
             $return['msg'][] = jLocale::get( 'occtax~search.form.error.query' );
             $rep->data = $return;
             return $rep;
+        }
+
+        // Add principal
+        if(file_exists($principal[0]) ){
+            $rep->content->addFile( $principal[0], 'st_' . 'principal' . '.csv' );
+            unlink( $principal[0] );
+        }
+        if(file_exists($principal[1]) ){
+            $rep->content->addFile( $principal[1], 'st_' . 'principal' . '.csvt' );
+            unlink( $principal[1] );
         }
 
         // Get other files
@@ -306,14 +317,16 @@ class serviceCtrl extends jController {
             $data[$topic] = array( $csv, $csvt );
         }
 
-        // Add csv files to ZIP
+        // Add other csv files to ZIP
+        $subdir = 'rattachements';
+        $rep->content->addEmptyDir($subdir);
         foreach( $data as $topic=>$files ) {
             if(file_exists($files[0]) ){
-                $rep->content->addFile( $files[0], 'st_' . $topic . '.csv' );
+                $rep->content->addFile( $files[0], $subdir . '/' . 'st_' . $topic . '.csv' );
                 unlink( $files[0] );
             }
             if(file_exists($files[1]) ){
-                $rep->content->addFile( $files[1], 'st_' . $topic . '.csvt' );
+                $rep->content->addFile( $files[1], $subdir . '/' . 'st_' . $topic . '.csvt' );
                 unlink( $files[1] );
             }
 
@@ -322,7 +335,7 @@ class serviceCtrl extends jController {
         // Add readme file + search description to ZIP
         $rep->content->addContentFile( 'LISEZ-MOI.txt', $occtaxSearch->getReadme('text') );
 
-        $rep->zipFilename = 'donnees_echange_observations_naturaliz.zip';
+        $rep->zipFilename = 'export_observations.zip';
         return $rep;
     }
 
