@@ -196,6 +196,14 @@ class occtaxSearch {
             if( array_key_exists( $k, $qf ) and $v and $qf[$k]['type'] != 'geom' ){
                 $filters[$k] = $this->getValueLabel($k, $v);
             }
+            if($k == 'code_maille' and $v){
+                $filters[$k] = $this->getValueLabel($k, $v);
+            }
+            if($k == 'geom' and $v and empty($this->params['code_maille'])){
+                $l = preg_replace('#([A-Z]+).+#', '\1', $v);
+                $l = preg_replace('#POLYGON|MULTIPOLYGON#','Polygone', $l);
+                $filters[$k] = $l;
+            }
         }
         $tpl->assign('filters', $filters);
         $tpl->assign('nb', $this->recordsTotal );
@@ -205,12 +213,7 @@ class occtaxSearch {
         $tpl->assign('s', $s  );
 
         if($format=='html' and $drawLegend){
-            // Add legend classes
-            $this->setLegendClasses();
-            $legend_classes = array();
-            foreach($this->legend_classes as $class){
-                $legend_classes[] = array_map( 'trim', explode(';', $class) );
-            }
+            $legend_classes = $this->drawLegend();
             $tpl->assign('legend_classes', $legend_classes );
             $description = $tpl->fetch('occtax~searchDescription');
         }
@@ -218,6 +221,16 @@ class occtaxSearch {
             $description = $tpl->fetch('occtax~searchDescription_text');
         }
         return $description;
+    }
+
+    private function drawLegend(){
+        // Add legend classes
+        $this->setLegendClasses();
+        $legend_classes = array();
+        foreach($this->legend_classes as $class){
+            $legend_classes[] = array_map( 'trim', explode(';', $class) );
+        }
+        return $legend_classes;
     }
 
     public function getReadme($format='html'){
@@ -258,6 +271,10 @@ class occtaxSearch {
 
     private function getValueLabel( $k, $v ){
         $qf = $this->queryFilters;
+
+        // Return value if $k not in queryFilters e.g: mailles
+        if( !array_key_exists( $k, $qf ) )
+            return $v;
 
         // Return value if no correspondance needed
         if( !array_key_exists( 'label', $qf[$k] ) )

@@ -260,6 +260,11 @@ class occtaxSearchObservation extends occtaxSearch {
             // Get description for the other filter via parent class
             $description.= parent::getSearchDescription($format, $drawLegend);
         }
+        if( $format=='html' ){
+            $titre = jLocale::get('occtax~search.description.active.filters');
+            $description = "<b>$titre</b><br/>" . $description;
+        }
+
         return $description;
     }
 
