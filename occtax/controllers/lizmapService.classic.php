@@ -125,17 +125,25 @@ class lizmapServiceCtrl extends serviceCtrl {
             }
 
             $target = $occtaxSearch->getSql();
-            $target = str_replace( '<', '&lt;', $target );
-            $target = str_replace( '"', '\"', $target );
+
             $target = str_replace(
                 'FROM (',
                 ', ST_Centroid(m.geom) AS geom FROM (',
                 $target
             );
-            $source = "SELECT * FROM tpl_observation_maille";
+
+            // Dans QGIS 2.18, il ne faut pas remplacer de la même manière
+            // ce qui est dans <maplayer et ce qui est dans <layer-tree-layer
+            // on choisit de ne remplacer que le <maplauyer
+            // on n'utilise pas htmlentities car on veut échapper les " et pas les remplacer par code html
+            // On utilise le préfixe pour cela
+            $target = str_replace( '<', '&lt;', $target );
+            $target = str_replace( '"', '\"', $target );
+            $pref = 'table="(';
+            $source =  'SELECT * FROM tpl_observation_maille';
             $newProjectContent = str_replace(
-                $source,
-                $target,
+                $pref . $source,
+                $pref . $target,
                 $newProjectContent
             );
 
