@@ -394,7 +394,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
             $sql.= " AND foo.diffusion ? 'c' ";
             $sql.= " AND foo.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
         }
-
+//jLog::log($sql);
         if( $response == 'sql' )
             $result = $sql;
         else
@@ -597,19 +597,28 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
     public function getExportedFields( $topic, $format='name' ) {
         $return = array();
         $fields = array();
-        if( !jAcl2::check("visualisation.donnees.brutes") and $topic == 'principal' ){
-            // Get fields from exportdFields which are listed in unsensitive
-            foreach($this->exportedFields[ $topic ] as $field=>$type){
-                if(in_array($field, $this->observation_exported_fields_unsensitive)){
-                    $fields[$field] = $type;
+
+        // Principal topic : we should remove sensitive data
+        if( $topic == 'principal' ){
+
+            if(!jAcl2::check("visualisation.donnees.brutes")){
+                // Get fields from exportdFields which are listed in unsensitive
+                foreach($this->exportedFields['principal'] as $field=>$type){
+                    if(in_array($field, $this->observation_exported_fields_unsensitive)){
+                        $fields[$field] = $type;
+                    }
                 }
+            }else{
+                $fields = $this->exportedFields['principal'];
             }
         }
+        // Other topic. We should just check if topic exists
         else{
             if( array_key_exists($topic, $this->exportedFields) ){
                 $fields = $this->exportedFields[ $topic ];
             }
         }
+
         if( $format == 'name' ) {
             // Return name (key)
             foreach( $fields as $k=>$v) {
@@ -627,7 +636,11 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
     }
 
 
-    public function limitFields($variable = 'observation_exported_fields', $children_variable = 'observation_exported_children', $variable_unsensitive='observation_exported_fields_unsensitive'){
+    public function limitFields(
+        $variable = 'observation_exported_fields',
+        $variable_unsensitive='observation_exported_fields_unsensitive',
+        $children_variable = 'observation_exported_children'
+    ){
 
         // Get configuration from ini file
         $localConfig = jApp::configPath('localconfig.ini.php');

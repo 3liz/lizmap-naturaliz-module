@@ -368,6 +368,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
 
         // Fields
         $attributes = $this->getExportedFields( $topic );
+
         if($topic == 'principal')
             $attributes = array_diff($attributes, array('geojson'));
 
