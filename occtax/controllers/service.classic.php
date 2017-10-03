@@ -59,7 +59,7 @@ class serviceCtrl extends jController {
         $wfsParams = array_merge(
             $occtaxSearch->getParams(),
             array(
-                'service'=> 'WMS',
+                'service'=> 'WFS',
                 'request'=> 'GetCapabilities',
                 'version' => '1.0.0'
             )

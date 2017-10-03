@@ -6,7 +6,7 @@
 {/foreach}
 {$sep}
 {else}
-&nbsp;{@occtax~search.description.no.filters@}
+
 {/if}
 
 {@occtax~search.description.total.number.is@} : {$nb} {@occtax~search.description.total.number.observation@}{$s}
