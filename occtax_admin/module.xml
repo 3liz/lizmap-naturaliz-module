@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module xmlns="http://jelix.org/ns/module/1.0">
     <info id="mascarine_admin3liz.com" name="occtax_admin" createdate="2015-02-04">
-        <version date="2015-02-04">0.1pre</version>
+        <version date="2017-10-03">2.0.0</version>
         <label lang="en_US">occtax_admin</label>
         <description lang="en_US" />
-        <license URL="">All rights reserved</license>
+        <license URL="http://www.mozilla.org/MPL/">Mozilla Public License</license>
         <copyright>2011 3liz</copyright>
-        <creator name="your name" email="your-email@yourwebsite.undefined" active="true"/>
+        <creator name="3liz" email="info@3liz.com" active="true"/>
         <!--<contributor name="hisname" email="hisemail@yoursite.undefined" active="true" since="" role=""/>-->
         <homepageURL>http://3liz.com</homepageURL>
     </info>
