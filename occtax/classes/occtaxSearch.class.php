@@ -212,8 +212,11 @@ class occtaxSearch {
             $s = 's';
         $tpl->assign('s', $s  );
 
-        if($format=='html' and $drawLegend){
-            $legend_classes = $this->drawLegend();
+        if($format=='html'){
+            $legend_classes = array();
+            if($drawLegend)
+                $legend_classes = $this->drawLegend();
+
             $tpl->assign('legend_classes', $legend_classes );
             $description = $tpl->fetch('occtax~searchDescription');
         }

@@ -195,9 +195,10 @@ class lizmapServiceCtrl extends serviceCtrl {
                     "WHERE 2>1 AND GeometryType( g.geom ) IN ('" . $geomtype . "', 'MULTI" . $geomtype . "')",
                     $target
                 );
+                $pref = 'table="( ';
                 $newProjectContent = str_replace(
-                    $source,
-                    $targetFinal,
+                    $pref.$source,
+                    $pref.$targetFinal,
                     $newProjectContent
                 );
             }
@@ -211,9 +212,10 @@ class lizmapServiceCtrl extends serviceCtrl {
                 $target
             );
             $source = "SELECT * FROM tpl_observation_brute_centroid";
+            $pref = 'table="( ';
             $newProjectContent = str_replace(
-                $source,
-                $targetFinal,
+                $pref.$source,
+                $pref.$targetFinal,
                 $newProjectContent
             );
         }
