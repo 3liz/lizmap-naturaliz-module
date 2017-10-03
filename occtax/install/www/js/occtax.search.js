@@ -1370,6 +1370,9 @@ OccTax.events.on({
       // Modification du mot "Rechercher"
       $('#search-query').attr('placeholder', 'Rechercher un lieu');
 
+      // On replie les couches
+      $('#layers-fold-all').click();
+
       //console.log('montre');
       $('div.jforms-submit-buttons').show()
 
