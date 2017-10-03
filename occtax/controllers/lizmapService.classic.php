@@ -344,7 +344,11 @@ class lizmapServiceCtrl extends serviceCtrl {
     $rep->mimeType = $mime;
     $rep->content = $data;
     $rep->doDownload  =  false;
-    $rep->outputFileName  =  'getPrint';
+
+    $localConfig = jApp::configPath('localconfig.ini.php');
+    $ini = new jIniFileModifier($localConfig);
+    $appName = $ini->getValue('projectName', 'occtax');
+    $rep->outputFileName  =  $appName . ' - impression des résultats' . '.' . $this->params['format'];
 
     // Log
     $logContent ='
