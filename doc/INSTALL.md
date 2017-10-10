@@ -441,6 +441,21 @@ WHERE t.code_maille = a.nom_maille
 
 ```
 
+Pour les départements, il faut choisir quelle géométrie est utilisée. Par défaut, l'application n'importe aucune données dans la table département. Vous devez ajouter une ou plusieurs lignes si vous souhaitez que les exports donnent le code du département. Pour les îles, comme La Réunion ou la Guadeloupe, il peut être intéressant d'utiliser la Zone économique exclusive comme géométrie du département. Pour cela on peut, par exemple pour La Réunion:
+
+* importer le fichier SHP de la zone économique exclusive dans la base de données, schéma sig, avec le nom de table "zone_economique_exclusive"
+* lancer la requête SQL suivante pour ajouter cette géométrie dans la table des départements
+
+```
+DROP * FROM sig.departement;
+INSERT INTO sig.departement
+(code_departement, nom_departement, annee_ref, geom)
+SELECT '974', 'La Réunion', 2017, st_multi(geom)::geometry(MULTIPOLYGON,2975)
+FROM sig.zone_economique_exclusive;
+```
+
+
+
 ## Finaliser l'installation
 
 ### PostgreSQL: ajouter un utilisateur naturaliz aux droits limités
