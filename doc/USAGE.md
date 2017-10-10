@@ -156,12 +156,11 @@ Les requêtes effectuées dans l'application font une jointure entre la table `o
 
 ### Gestion de la localisation spatiale
 
-Lorsqu'on a importé un jeu de données, il faut raffraîchir les rattachements des observations aux données spatiales (mailles, espaces naturels, communes, etc.). Pour cela, il suffit d'utiliser la fonction PostgreSQL `occtax.occtax_update_spatial_relationships(text[], text)` . Elle attend 2 variables en entrée : un tableau TEXT[] contenant la liste des jdd_id sur lesquels lancer la modification, et le code du département. Par exemple:
+Lorsqu'on a importé un jeu de données, il faut raffraîchir les rattachements des observations aux données spatiales (mailles, espaces naturels, communes, etc.). Pour cela, il suffit d'utiliser la fonction PostgreSQL `occtax.occtax_update_spatial_relationships(text[])` . Elle attend 1 variable en entrée : un tableau TEXT[] contenant la liste des jdd_id sur lesquels lancer la modification. Par exemple:
 
 ```
 SELECT occtax_update_spatial_relationships(
-    ARRAY['jdd-test', 'autre-jdd-test'],
-    '974'
+    ARRAY['jdd-test', 'autre-jdd-test']
 );
 ```
 
@@ -169,8 +168,7 @@ Pour le faire sur toutes les observations
 
 ```
 SELECT occtax_update_spatial_relationships(
-    (SELECT array_agg(DISTINCT jdd_id) FROM occtax.observation),
-    '974'
+    (SELECT array_agg(DISTINCT jdd_id) FROM occtax.observation)
 );
 ```
 

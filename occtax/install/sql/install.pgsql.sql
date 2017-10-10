@@ -1077,9 +1077,8 @@ CREATE INDEX observation_diffusion_diffusion_idx ON observation_diffusion (cle_o
 
 
 -- Fonction pour calculer les relations entre les observations et les données spatiales
-CREATE OR REPLACE FUNCTION occtax.occtax_update_spatial_relationships(
-    jdd_id text[],
-    code_departement text)
+DROP FUNCTION IF EXISTS occtax.occtax_update_spatial_relationships(text[]);
+CREATE OR REPLACE FUNCTION occtax.occtax_update_spatial_relationships(jdd_id text[])
   RETURNS integer AS
 $BODY$
 DECLARE sql_text TEXT;
@@ -1109,12 +1108,13 @@ WHERE cle_obs IN (
     SELECT cle_obs FROM occtax.observation WHERE jdd_id = ANY ( $1 )
 );
 INSERT INTO occtax.localisation_departement
-SELECT
+SELECT DISTINCT
     o.cle_obs,
-    $2 AS code_departement,
+    d.code_departement,
     ''2'' AS type_info_geo
 FROM occtax.observation o
-WHERE TRUE
+INNER JOIN sig.departement d ON ST_Intersects( o.geom, d.geom )
+WHERE 2>1
 AND o.jdd_id = ANY ( $1 )
 ;
 
@@ -1203,7 +1203,7 @@ AND o.jdd_id = ANY ( $1 )
 -- RAISE NOTICE '%s' , sql_text;
 
 EXECUTE format(sql_text)
-USING jdd_id, code_departement;
+USING jdd_id;
 RETURN 1;
 END
 $BODY$
