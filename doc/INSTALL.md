@@ -447,7 +447,7 @@ Pour les départements, il faut choisir quelle géométrie est utilisée. Par d�
 * lancer la requête SQL suivante pour ajouter cette géométrie dans la table des départements
 
 ```
-DROP * FROM sig.departement;
+DELETE FROM sig.departement;
 INSERT INTO sig.departement
 (code_departement, nom_departement, annee_ref, geom)
 SELECT '974', 'La Réunion', 2017, st_multi(geom)::geometry(MULTIPOLYGON,2975)
