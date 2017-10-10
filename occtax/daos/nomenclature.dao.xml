@@ -39,6 +39,14 @@
                 <orderitem property="code" way="asc" />
             </order>
         </method>
+        <method name="getValueForCode" type="selectfirst">
+            <parameter name="code" />
+            <parameter name="champ" />
+            <conditions logic="and">
+                <eq property="code" expr="$code" />
+                <eq property="champ" value="$champ" />
+            </conditions>
+        </method>
         <!--<method name="findByStage" type="select/selectfirst/delete/update/php">
             <parameter name="" />
             <values>

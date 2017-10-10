@@ -22,7 +22,14 @@
         {if array_key_exists('statut_observation', $data)}
         <tr>
             <th>{@occtax~observation.output.statut_observation@}</th>
-            <td>{$data['statut_observation']}</td>
+            <td>
+                {if array_key_exists('statut_observation' . '|' . $data['statut_observation'], $nomenclature) }
+                {assign $k = 'statut_observation' . '|' . $data['statut_observation']}
+                {$nomenclature[$k]}
+                {else}
+                {$data['statut_observation']}
+                {/if}
+            </td>
         </tr>
         {/if}
 
@@ -64,14 +71,28 @@
         {if array_key_exists('objet_denombrement', $data)}
         <tr>
             <th>{@occtax~observation.output.objet_denombrement@}</th>
-            <td>{$data['objet_denombrement']}</td>
+            <td>
+                {if array_key_exists('objet_denombrement' . '|' . $data['objet_denombrement'], $nomenclature) }
+                {assign $k = 'objet_denombrement' . '|' . $data['objet_denombrement']}
+                {$nomenclature[$k]}
+                {else}
+                {$data['objet_denombrement']}
+                {/if}
+            </td>
         </tr>
         {/if}
 
         {if array_key_exists('type_denombrement', $data)}
         <tr>
             <th>{@occtax~observation.output.type_denombrement@}</th>
-            <td>{$data['type_denombrement']}</td>
+            <td>
+                {if array_key_exists('type_denombrement' . '|' . $data['type_denombrement'], $nomenclature) }
+                {assign $k = 'type_denombrement' . '|' . $data['type_denombrement']}
+                {$nomenclature[$k]}
+                {else}
+                {$data['type_denombrement']}
+                {/if}
+            </td>
         </tr>
         {/if}
 
@@ -108,7 +129,14 @@
             {if in_array($key, $observation_card_fields)}
             <tr>
                 <th>{@occtax~observation.output.$key@}</th>
-                <td>{$val}</td>
+                <td>
+                    {if array_key_exists($key . '|' . $val, $nomenclature) }
+                    {assign $k = $key . '|' . $val}
+                    {$nomenclature[$k]}
+                    {else}
+                    {$val}
+                    {/if}
+                </td>
             </tr>
             {/if}
             {/foreach}
@@ -278,7 +306,14 @@ Pas d'individu décrit
         {if array_key_exists('nature_objet_geo', $data)}
         <tr>
             <th>{@occtax~observation.output.nature_objet_geo@}</th>
-            <td>{$data['nature_objet_geo']}</td>
+            <td>
+                {if array_key_exists('nature_objet_geo' . '|' . $data['nature_objet_geo'], $nomenclature) }
+                {assign $k = 'nature_objet_geo' . '|' . $data['nature_objet_geo']}
+                {$nomenclature[$k]}
+                {else}
+                {$data['nature_objet_geo']}
+                {/if}
+            </td>
         </tr>
         {/if}
 
@@ -393,14 +428,28 @@ Pas d'individu décrit
         {if array_key_exists('diffusion_niveau_precision', $data)}
         <tr>
             <th>{@occtax~observation.output.diffusion_niveau_precision@}</th>
-            <td>{$data['diffusion_niveau_precision']}</td>
+            <td>
+                {if array_key_exists('diffusion_niveau_precision' . '|' . $data['diffusion_niveau_precision'], $nomenclature) }
+                {assign $k = 'diffusion_niveau_precision' . '|' . $data['diffusion_niveau_precision']}
+                {$nomenclature[$k]}
+                {else}
+                {$data['diffusion_niveau_precision']}
+                {/if}
+            </td>
         </tr>
         {/if}
 
         {if array_key_exists('ds_publique', $data)}
         <tr>
             <th>{@occtax~observation.output.ds_publique@}</th>
-            <td>{$data['ds_publique']}</td>
+            <td>
+                {if array_key_exists('ds_publique' . '|' . $data['ds_publique'], $nomenclature) }
+                {assign $k = 'ds_publique' . '|' . $data['ds_publique']}
+                {$nomenclature[$k]}
+                {else}
+                {$data['ds_publique']}
+                {/if}
+            </td>
         </tr>
         {/if}
 
@@ -456,7 +505,14 @@ Pas d'individu décrit
         {if array_key_exists('statut_source', $data)}
         <tr>
             <th>{@occtax~observation.output.statut_source@}</th>
-            <td>{$data['statut_source']}</td>
+            <td>
+                {if array_key_exists('statut_source' . '|' . $data['statut_source'], $nomenclature) }
+                {assign $k = 'statut_source' . '|' . $data['statut_source']}
+                {$nomenclature[$k]}
+                {else}
+                {$data['statut_source']}
+                {/if}
+            </td>
         </tr>
         {/if}
 
@@ -470,7 +526,14 @@ Pas d'individu décrit
         {if array_key_exists('sensible', $data)}
         <tr>
             <th>{@occtax~observation.output.sensible@}</th>
-            <td>{$data['sensible']}</td>
+            <td>
+                {if array_key_exists('sensible' . '|' . $data['sensible'], $nomenclature) }
+                {assign $k = 'sensible' . '|' . $data['sensible']}
+                {$nomenclature[$k]}
+                {else}
+                {$data['sensible']}
+                {/if}
+            </td>
         </tr>
         {/if}
 
@@ -484,7 +547,14 @@ Pas d'individu décrit
         {if array_key_exists('sensi_niveau', $data)}
         <tr>
             <th>{@occtax~observation.output.sensi_niveau@}</th>
-            <td>{$data['sensi_niveau']}</td>
+            <td>
+                {if array_key_exists('sensi_niveau' . '|' . $data['sensi_niveau'], $nomenclature) }
+                {assign $k = 'sensi_niveau' . '|' . $data['sensi_niveau']}
+                {$nomenclature[$k]}
+                {else}
+                {$data['sensi_niveau']}
+                {/if}
+            </td>
         </tr>
         {/if}
 
@@ -505,7 +575,14 @@ Pas d'individu décrit
         {if array_key_exists('validite_niveau', $data)}
         <tr>
             <th>{@occtax~observation.output.validite_niveau@}</th>
-            <td>{$data['validite_niveau']}</td>
+            <td>
+                {if array_key_exists('validite_niveau' . '|' . $data['validite_niveau'], $nomenclature) }
+                {assign $k = 'validite_niveau' . '|' . $data['validite_niveau']}
+                {$nomenclature[$k]}
+                {else}
+                {$data['validite_niveau']}
+                {/if}
+            </td>
         </tr>
         {/if}
 

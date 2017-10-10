@@ -123,7 +123,16 @@ class observationCtrl extends jController {
             $observation_card_fields = array_map('trim', explode(',', $observation_card_fields));
         }
 
+        // Nomenclature
+        $dao = jDao::get('nomenclature');
+        $find = $dao->findAll();
+        $nomenclature = array();
+        foreach($find as $nom){
+            $nomenclature[$nom->champ . '|' . $nom->code] = $nom->valeur;
+        }
+
         $tpl->assign('observation_card_fields', $observation_card_fields);
+        $tpl->assign('nomenclature', $nomenclature);
 
         // Get content
         $content = $tpl->fetch('occtax~observation');
