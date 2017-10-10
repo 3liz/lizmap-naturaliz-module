@@ -274,6 +274,8 @@ Un exemple de script SQL est disponible dans les sources de l'application, et mo
 `referentiels/gestion/ajout_demande.sql`
 
 
+todo : ajouter comment fonctionne la table demande, en précisant notamment qu'on opère des filtres AND et non OR entre les différents champs de la table demande . (important pour cd_ref, group1_inpn, group2_inpn )
+
 ### Export des données
 
 #### Depuis l'application
