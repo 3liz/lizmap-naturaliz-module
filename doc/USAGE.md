@@ -296,6 +296,14 @@ observation_exported_children=commune, departement, maille_02, maille_10, espace
 Ces variables influencent la liste des champs exportés (CSV, WFS) et aussi la liste des champs visibles dans la
 
 
+Pour paramétrer le texte qui est écrit dans le fichier LISEZ-MOI.txt à la racine du ZIP, vous pouvez modifier le fichier suivant, relativement à la racine de l'application Lizmap : `lizmap/var/config/occtax-export-LISEZ-MOI.txt`
+Ce fichier est ensuite complété par l'application avec:
+
+* les informations sur la requête (paramètres de recherche),
+* sur le résultat (nombre d'observations),
+* la liste des jeux de données de la plate-forme.
+
+
 ### Fiche de détail d'une observation
 
 L'application permet d'afficher pour chaque observation une fiche. Les champs contenus dans cette fiche, ainsi que les données rattachées, sont définis dans le fichier de configuration local de l'application `lizmap/var/config/localconfig.ini.php`, dans les variables suivantes :
