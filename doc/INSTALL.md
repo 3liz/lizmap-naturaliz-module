@@ -403,6 +403,44 @@ php lizmap/scripts/script.php occtax~import:purge -sig "commune,departement,mail
 php lizmap/scripts/script.php occtax~import:purge -sig "espace_naturel"
 ```
 
+
+NB: Pour les mailles 02, la donnée ne provient pas des sites du MNHN. Il faut appliquer une requête sur les données pour pouvoir modifier le code et qu'il ait la même structure que les données
+
+```
+WITH a AS (
+SELECT code_maille, nom_maille,
+concat(
+    '2kmUTM40E',
+    regexp_replace(nom_maille, '\-\d+$', ''),
+    'S',
+    regexp_replace(nom_maille, '^\d+\-', '')
+) AS code
+FROM sig.maille_02
+)
+UPDATE sig.maille_02 t
+SET code_maille = code
+FROM a
+WHERE a.code_maille = t.code_maille
+;
+
+WITH a AS (
+SELECT code_maille, nom_maille,
+concat(
+    '2kmUTM40E',
+    regexp_replace(nom_maille, '\-\d+$', ''),
+    'S',
+    regexp_replace(nom_maille, '^\d+\-', '')
+) AS code
+FROM sig.maille_02
+)
+UPDATE occtax.localisation_maille_02 t
+SET code_maille = code
+FROM a
+WHERE t.code_maille = a.nom_maille
+;
+
+```
+
 ## Finaliser l'installation
 
 ### PostgreSQL: ajouter un utilisateur naturaliz aux droits limités
