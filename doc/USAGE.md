@@ -107,14 +107,29 @@ Voir fonction https://projects.3liz.org/clients/naturaliz-reunion/issues/48
 
 #### Vue matérialisée pour gérer la diffusion des données à partir de cette sensibilité
 
-Les requêtes effectuées dans l'application font une jointure entre la table `observation` et la vue matérialisée `observation_diffusion`, pour
+Les requêtes effectuées dans l'application font une jointure entre la table `observation` et la vue matérialisée `observation_diffusion`. Le champ utilisé pour faire les filtres et restreindre les données affichées est le champ `diffusion` qui contient un tableau JSON des diffusions possibles.
 
-* la récupération d'une maille à interroger, lorsqu'on clique sur la carte pour récupérer une maille sur laquelle filtrer (boutons spatiaux du formulaire de recherche)
+Pour l'instant dans l'application, cette diffusion n'est utilisée pour filtrer que si la personne n'a pas le droit de voir les données brutes, c'est-à-dire seulement pour les personnes non connectées, soit le grand public.
+
+Comme le grand public ne peut pas accéder aux données brutes sur la carte (onglet Observations) ou via les exports (seul l'export CSV lui est possible sans la géométrie), les garde-fous sont positionnés sur les mailles renvoyées, et sur les possibilités de recherche spatiale.
+
+Dans ce cas, la diffusion est utilisée dans les situations suivantes :
+
+* la récupération d'une maille à interroger, lorsqu'on clique sur la carte pour récupérer une maille sur laquelle filtrer (boutons spatiaux du formulaire de recherche).
 
     - le fichier `occtax/controllers/service.classic.php` utilise la fonction `getMaille` de la classe `occtax/classes/occtaxGeometryChecker.class.php`
     - cette fonction `getMaille` ne renvoit une maille que si au moins une observation a été trouvée en dessous avec les crtières de diffusion via `$sql.= " AND ( od.diffusion ? 'g' OR od.diffusion ? '" . $this->type_maille . "' )";`
+    - si aucune maille n'est trouvée, un message "Aucune donnée d'observation pour cette maille." est affiché, et l'utilisateur ne peut donc pas faire de recherche spatiale pour cette maille.
 
-* le filtrage des données lorsque l'utilisateur a fait une requête par maille, masse d'eau ou commune. On ne liste (ou n'exporte) que les données qui dont la diffusion correspond au type de requête spatiale utilisée, via l'ajout du filtre dans la clause WHERE. Le but est d'empêcher que les utilisateurs fassent des recherches de commune en commune, ou de maille en maille, pour deviner en recoupant où sont les observations sensibles
+* l'affichage des maille 2 ou 10 sur la carte est filtré selon la diffusion, si on n'a pas le droit de voir les données brutes. On considère que le fait d'afficher à la maille 2 ou 10 répond au floutage nécessaire. Donc on filtre
+
+    - fichier `occtax/classes/occtaxSearchObservationMaille.class.php`
+    - la fonction `__construct` modifie les `querySelectors`, c'est à dire les champs retournés. Elle vide la géométrie de maille retournée si la diffusion ne permet pas de la récupérer.
+    - le récupération des mailles est faite par une sous-requête sur les observations, englobée dans une requête de regroupement des mailles.
+    - Par exemple pour la maille 02, la géométrie retournée dans la sous-requête est renvoyée par `CASE WHEN od.diffusion ? 'g' OR WHEN od.diffusion ? 'm02' THEN geom ELSE NULL END geom`. Cette géométrie brute réelle ou vide est ensuite utilisée par la requête supérieure qui renvoit les mailles (avec le décompte des observations et la géométrie de chaque maille). Ne sont donc renvoyées que les mailles pour qui la diffusion est 'g' ou 'm02' (ou 'm10').
+
+
+* le filtrage des données lorsque l'utilisateur a fait une requête spatiale par masse d'eau ou commune pour le grand public (et donc pas par maille). On ne liste que les données dont la diffusion correspond au type de requête spatiale utilisée, via l'ajout du filtre dans la clause WHERE. Le but est d'empêcher que les utilisateurs fassent des recherches de commune en commune, ou de masse d'eau en masse d'eau, pour deviner en recoupant où sont les mailles d'observations sensibles. On ne récupère donc pas les données dont la diffusion est m02 ou m10 lorsqu'on fait une recherche par commune ou par masse d'eau.
 
     - le fichier `occtax/classes/occtaxSearchObservation.class.php`
     - la fonction `setWhereClause` ajoute un filtre dans les conditios suivantes : si l'utilisateur n'a pas le droit de voir les données brutes et si un filtre spatial a été ajouté,
@@ -123,21 +138,16 @@ Les requêtes effectuées dans l'application font une jointure entre la table `o
     - recherche par maille 2: le formulaire passe les paramètres `type_maille=m02` et `code_maille=2kmUTM40E330S7668` et `geom=POLYGON de la maille`. Aucun filtre n'est ajouté
     - recherche par maille 10: le formulaire passe les paramètres `type_maille=10` et `code_maille=10kmUTM40E330S7670` et `geom=POLYGON de la maille`. Aucun filtre n'est ajouté
 
-* l'affichage des maille 2 ou 10 sur la carte est filtré selon la diffusion, si on n'a pas le droit de voir les données brutes
-
-    - fichier `occtax/classes/occtaxSearchObservationMaille.class.php`
-    - la fonction `__construct` modifie les `querySelectors`, c'est à dire les champs retournés. Elle vide la géométrie de maille retournée si la diffusion ne permet pas de la récupérer.
-    - Par exemple pour la maille 02, la géométrie retournée est renvoyée par `CASE WHEN od.diffusion ? 'g' OR WHEN od.diffusion ? 'm02' THEN geom ELSE NULL END geom`. Cette géométrie brute n'est pas renvoyée, mais utilisée par une requête supérieure qui renvoit les mailles (avec le décompte des observations et la géométrie de chaque maille). Ne sont donc renvoyées que les mailles pour qui la diffusion est 'g' ou 'm02' (ou 'm10').
-
 * l'export des données rattachées dans le CSV (communes, mailles 10 et 02, départements, etc.) est filtrée, si on n'a pas le droit de voir les données brutes
 
     - fichier `occtax/classes/occtaxSearchObservationBrutes.class.php`
     - fonctions `getDepartement`, `getCommune`, `getMaille02`, `getMaille10`, `getEspaceNaturel`, `getMasseEau`
     - Le filtre ajouté dépend du type de rattachement.
-    - Par exemple pour les mailles 2 : `AND ( foo.diffusion ? 'm02'`
+    - Par exemple pour les mailles 2 : `AND ( foo.diffusion ? 'm02')`
 
-* todo : vérifier l'export en WFS et en GeoJSON
-* todo : peut-on contourner le filtre des mailles qui n'est fait que sur la géométrie ? Pourquoi ne pas toujours ajouter le critère de diffusion dans le WHERE (dans classe recherche brute, recherche par maille ?) -> car a priori pas acès aux données brutes si pas connecté (mais peut changer)
+
+* todo : vérifier ces critères lorsqu'on va activer le droit pour le grand public (personnes non connectées) de voir l'onglet "observations" sur l'appli. Il faudra filtrer les données via `AND ( foo.diffusion ? 'g')`. Et aussi pour l'export CSV. On pourrait alors toujours faire un CASE WHEN pour que la géométrie sortie soit dépendante du champ diffusion
+
 
 ## Gestion des personnes (observateurs)
 
