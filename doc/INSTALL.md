@@ -521,6 +521,24 @@ nano lizmap/var/config/profiles.ini.php
 lizmap/install/set_rights.sh www-data www-data
 ```
 
+**IMPORTANT** L'application utilise un service PostgreSQL pour certaines fonctionnalités, comme l'export PDF des cartes. Vous devez donc configurer ce service sur le serveur.
+
+```
+nano /etc/postgresql-common/pg_service.conf
+
+# y mettre le contenu suivant, en adaptant bien sûr le nom de la base de données et mot de passe
+
+[naturaliz]
+host=localhost
+dbname=lizmap
+user=naturaliz
+port=5432
+password=naturaliz
+
+# tester via
+psql service=naturaliz
+```
+
 ## Activer les modules dans l'interface d'administration
 
 Les modules **occtax_admin** et **mascarine_admin** doivent être déclarés dans la configuration de Lizmap, pour permettre leur visualisation dans l'interface graphique. Pour cela, il faut modifier le fichier **lizmap/var/config/mainconfig.ini.php** et ajouter **, occtax_admin~*@classic** à la variable **admin** de la section **[simple_urlengine_entrypoints]**
