@@ -289,13 +289,17 @@ class occtaxSearchObservation extends occtaxSearch {
             foreach( $this->params as $k=>$v ){
                 if( array_key_exists( $k, $qf ) and $v and $qf[$k]['type'] != 'geom' ){
                     if( in_array($k, $blackQueryParams) ){
+                        $asql = '';
                         // Keep only data with open diffusion
-                        $sql.= " AND ( diffusion ? 'g' ";
+                        $asql.= " AND ( diffusion ? 'g' ";
                         // Keep also some more data based on query type
                         if( array_key_exists($k, $qMatch) ){
-                            $sql.= " OR diffusion ? '".$qMatch[$k]."' ";
+                            $asql.= " OR diffusion ? '".$qMatch[$k]."' ";
                         }
-                        $sql.= ' ) ';
+                        $asql.= ' ) ';
+jLog::log($asql);
+                        $sql.= $asql;
+
                     }
                 }
             }

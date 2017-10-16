@@ -86,3 +86,8 @@ INSERT INTO nomenclature VALUES ('validite_niveau', '3', 'Douteux', NULL);
 INSERT INTO nomenclature VALUES ('validite_niveau', '4', 'Invalide', NULL);
 INSERT INTO nomenclature VALUES ('validite_niveau', '5', 'Non réalisable', NULL);
 INSERT INTO nomenclature VALUES ('validite_niveau', '6', 'Non évalué', NULL);
+
+--
+-- descriptif sujet
+--
+

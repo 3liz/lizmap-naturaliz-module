@@ -463,7 +463,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
 
         // Keep only data where diffusion is possible
         if( !jAcl2::check("visualisation.donnees.brutes") ){
-            $sql.= " AND ( foo.diffusion ? 'm02' OR foo.diffusion ? 'g' )";
+            $sql.= " AND ( foo.diffusion ? 'm02' )";
             $sql.= " AND foo.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
         }
 

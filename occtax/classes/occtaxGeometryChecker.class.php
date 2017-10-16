@@ -134,9 +134,11 @@ class occtaxGeometryChecker {
             $sql.= ' FROM '.$maille.' m';
             $sql.= ', (SELECT ST_Transform(ST_SetSRID(ST_MakePoint('.$this->x.', '.$this->y.'),4326), '. $this->srid .') as geom) as tgeo';
             $sql.= ', observation o';
+            $sql.= ' JOIN observation_diffusion od ON od.cle_obs = o.cle_obs';
             $sql.= ' WHERE True';
             $sql.= ' AND ST_Within( tgeo.geom, m.geom )';
             $sql.= ' AND ST_Intersects( o.geom, m.geom )';
+            $sql.= " AND ( od.diffusion ? 'g' OR od.diffusion ? '" . $this->type_maille . "' )";
         }
         if($this->moduleName == 'mascarine'){
             $sql = 'SELECT m.code_maille, m.nom_maille, ST_AsGeoJSON(ST_Transform( m.geom , 4326)) AS geojson ';
