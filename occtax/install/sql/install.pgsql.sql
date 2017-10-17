@@ -107,7 +107,6 @@ CREATE TABLE observation (
     CONSTRAINT obs_sensi_niveau_valide CHECK ( sensi_niveau IN ( '0', '1', '2', '3', '4', '5', 'm02' ) ),
     CONSTRAINT obs_sensi_referentiel_valide CHECK ( ( sensi_niveau != '0' AND sensi_referentiel IS NOT NULL) OR sensi_niveau = '0' ),
     CONSTRAINT obs_sensi_version_referentiel_valide CHECK ( ( sensi_niveau != '0' AND sensi_version_referentiel IS NOT NULL) OR sensi_niveau = '0' ),
-    CONSTRAINT obs_version_taxref_valide CHECK ( cd_nom IS NULL OR ( cd_nom IS NOT NULL AND version_taxref IS NOT NULL) )
     CONSTRAINT obs_version_taxref_valide CHECK (cd_nom IS NULL OR ( cd_nom IS NOT NULL AND cd_nom > 0 AND version_taxref IS NOT NULL) OR ( cd_nom IS NOT NULL AND cd_nom < 0 ))
 
 
