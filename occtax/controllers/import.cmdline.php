@@ -55,8 +55,8 @@ class importCtrl extends jControllerCmdLine {
             '-maille_10' => true, // Full path to maille_10 Shapefile
             '-reserves_naturelles_nationales' => true, // Full path to Shapefile reserves naturelles,
             '-habref' => true, // Full path to the HABREF csv file
-            '-habitat_mer' => false, // Full path to the marine habitat file : http://inpn.mnhn.fr/telechargement/referentiels/habitats#habitats_marins_om
-            '-habitat_terre' => false, // Full path to the terestrial habitat source
+            '-habitat_mer' => true, // Full path to the marine habitat file : http://inpn.mnhn.fr/telechargement/referentiels/habitats#habitats_marins_om
+            '-habitat_terre' => true, // Full path to the terestrial habitat source
 
             '-commune_annee_ref' => true,
             '-departement_annee_ref' => true,

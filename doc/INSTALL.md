@@ -266,7 +266,24 @@ Le fichier des listes rouges, par exemple *LR_Resultats_Guadeloupe_complet_expor
 
 Exemple : PROTECTION_ESPECES_10.csv
 
-On doit spécifier dans le fichier lizmap/var/config/localconfig.ini.php la liste des codes des arrêtés sur les protections des espèces, par exemple GUAM1,GUAO1,GUARA1,DV971,GUAI2 pour la Guadeloupe
+On doit spécifier dans le fichier lizmap/var/config/localconfig.ini.php la liste des codes des arrêtés sur les protections des espèces, par exemple:
+* Guadeloupe
+
+```
+code_arrete_protection_simple=""
+code_arrete_protection_communautaire="CDH2,CDH4,CDH5,CDO1,CDO21,CDO22,CDO31,CDO32"
+code_arrete_protection_internationale="CCA,CCB,CCC,CCD,IAAP"
+code_arrete_protection_nationale="DV971,GUAI2,GUAM1,GUAO1,GUARA1,IBE1,IBE2,IBE3,IBOAC,IBOAE,IBOAS,IBOAW,IBOC,IBOEU,IBO1,IBO2,ISPAW1,ISPAW2,ISPAW3,NMAMmar2,NMAMmar3,NMAMmar5,NO3,NO4,NO6,NP1,NTM1,NTM8,OC2,OC3,OC4,OC5"
+```
+
+* Réunion
+
+```
+code_arrete_protection_simple="agri1,agri2,Bubul1,Bulbul2,Bulbul3,Bulbul4,Bulbul5,Bulbul6,Bulbul9,corbasi1,phelsuma1,phelsuma2,phelsuma3,phelsuma4,phelsuma5,PV97,REUEEA,REUEEI,REUP"
+code_arrete_protection_internationale="CCA,CCB,CCC,CCD,IAAP,IAO2,IAO3,IAO4,IBA2,IBA3,IBE1,IBE2,IBE3,IBOAE,IBO1,IBO2,IOS5"
+code_arrete_protection_communautaire="CDH2,CDH4,CDH5,CDO1,CDO21,CDO22,CDO31,CDO32"
+code_arrete_protection_nationale="DV974,NM,NMAMmar2,NM2,NO3,NO4,NO6,NTAA1,NTM1,NTM8,OC3,REUEA2,REUEA3,REUEA4,REUI2"
+```
 
 * Source: https://inpn.mnhn.fr/telechargement/referentielEspece/reglementation
 * Lien: https://inpn.mnhn.fr/telechargement/referentielEspece/reglementation/zip
@@ -371,7 +388,8 @@ apt-get install gdal-bin
 # Vous devez spécifier le chemin complet vers les fichiers : communes, mailles 1x1km, mailles 2x2km et optionnellement les réserves et les habitats
 
 # Exemple 1/ Guadeloupe
-php lizmap/scripts/script.php occtax~import:shapefile -commune "/root/sig/COMMUNE.SHP" -maille_01 "/root/sig/grille_1000m_gwada_dep_ama_poly.shp" -maille_02 "/root/sig/grille_2000m_gwada_dep_ama_poly.shp" -maille_05 "/root/sig/grille_5000.shp" -maille_10 "/root/sig/grille_10000m" -reserves_naturelles_nationales "/root/sig/glp_rnn2012.shp" -habref "/root/csv/HABREF_20/HABREF_20.csv" -habitat_mer "/root/csv/habitats/TYPO_ANT_MER_09-01-2011.xls" -habitat_terre "/root/csv/habitats/EAR_Guadeloupe.csv" -commune_annee_ref "2013" -departement_annee_ref "2013" -maille_01_version_ref "2015" -maille_01_nom_ref "Grille nationale (1km x 1km) Réunion" -maille_02_version_ref "2015" -maille_02_nom_ref "Grille nationale (2km x 2km) Réunion" -maille_05_version_ref "2015" -maille_05_nom_ref "Grille nationale (5km x 5km) Réunion" -maille_10_version_ref "2012" -maille_10_nom_ref "Grille nationale (10km x 10km) Réunion" -rnn_version_en "2010"
+php lizmap/scripts/script.php occtax~import:shapefile -commune "/root/referentiels/sig/COMMUNE.SHP" -maille_01 "/root/referentiels/sig/GLP_UTM20N1X1.shp" -maille_02 "/root/referentiels/sig/grille_2000m_gwada_dep_ama_poly.shp" -maille_05 "/root/referentiels/sig/GLP_UTM20N5X5.shp" -maille_10 "/root/referentiels/sig/GLP_UTM20N10X10.shp" -reserves_naturelles_nationales "/root/referentiels/sig/glp_rnn2012.shp" -habref "/root/referentiels/csv/HABREF_20/HABREF_20.csv" -habitat_mer "/root/referentiels/csv/habitats/TYPO_ANT_MER_09-01-2011.xls" -habitat_terre "/root/referentiels/csv/habitats/EAR_Guadeloupe.csv" -commune_annee_ref "2013" -departement_annee_ref "2013" -maille_01_version_ref "2015" -maille_01_nom_ref "Grille nationale (1km x 1km) Réunion" -maille_02_version_ref "2015" -maille_02_nom_ref "Grille nationale (2km x 2km) Réunion" -maille_05_version_ref "2015" -maille_05_nom_ref "Grille nationale (5km x 5km) Réunion" -maille_10_version_ref "2012" -maille_10_nom_ref "Grille nationale (10km x 10km) Réunion" -rnn_version_en "2010"
+
 
 # Exemple 2/ La Réunion
 php lizmap/scripts/script.php occtax~import:shapefile -commune "/root/referentiels/sig/COMMUNE.SHP" -maille_01 "/root/referentiels/sig/REU_UTM40S1X1.shp" -maille_02 "/root/referentiels/sig/REU_UTM40S2X2.shp" -maille_05 "/root/referentiels/sig/REU_UTM40S5X5.shp" -maille_10 "/root/referentiels/sig/REU_UTM40S10X10.shp" -reserves_naturelles_nationales "/root/referentiels/sig/RN.shp" -habref "/root/referentiels/habitats/HABREF_20/HABREF_20.csv" -commune_annee_ref "2013" -departement_annee_ref "2013" -maille_01_version_ref "2015" -maille_01_nom_ref "Grille nationale (1km x 1km) Réunion" -maille_02_version_ref "2015" -maille_02_nom_ref "Grille nationale (2km x 2km) Réunion" -maille_05_version_ref "2015" -maille_05_nom_ref "Grille nationale (5km x 5km) Réunion" -maille_10_version_ref "2012" -maille_10_nom_ref "Grille nationale (10km x 10km) Réunion" -rnn_version_en "2010"
@@ -390,7 +408,7 @@ php lizmap/scripts/script.php occtax~import:wfs -wfs_url "http://ws.carmencarto.
 # Import des données de relief (Modèle numérique de terrain = MNT ) et des lieu-dits en shapefiles
 # ATTENTION: seulement nécessaire si le module mascarine (saisie flore) est utilisé.
 # Vous devez spécifier les chemins complet vers les fichiers dans cet ordre: MNT, lieux-dits habités, lieux-dits non-habités, oronymes et toponymes divers ( Source IGN )
-php lizmap/scripts/script.php mascarine~import:gdalogr "/root/sig/DEPT971.asc" "/root/sig/LIEU_DIT_HABITE.SHP" "/root/sig/LIEU_DIT_NON_HABITE.SHP" "/root/sig/ORONYME.SHP" "/root/sig/TOPONYME_DIVERS.SHP"
+php lizmap/scripts/script.php mascarine~import:gdalogr "/root/referentiels/sig/DEPT971.asc" "/root/referentiels/sig/LIEU_DIT_HABITE.SHP" "/root/referentiels/sig/LIEU_DIT_NON_HABITE.SHP" "/root/referentiels/sig/ORONYME.SHP" "/root/referentiels/sig/TOPONYME_DIVERS.SHP"
 
 ```
 
