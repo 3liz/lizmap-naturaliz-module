@@ -24,10 +24,14 @@ CREATE TABLE validation_observation (
     date_contact date,
     procedure text,
     proc_ref text,
-    commm_val text
+    comm_val text,
+    CONSTRAINT validation_observation_niv_val_ok CHECK (niv_val IN ( '1', '2', '3', '4', '5' ) ),
+    CONSTRAINT validation_observation_typ_val_ok CHECK (typ_val IN ( 'A', 'C', 'M') ),
+    CONSTRAINT validation_observation_peri_val_ok CHECK (peri_val IN ( '1', '2' ) ),
+    CONSTRAINT validation_observation_ech_val_ok CHECK (ech_val IN ( '1', '2', '3') )
 );
 ALTER TABLE validation_observation ADD PRIMARY KEY (id_validation);
--- Contrainte d'unicité sur le couple cle_obs, ech_val : une seule validation nationale, régionale ou producteur (donc au max 3)
+-- Contrainte d''unicité sur le couple cle_obs, ech_val : une seule validation nationale, régionale ou producteur (donc au max 3)
 ALTER TABLE validation_observation ADD CONSTRAINT validation_observation_cle_obs_ech_val_unique UNIQUE (cle_obs, ech_val);
 
 ALTER TABLE validation_observation ADD CONSTRAINT validation_observation_cle_obs_fk FOREIGN KEY (cle_obs)
@@ -40,7 +44,7 @@ REFERENCES personne (id_personne)
 ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 ALTER TABLE validation_observation ADD CONSTRAINT validation_observation_producteur_fkey
-FOREIGN KEY (validateur)
+FOREIGN KEY (producteur)
 REFERENCES personne (id_personne)
 ON UPDATE RESTRICT ON DELETE RESTRICT;
 
@@ -68,7 +72,7 @@ COMMENT ON COLUMN validation_observation.proc_vers IS 'Version de la procédure 
 
 COMMENT ON COLUMN validation_observation.proc_ref IS 'Référence permettant de retrouver la procédure : URL, référence biblio, texte libre. Exemple : https://inpn.mnhn.fr/docs-web/docs/download/146208';
 
-COMMENT ON COLUMN validation_observation.commm_val IS 'Commentaire sur la validation.';
+COMMENT ON COLUMN validation_observation.comm_val IS 'Commentaire sur la validation.';
 
 
 -- Tables et fonctions de gestion de validation et sensibilite automatique
@@ -108,7 +112,7 @@ CREATE TABLE critere_sensibilite (
     condition text NOT NULL,
     table_jointure text,
     niveau text NOT NULL,
-    CONSTRAINT critere_sensibilite_niveau_valide CHECK ( niveau IN ( '0', '1', '2', '3', '4' ) )
+    CONSTRAINT critere_sensibilite_niveau_valide CHECK ( niveau IN ( 'm02', '0', '1', '2', '3', '4' ) )
 
 );
 ALTER TABLE critere_sensibilite ADD PRIMARY KEY (id_critere);
@@ -121,7 +125,7 @@ COMMENT ON COLUMN critere_sensibilite.libelle IS 'Libellé court de la condition
 COMMENT ON COLUMN critere_sensibilite.description IS 'Description de la motivation de cette condition et des choix effectués';
 COMMENT ON COLUMN critere_sensibilite.condition IS 'Condition au format SQL s''appliquant sur les champs de la table observation. Une sous-requête peut être effectuée vers d''autres tables. Ex: "altitude_max" > 500 AND altitude_max < 1500';
 COMMENT ON COLUMN critere_sensibilite.table_jointure IS 'Nom de la table utilisée pour une condition de jointure. On peut par exemple l''utiliser pour une intersection spatiale. Par exemple les tampons à 100m autour des rivières. Pour des soucis de performance, il faut faire une jointure et non une condition simple. Cette table doit être stockée dans le schéma sig';
-COMMENT ON COLUMN critere_sensibilite.niveau IS 'Niveau de sensibilité à appliquer pour la condition. Doit correspondre à la nomenclature.';
+COMMENT ON COLUMN critere_sensibilite.niveau IS 'Niveau de sensibilité à appliquer pour la condition. Doit correspondre à la nomenclature. Liste des niveaux : ''m02'', ''0'', ''1'', ''2'', ''3'', ''4'' ';
 
 
 CREATE OR REPLACE VIEW occtax.v_critere_validation_et_sensibilite AS
@@ -149,7 +153,7 @@ DECLARE sql_text TEXT;
 BEGIN
 
     -- celui qui a la plus petite note gagne à la fin
-    -- (lorsqu'une observation a plusieurs notes données par plusieurs conditions)
+    -- (lorsqu''une observation a plusieurs notes données par plusieurs conditions)
     IF p_contexte = 'sensibilite' THEN
         json_note := '{"0": 6, "m02": 5, "1": 4, "2": 3, "3": 2, "4": 1}'; -- sensibilite
     ELSE
@@ -177,11 +181,11 @@ BEGIN
         INSERT INTO occtax.niveau_par_observation
         (id_critere, cle_obs, niveau, contexte, note)
         SELECT
-            %s,
+            %s AS id_critere,
             o.cle_obs,
             ''%s'' AS niveau,
             ''%s'' AS contexte,
-            (''%s''::json->>''%s'')::integer
+            (''%s''::json->>''%s'')::integer AS note
 
         FROM occtax.observation o
         ';
@@ -210,7 +214,7 @@ BEGIN
         -- Filtre par jdd_id
         IF p_jdd_id IS NOT NULL THEN
             sql_template :=  '
-            AND o.jdd_id jdd_id = ANY ( ''%s''::TEXT[] )
+            AND o.jdd_id = ANY ( ''%s''::TEXT[] )
             ';
             sql_text := sql_text || format(sql_template, p_jdd_id);
         END IF;
@@ -218,7 +222,7 @@ BEGIN
         -- Log SQL
         RAISE NOTICE '%' , sql_text;
 
-        -- On insère les données dans occtax.niveau_observation
+        -- On insère les données dans occtax.niveau_par_observation
         EXECUTE sql_text;
 
     END LOOP;
@@ -242,7 +246,6 @@ COST 100;
 -- calcul validation
 CREATE OR REPLACE FUNCTION occtax.calcul_niveau_validation(
     p_jdd_id TEXT[],
-    p_ech_val TEXT,
     p_validateur integer,
     p_proc_vers TEXT,
     p_simulation boolean
@@ -281,8 +284,8 @@ BEGIN
             now(),
             t.niveau,
             ''A'',  -- automatique
-            $1, -- ech_val
-            ''2'', -- perimetre maximal
+            ''2'', -- ech_val
+            ''1'', -- perimetre minimal
             $2, -- validateur
             $3 -- proc_vers
         FROM occtax.niveau_par_observation_final AS t
@@ -304,8 +307,8 @@ BEGIN
             now(),
             EXCLUDED.niv_val,
             ''A'',  --automatique
-            $1, -- ech_val
-            ''2'', -- perimetre maximal
+            ''2'', -- ech_val
+            ''1'', -- perimetre minimal
             $2, -- validateur
             $3 -- proc_vers
         )
