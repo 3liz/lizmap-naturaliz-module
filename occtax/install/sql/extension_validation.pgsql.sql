@@ -411,7 +411,7 @@ BEGIN
         WHERE True
         AND contexte = ''sensibilite''
         AND o.cle_obs != t.cle_obs
-        AND o.sensi_referentiel = $1
+        -- AND o.sensi_referentiel = $1
         ';
         sql_text := format(sql_template, p_sensi_referentiel, p_sensi_version_referentiel);
 
