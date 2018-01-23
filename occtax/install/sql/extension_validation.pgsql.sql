@@ -279,11 +279,10 @@ COST 100;
 
 -- calcul validation
 CREATE OR REPLACE FUNCTION occtax.calcul_niveau_validation(
-    p_jdd_id TEXT[],
+    p_jdd_id text[],
     p_validateur integer,
-    p_simulation boolean
-)
-RETURNS INTEGER AS
+    p_simulation boolean)
+  RETURNS integer AS
 $BODY$
 DECLARE sql_template TEXT;
 DECLARE sql_text TEXT;
@@ -370,19 +369,19 @@ BEGIN
             ''A'',  --automatique
             ''2'', -- ech_val
             ''1'', -- perimetre minimal
-            ''Validation automatique du '' || now()::DATE || '' : '' || cv.libelle,
+            ''Validation automatique du '' || now()::DATE,
             $1, -- validateur
 
             -- On utilise les valeurs de la table procedure
-            p."procedure",
-            p.proc_vers,
-            p.proc_ref
+            $2,
+            $3,
+            $4
         )
          WHERE TRUE
         AND vo.typ_val NOT IN (''M'', ''C'')
         ';
         EXECUTE format(sql_template)
-        USING p_validateur;
+        USING p_validateur, procedure_ref_record."procedure", procedure_ref_record.proc_vers, procedure_ref_record.proc_ref;
     END IF;
 
     -- On supprime les lignes dans validation_observation pour ech_val = '2' et cle_obs NOT IN
@@ -409,16 +408,15 @@ BEGIN
 
 END
 $BODY$
-LANGUAGE plpgsql VOLATILE
-COST 100;
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
 
 
 -- calcul sensibilite
 CREATE OR REPLACE FUNCTION occtax.calcul_niveau_sensibilite(
-    p_jdd_id TEXT[],
-    p_simulation boolean
-)
-RETURNS INTEGER AS
+    p_jdd_id text[],
+    p_simulation boolean)
+  RETURNS integer AS
 $BODY$
 DECLARE sql_template TEXT;
 DECLARE sql_text TEXT;
@@ -486,7 +484,7 @@ BEGIN
             now(), ''0'',
             p.sensi_referentiel, p.sensi_version_referentiel
         )
-        FROM occtax.niveau_par_observation_final AS t,
+        FROM
         (
             SELECT sensi_referentiel, sensi_version_referentiel
             FROM occtax.sensibilite_referentiel, regexp_split_to_array(trim(sensi_version_referentiel),  ''\.'')  AS a
@@ -494,11 +492,15 @@ BEGIN
             LIMIT 1
         ) AS p
         WHERE True
-        AND contexte = ''sensibilite''
-        AND o.cle_obs != t.cle_obs
         -- AND o.sensi_referentiel = p.sensi_referentiel
+        AND o.cle_obs NOT IN(
+            SELECT cle_obs
+            FROM occtax.niveau_par_observation_final
+            WHERE contexte = ''sensibilite''
+        )
+
         ';
-        sql_text := format(sql_template, p_sensi_referentiel, p_sensi_version_referentiel);
+        sql_text := format(sql_template);
 
         RAISE NOTICE '%' , sql_text;
         EXECUTE sql_text;
@@ -511,8 +513,8 @@ BEGIN
 
 END
 $BODY$
-LANGUAGE plpgsql VOLATILE
-COST 100;
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
 
 
 
