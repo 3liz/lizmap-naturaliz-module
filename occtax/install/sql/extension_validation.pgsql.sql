@@ -131,6 +131,43 @@ CREATE OR REPLACE VIEW occtax.v_critere_validation_et_sensibilite AS
 ;
 
 
+
+-- validation_procedure
+CREATE TABLE validation_procedure (
+    id serial NOT NULL PRIMARY KEY,
+    proc_ref text,
+    "procedure" text,
+    proc_vers text
+);
+COMMENT ON TABLE validation_procedure IS 'Procédures de validation.';
+
+COMMENT ON COLUMN validation_procedure.id IS 'Id unique de la procédure (entier auto)';
+COMMENT ON COLUMN validation_procedure.proc_ref IS 'Référence permettant de retrouver la procédure : URL, référence biblio, texte libre';
+COMMENT ON COLUMN validation_procedure.procedure IS 'Procédure utilisée pour la validation de la donnée. Description succincte des opérations réalisées.';
+COMMENT ON COLUMN validation_procedure.proc_vers IS 'Version de la procédure utilisée.';
+ALTER TABLE validation_procedure ADD CONSTRAINT validation_procedure_unique UNIQUE (proc_ref, "procedure", proc_vers);
+
+ALTER TABLE occtax.validation_procedure ADD CONSTRAINT proc_vers_valide CHECK ( proc_vers ~ '^\d{1,2}\.\d{1,2}\.\d{1,2}$' );
+
+-- sensibilite_referentiel
+DROP TABLE IF EXISTS sensibilite_referentiel;
+CREATE TABLE sensibilite_referentiel (
+    id serial NOT NULL PRIMARY KEY,
+    sensi_referentiel text,
+    sensi_version_referentiel text,
+    description text
+);
+COMMENT ON TABLE sensibilite_referentiel IS 'Référentiel de sensibilité.';
+
+COMMENT ON COLUMN sensibilite_referentiel.id IS 'Id unique du référentiel de sensibilité (entier auto)';
+COMMENT ON COLUMN sensibilite_referentiel.sensi_referentiel IS 'Référence permettant de retrouver la procédure : URL, référence biblio, texte libre';
+COMMENT ON COLUMN sensibilite_referentiel.sensi_version_referentiel IS 'Version du référentiel de sensibilité. Doit être du type *.*.* Par ex: 1.0.0';
+COMMENT ON COLUMN sensibilite_referentiel.description IS 'Description du référentiel.';
+ALTER TABLE sensibilite_referentiel ADD CONSTRAINT sensibilite_referentiel_unique UNIQUE (sensi_referentiel, sensi_version_referentiel);
+
+ALTER TABLE occtax.sensibilite_referentiel ADD CONSTRAINT sensi_version_referentiel_valide CHECK ( sensi_version_referentiel ~ '^\d{1,2}\.\d{1,2}\.\d{1,2}$' );
+
+
 CREATE OR REPLACE FUNCTION occtax.calcul_niveau_par_condition(
     p_contexte text,
     p_jdd_id TEXT[]
@@ -251,7 +288,18 @@ $BODY$
 DECLARE sql_template TEXT;
 DECLARE sql_text TEXT;
 DECLARE useless INTEGER;
+DECLARE procedure_ref_record RECORD;
 BEGIN
+
+    -- On vérifie qu'on a des données pour le référentiel de validation
+    SELECT INTO procedure_ref_record
+        "procedure", proc_vers, proc_ref
+    FROM occtax.validation_procedure
+    LIMIT 1;
+    IF procedure_ref_record.proc_vers IS NULL THEN
+        RAISE EXCEPTION '[naturaliz] La table validation_procedure est vide';
+        RETURN 0;
+    END IF;
 
     -- Remplissage de la table avec les valeurs issues des conditions
     SELECT occtax.calcul_niveau_par_condition(
@@ -270,6 +318,7 @@ BEGIN
             typ_val,
             ech_val,
             peri_val,
+            comm_val,
             validateur,
             "procedure",
             proc_vers,
@@ -282,6 +331,7 @@ BEGIN
             ''A'',  -- automatique
             ''2'', -- ech_val
             ''1'', -- perimetre minimal
+            ''Validation automatique du '' || now()::DATE || '' : '' || cv.libelle,
             $1, -- validateur
 
             -- On utilise les valeurs de la table procedure
@@ -289,8 +339,14 @@ BEGIN
             p.proc_vers,
             p.proc_ref
 
-        FROM occtax.niveau_validation_par_observation_final AS t,
-        (SELECT * FROM occtax.validation_procedure LIMIT 1) AS p
+        FROM occtax.niveau_par_observation_final AS t
+        JOIN occtax.critere_validation AS cv ON t.id_critere = cv.id_critere,
+        (
+            SELECT "procedure", proc_vers, proc_ref
+            FROM occtax.validation_procedure, regexp_split_to_array(trim(proc_vers),  ''\.'')  AS a
+            ORDER BY concat(lpad(a[1], 3, ''0''), lpad(a[2], 3, ''0''), lpad(a[3], 3, ''0'')) DESC
+            LIMIT 1
+        ) AS p
         WHERE True
         AND t.contexte = ''validation''
         AND t.cle_obs = cle_obs
@@ -302,6 +358,7 @@ BEGIN
             typ_val,
             ech_val,
             peri_val,
+            comm_val,
             validateur,
             "procedure",
             proc_vers,
@@ -313,6 +370,7 @@ BEGIN
             ''A'',  --automatique
             ''2'', -- ech_val
             ''1'', -- perimetre minimal
+            ''Validation automatique du '' || now()::DATE || '' : '' || cv.libelle,
             $1, -- validateur
 
             -- On utilise les valeurs de la table procedure
@@ -338,7 +396,9 @@ BEGIN
         AND ech_val = ''2''
         AND vo.typ_val NOT IN (''M'', ''C'')
         AND cle_obs NOT IN (
-            SELECT cle_obs FROM occtax.niveau_validation_par_observation_final AS t
+            SELECT cle_obs
+            FROM occtax.niveau_par_observation_final AS t
+            WHERE contexte = ''validation''
         )
         ';
         EXECUTE format(sql_template)
@@ -356,16 +416,25 @@ COST 100;
 -- calcul sensibilite
 CREATE OR REPLACE FUNCTION occtax.calcul_niveau_sensibilite(
     p_jdd_id TEXT[],
-    p_simulation boolean,
-    p_sensi_referentiel TEXT,
-    p_sensi_version_referentiel TEXT
+    p_simulation boolean
 )
 RETURNS INTEGER AS
 $BODY$
 DECLARE sql_template TEXT;
 DECLARE sql_text TEXT;
 DECLARE useless INTEGER;
+DECLARE sensi_ref_record RECORD;
 BEGIN
+
+    -- On vérifie qu'on a des données pour le référentiel de sensibilité
+    SELECT INTO sensi_ref_record
+        sensi_referentiel, sensi_version_referentiel
+    FROM occtax.sensibilite_referentiel
+    LIMIT 1;
+    IF sensi_ref_record.sensi_referentiel IS NULL THEN
+        RAISE EXCEPTION '[naturaliz] La table sensibilite_referentiel est vide';
+        RETURN 0;
+    END IF;
 
     -- Remplissage de la table avec les valeurs issues des conditions
     SELECT occtax.calcul_niveau_par_condition(
@@ -378,17 +447,25 @@ BEGIN
         sql_template := '
         UPDATE occtax.observation o
         SET (
-            sensi_date_attribution, sensi_niveau, sensi_referentiel, sensi_version_referentiel
+            sensi_date_attribution, sensi_niveau,
+            sensi_referentiel, sensi_version_referentiel
         )
         = (
-            now(), niveau, ''%s'', ''%s''
+            now(), niveau,
+            p.sensi_referentiel, p.sensi_version_referentiel
         )
-        FROM occtax.niveau_sensibilite_par_observation_final AS t
+        FROM occtax.niveau_par_observation_final AS t,
+        (
+            SELECT sensi_referentiel, sensi_version_referentiel
+            FROM occtax.sensibilite_referentiel, regexp_split_to_array(trim(sensi_version_referentiel),  ''\.'')  AS a
+            ORDER BY concat(lpad(a[1], 3, ''0''), lpad(a[2], 3, ''0''), lpad(a[3], 3, ''0'')) DESC
+            LIMIT 1
+        ) AS p
         WHERE True
         AND contexte = ''sensibilite''
         AND t.cle_obs = o.cle_obs
         ';
-        sql_text := format(sql_template, p_sensi_referentiel, p_sensi_version_referentiel);
+        sql_text := format(sql_template);
 
         RAISE NOTICE '%' , sql_text;
         EXECUTE sql_text;
@@ -402,16 +479,24 @@ BEGIN
         sql_template := '
         UPDATE occtax.observation o
         SET (
-            sensi_date_attribution, sensi_niveau, sensi_referentiel, sensi_version_referentiel
+            sensi_date_attribution, sensi_niveau,
+            sensi_referentiel, sensi_version_referentiel
         )
         = (
-            now(), ''0'', $1, $2
+            now(), ''0'',
+            p.sensi_referentiel, p.sensi_version_referentiel
         )
-        FROM occtax.niveau_par_observation_final AS t
+        FROM occtax.niveau_par_observation_final AS t,
+        (
+            SELECT sensi_referentiel, sensi_version_referentiel
+            FROM occtax.sensibilite_referentiel, regexp_split_to_array(trim(sensi_version_referentiel),  ''\.'')  AS a
+            ORDER BY concat(lpad(a[1], 3, ''0''), lpad(a[2], 3, ''0''), lpad(a[3], 3, ''0'')) DESC
+            LIMIT 1
+        ) AS p
         WHERE True
         AND contexte = ''sensibilite''
         AND o.cle_obs != t.cle_obs
-        -- AND o.sensi_referentiel = $1
+        -- AND o.sensi_referentiel = p.sensi_referentiel
         ';
         sql_text := format(sql_template, p_sensi_referentiel, p_sensi_version_referentiel);
 
@@ -479,9 +564,8 @@ FROM occtax.nomenclature
 
 
 -- VALIDATION : vue et triggers pour validation par les validateurs agréés
--- DROP MATERIALIZED VIEW IF EXISTS occtax.v_observation_validation CASCADE;
 DROP VIEW IF EXISTS occtax.v_observation_validation CASCADE;
-CREATE VIEW occtax.v_observation_validation AS
+CREATE OR REPLACE VIEW occtax.v_observation_validation AS
 
 SELECT
 -- Observation
@@ -496,7 +580,7 @@ t.nom_valide, t.reu, t.nom_vern, t.group1_inpn, t.group2_inpn,
 denombrement_min, denombrement_max, objet_denombrement, type_denombrement,
 
 -- Descriptif sujet
-(array_to_json(array_agg(json_build_object(
+REPLACE(replace((jsonb_pretty(array_to_json(array_agg(json_build_object(
     'obs_methode',
     dict->>(concat('obs_methode', '_', obs_methode)) ,
     'occ_etat_biologique',
@@ -523,7 +607,7 @@ denombrement_min, denombrement_max, objet_denombrement, type_denombrement,
     obs_description,
     'occ_methode_determination',
     dict->>(concat('occ_methode_determination', '_', occ_methode_determination))
-))), True)::text AS descriptif_sujet,
+)))::jsonb)::text), '"', ''), ':', ' : ') AS descriptif_sujet,
 
 date_determination,
 
@@ -534,8 +618,14 @@ date_debut, date_fin, heure_debut, heure_fin,
 geom, altitude_moy,  precision_geometrie, nature_objet_geo,
 
 --Personnes
-string_agg(concat(vobs.identite, ' ', vobs.mail,' (', vobs.organisme, ')'), ', ') AS observateurs,
-string_agg(concat(vdet.identite, ' ', vdet.mail,' (', vdet.organisme, ')'), ', ') AS determinateurs,
+string_agg(
+    vobs.identite || concat(' - ' || vobs.mail, ' (' || vobs.organisme || ')' ),
+    ', '
+) AS observateurs,
+string_agg(
+    vdet.identite || concat(' - ' || vdet.mail, ' (' || vdet.organisme || ')' ),
+    ', '
+) AS determinateurs,
 
 organisme_gestionnaire_donnees,
 
@@ -557,7 +647,7 @@ niv_val,
 typ_val,
 ech_val,
 peri_val,
-validateur,
+string_agg( vval.identite || concat(' - ' || vval.mail, ' (' || vval.organisme || ')' ), ', ') AS validateur,
 proc_vers,
 producteur,
 date_contact,
@@ -569,10 +659,12 @@ comm_val
 FROM occtax.observation o
 LEFT JOIN taxon.taxref AS t USING (cd_nom)
 LEFT JOIN occtax.v_observateur AS vobs USING (cle_obs)
+LEFT JOIN occtax.personne AS vval USING (id_personne)
 LEFT JOIN occtax.v_determinateur AS vdet USING (cle_obs)
 LEFT JOIN occtax.jdd USING (jdd_id)
 -- plateforme régionale
-LEFT JOIN occtax.validation_observation v ON "ech_val" = '2' AND v.cle_obs = o.cle_obs,
+LEFT JOIN occtax.validation_observation v ON "ech_val" = '2' AND v.cle_obs = o.cle_obs
+left join lateral
 jsonb_to_recordset(o.descriptif_sujet) AS (
     obs_methode text,
     occ_etat_biologique text,
@@ -587,14 +679,15 @@ jsonb_to_recordset(o.descriptif_sujet) AS (
     obs_contexte text,
     obs_description text,
     occ_methode_determination text
-),
+) ON TRUE,
 occtax.v_nomenclature_plat
 GROUP BY
 o.cle_obs, statut_observation,
 o.cd_nom, nom_cite,
 t.nom_valide, t.reu, t.nom_vern, t.group1_inpn, t.group2_inpn,
 denombrement_min, denombrement_max, objet_denombrement, type_denombrement,
-o.descriptif_sujet, date_determination,  date_debut, date_fin, heure_debut, heure_fin,
+
+date_determination,  date_debut, date_fin, heure_debut, heure_fin,
 geom, altitude_moy,  precision_geometrie, nature_objet_geo,
 commentaire, code_idcnp_dispositif,  dee_date_transformation, dee_date_derniere_modification,
 jdd.jdd_code, jdd.jdd_id, jdd.jdd_description, jdd.jdd_metadonnee_dee_id,
@@ -637,20 +730,6 @@ REFERENCES personne (id_personne)
 ON DELETE CASCADE;
 
 
--- validation_procedure
-CREATE TABLE validation_procedure (
-    proc_code text NOT NULL PRIMARY KEY,
-    proc_ref text,
-    "procedure" text,
-    proc_vers text
-);
-COMMENT ON TABLE validation_procedure IS 'Procédures de validation.';
-
-COMMENT ON COLUMN validation_procedure.proc_code IS 'Code de la procédure';
-COMMENT ON COLUMN validation_procedure.proc_ref IS 'Référence permettant de retrouver la procédure : URL, référence biblio, texte libre';
-COMMENT ON COLUMN validation_procedure.procedure IS 'Procédure utilisée pour la validation de la donnée. Description succincte des opérations réalisées.';
-COMMENT ON COLUMN validation_procedure.proc_vers IS 'Version de la procédure utilisée.';
-
 
 -- Fonction trigger qui lance la modification sur la table validation_observation
 -- lorsque l'utilisateur modifie une vue filtrée sur la vue matérialisée
@@ -670,7 +749,10 @@ CREATE OR REPLACE FUNCTION occtax.update_observation_validation() RETURNS TRIGGE
 
                 -- INSERT
                 WITH p AS (
-                    SELECT "procedure", proc_ref, proc_vers FROM occtax.validation_procedure  LIMIT 1
+                    SELECT "procedure", proc_vers, proc_ref
+                    FROM occtax.validation_procedure, regexp_split_to_array(trim(proc_vers),  '\.')  AS a
+                    ORDER BY concat(lpad(a[1], 3, '0'), lpad(a[2], 3, '0'), lpad(a[3], 3, '0')) DESC
+                    LIMIT 1
                 )
                 INSERT INTO occtax.validation_observation
                 (
@@ -760,7 +842,12 @@ CREATE OR REPLACE FUNCTION occtax.update_observation_validation() RETURNS TRIGGE
 
                     NEW.comm_val
                 )
-                FROM (SELECT * FROM occtax.validation_procedure LIMIT 1) AS p
+                FROM (
+                    SELECT "procedure", proc_vers, proc_ref
+                    FROM occtax.validation_procedure, regexp_split_to_array(trim(proc_vers),  '\.')  AS a
+                    ORDER BY concat(lpad(a[1], 3, '0'), lpad(a[2], 3, '0'), lpad(a[3], 3, '0')) DESC
+                    LIMIT 1
+                ) AS p
                 WHERE TRUE
                 AND vo.id_validation = NEW.id_validation
                 AND vo.cle_obs = NEW.cle_obs

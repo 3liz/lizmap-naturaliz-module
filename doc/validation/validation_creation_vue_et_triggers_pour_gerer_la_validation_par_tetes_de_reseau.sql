@@ -29,12 +29,10 @@ VALUES (
 );
 
 
-
 -- On ajoute une procédure de validation si elle n'existe pas déjà !
-DELETE FROM occtax.validation_procedure;
-INSERT INTO occtax.validation_procedure (proc_code, proc_ref, "procedure", proc_vers)
-VALUES ('test', '1.0beta', 'Procédure de validation de test', '1.0beta');
-
+INSERT INTO occtax.validation_procedure (proc_ref, "procedure", proc_vers)
+VALUES ('1.0.0', 'Procédure de validation de test', '1.0.0')
+ON CONFLICT DO NOTHING;
 
 -- On crée une vue qui filtre les données comme on le souhaite
 -- dans cet exemple, on a filtré sur le group2_inpn. On pourrait très bien filtrer sur d'autres critères
@@ -50,13 +48,19 @@ AND group2_inpn = 'Oiseaux';
 GRANT SELECT, UPDATE ON occtax.v_observation_validation_acme TO validation_acme;
 -- on enlève les droits sur occtax.observation
 REVOKE SELECT, INSERT, UPDATE ON occtax.observation FROM validation_acme;
+
 -- donner le droit de SELECT, INSERT et d'UPDATE sur la table validation_observation
+-- c'est obligatoire mais sans souci pour la sécurité car seulement table avec contenu du standard validation
 GRANT SELECT, INSERT, UPDATE ON occtax.validation_observation TO validation_acme;
+
 -- Droit en lecture sur les tables nomenclature, validation_procedure, validation_personne
 GRANT SELECT ON occtax.nomenclature, occtax.validation_procedure, occtax.validation_personne TO validation_acme;
+
 -- Utilisation de la séquence pour les validation
 GRANT USAGE ON validation_observation_id_validation_seq TO validation_acme;
+
 -- Visualisation des données de sig
+GRANT USAGE ON SCHEMA sig TO validation_acme;
 GRANT SELECT ON ALL TABLES IN SCHEMA sig TO validation_acme;
 
 -- On ajoute le TRIGGER pour déclencher la fonction qui modifiera la table occtax.validation_observation

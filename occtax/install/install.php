@@ -28,6 +28,10 @@ class occtaxModuleInstaller extends jInstallerModule {
             // Add occtax schema and tables
             $sqlPath = $this->path . 'install/sql/install.pgsql.sql';
             $sqlTpl = jFile::read( $sqlPath );
+
+            // Add extension validation
+            $sqlPath = $this->path . 'install/sql/extension_validation.pgsql.sql';
+            $sqlTpl.= jFile::read( $sqlPath );
             $tpl = new jTpl();
 
             // Get SRID
