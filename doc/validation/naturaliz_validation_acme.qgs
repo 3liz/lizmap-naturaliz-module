@@ -5,32 +5,47 @@
   <evaluateDefaultValues active="0"/>
   <layer-tree-group expanded="1" checked="Qt::PartiallyChecked" name="">
     <customproperties/>
-    <layer-tree-layer expanded="1" providerKey="postgres" checked="Qt::Checked" id="v_observation_validation_acme20171206175247744" source="dbname='naturaliz_reunion' host=localhost port=5432 user='john_doe_acme' sslmode=disable key='cle_obs' estimatedmetadata=true srid=2975 type=Point table=&quot;occtax&quot;.&quot;v_observation_validation_acme&quot; (geom) sql=" name="v_observation_validation">
+    <layer-tree-layer expanded="1" providerKey="postgres" checked="Qt::Checked" id="v_observation_validation_acme20171206175247744" source="dbname='naturaliz_reunion' host=localhost port=5432 user='john_doe_acme' sslmode=disable key='cle_obs' estimatedmetadata=true srid=2975 type=Point table=&quot;occtax&quot;.&quot;v_observation_validation_acme&quot; (geom) sql=&quot;niv_val&quot; IS NULL OR &quot;typ_val&quot; = 'A'" name="Observations à valider">
       <customproperties>
         <property key="showFeatureCount" value="0"/>
       </customproperties>
+    </layer-tree-layer>
+    <layer-tree-layer expanded="1" providerKey="postgres" checked="Qt::Unchecked" id="Observations_à_valider_copier20171213110332872" source="dbname='naturaliz_reunion' host=localhost port=5432 user='john_doe_acme' sslmode=disable key='cle_obs' estimatedmetadata=true srid=2975 type=Point table=&quot;occtax&quot;.&quot;v_observation_validation_acme&quot; (geom) sql=&quot;niv_val&quot; IS NOT NULL AND typ_val IN ('M', 'C')" name="Observations validées">
+      <customproperties/>
     </layer-tree-layer>
     <layer-tree-layer expanded="1" providerKey="postgres" checked="Qt::Checked" id="nomenclature20171206180403796" source="dbname='naturaliz_reunion' host=localhost port=5432 user='john_doe_acme' sslmode=disable key='champ,code' estimatedmetadata=true table=&quot;occtax&quot;.&quot;nomenclature&quot; sql=" name="nomenclature">
       <customproperties/>
     </layer-tree-layer>
     <layer-tree-group expanded="1" checked="Qt::PartiallyChecked" name="Référentiels">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="postgres" checked="Qt::Unchecked" id="maille_0220171207093956825" source="dbname='naturaliz_reunion' host=localhost port=5432 user='john_doe_acme' sslmode=disable key='id_maille' estimatedmetadata=true table=&quot;sig&quot;.&quot;maille_02&quot; (geom) sql=" name="maille_02">
+      <layer-tree-layer expanded="1" providerKey="postgres" checked="Qt::Unchecked" id="maille_0220171207093956825" source="dbname='naturaliz_reunion' host=localhost port=5432 user='john_doe_acme' sslmode=disable key='id_maille' estimatedmetadata=true table=&quot;sig&quot;.&quot;maille_02&quot; (geom) sql=" name="Mailles 2x2">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="postgres" checked="Qt::Unchecked" id="maille_1020171207093954652" source="dbname='naturaliz_reunion' host=localhost port=5432 user='john_doe_acme' sslmode=disable key='code_maille' estimatedmetadata=true table=&quot;sig&quot;.&quot;maille_10&quot; (geom) sql=" name="maille_10">
+      <layer-tree-layer expanded="1" providerKey="postgres" checked="Qt::Unchecked" id="maille_1020171207093954652" source="dbname='naturaliz_reunion' host=localhost port=5432 user='john_doe_acme' sslmode=disable key='code_maille' estimatedmetadata=true table=&quot;sig&quot;.&quot;maille_10&quot; (geom) sql=" name="Mailles 10x10">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="postgres" checked="Qt::Checked" id="zone_economique_exclusive20171207093950270" source="dbname='naturaliz_reunion' host=localhost port=5432 user='john_doe_acme' sslmode=disable key='id' estimatedmetadata=true table=&quot;sig&quot;.&quot;zone_economique_exclusive&quot; (geom) sql=" name="zone_economique_exclusive">
+      <layer-tree-layer expanded="1" providerKey="postgres" checked="Qt::Checked" id="zone_economique_exclusive20171207093950270" source="dbname='naturaliz_reunion' host=localhost port=5432 user='john_doe_acme' sslmode=disable key='id' estimatedmetadata=true table=&quot;sig&quot;.&quot;zone_economique_exclusive&quot; (geom) sql=" name="Zone économique exclusive">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="postgres" checked="Qt::Checked" id="espace_naturel20171207093947834" source="dbname='naturaliz_reunion' host=localhost port=5432 user='john_doe_acme' sslmode=disable key='code_en' estimatedmetadata=true table=&quot;sig&quot;.&quot;espace_naturel&quot; (geom) sql=" name="espace_naturel">
+      <layer-tree-layer expanded="1" providerKey="postgres" checked="Qt::Checked" id="espace_naturel20171207093947834" source="dbname='naturaliz_reunion' host=localhost port=5432 user='john_doe_acme' sslmode=disable key='code_en' estimatedmetadata=true table=&quot;sig&quot;.&quot;espace_naturel&quot; (geom) sql=" name="Espaces naturels">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="postgres" checked="Qt::Unchecked" id="masse_eau20171207093937734" source="dbname='naturaliz_reunion' host=localhost port=5432 user='john_doe_acme' sslmode=disable key='code_me' estimatedmetadata=true table=&quot;sig&quot;.&quot;masse_eau&quot; (geom) sql=" name="masse_eau">
+      <layer-tree-layer expanded="1" providerKey="postgres" checked="Qt::Checked" id="masse_eau20171207093937734" source="dbname='naturaliz_reunion' host=localhost port=5432 user='john_doe_acme' sslmode=disable key='code_me' estimatedmetadata=true table=&quot;sig&quot;.&quot;masse_eau&quot; (geom) sql=" name="Masses d'eau">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="postgres" checked="Qt::Checked" id="commune20171207093853482" source="dbname='naturaliz_reunion' host=localhost port=5432 user='john_doe_acme' sslmode=disable key='code_commune' estimatedmetadata=true table=&quot;sig&quot;.&quot;commune&quot; (geom) sql=" name="commune">
+      <layer-tree-layer expanded="1" providerKey="postgres" checked="Qt::Checked" id="commune20171207093853482" source="dbname='naturaliz_reunion' host=localhost port=5432 user='john_doe_acme' sslmode=disable key='code_commune' estimatedmetadata=true table=&quot;sig&quot;.&quot;commune&quot; (geom) sql=" name="Communes">
+        <customproperties/>
+      </layer-tree-layer>
+    </layer-tree-group>
+    <layer-tree-group expanded="1" checked="Qt::PartiallyChecked" name="Fonds">
+      <customproperties/>
+      <layer-tree-layer expanded="1" providerKey="wms" checked="Qt::Unchecked" id="osm_mapnik20171213110303879" source="crs=EPSG:3857&amp;format=&amp;type=xyz&amp;url=http://tile.openstreetmap.org/%7Bz%7D/%7Bx%7D/%7By%7D.png" name="osm-mapnik">
+        <customproperties/>
+      </layer-tree-layer>
+      <layer-tree-layer expanded="1" providerKey="wms" checked="Qt::Checked" id="google_satellite20171213143618024" source="crs=EPSG:3857&amp;format=&amp;type=xyz&amp;url=http://mt.google.com/vt/lyrs%3Ds%26x%3D%7Bx%7D%26y%3D%7By%7D%26z%3D%7Bz%7D" name="google-satellite">
+        <customproperties/>
+      </layer-tree-layer>
+      <layer-tree-layer expanded="1" providerKey="wms" checked="Qt::Unchecked" id="google_terrain20171213143512180" source="crs=EPSG:3857&amp;format=&amp;type=xyz&amp;url=http://mt1.google.com/vt/lyrs%3Dp%26x%3D%7Bx%7D%26y%3D%7By%7D%26z%3D%7Bz%7D" name="google-terrain">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
@@ -39,10 +54,10 @@
   <mapcanvas>
     <units>meters</units>
     <extent>
-      <xmin>315511.79416565061546862</xmin>
-      <ymin>7633539.7224746011197567</ymin>
-      <xmax>377817.71400595479644835</xmax>
-      <ymax>7690298.78743337467312813</ymax>
+      <xmin>315004.39402537175919861</xmin>
+      <ymin>7636557.99019306804984808</ymin>
+      <xmax>382797.74902537174057215</xmax>
+      <ymax>7696552.99519307073205709</ymax>
     </extent>
     <rotation>0</rotation>
     <projections>1</projections>
@@ -61,12 +76,19 @@
     <rendermaptile>0</rendermaptile>
     <layer_coordinate_transform_info>
       <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="maille_1020171207093954652"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:3857" srcDatumTransform="-1" destDatumTransform="-1" layerid="google_terrain20171213143512180"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:3857" srcDatumTransform="-1" destDatumTransform="-1" layerid="Google_Satellite20171213110302758"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:3857" srcDatumTransform="-1" destDatumTransform="-1" layerid="Google_Terrain20171213143405739"/>
       <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="v_observation_validation_acme20171206175247744"/>
       <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="masse_eau20171207093937734"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="Observations_à_valider_copier20171213110332872"/>
       <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="espace_naturel20171207093947834"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:3857" srcDatumTransform="-1" destDatumTransform="-1" layerid="Landsat__Gis_Lab_info_20171213145330398"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:3857" srcDatumTransform="-1" destDatumTransform="-1" layerid="osm_mapnik20171213110303879"/>
       <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="commune20171207093853482"/>
       <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="reunion_300k20171207112240880"/>
       <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="maille_0220171207093956825"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:3857" srcDatumTransform="-1" destDatumTransform="-1" layerid="google_satellite20171213143618024"/>
       <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="zone_economique_exclusive20171207093950270"/>
     </layer_coordinate_transform_info>
   </mapcanvas>
@@ -80,12 +102,21 @@
       <item>zone_economique_exclusive20171207093950270</item>
       <item>maille_1020171207093954652</item>
       <item>maille_0220171207093956825</item>
+      <item>osm_mapnik20171213110303879</item>
+      <item>Observations_à_valider_copier20171213110332872</item>
+      <item>google_terrain20171213143512180</item>
+      <item>google_satellite20171213143618024</item>
     </custom-order>
   </layer-tree-canvas>
   <legend updateDrawingOrder="true">
-    <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="v_observation_validation" showFeatureCount="0">
+    <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="Observations à valider" showFeatureCount="0">
       <filegroup open="true" hidden="false">
         <legendlayerfile isInOverview="0" layerid="v_observation_validation_acme20171206175247744" visible="1"/>
+      </filegroup>
+    </legendlayer>
+    <legendlayer drawingOrder="-1" open="true" checked="Qt::Unchecked" name="Observations validées" showFeatureCount="0">
+      <filegroup open="true" hidden="false">
+        <legendlayerfile isInOverview="0" layerid="Observations_à_valider_copier20171213110332872" visible="0"/>
       </filegroup>
     </legendlayer>
     <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="nomenclature" showFeatureCount="0">
@@ -94,46 +125,860 @@
       </filegroup>
     </legendlayer>
     <legendgroup open="true" checked="Qt::PartiallyChecked" name="Référentiels">
-      <legendlayer drawingOrder="-1" open="true" checked="Qt::Unchecked" name="maille_02" showFeatureCount="0">
+      <legendlayer drawingOrder="-1" open="true" checked="Qt::Unchecked" name="Mailles 2x2" showFeatureCount="0">
         <filegroup open="true" hidden="false">
           <legendlayerfile isInOverview="0" layerid="maille_0220171207093956825" visible="0"/>
         </filegroup>
       </legendlayer>
-      <legendlayer drawingOrder="-1" open="true" checked="Qt::Unchecked" name="maille_10" showFeatureCount="0">
+      <legendlayer drawingOrder="-1" open="true" checked="Qt::Unchecked" name="Mailles 10x10" showFeatureCount="0">
         <filegroup open="true" hidden="false">
           <legendlayerfile isInOverview="0" layerid="maille_1020171207093954652" visible="0"/>
         </filegroup>
       </legendlayer>
-      <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="zone_economique_exclusive" showFeatureCount="0">
+      <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="Zone économique exclusive" showFeatureCount="0">
         <filegroup open="true" hidden="false">
           <legendlayerfile isInOverview="0" layerid="zone_economique_exclusive20171207093950270" visible="1"/>
         </filegroup>
       </legendlayer>
-      <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="espace_naturel" showFeatureCount="0">
+      <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="Espaces naturels" showFeatureCount="0">
         <filegroup open="true" hidden="false">
           <legendlayerfile isInOverview="0" layerid="espace_naturel20171207093947834" visible="1"/>
         </filegroup>
       </legendlayer>
-      <legendlayer drawingOrder="-1" open="true" checked="Qt::Unchecked" name="masse_eau" showFeatureCount="0">
+      <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="Masses d'eau" showFeatureCount="0">
         <filegroup open="true" hidden="false">
-          <legendlayerfile isInOverview="0" layerid="masse_eau20171207093937734" visible="0"/>
+          <legendlayerfile isInOverview="0" layerid="masse_eau20171207093937734" visible="1"/>
         </filegroup>
       </legendlayer>
-      <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="commune" showFeatureCount="0">
+      <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="Communes" showFeatureCount="0">
         <filegroup open="true" hidden="false">
           <legendlayerfile isInOverview="0" layerid="commune20171207093853482" visible="1"/>
         </filegroup>
       </legendlayer>
     </legendgroup>
+    <legendgroup open="true" checked="Qt::PartiallyChecked" name="Fonds">
+      <legendlayer drawingOrder="-1" open="true" checked="Qt::Unchecked" name="osm-mapnik" showFeatureCount="0">
+        <filegroup open="true" hidden="false">
+          <legendlayerfile isInOverview="0" layerid="osm_mapnik20171213110303879" visible="0"/>
+        </filegroup>
+      </legendlayer>
+      <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="google-satellite" showFeatureCount="0">
+        <filegroup open="true" hidden="false">
+          <legendlayerfile isInOverview="0" layerid="google_satellite20171213143618024" visible="1"/>
+        </filegroup>
+      </legendlayer>
+      <legendlayer drawingOrder="-1" open="true" checked="Qt::Unchecked" name="google-terrain" showFeatureCount="0">
+        <filegroup open="true" hidden="false">
+          <legendlayerfile isInOverview="0" layerid="google_terrain20171213143512180" visible="0"/>
+        </filegroup>
+      </legendlayer>
+    </legendgroup>
   </legend>
   <projectlayers>
+    <maplayer simplifyAlgorithm="2" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="0" scaleBasedLabelVisibilityFlag="0">
+      <id>Observations_à_valider_copier20171213110332872</id>
+      <datasource>dbname='naturaliz_reunion' host=localhost port=5432 user='john_doe_acme' password='acme' sslmode=disable key='cle_obs' estimatedmetadata=true srid=2975 type=Point table="occtax"."v_observation_validation_acme" (geom) sql="niv_val" IS NOT NULL AND typ_val IN ('M', 'C')</datasource>
+      <keywordList>
+        <value></value>
+      </keywordList>
+      <layername>Observations validées</layername>
+      <srs>
+        <spatialrefsys>
+          <proj4>+proj=utm +zone=40 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+          <srsid>942</srsid>
+          <srid>2975</srid>
+          <authid>EPSG:2975</authid>
+          <description>RGR92 / UTM zone 40S</description>
+          <projectionacronym>utm</projectionacronym>
+          <ellipsoidacronym>GRS80</ellipsoidacronym>
+          <geographicflag>false</geographicflag>
+        </spatialrefsys>
+      </srs>
+      <provider encoding="System">postgres</provider>
+      <vectorjoins/>
+      <layerDependencies/>
+      <expressionfields/>
+      <map-layer-style-manager current="">
+        <map-layer-style name=""/>
+      </map-layer-style-manager>
+      <edittypes>
+        <edittype widgetv2type="TextEdit" name="cle_obs">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="ValueRelation" name="statut_observation">
+          <widgetv2config OrderByValue="1" AllowNull="1" FilterExpression="champ='statut_observation'" UseCompleter="0" fieldEditable="0" Key="code" constraint="" Layer="nomenclature20171206180403796" Value="valeur" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="cd_nom">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="cd_ref">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="nom_cite">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="nom_valide">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="reu">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="nom_vern">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="group1_inpn">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="group2_inpn">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="denombrement_min">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="denombrement_max">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="ValueRelation" name="objet_denombrement">
+          <widgetv2config OrderByValue="1" AllowNull="1" FilterExpression="champ='objet_denombrement'" UseCompleter="0" fieldEditable="0" Key="code" constraint="" Layer="nomenclature20171206180403796" Value="valeur" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="ValueRelation" name="type_denombrement">
+          <widgetv2config OrderByValue="1" AllowNull="1" FilterExpression="champ='type_denombrement'" UseCompleter="0" fieldEditable="0" Key="code" constraint="" Layer="nomenclature20171206180403796" Value="valeur" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="descriptif_sujet">
+          <widgetv2config IsMultiline="1" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="1" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="date_determination">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="date_debut">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="date_fin">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="heure_debut">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="heure_fin">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="altitude_moy">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="ValueRelation" name="precision_geometrie">
+          <widgetv2config OrderByValue="1" AllowNull="1" FilterExpression="champ='precision_geometrie'" UseCompleter="0" fieldEditable="0" Key="code" constraint="" Layer="nomenclature20171206180403796" Value="valeur" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="ValueRelation" name="nature_objet_geo">
+          <widgetv2config OrderByValue="1" AllowNull="1" FilterExpression="champ='nature_objet_geo'" UseCompleter="0" fieldEditable="0" Key="code" constraint="" Layer="nomenclature20171206180403796" Value="valeur" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="observateurs">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="determinateurs">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="organisme_gestionnaire_donnees">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="commentaire">
+          <widgetv2config IsMultiline="1" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="1" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="code_idcnp_dispositif">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="dee_date_transformation">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="dee_date_derniere_modification">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="jdd_code">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="jdd_id">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="jdd_description">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="jdd_metadonnee_dee_id">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="ValueRelation" name="statut_source">
+          <widgetv2config OrderByValue="1" AllowNull="1" FilterExpression="champ='statut_source'" UseCompleter="0" fieldEditable="0" Key="code" constraint="" Layer="nomenclature20171206180403796" Value="valeur" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="ValueRelation" name="reference_biblio">
+          <widgetv2config OrderByValue="1" AllowNull="1" FilterExpression="champ='reference_biblio'" UseCompleter="0" fieldEditable="0" Key="code" constraint="" Layer="nomenclature20171206180403796" Value="valeur" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="ValueRelation" name="ds_publique">
+          <widgetv2config OrderByValue="1" AllowNull="1" FilterExpression="champ='ds_publique'" UseCompleter="0" fieldEditable="0" Key="code" constraint="" Layer="nomenclature20171206180403796" Value="valeur" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="ValueRelation" name="diffusion_niveau_precision">
+          <widgetv2config OrderByValue="1" AllowNull="1" FilterExpression="champ='diffusion_niveau_precision'" UseCompleter="0" fieldEditable="0" Key="code" constraint="" Layer="nomenclature20171206180403796" Value="valeur" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="ValueRelation" name="sensi_niveau">
+          <widgetv2config OrderByValue="1" AllowNull="1" FilterExpression="champ='sensi_niveau'" UseCompleter="0" fieldEditable="0" Key="code" constraint="" Layer="nomenclature20171206180403796" Value="valeur" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="Hidden" name="validite_niveau">
+          <widgetv2config fieldEditable="0" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="Hidden" name="validite_date_validation">
+          <widgetv2config fieldEditable="0" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="id_validation">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="date_ctrl">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="ValueRelation" name="niv_val">
+          <widgetv2config OrderByValue="1" AllowNull="1" FilterExpression="champ= 'niveau_validation_automatique' " UseCompleter="0" fieldEditable="1" Key="code" constraint="" Layer="nomenclature20171206180403796" Value="valeur" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="ValueRelation" name="typ_val">
+          <widgetv2config OrderByValue="1" AllowNull="1" FilterExpression="champ='typ_val'" UseCompleter="0" fieldEditable="0" Key="code" constraint="" Layer="nomenclature20171206180403796" Value="valeur" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="ValueRelation" name="ech_val">
+          <widgetv2config OrderByValue="1" AllowNull="1" FilterExpression="champ='ech_val'" UseCompleter="0" fieldEditable="0" Key="code" constraint="" Layer="nomenclature20171206180403796" Value="valeur" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="ValueRelation" name="peri_val">
+          <widgetv2config OrderByValue="1" AllowNull="1" FilterExpression="champ='peri_val'" UseCompleter="0" fieldEditable="0" Key="code" constraint="" Layer="nomenclature20171206180403796" Value="valeur" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="validateur">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="proc_vers">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="producteur">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="date_contact">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="procedure">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="proc_ref">
+          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="TextEdit" name="comm_val">
+          <widgetv2config IsMultiline="1" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="1" constraintDescription="" notNull="0"/>
+        </edittype>
+      </edittypes>
+      <renderer-v2 forceraster="0" symbollevels="0" type="RuleRenderer" enableorderby="0">
+        <rules key="{2fd9854e-fd10-42a0-8b0b-553b730cebf5}">
+          <rule filter="&quot;niv_val&quot; = '1'" key="{d36e9b98-64aa-4e8a-84bd-97bb5af616bb}" symbol="0" label="Certain - &quot;niv_val&quot; = '1'"/>
+          <rule filter="&quot;niv_val&quot; = '2'" key="{159beda2-1408-477a-9dd2-e8be4a62bb72}" symbol="1" label="Probable  - &quot;niv_val&quot; = '2'"/>
+          <rule filter="&quot;niv_val&quot; = '3'" key="{e38224ae-f3c8-4264-9f9c-1dfefd0686ae}" symbol="2" label="Douteux  - &quot;niv_val&quot; = '3'"/>
+          <rule filter="&quot;niv_val&quot; = '4'" key="{439bacdf-fdeb-493b-99a8-c7c459034c4f}" symbol="3" label="Invalide  - &quot;niv_val&quot; = '4'"/>
+          <rule filter="&quot;niv_val&quot; = '5'" key="{0f7830ff-22a5-40b4-9955-09d8ee21f6f3}" symbol="4" label="Non réalisable  - &quot;niv_val&quot; = '5'"/>
+        </rules>
+        <symbols>
+          <symbol alpha="1" clip_to_extent="1" type="marker" name="0">
+            <layer pass="0" class="SimpleMarker" locked="0">
+              <prop k="angle" v="0"/>
+              <prop k="color" v="26,150,65,255"/>
+              <prop k="horizontal_anchor_point" v="1"/>
+              <prop k="joinstyle" v="bevel"/>
+              <prop k="name" v="square"/>
+              <prop k="offset" v="0,0"/>
+              <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="offset_unit" v="MM"/>
+              <prop k="outline_color" v="255,255,255,255"/>
+              <prop k="outline_style" v="solid"/>
+              <prop k="outline_width" v="0"/>
+              <prop k="outline_width_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="outline_width_unit" v="MM"/>
+              <prop k="scale_method" v="diameter"/>
+              <prop k="size" v="2"/>
+              <prop k="size_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="size_unit" v="MM"/>
+              <prop k="vertical_anchor_point" v="1"/>
+            </layer>
+          </symbol>
+          <symbol alpha="1" clip_to_extent="1" type="marker" name="1">
+            <layer pass="0" class="SimpleMarker" locked="0">
+              <prop k="angle" v="0"/>
+              <prop k="color" v="166,217,106,255"/>
+              <prop k="horizontal_anchor_point" v="1"/>
+              <prop k="joinstyle" v="bevel"/>
+              <prop k="name" v="square"/>
+              <prop k="offset" v="0,0"/>
+              <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="offset_unit" v="MM"/>
+              <prop k="outline_color" v="255,255,255,255"/>
+              <prop k="outline_style" v="solid"/>
+              <prop k="outline_width" v="0"/>
+              <prop k="outline_width_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="outline_width_unit" v="MM"/>
+              <prop k="scale_method" v="diameter"/>
+              <prop k="size" v="2"/>
+              <prop k="size_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="size_unit" v="MM"/>
+              <prop k="vertical_anchor_point" v="1"/>
+            </layer>
+          </symbol>
+          <symbol alpha="1" clip_to_extent="1" type="marker" name="2">
+            <layer pass="0" class="SimpleMarker" locked="0">
+              <prop k="angle" v="0"/>
+              <prop k="color" v="255,199,87,255"/>
+              <prop k="horizontal_anchor_point" v="1"/>
+              <prop k="joinstyle" v="bevel"/>
+              <prop k="name" v="square"/>
+              <prop k="offset" v="0,0"/>
+              <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="offset_unit" v="MM"/>
+              <prop k="outline_color" v="255,255,255,255"/>
+              <prop k="outline_style" v="solid"/>
+              <prop k="outline_width" v="0"/>
+              <prop k="outline_width_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="outline_width_unit" v="MM"/>
+              <prop k="scale_method" v="diameter"/>
+              <prop k="size" v="2"/>
+              <prop k="size_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="size_unit" v="MM"/>
+              <prop k="vertical_anchor_point" v="1"/>
+            </layer>
+          </symbol>
+          <symbol alpha="1" clip_to_extent="1" type="marker" name="3">
+            <layer pass="0" class="SimpleMarker" locked="0">
+              <prop k="angle" v="0"/>
+              <prop k="color" v="240,0,48,255"/>
+              <prop k="horizontal_anchor_point" v="1"/>
+              <prop k="joinstyle" v="bevel"/>
+              <prop k="name" v="square"/>
+              <prop k="offset" v="0,0"/>
+              <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="offset_unit" v="MM"/>
+              <prop k="outline_color" v="255,255,255,255"/>
+              <prop k="outline_style" v="solid"/>
+              <prop k="outline_width" v="0"/>
+              <prop k="outline_width_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="outline_width_unit" v="MM"/>
+              <prop k="scale_method" v="diameter"/>
+              <prop k="size" v="2"/>
+              <prop k="size_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="size_unit" v="MM"/>
+              <prop k="vertical_anchor_point" v="1"/>
+            </layer>
+          </symbol>
+          <symbol alpha="1" clip_to_extent="1" type="marker" name="4">
+            <layer pass="0" class="SimpleMarker" locked="0">
+              <prop k="angle" v="0"/>
+              <prop k="color" v="166,0,141,255"/>
+              <prop k="horizontal_anchor_point" v="1"/>
+              <prop k="joinstyle" v="bevel"/>
+              <prop k="name" v="square"/>
+              <prop k="offset" v="0,0"/>
+              <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="offset_unit" v="MM"/>
+              <prop k="outline_color" v="255,255,255,255"/>
+              <prop k="outline_style" v="solid"/>
+              <prop k="outline_width" v="0"/>
+              <prop k="outline_width_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="outline_width_unit" v="MM"/>
+              <prop k="scale_method" v="diameter"/>
+              <prop k="size" v="2"/>
+              <prop k="size_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="size_unit" v="MM"/>
+              <prop k="vertical_anchor_point" v="1"/>
+            </layer>
+          </symbol>
+        </symbols>
+      </renderer-v2>
+      <labeling type="simple"/>
+      <customproperties>
+        <property key="embeddedWidgets/count" value="0"/>
+        <property key="labeling" value="pal"/>
+        <property key="labeling/addDirectionSymbol" value="false"/>
+        <property key="labeling/angleOffset" value="0"/>
+        <property key="labeling/blendMode" value="0"/>
+        <property key="labeling/bufferBlendMode" value="0"/>
+        <property key="labeling/bufferColorA" value="255"/>
+        <property key="labeling/bufferColorB" value="255"/>
+        <property key="labeling/bufferColorG" value="255"/>
+        <property key="labeling/bufferColorR" value="255"/>
+        <property key="labeling/bufferDraw" value="false"/>
+        <property key="labeling/bufferJoinStyle" value="128"/>
+        <property key="labeling/bufferNoFill" value="false"/>
+        <property key="labeling/bufferSize" value="1"/>
+        <property key="labeling/bufferSizeInMapUnits" value="false"/>
+        <property key="labeling/bufferSizeMapUnitScale" value="0,0,0,0,0,0"/>
+        <property key="labeling/bufferTransp" value="0"/>
+        <property key="labeling/centroidInside" value="false"/>
+        <property key="labeling/centroidWhole" value="false"/>
+        <property key="labeling/decimals" value="3"/>
+        <property key="labeling/displayAll" value="false"/>
+        <property key="labeling/dist" value="0"/>
+        <property key="labeling/distInMapUnits" value="false"/>
+        <property key="labeling/distMapUnitScale" value="0,0,0,0,0,0"/>
+        <property key="labeling/drawLabels" value="false"/>
+        <property key="labeling/enabled" value="false"/>
+        <property key="labeling/fieldName" value=""/>
+        <property key="labeling/fitInPolygonOnly" value="false"/>
+        <property key="labeling/fontCapitals" value="0"/>
+        <property key="labeling/fontFamily" value="Ubuntu"/>
+        <property key="labeling/fontItalic" value="false"/>
+        <property key="labeling/fontLetterSpacing" value="0"/>
+        <property key="labeling/fontLimitPixelSize" value="false"/>
+        <property key="labeling/fontMaxPixelSize" value="10000"/>
+        <property key="labeling/fontMinPixelSize" value="3"/>
+        <property key="labeling/fontSize" value="11"/>
+        <property key="labeling/fontSizeInMapUnits" value="false"/>
+        <property key="labeling/fontSizeMapUnitScale" value="0,0,0,0,0,0"/>
+        <property key="labeling/fontStrikeout" value="false"/>
+        <property key="labeling/fontUnderline" value="false"/>
+        <property key="labeling/fontWeight" value="50"/>
+        <property key="labeling/fontWordSpacing" value="0"/>
+        <property key="labeling/formatNumbers" value="false"/>
+        <property key="labeling/isExpression" value="true"/>
+        <property key="labeling/labelOffsetInMapUnits" value="true"/>
+        <property key="labeling/labelOffsetMapUnitScale" value="0,0,0,0,0,0"/>
+        <property key="labeling/labelPerPart" value="false"/>
+        <property key="labeling/leftDirectionSymbol" value="&lt;"/>
+        <property key="labeling/limitNumLabels" value="false"/>
+        <property key="labeling/maxCurvedCharAngleIn" value="25"/>
+        <property key="labeling/maxCurvedCharAngleOut" value="-25"/>
+        <property key="labeling/maxNumLabels" value="2000"/>
+        <property key="labeling/mergeLines" value="false"/>
+        <property key="labeling/minFeatureSize" value="0"/>
+        <property key="labeling/multilineAlign" value="3"/>
+        <property key="labeling/multilineHeight" value="1"/>
+        <property key="labeling/namedStyle" value="Medium Italic"/>
+        <property key="labeling/obstacle" value="true"/>
+        <property key="labeling/obstacleFactor" value="1"/>
+        <property key="labeling/obstacleType" value="0"/>
+        <property key="labeling/offsetType" value="0"/>
+        <property key="labeling/placeDirectionSymbol" value="0"/>
+        <property key="labeling/placement" value="6"/>
+        <property key="labeling/placementFlags" value="10"/>
+        <property key="labeling/plussign" value="false"/>
+        <property key="labeling/predefinedPositionOrder" value="TR,TL,BR,BL,R,L,TSR,BSR"/>
+        <property key="labeling/preserveRotation" value="true"/>
+        <property key="labeling/previewBkgrdColor" value="#ffffff"/>
+        <property key="labeling/priority" value="5"/>
+        <property key="labeling/quadOffset" value="4"/>
+        <property key="labeling/repeatDistance" value="0"/>
+        <property key="labeling/repeatDistanceMapUnitScale" value="0,0,0,0,0,0"/>
+        <property key="labeling/repeatDistanceUnit" value="1"/>
+        <property key="labeling/reverseDirectionSymbol" value="false"/>
+        <property key="labeling/rightDirectionSymbol" value=">"/>
+        <property key="labeling/scaleMax" value="10000000"/>
+        <property key="labeling/scaleMin" value="1"/>
+        <property key="labeling/scaleVisibility" value="false"/>
+        <property key="labeling/shadowBlendMode" value="6"/>
+        <property key="labeling/shadowColorB" value="0"/>
+        <property key="labeling/shadowColorG" value="0"/>
+        <property key="labeling/shadowColorR" value="0"/>
+        <property key="labeling/shadowDraw" value="false"/>
+        <property key="labeling/shadowOffsetAngle" value="135"/>
+        <property key="labeling/shadowOffsetDist" value="1"/>
+        <property key="labeling/shadowOffsetGlobal" value="true"/>
+        <property key="labeling/shadowOffsetMapUnitScale" value="0,0,0,0,0,0"/>
+        <property key="labeling/shadowOffsetUnits" value="1"/>
+        <property key="labeling/shadowRadius" value="1.5"/>
+        <property key="labeling/shadowRadiusAlphaOnly" value="false"/>
+        <property key="labeling/shadowRadiusMapUnitScale" value="0,0,0,0,0,0"/>
+        <property key="labeling/shadowRadiusUnits" value="1"/>
+        <property key="labeling/shadowScale" value="100"/>
+        <property key="labeling/shadowTransparency" value="30"/>
+        <property key="labeling/shadowUnder" value="0"/>
+        <property key="labeling/shapeBlendMode" value="0"/>
+        <property key="labeling/shapeBorderColorA" value="255"/>
+        <property key="labeling/shapeBorderColorB" value="128"/>
+        <property key="labeling/shapeBorderColorG" value="128"/>
+        <property key="labeling/shapeBorderColorR" value="128"/>
+        <property key="labeling/shapeBorderWidth" value="0"/>
+        <property key="labeling/shapeBorderWidthMapUnitScale" value="0,0,0,0,0,0"/>
+        <property key="labeling/shapeBorderWidthUnits" value="1"/>
+        <property key="labeling/shapeDraw" value="false"/>
+        <property key="labeling/shapeFillColorA" value="255"/>
+        <property key="labeling/shapeFillColorB" value="255"/>
+        <property key="labeling/shapeFillColorG" value="255"/>
+        <property key="labeling/shapeFillColorR" value="255"/>
+        <property key="labeling/shapeJoinStyle" value="64"/>
+        <property key="labeling/shapeOffsetMapUnitScale" value="0,0,0,0,0,0"/>
+        <property key="labeling/shapeOffsetUnits" value="1"/>
+        <property key="labeling/shapeOffsetX" value="0"/>
+        <property key="labeling/shapeOffsetY" value="0"/>
+        <property key="labeling/shapeRadiiMapUnitScale" value="0,0,0,0,0,0"/>
+        <property key="labeling/shapeRadiiUnits" value="1"/>
+        <property key="labeling/shapeRadiiX" value="0"/>
+        <property key="labeling/shapeRadiiY" value="0"/>
+        <property key="labeling/shapeRotation" value="0"/>
+        <property key="labeling/shapeRotationType" value="0"/>
+        <property key="labeling/shapeSVGFile" value=""/>
+        <property key="labeling/shapeSizeMapUnitScale" value="0,0,0,0,0,0"/>
+        <property key="labeling/shapeSizeType" value="0"/>
+        <property key="labeling/shapeSizeUnits" value="1"/>
+        <property key="labeling/shapeSizeX" value="0"/>
+        <property key="labeling/shapeSizeY" value="0"/>
+        <property key="labeling/shapeTransparency" value="0"/>
+        <property key="labeling/shapeType" value="0"/>
+        <property key="labeling/substitutions" value="&lt;substitutions/>"/>
+        <property key="labeling/textColorA" value="255"/>
+        <property key="labeling/textColorB" value="0"/>
+        <property key="labeling/textColorG" value="0"/>
+        <property key="labeling/textColorR" value="0"/>
+        <property key="labeling/textTransp" value="0"/>
+        <property key="labeling/upsidedownLabels" value="0"/>
+        <property key="labeling/useSubstitutions" value="false"/>
+        <property key="labeling/wrapChar" value=""/>
+        <property key="labeling/xOffset" value="0"/>
+        <property key="labeling/yOffset" value="0"/>
+        <property key="labeling/zIndex" value="0"/>
+        <property key="variableNames"/>
+        <property key="variableValues"/>
+      </customproperties>
+      <blendMode>0</blendMode>
+      <featureBlendMode>0</featureBlendMode>
+      <layerTransparency>0</layerTransparency>
+      <displayfield>jdd_description</displayfield>
+      <label>0</label>
+      <labelattributes>
+        <label fieldname="" text="Étiquette"/>
+        <family fieldname="" name="Ubuntu"/>
+        <size fieldname="" units="pt" value="12"/>
+        <bold fieldname="" on="0"/>
+        <italic fieldname="" on="0"/>
+        <underline fieldname="" on="0"/>
+        <strikeout fieldname="" on="0"/>
+        <color fieldname="" red="0" blue="0" green="0"/>
+        <x fieldname=""/>
+        <y fieldname=""/>
+        <offset x="0" y="0" units="pt" yfieldname="" xfieldname=""/>
+        <angle fieldname="" value="0" auto="0"/>
+        <alignment fieldname="" value="center"/>
+        <buffercolor fieldname="" red="255" blue="255" green="255"/>
+        <buffersize fieldname="" units="pt" value="1"/>
+        <bufferenabled fieldname="" on=""/>
+        <multilineenabled fieldname="" on=""/>
+        <selectedonly on=""/>
+      </labelattributes>
+      <SingleCategoryDiagramRenderer diagramType="Histogram" sizeLegend="0" attributeLegend="1">
+        <DiagramCategory penColor="#000000" labelPlacementMethod="XHeight" penWidth="0" diagramOrientation="Up" sizeScale="0,0,0,0,0,0" minimumSize="0" barWidth="5" penAlpha="255" maxScaleDenominator="1e+08" backgroundColor="#ffffff" transparency="0" width="15" scaleDependency="Area" backgroundAlpha="255" angleOffset="1440" scaleBasedVisibility="0" enabled="0" height="15" lineSizeScale="0,0,0,0,0,0" sizeType="MM" lineSizeType="MM" minScaleDenominator="inf">
+          <fontProperties description="Ubuntu,11,-1,5,50,0,0,0,0,0" style=""/>
+          <attribute field="" color="#000000" label=""/>
+        </DiagramCategory>
+        <symbol alpha="1" clip_to_extent="1" type="marker" name="sizeSymbol">
+          <layer pass="0" class="SimpleMarker" locked="0">
+            <prop k="angle" v="0"/>
+            <prop k="color" v="255,0,0,255"/>
+            <prop k="horizontal_anchor_point" v="1"/>
+            <prop k="joinstyle" v="bevel"/>
+            <prop k="name" v="circle"/>
+            <prop k="offset" v="0,0"/>
+            <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
+            <prop k="offset_unit" v="MM"/>
+            <prop k="outline_color" v="0,0,0,255"/>
+            <prop k="outline_style" v="solid"/>
+            <prop k="outline_width" v="0"/>
+            <prop k="outline_width_map_unit_scale" v="0,0,0,0,0,0"/>
+            <prop k="outline_width_unit" v="MM"/>
+            <prop k="scale_method" v="diameter"/>
+            <prop k="size" v="2"/>
+            <prop k="size_map_unit_scale" v="0,0,0,0,0,0"/>
+            <prop k="size_unit" v="MM"/>
+            <prop k="vertical_anchor_point" v="1"/>
+          </layer>
+        </symbol>
+      </SingleCategoryDiagramRenderer>
+      <DiagramLayerSettings yPosColumn="-1" showColumn="-1" linePlacementFlags="10" placement="0" dist="0" xPosColumn="-1" priority="0" obstacle="0" zIndex="0" showAll="1"/>
+      <annotationform>.</annotationform>
+      <aliases>
+        <alias field="cle_obs" index="0" name="Identifiant"/>
+        <alias field="statut_observation" index="1" name="Statut d'observation"/>
+        <alias field="cd_nom" index="2" name="CDNOM"/>
+        <alias field="cd_ref" index="3" name="CDREF"/>
+        <alias field="nom_cite" index="4" name="Nom cité"/>
+        <alias field="nom_valide" index="5" name="Nom valide"/>
+        <alias field="reu" index="6" name="Statut REU"/>
+        <alias field="nom_vern" index="7" name="Nom vernaculaire"/>
+        <alias field="group1_inpn" index="8" name="Groupe 1 INPN"/>
+        <alias field="group2_inpn" index="9" name="Groupe 2 INPN"/>
+        <alias field="denombrement_min" index="10" name="Dénombrement min"/>
+        <alias field="denombrement_max" index="11" name="Dénombrement max"/>
+        <alias field="objet_denombrement" index="12" name="Objet dénombrement"/>
+        <alias field="type_denombrement" index="13" name="Type dénombrement"/>
+        <alias field="descriptif_sujet" index="14" name="Descriptif des individus"/>
+        <alias field="date_determination" index="15" name="Date de détermination"/>
+        <alias field="date_debut" index="16" name="Date de début"/>
+        <alias field="date_fin" index="17" name="Date de fin"/>
+        <alias field="heure_debut" index="18" name="Heure début"/>
+        <alias field="heure_fin" index="19" name="Heure fin"/>
+        <alias field="altitude_moy" index="20" name="Altitude moyenne"/>
+        <alias field="precision_geometrie" index="21" name="Précision géométrie"/>
+        <alias field="nature_objet_geo" index="22" name="Nature de l'objet géométrie"/>
+        <alias field="observateurs" index="23" name="Observateurs"/>
+        <alias field="determinateurs" index="24" name="Déterminateurs"/>
+        <alias field="organisme_gestionnaire_donnees" index="25" name="Gestionnaire des données"/>
+        <alias field="commentaire" index="26" name="Commentaire"/>
+        <alias field="code_idcnp_dispositif" index="27" name="Code IDCNP"/>
+        <alias field="dee_date_transformation" index="28" name="Date de transformation DEE"/>
+        <alias field="dee_date_derniere_modification" index="29" name="Date dernière transformation DEE"/>
+        <alias field="jdd_code" index="30" name="JDD code"/>
+        <alias field="jdd_id" index="31" name="JDD id"/>
+        <alias field="jdd_description" index="32" name="JDD description"/>
+        <alias field="jdd_metadonnee_dee_id" index="33" name="JDD métadonnée"/>
+        <alias field="statut_source" index="34" name="Statut source"/>
+        <alias field="reference_biblio" index="35" name="Référence biblio"/>
+        <alias field="ds_publique" index="36" name="DS Publique"/>
+        <alias field="diffusion_niveau_precision" index="37" name="Diffusion niveau précision"/>
+        <alias field="sensi_niveau" index="38" name="Niveau de sensibilité"/>
+        <alias field="validite_niveau" index="39" name="Niveau de validité"/>
+        <alias field="validite_date_validation" index="40" name="Date de validation"/>
+        <alias field="id_validation" index="41" name="V. Identifiant"/>
+        <alias field="date_ctrl" index="42" name="V. Date du contrôle"/>
+        <alias field="niv_val" index="43" name="V. Niveau de validité"/>
+        <alias field="typ_val" index="44" name="V. Type"/>
+        <alias field="ech_val" index="45" name="V. Échelle"/>
+        <alias field="peri_val" index="46" name="V Périmètre"/>
+        <alias field="validateur" index="47" name="V. Validateur"/>
+        <alias field="proc_vers" index="48" name="V. Version de la procédure"/>
+        <alias field="producteur" index="49" name="V. Producteur contacté"/>
+        <alias field="date_contact" index="50" name="V. Date de contact du producteur"/>
+        <alias field="procedure" index="51" name="V. Procédure"/>
+        <alias field="proc_ref" index="52" name="V. Ref procédure"/>
+        <alias field="comm_val" index="53" name="V. Commentaire"/>
+      </aliases>
+      <excludeAttributesWMS/>
+      <excludeAttributesWFS/>
+      <attributeactions default="-1"/>
+      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="&quot;niv_val&quot;" sortOrder="1">
+        <columns>
+          <column width="-1" hidden="0" type="field" name="cle_obs"/>
+          <column width="-1" hidden="0" type="field" name="statut_observation"/>
+          <column width="-1" hidden="0" type="field" name="cd_nom"/>
+          <column width="-1" hidden="0" type="field" name="cd_ref"/>
+          <column width="-1" hidden="0" type="field" name="nom_cite"/>
+          <column width="-1" hidden="0" type="field" name="nom_valide"/>
+          <column width="-1" hidden="0" type="field" name="reu"/>
+          <column width="-1" hidden="0" type="field" name="nom_vern"/>
+          <column width="-1" hidden="0" type="field" name="group1_inpn"/>
+          <column width="-1" hidden="0" type="field" name="group2_inpn"/>
+          <column width="-1" hidden="0" type="field" name="denombrement_min"/>
+          <column width="-1" hidden="0" type="field" name="denombrement_max"/>
+          <column width="-1" hidden="0" type="field" name="objet_denombrement"/>
+          <column width="-1" hidden="0" type="field" name="type_denombrement"/>
+          <column width="-1" hidden="0" type="field" name="date_determination"/>
+          <column width="-1" hidden="0" type="field" name="date_debut"/>
+          <column width="-1" hidden="0" type="field" name="date_fin"/>
+          <column width="-1" hidden="0" type="field" name="heure_debut"/>
+          <column width="-1" hidden="0" type="field" name="heure_fin"/>
+          <column width="-1" hidden="0" type="field" name="altitude_moy"/>
+          <column width="-1" hidden="0" type="field" name="precision_geometrie"/>
+          <column width="-1" hidden="0" type="field" name="nature_objet_geo"/>
+          <column width="-1" hidden="0" type="field" name="observateurs"/>
+          <column width="-1" hidden="0" type="field" name="determinateurs"/>
+          <column width="-1" hidden="0" type="field" name="organisme_gestionnaire_donnees"/>
+          <column width="-1" hidden="0" type="field" name="commentaire"/>
+          <column width="-1" hidden="0" type="field" name="code_idcnp_dispositif"/>
+          <column width="-1" hidden="0" type="field" name="dee_date_transformation"/>
+          <column width="-1" hidden="0" type="field" name="dee_date_derniere_modification"/>
+          <column width="-1" hidden="0" type="field" name="jdd_code"/>
+          <column width="-1" hidden="0" type="field" name="jdd_id"/>
+          <column width="-1" hidden="0" type="field" name="jdd_description"/>
+          <column width="-1" hidden="0" type="field" name="jdd_metadonnee_dee_id"/>
+          <column width="-1" hidden="0" type="field" name="statut_source"/>
+          <column width="-1" hidden="0" type="field" name="reference_biblio"/>
+          <column width="-1" hidden="0" type="field" name="ds_publique"/>
+          <column width="-1" hidden="0" type="field" name="diffusion_niveau_precision"/>
+          <column width="-1" hidden="0" type="field" name="sensi_niveau"/>
+          <column width="-1" hidden="1" type="field" name="validite_niveau"/>
+          <column width="-1" hidden="1" type="field" name="validite_date_validation"/>
+          <column width="-1" hidden="1" type="field" name="id_validation"/>
+          <column width="-1" hidden="0" type="field" name="date_ctrl"/>
+          <column width="-1" hidden="0" type="field" name="niv_val"/>
+          <column width="-1" hidden="0" type="field" name="typ_val"/>
+          <column width="-1" hidden="0" type="field" name="ech_val"/>
+          <column width="176" hidden="0" type="field" name="peri_val"/>
+          <column width="-1" hidden="1" type="field" name="validateur"/>
+          <column width="-1" hidden="0" type="field" name="proc_vers"/>
+          <column width="-1" hidden="0" type="field" name="producteur"/>
+          <column width="-1" hidden="0" type="field" name="date_contact"/>
+          <column width="-1" hidden="0" type="field" name="procedure"/>
+          <column width="-1" hidden="0" type="field" name="proc_ref"/>
+          <column width="-1" hidden="0" type="field" name="comm_val"/>
+          <column width="-1" hidden="1" type="actions"/>
+          <column width="-1" hidden="0" type="field" name="descriptif_sujet"/>
+        </columns>
+      </attributetableconfig>
+      <editform>.</editform>
+      <editforminit/>
+      <editforminitcodesource>0</editforminitcodesource>
+      <editforminitfilepath>.</editforminitfilepath>
+      <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
+"""
+Les formulaires QGIS peuvent avoir une fonction Python qui sera appelée à l'ouverture du formulaire.
+
+Utilisez cette fonction pour ajouter plus de fonctionnalités à vos formulaires.
+
+Entrez le nom de la fonction dans le champ "Fonction d'initialisation Python".
+Voici un exemple à suivre:
+"""
+from qgis.PyQt.QtWidgets import QWidget
+
+def my_form_open(dialog, layer, feature):
+    geom = feature.geometry()
+    control = dialog.findChild(QWidget, "MyLineEdit")
+
+]]></editforminitcode>
+      <featformsuppress>0</featformsuppress>
+      <editorlayout>tablayout</editorlayout>
+      <attributeEditorForm>
+        <attributeEditorContainer showLabel="1" visibilityExpressionEnabled="0" visibilityExpression="" name="Observation" groupBox="0" columnCount="1">
+          <attributeEditorContainer showLabel="1" visibilityExpressionEnabled="0" visibilityExpression="" name="Quoi" groupBox="1" columnCount="2">
+            <attributeEditorField showLabel="1" index="0" name="cle_obs"/>
+            <attributeEditorField showLabel="1" index="4" name="nom_cite"/>
+            <attributeEditorField showLabel="1" index="5" name="nom_valide"/>
+            <attributeEditorField showLabel="1" index="7" name="nom_vern"/>
+            <attributeEditorField showLabel="1" index="2" name="cd_nom"/>
+            <attributeEditorField showLabel="1" index="3" name="cd_ref"/>
+            <attributeEditorField showLabel="1" index="10" name="denombrement_min"/>
+            <attributeEditorField showLabel="1" index="11" name="denombrement_max"/>
+            <attributeEditorField showLabel="1" index="12" name="objet_denombrement"/>
+            <attributeEditorField showLabel="1" index="13" name="type_denombrement"/>
+            <attributeEditorField showLabel="1" index="1" name="statut_observation"/>
+            <attributeEditorField showLabel="1" index="6" name="reu"/>
+            <attributeEditorField showLabel="1" index="8" name="group1_inpn"/>
+            <attributeEditorField showLabel="1" index="9" name="group2_inpn"/>
+            <attributeEditorField showLabel="1" index="14" name="descriptif_sujet"/>
+            <attributeEditorField showLabel="1" index="26" name="commentaire"/>
+          </attributeEditorContainer>
+          <attributeEditorContainer showLabel="1" visibilityExpressionEnabled="0" visibilityExpression="" name="Qui" groupBox="1" columnCount="2">
+            <attributeEditorField showLabel="1" index="23" name="observateurs"/>
+            <attributeEditorField showLabel="1" index="24" name="determinateurs"/>
+          </attributeEditorContainer>
+          <attributeEditorContainer showLabel="1" visibilityExpressionEnabled="0" visibilityExpression="" name="Quand" groupBox="1" columnCount="2">
+            <attributeEditorField showLabel="1" index="16" name="date_debut"/>
+            <attributeEditorField showLabel="1" index="18" name="heure_debut"/>
+            <attributeEditorField showLabel="1" index="17" name="date_fin"/>
+            <attributeEditorField showLabel="1" index="19" name="heure_fin"/>
+            <attributeEditorField showLabel="1" index="15" name="date_determination"/>
+          </attributeEditorContainer>
+          <attributeEditorContainer showLabel="1" visibilityExpressionEnabled="0" visibilityExpression="" name="Où" groupBox="1" columnCount="2">
+            <attributeEditorField showLabel="1" index="21" name="precision_geometrie"/>
+            <attributeEditorField showLabel="1" index="20" name="altitude_moy"/>
+            <attributeEditorField showLabel="1" index="22" name="nature_objet_geo"/>
+          </attributeEditorContainer>
+          <attributeEditorContainer showLabel="1" visibilityExpressionEnabled="0" visibilityExpression="" name="Source" groupBox="1" columnCount="2">
+            <attributeEditorField showLabel="1" index="25" name="organisme_gestionnaire_donnees"/>
+            <attributeEditorField showLabel="1" index="36" name="ds_publique"/>
+            <attributeEditorField showLabel="1" index="34" name="statut_source"/>
+            <attributeEditorField showLabel="1" index="35" name="reference_biblio"/>
+            <attributeEditorField showLabel="1" index="37" name="diffusion_niveau_precision"/>
+            <attributeEditorField showLabel="1" index="38" name="sensi_niveau"/>
+            <attributeEditorField showLabel="1" index="31" name="jdd_id"/>
+            <attributeEditorField showLabel="1" index="30" name="jdd_code"/>
+            <attributeEditorField showLabel="1" index="32" name="jdd_description"/>
+            <attributeEditorField showLabel="1" index="33" name="jdd_metadonnee_dee_id"/>
+            <attributeEditorField showLabel="1" index="28" name="dee_date_transformation"/>
+            <attributeEditorField showLabel="1" index="29" name="dee_date_derniere_modification"/>
+            <attributeEditorField showLabel="1" index="27" name="code_idcnp_dispositif"/>
+          </attributeEditorContainer>
+        </attributeEditorContainer>
+        <attributeEditorContainer showLabel="1" visibilityExpressionEnabled="0" visibilityExpression="" name="Fiche taxon MNHN" groupBox="0" columnCount="2">
+          <attributeEditorField showLabel="1" index="-1" name="webcdnom"/>
+        </attributeEditorContainer>
+        <attributeEditorContainer showLabel="1" visibilityExpressionEnabled="0" visibilityExpression="" name="Validation" groupBox="0" columnCount="1">
+          <attributeEditorContainer showLabel="1" visibilityExpressionEnabled="0" visibilityExpression="" name="A renseigner" groupBox="1" columnCount="1">
+            <attributeEditorField showLabel="1" index="43" name="niv_val"/>
+            <attributeEditorField showLabel="1" index="49" name="producteur"/>
+            <attributeEditorField showLabel="1" index="50" name="date_contact"/>
+            <attributeEditorField showLabel="1" index="53" name="comm_val"/>
+          </attributeEditorContainer>
+          <attributeEditorContainer showLabel="1" visibilityExpressionEnabled="0" visibilityExpression="" name="Renseignés automatiquement" groupBox="1" columnCount="1">
+            <attributeEditorField showLabel="1" index="47" name="validateur"/>
+            <attributeEditorField showLabel="1" index="42" name="date_ctrl"/>
+            <attributeEditorField showLabel="1" index="44" name="typ_val"/>
+            <attributeEditorField showLabel="1" index="45" name="ech_val"/>
+            <attributeEditorField showLabel="1" index="46" name="peri_val"/>
+            <attributeEditorField showLabel="1" index="51" name="procedure"/>
+            <attributeEditorField showLabel="1" index="48" name="proc_vers"/>
+            <attributeEditorField showLabel="1" index="52" name="proc_ref"/>
+          </attributeEditorContainer>
+        </attributeEditorContainer>
+      </attributeEditorForm>
+      <widgets/>
+      <conditionalstyles>
+        <rowstyles/>
+        <fieldstyles/>
+      </conditionalstyles>
+      <defaults>
+        <default field="cle_obs" expression=""/>
+        <default field="statut_observation" expression=""/>
+        <default field="cd_nom" expression=""/>
+        <default field="cd_ref" expression=""/>
+        <default field="nom_cite" expression=""/>
+        <default field="nom_valide" expression=""/>
+        <default field="reu" expression=""/>
+        <default field="nom_vern" expression=""/>
+        <default field="group1_inpn" expression=""/>
+        <default field="group2_inpn" expression=""/>
+        <default field="denombrement_min" expression=""/>
+        <default field="denombrement_max" expression=""/>
+        <default field="objet_denombrement" expression=""/>
+        <default field="type_denombrement" expression=""/>
+        <default field="descriptif_sujet" expression=""/>
+        <default field="date_determination" expression=""/>
+        <default field="date_debut" expression=""/>
+        <default field="date_fin" expression=""/>
+        <default field="heure_debut" expression=""/>
+        <default field="heure_fin" expression=""/>
+        <default field="altitude_moy" expression=""/>
+        <default field="precision_geometrie" expression=""/>
+        <default field="nature_objet_geo" expression=""/>
+        <default field="observateurs" expression=""/>
+        <default field="determinateurs" expression=""/>
+        <default field="organisme_gestionnaire_donnees" expression=""/>
+        <default field="commentaire" expression=""/>
+        <default field="code_idcnp_dispositif" expression=""/>
+        <default field="dee_date_transformation" expression=""/>
+        <default field="dee_date_derniere_modification" expression=""/>
+        <default field="jdd_code" expression=""/>
+        <default field="jdd_id" expression=""/>
+        <default field="jdd_description" expression=""/>
+        <default field="jdd_metadonnee_dee_id" expression=""/>
+        <default field="statut_source" expression=""/>
+        <default field="reference_biblio" expression=""/>
+        <default field="ds_publique" expression=""/>
+        <default field="diffusion_niveau_precision" expression=""/>
+        <default field="sensi_niveau" expression=""/>
+        <default field="validite_niveau" expression=""/>
+        <default field="validite_date_validation" expression=""/>
+        <default field="id_validation" expression=""/>
+        <default field="date_ctrl" expression=""/>
+        <default field="niv_val" expression=""/>
+        <default field="typ_val" expression=""/>
+        <default field="ech_val" expression=""/>
+        <default field="peri_val" expression=""/>
+        <default field="validateur" expression=""/>
+        <default field="proc_vers" expression=""/>
+        <default field="producteur" expression=""/>
+        <default field="date_contact" expression=""/>
+        <default field="procedure" expression=""/>
+        <default field="proc_ref" expression=""/>
+        <default field="comm_val" expression=""/>
+      </defaults>
+      <previewExpression>Concat(
+"cle_obs", ' - ',
+"nom_cite", ' le ',
+"date_debut"
+)</previewExpression>
+    </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="1" maximumScale="300001" simplifyDrawingHints="1" minLabelScale="1" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
+      <extent>
+        <xmin>314671.5</xmin>
+        <ymin>7634125.29999999981373549</ymin>
+        <xmax>379236.59999999997671694</xmax>
+        <ymax>7691263.40000000037252903</ymax>
+      </extent>
       <id>commune20171207093853482</id>
       <datasource>dbname='naturaliz_reunion' host=localhost port=5432 user='john_doe_acme' password='acme' sslmode=disable key='code_commune' estimatedmetadata=true table="sig"."commune" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
-      <layername>commune</layername>
+      <layername>Communes</layername>
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=40 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
@@ -169,16 +1014,16 @@
           <symbol alpha="1" clip_to_extent="1" type="fill" name="0">
             <layer pass="0" class="SimpleFill" locked="0">
               <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="color" v="177,177,255,255"/>
+              <prop k="color" v="160,40,64,255"/>
               <prop k="joinstyle" v="bevel"/>
               <prop k="offset" v="0,0"/>
               <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
               <prop k="offset_unit" v="MM"/>
               <prop k="outline_color" v="0,0,0,255"/>
-              <prop k="outline_style" v="dash dot"/>
-              <prop k="outline_width" v="0.15"/>
+              <prop k="outline_style" v="dash"/>
+              <prop k="outline_width" v="0.26"/>
               <prop k="outline_width_unit" v="MM"/>
-              <prop k="style" v="solid"/>
+              <prop k="style" v="no"/>
             </layer>
           </symbol>
         </symbols>
@@ -197,7 +1042,7 @@
         <property key="labeling/bufferColorB" value="255"/>
         <property key="labeling/bufferColorG" value="255"/>
         <property key="labeling/bufferColorR" value="255"/>
-        <property key="labeling/bufferDraw" value="true"/>
+        <property key="labeling/bufferDraw" value="false"/>
         <property key="labeling/bufferJoinStyle" value="64"/>
         <property key="labeling/bufferNoFill" value="false"/>
         <property key="labeling/bufferSize" value="0.6"/>
@@ -290,8 +1135,8 @@
         <property key="labeling/shapeBorderWidth" value="0"/>
         <property key="labeling/shapeBorderWidthMapUnitScale" value="0,0,0,0,0,0"/>
         <property key="labeling/shapeBorderWidthUnits" value="1"/>
-        <property key="labeling/shapeDraw" value="false"/>
-        <property key="labeling/shapeFillColorA" value="255"/>
+        <property key="labeling/shapeDraw" value="true"/>
+        <property key="labeling/shapeFillColorA" value="95"/>
         <property key="labeling/shapeFillColorB" value="255"/>
         <property key="labeling/shapeFillColorG" value="255"/>
         <property key="labeling/shapeFillColorR" value="255"/>
@@ -302,16 +1147,16 @@
         <property key="labeling/shapeOffsetY" value="0"/>
         <property key="labeling/shapeRadiiMapUnitScale" value="0,0,0,0,0,0"/>
         <property key="labeling/shapeRadiiUnits" value="1"/>
-        <property key="labeling/shapeRadiiX" value="0"/>
-        <property key="labeling/shapeRadiiY" value="0"/>
+        <property key="labeling/shapeRadiiX" value="1"/>
+        <property key="labeling/shapeRadiiY" value="1"/>
         <property key="labeling/shapeRotation" value="0"/>
         <property key="labeling/shapeRotationType" value="0"/>
         <property key="labeling/shapeSVGFile" value=""/>
         <property key="labeling/shapeSizeMapUnitScale" value="0,0,0,0,0,0"/>
         <property key="labeling/shapeSizeType" value="0"/>
         <property key="labeling/shapeSizeUnits" value="1"/>
-        <property key="labeling/shapeSizeX" value="0"/>
-        <property key="labeling/shapeSizeY" value="0"/>
+        <property key="labeling/shapeSizeX" value="2"/>
+        <property key="labeling/shapeSizeY" value="2"/>
         <property key="labeling/shapeTransparency" value="0"/>
         <property key="labeling/shapeType" value="0"/>
         <property key="labeling/substitutions" value="&lt;substitutions/>"/>
@@ -440,7 +1285,7 @@ def my_form_open(dialog, layer, feature):
       <keywordList>
         <value></value>
       </keywordList>
-      <layername>espace_naturel</layername>
+      <layername>Espaces naturels</layername>
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=40 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
@@ -470,8 +1315,8 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="TextEdit" name="nom_en">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="url">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        <edittype widgetv2type="WebView" name="url">
+          <widgetv2config Width="0" fieldEditable="1" Height="0" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="version_en">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -479,36 +1324,21 @@ def my_form_open(dialog, layer, feature):
       </edittypes>
       <renderer-v2 attr="type_en" forceraster="0" symbollevels="0" type="categorizedSymbol" enableorderby="0">
         <categories>
-          <category render="false" symbol="0" value="AAPN" label="AAPN"/>
-          <category render="false" symbol="1" value="APB" label="APB"/>
-          <category render="false" symbol="2" value="CPN" label="CPN"/>
-          <category render="false" symbol="3" value="RBD" label="RBD"/>
-          <category render="false" symbol="4" value="RBI" label="RBI"/>
-          <category render="false" symbol="5" value="RNN" label="RNN"/>
-          <category render="false" symbol="6" value="SCL" label="SCL"/>
-          <category render="false" symbol="7" value="ZNIEFF1" label="ZNIEFF1"/>
-          <category render="false" symbol="8" value="ZNIEFF2" label="ZNIEFF2"/>
+          <category render="false" symbol="0" value="CPN" label="CPN - Coeur de parc national"/>
+          <category render="false" symbol="1" value="AAPN" label="AAPN - Aire d’adhésion de parc national"/>
+          <category render="false" symbol="2" value="APB" label="APB - Arrêté de protection de biotope"/>
+          <category render="false" symbol="3" value="RBD" label="RBD - Réserve biologique"/>
+          <category render="false" symbol="4" value="RBI" label="RBI - Réserve biologique intégrale"/>
+          <category render="false" symbol="5" value="RNN" label="RNN - Réserve naturelle nationale"/>
+          <category render="false" symbol="6" value="SCL" label="SCL - Site du Conservatoire du littoral"/>
+          <category render="false" symbol="7" value="ZNIEFF1" label="ZNIEFF1 - Zone Naturelle d’Intérêt Ecologique Faunistique et Floristique de type I"/>
+          <category render="false" symbol="8" value="ZNIEFF2" label="ZNIEFF2 - Zone Naturelle d’Intérêt Ecologique Faunistique et Floristique de type II"/>
         </categories>
         <symbols>
           <symbol alpha="1" clip_to_extent="1" type="fill" name="0">
             <layer pass="0" class="SimpleFill" locked="0">
               <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="color" v="185,195,93,255"/>
-              <prop k="joinstyle" v="bevel"/>
-              <prop k="offset" v="0,0"/>
-              <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="offset_unit" v="MM"/>
-              <prop k="outline_color" v="160,160,160,255"/>
-              <prop k="outline_style" v="solid"/>
-              <prop k="outline_width" v="0.2"/>
-              <prop k="outline_width_unit" v="MM"/>
-              <prop k="style" v="solid"/>
-            </layer>
-          </symbol>
-          <symbol alpha="1" clip_to_extent="1" type="fill" name="1">
-            <layer pass="0" class="SimpleFill" locked="0">
-              <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="color" v="251,155,72,255"/>
+              <prop k="color" v="150,152,119,102"/>
               <prop k="joinstyle" v="bevel"/>
               <prop k="offset" v="0,0"/>
               <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
@@ -520,10 +1350,25 @@ def my_form_open(dialog, layer, feature):
               <prop k="style" v="solid"/>
             </layer>
           </symbol>
+          <symbol alpha="1" clip_to_extent="1" type="fill" name="1">
+            <layer pass="0" class="SimpleFill" locked="0">
+              <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="color" v="185,195,93,103"/>
+              <prop k="joinstyle" v="bevel"/>
+              <prop k="offset" v="0,0"/>
+              <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
+              <prop k="offset_unit" v="MM"/>
+              <prop k="outline_color" v="160,160,160,255"/>
+              <prop k="outline_style" v="solid"/>
+              <prop k="outline_width" v="0.2"/>
+              <prop k="outline_width_unit" v="MM"/>
+              <prop k="style" v="solid"/>
+            </layer>
+          </symbol>
           <symbol alpha="1" clip_to_extent="1" type="fill" name="2">
             <layer pass="0" class="SimpleFill" locked="0">
               <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="color" v="150,152,119,255"/>
+              <prop k="color" v="251,155,72,102"/>
               <prop k="joinstyle" v="bevel"/>
               <prop k="offset" v="0,0"/>
               <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
@@ -538,7 +1383,7 @@ def my_form_open(dialog, layer, feature):
           <symbol alpha="1" clip_to_extent="1" type="fill" name="3">
             <layer pass="0" class="SimpleFill" locked="0">
               <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="color" v="246,202,162,255"/>
+              <prop k="color" v="246,202,162,102"/>
               <prop k="joinstyle" v="bevel"/>
               <prop k="offset" v="0,0"/>
               <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
@@ -553,7 +1398,7 @@ def my_form_open(dialog, layer, feature):
           <symbol alpha="1" clip_to_extent="1" type="fill" name="4">
             <layer pass="0" class="SimpleFill" locked="0">
               <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="color" v="188,86,112,255"/>
+              <prop k="color" v="188,86,112,102"/>
               <prop k="joinstyle" v="bevel"/>
               <prop k="offset" v="0,0"/>
               <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
@@ -568,7 +1413,7 @@ def my_form_open(dialog, layer, feature):
           <symbol alpha="1" clip_to_extent="1" type="fill" name="5">
             <layer pass="0" class="SimpleFill" locked="0">
               <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="color" v="189,72,164,255"/>
+              <prop k="color" v="189,72,164,102"/>
               <prop k="joinstyle" v="bevel"/>
               <prop k="offset" v="0,0"/>
               <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
@@ -583,7 +1428,7 @@ def my_form_open(dialog, layer, feature):
           <symbol alpha="1" clip_to_extent="1" type="fill" name="6">
             <layer pass="0" class="SimpleFill" locked="0">
               <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="color" v="72,125,189,255"/>
+              <prop k="color" v="72,125,189,102"/>
               <prop k="joinstyle" v="bevel"/>
               <prop k="offset" v="0,0"/>
               <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
@@ -598,7 +1443,7 @@ def my_form_open(dialog, layer, feature):
           <symbol alpha="1" clip_to_extent="1" type="fill" name="7">
             <layer pass="0" class="SimpleFill" locked="0">
               <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="color" v="72,166,85,255"/>
+              <prop k="color" v="72,166,85,102"/>
               <prop k="joinstyle" v="bevel"/>
               <prop k="offset" v="0,0"/>
               <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
@@ -613,7 +1458,7 @@ def my_form_open(dialog, layer, feature):
           <symbol alpha="1" clip_to_extent="1" type="fill" name="8">
             <layer pass="0" class="SimpleFill" locked="0">
               <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="color" v="168,215,166,255"/>
+              <prop k="color" v="168,215,166,102"/>
               <prop k="joinstyle" v="bevel"/>
               <prop k="offset" v="0,0"/>
               <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
@@ -658,10 +1503,10 @@ def my_form_open(dialog, layer, feature):
         <property key="labeling/bufferColorB" value="255"/>
         <property key="labeling/bufferColorG" value="255"/>
         <property key="labeling/bufferColorR" value="255"/>
-        <property key="labeling/bufferDraw" value="false"/>
+        <property key="labeling/bufferDraw" value="true"/>
         <property key="labeling/bufferJoinStyle" value="64"/>
         <property key="labeling/bufferNoFill" value="false"/>
-        <property key="labeling/bufferSize" value="1"/>
+        <property key="labeling/bufferSize" value="0.8"/>
         <property key="labeling/bufferSizeInMapUnits" value="false"/>
         <property key="labeling/bufferSizeMapUnitScale" value="0,0,0,0,0,0"/>
         <property key="labeling/bufferTransp" value="0"/>
@@ -672,9 +1517,9 @@ def my_form_open(dialog, layer, feature):
         <property key="labeling/dist" value="0"/>
         <property key="labeling/distInMapUnits" value="false"/>
         <property key="labeling/distMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/drawLabels" value="false"/>
-        <property key="labeling/enabled" value="false"/>
-        <property key="labeling/fieldName" value=""/>
+        <property key="labeling/drawLabels" value="true"/>
+        <property key="labeling/enabled" value="true"/>
+        <property key="labeling/fieldName" value="Wordwrap(nom_en, 15, ' ')"/>
         <property key="labeling/fitInPolygonOnly" value="false"/>
         <property key="labeling/fontCapitals" value="0"/>
         <property key="labeling/fontFamily" value="Ubuntu"/>
@@ -683,7 +1528,7 @@ def my_form_open(dialog, layer, feature):
         <property key="labeling/fontLimitPixelSize" value="false"/>
         <property key="labeling/fontMaxPixelSize" value="10000"/>
         <property key="labeling/fontMinPixelSize" value="3"/>
-        <property key="labeling/fontSize" value="8.25"/>
+        <property key="labeling/fontSize" value="8"/>
         <property key="labeling/fontSizeInMapUnits" value="false"/>
         <property key="labeling/fontSizeMapUnitScale" value="0,0,0,0,0,0"/>
         <property key="labeling/fontStrikeout" value="false"/>
@@ -723,9 +1568,9 @@ def my_form_open(dialog, layer, feature):
         <property key="labeling/repeatDistanceUnit" value="1"/>
         <property key="labeling/reverseDirectionSymbol" value="false"/>
         <property key="labeling/rightDirectionSymbol" value=">"/>
-        <property key="labeling/scaleMax" value="10000000"/>
+        <property key="labeling/scaleMax" value="100000"/>
         <property key="labeling/scaleMin" value="1"/>
-        <property key="labeling/scaleVisibility" value="false"/>
+        <property key="labeling/scaleVisibility" value="true"/>
         <property key="labeling/shadowBlendMode" value="6"/>
         <property key="labeling/shadowColorB" value="0"/>
         <property key="labeling/shadowColorG" value="0"/>
@@ -777,9 +1622,9 @@ def my_form_open(dialog, layer, feature):
         <property key="labeling/shapeType" value="0"/>
         <property key="labeling/substitutions" value="&lt;substitutions/>"/>
         <property key="labeling/textColorA" value="255"/>
-        <property key="labeling/textColorB" value="0"/>
-        <property key="labeling/textColorG" value="0"/>
-        <property key="labeling/textColorR" value="0"/>
+        <property key="labeling/textColorB" value="56"/>
+        <property key="labeling/textColorG" value="56"/>
+        <property key="labeling/textColorR" value="56"/>
         <property key="labeling/textTransp" value="0"/>
         <property key="labeling/upsidedownLabels" value="0"/>
         <property key="labeling/useSubstitutions" value="false"/>
@@ -846,15 +1691,17 @@ def my_form_open(dialog, layer, feature):
       <DiagramLayerSettings yPosColumn="-1" showColumn="-1" linePlacementFlags="10" placement="0" dist="0" xPosColumn="-1" priority="0" obstacle="0" zIndex="0" showAll="1"/>
       <annotationform>.</annotationform>
       <aliases>
-        <alias field="code_en" index="0" name=""/>
-        <alias field="type_en" index="1" name=""/>
-        <alias field="nom_en" index="2" name=""/>
-        <alias field="url" index="3" name=""/>
-        <alias field="version_en" index="4" name=""/>
+        <alias field="code_en" index="0" name="Code"/>
+        <alias field="type_en" index="1" name="Type d'espace naturel"/>
+        <alias field="nom_en" index="2" name="Nom"/>
+        <alias field="url" index="3" name="URL"/>
+        <alias field="version_en" index="4" name="Version"/>
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
-      <attributeactions default="-1"/>
+      <attributeactions default="-1">
+        <actionsetting showInAttributeTable="1" action="[% &quot;url&quot; %]" icon="" capture="0" type="5" name="Fiche Web de l'espace naturel" shortTitle="Fiche Web de l'espace naturel"/>
+      </attributeactions>
       <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
         <columns>
           <column width="-1" hidden="0" type="field" name="code_en"/>
@@ -899,7 +1746,98 @@ def my_form_open(dialog, layer, feature):
         <default field="url" expression=""/>
         <default field="version_en" expression=""/>
       </defaults>
-      <previewExpression>COALESCE( "Id", '&lt;NULL>' )</previewExpression>
+      <previewExpression>COALESCE( "nom_en", '&lt;NULL>' )</previewExpression>
+    </maplayer>
+    <maplayer minimumScale="0" maximumScale="1e+08" type="raster" hasScaleBasedVisibilityFlag="0">
+      <extent>
+        <xmin>-20037508.34278924390673637</xmin>
+        <ymin>-20037508.34278925508260727</ymin>
+        <xmax>20037508.34278924390673637</xmax>
+        <ymax>20037508.34278924390673637</ymax>
+      </extent>
+      <id>google_satellite20171213143618024</id>
+      <datasource>crs=EPSG:3857&amp;format=&amp;type=xyz&amp;url=http://mt.google.com/vt/lyrs%3Ds%26x%3D%7Bx%7D%26y%3D%7By%7D%26z%3D%7Bz%7D</datasource>
+      <keywordList>
+        <value></value>
+      </keywordList>
+      <layername>google-satellite</layername>
+      <srs>
+        <spatialrefsys>
+          <proj4>+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs</proj4>
+          <srsid>3857</srsid>
+          <srid>3857</srid>
+          <authid>EPSG:3857</authid>
+          <description>WGS 84 / Pseudo Mercator</description>
+          <projectionacronym>merc</projectionacronym>
+          <ellipsoidacronym>WGS84</ellipsoidacronym>
+          <geographicflag>false</geographicflag>
+        </spatialrefsys>
+      </srs>
+      <customproperties>
+        <property key="identify/format" value="Undefined"/>
+      </customproperties>
+      <provider>wms</provider>
+      <noData>
+        <noDataList bandNo="1" useSrcNoData="0"/>
+      </noData>
+      <map-layer-style-manager current="">
+        <map-layer-style name=""/>
+      </map-layer-style-manager>
+      <pipe>
+        <rasterrenderer opacity="1" alphaBand="-1" band="1" type="singlebandcolordata">
+          <rasterTransparency/>
+        </rasterrenderer>
+        <brightnesscontrast brightness="0" contrast="0"/>
+        <huesaturation colorizeGreen="128" colorizeOn="0" colorizeRed="255" colorizeBlue="128" grayscaleMode="0" saturation="0" colorizeStrength="100"/>
+        <rasterresampler maxOversampling="2"/>
+      </pipe>
+      <blendMode>0</blendMode>
+    </maplayer>
+    <maplayer minimumScale="inf" maximumScale="1e+08" type="raster" hasScaleBasedVisibilityFlag="0">
+      <extent>
+        <xmin>-20037508.34278924390673637</xmin>
+        <ymin>-20037508.34278925508260727</ymin>
+        <xmax>20037508.34278924390673637</xmax>
+        <ymax>20037508.34278924390673637</ymax>
+      </extent>
+      <id>google_terrain20171213143512180</id>
+      <datasource>crs=EPSG:3857&amp;format=&amp;type=xyz&amp;url=http://mt1.google.com/vt/lyrs%3Dp%26x%3D%7Bx%7D%26y%3D%7By%7D%26z%3D%7Bz%7D</datasource>
+      <keywordList>
+        <value></value>
+      </keywordList>
+      <layername>google-terrain</layername>
+      <srs>
+        <spatialrefsys>
+          <proj4>+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs</proj4>
+          <srsid>3857</srsid>
+          <srid>3857</srid>
+          <authid>EPSG:3857</authid>
+          <description>WGS 84 / Pseudo Mercator</description>
+          <projectionacronym>merc</projectionacronym>
+          <ellipsoidacronym>WGS84</ellipsoidacronym>
+          <geographicflag>false</geographicflag>
+        </spatialrefsys>
+      </srs>
+      <customproperties>
+        <property key="embeddedWidgets/count" value="0"/>
+        <property key="identify/format" value="Undefined"/>
+      </customproperties>
+      <provider>wms</provider>
+      <noData>
+        <noDataList bandNo="1" useSrcNoData="0"/>
+      </noData>
+      <map-layer-style-manager current="">
+        <map-layer-style name=""/>
+      </map-layer-style-manager>
+      <pipe>
+        <rasterrenderer opacity="1" alphaBand="-1" band="1" type="singlebandcolordata">
+          <rasterTransparency/>
+        </rasterrenderer>
+        <brightnesscontrast brightness="0" contrast="0"/>
+        <huesaturation colorizeGreen="128" colorizeOn="0" colorizeRed="255" colorizeBlue="128" grayscaleMode="0" saturation="0" colorizeStrength="100"/>
+        <rasterresampler maxOversampling="2"/>
+      </pipe>
+      <blendMode>0</blendMode>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="5000" maximumScale="300100" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="1" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>maille_0220171207093956825</id>
@@ -907,7 +1845,7 @@ def my_form_open(dialog, layer, feature):
       <keywordList>
         <value></value>
       </keywordList>
-      <layername>maille_02</layername>
+      <layername>Mailles 2x2</layername>
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=40 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
@@ -1230,7 +2168,7 @@ def my_form_open(dialog, layer, feature):
       <keywordList>
         <value></value>
       </keywordList>
-      <layername>maille_10</layername>
+      <layername>Mailles 10x10</layername>
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=40 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
@@ -1547,7 +2485,7 @@ def my_form_open(dialog, layer, feature):
       <keywordList>
         <value></value>
       </keywordList>
-      <layername>masse_eau</layername>
+      <layername>Masses d'eau</layername>
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=40 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
@@ -1935,7 +2873,7 @@ def my_form_open(dialog, layer, feature):
           <column width="343" hidden="0" type="field" name="champ"/>
           <column width="-1" hidden="0" type="field" name="code"/>
           <column width="230" hidden="0" type="field" name="valeur"/>
-          <column width="-1" hidden="0" type="field" name="description"/>
+          <column width="653" hidden="0" type="field" name="description"/>
           <column width="-1" hidden="1" type="actions"/>
         </columns>
       </attributetableconfig>
@@ -1959,6 +2897,51 @@ def my_form_open(dialog, layer, feature):
       </defaults>
       <previewExpression>COALESCE("champ", '&lt;NULL>')||', '||COALESCE("code", '&lt;NULL>')</previewExpression>
     </maplayer>
+    <maplayer minimumScale="0" maximumScale="1e+08" type="raster" hasScaleBasedVisibilityFlag="0">
+      <extent>
+        <xmin>-20037508.34278924390673637</xmin>
+        <ymin>-20037508.34278925508260727</ymin>
+        <xmax>20037508.34278924390673637</xmax>
+        <ymax>20037508.34278924390673637</ymax>
+      </extent>
+      <id>osm_mapnik20171213110303879</id>
+      <datasource>crs=EPSG:3857&amp;format=&amp;type=xyz&amp;url=http://tile.openstreetmap.org/%7Bz%7D/%7Bx%7D/%7By%7D.png</datasource>
+      <keywordList>
+        <value></value>
+      </keywordList>
+      <layername>osm-mapnik</layername>
+      <srs>
+        <spatialrefsys>
+          <proj4>+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs</proj4>
+          <srsid>3857</srsid>
+          <srid>3857</srid>
+          <authid>EPSG:3857</authid>
+          <description>WGS 84 / Pseudo Mercator</description>
+          <projectionacronym>merc</projectionacronym>
+          <ellipsoidacronym>WGS84</ellipsoidacronym>
+          <geographicflag>false</geographicflag>
+        </spatialrefsys>
+      </srs>
+      <customproperties>
+        <property key="identify/format" value="Undefined"/>
+      </customproperties>
+      <provider>wms</provider>
+      <noData>
+        <noDataList bandNo="1" useSrcNoData="0"/>
+      </noData>
+      <map-layer-style-manager current="">
+        <map-layer-style name=""/>
+      </map-layer-style-manager>
+      <pipe>
+        <rasterrenderer opacity="1" alphaBand="-1" band="1" type="singlebandcolordata">
+          <rasterTransparency/>
+        </rasterrenderer>
+        <brightnesscontrast brightness="0" contrast="0"/>
+        <huesaturation colorizeGreen="128" colorizeOn="0" colorizeRed="255" colorizeBlue="128" grayscaleMode="0" saturation="0" colorizeStrength="100"/>
+        <rasterresampler maxOversampling="2"/>
+      </pipe>
+      <blendMode>0</blendMode>
+    </maplayer>
     <maplayer simplifyAlgorithm="2" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="0" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Point" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="0" scaleBasedLabelVisibilityFlag="0">
       <extent>
         <xmin>314729.25588052201783285</xmin>
@@ -1967,11 +2950,11 @@ def my_form_open(dialog, layer, feature):
         <ymax>7689726.9537584101781249</ymax>
       </extent>
       <id>v_observation_validation_acme20171206175247744</id>
-      <datasource>dbname='naturaliz_reunion' host=localhost port=5432 user='john_doe_acme' password='acme' sslmode=disable key='cle_obs' estimatedmetadata=true srid=2975 type=Point table="occtax"."v_observation_validation_acme" (geom) sql=</datasource>
+      <datasource>dbname='naturaliz_reunion' host=localhost port=5432 user='john_doe_acme' password='acme' sslmode=disable key='cle_obs' estimatedmetadata=true srid=2975 type=Point table="occtax"."v_observation_validation_acme" (geom) sql="niv_val" IS NULL OR "typ_val" = 'A'</datasource>
       <keywordList>
         <value></value>
       </keywordList>
-      <layername>v_observation_validation</layername>
+      <layername>Observations à valider</layername>
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=40 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
@@ -1987,7 +2970,9 @@ def my_form_open(dialog, layer, feature):
       <provider encoding="System">postgres</provider>
       <vectorjoins/>
       <layerDependencies/>
-      <expressionfields/>
+      <expressionfields>
+        <field typeName="text" precision="-1" expression="concat(&#xa;'https://inpn.mnhn.fr/espece/cd_nom/',&#xa;cd_nom&#xa;)" length="-1" type="10" comment="" name="webcdnom"/>
+      </expressionfields>
       <map-layer-style-manager current="">
         <map-layer-style name=""/>
       </map-layer-style-manager>
@@ -2035,7 +3020,7 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config OrderByValue="1" AllowNull="1" FilterExpression="champ='type_denombrement'" UseCompleter="0" fieldEditable="0" Key="code" constraint="" Layer="nomenclature20171206180403796" Value="valeur" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="descriptif_sujet">
-          <widgetv2config IsMultiline="1" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+          <widgetv2config IsMultiline="1" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="1" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="date_determination">
           <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -2071,7 +3056,7 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="commentaire">
-          <widgetv2config IsMultiline="1" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+          <widgetv2config IsMultiline="1" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="1" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="code_idcnp_dispositif">
           <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -2109,11 +3094,11 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="ValueRelation" name="sensi_niveau">
           <widgetv2config OrderByValue="1" AllowNull="1" FilterExpression="champ='sensi_niveau'" UseCompleter="0" fieldEditable="0" Key="code" constraint="" Layer="nomenclature20171206180403796" Value="valeur" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="ValueRelation" name="validite_niveau">
-          <widgetv2config OrderByValue="1" AllowNull="1" FilterExpression="champ='validite_niveau'" UseCompleter="0" fieldEditable="0" Key="code" constraint="" Layer="nomenclature20171206180403796" Value="valeur" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+        <edittype widgetv2type="Hidden" name="validite_niveau">
+          <widgetv2config fieldEditable="0" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="validite_date_validation">
-          <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        <edittype widgetv2type="Hidden" name="validite_date_validation">
+          <widgetv2config fieldEditable="0" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="id_validation">
           <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -2152,16 +3137,19 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="comm_val">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+          <widgetv2config IsMultiline="1" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="1" constraintDescription="" notNull="0"/>
+        </edittype>
+        <edittype widgetv2type="WebView" name="webcdnom">
+          <widgetv2config Width="0" fieldEditable="0" Height="0" constraint="" labelOnTop="1" constraintDescription="" notNull="0"/>
         </edittype>
       </edittypes>
       <renderer-v2 forceraster="0" symbollevels="0" type="RuleRenderer" enableorderby="0">
         <rules key="{2fd9854e-fd10-42a0-8b0b-553b730cebf5}">
-          <rule filter="&quot;niv_val&quot; = '1'" key="{d36e9b98-64aa-4e8a-84bd-97bb5af616bb}" symbol="0" label="&quot;niv_val&quot; = '1'"/>
-          <rule filter="&quot;niv_val&quot; = '2'" key="{159beda2-1408-477a-9dd2-e8be4a62bb72}" symbol="1" label="&quot;niv_val&quot; = '2'"/>
-          <rule filter="&quot;niv_val&quot; = '3'" key="{e38224ae-f3c8-4264-9f9c-1dfefd0686ae}" symbol="2" label="&quot;niv_val&quot; = '3'"/>
-          <rule filter="&quot;niv_val&quot; = '4'" key="{439bacdf-fdeb-493b-99a8-c7c459034c4f}" symbol="3" label="&quot;niv_val&quot; = '4'"/>
-          <rule filter="&quot;niv_val&quot; = '5'" key="{0f7830ff-22a5-40b4-9955-09d8ee21f6f3}" symbol="4" label="&quot;niv_val&quot; = '5'"/>
+          <rule filter="&quot;niv_val&quot; = '1'" key="{d36e9b98-64aa-4e8a-84bd-97bb5af616bb}" symbol="0" label="Certain - &quot;niv_val&quot; = '1'"/>
+          <rule filter="&quot;niv_val&quot; = '2'" key="{159beda2-1408-477a-9dd2-e8be4a62bb72}" symbol="1" label="Probable  - &quot;niv_val&quot; = '2'"/>
+          <rule filter="&quot;niv_val&quot; = '3'" key="{e38224ae-f3c8-4264-9f9c-1dfefd0686ae}" symbol="2" label="Douteux  - &quot;niv_val&quot; = '3'"/>
+          <rule filter="&quot;niv_val&quot; = '4'" key="{439bacdf-fdeb-493b-99a8-c7c459034c4f}" symbol="3" label="Invalide  - &quot;niv_val&quot; = '4'"/>
+          <rule filter="&quot;niv_val&quot; = '5'" key="{0f7830ff-22a5-40b4-9955-09d8ee21f6f3}" symbol="4" label="Non réalisable  - &quot;niv_val&quot; = '5'"/>
           <rule filter="ELSE" key="{7a697446-8c8f-4b76-a6ae-961991e8c05b}" symbol="5" label="Sans niveau de validation"/>
         </rules>
         <symbols>
@@ -2212,7 +3200,7 @@ def my_form_open(dialog, layer, feature):
           <symbol alpha="1" clip_to_extent="1" type="marker" name="2">
             <layer pass="0" class="SimpleMarker" locked="0">
               <prop k="angle" v="0"/>
-              <prop k="color" v="255,255,192,255"/>
+              <prop k="color" v="255,199,87,255"/>
               <prop k="horizontal_anchor_point" v="1"/>
               <prop k="joinstyle" v="bevel"/>
               <prop k="name" v="circle"/>
@@ -2234,7 +3222,7 @@ def my_form_open(dialog, layer, feature):
           <symbol alpha="1" clip_to_extent="1" type="marker" name="3">
             <layer pass="0" class="SimpleMarker" locked="0">
               <prop k="angle" v="0"/>
-              <prop k="color" v="253,174,97,255"/>
+              <prop k="color" v="240,0,48,255"/>
               <prop k="horizontal_anchor_point" v="1"/>
               <prop k="joinstyle" v="bevel"/>
               <prop k="name" v="circle"/>
@@ -2256,7 +3244,7 @@ def my_form_open(dialog, layer, feature):
           <symbol alpha="1" clip_to_extent="1" type="marker" name="4">
             <layer pass="0" class="SimpleMarker" locked="0">
               <prop k="angle" v="0"/>
-              <prop k="color" v="215,25,28,255"/>
+              <prop k="color" v="166,0,141,255"/>
               <prop k="horizontal_anchor_point" v="1"/>
               <prop k="joinstyle" v="bevel"/>
               <prop k="name" v="circle"/>
@@ -2540,19 +3528,20 @@ def my_form_open(dialog, layer, feature):
         <alias field="sensi_niveau" index="38" name="Niveau de sensibilité"/>
         <alias field="validite_niveau" index="39" name="Niveau de validité"/>
         <alias field="validite_date_validation" index="40" name="Date de validation"/>
-        <alias field="id_validation" index="41" name="Validation identifiant"/>
-        <alias field="date_ctrl" index="42" name="Validation Date contrôle "/>
-        <alias field="niv_val" index="43" name="Validation niveau"/>
-        <alias field="typ_val" index="44" name="Validation type"/>
-        <alias field="ech_val" index="45" name="Validation échelle"/>
-        <alias field="peri_val" index="46" name="Validation périmètre"/>
-        <alias field="validateur" index="47" name="Validateur"/>
-        <alias field="proc_vers" index="48" name="Validateur version procédure"/>
-        <alias field="producteur" index="49" name="Validation producteur contacté"/>
-        <alias field="date_contact" index="50" name="Validation date contact"/>
-        <alias field="procedure" index="51" name="Validation procédure"/>
-        <alias field="proc_ref" index="52" name="Validation Ref procédure"/>
-        <alias field="comm_val" index="53" name="Validation commentaire"/>
+        <alias field="id_validation" index="41" name="V. Identifiant"/>
+        <alias field="date_ctrl" index="42" name="V. Date du contrôle"/>
+        <alias field="niv_val" index="43" name="V. Niveau de validité"/>
+        <alias field="typ_val" index="44" name="V. Type"/>
+        <alias field="ech_val" index="45" name="V. Échelle"/>
+        <alias field="peri_val" index="46" name="V Périmètre"/>
+        <alias field="validateur" index="47" name="V. Validateur"/>
+        <alias field="proc_vers" index="48" name="V. Version de la procédure"/>
+        <alias field="producteur" index="49" name="V. Producteur contacté"/>
+        <alias field="date_contact" index="50" name="V. Date de contact du producteur"/>
+        <alias field="procedure" index="51" name="V. Procédure"/>
+        <alias field="proc_ref" index="52" name="V. Ref procédure"/>
+        <alias field="comm_val" index="53" name="V. Commentaire"/>
+        <alias field="webcdnom" index="54" name="Fiche MNHN"/>
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
@@ -2597,15 +3586,15 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="ds_publique"/>
           <column width="-1" hidden="0" type="field" name="diffusion_niveau_precision"/>
           <column width="-1" hidden="0" type="field" name="sensi_niveau"/>
-          <column width="-1" hidden="0" type="field" name="validite_niveau"/>
-          <column width="-1" hidden="0" type="field" name="validite_date_validation"/>
-          <column width="-1" hidden="0" type="field" name="id_validation"/>
+          <column width="-1" hidden="1" type="field" name="validite_niveau"/>
+          <column width="-1" hidden="1" type="field" name="validite_date_validation"/>
+          <column width="-1" hidden="1" type="field" name="id_validation"/>
           <column width="-1" hidden="0" type="field" name="date_ctrl"/>
           <column width="-1" hidden="0" type="field" name="niv_val"/>
           <column width="-1" hidden="0" type="field" name="typ_val"/>
           <column width="-1" hidden="0" type="field" name="ech_val"/>
           <column width="176" hidden="0" type="field" name="peri_val"/>
-          <column width="-1" hidden="0" type="field" name="validateur"/>
+          <column width="-1" hidden="1" type="field" name="validateur"/>
           <column width="-1" hidden="0" type="field" name="proc_vers"/>
           <column width="-1" hidden="0" type="field" name="producteur"/>
           <column width="-1" hidden="0" type="field" name="date_contact"/>
@@ -2614,6 +3603,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="comm_val"/>
           <column width="-1" hidden="1" type="actions"/>
           <column width="-1" hidden="0" type="field" name="descriptif_sujet"/>
+          <column width="-1" hidden="0" type="field" name="webcdnom"/>
         </columns>
       </attributetableconfig>
       <editform>.</editform>
@@ -2639,21 +3629,6 @@ def my_form_open(dialog, layer, feature):
       <featformsuppress>0</featformsuppress>
       <editorlayout>tablayout</editorlayout>
       <attributeEditorForm>
-        <attributeEditorContainer showLabel="1" visibilityExpressionEnabled="0" visibilityExpression="" name="Validation" groupBox="0" columnCount="2">
-          <attributeEditorField showLabel="1" index="41" name="id_validation"/>
-          <attributeEditorField showLabel="1" index="42" name="date_ctrl"/>
-          <attributeEditorField showLabel="1" index="43" name="niv_val"/>
-          <attributeEditorField showLabel="1" index="44" name="typ_val"/>
-          <attributeEditorField showLabel="1" index="45" name="ech_val"/>
-          <attributeEditorField showLabel="1" index="46" name="peri_val"/>
-          <attributeEditorField showLabel="1" index="47" name="validateur"/>
-          <attributeEditorField showLabel="1" index="48" name="proc_vers"/>
-          <attributeEditorField showLabel="1" index="49" name="producteur"/>
-          <attributeEditorField showLabel="1" index="50" name="date_contact"/>
-          <attributeEditorField showLabel="1" index="51" name="procedure"/>
-          <attributeEditorField showLabel="1" index="52" name="proc_ref"/>
-          <attributeEditorField showLabel="1" index="53" name="comm_val"/>
-        </attributeEditorContainer>
         <attributeEditorContainer showLabel="1" visibilityExpressionEnabled="0" visibilityExpression="" name="Observation" groupBox="0" columnCount="1">
           <attributeEditorContainer showLabel="1" visibilityExpressionEnabled="0" visibilityExpression="" name="Quoi" groupBox="1" columnCount="2">
             <attributeEditorField showLabel="1" index="0" name="cle_obs"/>
@@ -2662,23 +3637,20 @@ def my_form_open(dialog, layer, feature):
             <attributeEditorField showLabel="1" index="7" name="nom_vern"/>
             <attributeEditorField showLabel="1" index="2" name="cd_nom"/>
             <attributeEditorField showLabel="1" index="3" name="cd_ref"/>
-            <attributeEditorField showLabel="1" index="11" name="denombrement_max"/>
             <attributeEditorField showLabel="1" index="10" name="denombrement_min"/>
+            <attributeEditorField showLabel="1" index="11" name="denombrement_max"/>
             <attributeEditorField showLabel="1" index="12" name="objet_denombrement"/>
             <attributeEditorField showLabel="1" index="13" name="type_denombrement"/>
             <attributeEditorField showLabel="1" index="1" name="statut_observation"/>
             <attributeEditorField showLabel="1" index="6" name="reu"/>
             <attributeEditorField showLabel="1" index="8" name="group1_inpn"/>
             <attributeEditorField showLabel="1" index="9" name="group2_inpn"/>
-            <attributeEditorField showLabel="1" index="26" name="commentaire"/>
-          </attributeEditorContainer>
-          <attributeEditorContainer showLabel="1" visibilityExpressionEnabled="0" visibilityExpression="" name="Descriptions des individus" groupBox="1" columnCount="2">
             <attributeEditorField showLabel="1" index="14" name="descriptif_sujet"/>
+            <attributeEditorField showLabel="1" index="26" name="commentaire"/>
           </attributeEditorContainer>
           <attributeEditorContainer showLabel="1" visibilityExpressionEnabled="0" visibilityExpression="" name="Qui" groupBox="1" columnCount="2">
             <attributeEditorField showLabel="1" index="23" name="observateurs"/>
             <attributeEditorField showLabel="1" index="24" name="determinateurs"/>
-            <attributeEditorField showLabel="1" index="47" name="validateur"/>
           </attributeEditorContainer>
           <attributeEditorContainer showLabel="1" visibilityExpressionEnabled="0" visibilityExpression="" name="Quand" groupBox="1" columnCount="2">
             <attributeEditorField showLabel="1" index="16" name="date_debut"/>
@@ -2706,6 +3678,27 @@ def my_form_open(dialog, layer, feature):
             <attributeEditorField showLabel="1" index="28" name="dee_date_transformation"/>
             <attributeEditorField showLabel="1" index="29" name="dee_date_derniere_modification"/>
             <attributeEditorField showLabel="1" index="27" name="code_idcnp_dispositif"/>
+          </attributeEditorContainer>
+        </attributeEditorContainer>
+        <attributeEditorContainer showLabel="1" visibilityExpressionEnabled="0" visibilityExpression="" name="Fiche taxon MNHN" groupBox="0" columnCount="2">
+          <attributeEditorField showLabel="1" index="54" name="webcdnom"/>
+        </attributeEditorContainer>
+        <attributeEditorContainer showLabel="1" visibilityExpressionEnabled="0" visibilityExpression="" name="Validation" groupBox="0" columnCount="1">
+          <attributeEditorContainer showLabel="1" visibilityExpressionEnabled="0" visibilityExpression="" name="A renseigner" groupBox="1" columnCount="1">
+            <attributeEditorField showLabel="1" index="43" name="niv_val"/>
+            <attributeEditorField showLabel="1" index="49" name="producteur"/>
+            <attributeEditorField showLabel="1" index="50" name="date_contact"/>
+            <attributeEditorField showLabel="1" index="53" name="comm_val"/>
+          </attributeEditorContainer>
+          <attributeEditorContainer showLabel="1" visibilityExpressionEnabled="0" visibilityExpression="" name="Renseignés automatiquement" groupBox="1" columnCount="1">
+            <attributeEditorField showLabel="1" index="47" name="validateur"/>
+            <attributeEditorField showLabel="1" index="42" name="date_ctrl"/>
+            <attributeEditorField showLabel="1" index="44" name="typ_val"/>
+            <attributeEditorField showLabel="1" index="45" name="ech_val"/>
+            <attributeEditorField showLabel="1" index="46" name="peri_val"/>
+            <attributeEditorField showLabel="1" index="51" name="procedure"/>
+            <attributeEditorField showLabel="1" index="48" name="proc_vers"/>
+            <attributeEditorField showLabel="1" index="52" name="proc_ref"/>
           </attributeEditorContainer>
         </attributeEditorContainer>
       </attributeEditorForm>
@@ -2769,8 +3762,13 @@ def my_form_open(dialog, layer, feature):
         <default field="procedure" expression=""/>
         <default field="proc_ref" expression=""/>
         <default field="comm_val" expression=""/>
+        <default field="webcdnom" expression=""/>
       </defaults>
-      <previewExpression>COALESCE( "cle_obs", '&lt;NULL>' )</previewExpression>
+      <previewExpression>Concat(
+"cle_obs", ' - ',
+"nom_cite", ' le ',
+"date_debut"
+)</previewExpression>
     </maplayer>
     <maplayer simplifyAlgorithm="0" minimumScale="5000" maximumScale="5e+06" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="1" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
       <id>zone_economique_exclusive20171207093950270</id>
@@ -2778,7 +3776,7 @@ def my_form_open(dialog, layer, feature):
       <keywordList>
         <value></value>
       </keywordList>
-      <layername>zone_economique_exclusive</layername>
+      <layername>Zone économique exclusive</layername>
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=40 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
@@ -3136,6 +4134,7 @@ def my_form_open(dialog, layer, feature):
     <Digitizing>
       <DefaultSnapToleranceUnit type="int">1</DefaultSnapToleranceUnit>
       <LayerSnappingList type="QStringList">
+        <value>Observations_à_valider_copier20171213110332872</value>
         <value>commune20171207093853482</value>
         <value>espace_naturel20171207093947834</value>
         <value>maille_0220171207093956825</value>
@@ -3145,6 +4144,7 @@ def my_form_open(dialog, layer, feature):
         <value>zone_economique_exclusive20171207093950270</value>
       </LayerSnappingList>
       <LayerSnappingEnabledList type="QStringList">
+        <value>enabled</value>
         <value>enabled</value>
         <value>enabled</value>
         <value>enabled</value>
@@ -3163,8 +4163,10 @@ def my_form_open(dialog, layer, feature):
         <value>1</value>
         <value>1</value>
         <value>1</value>
+        <value>1</value>
       </LayerSnappingToleranceUnitList>
       <LayerSnapToList type="QStringList">
+        <value>to_vertex_and_segment</value>
         <value>to_vertex_and_segment</value>
         <value>to_vertex_and_segment</value>
         <value>to_vertex_and_segment</value>
@@ -3176,6 +4178,7 @@ def my_form_open(dialog, layer, feature):
       <DefaultSnapType type="QString">to vertex and segment</DefaultSnapType>
       <DefaultSnapTolerance type="double">10</DefaultSnapTolerance>
       <LayerSnappingToleranceList type="QStringList">
+        <value>10.000000</value>
         <value>10.000000</value>
         <value>10.000000</value>
         <value>10.000000</value>

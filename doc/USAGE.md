@@ -98,10 +98,18 @@ todo: expliquer la notion et les tables utilisées
 
 Validite niveau et date -> expliquer grand public limité via localconfig et loggués limités via demande
 
+* Voir un exemple d'ajout de critères et de calcul de validation automatique:
+
+doc/validation/validation_calcul_validation_sensibilite_via_ajout_de_criteres.sql
+
+* Projet QGIS exemple pour les validateurs : todo
+
+
 ### Gestion de la sensibilité des données
 
-Sensibilité -> montrer requete pour faire un update des champs de sensibilité à partir de critères
-Voir fonction https://projects.3liz.org/clients/naturaliz-reunion/issues/48
+Voir un exemple d'ajout de critères et de calcul de sensibilité automatique:
+
+doc/validation/validation_calcul_validation_sensibilite_via_ajout_de_criteres.sql
 
 #### Fonction de modification de la sensibilité des données
 
