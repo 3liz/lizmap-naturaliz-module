@@ -10,7 +10,7 @@ class occtaxModuleUpgrader_extensionvalidationfixes extends jInstallerModule {
         if( $this->firstDbExec() ) {
             // modify jlx_user columns
             $this->useDbProfile('jauth');
-            $this->execSQLScript('sql/extension_validation_fixes');
+            $this->execSQLScript('sql/upgrade/extension_validation_fixes');
         }
     }
 
