@@ -1,5 +1,5 @@
 <?php
-class occtaxModuleUpgrader_extensionvalidation extends jInstallerModule {
+class occtaxModuleUpgrader_extensionvalidationfixes extends jInstallerModule {
 
     public $targetVersions = array(
         '2.0.2'
