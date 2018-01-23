@@ -287,6 +287,18 @@ LANGUAGE plpgsql VOLATILE
 COST 100;
 
 
+-- Vue pour avoir une nomenclature à plat
+DROP VIEW IF EXISTS v_nomenclature_plat CASCADE;
+CREATE VIEW v_nomenclature_plat AS
+SELECT
+json_object(
+    array_agg(concat("champ", '_', "code") ) ,
+    array_agg("valeur")
+) AS dict
+FROM occtax.nomenclature
+;
+
+
 
 DROP VIEW IF EXISTS occtax.v_observation_validation CASCADE;
 CREATE OR REPLACE VIEW occtax.v_observation_validation AS
