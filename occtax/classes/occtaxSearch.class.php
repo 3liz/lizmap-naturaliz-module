@@ -70,6 +70,8 @@ class occtaxSearch {
 
     protected $legend_max_radius = 410;
 
+    protected $nomenclatureFields = array();
+
     public function __construct ($token=Null, $params=Null, $demande=Null) {
 
         // Set demande to avoid inifite loop while fetching sql for demande

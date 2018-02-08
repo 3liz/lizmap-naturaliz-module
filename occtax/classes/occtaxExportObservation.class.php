@@ -323,9 +323,6 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
 
     );
 
-
-
-
     public function __construct ($token=Null, $params=Null, $demande=Null) {
 
         // Limit fields to export (ie to export in this class)
@@ -369,8 +366,9 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
         // Fields
         $attributes = $this->getExportedFields( $topic );
 
-        if($topic == 'principal')
+        if($topic == 'principal'){
             $attributes = array_diff($attributes, array('geojson'));
+        }
 
         $sql.= implode(', ', $attributes );
 
@@ -412,12 +410,25 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
         $fd = fopen($path, 'w');
         fputcsv($fd, $attributes, $delimiter);
 
+        // Get nomenclature
+        $sqlnom = "SELECT * FROM occtax.v_nomenclature_plat";
+        $reqnom = $cnx->query($sqlnom);
+        $codenom = array();
+        foreach($reqnom as $nom){
+            $codenom = (array)json_decode($nom->dict);
+        }
+
         // Fetch data and fill in the file
         $res = $cnx->query($sql);
         foreach($res as $line){
             $ldata = array();
             foreach($attributes as $att){
-                $ldata[] = $line->$att;
+                $val = $line->$att;
+                // on transforme les champs en nomenclature
+                if(in_array($att, $this->nomenclatureFields)){
+                    $val = $codenom[$att . '_' . $val];
+                }
+                $ldata[] = $val;
             }
             fputcsv($fd, $ldata, $delimiter);
         }
@@ -497,12 +508,25 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             $this->returnFields,
             array('geojson', 'wkt')
         );
+        $attributes =  array_map(
+            function($el){
+                $champ = $el;
+                if(in_array($el, $this->nomenclatureFields)){
+                    $champ = "dict->>(concat('".$el."', '_', ".$el."))";
+                }
+                // Ajout du nom de champ
+                $champ.= ' AS "'.$el.'"';
+                return $champ;
+            },
+            $attributes
+        );
         $sql.= implode(', ', $attributes );
         $sql.= "
                             ) As l
                         )
                     ) As properties
-                FROM source As lg
+                FROM source As lg,
+                occtax.v_nomenclature_plat
             ) As f
         ) As fc";
 //jLog::log($sql);
@@ -562,7 +586,18 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             $this->returnFields,
             array('geojson', 'wkt')
         );
-        $attributes =  array_map(function($el){ return $el . ' AS "qgs:'.$el.'"'; }, $attributes);
+        $attributes =  array_map(
+            function($el){
+                $champ = $el;
+                if(in_array($el, $this->nomenclatureFields)){
+                    $champ = "dict->>(concat('".$el."', '_', ".$el."))";
+                }
+                // Ajout du nom de balise XML
+                $champ.= ' AS "qgs:'.$el.'"';
+                return $champ;
+            },
+            $attributes
+        );
         $sql.= implode(', ', $attributes );
         $sql.= "
                         )
@@ -572,7 +607,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
 
 --        )
         AS gml
-        FROM source";
+        FROM source, occtax.v_nomenclature_plat";
 //jLog::log($sql);
 
         $cnx = jDb::getConnection();

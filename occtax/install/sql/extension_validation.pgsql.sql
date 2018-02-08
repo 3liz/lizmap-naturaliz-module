@@ -553,18 +553,6 @@ INSERT INTO nomenclature VALUES ('ech_val', '2', 'Validation régionale', 'Valid
 INSERT INTO nomenclature VALUES ('ech_val', '3', 'Validation nationale', 'Validation scientifique effectuée par la plateforme nationale');
 
 
--- Vue pour avoir une nomenclature à plat
-DROP VIEW IF EXISTS v_nomenclature_plat CASCADE;
-CREATE VIEW v_nomenclature_plat AS
-SELECT
-json_object(
-    array_agg(concat("champ", '_', "code") ) ,
-    array_agg("valeur")
-) AS dict
-FROM occtax.nomenclature
-;
-
-
 -- VALIDATION : vue et triggers pour validation par les validateurs agréés
 DROP VIEW IF EXISTS occtax.v_observation_validation CASCADE;
 CREATE OR REPLACE VIEW occtax.v_observation_validation AS

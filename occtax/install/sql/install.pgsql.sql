@@ -24,6 +24,18 @@ COMMENT ON COLUMN nomenclature.valeur IS 'Libellé court. Joue le rôle de valeu
 COMMENT ON COLUMN nomenclature.champ IS 'Description de la valeur';
 
 
+-- Vue pour avoir une nomenclature à plat
+DROP VIEW IF EXISTS v_nomenclature_plat CASCADE;
+CREATE VIEW v_nomenclature_plat AS
+SELECT
+json_object(
+    array_agg(concat("champ", '_', "code") ) ,
+    array_agg("valeur")
+) AS dict
+FROM occtax.nomenclature
+;
+
+
 -- Table principale des observations
 CREATE TABLE observation (
     cle_obs bigserial NOT NULL PRIMARY KEY,
@@ -67,6 +79,7 @@ CREATE TABLE observation (
     jdd_source_id text,
     organisme_gestionnaire_donnees text NOT NULL,
     org_transformation text NOT NULL,
+    organisme_standard text,
 
     statut_source text NOT NULL,
     reference_biblio text,
@@ -222,6 +235,8 @@ COMMENT ON COLUMN observation.dee_floutage IS 'Indique si un floutage a été ef
 COMMENT ON COLUMN observation.organisme_gestionnaire_donnees IS 'Nom de l’organisme qui détient la Donnée Source (DS) de la DEE et qui en a la responsabilité. Si plusieurs organismes sont nécessaires, les séparer par des virgules.';
 
 COMMENT ON COLUMN observation.org_transformation IS 'Nom de l''organisme ayant créé la DEE finale (plate-forme ou organisme mandaté par elle). Autant que possible, on utilisera des noms issus de l''annuaire du SINP lorsqu''il sera publié.';
+
+COMMENT ON COLUMN observation.organisme_standard IS 'Nom(s) de(s) organisme(s) qui ont participés à la standardisation de la DS en DEE (codage, formatage, recherche des données obligatoires).';
 
 COMMENT ON COLUMN observation.geom IS 'Géométrie de l''objet. Il peut être de type Point, Polygone ou Polyligne ou Multi, mais pas complexe (pas de mélange des types)';
 

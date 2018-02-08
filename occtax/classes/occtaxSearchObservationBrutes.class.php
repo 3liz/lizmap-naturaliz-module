@@ -365,6 +365,14 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $this->returnFields = $this->getExportedFields( 'principal');
         $this->displayFields = $this->returnFields;
 
+        // Fields with nomenclature
+        $cnx = jDb::getConnection();
+        $sql = 'SELECT DISTINCT champ FROM occtax.nomenclature';
+        $nomreq = $cnx->query($sql);
+        foreach($nomreq as $nom){
+            $this->nomenclatureFields[] = $nom->champ;
+        }
+
         parent::__construct($token, $params, $demande);
     }
 
