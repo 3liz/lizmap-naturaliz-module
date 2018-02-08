@@ -1173,7 +1173,11 @@ OccTax.events.on({
                     // Display description div
                     var dHtml = tData.description;
                     $('#occtax_search_description_content').html(dHtml);
-                    $('#occtax_search_description').show();
+                    var dockHeight = $('#dock').height();
+                    if(dockHeight >= 800)
+                      $('#occtax_search_description').show();
+                    else
+                      $('#occtax_search_description').hide();
                     $('#occtax_search_description').prev('h3.occtax_search').show();
                     $('#occtax-search-modify').show();
                     $('#occtax-search-replay').hide();
