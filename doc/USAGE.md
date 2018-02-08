@@ -220,7 +220,7 @@ Vue matérialisée pour récupérer uniquement les taxons valides (cd_nom = cd_r
 
 Elle fait une union entre les 2 tables source et ne conserve que les taxons des rangs FM, GN, AGES, ES, SSES, NAT, VAR, SVAR, FO, SSFO, RACE, CAR, AB.
 
-Elle doit être rafraîchie dès qu'on réalise un import dans une ou l'autre des tables sources: `REFRESH MATERIALIZED VIEW taxref_valide;`
+Elle doit être rafraîchie dès qu'on réalise un import dans une ou l'autre des tables sources: `REFRESH MATERIALIZED VIEW taxon.taxref_valide;`
 
 #### taxref_consolide
 
@@ -234,7 +234,12 @@ Elle est principalement utilisée pour récupérer les cd_ref des sous-ensembles
 AND o.cd_ref IN (SELECT cd_ref FROM taxon.taxref_consolide WHERE "menace" = 'EN'  )
 ```
 
-C'est une vue matérialisée, c'est-à-dire une vue qui se comporte comme une table, et qu'on doit mettre à jour suite à un import de taxons (dans taxref ou taxref_local), ou suite à la mise à jour de taxref_valide, via `REFRESH MATERIALIZED VIEW taxref_consolide;`
+C'est une vue matérialisée, c'est-à-dire une vue qui se comporte comme une table, et qu'on doit mettre à jour suite à un import de taxons (dans taxref ou taxref_local), ou suite à la mise à jour de taxref_valide, via `REFRESH MATERIALIZED VIEW taxon.taxref_consolide;`
+
+#### taxref_consolide_all
+
+Elle consolide aussi les informations du Taxref et des taxons locaux, mais en prenant tous les taxons, pas seulement les valides.
+Cette vue est plus simple, et ne contient que les champs cd_nom, group1_inpn et group2_inpn. Elle est utilisée pour le tableau des statistiques et doit être aussi rafraîchie: `REFRESH MATERIALIZED VIEW taxon.taxref_consolide_all`
 
 #### taxref_fts
 
@@ -247,7 +252,7 @@ Un champ poids permet de prioriser la recherche dans cet ordre, avec les poids r
 * noms vernaculaires (nom_vern) des taxons valides (cd_nom = cd_ref)
 * noms (nom_complet) des taxons synonymes (cd_nom != cd_ref)
 
-Cette vue doit être rafraîchie dès qu'on modifie les données dans les tables taxref et/ou taxref_local: `REFRESH MATERIALIZED VIEW taxref_fts`
+Cette vue doit être rafraîchie dès qu'on modifie les données dans les tables taxref et/ou taxref_local: `REFRESH MATERIALIZED VIEW taxon.taxref_fts`
 
 
 
