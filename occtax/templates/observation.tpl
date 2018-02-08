@@ -488,6 +488,13 @@ Pas d'individu décrit
         </tr>
         {/if}
 
+        {if array_key_exists('organisme_standard', $data)}
+        <tr>
+            <th>{@occtax~observation.output.organisme_standard@}</th>
+            <td>{$data['organisme_standard']}</td>
+        </tr>
+        {/if}
+
         {if array_key_exists('organisme_gestionnaire_donnees', $data)}
         <tr>
             <th>{@occtax~observation.output.organisme_gestionnaire_donnees@}</th>

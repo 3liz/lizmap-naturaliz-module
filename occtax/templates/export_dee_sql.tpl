@@ -190,7 +190,7 @@ xmlelement(
         XMLELEMENT(
             NAME "cont:OrganismeType",
             XMLFOREST(
-                o.organisme_gestionnaire_donnees AS "cont:nomOrganisme"
+                o.organisme_standard AS "cont:nomOrganisme"
             )
         )
     ),

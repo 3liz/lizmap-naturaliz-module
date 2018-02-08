@@ -860,7 +860,7 @@ CREATE OR REPLACE FUNCTION occtax.update_observation_set_validation_fields() RET
         IF TG_OP = 'DELETE' THEN
             UPDATE occtax.observation o
             SET
-                validite_niveau = NULL,
+                validite_niveau = '6', -- Non évalué
                 validite_date_validation = NULL
             WHERE o.cle_obs = NEW.cle_obs
             ;
@@ -868,7 +868,7 @@ CREATE OR REPLACE FUNCTION occtax.update_observation_set_validation_fields() RET
         ELSE
             UPDATE occtax.observation o
             SET
-                validite_niveau = NEW.niv_val,
+                validite_niveau = CASE WHEN NEW.niv_val IS NOT NULL THEN NEW.niv_val ELSE '6' END,
                 validite_date_validation = NEW.date_ctrl
             WHERE o.cle_obs = NEW.cle_obs
             ;
