@@ -852,4 +852,36 @@ $$ LANGUAGE plpgsql;
 
 
 
+-- Fonction trigger qui lance la modification des champs validite_niveau et validite_date_validation
+-- lorsque l'utilisateur modifie la table occtax.validation_observation
+CREATE OR REPLACE FUNCTION occtax.update_observation_set_validation_fields() RETURNS TRIGGER AS $$
+    BEGIN
+
+        IF TG_OP = 'DELETE' THEN
+            UPDATE occtax.observation o
+            SET
+                validite_niveau = NULL,
+                validite_date_validation = NULL
+            WHERE o.cle_obs = NEW.cle_obs
+            ;
+            RETURN OLD;
+        ELSE
+            UPDATE occtax.observation o
+            SET
+                validite_niveau = NEW.niv_val,
+                validite_date_validation = NEW.date_ctrl
+            WHERE o.cle_obs = NEW.cle_obs
+            ;
+            RETURN NEW;
+        END IF;
+    END;
+$$ LANGUAGE plpgsql;
+
+
+DROP TRIGGER IF EXISTS trg_validation_renseigner_champs_observation ON occtax.validation_observation;
+CREATE TRIGGER trg_validation_renseigner_champs_observation
+AFTER INSERT OR UPDATE OR DELETE ON occtax.validation_observation
+FOR EACH ROW EXECUTE PROCEDURE occtax.update_observation_set_validation_fields();
+
+
 COMMIT;
