@@ -516,5 +516,24 @@ COMMENT ON TABLE menaces IS 'Données sur les menaces, issues des listes rouges'
 CREATE INDEX ON menaces (cd_nom);
 
 
-
--- TRIGGERS
+-- Vue taxref_consolide_all pour pouvoir faire des statistiques
+-- sur tous les taxons, valides ou non.
+-- Sinon le tableau renvoit "Autre" car les taxons non valides ne sont pas bien pris en compte
+DROP MATERIALIZED VIEW IF EXISTS taxon.taxref_consolide_all;
+CREATE MATERIALIZED VIEW taxon.taxref_consolide_all AS
+WITH
+taxref_mnhn_et_local AS (
+  SELECT group1_inpn, group2_inpn, cd_nom
+  FROM taxref
+  WHERE rang IN ('FM', 'GN', 'AGES', 'ES', 'SSES', 'NAT', 'VAR', 'SVAR', 'FO', 'SSFO', 'RACE', 'CAR', 'AB')
+  UNION ALL
+  SELECT group1_inpn, group2_inpn, cd_nom
+  FROM taxref_local
+  WHERE rang IN ('FM', 'GN', 'AGES', 'ES', 'SSES', 'NAT', 'VAR', 'SVAR', 'FO', 'SSFO', 'RACE', 'CAR', 'AB')
+)
+SELECT tml.*, c.*
+FROM taxref_mnhn_et_local AS tml
+LEFT JOIN t_complement AS c ON c.cd_nom_fk = tml.cd_nom
+;
+CREATE INDEX ON taxon.taxref_consolide_all (cd_nom);
+CREATE INDEX ON taxon.taxref_consolide_all (protection);
