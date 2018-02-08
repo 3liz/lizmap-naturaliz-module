@@ -231,7 +231,13 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
                 'o.nature_objet_geo' => 'nature_objet_geo',
                 'ST_Transform(o.geom, 4326) AS geom' => 'geom',
                 "CASE
-                    WHEN o.geom IS NOT NULL THEN 'GEO'
+                    WHEN o.geom IS NOT NULL THEN
+                        CASE
+                            WHEN GeometryType(geom) IN ('POLYGON', 'MULTIPOLYGON') THEN 'Polygone'
+                            WHEN GeometryType(geom) IN ('LINESTRING', 'MULTILINESTRING') THEN 'Ligne'
+                            WHEN GeometryType(geom) IN ('POINT', 'MULTIPOINT') THEN 'Point'
+                            ELSE 'Géométrie'
+                        END
                     WHEN lm05.code_maille IS NOT NULL THEN 'M05'
                     WHEN lm10.code_maille IS NOT NULL THEN 'M10'
                     WHEN lc.code_commune IS NOT NULL THEN 'COM'

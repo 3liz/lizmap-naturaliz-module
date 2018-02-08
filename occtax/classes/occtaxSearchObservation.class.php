@@ -51,7 +51,13 @@ class occtaxSearchObservation extends occtaxSearch {
                 "to_char(date_debut, 'YYYY-MM-DD') AS date_debut" => 'date_debut',
 
                 "CASE
-                    WHEN o.geom IS NOT NULL THEN 'GEO'
+                    WHEN o.geom IS NOT NULL THEN
+                        CASE
+                            WHEN GeometryType(geom) IN ('POLYGON', 'MULTIPOLYGON') THEN 'Polygone'
+                            WHEN GeometryType(geom) IN ('LINESTRING', 'MULTILINESTRING') THEN 'Ligne'
+                            WHEN GeometryType(geom) IN ('POINT', 'MULTIPOINT') THEN 'Point'
+                            ELSE 'Géométrie'
+                        END
                     WHEN lm10.code_maille IS NOT NULL THEN 'M10'
                     WHEN lc.code_commune IS NOT NULL THEN 'COM'
                     WHEN lme.code_me IS NOT NULL THEN 'ME'
