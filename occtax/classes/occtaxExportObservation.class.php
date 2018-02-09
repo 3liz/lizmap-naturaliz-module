@@ -241,9 +241,11 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
 
                  // reprojection needed for GeoJSON standard
                 '(ST_AsGeoJSON( ST_Transform(o.geom, 4326), 6 ))::json AS geojson' => 'geom',
-                '(ST_AsText( ST_Transform(o.geom, 4326) )) AS wkt' => 'geom',
-                'ST_Transform(o.geom, 4326) AS geom' => 'geom',
 
+                // Le WKT est exporté dans le CSV, pour le grand public également
+                // donc on ne diffuse la geom que si la diffusion est possible cad 'g'
+                "CASE WHEN od.diffusion ? 'g' THEN (ST_AsText( ST_Transform(o.geom, 4326) )) ELSE NULL END AS wkt" => 'geom',
+                'ST_Transform(o.geom, 4326) AS geom' => 'geom',
             )
         ),
 
