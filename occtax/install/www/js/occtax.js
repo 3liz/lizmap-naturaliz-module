@@ -278,6 +278,7 @@ lizMap.events.on({
             },
             getStrokeWidth:function(feat) {
                 mySw = (OccTax.map.getZoom() + 1) * 1.5;
+                mySw = (OccTax.map.getZoom() + 1);
                 if(mySw < 3){mySw = 3;}
                 // Draw square underneath maille features
                 if('square' in feat.attributes){
@@ -301,8 +302,8 @@ lizMap.events.on({
                 return rad;
             },
             getStrokeWidthSelect:function(feat) {
-                mySw = (OccTax.map.getZoom() + 1) * 1.5 * 2;
-                if(mySw < 3){mySw = 3 * 2;}
+                mySw = (OccTax.map.getZoom() + 1);
+                if(mySw < 3){mySw = 3;}
                 // Hide square underneath maille features on select
                 if('square' in feat.attributes){
                     mySw = 0;
@@ -337,10 +338,11 @@ lizMap.events.on({
             pointRadius: "${getPointRadius}",
             fillColor: "${getPointColor}",
             fillOpacity: "${getFillOpacity}",
-            strokeColor: "${getPointColor}",
+            strokeColor: "white",
             strokeOpacity: 1,
             strokeDashstyle: "solid",
-            strokeWidth: "${getStrokeWidth}",
+            strokeWidth:1,
+//            strokeWidth: "${getStrokeWidth}",
             graphicName: "${getGraphicName}",
             cursor: "pointer"
         };
