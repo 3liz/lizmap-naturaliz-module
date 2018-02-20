@@ -269,7 +269,8 @@ class occtaxSearch {
 ';
                 }
             }
-            $content.= '\r';
+            $content.= '
+';
             $content.= 'NB: La liste des jeux de données (JDD) ci-dessus montre l\'ensemble des JDD disponibles dans la plate-forme. Elle n\'est pas filtrée en fonction des résultats.';
 
         }
