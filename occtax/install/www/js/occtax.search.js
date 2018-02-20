@@ -274,6 +274,8 @@ $(document).ready(function () {
                           }
                           refreshOcctaxDatatableSize('#occtax_results_stats_table_div');
                           callback( tData );
+                          $('#'+tableId+'').show();
+
                     }
                 );
             }
@@ -353,6 +355,7 @@ $(document).ready(function () {
                           refreshOcctaxDatatableSize('#occtax_results_taxon_table_div');
 
                           callback( tData );
+                          $('#'+tableId+'').show();
                     }
                 );
             }
@@ -445,6 +448,7 @@ $(document).ready(function () {
                           // Refresh maille on map
                           // usefull to refresh map features
                           $('#occtax_results_draw_maille_m02.btn').click();
+                          $('#'+tableId+'').show();
 
 
                     }
@@ -570,6 +574,7 @@ $(document).ready(function () {
                     $('#occtax_results_draw_observation').click();
 
                   refreshOcctaxDatatableSize('#occtax_results_observation_table_div');
+                  $('#'+tableId+'').show();
                 });
             }
         });
@@ -1230,6 +1235,17 @@ OccTax.events.on({
       $('#'+tokenFormId+'_reinit').click(function(){
           clearTaxonFromSearch();
           clearSpatialSearch();
+          OccTax.emptyDrawqueryLayer('queryLayer');
+          OccTax.events.triggerEvent('mailledatareceived_' + 'm02', {'results':null});
+          OccTax.events.triggerEvent('mailledatareceived_' + 'm10', {'results':null});
+          OccTax.events.triggerEvent('observationdatareceived', {'results':null});
+
+          $('#occtax_results_observation_table').hide();
+          $('#occtax_results_maille_table_m02').hide();
+          $('#occtax_results_maille_table_m10').hide();
+          $('#occtax_results_taxon_table').hide();
+          $('#occtax_results_stats_table').hide();
+
           //return false;
       });
 
