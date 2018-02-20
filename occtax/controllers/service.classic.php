@@ -225,11 +225,15 @@ class serviceCtrl extends jController {
         $offset = $this->intParam('offset');
         $geojson = $occtaxSearch->getGeoJSON($limit, $offset);
 
-        $rep = $this->getResponse('binary');
-        $rep->content = $geojson;
-        $rep->doDownload  =  true;
-        $rep->mimeType = 'text/json; charset=utf-8';
-        $rep->outputFileName = 'export_observations.geojson';
+        $rep = $this->getResponse('zip');
+
+        // Add geojson
+        $rep->content->addContentFile( 'export_observations.geojson', $geojson );
+
+        // Add readme file + search description to ZIP
+        $rep->content->addContentFile( 'LISEZ-MOI.txt', $occtaxSearch->getReadme('text') );
+
+        $rep->zipFilename = 'export_observations.zip';
 
         return $rep;
     }
