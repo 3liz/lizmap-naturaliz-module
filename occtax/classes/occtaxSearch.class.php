@@ -238,8 +238,8 @@ class occtaxSearch {
         return $legend_classes;
     }
 
-    public function getReadme($format='html'){
-        $readme = jApp::configPath('occtax-export-LISEZ-MOI.txt');
+    public function getReadme($format='html', $type='csv'){
+        $readme = jApp::configPath("occtax-export-LISEZ-MOI.$type.txt");
         $content = '';
         if( is_file( $readme ) ){
             $content = jFile::read( $readme );

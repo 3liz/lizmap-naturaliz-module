@@ -13,10 +13,14 @@ class occtaxModuleInstaller extends jInstallerModule {
 
     function install() {
 
-        // Copy export readme file
-        $readmeDestinationPath = jApp::configPath('occtax-export-LISEZ-MOI.txt');
+        // Copy export readme files
+        $readmeDestinationPath = jApp::configPath('occtax-export-LISEZ-MOI.csv.txt');
         if (!file_exists($readmeDestinationPath)) {
-            $this->copyFile('config/LISEZ-MOI.md', $readmeDestinationPath);
+            $this->copyFile('config/LISEZ-MOI.csv.md', $readmeDestinationPath);
+        }
+        $readmeDestinationPath = jApp::configPath('occtax-export-LISEZ-MOI.geojson.txt');
+        if (!file_exists($readmeDestinationPath)) {
+            $this->copyFile('config/LISEZ-MOI.geojson.md', $readmeDestinationPath);
         }
 
         // Copy CSS and JS files
