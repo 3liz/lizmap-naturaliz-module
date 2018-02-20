@@ -559,15 +559,14 @@ psql service=naturaliz
 
 ## Activer les modules dans l'interface d'administration
 
-Les modules **occtax_admin** et **mascarine_admin** doivent être déclarés dans la configuration de Lizmap, pour permettre leur visualisation dans l'interface graphique. Pour cela, il faut modifier le fichier **lizmap/var/config/mainconfig.ini.php** et ajouter **, occtax_admin~*@classic** à la variable **admin** de la section **[simple_urlengine_entrypoints]**
+Les modules **occtax_admin** et **mascarine_admin** doivent être déclarés dans la configuration de Lizmap, pour permettre leur visualisation dans l'interface graphique. Pour cela, il faut modifier le fichier **lizmap/var/config/localconfig.ini.php** et ajouter la configuration suivante au début du fichier
 
 ```
 cd /srv/lizmap_web_client/
-nano lizmap/var/config/mainconfig.ini.php
+nano lizmap/var/config/localconfig.ini.php
 
-# remplacer la ligne
-admin="jacl2db~*@classic, jacl2db_admin~*@classic, jauthdb_admin~*@classic, master_admin~*@classic, admin~*@classic, jauth~*@classic"
-# par
+[simple_urlengine_entrypoints]
+index="@classic"
 admin="jacl2db~*@classic, jacl2db_admin~*@classic, jauthdb_admin~*@classic, master_admin~*@classic, admin~*@classic, jauth~*@classic, occtax_admin~*@classic"
 
 # Si vous avez aussi activé le module mascarine, vous devez aussi l'ajouter, pour avoir

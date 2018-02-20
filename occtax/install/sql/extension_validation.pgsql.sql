@@ -223,7 +223,7 @@ BEGIN
 
         FROM occtax.observation o
         ';
-        sql_text := format(sql_template, p_contexte, var_id_critere, var_niveau, p_contexte, json_note, var_niveau);
+        sql_text := format(sql_template, var_id_critere, var_niveau, p_contexte, json_note, var_niveau);
 
          -- optionnally add JOIN table
         IF var_table_jointure IS NOT NULL THEN
