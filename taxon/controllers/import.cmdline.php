@@ -29,7 +29,7 @@ class importCtrl extends jControllerCmdLine {
             '-source' => true,// Chemin complet vers le fichier de données TAXREF au format CSV
             '-menace' => true, // Chemin complet vers le fichier de menaces (listes rouges) au format CSV
             '-protection' => true, // Chemin complet vers le fichier des espèces protégées au format CSV
-            '-version' => true, // Version du fichier Taxref. 10 par défaut
+            '-version' => true, // Version du fichier Taxref. 11 par défaut
             '-correctionsql' => true, // Path to SQL file to correct some taxref data
             '-correctioncsv' => true, // Path to CSV file to correct some taxref data
             '-dbprofile' => true // Jelix database profile name
@@ -46,7 +46,7 @@ class importCtrl extends jControllerCmdLine {
         - Vous devez préciser le chemin vers le fichier source des données TAXREF via le paramètre source, et il sera copié dans le répertoire temporaire de votre serveur. Sinon, le script suppose que le chemin du fichier source de TAXREF est /tmp/TAXREF.txt
         - Vous devez préciser le chemin vers le fichier CSV séparé par tabulation et encodé en UTF-8, contenant les menaces (taxons issu des listes rouges, filtrés sur la région) : à télécharger sur le site de l INPN
         - Vous devez préciser le chemin vers le fichier CSV séparé par tabulation et encodé en UTF-8, contenant les espèces protégées : à télécharger sur le site de l INPN
-        - Vous devez préciser la version via le paramètre version : 7, 8, 9 ou 10.
+        - Vous devez préciser la version via le paramètre version : 7, 8, 9, 10 ou 11.
         - Vous pouvez donner un fichier SQL à lancer après import du taxref pour corriger certaines données. On peut utiliser un csv source à préciser ensuite : -correctionsql
         - Si le script de correction SQL attend un fichier CSV, vous pouvez fournir son chemin ici : -correctioncsv
         - Vous pouvez préciser un nom de profil de base de données (comme écrit dans le fichier lizmap/var/config/profiles.ini.php )
@@ -55,7 +55,7 @@ class importCtrl extends jControllerCmdLine {
         php lizmap/scripts/script.php taxon~import:taxref -source [source] -menace [menace] -protection [protection] -version [version] -dbprofile [dbprofile]
 
         Exemple :
-        php lizmap/scripts/script.php taxon~import:taxref -source /tmp/TAXREFv10.0.txt -menace /tmp/LR_Resultats_Guadeloupe_complet_export.csv -protection /tmp/PROTECTION_ESPECES_10.csv -version 10
+        php lizmap/scripts/script.php taxon~import:taxref -source /tmp/TAXREFv11.txt -menace /tmp/LR_Resultats_Guadeloupe_complet_export.csv -protection /tmp/PROTECTION_ESPECES_11.csv -version 11
         '
     );
 
@@ -77,7 +77,7 @@ class importCtrl extends jControllerCmdLine {
         $rep = $this->getResponse(); // cmdline response by default
 
         //~ // Get version number given
-        $version = $this->option('-version', '10');
+        $version = $this->option('-version', '11');
 
         // Get import file
         $sqlPath = jApp::getModulePath('taxon') . 'install/sql/import.taxref.' . $version . '.pgsql.sql';
@@ -89,7 +89,7 @@ class importCtrl extends jControllerCmdLine {
         $tmpFolder = sys_get_temp_dir();
         $defaultSourcePath = $tmpFolder . '/TAXREF.txt';
         $menaceSourcePath = $tmpFolder . '/LR_Resultats_Guadeloupe_complet_export.csv';
-        $protectionSourcePath = $tmpFolder . '/PROTECTION_ESPECES_10.csv';
+        $protectionSourcePath = $tmpFolder . '/PROTECTION_ESPECES_11.csv';
         $source = $this->option('-source', $defaultSourcePath );
         $menace = $this->option('-menace', $menaceSourcePath );
         $protection = $this->option('-protection', $protectionSourcePath );

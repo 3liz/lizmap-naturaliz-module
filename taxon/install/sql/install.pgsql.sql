@@ -10,6 +10,8 @@ CREATE TABLE taxref (
   classe text,
   ordre text,
   famille text,
+  sous_famille text,
+  tribu text,
   group1_inpn text,
   group2_inpn text,
   cd_nom integer,
@@ -59,6 +61,8 @@ COMMENT ON COLUMN taxref.phylum IS 'Embranchement auquel le taxon appartient';
 COMMENT ON COLUMN taxref.classe IS 'Classe à laquelle le taxon appartient';
 COMMENT ON COLUMN taxref.ordre IS 'Ordre auquel le taxon appartient';
 COMMENT ON COLUMN taxref.famille IS 'Famille à laquelle le taxon appartient';
+COMMENT ON COLUMN taxref.sous_famille IS 'Sous- famille à laquelle le taxon appartient';
+COMMENT ON COLUMN taxref.tribu IS 'Tribu à laquelle le taxon appartient';
 COMMENT ON COLUMN taxref.group1_inpn IS 'Libellé Groupe 1 INPN pour ce taxon';
 COMMENT ON COLUMN taxref.group2_inpn IS 'Libellé Groupe 1 INPN';
 COMMENT ON COLUMN taxref.cd_nom IS 'Identifiant unique du nom scientifique';
@@ -123,6 +127,8 @@ CREATE TABLE taxref_local
   classe text, -- Classe à laquelle le taxon appartient
   ordre text, -- Ordre auquel le taxon appartient
   famille text, -- Famille à laquelle le taxon appartient
+  sous_famille text,
+  tribu text,
   group1_inpn text, -- Libellé Groupe 1 INPN pour ce taxon
   group2_inpn text, -- Libellé Groupe 1 INPN
   cd_nom integer NOT NULL, -- Identifiant unique du nom scientifique
@@ -175,6 +181,8 @@ COMMENT ON COLUMN taxref_local.phylum IS 'Embranchement auquel le taxon appartie
 COMMENT ON COLUMN taxref_local.classe IS 'Classe à laquelle le taxon appartient';
 COMMENT ON COLUMN taxref_local.ordre IS 'Ordre auquel le taxon appartient';
 COMMENT ON COLUMN taxref_local.famille IS 'Famille à laquelle le taxon appartient';
+COMMENT ON COLUMN taxref_local.sous_famille IS 'Sous-famille à laquelle le taxon appartient';
+COMMENT ON COLUMN taxref_local.tribu IS 'Tribu à laquelle le taxon appartient';
 COMMENT ON COLUMN taxref_local.group1_inpn IS 'Libellé Groupe 1 INPN pour ce taxon';
 COMMENT ON COLUMN taxref_local.group2_inpn IS 'Libellé Groupe 1 INPN';
 COMMENT ON COLUMN taxref_local.cd_nom IS 'Identifiant unique du nom scientifique';
@@ -240,20 +248,20 @@ ON UPDATE CASCADE ON DELETE RESTRICT
 DROP MATERIALIZED VIEW IF EXISTS taxref_valide CASCADE;
 CREATE MATERIALIZED VIEW taxref_valide AS
 WITH taxref_mnhn_et_local AS (
-  SELECT regne, phylum, classe, ordre, famille, group1_inpn, group2_inpn,
+  SELECT regne, phylum, classe, ordre, famille, sous_famille, tribu, group1_inpn, group2_inpn,
   cd_nom, cd_taxsup, cd_ref, rang, lb_nom, lb_auteur, nom_complet,
   nom_complet_html, nom_valide, nom_vern, nom_vern_eng, habitat,
   fr, gf, mar, gua, sm, sb, spm, may, epa, reu, sa, ta, taaf, pf, nc, wf, cli, url
   FROM taxref
   UNION ALL
-  SELECT regne, phylum, classe, ordre, famille, group1_inpn, group2_inpn,
+  SELECT regne, phylum, classe, ordre, famille, sous_famille, tribu, group1_inpn, group2_inpn,
   cd_nom, cd_taxsup, cd_ref, rang, lb_nom, lb_auteur, nom_complet,
   nom_complet_html, nom_valide, nom_vern, nom_vern_eng, habitat,
   fr, gf, mar, gua, sm, sb, spm, may, epa, reu, sa, ta, taaf, pf, nc, wf, cli, url
   FROM taxref_local
 )
 SELECT
-regne, phylum, classe, ordre, famille, group1_inpn, group2_inpn,
+regne, phylum, classe, ordre, famille, sous_famille, tribu, group1_inpn, group2_inpn,
 cd_nom, cd_taxsup, cd_ref, rang, lb_nom, lb_auteur, nom_complet,
 nom_complet_html, nom_valide, nom_vern, nom_vern_eng, habitat,
 fr, gf, mar, gua, sm, sb, spm, may, epa, reu, sa, ta, taaf, pf, nc, wf, cli, url
@@ -455,7 +463,7 @@ CREATE MATERIALIZED VIEW taxon.taxref_consolide AS
 SELECT
 t.*, c.*
 FROM (
-        SELECT regne, phylum, classe, ordre, famille, group1_inpn, group2_inpn, cd_nom, cd_taxsup, cd_ref, rang, lb_nom, lb_auteur, nom_complet, nom_complet_html, nom_valide, nom_vern, nom_vern_eng, habitat, fr, gf, mar, gua, sm, sb, spm, may, epa, reu, sa, ta, taaf, pf, nc, wf, cli, url
+        SELECT regne, phylum, classe, ordre, famille, sous_famille, tribu, group1_inpn, group2_inpn, cd_nom, cd_taxsup, cd_ref, rang, lb_nom, lb_auteur, nom_complet, nom_complet_html, nom_valide, nom_vern, nom_vern_eng, habitat, fr, gf, mar, gua, sm, sb, spm, may, epa, reu, sa, ta, taaf, pf, nc, wf, cli, url
         FROM taxref_valide
 ) AS t
 LEFT JOIN t_complement AS c ON c.cd_nom_fk = t.cd_nom
