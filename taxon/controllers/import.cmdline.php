@@ -169,11 +169,14 @@ class importCtrl extends jControllerCmdLine {
 
         // Run structure changes queries
         // Use try catch because IF NOT EXISTS is not supported by old PG
-        $sql = "ALTER TABLE taxref ADD COLUMN cd_sup integer;";
-        try {
-            $cnx->exec( $sql );
-        } catch ( Exception $e ) {
-            jLog::log( $e->getMessage(), 'error' );
+        $newcols = array('cd_sup'=>'integer', 'sous_famille'=>'text', 'tribu'=>'text');
+        foreach($newcols as $newcol => $format){
+            $sql = "ALTER TABLE taxref ADD COLUMN $newcol $format;";
+            try {
+                $cnx->exec( $sql );
+            } catch ( Exception $e ) {
+                jLog::log( $e->getMessage(), 'error' );
+            }
         }
 
         // Run import query
