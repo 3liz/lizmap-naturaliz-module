@@ -242,38 +242,35 @@ class occtaxSearch {
         $readme = jApp::configPath("occtax-export-LISEZ-MOI.$type.txt");
         $content = '';
         if( is_file( $readme ) ){
+            // replace line end
             $content = jFile::read( $readme );
-            $content.= "
-\r";
+            $content = str_replace("\n", "\r\n", $content);
+            $content.= "\r\n\r\n";
 
             // Add search description
             $content.= "Filtres de recherche utilisés :\r\n";
             $getSearchDescription = $this->getSearchDescription($format);
+            $getSearchDescription = str_replace('linebreak', "\r\n", $getSearchDescription);
             $content.= strip_tags( $getSearchDescription );
 
             // Add jdd list
             $osParams = $this->getParams();
             $dao_jdd = jDao::get('occtax~jdd');
-            $content.= "
-\r";
-            $content.= "Jeux de données :
-\r\n";
+            $content.= "\r\n\r\n";
+            $content.= "Jeux de données :\r\n";
 
             if( array_key_exists( 'jdd_id', $osParams ) and $osParams['jdd_id'] ){
                 $jdd_id = $osParams['jdd_id'];
                 $jdd = $dao_jdd->get( $jdd_id );
                 if( $jdd )
-                    $content.= '  * ' . $jdd->jdd_code . ' ( ' . $jdd->jdd_description . " )
-\r";
+                    $content.= '  * ' . $jdd->jdd_code . ' ( ' . $jdd->jdd_description . " )\r\n";
             }else{
                 $jdds = $dao_jdd->findAll();
                 foreach( $jdds as $jdd ){
-                    $content.= '  * ' . $jdd->jdd_code . ' ( ' . $jdd->jdd_description . " )
-\r";
+                    $content.= '  * ' . $jdd->jdd_code . ' ( ' . $jdd->jdd_description . " )\r\n";
                 }
             }
-            $content.= "
-\r";
+            $content.= "\r\n\r\n";
             $content.= 'NB: La liste des jeux de données (JDD) ci-dessus montre l\'ensemble des JDD disponibles dans la plate-forme. Elle n\'est pas filtrée en fonction des résultats.';
 
         }
