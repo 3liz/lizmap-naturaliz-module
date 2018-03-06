@@ -432,6 +432,23 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 if(in_array($att, $this->nomenclatureFields)){
                     $val = $codenom[$att . '_' . $val];
                 }
+                // On le fait aussi pour descriptif sujet
+                if($att == 'descriptif_sujet'){
+                    $dnew = array();
+                    $jval = json_decode($val);
+                    foreach($jval as $jitem){
+                        $ditem = array();
+                        foreach($jitem as $j=>$v){
+                            $vv = $v;
+                            if(in_array($j, $this->nomenclatureFields)){
+                                $vv = $codenom[$j . '_' . $v];
+                            }
+                            $ditem[$j] = $vv;
+                        }
+                        $dnew[] = $ditem;
+                    }
+                    $val = json_encode($dnew);
+                }
                 $ldata[] = $val;
             }
             fputcsv($fd, $ldata, $delimiter);
