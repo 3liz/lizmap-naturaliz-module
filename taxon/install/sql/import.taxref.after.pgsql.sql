@@ -12,7 +12,8 @@ INSERT INTO t_complement
     cd_nom_fk,
     statut,
 --    rarete,
-    endemicite
+    endemicite,
+    invasibilite
 )
 SELECT cd_nom,
 
@@ -36,7 +37,14 @@ CASE
         WHEN {$colonne_locale} IN ('E', 'Z') THEN 'E'
         WHEN {$colonne_locale} IN ('S') THEN 'S'
         ELSE NULL
-END AS endemicite
+END AS endemicite,
+
+-- invasibilite
+CASE
+    WHEN reu IN ('J') THEN 'E' -- envahissant
+    ELSE NULL
+END AS invasibilite
+
 FROM taxref_valide
 ;
 
@@ -115,5 +123,6 @@ AND a.cd_protection IN (
 
 
 REFRESH MATERIALIZED VIEW taxref_consolide;
+REFRESH MATERIALIZED VIEW taxref_consolide_all;
 
 COMMIT;
