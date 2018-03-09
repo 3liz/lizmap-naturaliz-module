@@ -7,7 +7,7 @@
 {else}
 
 {/if}
-linebreak
+linebreaklinebreak
 {@occtax~search.description.total.number.is@} : {$nb} {@occtax~search.description.total.number.observation@}{$s}
 {ifnotacl2 "visualisation.donnees.brutes"}
 linebreak{@occtax~search.description.sensitive.data.not.shown@}
