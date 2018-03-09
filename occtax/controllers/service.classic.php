@@ -228,7 +228,7 @@ class serviceCtrl extends jController {
         $rep = $this->getResponse('zip');
 
         // Add geojson
-        $rep->content->addContentFile( 'export_observations.geojson', $geojson );
+        $rep->content->addFile( $geojson , 'export_observations.geojson' );
 
         // Add readme file + search description to ZIP
         $rep->content->addContentFile( 'LISEZ-MOI.txt', $occtaxSearch->getReadme('text', 'geojson') );

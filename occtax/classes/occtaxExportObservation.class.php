@@ -240,7 +240,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 'o.nature_objet_geo' => 'nature_objet_geo',
 
                  // reprojection needed for GeoJSON standard
-                '(ST_AsGeoJSON( ST_Transform(o.geom, 4326), 6 ))::json AS geojson' => 'geom',
+                '(ST_AsGeoJSON( ST_Transform(o.geom, 4326), 6 ))::jsonb AS geojson' => 'geom',
 
                 // Le WKT est exporté dans le CSV, pour le grand public également
                 // donc on ne diffuse la geom que si la diffusion est possible cad 'g'
@@ -447,7 +447,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                         }
                         $dnew[] = $ditem;
                     }
-                    $val = json_encode($dnew);
+                    $val = json_encode($dnew, JSON_UNESCAPED_UNICODE);
                 }
                 $ldata[] = $val;
             }
@@ -493,6 +493,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
 
     public function getGeoJSON( $limit=Null, $offset=0) {
 
+        // Build query
         $sql = "
         WITH source AS (
         ".$this->sql;
@@ -505,19 +506,20 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
         $sql.= "
         )
 
-        SELECT row_to_json(fc, True) AS geojson
-        FROM (
+--        SELECT row_to_json(fc, True) AS geojson
+--        FROM (
             SELECT
                 'FeatureCollection' As type,
-                array_to_json(array_agg(f)) As features
+--                array_to_json(array_agg(f)) As features
+                row_to_json(f)
             FROM (
                 SELECT
                     'Feature' As type,
         ";
         if( jAcl2::check("visualisation.donnees.brutes") ){
-            $sql.= "lg.geojson::json As geometry,";
+            $sql.= "lg.geojson::jsonb As geometry,";
         }else{
-            $sql.= "(SELECT ST_AsGeoJSON(m.geom, 1) FROM sig.maille_10 m WHERE ST_Intersects(lg.geom, m.geom) LIMIT 1)::json As geometry,";
+            $sql.= "(SELECT ST_AsGeoJSON(m.geom, 1) FROM sig.maille_10 m WHERE ST_Intersects(lg.geom, m.geom) LIMIT 1)::jsonb As geometry,";
         }
 
         $sql.= "
@@ -525,15 +527,49 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                         ( SELECT l FROM
                             (
                                 SELECT ";
-        $attributes = $attributes = array_diff(
+        $attributes = array_diff(
             $this->returnFields,
             array('geojson', 'wkt')
         );
+
+        // Use nomenclature to replace code values with label
         $attributes =  array_map(
             function($el){
                 $champ = $el;
                 if(in_array($el, $this->nomenclatureFields)){
                     $champ = "dict->>(concat('".$el."', '_', ".$el."))";
+                }
+                if($el == 'descriptif_sujet'){
+                    $champ = "
+                    REPLACE(replace((jsonb_pretty(array_to_json(array_agg(json_build_object(
+                        'obs_methode',
+                        dict->>(concat('obs_methode', '_', obs_methode)) ,
+                        'occ_etat_biologique',
+                        dict->>(concat('occ_etat_biologique', '_', occ_etat_biologique)),
+                        'occ_naturalite',
+                        dict->>(concat('occ_naturalite', '_', occ_naturalite)),
+                        'occ_sexe',
+                        dict->>(concat('occ_sexe', '_', occ_sexe)),
+                        'occ_stade_de_vie',
+                        dict->>(concat('occ_stade_de_vie', '_', occ_stade_de_vie)),
+                        'occ_statut_biogeographique',
+                        dict->>(concat('occ_statut_biogeographique', '_', occ_statut_biogeographique)),
+                        'occ_statut_biologique',
+                        dict->>(concat('occ_statut_biologique', '_', occ_statut_biologique)),
+                        'preuve_existante',
+                        dict->>(concat('preuve_existante', '_', preuve_existante)),
+                        'preuve_numerique',
+                        preuve_numerique,
+                        'preuve_numerique',
+                        preuve_non_numerique,
+                        'obs_contexte',
+                        obs_contexte,
+                        'obs_description',
+                        obs_description,
+                        'occ_methode_determination',
+                        dict->>(concat('occ_methode_determination', '_', occ_methode_determination))
+                    )))::jsonb)::text), '\"', ''), ':', ' : ')
+                    ";
                 }
                 // Ajout du nom de champ
                 $champ.= ' AS "'.$el.'"';
@@ -546,20 +582,79 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                             ) As l
                         )
                     ) As properties
-                FROM source As lg,
-                occtax.v_nomenclature_plat
+                FROM source As lg
+                LEFT JOIN LATERAL
+                jsonb_to_recordset(lg.descriptif_sujet::jsonb) AS (
+                    obs_methode text,
+                    occ_etat_biologique text,
+                    occ_naturalite text,
+                    occ_sexe text,
+                    occ_stade_de_vie text,
+                    occ_statut_biogeographique text,
+                    occ_statut_biologique text,
+                    preuve_existante text,
+                    preuve_numerique text,
+                    preuve_non_numerique text,
+                    obs_contexte text,
+                    obs_description text,
+                    occ_methode_determination text
+                ) ON TRUE,
+                (SELECT dict::jsonb AS dict FROM occtax.v_nomenclature_plat ) AS v_nomenclature_plat
+        ";
+
+        $group_attributes = $attributes = array_diff(
+            $this->returnFields,
+            array('geojson', 'wkt', 'descriptif_sujet')
+        );
+        $sql.= " GROUP BY ";
+        $sql.= implode(', ', $group_attributes ) . ',dict,geojson';
+
+        $sql.= "
+
             ) As f
-        ) As fc";
+--        ) As fc
+        ";
+
 //jLog::log($sql);
 
+        // Create temporary file name
+        $path = '/tmp/' . time() . session_id() . '.geojson';
+        $fp = fopen($path, 'w');
+        fwrite($fp, '');
+        fclose($fp);
+        chmod($path, 0666);
+
+        // Write header
+        $fd = fopen($path, 'w');
+        $g_head = '
+        {
+          "type": "FeatureCollection",
+          "features": [
+        ';
+        fwrite($fd, $g_head);
+
+        // Write features
         $cnx = jDb::getConnection();
-        $q = $cnx->query( $sql );
-        $return = '';
-        foreach( $q as $d){
-            $return =  $d->geojson;
-            break;
+        $query = $cnx->query( $sql );
+        $v = '';
+        foreach( $query as $feature){
+            fwrite($fd, $v . $feature->row_to_json);
+            $v = ',';
         }
-        return $return;
+
+        // Write end
+        $g_tail = '
+          ]
+        }';
+        fwrite($fd, $g_tail);
+
+        fclose($fd);
+
+        if( !file_exists($path) ){
+            //jLog::log( "Erreur lors de l'export en CSV");
+            return Null;
+        }
+        return $path;
 
     }
 
@@ -613,6 +708,38 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 if(in_array($el, $this->nomenclatureFields)){
                     $champ = "dict->>(concat('".$el."', '_', ".$el."))";
                 }
+                if($el == 'descriptif_sujet'){
+                    $champ = "
+                    REPLACE(replace((jsonb_pretty(array_to_json(array_agg(json_build_object(
+                        'obs_methode',
+                        dict->>(concat('obs_methode', '_', obs_methode)) ,
+                        'occ_etat_biologique',
+                        dict->>(concat('occ_etat_biologique', '_', occ_etat_biologique)),
+                        'occ_naturalite',
+                        dict->>(concat('occ_naturalite', '_', occ_naturalite)),
+                        'occ_sexe',
+                        dict->>(concat('occ_sexe', '_', occ_sexe)),
+                        'occ_stade_de_vie',
+                        dict->>(concat('occ_stade_de_vie', '_', occ_stade_de_vie)),
+                        'occ_statut_biogeographique',
+                        dict->>(concat('occ_statut_biogeographique', '_', occ_statut_biogeographique)),
+                        'occ_statut_biologique',
+                        dict->>(concat('occ_statut_biologique', '_', occ_statut_biologique)),
+                        'preuve_existante',
+                        dict->>(concat('preuve_existante', '_', preuve_existante)),
+                        'preuve_numerique',
+                        preuve_numerique,
+                        'preuve_numerique',
+                        preuve_non_numerique,
+                        'obs_contexte',
+                        obs_contexte,
+                        'obs_description',
+                        obs_description,
+                        'occ_methode_determination',
+                        dict->>(concat('occ_methode_determination', '_', occ_methode_determination))
+                    )))::jsonb)::text), '\"', ''), ':', ' : ')
+                    ";
+                }
                 // Ajout du nom de balise XML
                 $champ.= ' AS "qgs:'.$el.'"';
                 return $champ;
@@ -628,30 +755,67 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
 
 --        )
         AS gml
-        FROM source, occtax.v_nomenclature_plat";
-//jLog::log($sql);
+        FROM source
+        LEFT JOIN LATERAL
+        jsonb_to_recordset(source.descriptif_sujet::jsonb) AS (
+            obs_methode text,
+            occ_etat_biologique text,
+            occ_naturalite text,
+            occ_sexe text,
+            occ_stade_de_vie text,
+            occ_statut_biogeographique text,
+            occ_statut_biologique text,
+            preuve_existante text,
+            preuve_numerique text,
+            preuve_non_numerique text,
+            obs_contexte text,
+            obs_description text,
+            occ_methode_determination text
+        ) ON TRUE,
+        (SELECT dict::jsonb AS dict FROM occtax.v_nomenclature_plat ) AS v_nomenclature_plat";
 
+        $group_attributes = $attributes = array_diff(
+            $this->returnFields,
+            array('geojson', 'wkt', 'descriptif_sujet')
+        );
+        $sql.= " GROUP BY ";
+        $sql.= implode(', ', $group_attributes ) . ',dict,geom';
+
+        // Create temporary file name
+        $path = '/tmp/' . time() . session_id() . '.gml';
+        $fp = fopen($path, 'w');
+        fwrite($fp, '');
+        fclose($fp);
+        chmod($path, 0666);
+
+        // Write header
+        $fd = fopen($path, 'w');
+        $gml_head = '<wfs:FeatureCollection xmlns:wfs="http://www.opengis.net/wfs" xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml" xmlns:ows="http://www.opengis.net/ows" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:qgs="http://www.qgis.org/gml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.0.0/wfs.xsd http://www.qgis.org/gml ';
+        $gml_head.= $describeUrl;
+        $gml_head.= '">';
+        fwrite($fd, $gml_head);
+
+        // Write bounding box
+        $boundedBy = ''; // not needed by QGIS. Do not compute it (avoid useless things)
+        fwrite($fd, $boundedBy);
+
+        // Write features
         $cnx = jDb::getConnection();
-        $q = $cnx->query( $sql );
-        $featureMembers = '';
-        $boundedBy = '';
-
-        // Get feature members
-        foreach( $q as $d){
-            $featureMembers.=  $d->gml;
+        $query = $cnx->query( $sql );
+        foreach( $query as $feature){
+            fwrite($fd, $feature->gml);
         }
 
-        // Build full XML
-        $tpl = new jTpl();
-        $assign = array();
-        $assign['url'] = $describeUrl;
-        $assign['boundedBy'] = $boundedBy;
-        $assign['featureMembers'] = $featureMembers;
-        $tpl->assign($assign);
+        // Write end
+        $gml_tail = '</wfs:FeatureCollection>';
+        fwrite($fd, $gml_tail);
+        fclose($fd);
 
-        $return = $tpl->fetch('occtax~wfs_getfeature_gml');
-
-        return $return;
+        if( !file_exists($path) ){
+            //jLog::log( "Erreur lors de l'export en CSV");
+            return Null;
+        }
+        return $path;
 
     }
 

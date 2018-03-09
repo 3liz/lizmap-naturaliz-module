@@ -203,8 +203,8 @@ class wfsCtrl extends jController {
         );
 
         $describeUrl = urlencode(jUrl::getFull('occtax~wfs:index', $params));
-        $data = $this->search->getGML($describeUrl);
-        $rep->content = $data;
+        $path = $this->search->getGML($describeUrl);
+        $rep->fileName = $path;
         $rep->doDownload  =  false;
         $rep->outputFileName  =  'naturaliz_'.$service.'_data.gml';
 
