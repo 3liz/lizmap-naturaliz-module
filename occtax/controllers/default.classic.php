@@ -60,6 +60,7 @@ class defaultCtrl extends lizMapCtrl {
             $rep->addJsLink( $bp.'js/fileUpload/jquery.iframe-transport.js' );
             $rep->addJsLink( $bp.'js/fileUpload/jquery.fileupload.js' );
             $rep->addJsLink( $bp.'js/occtax.js' );
+            $rep->addJsLink( $bp.'js/occtax.search.js' );
 
             $rep->addHeadContent( '<style>' . $ini->getValue('projectCss', 'occtax') . '</style>');
         }

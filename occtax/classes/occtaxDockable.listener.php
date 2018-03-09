@@ -81,7 +81,7 @@
                     $content,
                     10,
                     $bp.'css/occtax.search.css',
-                    $bp.'js/occtax.search.js'
+                    Null // JS loaded in occtax default controller
                 );
                 $event->add($dock);
 

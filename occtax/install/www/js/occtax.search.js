@@ -1,7 +1,30 @@
-lizMap.events.on({
-  uicreated: function(evt) {
+var uiprete = false;
+var blocme = true;
 
-    $('#div_form_occtax_search_token form div.jforms-submit-buttons').hide()
+function unblockSearchForm(){
+    uiprete = true;
+    blocme = false;
+    $("#div_form_occtax_search_token form input[type=submit]").prop('disabled', false);
+}
+
+function blockSearchForm(){
+    // hide search form
+    $("#div_form_occtax_search_token form input[type=submit]").prop('disabled', true);
+    // Block search form
+    var tokenFormId = $('#div_form_occtax_search_token form').attr('id');
+    $('#'+tokenFormId).submit(function(){
+        if(!uiprete) return false;
+    })
+};
+
+$( document ).ready(function() {
+  blockSearchForm();
+});
+
+
+OccTax.events.on({
+    'uicreated':function(evt){
+
     function getDatatableColumns( tableId ){
       var DT_Columns = $('#'+tableId+' thead tr th').map(
         function(){
@@ -884,10 +907,8 @@ lizMap.events.on({
       ul.append(li);
     }
 
-OccTax.events.on({
-    'uicreated':function(evt){
-        //~ console.log('OccTax uicreated');
-
+        //console.log('OccTax uicreated');
+        $('#occtax-message').remove();
         // Hide empty groups
         $('.jforms-table-group').each(function(){
             var tbContent = $(this).html().replace(/(\r\n|\n|\r)/gm,"");
@@ -1095,7 +1116,6 @@ OccTax.events.on({
             eventListeners: {
                 featureselected: function(evt) {
                   console.log(evt);
-
                 },
                 featurehighlighted: function(evt) {
                   //console.log(evt);
@@ -1159,22 +1179,33 @@ OccTax.events.on({
       });
 
       // Get search token corresponding to form inputs
+      unblockSearchForm();
       $('#'+tokenFormId).submit(function(){
+        if(blocme){
+          return false;
+        }
+        blocme = true;
+
         var self = $(this);
-        $('#occtax_result_button_bar').hide();
 
-        // show statistics
-        $('#occtax_results_stats_table_tab').tab('show');
-        // deactivate geometry button
-        $('#obs-spatial-query-buttons button.active').click();
-
-        // Remove previous features : remove feature in all layers except queryLayer
-        OccTax.emptyDrawqueryLayer('queryLayer');
-        OccTax.events.triggerEvent('mailledatareceived_' + 'm02', {'results':null});
-        OccTax.events.triggerEvent('mailledatareceived_' + 'm10', {'results':null});
-
+        // The Occtax events trigger an error on first load (when page not entirely loaded)
+        try{
+          $('#occtax_result_button_bar').hide();
+          // show statistics
+          $('#occtax_results_stats_table_tab').tab('show');
+          // deactivate geometry button
+          $('#obs-spatial-query-buttons button.active').click();
+          // Remove previous features : remove feature in all layers except queryLayer
+          OccTax.emptyDrawqueryLayer('queryLayer');
+          OccTax.events.triggerEvent('mailledatareceived_' + 'm02', {'results':null});
+          OccTax.events.triggerEvent('mailledatareceived_' + 'm10', {'results':null});
+        }catch(e){
+           var anerror = 1;
+           //console.error(e);
+        }
         $.getJSON(self.attr('action'), self.serialize(),
             function(tData) {
+                blocme = false;
                 if (tData.status == 1) {
                     // Display description div
                     var dHtml = tData.description;
@@ -1219,12 +1250,13 @@ OccTax.events.on({
                     var mycontainer = '#occtax_results_stats_table_div';
                     refreshOcctaxDatatableSize(mycontainer);
 
+
                 }
             }
         );
-
         return false;
       });
+
 
       $('#'+tokenFormId+'_where').append( $('#obs-spatial-query-buttons') );
       //~ $('#'+tokenFormId+'_where .jforms-table-group').hide();
@@ -1251,7 +1283,6 @@ OccTax.events.on({
       });
 
 
-
       addResultsStatsTable();
       addResultsTaxonTable();
       addResultsMailleTable('m02');
@@ -1260,8 +1291,6 @@ OccTax.events.on({
 
       initFormTaxon();
       addTaxonTable();
-
-      $('#div_form_occtax_search_token form div.jforms-submit-buttons').show()
 
       $('#occtax_results_draw .btn').click(function() {
         var self = $(this);
@@ -1402,7 +1431,6 @@ OccTax.events.on({
         }
     });
 
+
     }
 });
-        }
-    });
