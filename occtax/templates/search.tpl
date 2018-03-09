@@ -225,14 +225,5 @@ FICHE OBSERVATION
 <script type="text/javascript" >
 {literal}
   var occtaxClientConfig = {/literal}{$occtaxClientConfig}{literal};
-
-  $('#obs-spatial-query-buttons').css('margin-left','30px');
-  $('#obs-spatial-query-buttons').prepend('Géométrie').css('font-size', '1.2em');
-  $('#occtax_search_input legend').css('font-weight', 'bold');
-  $('#obs-spatial-query-buttons button').tooltip();
-
-  //console.log('cache');
-  $('div.jforms-submit-buttons').hide();
-
 {/literal}
 </script>

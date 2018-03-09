@@ -1,4 +1,5 @@
-$(document).ready(function () {
+lizMap.events.on({
+  uicreated: function(evt) {
 
     $('#div_form_occtax_search_token form div.jforms-submit-buttons').hide()
     function getDatatableColumns( tableId ){
@@ -1393,9 +1394,6 @@ OccTax.events.on({
       // On replie les couches
       $('#layers-fold-all').click();
 
-      //console.log('montre');
-      $('div.jforms-submit-buttons').show()
-
       // Refresh datatable size when bottom dock changes
     lizMap.events.on({
         bottomdocksizechanged: function(evt) {
@@ -1406,5 +1404,5 @@ OccTax.events.on({
 
     }
 });
-
-});
+        }
+    });
