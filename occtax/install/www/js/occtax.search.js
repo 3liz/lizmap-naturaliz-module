@@ -1264,20 +1264,25 @@ OccTax.events.on({
       //~ $('#'+tokenFormId+'_what .jforms-table-group').hide();
       $('#'+tokenFormId+'_what .jforms-table-group .control-group:nth-last-child(-n+2)').hide();
 
-      //FIXME
+      // Réinitialisation du formulaire
+      // On supprime les géométries de recherche
+      // On masque les résultats
       $('#'+tokenFormId+'_reinit').click(function(){
           clearTaxonFromSearch();
           clearSpatialSearch();
           OccTax.emptyDrawqueryLayer('queryLayer');
-          OccTax.events.triggerEvent('mailledatareceived_' + 'm02', {'results':null});
-          OccTax.events.triggerEvent('mailledatareceived_' + 'm10', {'results':null});
-          OccTax.events.triggerEvent('observationdatareceived', {'results':null});
+          try{
+            OccTax.events.triggerEvent('mailledatareceived_' + 'm02', {'results':null});
+            OccTax.events.triggerEvent('mailledatareceived_' + 'm10', {'results':null});
+            OccTax.events.triggerEvent('observationdatareceived', {'results':null});
+          }catch(e){
+            var myerror = e;
+          }
 
-          $('#occtax_results_observation_table').hide();
-          $('#occtax_results_maille_table_m02').hide();
-          $('#occtax_results_maille_table_m10').hide();
-          $('#occtax_results_taxon_table').hide();
-          $('#occtax_results_stats_table').hide();
+          $('#occtax_search_result, #occtax_search_description, #occtax_search_observation_card')
+          .hide()
+          .prev('h3.occtax_search').hide()
+          ;
 
           //return false;
       });
