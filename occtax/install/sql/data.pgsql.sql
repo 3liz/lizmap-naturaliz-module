@@ -142,6 +142,14 @@ INSERT INTO nomenclature VALUES ('sensi_niveau', '2', 'Département et maille 10
 INSERT INTO nomenclature VALUES ('sensi_niveau', '3', 'Département seulement', 'Département seulement.');
 INSERT INTO nomenclature VALUES ('sensi_niveau', '4', 'Aucune diffusion (cas exceptionnel)', 'Aucune diffusion (cas exceptionnel).');
 
+-- on modifie les libellés pour le niveau de sensibilité (plus compréhensible)
+UPDATE nomenclature SET valeur = 'Donnée non sensible' WHERE champ = 'sensi_niveau' AND code = '0';
+UPDATE nomenclature SET valeur = 'Floutage à la maille 10 x 10 km, à la commune et à l’espace naturel' WHERE champ = 'sensi_niveau' AND code = '1';
+UPDATE nomenclature SET valeur = 'Floutage à la maille 10 x 10 km' WHERE champ = 'sensi_niveau' AND code = '2';
+UPDATE nomenclature SET valeur = 'Floutage au département' WHERE champ = 'sensi_niveau' AND code = '3';
+UPDATE nomenclature SET valeur = 'Aucune diffusion' WHERE champ = 'sensi_niveau' AND code = '4';
+INSERT INTO nomenclature VALUES ('sensi_niveau', 'm02', 'Floutage à la maille 2 x 2 km', 'Département et maille 2 x 2 km');
+
 
 INSERT INTO nomenclature VALUES ('sensible', 'NON', 'Non', 'Indique que la donnée n''est pas sensible (par défaut, équivalent au niveau "0" des niveaux de sensibilité).');
 INSERT INTO nomenclature VALUES ('sensible', 'OUI', 'Oui', 'Indique que la donnée est sensible.');
