@@ -51,6 +51,7 @@ OccTax.events.on({
          * Initialisation
          */
         //mascarineService.emptyMessage();
+        OccTax.emptyDrawqueryLayer('queryLayer'); // needed to be sure that the modify feature tool is ok for the first run
         OccTax.deactivateAllDrawqueryControl();
 
         var theLayer = feature.layer;
@@ -1025,6 +1026,7 @@ OccTax.events.on({
             }
         });
 
+
         $('#obs-spatial-query-buttons button').button().click(function(){
             // Deactivate print if active
             $('#mapmenu li.print.active a').click();
@@ -1062,7 +1064,9 @@ OccTax.events.on({
                     OccTax.controls['query']['modifyPolygonLayerCtrl'].moveLayerBack();
                     return false;
                 } else {
-                    OccTax.oneCtrlAtATime( dataValue, 'query', ['queryLayer','resultLayer'] );
+                    // we must empty resultLayer to be sure the modified control works
+                    //OccTax.oneCtrlAtATime( dataValue, 'query', ['queryLayer','resultLayer'] );
+                    OccTax.oneCtrlAtATime( dataValue, 'query', ['queryLayer'] );
                     OccTax.controls['query']['modifyPolygonLayerCtrl'].activate();
                     OccTax.controls['query']['modifyPolygonLayerCtrl'].selectFeature( OccTax.layers['queryLayer'].features[0] );
                     self.addClass('active');
@@ -1250,7 +1254,6 @@ OccTax.events.on({
                     var mycontainer = '#occtax_results_stats_table_div';
                     refreshOcctaxDatatableSize(mycontainer);
 
-
                 }
             }
         );
@@ -1427,6 +1430,9 @@ OccTax.events.on({
 
       // On replie les couches
       $('#layers-fold-all').click();
+
+      // Ajout des tooltip sur les boutons
+      $('#occtax button').tooltip();
 
       // Refresh datatable size when bottom dock changes
     lizMap.events.on({

@@ -45,14 +45,15 @@ FORMULAIRE DE RECHERCHE
         {/ifacl2}
         <button type="button" id="obs-spatial-query-delete" data-value="deleteGeom" class="btn delete" title="Supprimer la géométrie" alt="Un clic sur ce bouton supprime la géométrie">
         </button>
-      </div>
 
-      {ifacl2 "requete.spatiale.polygone"}
-      <div class="pull-right">
+        {ifacl2 "requete.spatiale.polygone"}
         <button type="button" id="obs-spatial-query-modify" data-value="modifyPolygon" class="btn modify" title="Modifier un polygone" alt="Modifier un polygone en déplaçant les vertices" style="display:none;">
         </button>
+        {/ifacl2}
+
       </div>
-      {/ifacl2}
+
+
 
       <div id="obs-spatial-upload-geojson" style="display:none;">
         {formfull $formUpload, 'occtax~service:uploadGeoJSON', array(), 'htmlbootstrap'}
