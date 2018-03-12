@@ -116,6 +116,22 @@ class wfsCtrl extends jController {
 
     // Build search based on parameters
     jClasses::inc('occtax~occtaxExportObservation');
+
+    // URL Decode some Params
+    foreach($params as $k=>$v){
+      if(in_array($k, array('observateur', 'autocomplete', 'group', 'group1_inpn', 'group2_inpn'))){
+        jLog::log( "$k = $v" );
+        if(is_array($v)){
+          $av = array();
+          foreach($v as $vv){
+            $av[] = urldecode($vv);
+          }
+          $params[$k] = $av;
+        }else{
+          $params[$k] = urldecode($v);
+        }
+      }
+    }
     $occtaxSearch = new occtaxExportObservation( null, $params );
     $this->search = $occtaxSearch;
 
