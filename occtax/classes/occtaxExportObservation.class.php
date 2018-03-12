@@ -241,10 +241,6 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
 
                  // reprojection needed for GeoJSON standard
                 '(ST_AsGeoJSON( ST_Transform(o.geom, 4326), 6 ))::jsonb AS geojson' => 'geom',
-
-                // Le WKT est exporté dans le CSV, pour le grand public également
-                // donc on ne diffuse la geom que si la diffusion est possible cad 'g'
-                "CASE WHEN od.diffusion ? 'g' THEN (ST_AsText( ST_Transform(o.geom, 4326) )) ELSE NULL END AS wkt" => 'geom',
                 'ST_Transform(o.geom, 4326) AS geom' => 'geom',
             )
         ),
@@ -335,6 +331,14 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             'observation_exported_fields_unsensitive',
             'observation_exported_children'
         );
+
+        // Le WKT est exporté dans le CSV, pour le grand public également
+        // donc pour eux on ne diffuse la geom que si la diffusion est possible cad 'g'
+        if( !jAcl2::check("visualisation.donnees.brutes") ){
+            $this->querySelectors['observation']['returnFields']["CASE WHEN od.diffusion ? 'g' THEN (ST_AsText( ST_Transform(o.geom, 4326) )) ELSE NULL END AS wkt"] = 'geom';
+        }else{
+            $this->querySelectors['observation']['returnFields']["ST_AsText(ST_Transform(o.geom, 4326)) AS wkt"] = 'geom';
+        }
 
         parent::__construct($token, $params, $demande);
     }
