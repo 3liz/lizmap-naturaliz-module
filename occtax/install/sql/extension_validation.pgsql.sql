@@ -11,7 +11,7 @@ DROP FUNCTION IF EXISTS occtax.occtax_update_sensibilite_observations( text,  TE
 DROP TABLE IF EXISTS validation_observation CASCADE;
 CREATE TABLE validation_observation (
     id_validation serial,
-    cle_obs bigint,
+    identifiant_permanent text,
     date_ctrl date NOT NULL,
     niv_val text NOT NULL,
     typ_val text NOT NULL,
@@ -30,11 +30,11 @@ CREATE TABLE validation_observation (
     CONSTRAINT validation_observation_ech_val_ok CHECK (ech_val IN ( '1', '2', '3') )
 );
 ALTER TABLE validation_observation ADD PRIMARY KEY (id_validation);
--- Contrainte d''unicité sur le couple cle_obs, ech_val : une seule validation nationale, régionale ou producteur (donc au max 3)
-ALTER TABLE validation_observation ADD CONSTRAINT validation_observation_cle_obs_ech_val_unique UNIQUE (cle_obs, ech_val);
+-- Contrainte d''unicité sur le couple identifiant_permanent, ech_val : une seule validation nationale, régionale ou producteur (donc au max 3)
+ALTER TABLE validation_observation ADD CONSTRAINT validation_observation_identifiant_permanent_ech_val_unique UNIQUE (identifiant_permanent, ech_val);
 
-ALTER TABLE validation_observation ADD CONSTRAINT validation_observation_cle_obs_fk FOREIGN KEY (cle_obs)
-REFERENCES observation (cle_obs)
+ALTER TABLE validation_observation ADD CONSTRAINT validation_observation_identifiant_permanent_fk FOREIGN KEY (identifiant_permanent)
+REFERENCES observation (identifiant_permanent)
 ON UPDATE CASCADE ON DELETE CASCADE;
 
 ALTER TABLE validation_observation ADD CONSTRAINT validation_observation_validateur_fkey
@@ -194,11 +194,11 @@ BEGIN
     END IF;
 
     -- Table pour stocker les niveaux calculés
-    -- (plusieurs lignes possibles par cle_obs si condition remplie pour plusieurs critères)
+    -- (plusieurs lignes possibles par identifiant_permanent si condition remplie pour plusieurs critères)
     DROP TABLE IF EXISTS occtax.niveau_par_observation;
     CREATE TABLE occtax.niveau_par_observation (
         id_critere integer NOT NULL,
-        cle_obs bigint NOT NULL,
+        identifiant_permanent text NOT NULL,
         niveau text NOT NULL,
         contexte text NOT NULL,
         note INTEGER NOT NULL
@@ -213,10 +213,10 @@ BEGIN
     LOOP
         sql_template := '
         INSERT INTO occtax.niveau_par_observation
-        (id_critere, cle_obs, niveau, contexte, note)
+        (id_critere, identifiant_permanent, niveau, contexte, note)
         SELECT
             %s AS id_critere,
-            o.cle_obs,
+            o.identifiant_permanent,
             ''%s'' AS niveau,
             ''%s'' AS contexte,
             (''%s''::json->>''%s'')::integer AS note
@@ -265,10 +265,10 @@ BEGIN
     -- La note permet de dire qui gagne via le DISTINCT ON et le ORDER BY
     DROP TABLE IF EXISTS occtax.niveau_par_observation_final;
     CREATE TABLE occtax.niveau_par_observation_final AS
-    SELECT DISTINCT ON (cle_obs) niveau, cle_obs, id_critere, contexte
+    SELECT DISTINCT ON (identifiant_permanent) niveau, identifiant_permanent, id_critere, contexte
     FROM occtax.niveau_par_observation
     WHERE contexte = p_contexte
-    ORDER BY cle_obs, note;
+    ORDER BY identifiant_permanent, note;
 
     RETURN 1;
 
@@ -311,7 +311,7 @@ BEGIN
         sql_template := '
         INSERT INTO occtax.validation_observation AS vo
         (
-            cle_obs,
+            identifiant_permanent,
             date_ctrl,
             niv_val,
             typ_val,
@@ -324,7 +324,7 @@ BEGIN
             proc_ref
         )
         SELECT
-            t.cle_obs,
+            t.identifiant_permanent,
             now(),
             t.niveau,
             ''A'',  -- automatique
@@ -348,8 +348,8 @@ BEGIN
         ) AS p
         WHERE True
         AND t.contexte = ''validation''
-        AND t.cle_obs = cle_obs
-        ON CONFLICT ON CONSTRAINT validation_observation_cle_obs_ech_val_unique
+        AND t.identifiant_permanent = identifiant_permanent
+        ON CONFLICT ON CONSTRAINT validation_observation_identifiant_permanent_ech_val_unique
         DO UPDATE
         SET (
             date_ctrl,
@@ -384,7 +384,7 @@ BEGIN
         USING p_validateur, procedure_ref_record."procedure", procedure_ref_record.proc_vers, procedure_ref_record.proc_ref;
     END IF;
 
-    -- On supprime les lignes dans validation_observation pour ech_val = '2' et cle_obs NOT IN
+    -- On supprime les lignes dans validation_observation pour ech_val = '2' et identifiant_permanent NOT IN
     -- qui ne correspondent pas au critère et qui ne sont pas manuelles
     -- on a bien ajouté le WHERE AND vo.typ_val NOT IN (''M'', ''C'')
     -- pour ne surtout pas supprimer les validations manuelles ou combinées via notre outil auto
@@ -394,8 +394,8 @@ BEGIN
         WHERE TRUE
         AND ech_val = ''2''
         AND vo.typ_val NOT IN (''M'', ''C'')
-        AND cle_obs NOT IN (
-            SELECT cle_obs
+        AND identifiant_permanent NOT IN (
+            SELECT identifiant_permanent
             FROM occtax.niveau_par_observation_final AS t
             WHERE contexte = ''validation''
         )
@@ -461,7 +461,7 @@ BEGIN
         ) AS p
         WHERE True
         AND contexte = ''sensibilite''
-        AND t.cle_obs = o.cle_obs
+        AND t.identifiant_permanent = o.identifiant_permanent
         ';
         sql_text := format(sql_template);
 
@@ -493,8 +493,8 @@ BEGIN
         ) AS p
         WHERE True
         -- AND o.sensi_referentiel = p.sensi_referentiel
-        AND o.cle_obs NOT IN(
-            SELECT cle_obs
+        AND o.identifiant_permanent NOT IN(
+            SELECT identifiant_permanent
             FROM occtax.niveau_par_observation_final
             WHERE contexte = ''sensibilite''
         )
@@ -653,7 +653,7 @@ LEFT JOIN occtax.personne AS vval USING (id_personne)
 LEFT JOIN occtax.v_determinateur AS vdet USING (cle_obs)
 LEFT JOIN occtax.jdd USING (jdd_id)
 -- plateforme régionale
-LEFT JOIN occtax.validation_observation v ON "ech_val" = '2' AND v.cle_obs = o.cle_obs
+LEFT JOIN occtax.validation_observation v ON "ech_val" = '2' AND v.identifiant_permanent = o.identifiant_permanent
 left join lateral
 jsonb_to_recordset(o.descriptif_sujet) AS (
     obs_methode text,
@@ -746,7 +746,7 @@ CREATE OR REPLACE FUNCTION occtax.update_observation_validation() RETURNS TRIGGE
                 )
                 INSERT INTO occtax.validation_observation
                 (
-                    cle_obs,
+                    identifiant_permanent,
                     date_ctrl,
                     niv_val,
                     typ_val,
@@ -761,7 +761,7 @@ CREATE OR REPLACE FUNCTION occtax.update_observation_validation() RETURNS TRIGGE
                     comm_val
                 )
                 SELECT
-                    NEW.cle_obs,
+                    NEW.identifiant_permanent,
                     now()::date,
                     NEW.niv_val,
                     'M', -- insert donc la validation est manuelle
@@ -840,7 +840,7 @@ CREATE OR REPLACE FUNCTION occtax.update_observation_validation() RETURNS TRIGGE
                 ) AS p
                 WHERE TRUE
                 AND vo.id_validation = NEW.id_validation
-                AND vo.cle_obs = NEW.cle_obs
+                AND vo.identifiant_permanent = NEW.identifiant_permanent
                 ;
             END IF;
 
@@ -862,7 +862,7 @@ CREATE OR REPLACE FUNCTION occtax.update_observation_set_validation_fields() RET
             SET
                 validite_niveau = '6', -- Non évalué
                 validite_date_validation = NULL
-            WHERE o.cle_obs = NEW.cle_obs
+            WHERE o.identifiant_permanent = NEW.identifiant_permanent
             ;
             RETURN OLD;
         ELSE
@@ -870,7 +870,7 @@ CREATE OR REPLACE FUNCTION occtax.update_observation_set_validation_fields() RET
             SET
                 validite_niveau = CASE WHEN NEW.niv_val IS NOT NULL THEN NEW.niv_val ELSE '6' END,
                 validite_date_validation = NEW.date_ctrl
-            WHERE o.cle_obs = NEW.cle_obs
+            WHERE o.identifiant_permanent = NEW.identifiant_permanent
             ;
             RETURN NEW;
         END IF;
