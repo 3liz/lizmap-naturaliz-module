@@ -5,7 +5,6 @@
 {assign $sep='linebreak'}
 {/foreach}
 {else}
-
 {/if}
 linebreaklinebreak
 {@occtax~search.description.total.number.is@} : {$nb} {@occtax~search.description.total.number.observation@}{$s}

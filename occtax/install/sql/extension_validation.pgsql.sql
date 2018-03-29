@@ -716,10 +716,11 @@ COMMENT ON COLUMN validation_personne.id_personne IS 'Identifiant de la personne
 COMMENT ON COLUMN validation_personne.role_postgresql IS 'Role PostgreSQL de connexion, en lien avec cette personne. Par exemple john_doe_acme';
 COMMENT ON COLUMN validation_personne.role_postgresql_groupe IS 'Role PostgreSQL jouant le rôle de groupe pour le role_postgresql. C''est ce role role_postgresql_groupe qui a les droits sur La vue de validation, et non le role_postgresql ';
 
+-- on ne permet pas la suppression des personnes de la table personne qui sont encore référencées par validation_personne
 ALTER TABLE validation_personne ADD CONSTRAINT validation_personne_id_personne_fkey
 FOREIGN KEY (id_personne)
 REFERENCES personne (id_personne)
-ON DELETE CASCADE;
+ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
 

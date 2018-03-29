@@ -286,7 +286,12 @@ CREATE TABLE observation_personne (
 
 );
 ALTER TABLE observation_personne ADD PRIMARY KEY (cle_obs, id_personne, role_personne);
+
+-- on supprime les lignes de observation_personne quand on supprime des observations
 ALTER TABLE observation_personne ADD CONSTRAINT observation_personne_cle_obs_fk FOREIGN KEY (cle_obs) REFERENCES observation (cle_obs) ON DELETE CASCADE;
+
+-- on empêche la suppression de personnes référencées dans observation_personne
+ALTER TABLE observation_personne ADD CONSTRAINT observation_personne_id_personne_fk FOREIGN KEY (id_personne) REFERENCES personne (id_personne) ON DELETE RESTRICT;
 
 COMMENT ON TABLE observation_personne IS 'Table pivot entre les observations et les personnes. Le champ role_personne permet de renseigner le type de relation (voir nomenclature)';
 COMMENT ON COLUMN observation_personne.cle_obs IS 'Indentifiant de l''observation';
