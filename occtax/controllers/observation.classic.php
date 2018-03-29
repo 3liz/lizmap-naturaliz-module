@@ -78,31 +78,39 @@ class observationCtrl extends jController {
             }
         }
 
-        // Get child data
-        $topics = array(
-            'commune',
-            'departement',
-            'maille',
-            'espace_naturel',
-            'masse_eau',
-            'habitat',
-            'attribut_additionnel'
-        );
+        // Read local config
+        $localConfig = jApp::configPath('localconfig.ini.php');
+        $ini = new jIniFileModifier($localConfig);
 
-        // Remove sensitive data if not enough rights
+        // Children to display
+        $observation_card_children = array();
+        if($observation_card_children = $ini->getValue('observation_card_children', 'occtax')){
+            $observation_card_children = array_map('trim', explode(',', $observation_card_children));
+        }else{
+            $observation_card_children = array(
+                'commune',
+                'departement',
+                'maille',
+                'espace_naturel',
+                'masse_eau',
+                'habitat',
+                'attribut_additionnel'
+            );
+        }
+        // Remove sensitive children if not enough rights
         if( !jAcl2::check("visualisation.donnees.brutes") ) {
             $blackTopics = array(
                 'attribut_additionnel',
                 'espace_naturel'
             );
-            $topics = array_diff(
-                $topics,
+            $observation_card_children = array_diff(
+                $observation_card_children,
                 $blackTopics
             );
         }
 
         $children = array();
-        foreach( $topics as $topic ) {
+        foreach( $observation_card_children as $topic ) {
             // Get data for the given topic
             $return = $occtaxSearchSingleObservation->getTopicData( $topic );
             if( !$return )
@@ -116,8 +124,6 @@ class observationCtrl extends jController {
         $tpl->assign('children', $children);
 
         // Fields to display ( here again, to manage json properties for descriptfi_sujet )
-        $localConfig = jApp::configPath('localconfig.ini.php');
-        $ini = new jIniFileModifier($localConfig);
         $observation_card_fields = array();
         if($observation_card_fields = $ini->getValue('observation_card_fields', 'occtax')){
             $observation_card_fields = array_map('trim', explode(',', $observation_card_fields));
