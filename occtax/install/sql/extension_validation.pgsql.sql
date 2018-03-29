@@ -33,9 +33,11 @@ ALTER TABLE validation_observation ADD PRIMARY KEY (id_validation);
 -- Contrainte d''unicité sur le couple identifiant_permanent, ech_val : une seule validation nationale, régionale ou producteur (donc au max 3)
 ALTER TABLE validation_observation ADD CONSTRAINT validation_observation_identifiant_permanent_ech_val_unique UNIQUE (identifiant_permanent, ech_val);
 
-ALTER TABLE validation_observation ADD CONSTRAINT validation_observation_identifiant_permanent_fk FOREIGN KEY (identifiant_permanent)
-REFERENCES observation (identifiant_permanent)
-ON UPDATE CASCADE ON DELETE CASCADE;
+-- PAS DE CONTRAINTE de clés étrangère sur la table observation, car on veut pouvoir supprimer des observations,
+-- mais conserver les données dans validation_observation (l'identifiant permanent sera valide)
+-- ALTER TABLE validation_observation ADD CONSTRAINT validation_observation_identifiant_permanent_fk FOREIGN KEY (identifiant_permanent)
+-- REFERENCES observation (identifiant_permanent)
+-- ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 ALTER TABLE validation_observation ADD CONSTRAINT validation_observation_validateur_fkey
 FOREIGN KEY (validateur)

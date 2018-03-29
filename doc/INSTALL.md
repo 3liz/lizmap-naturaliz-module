@@ -93,7 +93,7 @@ endemicite_description_subendemique=Mascareignes
 code_arrete_protection_simple="agri1,agri2,Bubul1,Bulbul2,Bulbul3,Bulbul4,Bulbul5,Bulbul6,Bulbul9,corbasi1,phelsuma1,phelsuma2,phelsuma3,phelsuma4,phelsuma5,PV97,REUEEA,REUEEI,REUP"
 code_arrete_protection_internationale="CCA,CCB,CCC,CCD,IAAP,IAO2,IAO3,IAO4,IBA2,IBA3,IBE1,IBE2,IBE3,IBOAE,IBO1,IBO2,IOS5"
 code_arrete_protection_communautaire="CDH2,CDH4,CDH5,CDO1,CDO21,CDO22,CDO31,CDO32"
-code_arrete_protection_nationale="DV974,NM,NMAMmar2,NM2,NO3,NO4,NO6,NTAA1,NTM1,NTM8,OC3,REUEA2,REUEA3,REUEA4,REUI2"
+code_arrete_protection_nationale="VP974,NM,NMAMmar2,NM2,NO3,NO4,NO6,NTAA1,NTM1,NTM8,OC3,REUEA2,REUEA3,REUEA4,REUI2"
 
 [naturaliz]
 ; projection de reference
@@ -282,7 +282,7 @@ code_arrete_protection_nationale="DV971,GUAI2,GUAM1,GUAO1,GUARA1,IBE1,IBE2,IBE3,
 code_arrete_protection_simple="agri1,agri2,Bubul1,Bulbul2,Bulbul3,Bulbul4,Bulbul5,Bulbul6,Bulbul9,corbasi1,phelsuma1,phelsuma2,phelsuma3,phelsuma4,phelsuma5,PV97,REUEEA,REUEEI,REUP"
 code_arrete_protection_internationale="CCA,CCB,CCC,CCD,IAAP,IAO2,IAO3,IAO4,IBA2,IBA3,IBE1,IBE2,IBE3,IBOAE,IBO1,IBO2,IOS5"
 code_arrete_protection_communautaire="CDH2,CDH4,CDH5,CDO1,CDO21,CDO22,CDO31,CDO32"
-code_arrete_protection_nationale="DV974,NM,NMAMmar2,NM2,NO3,NO4,NO6,NTAA1,NTM1,NTM8,OC3,REUEA2,REUEA3,REUEA4,REUI2"
+code_arrete_protection_nationale="VP974,NM,NMAMmar2,NM2,NO3,NO4,NO6,NTAA1,NTM1,NTM8,OC3,REUEA2,REUEA3,REUEA4,REUI2"
 ```
 
 * Source: https://inpn.mnhn.fr/telechargement/referentielEspece/reglementation
@@ -312,6 +312,12 @@ Attention, on doit convertir le fichier Excel ( ex: PROTECTION_ESPECES_11.xls ) 
 Une fois les données récupérées, vous pouvez l'import de données via la commande suivante:
 
 ```
+# Vérifier les codes d'arrêtés de protection dans la configuration locale
+nano lizmap/var/config/localconfig.ini.php
+
+# Copier les fichiers dans le répertoire /tmp/ du serveur (par exemple : changer les chemins)
+cp -R /votre/repertoire/vers/referentiels /tmp/referentiels
+
 cd /srv/lizmap_web_client/
 php lizmap/scripts/script.php taxon~import:taxref -source /root/referentiels/taxref/11/TAXREFv11.txt -menace /root/referentiels/menaces/LR_Resultats_Réunion_export_.csv -protection /root/referentiels/protection/ESPECES_REGLEMENTEES_11/PROTECTION_ESPECES_11.csv -version 11
 ```
@@ -328,6 +334,8 @@ php lizmap/scripts/script.php help taxon~import:taxref
 ```
 
 **NB** Les fichiers concernant les menaces (listes rouges) et les protections sont téléchargés directement depuis la plateforme SINP:
+
+**Note** Une fois l'import finalisé, il peut être intéressant de vérifier que les données de protection et de menaces font bien référence à des taxons présents dans le TAXREF (CD_NOM).
 
 
 ### Import Occurences de taxon : données de références
