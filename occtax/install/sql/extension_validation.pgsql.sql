@@ -24,7 +24,7 @@ CREATE TABLE validation_observation (
     procedure text,
     proc_ref text,
     comm_val text,
-    CONSTRAINT validation_observation_niv_val_ok CHECK (niv_val IN ( '1', '2', '3', '4', '5' ) ),
+    CONSTRAINT validation_observation_niv_val_ok CHECK (niv_val IN ( '1', '2', '3', '4', '5', '6' ) ),
     CONSTRAINT validation_observation_typ_val_ok CHECK (typ_val IN ( 'A', 'C', 'M') ),
     CONSTRAINT validation_observation_peri_val_ok CHECK (peri_val IN ( '1', '2' ) ),
     CONSTRAINT validation_observation_ech_val_ok CHECK (ech_val IN ( '1', '2', '3') )
@@ -189,10 +189,14 @@ BEGIN
 
     -- celui qui a la plus petite note gagne à la fin
     -- (lorsqu''une observation a plusieurs notes données par plusieurs conditions)
+    -- cela veut dire ci-dessous que les plus à gauche gagnent (ceux qui ont une note + petite)
+    -- on fait attention ici de mettre les valeurs dans l'ordre pour faciliter la lecture de l'objet json_note
     IF p_contexte = 'sensibilite' THEN
-        json_note := '{"0": 6, "m02": 5, "1": 4, "2": 3, "3": 2, "4": 1}'; -- sensibilite
+        -- sensibilite : Aucune diffusion > département > dép & maille 10 > dep, mailles, en, com, znieff > maille 2 > précision max
+        json_note := '{"4": 1, "3": 2, "2": 3, "1": 4, "m02": 5, "0": 6 }'; -- sensibilite
     ELSE
-        json_note := '{"1": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 0}'; -- validation
+        -- validation: invalide > douteux > non évalué > non réalisable > probable > certain
+        json_note := '{"4": 1, "3": 2, "6": 3, "5": 4, "2": 5, "1": 6 }';
     END IF;
 
     -- Table pour stocker les niveaux calculés
@@ -528,6 +532,7 @@ INSERT INTO nomenclature VALUES ('niv_val_auto', '2', 'Probable', 'La donnée es
 INSERT INTO nomenclature VALUES ('niv_val_auto', '3', 'Douteux', 'La donnée concorde peu selon le protocole automatique appliqué. La donnée est peu cohérente ou incongrue. Elle ne satisfait pas ou peu un ou plusieurs des critères automatiques appliqués. Elle ne présente cependant pas de discordance majeure sur les critères jugés les plus importants qui permettraient d’attribuer le plus faible niveau de validité (invalide).');
 INSERT INTO nomenclature VALUES ('niv_val_auto', '4', 'Invalide', 'La donnée ne concorde pas selon la procédure automatique appliquée. Elle présente au moins une discordance majeure sur un des critères jugés les plus importants ou la majorité des critères déterminants sont discordants. Elle est considérée comme trop improbable (aberrante notamment au regard de l’aire de répartition connue, des paramètres biotiques et abiotiques de la niche écologique du taxon). Elle est considérée comme invalide.');
 INSERT INTO nomenclature VALUES ('niv_val_auto', '5', 'Non réalisable', 'La donnée a été soumise à l’ensemble du processus de validation mais l’opérateur (humain ou machine) n’a pas pu statuer sur le niveau de fiabilité, notamment à cause des points suivants : état des connaissances du taxon insuffisantes, ou informations insuffisantes sur l’observation.');
+INSERT INTO nomenclature VALUES ('niv_val_auto', '6', 'Non évalué', 'Non évalué : c''est un ajout au standard, qui permet de savoir quand la donnée n''a pas encore été évaluée');
 
 DELETE FROM nomenclature WHERE champ = 'niv_val_mancom';
 INSERT INTO nomenclature VALUES ('niv_val_mancom', '1', 'Certain - très probable', 'Certain - très probable : La donnée est exacte. Il n’y a pas de doute notable et significatif quant à l’exactitude de l’observation ou de la détermination du taxon. La validation a été réalisée notamment à partir d’une preuve de l’observation qui confirme la détermination du producteur ou après vérification auprès de l’observateur et/ou du déterminateur.');
@@ -535,6 +540,7 @@ INSERT INTO nomenclature VALUES ('niv_val_mancom', '2', 'Probable', 'Probable : 
 INSERT INTO nomenclature VALUES ('niv_val_mancom', '3', 'Douteux', 'Douteux : La donnée est peu vraisemblable ou surprenante mais on ne dispose pas d’éléments suffisants pour attester d’une erreur manifeste. La donnée est considérée comme douteuse.');
 INSERT INTO nomenclature VALUES ('niv_val_mancom', '4', 'Invalide', 'Invalide : La donnée a été infirmée (erreur manifeste/avérée) ou présente un trop bas niveau de fiabilité. Elle est considérée comme trop improbable (aberrante notamment au regard de l’aire de répartition connue, des paramètres biotiques et abiotiques de la niche écologique du taxon, la preuve révèle une erreur de détermination). Elle est considérée comme invalide.');
 INSERT INTO nomenclature VALUES ('niv_val_mancom', '5', 'Non réalisable', 'Non réalisable : La donnée a été soumise à l’ensemble du processus de validation mais l’opérateur (humain ou machine) n’a pas pu statuer sur le niveau de fiabilité, notamment à cause des points suivants : état des connaissances du taxon insuffisantes, ou informations insuffisantes sur l’observation.');
+INSERT INTO nomenclature VALUES ('niv_val_mancom', '6', 'Non évalué', 'Non évalué : c''est un ajout au standard, qui permet de savoir quand la donnée n''a pas encore été évaluée');
 
 DELETE FROM nomenclature WHERE champ = 'criticite';
 INSERT INTO nomenclature VALUES ('criticite', '1', 'Mineure', 'Mineure : La modification n''est pas de nature à modifier le niveau de validité de la donnée.');
