@@ -615,3 +615,20 @@ cp lizmap/install/png_ldap.crt /usr/local/share/ca-certificates
 update-ca-certificates
 service nginx restart
 ```
+
+
+## Configuration diverses
+
+On peut augmenter le temps de session PHP pour éviter des déconnexion suites à une inactivité. 
+Par exemple
+
+```
+nano /etc/php5/fpm/php.ini
+
+# modifier la variable session.gc_maxlifetime. Par exemple ici à 7H
+session.gc_maxlifetime = 25200
+
+# Enregistrer et recharger
+service php5-fpm reload
+
+```
