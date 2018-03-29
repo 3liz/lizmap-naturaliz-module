@@ -250,6 +250,7 @@ class occtaxSearch {
             // Add search description
             $content.= "Filtres de recherche utilisés :\r\n";
             $getSearchDescription = $this->getSearchDescription($format);
+            $getSearchDescription = str_replace('\n', "\r\n", $getSearchDescription);
             $getSearchDescription = str_replace('linebreak', "\r\n", $getSearchDescription);
             $content.= strip_tags( $getSearchDescription );
 
@@ -269,9 +270,9 @@ class occtaxSearch {
                 foreach( $jdds as $jdd ){
                     $content.= '  * ' . $jdd->jdd_code . ' ( ' . $jdd->jdd_description . " )\r\n";
                 }
+                $content.= "\r\n\r\n";
+                $content.= 'NB: La liste des jeux de données (JDD) ci-dessus montre l\'ensemble des JDD disponibles dans la plate-forme. Elle n\'est pas filtrée en fonction des résultats.';
             }
-            $content.= "\r\n\r\n";
-            $content.= 'NB: La liste des jeux de données (JDD) ci-dessus montre l\'ensemble des JDD disponibles dans la plate-forme. Elle n\'est pas filtrée en fonction des résultats.';
 
         }
         return $content;
