@@ -59,67 +59,90 @@ COPY menaces
 FROM '{$menace}' DELIMITER ',' CSV;
 
 -- INSERT taxon pas encore présents dans t_complement
+-- ON INSERE AUSSI LES SYNONYMES
+WITH s AS (
+    SELECT DISTINCT t.cd_nom, m.categorie_france AS menace
+    FROM taxon.taxref t
+    INNER JOIN taxon.menaces m ON m.cd_nom = t.cd_nom OR m.cd_nom = t.cd_ref OR m.cd_ref = t.cd_ref
+    WHERE TRUE
+)
 INSERT INTO t_complement (cd_nom_fk, menace)
-SELECT DISTINCT b.cd_nom, a.categorie_france
-FROM menaces a
-INNER JOIN taxref b ON a.cd_nom = b.cd_nom
-WHERE NOT EXISTS (SELECT cd_nom_fk FROM t_complement)
-;
+SELECT DISTINCT s.cd_nom, s.menace
+FROM s
+ON CONFLICT (cd_nom_fk)
+DO NOTHING;
 
--- UPDATE tous les taxons qui ont une menace
+-- UPDATE tous les taxons déjà présent dans t_complement mais avec menace différente
+WITH s AS (
+    SELECT DISTINCT t.cd_nom, m.categorie_france AS menace
+    FROM taxon.taxref t
+    INNER JOIN taxon.menaces m ON m.cd_nom = t.cd_nom OR m.cd_nom = t.cd_ref OR m.cd_ref = t.cd_ref
+    WHERE TRUE
+)
 UPDATE t_complement c
-SET menace = a.categorie_france
-FROM menaces a
-INNER JOIN taxref b ON a.cd_nom = b.cd_nom
-WHERE c.cd_nom_fk = b.cd_nom
-AND a.categorie_france IS NOT NULL
-;
+SET menace = s.menace
+FROM s
+WHERE c.cd_nom_fk = s.cd_nom AND (c.menace != s.menace OR c.menace IS NULL);
 
 
 -- PROTECTION
 TRUNCATE TABLE protections RESTART IDENTITY;
 COPY protections FROM '{$protection}' DELIMITER ',' HEADER CSV;
 
-
 -- INSERT taxon pas encore présents dans t_complement
-INSERT INTO t_complement (cd_nom_fk, protection)
-SELECT DISTINCT a.cd_nom::integer,
-CASE
-    WHEN a.cd_protection IN ({$code_arrete_protection_nationale}) THEN 'EPN'
-    WHEN a.cd_protection IN ({$code_arrete_protection_internationale}) THEN 'EPI'
-    WHEN a.cd_protection IN ({$code_arrete_protection_communautaire}) THEN 'EPC'
-    WHEN a.cd_protection IN ({$code_arrete_protection_simple}) THEN 'EPA'
-    ELSE NULL
-END AS "protection"
-FROM protections a
-WHERE NOT EXISTS (SELECT cd_nom_fk FROM t_complement)
-AND a.cd_protection IN (
-    {$code_arrete_protection_simple},
-    {$code_arrete_protection_nationale},
-    {$code_arrete_protection_internationale},
-    {$code_arrete_protection_communautaire}
+-- LES SYNONYMES SONT INCLUS VIA CLAUSE WITH
+WITH s AS (
+    SELECT DISTINCT t.cd_nom,
+    CASE
+        WHEN p.cd_protection IN ({$code_arrete_protection_internationale}) THEN 'EPI'
+        WHEN p.cd_protection IN ({$code_arrete_protection_communautaire}) THEN 'EPC'
+        WHEN p.cd_protection IN ({$code_arrete_protection_simple}) THEN 'EPA'
+        WHEN p.cd_protection IN ({$code_arrete_protection_nationale}) THEN 'EPN'
+        ELSE NULL
+    END AS "protection"
+    FROM taxon.taxref t
+    INNER JOIN taxon.protections p ON p.cd_nom::integer = t.cd_nom OR p.cd_nom::integer = t.cd_ref
+    WHERE TRUE
+    AND p.cd_protection IN (
+        {$code_arrete_protection_simple},
+        {$code_arrete_protection_nationale},
+        {$code_arrete_protection_internationale},
+        {$code_arrete_protection_communautaire}
+    )
 )
+INSERT INTO t_complement (cd_nom_fk, protection)
+SELECT DISTINCT s.cd_nom, s."protection"
+FROM s
+ON CONFLICT (cd_nom_fk)
+DO NOTHING
+;
+-- UPDATE tous les taxons qui ont une protection
+WITH s AS (
+    SELECT DISTINCT t.cd_nom,
+    CASE
+        WHEN p.cd_protection IN ({$code_arrete_protection_internationale}) THEN 'EPI'
+        WHEN p.cd_protection IN ({$code_arrete_protection_communautaire}) THEN 'EPC'
+        WHEN p.cd_protection IN ({$code_arrete_protection_simple}) THEN 'EPA'
+        WHEN p.cd_protection IN ({$code_arrete_protection_nationale}) THEN 'EPN'
+        ELSE NULL
+    END AS "protection"
+    FROM taxon.taxref t
+    INNER JOIN taxon.protections p ON p.cd_nom::integer = t.cd_nom OR p.cd_nom::integer = t.cd_ref
+    WHERE TRUE
+    AND p.cd_protection IN (
+        {$code_arrete_protection_simple},
+        {$code_arrete_protection_nationale},
+        {$code_arrete_protection_internationale},
+        {$code_arrete_protection_communautaire}
+    )
+)
+UPDATE t_complement c
+SET protection = s.protection
+FROM s
+WHERE c.cd_nom_fk = s.cd_nom AND (c.protection != s.protection OR c.protection IS NULL)
 ;
 
--- UPDATE tous les taxons qui ont une protection
-UPDATE t_complement c
-SET protection =
-CASE
-    WHEN a.cd_protection IN ({$code_arrete_protection_nationale}) THEN 'EPN'
-    WHEN a.cd_protection IN ({$code_arrete_protection_internationale}) THEN 'EPI'
-    WHEN a.cd_protection IN ({$code_arrete_protection_communautaire}) THEN 'EPC'
-    WHEN a.cd_protection IN ({$code_arrete_protection_simple}) THEN 'EPA'
-    ELSE NULL
-END
-FROM protections a
-WHERE c.cd_nom_fk::text = a.cd_nom
-AND a.cd_protection IN (
-    {$code_arrete_protection_simple},
-    {$code_arrete_protection_nationale},
-    {$code_arrete_protection_internationale},
-    {$code_arrete_protection_communautaire}
-)
-;
+
 
 
 REFRESH MATERIALIZED VIEW taxref_consolide;
