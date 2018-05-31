@@ -532,6 +532,33 @@ exit
 
 ```
 
+On peut aussi faire cela plus directement ainsi
+
+```
+-- Ajout des droits sur les objets de la base pour naturaliz
+GRANT CONNECT ON DATABASE $DBNAME TO naturaliz;
+GRANT USAGE ON SCHEMA public,taxon,sig,occtax TO naturaliz;
+GRANT SELECT ON ALL TABLES IN SCHEMA occtax,sig,taxon TO naturaliz;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO naturaliz;
+GRANT INSERT ON ALL TABLES IN SCHEMA occtax TO naturaliz;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public,occtax,sig,taxon TO naturaliz;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public,occtax,sig,taxon TO naturaliz;
+ALTER ROLE naturaliz SET search_path TO taxon,occtax,sig,public;
+
+-- Pour le module gestion (optionnel)
+GRANT USAGE ON SCHEMA gestion TO naturaliz;
+GRANT SELECT ON ALL TABLES IN SCHEMA gestion TO naturaliz;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA gestion TO naturaliz;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA gestion TO naturaliz;
+ALTER ROLE naturaliz SET search_path TO taxon,occtax,gestion,sig,public;
+
+-- Pour le module mascarine (optionnel)
+GRANT USAGE ON SCHEMA mascarine TO naturaliz;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA mascarine TO naturaliz;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA mascarine TO naturaliz;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA mascarine TO naturaliz;
+ALTER ROLE naturaliz SET search_path TO taxon,occtax,gestion,mascarine,sig,public;
+```
 
 
 
@@ -619,7 +646,7 @@ service nginx restart
 
 ## Configuration diverses
 
-On peut augmenter le temps de session PHP pour éviter des déconnexion suites à une inactivité. 
+On peut augmenter le temps de session PHP pour éviter des déconnexion suites à une inactivité.
 Par exemple
 
 ```
