@@ -142,8 +142,27 @@ FROM s
 WHERE c.cd_nom_fk = s.cd_nom AND (c.protection != s.protection OR c.protection IS NULL)
 ;
 
+-- Noms vernaculaires
+-- TAXVERN
+{if $taxvern}
+TRUNCATE TABLE taxon.taxvern RESTART IDENTITY;
+COPY taxon.taxvern FROM '{$taxvern}' DELIMITER E'\t' HEADER CSV;
 
-
+UPDATE taxon.taxref t
+SET nom_vern =
+CASE
+    WHEN nom_vern IS NULL OR trim(nom_vern) = '' THEN trim(v.lb_vern)
+    ELSE concat(
+        trim(nom_vern),
+        ', ',
+        trim(replace(trim(v.lb_vern), trim(nom_vern), ''), ' ,-')
+    )
+END
+FROM taxon.taxvern v
+WHERE (t.cd_nom = v.cd_nom OR t.cd_ref = v.cd_nom)
+AND "iso639_3" IN ('fra', '{$taxvern_iso}')
+;
+{/if}
 
 REFRESH MATERIALIZED VIEW taxref_consolide;
 REFRESH MATERIALIZED VIEW taxref_consolide_all;

@@ -27,6 +27,8 @@ class importCtrl extends jControllerCmdLine {
     protected $allowed_options = array(
         'taxref' => array(
             '-source' => true,// Chemin complet vers le fichier de données TAXREF au format CSV
+            '-taxvern' => true,// Chemin complet vers le fichier de données TAXVERN au format CSV.
+            '-taxvern_iso' => true,// Chemin complet vers le fichier de données TAXVERN au format CSV.
             '-menace' => true, // Chemin complet vers le fichier de menaces (listes rouges) au format CSV
             '-protection' => true, // Chemin complet vers le fichier des espèces protégées au format CSV
             '-version' => true, // Version du fichier Taxref. 11 par défaut
@@ -44,6 +46,8 @@ class importCtrl extends jControllerCmdLine {
     public $help = array(
         'taxref' => 'Import des données TAXREF dans la base de données.
         - Vous devez préciser le chemin vers le fichier source des données TAXREF via le paramètre source, et il sera copié dans le répertoire temporaire de votre serveur. Sinon, le script suppose que le chemin du fichier source de TAXREF est /tmp/TAXREF.txt
+        - Vous devez préciser le chemin vers le fichier des données TAXVERN (noms vernaculaires). Vous pouvez mettre "non" si le fichier ne doit pas être pris en compte
+        - Vous devez préciser le code ISO de langue des noms vernaculaires, disponible dans le champs iso639_3 de TAXVERN
         - Vous devez préciser le chemin vers le fichier CSV séparé par tabulation et encodé en UTF-8, contenant les menaces (taxons issu des listes rouges, filtrés sur la région) : à télécharger sur le site de l INPN
         - Vous devez préciser le chemin vers le fichier CSV séparé par tabulation et encodé en UTF-8, contenant les espèces protégées : à télécharger sur le site de l INPN
         - Vous devez préciser la version via le paramètre version : 7, 8, 9, 10 ou 11.
@@ -52,10 +56,10 @@ class importCtrl extends jControllerCmdLine {
         - Vous pouvez préciser un nom de profil de base de données (comme écrit dans le fichier lizmap/var/config/profiles.ini.php )
 
         Usage :
-        php lizmap/scripts/script.php taxon~import:taxref -source [source] -menace [menace] -protection [protection] -version [version] -dbprofile [dbprofile]
+        php lizmap/scripts/script.php taxon~import:taxref -source [source] -taxvern [taxvern] -taxvern_iso [taxvern_iso] -menace [menace] -protection [protection] -version [version] -dbprofile [dbprofile]
 
         Exemple :
-        php lizmap/scripts/script.php taxon~import:taxref -source /tmp/TAXREFv11.txt -menace /tmp/LR_Resultats_Guadeloupe_complet_export.csv -protection /tmp/PROTECTION_ESPECES_11.csv -version 11
+        php lizmap/scripts/script.php taxon~import:taxref -source /tmp/TAXREFv11.txt -taxvern /tmp/TAXVERNv11.txt -taxvern_iso rcf -menace /tmp/LR_Resultats_Guadeloupe_complet_export.csv -protection /tmp/PROTECTION_ESPECES_11.csv -version 11
         '
     );
 
@@ -88,13 +92,23 @@ class importCtrl extends jControllerCmdLine {
         // Get file to import
         $tmpFolder = sys_get_temp_dir();
         $defaultSourcePath = $tmpFolder . '/TAXREF.txt';
+        $taxvernSourcePath = $tmpFolder . '/TAXVERN.txt';
         $menaceSourcePath = $tmpFolder . '/LR_Resultats_Guadeloupe_complet_export.csv';
         $protectionSourcePath = $tmpFolder . '/PROTECTION_ESPECES_11.csv';
         $source = $this->option('-source', $defaultSourcePath );
+        $taxvern = $this->option('-taxvern', $taxvernSourcePath );
+        $taxvern_iso = $this->option('-taxvern_iso', 'fra' );
         $menace = $this->option('-menace', $menaceSourcePath );
         $protection = $this->option('-protection', $protectionSourcePath );
         if( !file_exists( $source ) )
             throw new jException('taxon~script.import.source.not.found');
+        $has_taxvern = True;
+        if( !file_exists( $taxvern ) ){
+            $has_taxvern = False;
+            $taxvern = False;
+            $taxvern_iso = 'fra';
+            $taxvernSourcePath = Null;
+        }
         if( !file_exists( $menace ) )
             throw new jException('taxon~script.import.menace.not.found');
         if( !file_exists( $protection ) )
@@ -102,6 +116,8 @@ class importCtrl extends jControllerCmdLine {
 
         // Copy source data to temporary folder
         copy($source, $defaultSourcePath );
+        if($has_taxvern)
+            copy($taxvern, $taxvernSourcePath );
         copy($menace, $menaceSourcePath );
         copy($protection, $protectionSourcePath );
 
@@ -128,9 +144,11 @@ class importCtrl extends jControllerCmdLine {
         $assign = array();
 
         // Replace source path in SQL script and run import
-        $assign['source'] = $defaultSourcePath ;
+        $assign['source'] = $defaultSourcePath;
+        $assign['taxvern'] = $taxvernSourcePath;
+        $assign['taxvern_iso'] = $taxvern_iso;
         $assign['menace'] = $menaceSourcePath ;
-        $assign['protection'] = $protectionSourcePath ;
+        $assign['protection'] = $protectionSourcePath;
 
         // Get the field corresponding to local for TAXREF among fr, gf, mar, gua, sm, sb, spm, may, epa, reu, taff, pf, nc, wf, cli
         $localConfig = jApp::configPath('localconfig.ini.php');

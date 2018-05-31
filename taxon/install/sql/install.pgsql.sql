@@ -545,3 +545,19 @@ LEFT JOIN t_complement AS c ON c.cd_nom_fk = tml.cd_nom
 ;
 CREATE INDEX ON taxon.taxref_consolide_all (cd_nom);
 CREATE INDEX ON taxon.taxref_consolide_all (protection);
+
+
+-- Noms vernaculaires : nouveau depuis TAXREF V11
+DROP TABLE IF EXISTS taxon.taxvern CASCADE;
+CREATE TABLE taxon.taxvern (
+  cd_vern integer PRIMARY KEY,
+  cd_nom integer,
+  lb_vern text,
+  nom_vern_source text,
+  langue text,
+  iso639_3 text,
+  pays text
+);
+COMMENT ON TABLE taxon.taxvern IS 'Nom vernaculaires. Nouveau depuis TAXREF V11';
+CREATE INDEX ON taxon.taxvern (cd_nom);
+CREATE INDEX ON taxon.taxvern ("iso639_3");

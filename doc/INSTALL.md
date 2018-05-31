@@ -307,6 +307,10 @@ Attention, on doit convertir le fichier Excel ( ex: PROTECTION_ESPECES_11.xls ) 
   cd_nom_cite text
   ```
 
+#### Noms vernaculaires
+
+Depuis la version 11 du TAXREF, il existe un fichier qui contient les noms vernaculaires pour les taxons. Pour pouvoir importer ce fichier, il faut préciser via l'option `-taxvern` le chemin du fichier, et préciser le code `iso639_3`. Par exemple 'rcf'
+
 #### Lancer l'import des données TAXREF dans l'application
 
 Une fois les données récupérées, vous pouvez l'import de données via la commande suivante:
@@ -319,11 +323,14 @@ nano lizmap/var/config/localconfig.ini.php
 cp -R /votre/repertoire/vers/referentiels /tmp/referentiels
 
 cd /srv/lizmap_web_client/
-php lizmap/scripts/script.php taxon~import:taxref -source /root/referentiels/taxref/11/TAXREFv11.txt -menace /root/referentiels/menaces/LR_Resultats_Réunion_export_.csv -protection /root/referentiels/protection/ESPECES_REGLEMENTEES_11/PROTECTION_ESPECES_11.csv -version 11
+php lizmap/scripts/script.php taxon~import:taxref -source /tmp/referentiels/taxref/11/TAXREFv11.txt -taxvern /tmp/referentiels/taxref/11/TAXVERNv11.txt -taxvern_iso rcf -menace /tmp/referentiels/menaces/LR_Resultats_Réunion_export_.csv -protection /tmp/referentiels/protection/ESPECES_REGLEMENTEES_11/PROTECTION_ESPECES_11.csv -version 11
 ```
 
-Le premier paramètre passé est le chemin complet vers le fichier CSV contenant les données. Le 2ème est le chemin vers le fichier des menaces (taxons sur listes rouges, filtré pour la région concernée).Le 3ème est le fichier contenant les taxon protégés. Vous pouvez pointer vers d'autres chemins de fichiers, et le script se chargera de copier les données dans le répertoire temporaire puis lancera l'import.
-Le dernier paramètre est la version du fichier TAXREF (7, 8, 9, 10, 11 sont possibles).
+* Le premier paramètre passé est le chemin complet vers le fichier CSV contenant les données.
+* Le 2ème paramètre est le chemin vers le fichier TAXVERN. Si non existant, mettre: non
+* Le 3ème est le code ISO de la langue du TAXVERN à considérer, (champs "iso639_3") par exemple rcf pour la Réunion. Si innaplicable mettre: fra
+* Le 4ème est le chemin vers le fichier des menaces (taxons sur listes rouges, filtré pour la région concernée).Le 3ème est le fichier contenant les taxon protégés. Vous pouvez pointer vers d'autres chemins de fichiers, et le script se chargera de copier les données dans le répertoire temporaire puis lancera l'import.
+* Le dernier paramètre est la version du fichier TAXREF (7, 8, 9, 10, 11 sont possibles).
 
 Parfois, il peut être utile de modifier certaines données du TAXREF (par exemple pour compléter les noms vernaculaires locaux). Pour cela, vous pouvez utiliser 2 options -correctionsql et -correctioncsv qui permettent de fournir un fichier SQL et un fichier CSV source (utilisé dans le fichier SQL). Voir l'exemple dans le répertoire taxon/install/sql/correction
 
@@ -396,11 +403,11 @@ apt-get install gdal-bin
 # Vous devez spécifier le chemin complet vers les fichiers : communes, mailles 1x1km, mailles 2x2km et optionnellement les réserves et les habitats
 
 # Exemple 1/ Guadeloupe
-php lizmap/scripts/script.php occtax~import:shapefile -commune "/root/referentiels/sig/COMMUNE.SHP" -maille_01 "/root/referentiels/sig/GLP_UTM20N1X1.shp" -maille_02 "/root/referentiels/sig/grille_2000m_gwada_dep_ama_poly.shp" -maille_05 "/root/referentiels/sig/GLP_UTM20N5X5.shp" -maille_10 "/root/referentiels/sig/GLP_UTM20N10X10.shp" -reserves_naturelles_nationales "/root/referentiels/sig/glp_rnn2012.shp" -habref "/root/referentiels/csv/HABREF_20/HABREF_20.csv" -habitat_mer "/root/referentiels/csv/habitats/TYPO_ANT_MER_09-01-2011.xls" -habitat_terre "/root/referentiels/csv/habitats/EAR_Guadeloupe.csv" -commune_annee_ref "2013" -departement_annee_ref "2013" -maille_01_version_ref "2015" -maille_01_nom_ref "Grille nationale (1km x 1km) Réunion" -maille_02_version_ref "2015" -maille_02_nom_ref "Grille nationale (2km x 2km) Réunion" -maille_05_version_ref "2015" -maille_05_nom_ref "Grille nationale (5km x 5km) Réunion" -maille_10_version_ref "2012" -maille_10_nom_ref "Grille nationale (10km x 10km) Réunion" -rnn_version_en "2010"
+php lizmap/scripts/script.php occtax~import:shapefile -commune "/tmp/referentiels/sig/COMMUNE.SHP" -maille_01 "/tmp/referentiels/sig/GLP_UTM20N1X1.shp" -maille_02 "/tmp/referentiels/sig/grille_2000m_gwada_dep_ama_poly.shp" -maille_05 "/tmp/referentiels/sig/GLP_UTM20N5X5.shp" -maille_10 "/tmp/referentiels/sig/GLP_UTM20N10X10.shp" -reserves_naturelles_nationales "/tmp/referentiels/sig/glp_rnn2012.shp" -habref "/tmp/referentiels/csv/HABREF_20/HABREF_20.csv" -habitat_mer "/tmp/referentiels/csv/habitats/TYPO_ANT_MER_09-01-2011.xls" -habitat_terre "/tmp/referentiels/csv/habitats/EAR_Guadeloupe.csv" -commune_annee_ref "2013" -departement_annee_ref "2013" -maille_01_version_ref "2015" -maille_01_nom_ref "Grille nationale (1km x 1km) Réunion" -maille_02_version_ref "2015" -maille_02_nom_ref "Grille nationale (2km x 2km) Réunion" -maille_05_version_ref "2015" -maille_05_nom_ref "Grille nationale (5km x 5km) Réunion" -maille_10_version_ref "2012" -maille_10_nom_ref "Grille nationale (10km x 10km) Réunion" -rnn_version_en "2010"
 
 
 # Exemple 2/ La Réunion
-php lizmap/scripts/script.php occtax~import:shapefile -commune "/root/referentiels/sig/COMMUNE.SHP" -maille_01 "/root/referentiels/sig/REU_UTM40S1X1.shp" -maille_02 "/root/referentiels/sig/REU_UTM40S2X2.shp" -maille_05 "/root/referentiels/sig/REU_UTM40S5X5.shp" -maille_10 "/root/referentiels/sig/REU_UTM40S10X10.shp" -reserves_naturelles_nationales "/root/referentiels/sig/RN.shp" -habref "/root/referentiels/habitats/HABREF_20/HABREF_20.csv" -commune_annee_ref "2013" -departement_annee_ref "2013" -maille_01_version_ref "2015" -maille_01_nom_ref "Grille nationale (1km x 1km) Réunion" -maille_02_version_ref "2015" -maille_02_nom_ref "Grille nationale (2km x 2km) Réunion" -maille_05_version_ref "2015" -maille_05_nom_ref "Grille nationale (5km x 5km) Réunion" -maille_10_version_ref "2012" -maille_10_nom_ref "Grille nationale (10km x 10km) Réunion" -rnn_version_en "2010"
+php lizmap/scripts/script.php occtax~import:shapefile -commune "/tmp/referentiels/sig/COMMUNE.SHP" -maille_01 "/tmp/referentiels/sig/REU_UTM40S1X1.shp" -maille_02 "/tmp/referentiels/sig/REU_UTM40S2X2.shp" -maille_05 "/tmp/referentiels/sig/REU_UTM40S5X5.shp" -maille_10 "/tmp/referentiels/sig/REU_UTM40S10X10.shp" -reserves_naturelles_nationales "/tmp/referentiels/sig/RN.shp" -habref "/tmp/referentiels/habitats/HABREF_20/HABREF_20.csv" -commune_annee_ref "2013" -departement_annee_ref "2013" -maille_01_version_ref "2015" -maille_01_nom_ref "Grille nationale (1km x 1km) Réunion" -maille_02_version_ref "2015" -maille_02_nom_ref "Grille nationale (2km x 2km) Réunion" -maille_05_version_ref "2015" -maille_05_nom_ref "Grille nationale (5km x 5km) Réunion" -maille_10_version_ref "2012" -maille_10_nom_ref "Grille nationale (10km x 10km) Réunion" -rnn_version_en "2010"
 
 # Import des données depuis les serveurs WFS officiels
 # Vous devez préciser l'URL des serveurs WFS pour les données INPN et pour les données Sandre (masses d'eau)
@@ -416,7 +423,7 @@ php lizmap/scripts/script.php occtax~import:wfs -wfs_url "http://ws.carmencarto.
 # Import des données de relief (Modèle numérique de terrain = MNT ) et des lieu-dits en shapefiles
 # ATTENTION: seulement nécessaire si le module mascarine (saisie flore) est utilisé.
 # Vous devez spécifier les chemins complet vers les fichiers dans cet ordre: MNT, lieux-dits habités, lieux-dits non-habités, oronymes et toponymes divers ( Source IGN )
-php lizmap/scripts/script.php mascarine~import:gdalogr "/root/referentiels/sig/DEPT971.asc" "/root/referentiels/sig/LIEU_DIT_HABITE.SHP" "/root/referentiels/sig/LIEU_DIT_NON_HABITE.SHP" "/root/referentiels/sig/ORONYME.SHP" "/root/referentiels/sig/TOPONYME_DIVERS.SHP"
+php lizmap/scripts/script.php mascarine~import:gdalogr "/tmp/referentiels/sig/DEPT971.asc" "/tmp/referentiels/sig/LIEU_DIT_HABITE.SHP" "/tmp/referentiels/sig/LIEU_DIT_NON_HABITE.SHP" "/tmp/referentiels/sig/ORONYME.SHP" "/tmp/referentiels/sig/TOPONYME_DIVERS.SHP"
 
 ```
 
