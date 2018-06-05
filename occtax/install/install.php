@@ -114,7 +114,7 @@ class occtaxModuleInstaller extends jInstallerModule {
             jAcl2DbManager::setRightsOnGroup(
                 'naturaliz_profil_1',
                 array(
-                    'occtax.admin.config.gerer'=>true,
+                    'occtax.admin.config.gerer'=>false,
                     'requete.spatiale.maille_01'=>true,
                     'requete.spatiale.maille_02'=>true,
                     'requete.spatiale.cercle'=>true,
@@ -211,6 +211,14 @@ class occtaxModuleInstaller extends jInstallerModule {
 
             // Add admin to group naturaliz_profil_1
             jAcl2DbUserGroup::addUserToGroup('admin', 'naturaliz_profil_1');
+
+            // Ajout du droit d'accès à l'administration de Naturaliz pour l'admin
+            jAcl2DbManager::setRightsOnGroup(
+                'admins',
+                array(
+                    'occtax.admin.config.gerer'=>true
+                )
+            );
 
             //Modify admin password
             $localConfig = jApp::configPath('localconfig.ini.php');
