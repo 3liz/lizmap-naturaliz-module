@@ -67,11 +67,18 @@
                     'menuOrder' => $mo
                 );
 
+                $mailles_a_utiliser = $ini->getValue('mailles_a_utiliser', 'occtax');
+                if( !$mailles_a_utiliser or empty(trim($mailles_a_utiliser)) ){
+                    $mailles_a_utiliser = 'maille_02,maille_10';
+                }
+                $mailles_a_utiliser = array_map('trim', explode(',', $mailles_a_utiliser));
+
                 $assign = array(
                     'form' => $form,
                     'formUpload' => $formUpload,
                     'formTax' => $formTax,
-                    'occtaxClientConfig' => json_encode($occtaxClientConfig)
+                    'occtaxClientConfig' => json_encode($occtaxClientConfig),
+                    'mailles_a_utiliser' => $mailles_a_utiliser
                 );
                 $content = array( 'occtax~search', $assign );
 

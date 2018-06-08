@@ -129,7 +129,7 @@ Dans ce cas, la diffusion est utilisée dans les situations suivantes :
     - cette fonction `getMaille` ne renvoit une maille que si au moins une observation a été trouvée en dessous avec les crtières de diffusion via `$sql.= " AND ( od.diffusion ? 'g' OR od.diffusion ? '" . $this->type_maille . "' )";`
     - si aucune maille n'est trouvée, un message "Aucune donnée d'observation pour cette maille." est affiché, et l'utilisateur ne peut donc pas faire de recherche spatiale pour cette maille.
 
-* l'affichage des maille 2 ou 10 sur la carte est filtré selon la diffusion, si on n'a pas le droit de voir les données brutes. On considère que le fait d'afficher à la maille 2 ou 10 répond au floutage nécessaire. Donc on filtre
+* l'affichage des maille 1, 2 ou 10 sur la carte est filtré selon la diffusion, si on n'a pas le droit de voir les données brutes. On considère que le fait d'afficher à la maille 1, 2 ou 10 répond au floutage nécessaire. Donc on filtre
 
     - fichier `occtax/classes/occtaxSearchObservationMaille.class.php`
     - la fonction `__construct` modifie les `querySelectors`, c'est à dire les champs retournés. Elle vide la géométrie de maille retournée si la diffusion ne permet pas de la récupérer.
@@ -143,13 +143,14 @@ Dans ce cas, la diffusion est utilisée dans les situations suivantes :
     - la fonction `setWhereClause` ajoute un filtre dans les conditios suivantes : si l'utilisateur n'a pas le droit de voir les données brutes et si un filtre spatial a été ajouté,
     - recherche par commune : le formulaire passe le paramètre `code_commune` . Le filtre ajouté est `AND ( diffusion ? 'g'  OR diffusion ? 'c'  )` si on a fait une recherche par commune
     - recherche par masse d'eau: le formulaire passe le paramètre `code_me`. Le filtre ajouté est `AND ( diffusion ? 'g'  ) ` si on a fait une recherche par masse d'eau
+    - recherche par maille 1: le formulaire passe les paramètres `type_maille=m01` et `code_maille=1kmUTM40E330S7668` et `geom=POLYGON de la maille`. Aucun filtre n'est ajouté
     - recherche par maille 2: le formulaire passe les paramètres `type_maille=m02` et `code_maille=2kmUTM40E330S7668` et `geom=POLYGON de la maille`. Aucun filtre n'est ajouté
     - recherche par maille 10: le formulaire passe les paramètres `type_maille=10` et `code_maille=10kmUTM40E330S7670` et `geom=POLYGON de la maille`. Aucun filtre n'est ajouté
 
-* l'export des données rattachées dans le CSV (communes, mailles 10 et 02, départements, etc.) est filtrée, si on n'a pas le droit de voir les données brutes
+* l'export des données rattachées dans le CSV (communes, mailles 10, 02, 01, départements, etc.) est filtrée, si on n'a pas le droit de voir les données brutes
 
     - fichier `occtax/classes/occtaxSearchObservationBrutes.class.php`
-    - fonctions `getDepartement`, `getCommune`, `getMaille02`, `getMaille10`, `getEspaceNaturel`, `getMasseEau`
+    - fonctions `getDepartement`, `getCommune`, `getMaille01`, `getMaille02`, `getMaille10`, `getEspaceNaturel`, `getMasseEau`
     - Le filtre ajouté dépend du type de rattachement.
     - Par exemple pour les mailles 2 : `AND ( foo.diffusion ? 'm02')`
 

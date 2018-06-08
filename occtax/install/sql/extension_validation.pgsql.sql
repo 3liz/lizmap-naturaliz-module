@@ -110,7 +110,7 @@ CREATE TABLE critere_sensibilite (
     condition text NOT NULL,
     table_jointure text,
     niveau text NOT NULL,
-    CONSTRAINT critere_sensibilite_niveau_valide CHECK ( niveau IN ( 'm02', '0', '1', '2', '3', '4' ) )
+    CONSTRAINT critere_sensibilite_niveau_valide CHECK ( niveau IN ( 'm01', 'm02', '0', '1', '2', '3', '4' ) )
 
 );
 ALTER TABLE critere_sensibilite ADD PRIMARY KEY (id_critere);
@@ -123,7 +123,7 @@ COMMENT ON COLUMN critere_sensibilite.libelle IS 'Libellé court de la condition
 COMMENT ON COLUMN critere_sensibilite.description IS 'Description de la motivation de cette condition et des choix effectués';
 COMMENT ON COLUMN critere_sensibilite.condition IS 'Condition au format SQL s''appliquant sur les champs de la table observation. Une sous-requête peut être effectuée vers d''autres tables. Ex: "altitude_max" > 500 AND altitude_max < 1500';
 COMMENT ON COLUMN critere_sensibilite.table_jointure IS 'Nom de la table utilisée pour une condition de jointure. On peut par exemple l''utiliser pour une intersection spatiale. Par exemple les tampons à 100m autour des rivières. Pour des soucis de performance, il faut faire une jointure et non une condition simple. Cette table doit être stockée dans le schéma sig';
-COMMENT ON COLUMN critere_sensibilite.niveau IS 'Niveau de sensibilité à appliquer pour la condition. Doit correspondre à la nomenclature. Liste des niveaux : ''m02'', ''0'', ''1'', ''2'', ''3'', ''4'' ';
+COMMENT ON COLUMN critere_sensibilite.niveau IS 'Niveau de sensibilité à appliquer pour la condition. Doit correspondre à la nomenclature. Liste des niveaux : ''m01'', ''m02'', ''0'', ''1'', ''2'', ''3'', ''4'' ';
 
 
 CREATE OR REPLACE VIEW occtax.v_critere_validation_et_sensibilite AS
@@ -192,8 +192,8 @@ BEGIN
     -- cela veut dire ci-dessous que les plus à gauche gagnent (ceux qui ont une note + petite)
     -- on fait attention ici de mettre les valeurs dans l'ordre pour faciliter la lecture de l'objet json_note
     IF p_contexte = 'sensibilite' THEN
-        -- sensibilite : Aucune diffusion > département > dép & maille 10 > dep, mailles, en, com, znieff > maille 2 > précision max
-        json_note := '{"4": 1, "3": 2, "2": 3, "1": 4, "m02": 5, "0": 6 }'; -- sensibilite
+        -- sensibilite : Aucune diffusion > département > dép & maille 10 > dep, mailles, en, com, znieff > maille 2 > maille 1 > précision max
+        json_note := '{"4": 1, "3": 2, "2": 3, "1": 4, "m02": 5, "m02": 6, "0": 7 }'; -- sensibilite
     ELSE
         -- validation: invalide > douteux > non évalué > non réalisable > probable > certain
         json_note := '{"4": 1, "3": 2, "6": 3, "5": 4, "2": 5, "1": 6 }';

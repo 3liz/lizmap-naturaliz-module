@@ -40,6 +40,20 @@ class lizmapServiceCtrl extends serviceCtrl {
             )
         ),
 
+        'm01' => array(
+            'layers' => array(
+                'observation_maille'
+            ),
+            'attributeTable' => array(
+                'source' => 'observation_maille',
+                'columns' => array (
+                    "maille" => "Code maille",
+                    "nbobs" => "Nombre d'observations",
+                    "nbtax" => "Nombre de taxons",
+                )
+            )
+
+        ),
         'm02' => array(
             'layers' => array(
                 'observation_maille'
@@ -54,6 +68,20 @@ class lizmapServiceCtrl extends serviceCtrl {
             )
 
         ),
+        //'m05' => array(
+            //'layers' => array(
+                //'observation_maille'
+            //),
+            //'attributeTable' => array(
+                //'source' => 'observation_maille',
+                //'columns' => array (
+                    //"maille" => "Code maille",
+                    //"nbobs" => "Nombre d'observations",
+                    //"nbtax" => "Nombre de taxons",
+                //)
+            //)
+
+        //),
         'm10' => array(
             'layers' => array(
                 'observation_maille'
@@ -89,11 +117,13 @@ class lizmapServiceCtrl extends serviceCtrl {
     // Create temporary project from template if needed
     // And modify layers datasource via passed token and datatype
     $token = $this->params['token'];
-    $datatype = $this->params['datatype']; // m02 = maille 2 , m10 = maille 10, b = données brutes
+    $datatype = $this->params['datatype']; // m01 = maille 1, m02 = maille 2 , m05 = maille 5, m10 = maille 10, b = données brutes
     $dynamic = Null;
     if( $token and $datatype ) {
 
         if( !jAcl2::check("visualisation.donnees.brutes") and $datatype == 'b' )
+            $datatype = 'm01';
+        if( !jAcl2::check("visualisation.donnees.maille_01") and $datatype == 'm01' )
             $datatype = 'm02';
 
         // Get source project params
@@ -114,10 +144,18 @@ class lizmapServiceCtrl extends serviceCtrl {
         $newProjectContent = $projectTemplate;
 
         // Replace datasource for observation_maille
-        if( $datatype == 'm02' or $datatype == 'm10'){
+        if( $datatype == 'm01' or $datatype == 'm02' or $datatype == 'm05' or $datatype == 'm10'){
             if( $datatype == 'm10' ){
                 jClasses::inc('occtax~occtaxSearchObservationMaille10');
                 $occtaxSearch = new occtaxSearchObservationMaille10( $token, null );
+            }
+            //if( $datatype == 'm05' ){
+                //jClasses::inc('occtax~occtaxSearchObservationMaille05');
+                //$occtaxSearch = new occtaxSearchObservationMaille05( $token, null );
+            //}
+            if( $datatype == 'm02' ){
+                jClasses::inc('occtax~occtaxSearchObservationMaille02');
+                $occtaxSearch = new occtaxSearchObservationMaille02( $token, null );
             }
             else{
                 jClasses::inc('occtax~occtaxSearchObservationMaille');
@@ -156,10 +194,11 @@ class lizmapServiceCtrl extends serviceCtrl {
             );
 
             // Replace width of square under maille for maille 10
-            if( $datatype == 'm10' ){
+            if( $datatype == 'm10' or $datatype == 'm02' or $datatype == 'm01'){
+                $mint = (int)preg_replace($datatype, 'm0?', '');
                 $newProjectContent = str_replace(
                     '<prop k="size_dd_expression" v="2000"/>',
-                    '<prop k="size_dd_expression" v="10000"/>',
+                    '<prop k="size_dd_expression" v="'.$mint.'000"/>',
                     $newProjectContent
                 );
             }

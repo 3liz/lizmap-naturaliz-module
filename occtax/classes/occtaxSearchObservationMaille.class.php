@@ -12,7 +12,7 @@ jClasses::inc('occtax~occtaxSearchObservation');
 
 class occtaxSearchObservationMaille extends occtaxSearchObservation {
 
-    protected $maille = 'maille_02';
+    protected $maille = 'maille_01';
 
     protected $returnFields = array(
         'mid',
@@ -41,8 +41,8 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
     public function __construct ($token=Null, $params=Null, $demande=Null) {
         // Set maille depending on rights
         // do it first because parent::__construct do setSql
-        //if ( jAcl2::check("visualisation.donnees.maille_01") )
-            //$this->maille = 'maille_01';
+        if ( $this->maille == 'maille_01' and !jAcl2::check("visualisation.donnees.maille_01") )
+            $this->maille = 'maille_02';
 
         // Remove unnecessary LEFT JOIN to improve performances
         $this->querySelectors['localisation_maille_05']['required'] = False;
@@ -62,9 +62,15 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
         // Change geometry exported value for users depending on sensibiliy
         if( !jAcl2::check("visualisation.donnees.brutes") ){
             $question = "WHEN od.diffusion ? 'g' ";
+            if($this->maille == 'maille_01' and jAcl2::check("visualisation.donnees.maille_01")){
+                $question.= " OR od.diffusion ? 'm01' ";
+            }
             if($this->maille == 'maille_02'){
                 $question.= " OR od.diffusion ? 'm02' ";
             }
+            //if($this->maille == 'maille_05'){
+                //$question.= " OR od.diffusion ? 'm05' ";
+            //}
             if($this->maille == 'maille_10'){
                 $question.= " OR od.diffusion ? 'm10' ";
             }
@@ -96,10 +102,13 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
         parent::setSql();
 
         // Get maille type (1 or 2)
-        $m = 1;
+        $m = 2;
+        if(jAcl2::check("visualisation.donnees.maille_01") and $this->maille == 'maille_01')
+            $m = 1;
         if($this->maille == 'maille_02')
             $m = 2;
-
+        //if($this->maille == 'maille_05')
+            //$m = 5;
         if($this->maille == 'maille_10')
             $m = 10;
 
@@ -155,6 +164,8 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
         $sql.= ' GROUP BY m.code_maille, m.nom_maille, m.geom';
 
         $this->sql = $sql;
+
+//jLog::log($this->sql);
     }
 
     protected function getResult( $limit=50, $offset=0, $order="" ) {

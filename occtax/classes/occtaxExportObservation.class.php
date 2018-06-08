@@ -118,7 +118,13 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             'type_info_geo' => "String",
         ),
 
-
+        'maille_01' => array(
+            'cle_obs' => "Integer",
+            'code_maille' => "String",
+            'version_ref' => "String",
+            'nom_ref' => "String",
+            'type_info_geo' => "String",
+        ),
         'maille_02' => array(
             'cle_obs' => "Integer",
             'code_maille' => "String",
@@ -126,6 +132,14 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             'nom_ref' => "String",
             'type_info_geo' => "String",
         ),
+
+        //'maille_05' => array(
+            //'cle_obs' => "Integer",
+            //'code_maille' => "String",
+            //'version_ref' => "String",
+            //'nom_ref' => "String",
+            //'type_info_geo' => "String",
+        //),
 
         'espace_naturel' => array(
             'cle_obs' => "Integer",
@@ -401,7 +415,6 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
         }
         $sql.= ") foo";
 
-//jLog::log($sql);
 
         // Use COPY: DEACTIVATED BECAUSE NEEDS SUPERUSER PG RIGHTS
         //$sqlcopy = " COPY (" . $sql ;
@@ -458,7 +471,6 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             fputcsv($fd, $ldata, $delimiter);
         }
         fclose($fd);
-
         if( !file_exists($path) ){
             //jLog::log( "Erreur lors de l'export en CSV");
             return Null;

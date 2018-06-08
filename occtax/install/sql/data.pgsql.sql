@@ -149,6 +149,7 @@ UPDATE nomenclature SET valeur = 'Floutage à la maille 10 x 10 km' WHERE champ 
 UPDATE nomenclature SET valeur = 'Floutage au département' WHERE champ = 'sensi_niveau' AND code = '3';
 UPDATE nomenclature SET valeur = 'Aucune diffusion' WHERE champ = 'sensi_niveau' AND code = '4';
 INSERT INTO nomenclature VALUES ('sensi_niveau', 'm02', 'Floutage à la maille 2 x 2 km', 'Département et maille 2 x 2 km');
+INSERT INTO nomenclature VALUES ('sensi_niveau', 'm01', 'Floutage à la maille 1 x 1 km', 'Département, maille 2 x 2 km et maille 1 x 1 km');
 
 
 INSERT INTO nomenclature VALUES ('sensible', 'NON', 'Non', 'Indique que la donnée n''est pas sensible (par défaut, équivalent au niveau "0" des niveaux de sensibilité).');
@@ -183,7 +184,7 @@ INSERT INTO nomenclature VALUES ('type_en', 'APIA', 'APIA', 'Zone protégée de 
 INSERT INTO nomenclature VALUES ('type_en', 'ASPIM', 'ASPIM', 'Aire spécialement protégée d’importance méditerranéenne');
 INSERT INTO nomenclature VALUES ('type_en', 'BPM', 'BPM', 'Bien inscrit sur la liste du patrimoine mondial de l''UNESCO');
 INSERT INTO nomenclature VALUES ('type_en', 'CARTH', 'CARTH', 'Zone protégée de la convention de Carthagène');
-INSERT INTO nomenclature VALUES ('type_en', 'CNP', 'CNP', 'Coeur de parc national. Valeur gelée le 15/06/2016 et remplacée par "CPN"');
+INSERT INTO nomenclature VALUES ('type_en', 'CPN', 'CPN', 'Coeur de parc national. Valeur gelée le 15/06/2016 et remplacée par "CPN"');
 INSERT INTO nomenclature VALUES ('type_en', 'ENS', 'ENS', 'Espace naturel sensible');
 INSERT INTO nomenclature VALUES ('type_en', 'MAB', 'MAB', 'Réserve de biosphère (Man and Biosphère)');
 INSERT INTO nomenclature VALUES ('type_en', 'N2000', 'N2000', 'Natura 2000');

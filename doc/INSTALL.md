@@ -45,6 +45,7 @@ Les modules Naturaliz lisent dans le fichier **lizmap/var/config/localconfig.ini
 * la **liste des codes d'arrêtés de protection** pour la zone concernée: variables **code_arrete_protection_simple**, **code_arrete_protection_internationale**, **code_arrete_protection_nationale**, **code_arrete_protection_communautaire** de la section  [taxon]
 * le **code SRID** du système de coordonnées de références des données spatiales du projet : variable **srid** de la section [naturaliz].
 * le **mot de passe de l'utilisateur admin**: variable **adminPassword** de la section [naturaliz].
+* la **liste des types de mailles à utiliser** de la section [occtax]. Par exemple: `mailles_a_utiliser=maille_02,maille_10`
 * la **liste des niveaux de validité**, séparés par virgule, pour filtrer les observations pour le grand public, c'est-à-dire que seules les observations qui ont un niveau de validité correspondant à un des éléments de la liste pourront être visibles pour le grand public. Variable **validite_niveaux_grand_public** de la section [occtax]. Par exemple validite_niveaux_grand_public=1,2
 * la **taille maximale du polygone ou cercle de requête** que l'utilisateur peut dessiner sur la carte: **maxAreaQuery** . On met une valeur en m2, ou -1 pour désactiver le contrôle
 * la **configuration des classes de légende** pour les affichages par maille: **legend_class**. On peut utiliser autant de legend_class[] que nécessaire, et on doit les écrire avec les informations suivantes séparées par point-virgule: intitulé de la classe; borne inférieure; borne supérieure; couleur. Ex: legend_class[]="De 1 à 10 observations; 1; 10; #FFFBC3"
@@ -101,6 +102,10 @@ srid=2975
 appName=Naturaliz
 
 [occtax]
+
+; liste séparée par virgule de mailles à utiliser. Par ex: maille_01,maille_10
+mailles_a_utiliser=maille_02,maille_10
+
 defaultRepository=
 defaultProject=
 projectName=Occurences de Taxon
@@ -140,8 +145,8 @@ observation_card_fields=cle_obs,statut_observation, nom_cite, denombrement_min, 
 observation_card_fields_unsensitive=cle_obs, identifiant_permanent, statut_source, nom_cite, date_debut, date_fin, organisme_gestionnaire_donnees, source_objet, code_commune, code_departement, code_maille_10
 
 ; liste blanche des données filles à afficher dans la fiche
-;observation_card_children=commune, departement, maille_02, maille_10, espace_naturel, masse_eau, habitat, attribut_additionnel
-observation_card_children=commune, departement, maille_02, maille_10, espace_naturel, masse_eau, habitat
+;observation_card_children=commune, departement, maille_01, maille_02, maille_10, espace_naturel, masse_eau, habitat, attribut_additionnel
+observation_card_children=commune, departement, maille_01, maille_02, maille_10, espace_naturel, masse_eau, habitat
 
 ; liste blanche des champs à exporter
 observation_exported_fields=cle_obs, identifiant_permanent, identifiant_origine, statut_observation, cd_nom, cd_ref, version_taxref, nom_cite, nom_valide, nom_vern, group1_inpn, group2_inpn, denombrement_min, denombrement_max, type_denombrement, objet_denombrement, commentaire, date_debut, heure_debut, date_fin, heure_fin, altitude_moy, profondeur_moy, date_determination, ds_publique, jdd_metadonnee_dee_id, dee_date_derniere_modification, jdd_code, reference_biblio, organisme_gestionnaire_donnees, statut_source, sensi_niveau, observateur, determinateur, validateur, descriptif_sujet, validite_niveau, validite_date_validation, precision_geometrie, nature_objet_geo, wkt
@@ -150,8 +155,8 @@ observation_exported_fields=cle_obs, identifiant_permanent, identifiant_origine,
 observation_exported_fields_unsensitive=cle_obs, identifiant_permanent, statut_source, nom_cite, date_debut, date_fin, organisme_gestionnaire_donnees, source_objet, code_commune, code_departement, code_maille_10, wkt
 
 ; liste blanche des données filles à exporter
-;observation_exprted_children=commune, departement, maille_02, maille_10, espace_naturel, masse_eau, habitat, attribut_additionnel
-observation_exported_children=commune, departement, maille_02, maille_10, espace_naturel, masse_eau, habitat
+;observation_exprted_children=commune, departement, maille_01, maille_02, maille_10, espace_naturel, masse_eau, habitat, attribut_additionnel
+observation_exported_children=commune, departement, maille_01, maille_02, maille_10, espace_naturel, masse_eau, habitat
 
 ; ordre des items de menu Lizmap (barre de menu de gauche)
 menuOrder=home, occtax-presentation, switcher, occtax, dataviz, print, measure, permaLink, occtax-legal, taxon, metadata

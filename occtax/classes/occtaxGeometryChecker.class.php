@@ -124,8 +124,11 @@ class occtaxGeometryChecker {
             return $return;
 
         $maille = 'maille_02';
-        //if ( jAcl2::check("visualisation.donnees.maille_01") )
-          //$maille = 'maille_01';
+        if ( $this->type_maille == 'm01' and jAcl2::check("visualisation.donnees.maille_01") ){
+          $maille = 'maille_01';
+        }
+        //if( $this->type_maille == 'm05')
+            //$maille = 'maille_05';
         if( $this->type_maille == 'm10')
             $maille = 'maille_10';
 

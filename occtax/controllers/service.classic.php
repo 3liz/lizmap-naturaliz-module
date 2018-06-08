@@ -12,6 +12,8 @@ class serviceCtrl extends jController {
 
     protected $srid = '4326';
 
+    protected $mailles_a_utiliser = 'maille_02,maille_10';
+
     function __construct( $request ){
 
         // Get SRID
@@ -19,6 +21,14 @@ class serviceCtrl extends jController {
         $ini = new jIniFileModifier($localConfig);
         $srid = $ini->getValue('srid', 'naturaliz');
         $this->srid = $srid;
+
+        // Mailles
+        $mailles_a_utiliser = $ini->getValue('mailles_a_utiliser', 'occtax');
+        if( !$mailles_a_utiliser or empty(trim($mailles_a_utiliser)) ){
+            $mailles_a_utiliser = 'maille_02,maille_10';
+        }
+        $this->mailles_a_utiliser = array_map('trim', explode(',', $mailles_a_utiliser));
+
         parent::__construct( $request );
 
     }
@@ -175,7 +185,14 @@ class serviceCtrl extends jController {
      */
     function searchGroupByMaille() {
         $class = 'occtaxSearchObservationMaille';
-        if($this->param('type_maille', 'm02') == 'm10'){
+        $m = $this->param('type_maille', 'm02');
+        if($m == 'm02' or (!jAcl2::check("visualisation.donnees.maille_01") and $m == 'm01')){
+            $class = 'occtaxSearchObservationMaille02';
+        }
+        //if($m == 'm05'){
+            //$class = 'occtaxSearchObservationMaille05';
+        //}
+        if($m == 'm10'){
             $class = 'occtaxSearchObservationMaille10';
         }
         return $this->__search( $class );
@@ -289,20 +306,26 @@ class serviceCtrl extends jController {
             $rep->content->addFile( $principal[1], 'st_' . 'principal' . '.csvt' );
             unlink( $principal[1] );
         }
-
         // Get other files
         $topics = array(
             'commune',
             'departement',
             'maille_10',
-            'maille_02',
             'espace_naturel',
             'masse_eau',
             'habitat',
             'attribut_additionnel'
         );
 
+        // Mailles
+
         // Remove sensitive data if not enough rights
+        if( jAcl2::check("visualisation.donnees.maille_01") and in_array('maille_01', $this->mailles_a_utiliser) ) {
+            $topics[] = 'maille_01';
+        }
+        if( jAcl2::check("visualisation.donnees.maille_02") and in_array('maille_02', $this->mailles_a_utiliser) ) {
+            $topics[] = 'maille_02';
+        }
         if( !jAcl2::check("visualisation.donnees.brutes") ) {
             $blackTopics = array(
                 'attribut_additionnel',
@@ -318,7 +341,9 @@ class serviceCtrl extends jController {
             // Write data to CSV and get csv file path
             $csv = $occtaxSearch->writeCsv($topic );
             $csvt = $occtaxSearch->writeCsvT( $topic );
-            $data[$topic] = array( $csv, $csvt );
+            if($csv){
+                $data[$topic] = array( $csv, $csvt );
+            }
         }
 
         // Add other csv files to ZIP
@@ -333,7 +358,6 @@ class serviceCtrl extends jController {
                 $rep->content->addFile( $files[1], $subdir . '/' . 'st_' . $topic . '.csvt' );
                 unlink( $files[1] );
             }
-
         }
 
         // Add readme file + search description to ZIP

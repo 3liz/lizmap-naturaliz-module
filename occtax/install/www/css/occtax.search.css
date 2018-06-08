@@ -13,8 +13,14 @@
 #obs-spatial-query-buttons button.maille {
     background:url(img/sig/mActionSelect.png) no-repeat 2px 2px #F5F5F5;
 }
+#obs-spatial-query-buttons button.maille.m01 {
+    background:url(img/sig/mActionSelectM01.png) no-repeat 2px 2px #F5F5F5;
+}
 #obs-spatial-query-buttons button.maille.m02 {
     background:url(img/sig/mActionSelectM02.png) no-repeat 2px 2px #F5F5F5;
+}
+#obs-spatial-query-buttons button.maille.m05 {
+    background:url(img/sig/mActionSelectM05.png) no-repeat 2px 2px #F5F5F5;
 }
 #obs-spatial-query-buttons button.maille.m10 {
     background:url(img/sig/mActionSelectM10.png) no-repeat 2px 2px #F5F5F5;

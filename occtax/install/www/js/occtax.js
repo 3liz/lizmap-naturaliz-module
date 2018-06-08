@@ -1,6 +1,8 @@
 var OccTax = function() {
   occTaxObservationResult = null;
+  occTaxMailleResult_m01 = null;
   occTaxMailleResult_m02 = null;
+  occTaxMailleResult_m05 = null;
   occTaxMailleResult_m10 = null;
   // creating the OccTax object
   var obj = {
@@ -147,8 +149,12 @@ var OccTax = function() {
         var results = [];
         if (type == 'm10')
             results = occTaxMailleResult_m10;
+        //else if (type == 'm05')
+            //results = occTaxMailleResult_m05;
         else if (type == 'm02')
             results = occTaxMailleResult_m02;
+        else if (type == 'm01')
+            results = occTaxMailleResult_m01;
         else if (type == 'observation')
             results = occTaxObservationResult;
 
@@ -164,8 +170,12 @@ var OccTax = function() {
         var geoIdx = fields['return'].indexOf( 'geojson' );
 
         var th = $('#occtax_results_observation_table th');
+        if (type == 'm01')
+          th = $('#occtax_results_maille_table_'+type+' th');
         if (type == 'm02')
           th = $('#occtax_results_maille_table_'+type+' th');
+        //if (type == 'm05')
+          //th = $('#occtax_results_maille_table_'+type+' th');
         if (type == 'm10')
           th = $('#occtax_results_maille_table_'+type+' th');
 
@@ -224,7 +234,14 @@ var OccTax = function() {
   // initializing the OccTax events
   obj.events = new OpenLayers.Events(
       obj, null,
-      ['uicreated','mailledatareceived_m02','mailledatareceived_m10','observationdatareceived'],
+      [
+        'uicreated',
+        'mailledatareceived_m01',
+        'mailledatareceived_m02',
+        //'mailledatareceived_m05',
+        'mailledatareceived_m10',
+        'observationdatareceived'
+      ],
       true,
       {includeXY: true}
     );
@@ -233,10 +250,18 @@ var OccTax = function() {
         if ('results' in evt )
           occTaxObservationResult = evt.results;
     }
+   ,'mailledatareceived_m01':function(evt){
+        if ('results' in evt )
+          occTaxMailleResult_m01 = evt.results;
+    }
    ,'mailledatareceived_m02':function(evt){
         if ('results' in evt )
           occTaxMailleResult_m02 = evt.results;
     }
+   //,'mailledatareceived_m05':function(evt){
+        //if ('results' in evt )
+          //occTaxMailleResult_m05 = evt.results;
+    //}
    ,'mailledatareceived_m10':function(evt){
         if ('results' in evt )
           occTaxMailleResult_m10 = evt.results;

@@ -95,6 +95,12 @@ OccTax.events.on({
                 if ( activeButton.hasClass('maille') ) {
                     var form = $('#form_occtax_service_maille');
                     var type_maille = 'm02';
+                    if(activeButton.hasClass('m01')){
+                      type_maille = 'm01';
+                    }
+                    //if(activeButton.hasClass('m05')){
+                      //type_maille = 'm05';
+                    //}
                     if(activeButton.hasClass('m10')){
                       type_maille = 'm10';
                     }
@@ -407,6 +413,9 @@ OccTax.events.on({
 
     function addResultsMailleTable(type_maille) {
       var tableId = 'occtax_results_maille_table_' + type_maille;
+      if($('#'+tableId+'').length == 0){
+        return false;
+      }
       // Get maille fields to display
       var returnFields = $('#'+tableId+'').attr('data-value').split(',');
       var DT_RowId = $('#'+tableId+' thead tr').attr('data-value');
@@ -470,9 +479,19 @@ OccTax.events.on({
                           $('#'+tableId+' a').unbind('click');
                           callback( tData );
                           refreshOcctaxDatatableSize('#occtax_results_maille_table_div_'+type_maille);
+
                           // Refresh maille on map
                           // usefull to refresh map features
-                          $('#occtax_results_draw_maille_m02.btn').click();
+                          var mclick = false;
+                          if($('#occtax_results_draw_maille_m01.btn').length){
+                            $('#occtax_results_draw_maille_m01.btn').click();
+                            mclick = true;
+                          }
+                          if(!mclick && $('#occtax_results_draw_maille_m02.btn').length){
+                            $('#occtax_results_draw_maille_m02.btn').click();
+                            mclick = true;
+                          }
+
                           $('#'+tableId+'').show();
 
 
@@ -1201,8 +1220,16 @@ OccTax.events.on({
           $('#obs-spatial-query-buttons button.active').click();
           // Remove previous features : remove feature in all layers except queryLayer
           OccTax.emptyDrawqueryLayer('queryLayer');
-          OccTax.events.triggerEvent('mailledatareceived_' + 'm02', {'results':null});
-          OccTax.events.triggerEvent('mailledatareceived_' + 'm10', {'results':null});
+          if($('#occtax_results_draw_maille_m01.btn').length){
+            OccTax.events.triggerEvent('mailledatareceived_' + 'm01', {'results':null});
+          }
+          if($('#occtax_results_draw_maille_m02.btn').length){
+            OccTax.events.triggerEvent('mailledatareceived_' + 'm02', {'results':null});
+          }
+          //OccTax.events.triggerEvent('mailledatareceived_' + 'm05', {'results':null});
+          if($('#occtax_results_draw_maille_m10.btn').length){
+            OccTax.events.triggerEvent('mailledatareceived_' + 'm10', {'results':null});
+          }
         }catch(e){
            var anerror = 1;
            //console.error(e);
@@ -1234,8 +1261,12 @@ OccTax.events.on({
                     $('#occtax_results_stats_table').DataTable().ajax.reload();
                     $('#occtax_service_search_taxon_form input[name="token"]').val(tData.token).change();
                     $('#occtax_results_taxon_table').DataTable().ajax.reload();
+                    $('#occtax_service_search_maille_form_m01 input[name="token"]').val(tData.token).change();
+                    $('#occtax_results_maille_table_m01').DataTable().ajax.reload();
                     $('#occtax_service_search_maille_form_m02 input[name="token"]').val(tData.token).change();
                     $('#occtax_results_maille_table_m02').DataTable().ajax.reload();
+                    //$('#occtax_service_search_maille_form_m05 input[name="token"]').val(tData.token).change();
+                    //$('#occtax_results_maille_table_m05').DataTable().ajax.reload();
                     $('#occtax_service_search_maille_form_m10 input[name="token"]').val(tData.token).change();
                     $('#occtax_results_maille_table_m10').DataTable().ajax.reload();
                     $('#occtax_service_search_form input[name="token"]').val(tData.token).change();
@@ -1275,7 +1306,9 @@ OccTax.events.on({
           clearSpatialSearch();
           OccTax.emptyDrawqueryLayer('queryLayer');
           try{
+            OccTax.events.triggerEvent('mailledatareceived_' + 'm01', {'results':null});
             OccTax.events.triggerEvent('mailledatareceived_' + 'm02', {'results':null});
+            //OccTax.events.triggerEvent('mailledatareceived_' + 'm05', {'results':null});
             OccTax.events.triggerEvent('mailledatareceived_' + 'm10', {'results':null});
             OccTax.events.triggerEvent('observationdatareceived', {'results':null});
           }catch(e){
@@ -1293,7 +1326,9 @@ OccTax.events.on({
 
       addResultsStatsTable();
       addResultsTaxonTable();
+      addResultsMailleTable('m01');
       addResultsMailleTable('m02');
+      //addResultsMailleTable('m05');
       addResultsMailleTable('m10');
       addResultsObservationTable();
 
@@ -1310,13 +1345,23 @@ OccTax.events.on({
         var the_features = OccTax.getResultFeatures( self.val());
 
         // For mailles, add features to draw the underlying maille
-        if( self.val() == 'm02' || self.val() == 'm10' ){
+        if( self.val() == 'm01' || self.val() == 'm02' || self.val() == 'm05' || self.val() == 'm10' ){
           var sq_features = OccTax.getResultFeatures( self.val());
           if(sq_features){
             var square = 2000;
             if(self.val() == 'm10'){
               square = 10000;
             }
+            if(self.val() == 'm01'){
+              square = 1000;
+            }
+            if(self.val() == 'm02'){
+              square = 2000;
+            }
+            if(self.val() == 'm05'){
+              square = 5000;
+            }
+
             for(var i=0, len=sq_features.length; i<len; i++){
               var f = sq_features[i];
               f.fid += 'sq';
@@ -1346,9 +1391,15 @@ OccTax.events.on({
 
           // Draw geometries corresponding to displayed tab
           var drawButton = 'occtax_results_draw_maille_m02';
+          if(tid == 'occtax_results_maille_table_tab_m01'){
+            drawButton = 'occtax_results_draw_maille_m01';
+          }
           if(tid == 'occtax_results_maille_table_tab_m02'){
             drawButton = 'occtax_results_draw_maille_m02';
           }
+          //if(tid == 'occtax_results_maille_table_tab_m05'){
+            //drawButton = 'occtax_results_draw_maille_m05';
+          //}
           if(tid == 'occtax_results_maille_table_tab_m10'){
             drawButton = 'occtax_results_draw_maille_m10';
           }

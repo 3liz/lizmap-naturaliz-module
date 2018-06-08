@@ -118,10 +118,20 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
             'type_info_geo' => "String",
         ),
 
+        'maille_01' => array(
+            'cle_obs' => "Integer",
+            'code_maille' => "String",
+        ),
+
         'maille_02' => array(
             'cle_obs' => "Integer",
             'code_maille' => "String",
         ),
+
+        //'maille_05' => array(
+            //'cle_obs' => "Integer",
+            //'code_maille' => "String",
+        //),
 
         'espace_naturel' => array(
             'cle_obs' => "Integer",
@@ -466,6 +476,30 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         return $result;
     }
 
+    protected function getMaille05($response='result') {
+
+        $cnx = jDb::getConnection();
+        $sql = " SELECT DISTINCT lm.cle_obs, lm.code_maille,";
+        $sql.= " m.version_ref, m.nom_ref, lm.type_info_geo";
+        $sql.= " FROM localisation_maille_05 AS lm";
+        $sql.= " INNER JOIN maille_05 m ON lm.code_maille = m.code_maille";
+        $sql.= " INNER JOIN ( ";
+        $sql.= $this->sql;
+        $sql.= " ) AS foo ON foo.cle_obs = lm.cle_obs";
+
+        // Keep only data where diffusion is possible
+        if( !jAcl2::check("visualisation.donnees.brutes") ){
+            $sql.= " AND ( foo.diffusion ? 'm05' )";
+            $sql.= " AND foo.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
+        }
+
+        if( $response == 'sql' )
+            $result = $sql;
+        else
+            $result = $cnx->query( $sql );
+        return $result;
+    }
+
     protected function getMaille02($response='result') {
 
         $cnx = jDb::getConnection();
@@ -480,6 +514,30 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         // Keep only data where diffusion is possible
         if( !jAcl2::check("visualisation.donnees.brutes") ){
             $sql.= " AND ( foo.diffusion ? 'm02' )";
+            $sql.= " AND foo.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
+        }
+
+        if( $response == 'sql' )
+            $result = $sql;
+        else
+            $result = $cnx->query( $sql );
+        return $result;
+    }
+
+    protected function getMaille01($response='result') {
+
+        $cnx = jDb::getConnection();
+        $sql = " SELECT DISTINCT lm.cle_obs, lm.code_maille,";
+        $sql.= " m.version_ref, m.nom_ref, lm.type_info_geo";
+        $sql.= " FROM localisation_maille_01 AS lm";
+        $sql.= " INNER JOIN maille_01 m ON lm.code_maille = m.code_maille";
+        $sql.= " INNER JOIN ( ";
+        $sql.= $this->sql;
+        $sql.= " ) AS foo ON foo.cle_obs = lm.cle_obs";
+
+        // Keep only data where diffusion is possible
+        if( !jAcl2::check("visualisation.donnees.brutes") ){
+            $sql.= " AND ( foo.diffusion ? 'm01' )";
             $sql.= " AND foo.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
         }
 
@@ -582,8 +640,14 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
             case 'maille_10':
                 $rs = $this->getMaille10($response);
                 break;
+            case 'maille_05':
+                $rs = $this->getMaille05($response);
+                break;
             case 'maille_02':
                 $rs = $this->getMaille02($response);
+                break;
+            case 'maille_01':
+                $rs = $this->getMaille01($response);
                 break;
             case 'espace_naturel':
                 $rs = $this->getEspaceNaturel($response);

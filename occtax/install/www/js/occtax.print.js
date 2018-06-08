@@ -179,6 +179,14 @@ lizMap.events.on({
         // Occtax specific parameters
         var searchForm = $('#occtax_service_search_maille_form_m02');
         var datatype = 'm02';
+        if( $('#occtax_results_maille_table_div_m01.active').length > 0 ){
+            var searchForm = $('#occtax_service_search_maille_form_m01');
+            var datatype = 'm01';
+        }
+        //if( $('#occtax_results_maille_table_div_m05.active').length > 0 ){
+            //var searchForm = $('#occtax_service_search_maille_form_m05');
+            //var datatype = 'm05';
+        //}
         if( $('#occtax_results_maille_table_div_m10.active').length > 0 ){
             var searchForm = $('#occtax_service_search_maille_form_m10');
             var datatype = 'm10';
