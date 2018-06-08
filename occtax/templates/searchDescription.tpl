@@ -20,9 +20,12 @@
 </p>
 {/ifnotacl2}
 
+
+{assign $nb = count($legend_classes)}
+{if $nb > 0}
 <b>{@occtax~search.legende.mailles.title@}</b>
 <table class="occtax-legend-table">
-    {assign $nb = count($legend_classes)}
+
     {assign $min = 3}
     {assign $max = 9}
     {assign $inter = $max - $min}
@@ -40,3 +43,4 @@
     {assign $x = $x +1}
     {/foreach}
 </table>
+{/if}

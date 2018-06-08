@@ -114,6 +114,15 @@ class lizmapServiceCtrl extends serviceCtrl {
 
     $url = $this->services->wmsServerURL.'?';
 
+    $localConfig = jApp::configPath('localconfig.ini.php');
+    $ini = new jIniFileModifier($localConfig);
+
+    $mailles_a_utiliser = $ini->getValue('mailles_a_utiliser', 'occtax');
+    if( !$mailles_a_utiliser or empty(trim($mailles_a_utiliser)) ){
+        $mailles_a_utiliser = 'maille_02,maille_10';
+    }
+    $mailles_a_utiliser = array_map('trim', explode(',', $mailles_a_utiliser));
+
     // Create temporary project from template if needed
     // And modify layers datasource via passed token and datatype
     $token = $this->params['token'];
@@ -121,9 +130,9 @@ class lizmapServiceCtrl extends serviceCtrl {
     $dynamic = Null;
     if( $token and $datatype ) {
 
-        if( !jAcl2::check("visualisation.donnees.brutes") and $datatype == 'b' )
+        if( !jAcl2::check("visualisation.donnees.brutes") and $datatype == 'b' and in_array('maille_01', $mailles_a_utiliser) )
             $datatype = 'm01';
-        if( !jAcl2::check("visualisation.donnees.maille_01") and $datatype == 'm01' )
+        if( !jAcl2::check("visualisation.donnees.maille_01") and $datatype == 'm01' and in_array('maille_02', $mailles_a_utiliser))
             $datatype = 'm02';
 
         // Get source project params
@@ -149,11 +158,11 @@ class lizmapServiceCtrl extends serviceCtrl {
                 jClasses::inc('occtax~occtaxSearchObservationMaille10');
                 $occtaxSearch = new occtaxSearchObservationMaille10( $token, null );
             }
-            //if( $datatype == 'm05' ){
+            //elseif( $datatype == 'm05' ){
                 //jClasses::inc('occtax~occtaxSearchObservationMaille05');
                 //$occtaxSearch = new occtaxSearchObservationMaille05( $token, null );
             //}
-            if( $datatype == 'm02' ){
+            elseif( $datatype == 'm02' ){
                 jClasses::inc('occtax~occtaxSearchObservationMaille02');
                 $occtaxSearch = new occtaxSearchObservationMaille02( $token, null );
             }
@@ -195,7 +204,7 @@ class lizmapServiceCtrl extends serviceCtrl {
 
             // Replace width of square under maille for maille 10
             if( $datatype == 'm10' or $datatype == 'm02' or $datatype == 'm01'){
-                $mint = (int)preg_replace($datatype, 'm0?', '');
+                $mint = (int)preg_replace('#m0?#', '', $datatype);
                 $newProjectContent = str_replace(
                     '<prop k="size_dd_expression" v="2000"/>',
                     '<prop k="size_dd_expression" v="'.$mint.'000"/>',
@@ -384,8 +393,6 @@ class lizmapServiceCtrl extends serviceCtrl {
     $rep->content = $data;
     $rep->doDownload  =  false;
 
-    $localConfig = jApp::configPath('localconfig.ini.php');
-    $ini = new jIniFileModifier($localConfig);
     $appName = $ini->getValue('projectName', 'occtax');
     $rep->outputFileName  =  $appName . ' - impression des résultats' . '.' . $this->params['format'];
 
