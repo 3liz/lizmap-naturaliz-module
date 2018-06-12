@@ -109,7 +109,7 @@ lizMap.events.on({
       // Add table vector layer without geom
       if( pTableVectorLayers.length > 0 ) {
           $.each( pTableVectorLayers, function( i, layerId ){
-              var aConfig = getLayerConfigById( layerId );
+              var aConfig = lizMap.getLayerConfigById( layerId );
               if( aConfig ) {
                   var layerName = aConfig[0];
                   var layerConfig = aConfig[1];
