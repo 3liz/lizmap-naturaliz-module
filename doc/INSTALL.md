@@ -614,10 +614,9 @@ nano lizmap/var/config/localconfig.ini.php
 
 [simple_urlengine_entrypoints]
 index="@classic"
-admin="jacl2db~*@classic, jacl2db_admin~*@classic, jauthdb_admin~*@classic, master_admin~*@classic, admin~*@classic, jauth~*@classic, occtax_admin~*@classic"
-
+admin="jacl2db~*@classic, jacl2db_admin~*@classic, jauthdb_admin~*@classic, master_admin~*@classic, admin~*@classic, jcommunity~*@classic, occtax_admin~*@classic"
 # Si vous avez aussi activé le module mascarine, vous devez aussi l'ajouter, pour avoir
-admin="jacl2db~*@classic, jacl2db_admin~*@classic, jauthdb_admin~*@classic, master_admin~*@classic, admin~*@classic, jauth~*@classic, occtax_admin~*@classic, mascarine_admin~*@classic"
+admin="jacl2db~*@classic, jacl2db_admin~*@classic, jauthdb_admin~*@classic, master_admin~*@classic, admin~*@classic, jcommunity~*@classic, occtax_admin~*@classic, mascarine_admin~*@classic"
 
 ```
 
