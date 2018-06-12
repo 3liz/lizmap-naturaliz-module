@@ -16,7 +16,13 @@ lizMap.events.on({
               if( t.composerMap == -1 || ('map'+t.composerMap) == dragCtrl.layout.mapId )
                 return t.vectorLayer;
           });
+      // Print Extent
       var extent = dragCtrl.layer.features[0].geometry.getBounds();
+      // Projection code and reverseAxisOrder
+      var projCode = map.projection.getCode();
+      var reverseAxisOrder = (OpenLayers.Projection.defaults[projCode] && OpenLayers.Projection.defaults[projCode].yx);
+
+      // Build URL
       var url = OpenLayers.Util.urlAppend(lizUrls.wms
           ,OpenLayers.Util.getParameterString(lizUrls.params)
           );
@@ -25,10 +31,10 @@ lizMap.events.on({
       url += '&VERSION=1.3.0&REQUEST=GetPrint';
       url += '&FORMAT='+$('#print-format').val();
       url += '&EXCEPTIONS=application/vnd.ogc.se_inimage&TRANSPARENT=true';
-      url += '&SRS='+map.projection;
+      url += '&SRS='+projCode;
       url += '&DPI='+$('#print-dpi').val();
       url += '&TEMPLATE='+pTemplate.title;
-      url += '&'+dragCtrl.layout.mapId+':extent='+extent;
+      url += '&'+dragCtrl.layout.mapId+':extent='+extent.toBBOX(null, reverseAxisOrder);
       //url += '&'+dragCtrl.layout.mapId+':rotation=0';
       var scale = $('#print-scale').val();
       url += '&'+dragCtrl.layout.mapId+':scale='+scale;
@@ -89,21 +95,20 @@ lizMap.events.on({
         var exbl = externalBaselayersReplacement[activeBaseLayerName];
         if( exbl in config.layers ) {
             var activeBaseLayerConfig = config.layers[exbl];
-            if ( 'id' in activeBaseLayerConfig && 'abstract' in activeBaseLayerConfig ) {
-                if ( 'useLayerIDs' in config.options && config.options.useLayerIDs == 'True' )
+            if ( 'id' in activeBaseLayerConfig && 'useLayerIDs' in config.options && config.options.useLayerIDs == 'True' ){
                     printLayers.push(activeBaseLayerConfig.id);
                 else
                     printLayers.push(exbl);
+            }
                 styleLayers.push('default');
         opacityLayers.push(255);
             }
         }
-      }
 
       // Add table vector layer without geom
       if( pTableVectorLayers.length > 0 ) {
           $.each( pTableVectorLayers, function( i, layerId ){
-              var aConfig = lizMap.getLayerConfigById( layerId );
+              var aConfig = getLayerConfigById( layerId );
               if( aConfig ) {
                   var layerName = aConfig[0];
                   var layerConfig = aConfig[1];
@@ -122,6 +127,7 @@ lizMap.events.on({
       if ( 'qgisServerVersion' in config.options && config.options.qgisServerVersion != '2.14' ) {
         printLayers.reverse();
         styleLayers.reverse();
+        opacityLayers.reverse();
       }
 
       url += '&'+dragCtrl.layout.mapId+':LAYERS='+printLayers.join(',');
@@ -133,9 +139,15 @@ lizMap.events.on({
         var oExtent = new OpenLayers.Bounds(Number(bbox[0]),Number(bbox[1]),Number(bbox[2]),Number(bbox[3]));
         url += '&'+dragCtrl.layout.overviewId+':extent='+oExtent;
         url += '&'+dragCtrl.layout.overviewId+':LAYERS=Overview';
+        if ( 'qgisServerVersion' in config.options && config.options.qgisServerVersion != '2.14' ) {
+            printLayers.push('Overview');
+            styleLayers.push('default');
+            opacityLayers.push(255);
+        } else {
         printLayers.unshift('Overview');
         styleLayers.unshift('default');
         opacityLayers.unshift(255);
+      }
       }
       url += '&LAYERS='+printLayers.join(',');
       url += '&STYLES='+styleLayers.join(',');
