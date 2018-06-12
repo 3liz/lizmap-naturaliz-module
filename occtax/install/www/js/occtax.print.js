@@ -96,14 +96,15 @@ lizMap.events.on({
         if( exbl in config.layers ) {
             var activeBaseLayerConfig = config.layers[exbl];
             if ( 'id' in activeBaseLayerConfig && 'useLayerIDs' in config.options && config.options.useLayerIDs == 'True' ){
-                    printLayers.push(activeBaseLayerConfig.id);
-                else
-                    printLayers.push(exbl);
+                printLayers.push(activeBaseLayerConfig.id);
             }
-                styleLayers.push('default');
-        opacityLayers.push(255);
+            else{
+                printLayers.push(exbl);
             }
+            styleLayers.push('default');
+            opacityLayers.push(255);
         }
+      }
 
       // Add table vector layer without geom
       if( pTableVectorLayers.length > 0 ) {
