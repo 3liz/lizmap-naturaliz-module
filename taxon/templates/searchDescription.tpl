@@ -1,5 +1,5 @@
-<ul>
+<span>
 {foreach $filters as $k=>$v}
-    <li><b>{@taxon~search.input.$k@}</b>  {$v}</li>
+- <b>{@taxon~search.input.$k@}</b>  {$v}</br>
 {/foreach}
-</ul>
+</span>

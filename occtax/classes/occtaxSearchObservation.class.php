@@ -256,19 +256,34 @@ class occtaxSearchObservation extends occtaxSearch {
         $description = '';
         $params = $this->getParams();
         if ( $params ) {
+
+            // Get description for the other filter via parent class
+            $parent_description = parent::getSearchDescription($format, $drawLegend);
+
             // Get search description for TAXON list
             if ( count($this->taxon_params) > 0 ){
                 $token = $params['search_token'];
                 jClasses::inc('taxon~taxonSearch');
                 $taxonSearch = new taxonSearch( $token );
                 $description.= $taxonSearch->getSearchDescription();
+
+                $mat = array();
+                $test = preg_match('#^' . jLocale::get('occtax~search.description.no.filters') . '#', $parent_description, $mat);
+                if( !$test ){
+                    $description.= $parent_description;
+                }else{
+                    $description.= preg_replace('#^' . jLocale::get('occtax~search.description.no.filters') . '#', '', $parent_description);
+                }
+            }else{
+                $description.= $parent_description;
             }
-            // Get description for the other filter via parent class
-            $description.= parent::getSearchDescription($format, $drawLegend);
+
+
         }
+
         if( $format=='html' ){
             $titre = jLocale::get('occtax~search.description.active.filters');
-            $description = "<b>$titre</b><br/>" . $description;
+            $description = "<b>$titre</b> :<br/>" . $description;
         }
 
         return $description;
