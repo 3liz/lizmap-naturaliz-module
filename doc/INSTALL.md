@@ -573,6 +573,25 @@ ALTER ROLE naturaliz SET search_path TO taxon,occtax,gestion,mascarine,sig,publi
 ```
 
 
+Pour l'utilisateur lizmap qui n'est pas superuser mais a les droits sur la base de données Lizmap (création, suppression de tables, schéma, etc.)
+
+```
+-- Ajout des droits sur les objets de la base pour naturaliz
+GRANT CONNECT ON DATABASE $DBNAME TO lizmap;
+GRANT ALL PRIVILEGES ON SCHEMA public,taxon,sig,occtax TO lizmap;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public,taxon,sig,occtax TO lizmap;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public,occtax,sig,taxon TO lizmap;
+GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public,occtax,sig,taxon TO lizmap;
+ALTER ROLE lizmap SET search_path TO taxon,occtax,sig,public;
+
+-- Pour le module gestion (optionnel)
+GRANT ALL PRIVILEGES ON SCHEMA gestion TO lizmap;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA gestion TO lizmap;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA gestion TO lizmap;
+GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA gestion TO lizmap;
+ALTER ROLE lizmap SET search_path TO taxon,occtax,gestion,sig,public;
+```
+
 
 * puis modifier le fichier de configuration des profils pour remplacer l'utilisateur "postgres" par l'utilisateur avec droits limités "naturaliz":
 
