@@ -193,7 +193,7 @@ BEGIN
     -- on fait attention ici de mettre les valeurs dans l'ordre pour faciliter la lecture de l'objet json_note
     IF p_contexte = 'sensibilite' THEN
         -- sensibilite : Aucune diffusion > département > dép & maille 10 > dep, mailles, en, com, znieff > maille 2 > maille 1 > précision max
-        json_note := '{"4": 1, "3": 2, "2": 3, "1": 4, "m02": 5, "m02": 6, "0": 7 }'; -- sensibilite
+        json_note := '{"4": 1, "3": 2, "2": 3, "1": 4, "m02": 5, "m01": 6, "0": 7 }'; -- sensibilite
     ELSE
         -- validation: invalide > douteux > non évalué > non réalisable > probable > certain
         json_note := '{"4": 1, "3": 2, "6": 3, "5": 4, "2": 5, "1": 6 }';
