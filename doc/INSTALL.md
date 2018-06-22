@@ -24,7 +24,7 @@ Vous pouvez le faire via l'outil git, en se connectant avec vos identifiants de 
 
 Dans l'exemple suivant, nous utilisons la plateforme Gitlab de 3liz, avec accès https: https://projects.3liz.org/clients/naturaliz-reunion.git
 
-```
+```bash
 cd /root/
 git clone https://projects.3liz.org/clients/naturaliz-reunion.git naturaliz
 # copier les modules dans le répertoire lizmap-modules de lizmap
@@ -60,7 +60,7 @@ Pour le module mascarine:
 
 Voir l'exemple localconfig.ini.php.dist à la racine de ce dépôt.
 
-```
+```bash
 cd /srv/lizmap_web_client/
 cp lizmap/lizmap-modules/localconfig.ini.php.dist lizmap/var/config/localconfig.ini.php
 nano lizmap/var/config/localconfig.ini.php # Faire les modifications nécessaires
@@ -68,7 +68,7 @@ nano lizmap/var/config/localconfig.ini.php # Faire les modifications nécessaire
 
 Exemple de contenu:
 
-```
+```ini
 ;<?php die(''); ?>
 ;for security reasons , don't remove or modify the first line
 
@@ -172,7 +172,7 @@ Dans la section [jdb:jauth], modifier les variables "user" et "password" pour ut
 Si vous avez installé Lizmap via **lizmap-box**, vous devez remplacer l'utilisateur *lizmap* par *postgres* et remplacer le mot de passe par celui entré pour postgres.
 
 
-```
+```bash
 cd /srv/lizmap_web_client/
 nano lizmap/var/config/profiles.ini.php
 ```
@@ -181,7 +181,7 @@ nano lizmap/var/config/profiles.ini.php
 
 Modifiez les droits pour que l'application puisse écrire dans les répertoires temporaires, puis lancer l'installateur de l'application
 
-```
+```bash
 cd /srv/lizmap_web_client/
 lizmap/install/set_rights.sh
 php lizmap/install/installer.php
@@ -247,25 +247,25 @@ Le fichier des listes rouges, par exemple *LR_Resultats_Guadeloupe_complet_expor
 
 * Colonnes:
 
-  ```
-  cd_nom integer NOT NULL, -- Identifiant unique du nom scientifique
-  cd_ref integer, -- Identifiant (CD_NOM) du taxon de référence (nom retenu)
-  nom_scientifique text,
-  auteur text,
-  nom_commun text,
-  rang text,
-  famille text,
-  endemisme text,
-  population text,
-  commentaire text,
-  categorie_france text,
-  criteres_france text,
-  tendance text,
-  liste_rouge_source text,
-  annee_publi text,
-  categorie_lr_europe text,
-  categorie_lr_monde text
-  ```
+```sql
+cd_nom integer NOT NULL, -- Identifiant unique du nom scientifique
+cd_ref integer, -- Identifiant (CD_NOM) du taxon de référence (nom retenu)
+nom_scientifique text,
+auteur text,
+nom_commun text,
+rang text,
+famille text,
+endemisme text,
+population text,
+commentaire text,
+categorie_france text,
+criteres_france text,
+tendance text,
+liste_rouge_source text,
+annee_publi text,
+categorie_lr_europe text,
+categorie_lr_monde text
+```
 
 #### Protections
 
@@ -274,7 +274,7 @@ Exemple : PROTECTION_ESPECES_11.csv
 On doit spécifier dans le fichier lizmap/var/config/localconfig.ini.php la liste des codes des arrêtés sur les protections des espèces, par exemple:
 * Guadeloupe
 
-```
+```ini
 code_arrete_protection_simple=""
 code_arrete_protection_communautaire="CDH2,CDH4,CDH5,CDO1,CDO21,CDO22,CDO31,CDO32"
 code_arrete_protection_internationale="CCA,CCB,CCC,CCD,IAAP"
@@ -283,7 +283,7 @@ code_arrete_protection_nationale="DV971,GUAI2,GUAM1,GUAO1,GUARA1,IBE1,IBE2,IBE3,
 
 * Réunion
 
-```
+```ini
 code_arrete_protection_simple="agri1,agri2,Bubul1,Bulbul2,Bulbul3,Bulbul4,Bulbul5,Bulbul6,Bulbul9,corbasi1,phelsuma1,phelsuma2,phelsuma3,phelsuma4,phelsuma5,PV97,REUEEA,REUEEI,REUP"
 code_arrete_protection_internationale="CCA,CCB,CCC,CCD,IAAP,IAO2,IAO3,IAO4,IBA2,IBA3,IBE1,IBE2,IBE3,IBOAE,IBO1,IBO2,IOS5"
 code_arrete_protection_communautaire="CDH2,CDH4,CDH5,CDO1,CDO21,CDO22,CDO31,CDO32"
@@ -302,15 +302,15 @@ Attention, on doit convertir le fichier Excel ( ex: PROTECTION_ESPECES_11.xls ) 
 
 * Colonnes:
 
-  ```
-  cd_nom text,
-  cd_protection text,
-  nom_cite text,
-  syn_cite text,
-  nom_francais_cite text,
-  precisions text,
-  cd_nom_cite text
-  ```
+```sql
+cd_nom text,
+cd_protection text,
+nom_cite text,
+syn_cite text,
+nom_francais_cite text,
+precisions text,
+cd_nom_cite text
+```
 
 #### Noms vernaculaires
 
@@ -320,7 +320,7 @@ Depuis la version 11 du TAXREF, il existe un fichier qui contient les noms verna
 
 Une fois les données récupérées, vous pouvez l'import de données via la commande suivante:
 
-```
+```bash
 # Vérifier les codes d'arrêtés de protection dans la configuration locale
 nano lizmap/var/config/localconfig.ini.php
 
@@ -341,7 +341,7 @@ Parfois, il peut être utile de modifier certaines données du TAXREF (par exemp
 
 Vous pouvez voir l'aide de la commande via:
 
-```
+```bash
 php lizmap/scripts/script.php help taxon~import:taxref
 ```
 
@@ -386,8 +386,7 @@ Deux scripts permettent d'importer ces données dans la base, un pour les donné
 
 Pour que l'import des données via les serveurs WFS fonctionne, il faut absolument préciser dans le fichier **lizmap/var/config/localconfig.ini.php** les paramètres suivants dans la partie **[occtax]**
 
-```
-
+```ini
 ; typename WFS pour les imports
 znieff1_terre=reu_znieff1
 znieff1_mer=reu_znieff1_mer
@@ -398,10 +397,10 @@ znieff2_mer=reu_znieff2_mer
 
 Lancer l'import des données via les commandes suivantes:
 
-```
+```bash
 cd /srv/lizmap_web_client/
 # Installation de gdal-bin pour disposer de l'outil ogr2ogr utilisé par le script d'import
-apt-get install gdal-bin
+apt install gdal-bin
 
 # Import des données depuis les Shapefile pour les communes, mailles 1 et 2.
 # Import optionnel des réserves naturelles nationales et des habitats
@@ -434,7 +433,7 @@ php lizmap/scripts/script.php mascarine~import:gdalogr "/tmp/referentiels/sig/DE
 
 Suppression des référentiels géographiques
 
-```
+```bash
 # On peut supprimer tout ou partie des données (avant réimport par exemple), via la commande purge, en passant une liste des tables séparées par virgule
 php lizmap/scripts/script.php occtax~import:purge -sig "commune,departement,maille_01,maille_02,maille_05,maille_10,espace_naturel,masse_eau" -occtax "habitat"
 # ou pour une table par exemple
@@ -444,7 +443,7 @@ php lizmap/scripts/script.php occtax~import:purge -sig "espace_naturel"
 
 NB: Pour les mailles 02, la donnée ne provient pas des sites du MNHN. Il faut appliquer une requête sur les données pour pouvoir modifier le code et qu'il ait la même structure que les données
 
-```
+```sql
 WITH a AS (
 SELECT code_maille, nom_maille,
 concat(
@@ -484,7 +483,7 @@ Pour les départements, il faut choisir quelle géométrie est utilisée. Par d�
 * importer le fichier SHP de la zone économique exclusive dans la base de données, schéma sig, avec le nom de table "zone_economique_exclusive"
 * lancer la requête SQL suivante pour ajouter cette géométrie dans la table des départements
 
-```
+```sql
 DELETE FROM sig.departement;
 INSERT INTO sig.departement
 (code_departement, nom_departement, annee_ref, geom)
@@ -503,7 +502,7 @@ La base est installée et les données importées. Vous pouvez maintenant:
 * créer un utilisateur **naturaliz**
 * donner les **droits** d'accès à la base de données, aux tables et aux fonctions.
 
-```
+```bash
 su postgres
 
 # informations de connexion A ADAPTER
@@ -546,7 +545,7 @@ exit
 
 On peut aussi faire cela plus directement ainsi
 
-```
+```sql
 -- Ajout des droits sur les objets de la base pour naturaliz
 GRANT CONNECT ON DATABASE $DBNAME TO naturaliz;
 GRANT USAGE ON SCHEMA public,taxon,sig,occtax TO naturaliz;
@@ -575,7 +574,7 @@ ALTER ROLE naturaliz SET search_path TO taxon,occtax,gestion,mascarine,sig,publi
 
 Pour l'utilisateur lizmap qui n'est pas superuser mais a les droits sur la base de données Lizmap (création, suppression de tables, schéma, etc.)
 
-```
+```sql
 -- Ajout des droits sur les objets de la base pour naturaliz
 GRANT CONNECT ON DATABASE $DBNAME TO lizmap;
 GRANT ALL PRIVILEGES ON SCHEMA public,taxon,sig,occtax TO lizmap;
@@ -595,7 +594,7 @@ ALTER ROLE lizmap SET search_path TO taxon,occtax,gestion,sig,public;
 
 * puis modifier le fichier de configuration des profils pour remplacer l'utilisateur "postgres" par l'utilisateur avec droits limités "naturaliz":
 
-```
+```bash
 cd /srv/lizmap_web_client/
 
 # modifier le paramètre user et password de la section [jdb:jauth] du fichier de profiles
@@ -607,19 +606,22 @@ lizmap/install/set_rights.sh www-data www-data
 
 **IMPORTANT** L'application utilise un service PostgreSQL pour certaines fonctionnalités, comme l'export PDF des cartes. Vous devez donc configurer ce service sur le serveur.
 
-```
+```bash
 nano /etc/postgresql-common/pg_service.conf
+```
 
 # y mettre le contenu suivant, en adaptant bien sûr le nom de la base de données et mot de passe
-
+```ini
 [naturaliz]
 host=localhost
 dbname=lizmap
 user=naturaliz
 port=5432
 password=naturaliz
+```
 
 # tester via
+```bash
 psql service=naturaliz
 ```
 
@@ -627,7 +629,7 @@ psql service=naturaliz
 
 Les modules **occtax_admin** et **mascarine_admin** doivent être déclarés dans la configuration de Lizmap, pour permettre leur visualisation dans l'interface graphique. Pour cela, il faut modifier le fichier **lizmap/var/config/localconfig.ini.php** et ajouter la configuration suivante au début du fichier
 
-```
+```bash
 cd /srv/lizmap_web_client/
 nano lizmap/var/config/localconfig.ini.php
 
@@ -653,13 +655,13 @@ en modifiant le nom du fichier pour le plugin auth.
 
 dans lizmap/var/config/admin/config.ini.php :
 
-```
+```ini
 [coordplugins]
 auth="admin/authldap.coord.ini.php"
 ```
 et dans lizmap/var/config/index/config.ini.php
 
-```
+```ini
 [coordplugins]
 auth="index/authldap.coord.ini.php"
 ```
@@ -667,7 +669,7 @@ auth="index/authldap.coord.ini.php"
 Il faut aussi installer le certificat racine SSL du serveur ldap, sur le serveur
 apache/php, sinon la connexion au ldap ne pourra se faire. En tant que root:
 
-```
+```bash
 cp lizmap/install/png_ldap.crt /usr/local/share/ca-certificates
 update-ca-certificates
 service nginx restart
@@ -679,7 +681,7 @@ service nginx restart
 On peut augmenter le temps de session PHP pour éviter des déconnexion suites à une inactivité.
 Par exemple
 
-```
+```bash
 nano /etc/php5/fpm/php.ini
 
 # modifier la variable session.gc_maxlifetime. Par exemple ici à 7H
@@ -687,5 +689,4 @@ session.gc_maxlifetime = 25200
 
 # Enregistrer et recharger
 service php5-fpm reload
-
 ```
