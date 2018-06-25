@@ -236,14 +236,15 @@ Les fichiers concernant TAXREF, les menaces (listes rouges) et les protections s
 Le fichier officiel du taxref, par exemple *TAXREFv11.txt*
 
 * Source: https://inpn.mnhn.fr/telechargement/referentielEspece/taxref/11.0/menu
-* Lien: https://inpn.mnhn.fr/telechargement/referentielEspece/taxref/11.0/zip
 
 #### Menaces (listes rouges)
 
-Le fichier des listes rouges, par exemple *LR_Resultats_Guadeloupe_complet_export.csv*.  On utilise pour remplir la colonne menace de la table t_complement le champ *CATEGORIE_FR* et non *CATEGORIE_MONDE*
+Le fichier des listes rouges, par exemple `LR_Resultats_Guadeloupe_complet_export.csv`.  On utilise pour remplir la colonne menace de la table `t_complement` le champ `CATEGORIE_FR` et non `CATEGORIE_MONDE`.
 
 * Source: https://inpn.mnhn.fr/telechargement/acces-par-thematique/listes-rouges# Aller dans *Liste rouge Réunion* puis cliquer sur *Publication et résultats* puis sur *Réunion: consulter tous les résultats* Puis *Exporter les données: CSV*
-* Lien (exemple, peut changer): https://inpn.mnhn.fr/telechargement/acces-par-thematique/listes-rouges/FR/territoire/REU?6578706f7274=1&d-7649687-e=1
+* Lien (exemple, peut changer):
+  * https://inpn.mnhn.fr/telechargement/acces-par-thematique/listes-rouges/FR/territoire/REU?6578706f7274=1&d-7649687-e=1 pour la Réunion
+  * https://inpn.mnhn.fr/telechargement/acces-par-thematique/listes-rouges/FR/territoire/GLP?6578706f7274=1&d-7649687-e=1 pour la Guadeloupe
 
 * Colonnes:
 
@@ -269,8 +270,6 @@ categorie_lr_monde text
 
 #### Protections
 
-Exemple : PROTECTION_ESPECES_11.csv
-
 On doit spécifier dans le fichier lizmap/var/config/localconfig.ini.php la liste des codes des arrêtés sur les protections des espèces, par exemple:
 * Guadeloupe
 
@@ -291,7 +290,11 @@ code_arrete_protection_nationale="VP974,NM,NMAMmar2,NM2,NO3,NO4,NO6,NTAA1,NTM1,N
 ```
 
 * Source: https://inpn.mnhn.fr/telechargement/referentielEspece/reglementation
-* Lien: https://inpn.mnhn.fr/telechargement/referentielEspece/reglementation/zip
+
+Télécharger le fichier ZIP `Espèces réglementées : Gargominy, O. & Régnier, C. 2017`
+
+Exemple : `PROTECTION_ESPECES_11.csv`
+
 
 Attention, on doit convertir le fichier Excel ( ex: PROTECTION_ESPECES_11.xls ) au format CSV (ex: PROTECTION_ESPECES_11.csv ). Pour cela, utiliser LibreOffice pour ouvrir le fichier Excel, et "Enregistrer sous" avec les options suivantes:
 * format Texte CSV (.csv)
@@ -300,7 +303,7 @@ Attention, on doit convertir le fichier Excel ( ex: PROTECTION_ESPECES_11.xls ) 
 * Séparateur de texte: guillemet double '"'
 * Conserver la première ligne avec le nom des champs
 
-* Colonnes:
+* Colonnes (dans le CSV, les noms des colonnes sont en majuscules, ce n'est pas grave):
 
 ```sql
 cd_nom text,
