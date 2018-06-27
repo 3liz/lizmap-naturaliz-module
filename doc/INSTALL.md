@@ -18,6 +18,10 @@ Pendant le processus d'installation de l'application, l'utilisateur PostGreSQL s
 
 ## Installer les modules Naturaliz sur une application Lizmap
 
+### Utilisation du compte root
+
+Il est fortement conseillé d'utiliser le compte root et non avec un simple sudo. Par exemple `sudo -E -s`
+
 ### Récupérer les modules
 
 Vous pouvez le faire via l'outil git, en se connectant avec vos identifiants de la plateforme git (Gitlab ou Github). Ou bien vous rendre sur la plateforme, et télécharger au format ZIP, puis coller le ZIP dans le répertoire /root/ et dézipper.
@@ -90,7 +94,7 @@ colonne_locale=reu
 endemicite_description_endemique=Réunion
 endemicite_description_subendemique=Mascareignes
 
-; liste des codes des arr  t  s de protection qui concernent la zone de travail
+; liste des codes des arrêtés de protection qui concernent la zone de travail
 code_arrete_protection_simple="agri1,agri2,Bubul1,Bulbul2,Bulbul3,Bulbul4,Bulbul5,Bulbul6,Bulbul9,corbasi1,phelsuma1,phelsuma2,phelsuma3,phelsuma4,phelsuma5,PV97,REUEEA,REUEEI,REUP"
 code_arrete_protection_internationale="CCA,CCB,CCC,CCD,IAAP,IAO2,IAO3,IAO4,IBA2,IBA3,IBE1,IBE2,IBE3,IBOAE,IBO1,IBO2,IOS5"
 code_arrete_protection_communautaire="CDH2,CDH4,CDH5,CDO1,CDO21,CDO22,CDO31,CDO32"
@@ -317,7 +321,7 @@ cd_nom_cite text
 
 #### Noms vernaculaires
 
-Depuis la version 11 du TAXREF, il existe un fichier qui contient les noms vernaculaires pour les taxons. Pour pouvoir importer ce fichier, il faut préciser via l'option `-taxvern` le chemin du fichier, et préciser le code `iso639_3`. Par exemple 'rcf'
+Depuis la version 11 du TAXREF, il existe un fichier qui contient les noms vernaculaires pour les taxons. Pour pouvoir importer ce fichier, il faut préciser via l'option `-taxvern` le chemin du fichier, et préciser le code `iso639_3`. Par exemple `rcf`
 
 #### Lancer l'import des données TAXREF dans l'application
 
@@ -336,7 +340,7 @@ php lizmap/scripts/script.php taxon~import:taxref -source /tmp/referentiels/taxr
 
 * Le premier paramètre passé est le chemin complet vers le fichier CSV contenant les données.
 * Le 2ème paramètre est le chemin vers le fichier TAXVERN. Si non existant, mettre: non
-* Le 3ème est le code ISO de la langue du TAXVERN à considérer, (champs "iso639_3") par exemple rcf pour la Réunion. Si innaplicable mettre: fra
+* Le 3ème est le code ISO de la langue du TAXVERN à considérer, (champs "iso639_3") par exemple `rcf` pour la Réunion. Si inaplicable mettre: `fra`
 * Le 4ème est le chemin vers le fichier des menaces (taxons sur listes rouges, filtré pour la région concernée).Le 3ème est le fichier contenant les taxon protégés. Vous pouvez pointer vers d'autres chemins de fichiers, et le script se chargera de copier les données dans le répertoire temporaire puis lancera l'import.
 * Le dernier paramètre est la version du fichier TAXREF (7, 8, 9, 10, 11 sont possibles).
 
