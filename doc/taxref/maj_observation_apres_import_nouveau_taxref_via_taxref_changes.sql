@@ -9,8 +9,7 @@ BEGIN;
 
 
 -- Schéma de travail
-DROP SCHEMA IF EXISTS fdw CASCADE;
-CREATE SCHEMA fdw;
+CREATE SCHEMA IF NOT EXISTS fdw;
 
 -- importer le fichier TAXREF_CHANGES
 DROP TABLE IF EXISTS fdw.taxref_changes;
@@ -52,7 +51,8 @@ AND o.cd_nom::text = tc.cd_nom
 
 -- Lancer la requête d'UPDATE des cd_nom de occtax.observation à partir de taxref_changes
 UPDATE occtax.observation AS o
-SET cd_nom =  cd_nom_remplacement::bigint
+SET cd_nom =  cd_nom_remplacement::bigint,
+dee_date_derniere_modification = now()
 FROM fdw.taxref_changes AS tc
 LEFT JOIN fdw.cd_nom_disparus d ON d.cd_nom = tc.cd_nom
 WHERE TRUE
@@ -65,7 +65,8 @@ AND o.cd_nom::text = tc.cd_nom
 -- Lancer la requête d'UPDATE des cd_ref de occtax.observation à partir de TAXREF v8
 -- pour les observations concernées par RETRAIT de cd_nom avec cd_raison_suppresion = 1
 UPDATE occtax.observation AS o
-SET cd_ref = t.cd_ref
+SET cd_ref = t.cd_ref,
+dee_date_derniere_modification = now()
 FROM taxon.taxref AS t
 WHERE  TRUE
 AND t.cd_nom = o.cd_nom
@@ -86,7 +87,9 @@ AND o.cd_ref::text = tc.valeur_init
 -- UPDATE
 UPDATE occtax.observation o
 -- SET cd_ref = tc.valeur_final::bigint -- cd_ref doit aussi être modifié
-SET (cd_nom,cd_ref) = (tc.valeur_final::bigint, tc.valeur_final::bigint)
+SET 
+cd_ref = tc.valeur_final::bigint,
+dee_date_derniere_modification = now()
 FROM fdw.taxref_changes tc
 WHERE TRUE
 AND o.cd_nom::text = tc.cd_nom
@@ -134,8 +137,49 @@ DELETE FROM taxon.taxref_local
 WHERE cd_nom IN ( SELECT DISTINCT cd_nom_local FROM fdw.taxon_local_correspondance )
 ;
 
+-- Mis à jour taxref_local un champ destiné à assurer la traçabilité.
+-- Traitement de la table taxref_local
+-- TODO : a vérifier
+
+-- 1/ Mise à jour de cd_nom_valide pour les taxons locaux désormais intégrés à Taxref
+WITH loc AS (
+	SELECT tl.cd_nom AS cd_nom_old, t.cd_nom AS cd_nom_new, t.cd_ref AS cd_ref_new, tl.lb_nom, tl.nom_vern, t.nom_vern, tl.group2_inpn, t.rang, tl.cd_nom_valide
+	FROM taxon.taxref_local tl
+	INNER JOIN taxon.taxref t USING(lb_nom)
+	)
+UPDATE taxon.taxref_local tl
+SET cd_nom_valide=loc.cd_nom_new
+FROM loc
+WHERE cd_nom=loc.cd_nom_old
+;
+
+-- 2/ Mise à jour de la table occtax.observation en conséquence
+WITH loc AS (
+	SELECT tl.cd_nom AS cd_nom_old, t.cd_nom AS cd_nom_new, t.cd_ref AS cd_ref_new, tl.lb_nom, tl.nom_vern, t.nom_vern, tl.group2_inpn, t.rang, tl.cd_nom_valide
+	FROM taxon.taxref_local tl
+	INNER JOIN taxon.taxref t USING(lb_nom)
+	),
+maj AS (
+	SELECT o.cle_obs,
+	o.cd_nom AS cd_nom_old,
+	loc.cd_nom_new,
+	o.cd_ref AS cd_ref_old,
+	loc.cd_ref_new
+	FROM occtax.observation o
+	INNER JOIN loc ON loc.cd_nom_old=o.cd_nom
+	)
+	
+UPDATE occtax.observation o
+SET cd_nom=maj.cd_nom_new,
+	cd_ref=maj.cd_ref_new, 
+	dee_date_derniere_modification=now()
+FROM maj
+WHERE o.cle_obs=maj.cle_obs
+;
+-------------------------------------------------------------------------
+
 -- Déplacer les observations du cas RETRAIT , raison 3 dans une autre table occtax/observation_taxon_invalide
--- TODO : faire le déplacement = supprimer les observations d'un côté, conserver aussi le jdd_id et le id_origine
+-- TODO : il est plus judicieux de garder les obs concernées et de les mettre en douteuses si besoin. Mettre une nouvelle ligne dans taxref_local si besoin
 CREATE TABLE IF NOT EXISTS occtax.observation_retrait_taxon_cas_3 (
     cle_obs bigint NOT NULL,
     identifiant_permanent text NOT NULL,
@@ -162,6 +206,12 @@ WHERE TRUE
 AND identifiant_permanent IN (
     SELECT DISTINCT identifiant_permanent FROM occtax.observation_retrait_taxon_cas_3
 )
+;
+
+-- Mise à jour du champ version_taxref de occtax.observation
+UPDATE occtax.observation o
+SET version_taxref='11.0'
+WHERE o.cd_nom>0 -- Seulement pour les taxons dans Taxref (pas ceux dans Taxref_local)
 ;
 
 -- todo
