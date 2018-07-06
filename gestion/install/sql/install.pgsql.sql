@@ -39,12 +39,11 @@ CREATE TABLE demande (
     group1_inpn text[],
     group2_inpn text[],
     date_creation date DEFAULT now(),
-    libelle_geom text NOT NULL,
+    libelle_geom text,
     validite_niveau text[] NOT NULL DEFAULT ARRAY['1', '2', '3', '4', '5']::text[]
 
 );
-SELECT AddGeometryColumn('demande', 'geom', {$SRID}, 'GEOMETRY', 2);
-ALTER TABLE demande ALTER COLUMN geom SET NOT NULL;
+SELECT AddGeometryColumn('demande', 'geom', {$SRID}, 'MULTIPOLYGON', 2);
 
 ALTER TABLE demande ADD CONSTRAINT demande_user_login_fk
 FOREIGN KEY (usr_login) REFERENCES jlx_user (usr_login)
