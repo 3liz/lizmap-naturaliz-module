@@ -589,6 +589,9 @@ COMMENT ON COLUMN lien_observation_identifiant_permanent.dee_date_derniere_modif
 
 COMMENT ON COLUMN lien_observation_identifiant_permanent.dee_date_transformation IS 'Date de transformation de la donnée source (DSP ou DSR) en donnée élémentaire d''échange (DEE).';
 
+ALTER TABLE occtax.lien_observation_identifiant_permanent
+ADD CONSTRAINT lien_observation_identifiant__jdd_id_identifiant_origine_id_key UNIQUE (jdd_id, identifiant_origine, identifiant_permanent);
+
 
 -- Table organisme
 CREATE TABLE "organisme" (
