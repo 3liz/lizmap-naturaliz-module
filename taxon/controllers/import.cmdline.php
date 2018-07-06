@@ -28,7 +28,7 @@ class importCtrl extends jControllerCmdLine {
         'taxref' => array(
             '-source' => true,// Chemin complet vers le fichier de données TAXREF au format CSV
             '-taxvern' => true,// Chemin complet vers le fichier de données TAXVERN au format CSV.
-            '-taxvern_iso' => true,// Chemin complet vers le fichier de données TAXVERN au format CSV.
+            '-taxvern_iso' => true,// Langue ISO `fra`, `rcf`
             '-menace' => true, // Chemin complet vers le fichier de menaces (listes rouges) au format CSV
             '-protection' => true, // Chemin complet vers le fichier des espèces protégées au format CSV
             '-version' => true, // Version du fichier Taxref. 11 par défaut
@@ -93,7 +93,7 @@ class importCtrl extends jControllerCmdLine {
         $tmpFolder = sys_get_temp_dir();
         $defaultSourcePath = $tmpFolder . '/TAXREF.txt';
         $taxvernSourcePath = $tmpFolder . '/TAXVERN.txt';
-        $menaceSourcePath = $tmpFolder . '/LR_Resultats_Guadeloupe_complet_export.csv';
+        $menaceSourcePath = $tmpFolder . '/LR_Resultats_Guadeloupe_export.csv';
         $protectionSourcePath = $tmpFolder . '/PROTECTION_ESPECES_11.csv';
         $source = $this->option('-source', $defaultSourcePath );
         $taxvern = $this->option('-taxvern', $taxvernSourcePath );
@@ -203,7 +203,7 @@ class importCtrl extends jControllerCmdLine {
 
         $sqlAfter = $tpl->fetchFromString($sqlTplAfter, 'text');
 
-        // Optionnaly correction sql
+        // Optionally correction sql
         $sqlCorrection = '';
         $cor_sql = $this->option('-correctionsql', '' );
         $cor_csv = $this->option('-correctioncsv', '' );
@@ -224,8 +224,9 @@ class importCtrl extends jControllerCmdLine {
         try {
             $cnx->exec( $sql );
         } catch ( Exception $e ) {
+            jLog::log( 'Error while executing the SQL below:', 'error' );
+            jLog::log($sql, 'error');
             jLog::log( $e->getMessage(), 'error' );
-            jLog::log($sql);
             throw new jException('taxon~script.import.error');
         }
 
