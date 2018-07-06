@@ -59,8 +59,8 @@ class defaultCtrl extends lizMapCtrl {
             $bp = jApp::config()->urlengine['basePath'];
             $rep->addJsLink( $bp.'js/fileUpload/jquery.iframe-transport.js' );
             $rep->addJsLink( $bp.'js/fileUpload/jquery.fileupload.js' );
-            $rep->addJsLink( $bp.'js/occtax.js' );
-            $rep->addJsLink( $bp.'js/occtax.search.js' );
+            $rep->addJsLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/occtax.js')));
+            $rep->addJsLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/occtax.search.js')));
 
             $rep->addHeadContent( '<style>' . $ini->getValue('projectCss', 'occtax') . '</style>');
         }

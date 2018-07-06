@@ -23,9 +23,6 @@ class occtaxModuleInstaller extends jInstallerModule {
             $this->copyFile('config/LISEZ-MOI.geojson.md', $readmeDestinationPath);
         }
 
-        // Copy CSS and JS files
-        $this->copyDirectoryContent('www', jApp::wwwPath());
-
         // Install occtax schema into database if needed
         if ($this->firstDbExec()) {
 

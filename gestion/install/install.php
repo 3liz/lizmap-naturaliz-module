@@ -12,8 +12,6 @@
 class gestionModuleInstaller extends jInstallerModule {
 
     function install() {
-        // Copy www content
-        //$this->copyDirectoryContent('www', jApp::wwwPath());
 
         // Install gestion structure into database if needed
         if ($this->firstDbExec()) {

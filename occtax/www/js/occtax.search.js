@@ -1285,6 +1285,8 @@ OccTax.events.on({
                     var mycontainer = '#occtax_results_stats_table_div';
                     refreshOcctaxDatatableSize(mycontainer);
 
+                }else{
+                  lizMap.addMessage( tData.msg.join('<br/>'), 'error', true );
                 }
             }
         );

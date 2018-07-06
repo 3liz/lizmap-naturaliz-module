@@ -5,40 +5,40 @@
 }
 
 #obs-spatial-query-buttons button.commune {
-    background:url(img/sig/mActionSelectCommune.png) no-repeat 2px 2px #F5F5F5;
+    background:url(getfile?targetmodule=occtax&file=css/img/sig/mActionSelectCommune.png) no-repeat 2px 2px #F5F5F5;
 }
 #obs-spatial-query-buttons button.masse_eau {
-    background:url(img/sig/mActionSelectMasseEau.png) no-repeat 2px 2px #F5F5F5;
+    background:url(getfile?targetmodule=occtax&file=css/img/sig/mActionSelectMasseEau.png) no-repeat 2px 2px #F5F5F5;
 }
 #obs-spatial-query-buttons button.maille {
-    background:url(img/sig/mActionSelect.png) no-repeat 2px 2px #F5F5F5;
+    background:url(getfile?targetmodule=occtax&file=css/img/sig/mActionSelect.png) no-repeat 2px 2px #F5F5F5;
 }
 #obs-spatial-query-buttons button.maille.m01 {
-    background:url(img/sig/mActionSelectM01.png) no-repeat 2px 2px #F5F5F5;
+    background:url(getfile?targetmodule=occtax&file=css/img/sig/mActionSelectM01.png) no-repeat 2px 2px #F5F5F5;
 }
 #obs-spatial-query-buttons button.maille.m02 {
-    background:url(img/sig/mActionSelectM02.png) no-repeat 2px 2px #F5F5F5;
+    background:url(getfile?targetmodule=occtax&file=css/img/sig/mActionSelectM02.png) no-repeat 2px 2px #F5F5F5;
 }
 #obs-spatial-query-buttons button.maille.m05 {
-    background:url(img/sig/mActionSelectM05.png) no-repeat 2px 2px #F5F5F5;
+    background:url(getfile?targetmodule=occtax&file=css/img/sig/mActionSelectM05.png) no-repeat 2px 2px #F5F5F5;
 }
 #obs-spatial-query-buttons button.maille.m10 {
-    background:url(img/sig/mActionSelectM10.png) no-repeat 2px 2px #F5F5F5;
+    background:url(getfile?targetmodule=occtax&file=css/img/sig/mActionSelectM10.png) no-repeat 2px 2px #F5F5F5;
 }
 #obs-spatial-query-buttons button.circle {
-    background:url(img/sig/mActionSelectCircle.png) no-repeat 2px 2px #F5F5F5;
+    background:url(getfile?targetmodule=occtax&file=css/img/sig/mActionSelectCircle.png) no-repeat 2px 2px #F5F5F5;
 }
 #obs-spatial-query-buttons button.polygon {
-    background:url(img/sig/mActionSelectPolygon.png) no-repeat 2px 2px #F5F5F5;
+    background:url(getfile?targetmodule=occtax&file=css/img/sig/mActionSelectPolygon.png) no-repeat 2px 2px #F5F5F5;
 }
 #obs-spatial-query-buttons button.import {
-    background:url(img/sig/mActionSelectUpload.png) no-repeat 2px 2px #F5F5F5;
+    background:url(getfile?targetmodule=occtax&file=css/img/sig/mActionSelectUpload.png) no-repeat 2px 2px #F5F5F5;
 }
 #obs-spatial-query-buttons button.delete {
-    background:url(img/sig/Erase.png) no-repeat 2px 2px #F5F5F5;
+    background:url(getfile?targetmodule=occtax&file=css/img/sig/Erase.png) no-repeat 2px 2px #F5F5F5;
 }
 #obs-spatial-query-buttons button.modify {
-    background:url(img/sig/mActionMoveVertex.png) no-repeat 2px 2px #F5F5F5;
+    background:url(getfile?targetmodule=occtax&file=css/img/sig/mActionMoveVertex.png) no-repeat 2px 2px #F5F5F5;
 }
 
 #div_form_occtax_search_token,
@@ -52,23 +52,23 @@ Left Menu button
 
 /* taxon */
 #mapmenu .nav-list > li.taxon .icon {
-  background-image:url("img/navbar/occtax_navbar.png");
+  background-image:url("getfile?targetmodule=occtax&file=css/img/navbar/occtax_navbar.png");
   background-position: -175px 0px;
 }
 #mapmenu .nav-list > li.taxon.active .icon,
 #mapmenu .nav-list > li.taxon a:hover .icon {
-  background-image:url("img/navbar/occtax_navbar.png");
+  background-image:url("getfile?targetmodule=occtax&file=css/img/navbar/occtax_navbar.png");
   background-position: -150px 0px;
 }
 
 /* occtax */
 #mapmenu .nav-list > li.occtax .icon {
-  background-image:url("img/navbar/occtax_navbar.png");
+  background-image:url("getfile?targetmodule=occtax&file=css/img/navbar/occtax_navbar.png");
   background-position: -175px 0;
 }
 #mapmenu .nav-list > li.occtax.active .icon,
 #mapmenu .nav-list > li.occtax a:hover .icon {
-  background-image:url("img/navbar/occtax_navbar.png");
+  background-image:url("getfile?targetmodule=occtax&file=css/img/navbar/occtax_navbar.png");
   background-position: -150px 0px;
 }
 
@@ -88,15 +88,15 @@ Left Menu button
 */
 
 #mapmenu .nav-list > li.occtax-legal .icon {
-  background-image: url(img/navbar/src/legal-icon-white.png);
+  background-image: url(getfile?targetmodule=occtax&file=css/img/navbar/src/legal-icon-white.png);
 }
 #mapmenu .nav-list > li.occtax-legal.active .icon,
 #mapmenu .nav-list > li.occtax-legal a:hover .icon {
-  background-image: url(img/navbar/src/legal-icon-dark.png);
+  background-image: url(getfile?targetmodule=occtax&file=css/img/navbar/src/legal-icon-dark.png);
 }
 
 #occtax-legal h3 .icon {
-    background-image: url(img/navbar/src/legal-icon-white.png);
+    background-image: url(getfile?targetmodule=occtax&file=css/img/navbar/src/legal-icon-white.png);
 }
 #occtax-legal-content {
     overflow: auto;
@@ -109,39 +109,39 @@ Toolbar buttons
 */
 
 #taxon h3 .icon.search {
-    background-image: url("img/navbar/occtax_navbar.png");
+    background-image: url("getfile?targetmodule=occtax&file=css/img/navbar/occtax_navbar.png");
   background-position: -175px 0px;
 }
 #taxon h3 .icon.description {
-    background-image: url("img/navbar/occtax_navbar.png");
+    background-image: url("getfile?targetmodule=occtax&file=css/img/navbar/occtax_navbar.png");
   background-position: -175px 0px;
 }
 #taxon h3 .icon.result {
-    background-image: url("img/navbar/occtax_navbar.png");
+    background-image: url("getfile?targetmodule=occtax&file=css/img/navbar/occtax_navbar.png");
   background-position: -225px 0px;
 }
 
 #occtax h3 .icon.search {
-    background-image: url("img/navbar/occtax_navbar.png");
+    background-image: url("getfile?targetmodule=occtax&file=css/img/navbar/occtax_navbar.png");
   background-position: -175px 0px;
 }
 
 #occtax h3 .icon.description {
-    background-image: url("img/navbar/occtax_navbar.png");
+    background-image: url("getfile?targetmodule=occtax&file=css/img/navbar/occtax_navbar.png");
   background-position: -175px 0px;
 }
 #occtax h3 .icon.result {
-    background-image: url("img/navbar/occtax_navbar.png");
+    background-image: url("getfile?targetmodule=occtax&file=css/img/navbar/occtax_navbar.png");
   background-position: -25px 0px;
 }
 
 
 #div_occtax_taxon_modal  h3 .icon.search {
-    background-image: url("img/navbar/occtax_navbar.png");
+    background-image: url("getfile?targetmodule=occtax&file=css/img/navbar/occtax_navbar.png");
   background-position: -150px 0px;
 }
 #div_occtax_taxon_modal  h3 .icon.result {
-    background-image: url("img/navbar/occtax_navbar.png");
+    background-image: url("getfile?targetmodule=occtax&file=css/img/navbar/occtax_navbar.png");
   background-position: -200px 0px;
 }
 
