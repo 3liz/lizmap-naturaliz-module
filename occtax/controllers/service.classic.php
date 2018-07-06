@@ -47,13 +47,30 @@ class serviceCtrl extends jController {
         $form->initFromRequest();
 
         // Check form
+        $fok = True;
+        $fmsg = array();
         if ( !$form->check() ) {
+            $fok = False;
+            $fmsg[] = jLocale::get( 'occtax~search.form.error.check' );
+        }
+
+        // Check the dates are OK
+        $dmin = $form->getData('date_min');
+        $dmax = $form->getData('date_max');
+        if( strtotime($dmax) - strtotime($dmin) < 0 ){
+            $form->setErrorOn('date_min', jLocale::get('occtax~search.form.error.date'));
+            $fmsg[] = jLocale::get('occtax~search.form.error.date');
+            $fok = False;
+        }
+
+        if(!$fok){
             $return = array();
             $return['status'] = 0;
-            $return['msg'] = array( jLocale::get( 'occtax~search.form.error.check' ) );
+            $return['msg'] = $fmsg;
             $rep->data = $return;
             return $rep;
         }
+
 
         // Get occtaxSearch instance
         jClasses::inc('occtax~occtaxSearchObservation');
