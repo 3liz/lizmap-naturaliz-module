@@ -4,7 +4,7 @@ class gestionModuleUpgrader_210_211 extends jInstallerModule {
     public $targetVersions = array(
         '2.1.1'
     );
-    public $date = '2018-11-17';
+    public $date = '2018-07-06';
 
     function install() {
         if( $this->firstDbExec() ) {
