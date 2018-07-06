@@ -1,5 +1,5 @@
 <?php
-class gestionModuleUpgrader_210_211 extends jInstallerModule {
+class occtaxModuleUpgrader_210_211 extends jInstallerModule {
 
     public $targetVersions = array(
         '2.1.1'
