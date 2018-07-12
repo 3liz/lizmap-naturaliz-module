@@ -57,7 +57,7 @@ class serviceCtrl extends jController {
         // Check the dates are OK
         $dmin = $form->getData('date_min');
         $dmax = $form->getData('date_max');
-        if( strtotime($dmax) - strtotime($dmin) < 0 ){
+        if( !empty($dmax) and !empty($dmin) and (strtotime($dmax) - strtotime($dmin) < 0) ){
             $form->setErrorOn('date_min', jLocale::get('occtax~search.form.error.date'));
             $fmsg[] = jLocale::get('occtax~search.form.error.date');
             $fok = False;
