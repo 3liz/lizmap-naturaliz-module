@@ -87,7 +87,7 @@ AND o.cd_ref::text = tc.valeur_init
 -- UPDATE
 UPDATE occtax.observation o
 -- SET cd_ref = tc.valeur_final::bigint -- cd_ref doit aussi être modifié
-SET 
+SET
 cd_ref = tc.valeur_final::bigint,
 dee_date_derniere_modification = now()
 FROM fdw.taxref_changes tc
@@ -98,7 +98,8 @@ AND tc.type_change = 'MODIFICATION'
 AND o.cd_ref::text = tc.valeur_init
 ;
 
---  Modifier le cd_nom dans la table taxon.taxon_sensible, au cas où des taxons sont concernés
+-- Modifier le cd_nom dans la table taxon.taxon_sensible, au cas où des taxons sont concernés
+-- ( cette table est utilisée par le PN Guadeloupe en amont des critères de sensibilité)
 UPDATE taxon.taxon_sensible AS o
 SET cd_nom = cd_nom_remplacement::bigint
 FROM fdw.taxref_changes AS tc
@@ -143,10 +144,10 @@ WHERE cd_nom IN ( SELECT DISTINCT cd_nom_local FROM fdw.taxon_local_correspondan
 
 -- 1/ Mise à jour de cd_nom_valide pour les taxons locaux désormais intégrés à Taxref
 WITH loc AS (
-	SELECT tl.cd_nom AS cd_nom_old, t.cd_nom AS cd_nom_new, t.cd_ref AS cd_ref_new, tl.lb_nom, tl.nom_vern, t.nom_vern, tl.group2_inpn, t.rang, tl.cd_nom_valide
-	FROM taxon.taxref_local tl
-	INNER JOIN taxon.taxref t USING(lb_nom)
-	)
+    SELECT tl.cd_nom AS cd_nom_old, t.cd_nom AS cd_nom_new, t.cd_ref AS cd_ref_new, tl.lb_nom, tl.nom_vern, t.nom_vern, tl.group2_inpn, t.rang, tl.cd_nom_valide
+    FROM taxon.taxref_local tl
+    INNER JOIN taxon.taxref t USING(lb_nom)
+    )
 UPDATE taxon.taxref_local tl
 SET cd_nom_valide=loc.cd_nom_new
 FROM loc
@@ -155,24 +156,24 @@ WHERE cd_nom=loc.cd_nom_old
 
 -- 2/ Mise à jour de la table occtax.observation en conséquence
 WITH loc AS (
-	SELECT tl.cd_nom AS cd_nom_old, t.cd_nom AS cd_nom_new, t.cd_ref AS cd_ref_new, tl.lb_nom, tl.nom_vern, t.nom_vern, tl.group2_inpn, t.rang, tl.cd_nom_valide
-	FROM taxon.taxref_local tl
-	INNER JOIN taxon.taxref t USING(lb_nom)
-	),
+    SELECT tl.cd_nom AS cd_nom_old, t.cd_nom AS cd_nom_new, t.cd_ref AS cd_ref_new, tl.lb_nom, tl.nom_vern, t.nom_vern, tl.group2_inpn, t.rang, tl.cd_nom_valide
+    FROM taxon.taxref_local tl
+    INNER JOIN taxon.taxref t USING(lb_nom)
+    ),
 maj AS (
-	SELECT o.cle_obs,
-	o.cd_nom AS cd_nom_old,
-	loc.cd_nom_new,
-	o.cd_ref AS cd_ref_old,
-	loc.cd_ref_new
-	FROM occtax.observation o
-	INNER JOIN loc ON loc.cd_nom_old=o.cd_nom
-	)
-	
+    SELECT o.cle_obs,
+    o.cd_nom AS cd_nom_old,
+    loc.cd_nom_new,
+    o.cd_ref AS cd_ref_old,
+    loc.cd_ref_new
+    FROM occtax.observation o
+    INNER JOIN loc ON loc.cd_nom_old=o.cd_nom
+    )
+
 UPDATE occtax.observation o
 SET cd_nom=maj.cd_nom_new,
-	cd_ref=maj.cd_ref_new, 
-	dee_date_derniere_modification=now()
+    cd_ref=maj.cd_ref_new,
+    dee_date_derniere_modification=now()
 FROM maj
 WHERE o.cle_obs=maj.cle_obs
 ;
@@ -214,11 +215,13 @@ SET version_taxref='11.0'
 WHERE o.cd_nom>0 -- Seulement pour les taxons dans Taxref (pas ceux dans Taxref_local)
 ;
 
--- todo
+-- A FINALISER
+-- Valentin vérifie comment gérer les taxons qui était dans taxref_local et qui sont maintenant dans taxref v N+1 : soit via table taxon_local_correspondance soit via nouveau champ cd_nom_valide -> privilégier la 2ème.
 -- pour les retraits de type 2, ajouter le taxon dans taxref_local pour ne pas perdre les correspondances sur ces taxon disparus
--- todo : intégrer le script qui permet de rendre lisible le fichier source ? script nmartinon
--- Raffraîchir les vues matérialisées basées sur occtax.observation
--- Raffraîchir les tables qui contiennent des
--- Relancer les scripts de calcul des sensibilités et des validations
+
+-- PENSE BETE : a vérifier et à faire
+
+-- Rafraîchir les vues matérialisées basées sur occtax.observation
+-- Relancer les scripts de calcul de la sensibilité et de la validation
 
 COMMIT;
