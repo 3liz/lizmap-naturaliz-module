@@ -89,17 +89,26 @@ WHERE c.cd_nom_fk = s.cd_nom AND (c.menace != s.menace OR c.menace IS NULL);
 TRUNCATE TABLE protections RESTART IDENTITY;
 COPY protections FROM '{$protection}' DELIMITER ',' HEADER CSV;
 
+
+
 -- INSERT taxon pas encore présents dans t_complement
 -- LES SYNONYMES SONT INCLUS VIA CLAUSE WITH
-WITH s AS (
+WITH ss AS (
     SELECT DISTINCT t.cd_nom,
     CASE
-        WHEN p.cd_protection IN ({$code_arrete_protection_internationale}) THEN 'EPI'
-        WHEN p.cd_protection IN ({$code_arrete_protection_communautaire}) THEN 'EPC'
-        WHEN p.cd_protection IN ({$code_arrete_protection_simple}) THEN 'EPA'
         WHEN p.cd_protection IN ({$code_arrete_protection_nationale}) THEN 'EPN'
+        WHEN p.cd_protection IN ({$code_arrete_protection_communautaire}) THEN 'EPC'
+        WHEN p.cd_protection IN ({$code_arrete_protection_internationale}) THEN 'EPI'
+        WHEN p.cd_protection IN ({$code_arrete_protection_simple}) THEN 'EPA'
         ELSE NULL
-    END AS "protection"
+    END AS "protection",
+    CASE
+        WHEN p.cd_protection IN ({$code_arrete_protection_nationale}) THEN 0
+        WHEN p.cd_protection IN ({$code_arrete_protection_communautaire}) THEN 1
+        WHEN p.cd_protection IN ({$code_arrete_protection_internationale}) THEN 2
+        WHEN p.cd_protection IN ({$code_arrete_protection_simple}) THEN 3
+        ELSE NULL
+    END AS "note"
     FROM taxon.taxref t
     INNER JOIN taxon.protections p ON p.cd_nom::integer = t.cd_nom OR p.cd_nom::integer = t.cd_ref
     WHERE TRUE
@@ -109,6 +118,10 @@ WITH s AS (
         {$code_arrete_protection_internationale},
         {$code_arrete_protection_communautaire}
     )
+),
+s AS (
+ SELECT DISTINCT cd_nom, FIRST_VALUE(protection) OVER (PARTITION BY cd_nom ORDER BY note)
+ FROM s
 )
 INSERT INTO t_complement (cd_nom_fk, protection)
 SELECT DISTINCT s.cd_nom, s."protection"
@@ -117,15 +130,22 @@ ON CONFLICT (cd_nom_fk)
 DO NOTHING
 ;
 -- UPDATE tous les taxons qui ont une protection
-WITH s AS (
+WITH ss AS (
     SELECT DISTINCT t.cd_nom,
     CASE
-        WHEN p.cd_protection IN ({$code_arrete_protection_internationale}) THEN 'EPI'
-        WHEN p.cd_protection IN ({$code_arrete_protection_communautaire}) THEN 'EPC'
-        WHEN p.cd_protection IN ({$code_arrete_protection_simple}) THEN 'EPA'
         WHEN p.cd_protection IN ({$code_arrete_protection_nationale}) THEN 'EPN'
+        WHEN p.cd_protection IN ({$code_arrete_protection_communautaire}) THEN 'EPC'
+        WHEN p.cd_protection IN ({$code_arrete_protection_internationale}) THEN 'EPI'
+        WHEN p.cd_protection IN ({$code_arrete_protection_simple}) THEN 'EPA'
         ELSE NULL
-    END AS "protection"
+    END AS "protection",
+    CASE
+        WHEN p.cd_protection IN ({$code_arrete_protection_nationale}) THEN 0
+        WHEN p.cd_protection IN ({$code_arrete_protection_communautaire}) THEN 1
+        WHEN p.cd_protection IN ({$code_arrete_protection_internationale}) THEN 2
+        WHEN p.cd_protection IN ({$code_arrete_protection_simple}) THEN 3
+        ELSE NULL
+    END AS "note"
     FROM taxon.taxref t
     INNER JOIN taxon.protections p ON p.cd_nom::integer = t.cd_nom OR p.cd_nom::integer = t.cd_ref
     WHERE TRUE
@@ -135,6 +155,10 @@ WITH s AS (
         {$code_arrete_protection_internationale},
         {$code_arrete_protection_communautaire}
     )
+),
+s AS (
+ SELECT DISTINCT cd_nom, FIRST_VALUE(protection) OVER (PARTITION BY cd_nom ORDER BY note)
+ FROM s
 )
 UPDATE t_complement c
 SET protection = s.protection
