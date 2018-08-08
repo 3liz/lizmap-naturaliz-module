@@ -244,7 +244,8 @@ ON UPDATE CASCADE ON DELETE RESTRICT
 
 
 
--- Ajout d'une vue pour les taxons valides
+-- Ajout d'une vue pour les taxons valides seulement
+-- seulement sur les rangs qui correpondent à des espaces
 DROP MATERIALIZED VIEW IF EXISTS taxref_valide CASCADE;
 CREATE MATERIALIZED VIEW taxref_valide AS
 WITH taxref_mnhn_et_local AS (
@@ -259,6 +260,7 @@ WITH taxref_mnhn_et_local AS (
   nom_complet_html, nom_valide, nom_vern, nom_vern_eng, habitat,
   fr, gf, mar, gua, sm, sb, spm, may, epa, reu, sa, ta, taaf, pf, nc, wf, cli, url
   FROM taxref_local
+  WHERE cd_nom_valide IS NULL
 )
 SELECT
 regne, phylum, classe, ordre, famille, sous_famille, tribu, group1_inpn, group2_inpn,
@@ -306,6 +308,7 @@ WITH taxref_mnhn_et_local AS (
   UNION ALL
   SELECT cd_nom, cd_ref, nom_valide, nom_vern, nom_complet, group2_inpn, rang
   FROM taxref_local
+  WHERE cd_nom_valide IS NULL
 )
 -- Noms valides
 SELECT cd_nom::bigint, cd_ref::bigint, nom_valide AS val, nom_valide, 6::smallint AS poids,
@@ -538,6 +541,7 @@ taxref_mnhn_et_local AS (
   SELECT group1_inpn, group2_inpn, cd_nom
   FROM taxref_local
   WHERE rang IN ('FM', 'GN', 'AGES', 'ES', 'SSES', 'NAT', 'VAR', 'SVAR', 'FO', 'SSFO', 'RACE', 'CAR', 'AB')
+  AND cd_nom_valide IS NULL
 )
 SELECT tml.*, c.*
 FROM taxref_mnhn_et_local AS tml
@@ -545,6 +549,52 @@ LEFT JOIN t_complement AS c ON c.cd_nom_fk = tml.cd_nom
 ;
 CREATE INDEX ON taxon.taxref_consolide_all (cd_nom);
 CREATE INDEX ON taxon.taxref_consolide_all (protection);
+
+
+-- Vue qui rassemble tous les taxons de TAXREF et de taxref local:
+-- valides et non valides
+-- tous les rangs
+-- utilisée pour le filtrage de la fin
+-- du fichier de lizmap/lizmap-modules/occtax/classes/occtaxSearchObservation.class.php
+DROP MATERIALIZED VIEW IF EXISTS taxon.taxref_consolide_non_filtre;
+CREATE MATERIALIZED VIEW taxon.taxref_consolide_non_filtre AS
+WITH
+taxref_mnhn_et_local AS (
+  SELECT
+  regne, phylum, classe, ordre, famille, sous_famille, tribu, group1_inpn, group2_inpn,
+cd_nom, cd_taxsup, cd_ref, rang, lb_nom, lb_auteur, nom_complet,
+nom_complet_html, nom_valide, nom_vern, nom_vern_eng, habitat,
+fr, gf, mar, gua, sm, sb, spm, may, epa, reu, sa, ta, taaf, pf, nc, wf, cli, url
+  FROM taxref
+  WHERE True
+  UNION ALL
+  SELECT
+  regne, phylum, classe, ordre, famille, sous_famille, tribu, group1_inpn, group2_inpn,
+cd_nom, cd_taxsup, cd_ref, rang, lb_nom, lb_auteur, nom_complet,
+nom_complet_html, nom_valide, nom_vern, nom_vern_eng, habitat,
+fr, gf, mar, gua, sm, sb, spm, may, epa, reu, sa, ta, taaf, pf, nc, wf, cli, url
+  FROM taxref_local
+  WHERE True
+  AND cd_nom_valide IS NULL
+)
+SELECT tml.*, c.*
+FROM taxref_mnhn_et_local AS tml
+LEFT JOIN t_complement AS c ON c.cd_nom_fk = tml.cd_nom
+;
+
+CREATE INDEX ON taxon.taxref_consolide_non_filtre (cd_ref);
+CREATE INDEX ON taxon.taxref_consolide_non_filtre (cd_nom);
+CREATE INDEX ON taxon.taxref_consolide_non_filtre (regne);
+CREATE INDEX ON taxon.taxref_consolide_non_filtre (group1_inpn);
+CREATE INDEX ON taxon.taxref_consolide_non_filtre (group2_inpn);
+CREATE INDEX ON taxon.taxref_consolide_non_filtre (protection);
+CREATE INDEX ON taxon.taxref_consolide_non_filtre (det_znieff);
+CREATE INDEX ON taxon.taxref_consolide_non_filtre (endemicite);
+CREATE INDEX ON taxon.taxref_consolide_non_filtre (invasibilite);
+CREATE INDEX ON taxon.taxref_consolide_non_filtre (menace);
+CREATE INDEX ON taxon.taxref_consolide_non_filtre (protection);
+CREATE INDEX ON taxon.taxref_consolide_non_filtre (rarete);
+CREATE INDEX ON taxon.taxref_consolide_non_filtre (statut);
 
 
 -- Noms vernaculaires : nouveau depuis TAXREF V11
@@ -561,3 +611,6 @@ CREATE TABLE taxon.taxvern (
 COMMENT ON TABLE taxon.taxvern IS 'Nom vernaculaires. Nouveau depuis TAXREF V11';
 CREATE INDEX ON taxon.taxvern (cd_nom);
 CREATE INDEX ON taxon.taxvern ("iso639_3");
+
+
+

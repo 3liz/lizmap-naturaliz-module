@@ -367,7 +367,7 @@ jLog::log($asql);
 
                 }
                 if( count($tsql) > 0 ){
-                    $taxonSql = " AND o.cd_ref IN (SELECT cd_ref FROM taxon.taxref_consolide WHERE ";
+                    $taxonSql = " AND o.cd_ref IN (SELECT cd_ref FROM taxon.taxref_consolide_non_filtre WHERE ";
                     $taxonSql.= implode( ' AND ', $tsql  ) . " ) ";
                     $sql.= $taxonSql;
                 }
