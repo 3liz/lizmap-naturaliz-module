@@ -120,8 +120,8 @@ WITH ss AS (
     )
 ),
 s AS (
- SELECT DISTINCT cd_nom, FIRST_VALUE(protection) OVER (PARTITION BY cd_nom ORDER BY note)
- FROM s
+ SELECT DISTINCT cd_nom, FIRST_VALUE(protection) OVER (PARTITION BY cd_nom ORDER BY note) AS protection
+ FROM ss
 )
 INSERT INTO t_complement (cd_nom_fk, protection)
 SELECT DISTINCT s.cd_nom, s."protection"
@@ -157,8 +157,8 @@ WITH ss AS (
     )
 ),
 s AS (
- SELECT DISTINCT cd_nom, FIRST_VALUE(protection) OVER (PARTITION BY cd_nom ORDER BY note)
- FROM s
+ SELECT DISTINCT cd_nom, FIRST_VALUE(protection) OVER (PARTITION BY cd_nom ORDER BY note) AS protection
+ FROM ss
 )
 UPDATE t_complement c
 SET protection = s.protection
