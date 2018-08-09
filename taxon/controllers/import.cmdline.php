@@ -190,6 +190,7 @@ class importCtrl extends jControllerCmdLine {
         $newcols = array('cd_sup'=>'integer', 'sous_famille'=>'text', 'tribu'=>'text');
         foreach($newcols as $newcol => $format){
             $sql = "ALTER TABLE taxref ADD COLUMN $newcol $format;";
+            $sql.= "ALTER TABLE taxref_local ADD COLUMN $newcol $format;";
             try {
                 $cnx->exec( $sql );
             } catch ( Exception $e ) {
