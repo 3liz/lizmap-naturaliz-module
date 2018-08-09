@@ -126,13 +126,14 @@ class importCtrl extends jControllerCmdLine {
 
         $rep = $this->getResponse(); // cmdline response by default
 
-        // Get default profile
-        $profileConfig = jApp::configPath('profiles.ini.php');
-        $ini = new jIniFileModifier( $profileConfig );
-        $defaultProfile = $ini->getValue( 'default', 'jdb' );
+        // Use superuser profile
+        //$profileConfig = jApp::configPath('profiles.ini.php');
+        //$ini = new jIniFileModifier( $profileConfig );
+        //$profile = $ini->getValue( 'default', 'jdb' );
+        $profile = 'jauth_super';
 
         // Try to use the optional given db profile
-        $cnx = jDb::getConnection( $defaultProfile );
+        $cnx = jDb::getConnection( $profile );
 
         $sig = $this->option('-sig');
         $occtax = $this->option('-occtax');
@@ -193,20 +194,21 @@ class importCtrl extends jControllerCmdLine {
             throw new jException('occtax~script.import.script.not.found');
 
         // Get default profile
-        $profileConfig = jApp::configPath('profiles.ini.php');
-        $pini = new jIniFileModifier( $profileConfig );
-        $defaultProfile = $pini->getValue( 'default', 'jdb' );
+        //$profileConfig = jApp::configPath('profiles.ini.php');
+        //$pini = new jIniFileModifier( $profileConfig );
+        //$profile = $pini->getValue( 'default', 'jdb' );
+        $profile = 'jauth_super';
 
         // Get content of SQL template script
         $template = jFile::read( $importFile );
         $tpl = new jTpl();
 
         // Replace options in template
-        $assign['dbhost'] = $pini->getValue( 'host', 'jdb:' . $defaultProfile );
-        $assign['dbname'] = $pini->getValue( 'database', 'jdb:' . $defaultProfile );
-        $assign['dbuser'] = $pini->getValue( 'user', 'jdb:' . $defaultProfile );
-        $assign['dbpassword'] = $pini->getValue( 'password', 'jdb:' . $defaultProfile );
-        $assign['dbport'] = $pini->getValue( 'port', 'jdb:' . $defaultProfile );
+        $assign['dbhost'] = $pini->getValue( 'host', 'jdb:' . $profile );
+        $assign['dbname'] = $pini->getValue( 'database', 'jdb:' . $profile );
+        $assign['dbuser'] = $pini->getValue( 'user', 'jdb:' . $profile );
+        $assign['dbpassword'] = $pini->getValue( 'password', 'jdb:' . $profile );
+        $assign['dbport'] = $pini->getValue( 'port', 'jdb:' . $profile );
 
         $assign['dbschema'] = 'sig';
 
@@ -300,9 +302,10 @@ class importCtrl extends jControllerCmdLine {
             throw new jException('occtax~script.import.script.not.found');
 
         // Get default profile
-        $profileConfig = jApp::configPath('profiles.ini.php');
-        $ini = new jIniFileModifier( $profileConfig );
-        $defaultProfile = $ini->getValue( 'default', 'jdb' );
+        //$profileConfig = jApp::configPath('profiles.ini.php');
+        //$ini = new jIniFileModifier( $profileConfig );
+        //$profile = $ini->getValue( 'default', 'jdb' );
+        $profile = 'jauth_super';
 
         // Get content of SQL template script
         $template = jFile::read( $importFile );
@@ -328,11 +331,11 @@ class importCtrl extends jControllerCmdLine {
         $assign['habitat_mer_name'] = pathinfo($habitat_mer, PATHINFO_FILENAME);
         $assign['habitat_terre'] = $habitat_terre;
         $assign['habitat_terre_name'] = pathinfo($habitat_terre, PATHINFO_FILENAME);
-        $assign['dbhost'] = $ini->getValue( 'host', 'jdb:' . $defaultProfile );
-        $assign['dbname'] = $ini->getValue( 'database', 'jdb:' . $defaultProfile );
-        $assign['dbuser'] = $ini->getValue( 'user', 'jdb:' . $defaultProfile );
-        $assign['dbpassword'] = $ini->getValue( 'password', 'jdb:' . $defaultProfile );
-        $assign['dbport'] = $ini->getValue( 'port', 'jdb:' . $defaultProfile );
+        $assign['dbhost'] = $ini->getValue( 'host', 'jdb:' . $profile );
+        $assign['dbname'] = $ini->getValue( 'database', 'jdb:' . $profile );
+        $assign['dbuser'] = $ini->getValue( 'user', 'jdb:' . $profile );
+        $assign['dbpassword'] = $ini->getValue( 'password', 'jdb:' . $profile );
+        $assign['dbport'] = $ini->getValue( 'port', 'jdb:' . $profile );
         $assign['dbschema'] = 'sig';
 
         $localConfig = jApp::configPath('localconfig.ini.php');

@@ -9,17 +9,23 @@ class taxonModuleUpgrader_211_212 extends jInstallerModule {
     function install() {
         if( $this->firstDbExec() ) {
             // modify jlx_user columns
-            $this->useDbProfile('jauth');
+            $this->useDbProfile('jauth_super');
 
             $sqlPath = $this->path . 'install/sql/upgrade/upgrade_2.1.1_2.1.2.sql';
             $sqlTpl = jFile::read( $sqlPath );
             $tpl = new jTpl();
+            $sql = $tpl->fetchFromString($sqlTpl, 'text');
+            $db = $this->dbConnection();
+            $db->exec($sql);
 
-            // Get SRID
-            //$localConfig = jApp::configPath('localconfig.ini.php');
-            //$ini = new jIniFileModifier($localConfig);
-            //$srid = $ini->getValue('srid', 'naturaliz');
-            //$tpl->assign('SRID', $srid);
+            // Grant rights
+            $sqlPath = $this->path . 'install/sql/grant_rights.sql';
+            $sqlTpl = jFile::read( $sqlPath );
+            $tpl = new jTpl();
+            $prof = jProfiles::get('jdb', $this->dbProfile, true);
+            $tpl->assign('DBNAME', $prof['database'] );
+            $tpl->assign('DBUSER_READONLY', 'naturaliz' );
+            $tpl->assign('DBUSER_OWNER', 'lizmap' );
             $sql = $tpl->fetchFromString($sqlTpl, 'text');
             $db = $this->dbConnection();
             $db->exec($sql);

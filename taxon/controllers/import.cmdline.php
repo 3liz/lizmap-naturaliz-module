@@ -122,18 +122,19 @@ class importCtrl extends jControllerCmdLine {
         copy($protection, $protectionSourcePath );
 
         // Get default profile
-        $profileConfig = jApp::configPath('profiles.ini.php');
-        $ini = new jIniFileModifier( $profileConfig );
-        $defaultProfile = $ini->getValue( 'default', 'jdb' );
+        //$profileConfig = jApp::configPath('profiles.ini.php');
+        //$ini = new jIniFileModifier( $profileConfig );
+        //$profile = $ini->getValue( 'default', 'jdb' );
+        $profile = 'jauth_super';
 
         // Try to use the optional given db profile
-        $cnx = jDb::getConnection( $defaultProfile );
+        $cnx = jDb::getConnection( $profile );
         $userprofile = $this->option('-dbprofile', '' );
         if( !empty($userprofile) ){
             try {
                 $cnx = jDb::getConnection( $userprofile );
             } catch ( Exception $e ) {
-                $cnx = jDb::getConnection( $defaultProfile );
+                $cnx = jDb::getConnection( $profile );
             }
         }
 

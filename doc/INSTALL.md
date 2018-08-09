@@ -181,6 +181,20 @@ cd /srv/lizmap_web_client/
 nano lizmap/var/config/profiles.ini.php
 ```
 
+Vous aurez alors un contenu du type
+
+```
+[jdb:jauth]
+driver=pgsql
+database=naturaliz
+host=localhost
+port=5432
+user=postgres
+password="********"
+persistent=off
+search_path=""
+```
+
 ### Lancer l'installation des modules Naturaliz
 
 Modifiez les droits pour que l'application puisse écrire dans les répertoires temporaires, puis lancer l'installateur de l'application
@@ -219,15 +233,172 @@ Installation ended.
 
 ```
 
-Une fois cette étape validée, l'application naturaliz est bien installée. Il faut maintenant
+Une fois cette installation réussie, vous avez maintenant une base de donnée qui contient l'ensemble des schémas nécessaires à l'application, avec les tables et fonctions.
 
-* importer des données de référence
-* importer des données d'observation faunistiques ou floristiques
+Il faut maintenant créer un utilisateur aux droits limités, qui sera utilisé par l'application Web pour lancer les requêtes:
+
+* créer un utilisateur **naturaliz** dans PostgreSQL
+* donner les **droits** d'accès à la base de données, aux tables et aux fonctions.
+
+Vous pouvez créer l'utilisateur naturaliz via les commandes suivantes (ou via votre client PostgreSQL, par exemple PgAdmin)
+
+
+```bash
+su postgres
+
+# informations de connexion A ADAPTER
+DBPORT=5432
+DBNAME=lizmap
+DBUSER=naturaliz
+DBPASS=naturaliz # !!! MODIFIER CE MOT DE PASSE !!!
+
+# création de l'utilisateur avec droits limités
+createuser $DBUSER -p $DBPORT --no-createdb --no-createrole --no-superuser
+psql -d template1 -p $DBPORT -c "ALTER USER "$DBUSER" WITH ENCRYPTED PASSWORD '"$DBPASS"' ;"
+
+# Ajout des droits sur les objets de la base pour naturaliz
+psql -d $DBNAME -p $DBPORT -c "GRANT CONNECT ON DATABASE $DBNAME TO $DBUSER;"
+psql -d $DBNAME -p $DBPORT -c "GRANT USAGE ON SCHEMA public,taxon,sig,occtax TO $DBUSER";
+psql -d $DBNAME -p $DBPORT -c "GRANT SELECT ON ALL TABLES IN SCHEMA occtax,sig,taxon TO $DBUSER;"
+psql -d $DBNAME -p $DBPORT -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO $DBUSER;"
+psql -d $DBNAME -p $DBPORT -c "GRANT INSERT ON ALL TABLES IN SCHEMA occtax TO $DBUSER;"
+psql -d $DBNAME -p $DBPORT -c "GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public,occtax,sig,taxon TO $DBUSER;"
+psql -d $DBNAME -p $DBPORT -c "GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public,occtax,sig,taxon TO $DBUSER;"
+psql -d $DBNAME -p $DBPORT -c "ALTER ROLE $DBUSER SET search_path TO taxon,occtax,sig,public;"
+
+# Pour le module gestion (optionnel)
+psql -d $DBNAME -p $DBPORT -c "GRANT USAGE ON SCHEMA gestion TO $DBUSER";
+psql -d $DBNAME -p $DBPORT -c "GRANT SELECT ON ALL TABLES IN SCHEMA gestion TO $DBUSER;"
+psql -d $DBNAME -p $DBPORT -c "GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA gestion TO $DBUSER;"
+psql -d $DBNAME -p $DBPORT -c "GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA gestion TO $DBUSER;"
+psql -d $DBNAME -p $DBPORT -c "ALTER ROLE $DBUSER SET search_path TO taxon,occtax,gestion,sig,public;"
+
+# Pour le module mascarine (optionnel)
+psql -d $DBNAME -p $DBPORT -c "GRANT USAGE ON SCHEMA mascarine TO $DBUSER";
+psql -d $DBNAME -p $DBPORT -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA mascarine TO $DBUSER;"
+psql -d $DBNAME -p $DBPORT -c "GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA mascarine TO $DBUSER;"
+psql -d $DBNAME -p $DBPORT -c "GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA mascarine TO $DBUSER;"
+psql -d $DBNAME -p $DBPORT -c "ALTER ROLE $DBUSER SET search_path TO taxon,occtax,gestion,mascarine,sig,public;"
+
+exit
+
+```
+
+
+On peut aussi faire cela plus directement ainsi. ATTENTION: remplacer le nom de la base naturaliz par votre nom (ex: naturaliz_reunion)
+
+```sql
+-- Ajout des droits sur les objets de la base pour naturaliz
+GRANT CONNECT ON DATABASE naturaliz TO naturaliz;
+GRANT USAGE ON SCHEMA public,taxon,sig,occtax TO naturaliz;
+GRANT SELECT ON ALL TABLES IN SCHEMA occtax,sig,taxon TO naturaliz;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO naturaliz;
+GRANT INSERT ON ALL TABLES IN SCHEMA occtax TO naturaliz;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public,occtax,sig,taxon TO naturaliz;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public,occtax,sig,taxon TO naturaliz;
+ALTER ROLE naturaliz SET search_path TO taxon,occtax,sig,public;
+
+-- Pour le module gestion (optionnel)
+GRANT USAGE ON SCHEMA gestion TO naturaliz;
+GRANT SELECT ON ALL TABLES IN SCHEMA gestion TO naturaliz;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA gestion TO naturaliz;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA gestion TO naturaliz;
+ALTER ROLE naturaliz SET search_path TO taxon,occtax,gestion,sig,public;
+
+-- Pour le module mascarine (optionnel)
+GRANT USAGE ON SCHEMA mascarine TO naturaliz;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA mascarine TO naturaliz;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA mascarine TO naturaliz;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA mascarine TO naturaliz;
+ALTER ROLE naturaliz SET search_path TO taxon,occtax,gestion,mascarine,sig,public;
+```
+
+
+Pour l'utilisateur lizmap qui n'est pas superuser mais a les droits sur la base de données Lizmap (création, suppression de tables, schéma, etc.)
+
+```sql
+-- Ajout des droits sur les objets de la base pour lizmap
+GRANT CONNECT ON DATABASE naturaliz TO lizmap;
+GRANT ALL PRIVILEGES ON SCHEMA public,taxon,sig,occtax TO lizmap;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public,taxon,sig,occtax TO lizmap;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public,occtax,sig,taxon TO lizmap;
+GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public,occtax,sig,taxon TO lizmap;
+ALTER ROLE lizmap SET search_path TO taxon,occtax,sig,public;
+
+-- Pour le module gestion (optionnel)
+GRANT ALL PRIVILEGES ON SCHEMA gestion TO lizmap;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA gestion TO lizmap;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA gestion TO lizmap;
+GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA gestion TO lizmap;
+ALTER ROLE lizmap SET search_path TO taxon,occtax,gestion,sig,public;
+```
+
+
+Une fois cet utlisateur créé et les droits appliqués, vous devez modifier le fichier de configuration des profils `lizmap/var/config/profiles.ini.php` pour remplacer l'utilisateur "postgres" par l'utilisateur avec droits limités "naturaliz" dans la section `[jdb:jauth]`. Il faut ensuite copier/coller les informations de cette section, et créer une nouvelle section [jdb:jauth_super] qui aura les mêmes informations, mais avec des droits superuser (elle sera utilisée pour les mises à jours notamment).
+
+```bash
+cd /srv/lizmap_web_client/
+
+# Remplir le fichier de profiles avec les informations nécessaire (2 sections jdb:jauth et jdb:jauth_super)
+nano lizmap/var/config/profiles.ini.php
+
+# rétablir les droits de l'application Lizmap
+lizmap/install/set_rights.sh www-data www-data
+```
+
+
+Dans le fichier `lizmap/var/config/profiles.ini.php`, vous aurez donc les 2 sections `[jdb:jauth]` et `[jdb:jauth_super]` suivantes (adapter les mots de passe, et nom de la bdd si besoin):
+
+```
+[jdb:jauth]
+driver=pgsql
+database=naturaliz
+host=localhost
+port=5432
+user=naturaliz
+password="********"
+persistent=off
+search_path="public,taxon,sig,occtax,gestion"
+
+[jdb:jauth_super]
+driver=pgsql
+database=naturaliz
+host=localhost
+port=5432
+user=postgres
+password="********"
+persistent=off
+search_path="public,taxon,sig,occtax,gestion"
+
+```
+
+
+**IMPORTANT** L'application utilise un service PostgreSQL pour certaines fonctionnalités, comme l'export PDF des cartes. Vous devez donc configurer ce service sur le serveur.
+
+```bash
+nano /etc/postgresql-common/pg_service.conf
+```
+
+# y mettre le contenu suivant, en adaptant bien sûr le nom de la base de données et mot de passe
+```ini
+[naturaliz]
+host=localhost
+dbname=naturaliz
+user=naturaliz
+port=5432
+password=naturaliz
+```
+
+# tester via
+```bash
+psql service=naturaliz
+```
+
 
 
 ## Importer les données de référence
 
-L'installateur a créé la structure dans la base de données PostGreSQL (schéma, tables, vues, etc.), mais aucune donnée n'a encore été importée, à part les listes liées à la nomenclature du standard TAXREF et du schéma Occurence de taxons.
+L'installateur a créé la structure dans la base de données PostGreSQL (schéma, tables, vues, etc.), mais aucune donnée n'a encore été importée, à part les listes liées à la nomenclature du standard TAXREF et du schéma Occurence de taxons. Les imports peuvent être réalisés via des scripts de l'application. Pour cela, il faut bien avoir configuré le fichier `lizmap/var/config/profiles.ini.php` comme décrit précédemment.
 
 ### Import TAXREF : données officielles des taxons
 
@@ -500,138 +671,6 @@ FROM sig.zone_economique_exclusive;
 ```
 
 
-
-## Finaliser l'installation
-
-### PostgreSQL: ajouter un utilisateur naturaliz aux droits limités
-
-La base est installée et les données importées. Vous pouvez maintenant:
-
-* créer un utilisateur **naturaliz**
-* donner les **droits** d'accès à la base de données, aux tables et aux fonctions.
-
-```bash
-su postgres
-
-# informations de connexion A ADAPTER
-DBPORT=5432
-DBNAME=lizmap
-DBUSER=naturaliz
-DBPASS=naturaliz # !!! MODIFIER CE MOT DE PASSE !!!
-
-# création de l'utilisateur avec droits limités
-createuser $DBUSER -p $DBPORT --no-createdb --no-createrole --no-superuser
-psql -d template1 -p $DBPORT -c "ALTER USER "$DBUSER" WITH ENCRYPTED PASSWORD '"$DBPASS"' ;"
-
-# Ajout des droits sur les objets de la base pour naturaliz
-psql -d $DBNAME -p $DBPORT -c "GRANT CONNECT ON DATABASE $DBNAME TO $DBUSER;"
-psql -d $DBNAME -p $DBPORT -c "GRANT USAGE ON SCHEMA public,taxon,sig,occtax TO $DBUSER";
-psql -d $DBNAME -p $DBPORT -c "GRANT SELECT ON ALL TABLES IN SCHEMA occtax,sig,taxon TO $DBUSER;"
-psql -d $DBNAME -p $DBPORT -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO $DBUSER;"
-psql -d $DBNAME -p $DBPORT -c "GRANT INSERT ON ALL TABLES IN SCHEMA occtax TO $DBUSER;"
-psql -d $DBNAME -p $DBPORT -c "GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public,occtax,sig,taxon TO $DBUSER;"
-psql -d $DBNAME -p $DBPORT -c "GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public,occtax,sig,taxon TO $DBUSER;"
-psql -d $DBNAME -p $DBPORT -c "ALTER ROLE $DBUSER SET search_path TO taxon,occtax,sig,public;"
-
-# Pour le module gestion (optionnel)
-psql -d $DBNAME -p $DBPORT -c "GRANT USAGE ON SCHEMA gestion TO $DBUSER";
-psql -d $DBNAME -p $DBPORT -c "GRANT SELECT ON ALL TABLES IN SCHEMA gestion TO $DBUSER;"
-psql -d $DBNAME -p $DBPORT -c "GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA gestion TO $DBUSER;"
-psql -d $DBNAME -p $DBPORT -c "GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA gestion TO $DBUSER;"
-psql -d $DBNAME -p $DBPORT -c "ALTER ROLE $DBUSER SET search_path TO taxon,occtax,gestion,sig,public;"
-
-# Pour le module mascarine (optionnel)
-psql -d $DBNAME -p $DBPORT -c "GRANT USAGE ON SCHEMA mascarine TO $DBUSER";
-psql -d $DBNAME -p $DBPORT -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA mascarine TO $DBUSER;"
-psql -d $DBNAME -p $DBPORT -c "GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA mascarine TO $DBUSER;"
-psql -d $DBNAME -p $DBPORT -c "GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA mascarine TO $DBUSER;"
-psql -d $DBNAME -p $DBPORT -c "ALTER ROLE $DBUSER SET search_path TO taxon,occtax,gestion,mascarine,sig,public;"
-
-exit
-
-```
-
-On peut aussi faire cela plus directement ainsi
-
-```sql
--- Ajout des droits sur les objets de la base pour naturaliz
-GRANT CONNECT ON DATABASE $DBNAME TO naturaliz;
-GRANT USAGE ON SCHEMA public,taxon,sig,occtax TO naturaliz;
-GRANT SELECT ON ALL TABLES IN SCHEMA occtax,sig,taxon TO naturaliz;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO naturaliz;
-GRANT INSERT ON ALL TABLES IN SCHEMA occtax TO naturaliz;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public,occtax,sig,taxon TO naturaliz;
-GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public,occtax,sig,taxon TO naturaliz;
-ALTER ROLE naturaliz SET search_path TO taxon,occtax,sig,public;
-
--- Pour le module gestion (optionnel)
-GRANT USAGE ON SCHEMA gestion TO naturaliz;
-GRANT SELECT ON ALL TABLES IN SCHEMA gestion TO naturaliz;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA gestion TO naturaliz;
-GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA gestion TO naturaliz;
-ALTER ROLE naturaliz SET search_path TO taxon,occtax,gestion,sig,public;
-
--- Pour le module mascarine (optionnel)
-GRANT USAGE ON SCHEMA mascarine TO naturaliz;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA mascarine TO naturaliz;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA mascarine TO naturaliz;
-GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA mascarine TO naturaliz;
-ALTER ROLE naturaliz SET search_path TO taxon,occtax,gestion,mascarine,sig,public;
-```
-
-
-Pour l'utilisateur lizmap qui n'est pas superuser mais a les droits sur la base de données Lizmap (création, suppression de tables, schéma, etc.)
-
-```sql
--- Ajout des droits sur les objets de la base pour naturaliz
-GRANT CONNECT ON DATABASE $DBNAME TO lizmap;
-GRANT ALL PRIVILEGES ON SCHEMA public,taxon,sig,occtax TO lizmap;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public,taxon,sig,occtax TO lizmap;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public,occtax,sig,taxon TO lizmap;
-GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public,occtax,sig,taxon TO lizmap;
-ALTER ROLE lizmap SET search_path TO taxon,occtax,sig,public;
-
--- Pour le module gestion (optionnel)
-GRANT ALL PRIVILEGES ON SCHEMA gestion TO lizmap;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA gestion TO lizmap;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA gestion TO lizmap;
-GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA gestion TO lizmap;
-ALTER ROLE lizmap SET search_path TO taxon,occtax,gestion,sig,public;
-```
-
-
-* puis modifier le fichier de configuration des profils pour remplacer l'utilisateur "postgres" par l'utilisateur avec droits limités "naturaliz":
-
-```bash
-cd /srv/lizmap_web_client/
-
-# modifier le paramètre user et password de la section [jdb:jauth] du fichier de profiles
-nano lizmap/var/config/profiles.ini.php
-
-# rétablir les droits de l'application Lizmap
-lizmap/install/set_rights.sh www-data www-data
-```
-
-**IMPORTANT** L'application utilise un service PostgreSQL pour certaines fonctionnalités, comme l'export PDF des cartes. Vous devez donc configurer ce service sur le serveur.
-
-```bash
-nano /etc/postgresql-common/pg_service.conf
-```
-
-# y mettre le contenu suivant, en adaptant bien sûr le nom de la base de données et mot de passe
-```ini
-[naturaliz]
-host=localhost
-dbname=lizmap
-user=naturaliz
-port=5432
-password=naturaliz
-```
-
-# tester via
-```bash
-psql service=naturaliz
-```
 
 ## Activer les modules dans l'interface d'administration
 
