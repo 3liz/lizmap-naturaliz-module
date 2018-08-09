@@ -1,6 +1,11 @@
 BEGIN;
 SET search_path TO taxon,public;
 
+ALTER TABLE taxon.taxref_local ADD COLUMN IF NOT EXISTS sous_famille text;
+ALTER TABLE taxon.taxref_local ADD COLUMN IF NOT EXISTS tribu text;
+ALTER TABLE taxon.taxref ADD COLUMN IF NOT EXISTS sous_famille text;
+ALTER TABLE taxon.taxref ADD COLUMN IF NOT EXISTS tribu text;
+
 DROP MATERIALIZED VIEW IF EXISTS taxref_valide CASCADE;
 CREATE MATERIALIZED VIEW taxref_valide AS
 WITH taxref_mnhn_et_local AS (
