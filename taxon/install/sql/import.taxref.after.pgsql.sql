@@ -46,6 +46,9 @@ CASE
 END AS invasibilite
 
 FROM taxref_valide
+
+ON CONFLICT (cd_nom_fk)
+DO NOTHING;
 ;
 
 -- Adaptation de la nomenclature au contexte local
