@@ -127,9 +127,6 @@ class importCtrl extends jControllerCmdLine {
         $rep = $this->getResponse(); // cmdline response by default
 
         // Use superuser profile
-        //$profileConfig = jApp::configPath('profiles.ini.php');
-        //$ini = new jIniFileModifier( $profileConfig );
-        //$profile = $ini->getValue( 'default', 'jdb' );
         $profile = 'jauth_super';
 
         // Try to use the optional given db profile
@@ -302,9 +299,8 @@ class importCtrl extends jControllerCmdLine {
             throw new jException('occtax~script.import.script.not.found');
 
         // Get default profile
-        //$profileConfig = jApp::configPath('profiles.ini.php');
-        //$ini = new jIniFileModifier( $profileConfig );
-        //$profile = $ini->getValue( 'default', 'jdb' );
+        $profileConfig = jApp::configPath('profiles.ini.php');
+        $ini = new jIniFileModifier( $profileConfig );
         $profile = 'jauth_super';
 
         // Get content of SQL template script

@@ -17,7 +17,7 @@ ogr2ogr -append -a_srs "EPSG:{$srid}" -f PostgreSQL "PG:host={$dbhost} port={$db
 
 # mailles 2km
 {if $maille_02}
-ogr2ogr -append -a_srs "EPSG:{$srid}" -f PostgreSQL "PG:host={$dbhost} port={$dbport} user={$dbuser} password={$dbpassword} dbname={$dbname} active_schema={$dbschema}" "{$maille_02}" -nln maille_02 -lco GEOMETRY_NAME=geom -lco PG_USE_COPY=YES -gt 100000 -sql "SELECT Concat( Substr(Cast(Cast(X_MIN AS integer) AS character ), 0, 3), '-' , Substr(Cast(Cast(Y_MIN AS integer) AS character ), 0, 4) ) AS code_maille, Concat( Substr(Cast(Cast(X_MIN AS integer) AS character ), 0, 3), '-' , Substr(Cast(Cast(Y_MIN AS integer) AS character ), 0, 4) ) AS nom_maille, '{$maille_02_version_ref}' AS version_ref, '{$maille_02_nom_ref}' AS nom_ref FROM {$maille_02_name}"
+ogr2ogr -append -a_srs "EPSG:{$srid}" -f PostgreSQL "PG:host={$dbhost} port={$dbport} user={$dbuser} password={$dbpassword} dbname={$dbname} active_schema={$dbschema}" "{$maille_02}" -nln maille_02 -lco GEOMETRY_NAME=geom -lco PG_USE_COPY=YES -gt 100000 -sql "SELECT Concat( Substr(Cast(Cast(xmin AS integer) AS character ), 0, 3), '-' , Substr(Cast(Cast(ymin AS integer) AS character ), 0, 4) ) AS code_maille, Concat( Substr(Cast(Cast(xmin AS integer) AS character ), 0, 3), '-' , Substr(Cast(Cast(ymin AS integer) AS character ), 0, 4) ) AS nom_maille, '{$maille_02_version_ref}' AS version_ref, '{$maille_02_nom_ref}' AS nom_ref FROM {$maille_02_name}"
 {/if}
 
 # mailles 5km
