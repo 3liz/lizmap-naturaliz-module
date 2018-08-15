@@ -318,7 +318,7 @@ class occtaxSearchObservation extends occtaxSearch {
                             $asql.= " OR diffusion ? '".$qMatch[$k]."' ";
                         }
                         $asql.= ' ) ';
-jLog::log($asql);
+//jLog::log($asql);
                         $sql.= $asql;
 
                     }
@@ -373,7 +373,7 @@ jLog::log($asql);
                 }
             }
         }
-//jLog::log(json_encode($sql));
+//jLog::log($sql);
         return $sql;
 
     }

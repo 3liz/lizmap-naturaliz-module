@@ -178,12 +178,15 @@ RETURNS INTEGER AS
 $BODY$
 DECLARE json_note TEXT;
 DECLARE var_id_critere INTEGER;
+DECLARE var_libelle TEXT;
 DECLARE var_cd_nom bigint[];
 DECLARE var_condition TEXT;
 DECLARE var_table_jointure TEXT;
 DECLARE var_niveau TEXT;
 DECLARE sql_template TEXT;
 DECLARE sql_text TEXT;
+DECLARE var_count integer;
+DECLARE sql_count text;
 
 BEGIN
 
@@ -210,10 +213,18 @@ BEGIN
         note INTEGER NOT NULL
      );
 
+    DROP TABLE IF EXISTS occtax.niveau_par_observation_compteur;
+    CREATE TABLE occtax.niveau_par_observation_compteur (
+        id_critere integer NOT NULL,
+        libelle text NOT NULL,
+        contexte text NOT NULL,
+        compteur text NOT NULL,
+        condition text NOT NULL
+    );
 
     -- On boucle sur les criteres
-    FOR var_id_critere, var_cd_nom, var_condition, var_table_jointure, var_niveau IN
-        SELECT id_critere, cd_nom, "condition", table_jointure, niveau
+    FOR var_id_critere, var_libelle, var_cd_nom, var_condition, var_table_jointure, var_niveau IN
+        SELECT id_critere, libelle, cd_nom, "condition", table_jointure, niveau
         FROM occtax.v_critere_validation_et_sensibilite
         WHERE contexte = p_contexte
     LOOP
@@ -264,6 +275,19 @@ BEGIN
 
         -- On insère les données dans occtax.niveau_par_observation
         EXECUTE sql_text;
+
+        -- on enregistre les compteurs pour faciliter le débogage
+        GET DIAGNOSTICS var_count = ROW_COUNT;
+        sql_count := '
+        INSERT INTO occtax.niveau_par_observation_compteur
+        SELECT
+            %s AS id_critere,
+            ''%s'' AS contexte,
+            ''%s'' AS libelle,
+            %s AS compteur,
+            %s AS condition
+        ;';
+        EXECUTE format(sql_count, var_id_critere, var_libelle, p_contexte, var_count, quote_literal(var_condition));
 
     END LOOP;
 
@@ -406,8 +430,20 @@ BEGIN
             WHERE contexte = ''validation''
         )
         ';
-        EXECUTE format(sql_template)
-        ;
+        sql_text := format(sql_template);
+        -- on doit ajouter le filtre jdd_id si non NULL
+        IF p_jdd_id IS NOT NULL THEN
+            sql_template :=  '
+            AND identifiant_permanent IN (
+                SELECT identifiant_permanent
+                FROM occtax.observation
+                WHERE jdd_id = ANY ( ''%s''::TEXT[] )
+            )
+            ';
+            sql_text := sql_text || format(sql_template, p_jdd_id);
+        END IF;
+
+        EXECUTE sql_text;
     END IF;
 
     RETURN 1;
@@ -507,6 +543,14 @@ BEGIN
 
         ';
         sql_text := format(sql_template);
+
+        -- on doit ajouter le filtre jdd_id si non NULL
+        IF p_jdd_id IS NOT NULL THEN
+            sql_template :=  '
+            AND o.jdd_id = ANY ( ''%s''::TEXT[] )
+            ';
+            sql_text := sql_text || format(sql_template, p_jdd_id);
+        END IF;
 
         RAISE NOTICE '%' , sql_text;
         EXECUTE sql_text;
@@ -872,11 +916,11 @@ CREATE OR REPLACE FUNCTION occtax.update_observation_set_validation_fields() RET
             SET
                 validite_niveau = '6', -- Non évalué
                 validite_date_validation = NULL
-            WHERE o.identifiant_permanent = NEW.identifiant_permanent
+            WHERE o.identifiant_permanent = OLD.identifiant_permanent
             -- une donnée validée juste par le producteur ne devrait pas être considérée
             -- comme validée et donc accessible au grand public
-            -- donc on applique seulement si ech_val = 2 cad niveau régional
-            AND NEW.ech_val = 2
+            -- donc on applique seulement si ech_val = '2' cad niveau régional
+            AND OLD.ech_val = '2'
             ;
             RETURN OLD;
         ELSE
@@ -887,8 +931,8 @@ CREATE OR REPLACE FUNCTION occtax.update_observation_set_validation_fields() RET
             WHERE o.identifiant_permanent = NEW.identifiant_permanent
             -- une donnée validée juste par le producteur ne devrait pas être considérée
             -- comme validée et donc accessible au grand public
-            -- donc on applique seulement si ech_val = 2 cad niveau régional
-            AND NEW.ech_val = 2
+            -- donc on applique seulement si ech_val = '2' cad niveau régional
+            AND NEW.ech_val = '2'
             ;
             RETURN NEW;
         END IF;
