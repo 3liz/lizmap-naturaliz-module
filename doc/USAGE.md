@@ -94,6 +94,34 @@ Lors de l'installation, une structure de données conforme au standard "Occurenc
 
 todo: expliquer la notion et les tables utilisées
 
+### Gestion de la sensibilité des données
+
+La sensibilité des observations peut être décidée pendant l'import des données, ou bien après l'import, via une liste de conditions pré-établie.
+La sensibilité des observations dépend en effet de nombreux critères sur les taxons, la position de l'observation, les commentaires, et d'autres conditions spécifiques.
+
+L'application Naturaliz permet de stocker l'ensemble des critères de sensibilité dans la table `occtax.critere_sensibilite`, puis de les utiliser pour calculer automatiquement la sensibilitén de chaque observation via une fonction PostgreSQL `occtax.calcul_niveau_sensibilite`. Pour chacun des critères, la fonction teste les observations en fonction de la condition donnée, et pour les jeux de données (jdd_id) passé en paramètre optionnel. Le résultat est stocké dans la table `occtax.niveau_par_observation`, qui liste les observations à modifier, ainsi que la valeur de sensibilité calculée. Comme plusieurs critères peuvent impacter la même observation, la fonction choisi la sensibilité la plus forte et stocke alors une seule ligne par observation dans la table `occtax.niveau_par_observation_final`.
+
+Pour pouvoir filtrer les observations sur lesquelles calculer la sensibilité, on passe en 1er paramètre un tableau d'entier contenant la liste des jdd_id. Pour pouvoir vérifier le calcul, on passe en 2ème paramètre de la fonction un booléen "simulation". S'il vaut TRUE, alors la fonction remplit les tables `occtax.niveau_par_observation` et `occtax.niveau_par_observation_final`, mais ne modifie pas les observations à partir de ces données.
+
+Pour lancer la fonction sur l'ensemble des observations (tous les jdd_id), on peut par exemple lancer le SQL suivant:
+
+```
+SELECT occtax.critere_sensibilite(
+    (
+        SELECT array_agg(jdd_id)
+        FROM occtax.jdd
+    ),
+    FALSE
+);
+```
+
+NB: Si on veut pouvoir comprendre le nombre d'observations impactées par chacun des critères, on peut lire le contenu de la table `occtax.niveau_par_observation_compteur` qui fournit pour chaque critère (id et libelle) le nombre d'observation impactées, dans le champ `compteur`. La table rappelle aussi la `condition`.
+
+Voir un exemple d'ajout de critères et de calcul de sensibilité automatique: doc/validation/validation_calcul_validation_sensibilite_via_ajout_de_criteres.sql
+
+Cet exemple montre par exemple comment utiliser une jointure avec table spatiale (par exemple de zonages de sensibilité) pour créer un critère qui teste l'intersection entre les observations et des polygones.
+
+
 ### Gestion de la validité des données
 
 Validite niveau et date -> expliquer grand public limité via localconfig et loggués limités via demande
@@ -105,11 +133,7 @@ doc/validation/validation_calcul_validation_sensibilite_via_ajout_de_criteres.sq
 * Projet QGIS exemple pour les validateurs : todo
 
 
-### Gestion de la sensibilité des données
 
-Voir un exemple d'ajout de critères et de calcul de sensibilité automatique:
-
-doc/validation/validation_calcul_validation_sensibilite_via_ajout_de_criteres.sql
 
 #### Fonction de modification de la sensibilité des données
 
