@@ -11,9 +11,7 @@ class occtaxModuleUpgrader_212_213 extends jInstallerModule {
             // modify jlx_user columns
             $this->useDbProfile('jauth_super');
             $sqlPath = $this->path . 'install/sql/upgrade/upgrade_2.1.2_2.1.3.sql';
-            $sqlTpl = jFile::read( $sqlPath );
-            $tpl = new jTpl();
-            $sql = $tpl->fetchFromString($sqlTpl, 'text');
+            $sql = jFile::read( $sqlPath );
             $db = $this->dbConnection();
             $db->exec($sql);
 
