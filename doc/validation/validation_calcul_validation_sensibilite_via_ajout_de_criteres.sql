@@ -68,6 +68,21 @@ SELECT occtax.calcul_niveau_validation(
 INSERT INTO occtax.critere_sensibilite (cd_nom, libelle, "condition", table_jointure, niveau)
 VALUES (ARRAY[441613], '1', 'o.commentaire ILIKE ''%nid%'' OR o.commentaire ILIKE ''%terrier %'' OR o.commentaire ILIKE ''%colonie %'' OR o.descriptif_sujet @>  ''[{"occ_statut_biologique": "4"}]'' OR o.descriptif_sujet @>  ''[{"occ_stade_de_vie": "9"}]'' OR o.descriptif_sujet @>  ''[{"occ_stade_de_vie": "25"}]''   ', NULL, '2');
 
+
+-- Ajout d'un critère plus complexe avec une condition sur le contenu de descriptif_sujet
+INSERT INTO occtax.critere_sensibilite (cd_nom, libelle, "condition", table_jointure, niveau)
+VALUES (
+    ARRAY[441613],
+    'test',
+    '  commentaire ~*  ''nid|nich|terrier|colonie|reproduct'' -- ~* veut dire "expression régulière insensible à la casse"
+    OR descriptif_sujet::text ~* ''"occ_statut_biologique": "3"'' -- si une seule valeur recherchée
+    OR descriptif_sujet::text ~* ''"occ_stade_de_vie": "(9|25)"''  -- Les parenthèses son importante !
+    OR (donnee_complementaire->>''atlas_code'')::integer BETWEEN 2 AND 19
+    OR (donnee_complementaire->>''atlas_code'')::integer IN (30, 40, 50)
+    ',
+    NULL, '2'
+);
+
 -- Ajout du référentuel dans sensibilite_referentiel
 INSERT INTO occtax.sensibilite_referentiel (sensi_referentiel, sensi_version_referentiel, description)
 VALUES ('Référentiel de sensibilité TEST', '1.0.0', 'Un référentiel de sensibilité de test')

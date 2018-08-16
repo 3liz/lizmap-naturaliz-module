@@ -117,9 +117,7 @@ SELECT occtax.critere_sensibilite(
 
 NB: Si on veut pouvoir comprendre le nombre d'observations impactées par chacun des critères, on peut lire le contenu de la table `occtax.niveau_par_observation_compteur` qui fournit pour chaque critère (id et libelle) le nombre d'observation impactées, dans le champ `compteur`. La table rappelle aussi la `condition`.
 
-Voir un exemple d'ajout de critères et de calcul de sensibilité automatique: doc/validation/validation_calcul_validation_sensibilite_via_ajout_de_criteres.sql
-
-Cet exemple montre par exemple comment utiliser une jointure avec table spatiale (par exemple de zonages de sensibilité) pour créer un critère qui teste l'intersection entre les observations et des polygones.
+Voir [un exemple d'ajout de critères et de calcul de sensibilité automatique](doc/validation/validation_calcul_validation_sensibilite_via_ajout_de_criteres.sql) qui montre comment utiliser les tables de critères, et comment faire une jointure avec table spatiale (par exemple de zonages de sensibilité) pour créer un critère qui teste l'intersection entre les observations et des polygones. Des exemples complexes montrent comment utiliser un filtre sur `descriptif_sujet`
 
 
 ### Gestion de la validité des données
