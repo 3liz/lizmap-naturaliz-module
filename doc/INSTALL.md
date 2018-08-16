@@ -737,3 +737,26 @@ session.gc_maxlifetime = 25200
 # Enregistrer et recharger
 service php5-fpm reload
 ```
+
+
+## Mise à jour
+
+Lorsqu'une nouvelle version des modules Naturaliz est sortie, il faut les mettre à jour. Par exemple via ce type de procédure
+
+```
+# 1 - mettre à jour les modules via git
+cd /CHEMIN/REPERTOIRE/SOURCE/MODULES
+git status -s
+git fetch origin
+git merge origin/master
+
+# 2 - copier les modules dans l'application Lizmap
+cp -R /CHEMIN/REPERTOIRE/SOURCE/MODULES/* /srv/lizmap_web_client/lizmap/lizmap-modules/
+
+# 3 - lancer l'installateur de Lizmap pour mettre à jour
+cd /srv/lizmap_web_client/
+lizmap/install/clean_vartmp.sh
+lizmap/install/set_rights.sh
+php lizmap/install/installer.php
+lizmap/install/set_rights.sh
+```
