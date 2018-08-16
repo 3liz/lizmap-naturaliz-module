@@ -29,10 +29,10 @@ class gestionFilterListener extends jEventListener{
                 $dparams['cd_nom'] = explode( ',', trim($demande->cd_ref, '{}') );
             }
             if($demande->group1_inpn){
-                $dparams['group1_inpn'] = explode( ',', trim($demande->group1_inpn, '{}') );
+                $dparams['group1_inpn'] = explode( ',', trim(str_replace('"', '', $demande->group1_inpn), '{}') );
             }
             if($demande->group2_inpn){
-                $dparams['group2_inpn'] = explode( ',', trim($demande->group2_inpn, '{}') );
+                $dparams['group2_inpn'] = explode( ',', trim(str_replace('"', '', $demande->group2_inpn), '{}') );
             }
             jClasses::inc('occtax~occtaxSearchObservation');
             $dsearch = new occtaxSearchObservation( null, $dparams, 1 );
