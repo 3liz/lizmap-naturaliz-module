@@ -263,9 +263,6 @@ CREATE TABLE personne (
     CONSTRAINT personne_identite_valide CHECK ( identite NOT LIKE '%,%' )
 );
 ALTER TABLE personne ADD PRIMARY KEY (id_personne);
--- ALTER TABLE occtax.personne ADD CONSTRAINT personne_mail_key UNIQUE (mail);
--- ALTER TABLE occtax.personne ADD CONSTRAINT personne_identite_mail_key UNIQUE (identite, mail);
-
 
 COMMENT ON TABLE personne IS 'Liste des personnes participant aux observations. Cette table est remplie de manière automatique lors des imports de données. Il n''est pas assuré que chaque personne ne représente pas plusieurs homonymes.';
 COMMENT ON COLUMN personne.id_personne IS 'Identifiant de la personne (valeur autoincrémentée)';
