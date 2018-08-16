@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>naturaliz_reunion Database</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon.png">
+  <!-- Bootstrap 3.3.5 -->
+  <link rel="stylesheet" href="bower/admin-lte/bootstrap/css/bootstrap.min.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="bower/font-awesome/css/font-awesome.min.css">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="bower/ionicons/css/ionicons.min.css">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="bower/datatables.net-bs/css/dataTables.bootstrap.min.css">
+  <link rel="stylesheet" href="bower/datatables.net-buttons-bs/css/buttons.bootstrap.min.css">
+  <!-- Code Mirror -->
+  <link rel="stylesheet" href="bower/codemirror/codemirror.css">
+  <!-- Fonts -->
+  <link href='fonts/indieflower/indie-flower.css' rel='stylesheet' type='text/css'>
+  <link href='fonts/source-sans-pro/source-sans-pro.css' rel='stylesheet' type='text/css'>
+
+  <!-- Theme style -->
+  <link rel="stylesheet" href="bower/admin-lte/dist/css/AdminLTE.min.css">
+  <!-- Salvattore -->
+  <link rel="stylesheet" href="bower/salvattore/salvattore.css">
+  <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+  <link rel="stylesheet" href="bower/admin-lte/dist/css/skins/_all-skins.min.css">
+  <!-- SchemaSpy -->
+  <link rel="stylesheet" href="schemaSpy.css">
+  
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+  <script src="bower/html5shiv/html5shiv.min.js"></script>
+  <script src="bower/respond/respond.min.js"></script>
+  <![endif]-->
+</head>
+<!-- ADD THE CLASS layout-top-nav TO REMOVE THE SIDEBAR. -->
+<body class="hold-transition skin-blue layout-top-nav">
+<div class="wrapper">
+  <header class="main-header">
+    <nav class="navbar navbar-static-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a href="index.html" class="navbar-brand"><b>naturaliz_reunion</b> Database</a>
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+            <i class="fa fa-bars"></i>
+          </button>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse pull-left" id="navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="index.html">Tables <span class="sr-only">(current)</span></a></li>
+			<li><a href="columns.html" title="All of the columns in the schema">Columns</a></li>
+			<li><a href="constraints.html" title="Useful for diagnosing error messages that just give constraint name or number">Constraints</a></li>
+			<li><a href="relationships.html" title="Diagram of table relationships">Relationships</a></li>
+			<li><a href="orphans.html" title="View of tables with neither parents nor children">Orphan&nbsp;Tables</a></li>				
+			<li><a href="anomalies.html" title="Things that might not be quite right">Anomalies</a></li>
+			<li><a href="routines.html" title="Procedures and functions">Routines</a></li>
+          </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+        <!-- Navbar Right Menu -->
+
+      </div>
+      <!-- /.container-fluid -->
+    </nav>
+  </header>
+  <!-- Main content -->
+  <!-- Full Width Column -->
+  <div class="content-wrapper">
+          <!-- Content Header (Page header) -->
+      <section class="content-header">
+        <h1>All Relationships</h1>
+      </section>
+      <!-- Main content -->
+      <section class="content">
+				<div class="box box-primary">		
+			<div class="box-header with-border">
+              <i class="fa fa-code-fork"></i>
+              <h3 class="box-title">Diagrams</h3>
+            </div>	
+			<div class="box-body">	
+			<div class="nav-tabs-custom" style="cursor: move;">
+            <!-- Tabs within a box -->
+			<h5>By default only columns that are primary keys, foreign keys or indexes are shown.</h5>
+            <ul class="nav nav-tabs pull-left ui-sortable-handle">
+			  			              <li class="active"><a href="#compactDegreeImg-chart" data-toggle="tab" aria-expanded="true">Compact</a></li>			  			 
+			  			              <li class=""><a href="#largeDegreeImg-chart" data-toggle="tab" aria-expanded="true">Large</a></li>			  			 
+			  			              <li class=""><a href="#compactimpliedDegreeImg-chart" data-toggle="tab" aria-expanded="true">Compact Implied</a></li>			  			 
+			  			              <li class=""><a href="#largeimpliedDegreeImg-chart" data-toggle="tab" aria-expanded="true">Large Implied</a></li>			  			 
+            </ul>
+            <div class="tab-content no-padding">            
+				<div class="chart tab-pane active" id="compactDegreeImg-chart" style="position: relative; overflow-x:auto;">
+																					<map id="compactRelationshipsDiagram" name="compactRelationshipsDiagram">
+<area shape="rect" id="node1" title="gestion.acteur" alt="" coords="313,2285,545,2403">
+<area shape="rect" id="node17" title="occtax.organisme" alt="" coords="5,2141,211,2229">
+<area shape="rect" id="node2" title="gestion.demande" alt="" coords="324,1987,535,2104">
+<area shape="rect" id="node3" href="tables/attribut_additionnel.html" title="attribut_additionnel" alt="" coords="681,392,911,539">
+<area shape="rect" id="node15" href="tables/observation.html" title="observation" alt="" coords="255,1217,604,1540">
+<area shape="rect" id="node4" href="tables/jdd.html" title="jdd" alt="" coords="297,2121,561,2268">
+<area shape="rect" id="node5" href="tables/jdd_import.html" title="jdd_import" alt="" coords="684,2207,908,2412">
+<area shape="rect" id="node6" href="tables/localisation_commune.html" title="localisation_commune" alt="" coords="672,556,920,703">
+<area shape="rect" id="node7" href="tables/localisation_departement.html" title="localisation_departement" alt="" coords="657,720,935,867">
+<area shape="rect" id="node8" href="tables/localisation_espace_naturel.html" title="localisation_espace_naturel" alt="" coords="648,884,944,1031">
+<area shape="rect" id="node9" href="tables/localisation_habitat.html" title="localisation_habitat" alt="" coords="683,1048,909,1200">
+<area shape="rect" id="node10" href="tables/localisation_maille_01.html" title="localisation_maille_01" alt="" coords="673,1217,919,1364">
+<area shape="rect" id="node11" href="tables/localisation_maille_02.html" title="localisation_maille_02" alt="" coords="673,1381,919,1528">
+<area shape="rect" id="node12" href="tables/localisation_maille_05.html" title="localisation_maille_05" alt="" coords="673,1545,919,1692">
+<area shape="rect" id="node13" href="tables/localisation_maille_10.html" title="localisation_maille_10" alt="" coords="673,1709,919,1856">
+<area shape="rect" id="node14" href="tables/localisation_masse_eau.html" title="localisation_masse_eau" alt="" coords="667,1873,925,2020">
+<area shape="rect" id="node16" href="tables/observation_personne.html" title="observation_personne" alt="" coords="672,2037,920,2189">
+<area shape="rect" id="node18" href="tables/personne.html" title="personne" alt="" coords="351,161,508,308">
+<area shape="rect" id="node19" href="tables/validation_observation.html" title="validation_observation" alt="" coords="669,5,923,211">
+<area shape="rect" id="node20" href="tables/validation_personne.html" title="validation_personne" alt="" coords="666,228,926,375">
+</map>
+
+					<a name='diagram'><img id='compactDegreeImg' src='diagrams/summary/relationships.real.compact.png' usemap='#compactRelationshipsDiagram' class='diagram' border='0' alt='' align='left'></a>							
+				</div>
+				<div class="chart tab-pane " id="largeDegreeImg-chart" style="position: relative; overflow-x:auto;">
+																					<map id="largeRelationshipsDiagram" name="largeRelationshipsDiagram">
+<area shape="rect" id="node1" title="gestion.acteur" alt="" coords="313,4063,545,4479">
+<area shape="rect" id="node17" title="occtax.organisme" alt="" coords="5,3812,211,3935">
+<area shape="rect" id="node2" title="gestion.demande" alt="" coords="324,3237,535,3800">
+<area shape="rect" id="node3" href="tables/attribut_additionnel.html" title="attribut_additionnel" alt="" coords="681,667,911,936">
+<area shape="rect" id="node15" href="tables/observation.html" title="observation" alt="" coords="255,1631,604,3220">
+<area shape="rect" id="node4" href="tables/jdd.html" title="jdd" alt="" coords="297,3817,561,4028">
+<area shape="rect" id="node5" href="tables/jdd_import.html" title="jdd_import" alt="" coords="684,3769,908,4185">
+<area shape="rect" id="node6" href="tables/localisation_commune.html" title="localisation_commune" alt="" coords="672,953,920,1105">
+<area shape="rect" id="node7" href="tables/localisation_departement.html" title="localisation_departement" alt="" coords="657,1123,935,1275">
+<area shape="rect" id="node8" href="tables/localisation_espace_naturel.html" title="localisation_espace_naturel" alt="" coords="648,1292,944,1444">
+<area shape="rect" id="node9" href="tables/localisation_habitat.html" title="localisation_habitat" alt="" coords="683,1461,909,1613">
+<area shape="rect" id="node10" href="tables/localisation_maille_01.html" title="localisation_maille_01" alt="" coords="673,1631,919,1783">
+<area shape="rect" id="node11" href="tables/localisation_maille_02.html" title="localisation_maille_02" alt="" coords="673,1800,919,1952">
+<area shape="rect" id="node12" href="tables/localisation_maille_05.html" title="localisation_maille_05" alt="" coords="673,1969,919,2121">
+<area shape="rect" id="node13" href="tables/localisation_maille_10.html" title="localisation_maille_10" alt="" coords="673,2139,919,2291">
+<area shape="rect" id="node14" href="tables/localisation_masse_eau.html" title="localisation_masse_eau" alt="" coords="667,2308,925,2460">
+<area shape="rect" id="node16" href="tables/observation_personne.html" title="observation_personne" alt="" coords="672,2477,920,2629">
+<area shape="rect" id="node18" href="tables/personne.html" title="personne" alt="" coords="351,355,508,624">
+<area shape="rect" id="node19" href="tables/validation_observation.html" title="validation_observation" alt="" coords="669,5,923,480">
+<area shape="rect" id="node20" href="tables/validation_personne.html" title="validation_personne" alt="" coords="666,497,926,649">
+</map>
+
+					<a name='diagram'><img id='largeDegreeImg' src='diagrams/summary/relationships.real.large.png' usemap='#largeRelationshipsDiagram' class='diagram' border='0' alt='' align='left'></a>							
+				</div>
+				<div class="chart tab-pane " id="compactimpliedDegreeImg-chart" style="position: relative; overflow-x:auto;">
+																											<map id="compactImpliedRelationshipsDiagram" name="compactImpliedRelationshipsDiagram">
+<area shape="rect" id="node1" title="gestion.acteur" alt="" coords="271,140,503,257">
+<area shape="rect" id="node19" title="occtax.organisme" alt="" coords="5,79,211,167">
+<area shape="rect" id="node2" title="gestion.demande" alt="" coords="281,5,492,123">
+<area shape="rect" id="node3" href="tables/attribut_additionnel.html" title="attribut_additionnel" alt="" coords="1056,3079,1285,3225">
+<area shape="rect" id="node16" href="tables/observation.html" title="observation" alt="" coords="591,1949,941,2272">
+<area shape="rect" id="node4" href="tables/jdd.html" title="jdd" alt="" coords="255,375,519,521">
+<area shape="rect" id="node5" href="tables/jdd_import.html" title="jdd_import" alt="" coords="654,76,878,281">
+<area shape="rect" id="node6" href="tables/lien_observation_identifiant_permanent.html" title="lien_observation_identifiant_permanent" alt="" coords="563,299,969,475">
+<area shape="rect" id="node7" href="tables/localisation_commune.html" title="localisation_commune" alt="" coords="1047,3243,1295,3389">
+<area shape="rect" id="node8" href="tables/localisation_departement.html" title="localisation_departement" alt="" coords="1032,1371,1309,1517">
+<area shape="rect" id="node9" href="tables/localisation_espace_naturel.html" title="localisation_espace_naturel" alt="" coords="1023,1535,1319,1681">
+<area shape="rect" id="node10" href="tables/localisation_habitat.html" title="localisation_habitat" alt="" coords="1058,1699,1283,1851">
+<area shape="rect" id="node11" href="tables/localisation_maille_01.html" title="localisation_maille_01" alt="" coords="1048,1868,1293,2015">
+<area shape="rect" id="node12" href="tables/localisation_maille_02.html" title="localisation_maille_02" alt="" coords="1048,2032,1293,2179">
+<area shape="rect" id="node13" href="tables/localisation_maille_05.html" title="localisation_maille_05" alt="" coords="1048,2196,1293,2343">
+<area shape="rect" id="node14" href="tables/localisation_maille_10.html" title="localisation_maille_10" alt="" coords="1048,2360,1293,2507">
+<area shape="rect" id="node15" href="tables/localisation_masse_eau.html" title="localisation_masse_eau" alt="" coords="1041,2524,1300,2671">
+<area shape="rect" id="node17" href="tables/observation_diffusion.html" title="observation_diffusion" alt="" coords="1049,2688,1293,2781">
+<area shape="rect" id="node18" href="tables/observation_personne.html" title="observation_personne" alt="" coords="1047,2799,1295,2951">
+<area shape="rect" id="node20" href="tables/personne.html" title="personne" alt="" coords="687,915,845,1061">
+<area shape="rect" id="node21" href="tables/v_determinateur.html" title="v_determinateur" alt="" coords="1072,1055,1269,1177">
+<area shape="rect" id="node22" href="tables/v_localisation_espace_naturel.html" title="v_localisation_espace_naturel" alt="" coords="1013,2968,1328,3061">
+<area shape="rect" id="node23" href="tables/v_observateur.html" title="v_observateur" alt="" coords="1081,1195,1260,1317">
+<area shape="rect" id="node24" href="tables/v_observation_validation.html" title="v_observation_validation" alt="" coords="1372,633,1721,785">
+<area shape="rect" id="node26" href="tables/validation_observation.html" title="validation_observation" alt="" coords="1043,692,1298,897">
+<area shape="rect" id="node25" href="tables/v_validateur.html" title="v_validateur" alt="" coords="1089,915,1252,1037">
+<area shape="rect" id="node27" href="tables/validation_personne.html" title="validation_personne" alt="" coords="1041,528,1301,675">
+</map>
+
+					<a name='diagram'><img id='compactimpliedDegreeImg' src='diagrams/summary/relationships.implied.compact.png' usemap='#compactImpliedRelationshipsDiagram' class='diagram' border='0' alt='' align='left'></a>							
+				</div>
+				<div class="chart tab-pane " id="largeimpliedDegreeImg-chart" style="position: relative; overflow-x:auto;">
+																											<map id="largeImpliedRelationshipsDiagram" name="largeImpliedRelationshipsDiagram">
+<area shape="rect" id="node1" title="gestion.acteur" alt="" coords="271,585,503,1001">
+<area shape="rect" id="node19" title="occtax.organisme" alt="" coords="5,457,211,580">
+<area shape="rect" id="node2" title="gestion.demande" alt="" coords="281,5,492,568">
+<area shape="rect" id="node3" href="tables/attribut_additionnel.html" title="attribut_additionnel" alt="" coords="1056,4512,1285,4781">
+<area shape="rect" id="node16" href="tables/observation.html" title="observation" alt="" coords="591,3260,941,4849">
+<area shape="rect" id="node4" href="tables/jdd.html" title="jdd" alt="" coords="255,1019,519,1229">
+<area shape="rect" id="node5" href="tables/jdd_import.html" title="jdd_import" alt="" coords="654,292,878,708">
+<area shape="rect" id="node6" href="tables/lien_observation_identifiant_permanent.html" title="lien_observation_identifiant_permanent" alt="" coords="563,831,969,1041">
+<area shape="rect" id="node7" href="tables/localisation_commune.html" title="localisation_commune" alt="" coords="1047,4799,1295,4951">
+<area shape="rect" id="node8" href="tables/localisation_departement.html" title="localisation_departement" alt="" coords="1032,2668,1309,2820">
+<area shape="rect" id="node9" href="tables/localisation_espace_naturel.html" title="localisation_espace_naturel" alt="" coords="1023,2837,1319,2989">
+<area shape="rect" id="node10" href="tables/localisation_habitat.html" title="localisation_habitat" alt="" coords="1058,3007,1283,3159">
+<area shape="rect" id="node11" href="tables/localisation_maille_01.html" title="localisation_maille_01" alt="" coords="1048,3176,1293,3328">
+<area shape="rect" id="node12" href="tables/localisation_maille_02.html" title="localisation_maille_02" alt="" coords="1048,3345,1293,3497">
+<area shape="rect" id="node13" href="tables/localisation_maille_05.html" title="localisation_maille_05" alt="" coords="1048,3515,1293,3667">
+<area shape="rect" id="node14" href="tables/localisation_maille_10.html" title="localisation_maille_10" alt="" coords="1048,3684,1293,3836">
+<area shape="rect" id="node15" href="tables/localisation_masse_eau.html" title="localisation_masse_eau" alt="" coords="1041,3853,1300,4005">
+<area shape="rect" id="node17" href="tables/observation_diffusion.html" title="observation_diffusion" alt="" coords="1049,4023,1293,4121">
+<area shape="rect" id="node18" href="tables/observation_personne.html" title="observation_personne" alt="" coords="1047,4139,1295,4291">
+<area shape="rect" id="node20" href="tables/personne.html" title="personne" alt="" coords="687,1844,845,2113">
+<area shape="rect" id="node21" href="tables/v_determinateur.html" title="v_determinateur" alt="" coords="1072,2048,1269,2323">
+<area shape="rect" id="node22" href="tables/v_localisation_espace_naturel.html" title="v_localisation_espace_naturel" alt="" coords="1013,4308,1328,4495">
+<area shape="rect" id="node23" href="tables/v_observateur.html" title="v_observateur" alt="" coords="1081,2340,1260,2615">
+<area shape="rect" id="node24" href="tables/v_observation_validation.html" title="v_observation_validation" alt="" coords="1372,80,1721,1733">
+<area shape="rect" id="node26" href="tables/validation_observation.html" title="validation_observation" alt="" coords="1043,1264,1298,1739">
+<area shape="rect" id="node25" href="tables/v_validateur.html" title="v_validateur" alt="" coords="1089,1756,1252,2031">
+<area shape="rect" id="node27" href="tables/validation_personne.html" title="validation_personne" alt="" coords="1041,1095,1301,1247">
+</map>
+
+					<a name='diagram'><img id='largeimpliedDegreeImg' src='diagrams/summary/relationships.implied.large.png' usemap='#largeImpliedRelationshipsDiagram' class='diagram' border='0' alt='' align='left'></a>							
+				</div>
+			  			</div>
+			</div>
+		  </div><!-- /.box-body -->
+		</div>
+		      </section>    
+  </div>
+  <!-- /.content-wrapper -->
+  <footer class="main-footer">
+    <div>
+      <div class="pull-right hidden-xs">
+        <a href="https://github.com/schemaspy/schemaspy" title="GitHub for SchemaSpy"><i class="fa fa-github-square fa-2x"></i></a>
+        <a href="http://stackoverflow.com/questions/tagged/schemaspy" title="StackOverflow for SchemaSpy"><i class="fa fa-stack-overflow fa-2x"></i></a>
+      </div>
+      <strong>Generated by <a href="http://schemaspy.org/" class="logo-text"><i class="fa fa-database"></i> SchemaSpy 6.0.0</a></strong>
+    </div>
+    <!-- /.container -->
+  </footer>
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery 2.2.3 -->
+<script src="bower/admin-lte/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script src="bower/admin-lte/plugins/jQueryUI/jquery-ui.min.js"></script>
+<!-- Bootstrap 3.3.5 -->
+<script src="bower/admin-lte/bootstrap/js/bootstrap.min.js"></script>
+<!-- DataTables -->
+<script src="bower/datatables.net/jquery.dataTables.min.js"></script>
+<script src="bower/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<script src="bower/datatables.net-buttons/dataTables.buttons.min.js"></script>
+<script src="bower/datatables.net-buttons-bs/js/buttons.bootstrap.min.js"></script>
+<script src="bower/datatables.net-buttons/buttons.html5.min.js"></script>
+<script src="bower/datatables.net-buttons/buttons.print.min.js"></script>
+<script src="bower/datatables.net-buttons/buttons.colVis.min.js"></script>
+<!-- SheetJS -->
+<script src="bower/js-xlsx/xlsx.full.min.js"></script>
+<!-- pdfmake -->
+<script src="bower/pdfmake/pdfmake.min.js"></script>
+<script src="bower/pdfmake/vfs_fonts.js"></script>
+<!-- SlimScroll -->
+<script src="bower/admin-lte/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+<!-- FastClick -->
+<script src="bower/admin-lte/plugins/fastclick/fastclick.js"></script>
+<!-- Salvattore -->
+<script src="bower/salvattore/salvattore.min.js"></script>
+<!-- AnchorJS -->
+<script src="bower/anchor-js/anchor.min.js"></script>
+<!-- CodeMirror -->
+<script src="bower/codemirror/codemirror.js"></script>
+<script src="bower/codemirror/sql.js"></script>
+<!-- AdminLTE App -->
+<script src="bower/admin-lte/dist/js/app.min.js"></script>
+<script src="relationships.js"></script>
+<script src="schemaSpy.js"></script>
+</body>
+</html>

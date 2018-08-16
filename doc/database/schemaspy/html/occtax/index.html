@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>naturaliz_reunion Database</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon.png">
+  <!-- Bootstrap 3.3.5 -->
+  <link rel="stylesheet" href="bower/admin-lte/bootstrap/css/bootstrap.min.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="bower/font-awesome/css/font-awesome.min.css">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="bower/ionicons/css/ionicons.min.css">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="bower/datatables.net-bs/css/dataTables.bootstrap.min.css">
+  <link rel="stylesheet" href="bower/datatables.net-buttons-bs/css/buttons.bootstrap.min.css">
+  <!-- Code Mirror -->
+  <link rel="stylesheet" href="bower/codemirror/codemirror.css">
+  <!-- Fonts -->
+  <link href='fonts/indieflower/indie-flower.css' rel='stylesheet' type='text/css'>
+  <link href='fonts/source-sans-pro/source-sans-pro.css' rel='stylesheet' type='text/css'>
+
+  <!-- Theme style -->
+  <link rel="stylesheet" href="bower/admin-lte/dist/css/AdminLTE.min.css">
+  <!-- Salvattore -->
+  <link rel="stylesheet" href="bower/salvattore/salvattore.css">
+  <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+  <link rel="stylesheet" href="bower/admin-lte/dist/css/skins/_all-skins.min.css">
+  <!-- SchemaSpy -->
+  <link rel="stylesheet" href="schemaSpy.css">
+  
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+  <script src="bower/html5shiv/html5shiv.min.js"></script>
+  <script src="bower/respond/respond.min.js"></script>
+  <![endif]-->
+</head>
+<!-- ADD THE CLASS layout-top-nav TO REMOVE THE SIDEBAR. -->
+<body class="hold-transition skin-blue layout-top-nav">
+<div class="wrapper">
+  <header class="main-header">
+    <nav class="navbar navbar-static-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a href="index.html" class="navbar-brand"><b>naturaliz_reunion</b> Database</a>
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+            <i class="fa fa-bars"></i>
+          </button>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse pull-left" id="navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="index.html">Tables <span class="sr-only">(current)</span></a></li>
+			<li><a href="columns.html" title="All of the columns in the schema">Columns</a></li>
+			<li><a href="constraints.html" title="Useful for diagnosing error messages that just give constraint name or number">Constraints</a></li>
+			<li><a href="relationships.html" title="Diagram of table relationships">Relationships</a></li>
+			<li><a href="orphans.html" title="View of tables with neither parents nor children">Orphan&nbsp;Tables</a></li>				
+			<li><a href="anomalies.html" title="Things that might not be quite right">Anomalies</a></li>
+			<li><a href="routines.html" title="Procedures and functions">Routines</a></li>
+          </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+        <!-- Navbar Right Menu -->
+
+      </div>
+      <!-- /.container-fluid -->
+    </nav>
+  </header>
+  <!-- Main content -->
+  <!-- Full Width Column -->
+  <div class="content-wrapper">
+          <!-- Content Header (Page header) -->
+      <section class="content-header">
+        <h1>Tables</h1></br>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="callout callout-info">
+					<h4>SchemaSpy Analysis of naturaliz_reunion</h4>
+					<p>Generated on jeu. août 16 10:54 CEST 2018</p>
+				</div>
+			</div>
+		</div>
+
+
+        <a href="naturaliz_reunion.occtax.xml" title="XML Representation">XML Representation</a></br>
+		<a href="insertionOrder.txt" title="Useful for loading data into a database">Insertion Order</a>
+        <a href="deletionOrder.txt" title="Useful for purging data from a database">Deletion Order</a>	
+      </section>
+      <!-- Main content -->
+      <section class="content">
+		  <div class="row">
+			<div class="col-md-2 col-sm-4 col-xs-12">
+			  <div class="info-box">
+				  <span class="info-box-icon bg-aqua"><i class="fa fa-table"></i></span>
+				  <div class="info-box-content">
+					  <span class="info-box-text">TABLES</span>
+					  <span class="info-box-number">30</span>
+				  </div>
+				  <!-- /.info-box-content -->
+			  </div>
+			  <!-- /.info-box -->
+			</div>
+			<!-- /.col -->
+			<div class="col-md-2 col-sm-4 col-xs-12">
+			  <div class="info-box">
+				  <span class="info-box-icon bg-teal"><i class="fa fa-table"></i></span>
+				  <div class="info-box-content">
+					  <span class="info-box-text">VIEWS</span>
+					  <span class="info-box-number">8</span>
+				  </div>
+				  <!-- /.info-box-content -->
+			  </div>
+			  <!-- /.info-box -->
+			</div>
+			<!-- /.col -->
+
+			<div class="col-md-2 col-sm-4 col-xs-12">
+			  <div class="info-box">
+				  <span class="info-box-icon bg-green"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></span>
+
+				  <div class="info-box-content">
+					  <span class="info-box-text">COLUMNS</span>
+					  <span class="info-box-number">290</span>
+				  </div>
+				  <!-- /.info-box-content -->
+			  </div>
+			  <!-- /.info-box -->
+			</div>
+		  <!-- /.col -->
+			<div class="col-md-2 col-sm-4 col-xs-12">
+			  <div class="info-box">
+				  <span class="info-box-icon bg-yellow"><i class="ion ion-key"></i></span>
+
+				  <div class="info-box-content">
+					  <span class="info-box-text">Constraints</span>
+					  <span class="info-box-number">16</span>
+				  </div>
+				  <!-- /.info-box-content -->
+			  </div>
+			  <!-- /.info-box -->
+			</div>
+			<!-- /.col -->
+			<div class="col-md-2 col-sm-4 col-xs-12">
+			  <div class="info-box">
+				  <span class="info-box-icon bg-red-active"><i class="fa fa-question" aria-hidden="true"></i></span>
+
+				  <div class="info-box-content">
+					  <span class="info-box-text">Anomalies</span>
+					  <span class="info-box-number">5</span>
+				  </div>
+				  <!-- /.info-box-content -->
+			  </div>
+			  <!-- /.info-box -->
+			</div>
+		  	<!-- /.col -->
+			<div class="col-md-2 col-sm-4 col-xs-12">
+				<div class="info-box">
+					<span class="info-box-icon bg-navy"><i class="fa fa-file-code-o" aria-hidden="true"></i></span>
+
+					<div class="info-box-content">
+						<span class="info-box-text">Routines</span>
+						<span class="info-box-number">0</span>
+					</div>
+					<!-- /.info-box-content -->
+				</div>
+				<!-- /.info-box -->
+			</div>
+			<!-- /.col -->
+		</div>
+		<div class="box box-primary">		
+			<div class="box-header with-border">
+			  <h3 class="box-title">Database Properties</h3>
+			  <span class="label label-primary pull-right"><i class="fa fa-cog fa-2x"></i></span>			  
+			</div><!-- /.box-header -->
+			<div class="box-body">
+			  <p>Database Type: PostgreSQL - 9.6.9</p>			  
+			</div><!-- /.box-body -->
+		</div>
+		<div class="box box-primary">
+            <div class="box-header with-border">
+              <h3 class="box-title">Tables</h3>			  
+			  <span class="label label-primary pull-right"><i class="fa fa-database fa-2x"></i></span>
+            </div><!-- /.box-header -->
+            <div class="box-body">
+			<div class="row">
+				<div id="button_group_one" class="col-md-3 col-sm-6"></div>
+				<div id="button_group_two" class="col-md-2 col-sm-4 pull-right text-right"></div>
+			</div>
+            <table id="database_objects" class="table table-bordered table-striped dataTable" role="grid">
+				<thead>
+					<tr>
+					  <th valign="bottom">Table / View</th>
+					  <th align="right" valign="bottom">Children</th>
+					  <th align="right" valign="bottom">Parents</th>
+					  <th align="right" valign="bottom">Columns</th>
+					  <th align="right" valign="bottom">Rows</th>
+					  <th align="right" valign="bottom">Type</th>
+					  <th class="toggle">Comments</th>
+					</tr>
+				</thead>
+				<tbody>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/localisation_commune.html">localisation_commune</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">1</td>
+				  <td class="detail" align="right">3</td>
+				  <td class="detail" align="right">26934</td>
+				  <td class="detail" align="right">Table</td>
+				  <td class="comment detail" style="display: table-cell;"><p>Table de lien qui stocke la/les commune(s) où a été effectuée l’observation suivant le référentiel INSEE en vigueur.</p></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/organisme.html">organisme</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">2</td>
+				  <td class="detail" align="right">8</td>
+				  <td class="detail" align="right">Table</td>
+				  <td class="comment detail" style="display: table-cell;"><p>Organismes listés dans l'application. Par exemple, les organismes liés aux observations peuvent être liés à cette table. Ou les demandes du module optionnel de gestion sont rattachées à un organisme.</p></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/critere_validation.html">critere_validation</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">7</td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">Table</td>
+				  <td class="comment detail" style="display: table-cell;"><p>Liste les critères qui permettent de calculer un niveau de validation sur chacune des observations, via l'utilisation de conditions SQL, pour un taxon ou un ensemble de taxons.</p></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/localisation_habitat.html">localisation_habitat</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">1</td>
+				  <td class="detail" align="right">3</td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">Table</td>
+				  <td class="comment detail" style="display: table-cell;"><p>Table de lien etre les tables habitat et localisation</p></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/jdd.html">jdd</a></td>
+				  <td class="detail" align="right">4</td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">5</td>
+				  <td class="detail" align="right">19</td>
+				  <td class="detail" align="right">Table</td>
+				  <td class="comment detail" style="display: table-cell;"><p>Recense les jeux de données officiels du standard Occurence de taxons. Un jeu de données correspond souvent à une base de données</p></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/localisation_espace_naturel.html">localisation_espace_naturel</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">1</td>
+				  <td class="detail" align="right">3</td>
+				  <td class="detail" align="right">41659</td>
+				  <td class="detail" align="right">Table</td>
+				  <td class="comment detail" style="display: table-cell;"><p>Table de lien entre la localisation et l’espace naturel</p></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/observation.html">observation</a></td>
+				  <td class="detail" align="right">17</td>
+				  <td class="detail" align="right">1</td>
+				  <td class="detail" align="right">52</td>
+				  <td class="detail" align="right">34945</td>
+				  <td class="detail" align="right">Table</td>
+				  <td class="comment detail" style="display: table-cell;"><p>Une observation a une seule source qui peut être de 3 types différents : terrain, littérature ou collection. Ils ont des attributs communs JddId et JddCode qui précisent le support de la source, par exemple, le nom de la base de données où est gérée la Donnée Source ou le nom de la collection. Si la source est Littérature, un attribut est nécessaire pour préciser les références bibliographiques. En plus des attributs sur la source, des attributs permettent de caractériser la DEE (sensibilité ...) et de caractériser le sujet de l’observation: le nom du taxon observé, le dénombrement. Une observation est effectuée à une date au jour. En cas de doute sur la date exacte de l’observation, elle peut être représentée par des dates et heures de début et de fin présumées d’observation (période d’imprécision). L’heure de l’observation et la date de la détermination du taxon de l’observation peut être ajoutée.</p></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/validation_observation.html">validation_observation</a></td>
+				  <td class="detail" align="right">1</td>
+				  <td class="detail" align="right">1</td>
+				  <td class="detail" align="right">14</td>
+				  <td class="detail" align="right">36136</td>
+				  <td class="detail" align="right">Table</td>
+				  <td class="comment detail" style="display: table-cell;"><p>Décrit les opérations de validation scientifique et le niveau de validation attribué à la donnée d'occurrence. Les contrôles de validation scientifique ont été effectués au niveau régional ou national. Il n'est possible de transmettre que 2 résultats de contrôle de validation au maximum via ce concept : l'un national, l'autre régional.</p></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/personne.html">personne</a></td>
+				  <td class="detail" align="right">5</td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">7</td>
+				  <td class="detail" align="right">2348</td>
+				  <td class="detail" align="right">Table</td>
+				  <td class="comment detail" style="display: table-cell;"><p>Liste des personnes participant aux observations. Cette table est remplie de manière automatique lors des imports de données. Il n'est pas assuré que chaque personne ne représente pas plusieurs homonymes.</p></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/localisation_maille_10.html">localisation_maille_10</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">1</td>
+				  <td class="detail" align="right">3</td>
+				  <td class="detail" align="right">34981</td>
+				  <td class="detail" align="right">Table</td>
+				  <td class="comment detail" style="display: table-cell;"><p>Table de lien entre une table maille_10 (optionnelle) et la table des observations. Elle recense la ou les mailles sur laquelle l’observation a eu lieu</p></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/observation_personne.html">observation_personne</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">1</td>
+				  <td class="detail" align="right">3</td>
+				  <td class="detail" align="right">45584</td>
+				  <td class="detail" align="right">Table</td>
+				  <td class="comment detail" style="display: table-cell;"><p>Table pivot entre les observations et les personnes. Le champ role_personne permet de renseigner le type de relation (voir nomenclature)</p></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/critere_sensibilite.html">critere_sensibilite</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">7</td>
+				  <td class="detail" align="right">1105</td>
+				  <td class="detail" align="right">Table</td>
+				  <td class="comment detail" style="display: table-cell;"><p>Liste les critères qui permettent de calculer un niveau de sensibilité sur chacune des observations, via l'utilisation de conditions SQL, pour un taxon ou un ensemble de taxons.</p></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/localisation_maille_02.html">localisation_maille_02</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">1</td>
+				  <td class="detail" align="right">3</td>
+				  <td class="detail" align="right">35110</td>
+				  <td class="detail" align="right">Table</td>
+				  <td class="comment detail" style="display: table-cell;"><p>Table de lien entre une table maille_02 (optionnelle) et la table des observations. Elle recense la ou les mailles sur laquelle l’observation a eu lieu</p></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/niveau_par_observation_compteur.html">niveau_par_observation_compteur</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">5</td>
+				  <td class="detail" align="right">1105</td>
+				  <td class="detail" align="right">Table</td>
+				  <td class="comment detail" style="display: table-cell;"></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/localisation_maille_01.html">localisation_maille_01</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">1</td>
+				  <td class="detail" align="right">3</td>
+				  <td class="detail" align="right">31880</td>
+				  <td class="detail" align="right">Table</td>
+				  <td class="comment detail" style="display: table-cell;"><p>Table de lien entre une table maille_01 (optionnelle) et la table des observations. Elle recense la ou les mailles sur laquelle l’observation a eu lieu</p></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/jdd_import.html">jdd_import</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">3</td>
+				  <td class="detail" align="right">12</td>
+				  <td class="detail" align="right">21</td>
+				  <td class="detail" align="right">Table</td>
+				  <td class="comment detail" style="display: table-cell;"><p>Enregistre les actions d'import de données dans l'application. Cette table doit être renseignée manuellement à chaque import de données dans le schéma occtax. Cela permet d'avoir un suivi et un descriptif des imports successifs effectués sur l'application.</p></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/localisation_masse_eau.html">localisation_masse_eau</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">1</td>
+				  <td class="detail" align="right">3</td>
+				  <td class="detail" align="right">34910</td>
+				  <td class="detail" align="right">Table</td>
+				  <td class="comment detail" style="display: table-cell;"><p>Table de lien avec les masses d’eau</p></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/localisation_maille_05.html">localisation_maille_05</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">1</td>
+				  <td class="detail" align="right">3</td>
+				  <td class="detail" align="right">33717</td>
+				  <td class="detail" align="right">Table</td>
+				  <td class="comment detail" style="display: table-cell;"><p>Table de lien entre une table maille_05 (optionnelle) et la table des observations. Elle recense la ou les mailles sur laquelle l’observation a eu lieu</p></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/validation_procedure.html">validation_procedure</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">4</td>
+				  <td class="detail" align="right">4</td>
+				  <td class="detail" align="right">Table</td>
+				  <td class="comment detail" style="display: table-cell;"><p>Procédures de validation.</p></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/validation_personne.html">validation_personne</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">1</td>
+				  <td class="detail" align="right">3</td>
+				  <td class="detail" align="right">2</td>
+				  <td class="detail" align="right">Table</td>
+				  <td class="comment detail" style="display: table-cell;"><p>Stockage du lien entre personnes (id_personne) et roles postgresql</p></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/lien_observation_identifiant_permanent.html">lien_observation_identifiant_permanent</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">1</td>
+				  <td class="detail" align="right">5</td>
+				  <td class="detail" align="right">64035</td>
+				  <td class="detail" align="right">Table</td>
+				  <td class="comment detail" style="display: table-cell;"><p>Table utilisée pour conserver les identifiants permanents générés lors de l'import des observations. Cela permet de réutiliser les mêmes identifiants permanents lors d'un réimport par écrasement des données.</p></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/niveau_par_observation_final.html">niveau_par_observation_final</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">4</td>
+				  <td class="detail" align="right">142</td>
+				  <td class="detail" align="right">Table</td>
+				  <td class="comment detail" style="display: table-cell;"></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/referentiel_habitat.html">referentiel_habitat</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">5</td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">Table</td>
+				  <td class="comment detail" style="display: table-cell;"><p>Référentiel d'habitats et typologies. Source: http://standards-sinp.mnhn.fr/nomenclature/</p></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/niveau_par_observation.html">niveau_par_observation</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">5</td>
+				  <td class="detail" align="right">142</td>
+				  <td class="detail" align="right">Table</td>
+				  <td class="comment detail" style="display: table-cell;"></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/sensibilite_referentiel.html">sensibilite_referentiel</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">4</td>
+				  <td class="detail" align="right">1</td>
+				  <td class="detail" align="right">Table</td>
+				  <td class="comment detail" style="display: table-cell;"><p>Référentiel de sensibilité.</p></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/localisation_departement.html">localisation_departement</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">1</td>
+				  <td class="detail" align="right">3</td>
+				  <td class="detail" align="right">34938</td>
+				  <td class="detail" align="right">Table</td>
+				  <td class="comment detail" style="display: table-cell;"><p>Table de lien qui stocke le/les departement(s) où a été effectuée l’observation suivant le référentiel INSEE en vigueur.</p></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/nomenclature.html">nomenclature</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">4</td>
+				  <td class="detail" align="right">259</td>
+				  <td class="detail" align="right">Table</td>
+				  <td class="comment detail" style="display: table-cell;"><p>Stockage de la nomenclature pour les champs des tables qui ont des listes de valeurs prédéfinies.</p></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/attribut_additionnel.html">attribut_additionnel</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">1</td>
+				  <td class="detail" align="right">7</td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">Table</td>
+				  <td class="comment detail" style="display: table-cell;"><p>Les attributs additionnels sont des informations non prévues par le cœur de standard qui peuvent être ajoutées si besoin et sous réserve que l’information ajoutée soit décrite de manière satisfaisante directement dans le standard. De plus ces attributs ne doivent pas être utilisés pour modifier le sens d’un attribut du cœur du standard ou d’une extension.</p></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/habitat.html">habitat</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">8</td>
+				  <td class="detail" align="right">20067</td>
+				  <td class="detail" align="right">Table</td>
+				  <td class="comment detail" style="display: table-cell;"><p>Table recensant les habitats. Les codes des différents référentiels sont accessibles sur http://inpn.mnhn.fr/programme/referentiels-habitats</p></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/jdd_correspondance_taxon.html">jdd_correspondance_taxon</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">5</td>
+				  <td class="detail" align="right">199</td>
+				  <td class="detail" align="right">Table</td>
+				  <td class="comment detail" style="display: table-cell;"><p>Table de correspondance entre les codes d'espèces d'origine trouvés dans les jeux de données et le code cd_nom TAXREF</p></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/v_validateur.html">v_validateur</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">2</td>
+				  <td class="detail" align="right">8</td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">View</td>
+				  <td class="comment detail" style="display: table-cell;"></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/observation_diffusion.html">observation_diffusion</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">1</td>
+				  <td class="detail" align="right">2</td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">View</td>
+				  <td class="comment detail" style="display: table-cell;"></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/v_observation_validation.html">v_observation_validation</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">3</td>
+				  <td class="detail" align="right">55</td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">View</td>
+				  <td class="comment detail" style="display: table-cell;"></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/v_observateur.html">v_observateur</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">2</td>
+				  <td class="detail" align="right">8</td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">View</td>
+				  <td class="comment detail" style="display: table-cell;"></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/v_critere_validation_et_sensibilite.html">v_critere_validation_et_sensibilite</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">8</td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">View</td>
+				  <td class="comment detail" style="display: table-cell;"></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/v_nomenclature_plat.html">v_nomenclature_plat</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">1</td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">View</td>
+				  <td class="comment detail" style="display: table-cell;"></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/v_localisation_espace_naturel.html">v_localisation_espace_naturel</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">1</td>
+				  <td class="detail" align="right">5</td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">View</td>
+				  <td class="comment detail" style="display: table-cell;"></td>
+				  </tr>
+				 <tr class="tbl even" valign="top">  <td class="detail"><a href="tables/v_determinateur.html">v_determinateur</a></td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">2</td>
+				  <td class="detail" align="right">8</td>
+				  <td class="detail" align="right">0</td>
+				  <td class="detail" align="right">View</td>
+				  <td class="comment detail" style="display: table-cell;"></td>
+				  </tr>
+				  			</table>
+            </div>
+            <!-- /.box-body -->
+          </div>			
+      </section>
+      <!-- /.content -->
+	  <script>
+          var config = {
+	          pagination: true
+          }
+	  </script>    
+  </div>
+  <!-- /.content-wrapper -->
+  <footer class="main-footer">
+    <div>
+      <div class="pull-right hidden-xs">
+        <a href="https://github.com/schemaspy/schemaspy" title="GitHub for SchemaSpy"><i class="fa fa-github-square fa-2x"></i></a>
+        <a href="http://stackoverflow.com/questions/tagged/schemaspy" title="StackOverflow for SchemaSpy"><i class="fa fa-stack-overflow fa-2x"></i></a>
+      </div>
+      <strong>Generated by <a href="http://schemaspy.org/" class="logo-text"><i class="fa fa-database"></i> SchemaSpy 6.0.0</a></strong>
+    </div>
+    <!-- /.container -->
+  </footer>
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery 2.2.3 -->
+<script src="bower/admin-lte/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script src="bower/admin-lte/plugins/jQueryUI/jquery-ui.min.js"></script>
+<!-- Bootstrap 3.3.5 -->
+<script src="bower/admin-lte/bootstrap/js/bootstrap.min.js"></script>
+<!-- DataTables -->
+<script src="bower/datatables.net/jquery.dataTables.min.js"></script>
+<script src="bower/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<script src="bower/datatables.net-buttons/dataTables.buttons.min.js"></script>
+<script src="bower/datatables.net-buttons-bs/js/buttons.bootstrap.min.js"></script>
+<script src="bower/datatables.net-buttons/buttons.html5.min.js"></script>
+<script src="bower/datatables.net-buttons/buttons.print.min.js"></script>
+<script src="bower/datatables.net-buttons/buttons.colVis.min.js"></script>
+<!-- SheetJS -->
+<script src="bower/js-xlsx/xlsx.full.min.js"></script>
+<!-- pdfmake -->
+<script src="bower/pdfmake/pdfmake.min.js"></script>
+<script src="bower/pdfmake/vfs_fonts.js"></script>
+<!-- SlimScroll -->
+<script src="bower/admin-lte/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+<!-- FastClick -->
+<script src="bower/admin-lte/plugins/fastclick/fastclick.js"></script>
+<!-- Salvattore -->
+<script src="bower/salvattore/salvattore.min.js"></script>
+<!-- AnchorJS -->
+<script src="bower/anchor-js/anchor.min.js"></script>
+<!-- CodeMirror -->
+<script src="bower/codemirror/codemirror.js"></script>
+<script src="bower/codemirror/sql.js"></script>
+<!-- AdminLTE App -->
+<script src="bower/admin-lte/dist/js/app.min.js"></script>
+<script src="main.js"></script>
+<script src="schemaSpy.js"></script>
+</body>
+</html>

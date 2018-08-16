@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<database name="naturaliz_reunion" schema="sig" type="PostgreSQL - 9.6.9">
+   <tables>
+      <table name="commune" numRows="24" remarks="Liste les communes" schema="sig" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="code_commune" nullable="false" remarks="Code de la commune suivant le référentiel INSEE en vigueur." size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="1" name="nom_commune" nullable="false" remarks="Nom de la commune suivant le référentiel INSEE en vigueur." size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="2" name="annee_ref" nullable="false" remarks="Année de production du référentiel INSEE, qui sert à déterminer quel est le référentiel en vigueur pour le code et le nom de la commune" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="3" name="geom" nullable="true" remarks="Géométrie de la commune." size="2147483647" type="geometry"/>
+         <primaryKey column="code_commune" sequenceNumberInPK="1"/>
+         <index name="commune_pkey" unique="true">
+            <column ascending="true" name="code_commune"/>
+         </index>
+         <index name="commune_geom_idx" unique="false">
+            <column ascending="true" name="geom"/>
+         </index>
+      </table>
+      <table name="departement" numRows="1" remarks="Liste les départements" schema="sig" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="code_departement" nullable="false" remarks="Code du département suivant le référentiel INSEE en vigueur." size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="1" name="nom_departement" nullable="false" remarks="Nom du département suivant le référentiel INSEE en vigueur." size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="2" name="annee_ref" nullable="false" remarks="Année de production du référentiel INSEE, qui sert à déterminer quel est le référentiel en vigueur." size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="3" name="geom" nullable="true" remarks="Géométrie du département." size="2147483647" type="geometry"/>
+         <primaryKey column="code_departement" sequenceNumberInPK="1"/>
+         <index name="departement_pkey" unique="true">
+            <column ascending="true" name="code_departement"/>
+         </index>
+         <index name="departement_geom_idx" unique="false">
+            <column ascending="true" name="geom"/>
+         </index>
+      </table>
+      <table name="espace_naturel" numRows="216" remarks="L’espace naturel sur lequel a été faite l’observation." schema="sig" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="code_en" nullable="false" remarks="Code de l’espace naturel sur lequel a été faite l’observation." size="2147483647" type="text">
+            <child column="code_en" foreignKey="Implied Constraint" implied="true" onDeleteCascade="false" schema="sig" table="test_a_supprimer"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="type_en" nullable="false" remarks="Indique le type d’espace naturel ou de zonage sur lequel a été faite l’observation." size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="2" name="nom_en" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="3" name="url" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="4" name="version_en" nullable="false" remarks="Version du référentiel consulté respectant la norme ISO 8601, sous la forme YYYY-MM-dd (année-mois-jour), YYYY-MM (année-mois), ou YYYY (année)." size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="5" name="geom" nullable="true" remarks="Géometrie de l'espace naturel." size="2147483647" type="geometry"/>
+         <primaryKey column="code_en" sequenceNumberInPK="1"/>
+         <index name="espace_naturel_pkey" unique="true">
+            <column ascending="true" name="code_en"/>
+         </index>
+         <index name="espace_naturel_geom_idx" unique="false">
+            <column ascending="true" name="geom"/>
+         </index>
+         <index name="espace_naturel_type_en_idx" unique="false">
+            <column ascending="true" name="type_en"/>
+         </index>
+      </table>
+      <table name="maille_01" numRows="2638" remarks="Liste des mailles 1km du territoire." schema="sig" type="TABLE">
+         <column autoUpdated="true" defaultValue="nextval('sig.maille_01_id_maille_seq'::regclass)" digits="0" id="0" name="id_maille" nullable="false" remarks="" size="10" type="serial"/>
+         <column autoUpdated="false" digits="0" id="1" name="code_maille" nullable="true" remarks="Code de la maille 1km." size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="2" name="nom_maille" nullable="true" remarks="Code court de la maille 1km. Ex: 510-1660" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="3" name="version_ref" nullable="false" remarks="Version du référentiel en vigueur pour le code et le nom de la maille" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="4" name="nom_ref" nullable="false" remarks="Nom de la couche de maille utilisée : Concaténation des éléments des colonnes &quot;couche&quot; et &quot;territoire&quot; de la page http://inpn.mnhn.fr/telechargement/cartes-et-information-geographique/ref On n'utilisera que les grilles nationales (les grilles européennes sont proscrites)." size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="5" name="geom" nullable="true" remarks="Géométrie de la maille." size="2147483647" type="geometry"/>
+         <primaryKey column="id_maille" sequenceNumberInPK="1"/>
+         <index name="maille_01_pkey" unique="true">
+            <column ascending="true" name="id_maille"/>
+         </index>
+         <index name="maille_01_code_maille_idx" unique="false">
+            <column ascending="true" name="code_maille"/>
+         </index>
+         <index name="maille_01_code_maille_key" unique="true">
+            <column ascending="true" name="code_maille"/>
+         </index>
+         <index name="maille_01_geom_idx" unique="false">
+            <column ascending="true" name="geom"/>
+         </index>
+      </table>
+      <table name="maille_02" numRows="1020" remarks="Liste des mailles 2km du territoire." schema="sig" type="TABLE">
+         <column autoUpdated="true" defaultValue="nextval('sig.maille_02_id_maille_seq'::regclass)" digits="0" id="0" name="id_maille" nullable="false" remarks="" size="10" type="serial"/>
+         <column autoUpdated="false" digits="0" id="1" name="code_maille" nullable="true" remarks="Code de la maille 1km." size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="2" name="nom_maille" nullable="true" remarks="Code court de la maille 2km. Ex: 510-1660" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="3" name="version_ref" nullable="false" remarks="Version du référentiel en vigueur pour le code et le nom de la maille" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="4" name="nom_ref" nullable="false" remarks="Nom de la couche de maille utilisée : Concaténation des éléments des colonnes &quot;couche&quot; et &quot;territoire&quot; de la page http://inpn.mnhn.fr/telechargement/cartes-et-information-geographique/ref On n'utilisera que les grilles nationales (les grilles européennes sont proscrites)." size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="5" name="geom" nullable="true" remarks="Géométrie de la maille." size="2147483647" type="geometry"/>
+         <primaryKey column="id_maille" sequenceNumberInPK="1"/>
+         <index name="maille_02_pkey" unique="true">
+            <column ascending="true" name="id_maille"/>
+         </index>
+         <index name="maille_02_code_maille_idx" unique="false">
+            <column ascending="true" name="code_maille"/>
+         </index>
+         <index name="maille_02_code_maille_key" unique="true">
+            <column ascending="true" name="code_maille"/>
+         </index>
+         <index name="maille_02_geom_idx" unique="false">
+            <column ascending="true" name="geom"/>
+         </index>
+      </table>
+      <table name="maille_05" numRows="128" remarks="Liste des mailles 5km du territoire." schema="sig" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="code_maille" nullable="false" remarks="Code de la maille 5km." size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="1" name="nom_maille" nullable="true" remarks="Code court de la maille 5km." size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="2" name="version_ref" nullable="false" remarks="Version du référentiel en vigueur pour le code et le nom de la maille" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="3" name="nom_ref" nullable="false" remarks="Nom de la couche de maille utilisée : Concaténation des éléments des colonnes &quot;couche&quot; et &quot;territoire&quot; de la page http://inpn.mnhn.fr/telechargement/cartes-et-information-geographique/ref On n'utilisera que les grilles nationales (les grilles européennes sont proscrites)." size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="4" name="geom" nullable="true" remarks="Géométrie de la maille." size="2147483647" type="geometry"/>
+         <primaryKey column="code_maille" sequenceNumberInPK="1"/>
+         <index name="maille_05_pkey" unique="true">
+            <column ascending="true" name="code_maille"/>
+         </index>
+         <index name="maille_05_code_maille_idx" unique="false">
+            <column ascending="true" name="code_maille"/>
+         </index>
+         <index name="maille_05_geom_idx" unique="false">
+            <column ascending="true" name="geom"/>
+         </index>
+      </table>
+      <table name="maille_10" numRows="3317" remarks="Liste des mailles 10km du territoire." schema="sig" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="code_maille" nullable="false" remarks="Code de la maille 10km. Ex: 10kmUTM20W510N1660" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="1" name="nom_maille" nullable="true" remarks="Code court de la maille 10km. Ex: 510-1660" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="2" name="version_ref" nullable="false" remarks="Version du référentiel en vigueur pour le code et le nom de la maille" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="3" name="nom_ref" nullable="false" remarks="Nom de la couche de maille utilisée : Concaténation des éléments des colonnes &quot;couche&quot; et &quot;territoire&quot; de la page http://inpn.mnhn.fr/telechargement/cartes-et-information-geographique/ref On n'utilisera que les grilles nationales (les grilles européennes sont proscrites). Exemple : Grilles nationales (10 km x10 km) TAAF" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="4" name="geom" nullable="true" remarks="Géométrie de la maille." size="2147483647" type="geometry"/>
+         <primaryKey column="code_maille" sequenceNumberInPK="1"/>
+         <index name="maille_10_pkey" unique="true">
+            <column ascending="true" name="code_maille"/>
+         </index>
+         <index name="maille_10_code_maille_idx" unique="false">
+            <column ascending="true" name="code_maille"/>
+         </index>
+         <index name="maille_10_geom_idx" unique="false">
+            <column ascending="true" name="geom"/>
+         </index>
+      </table>
+      <table name="masse_eau" numRows="40" remarks="Liste des masses d’eau du territoire." schema="sig" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="code_me" nullable="false" remarks="Code de la masse d’eau." size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="1" name="nom_me" nullable="false" remarks="Nom de la masse d’eau." size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="2" name="version_me" nullable="false" remarks="Version du référentiel masse d'eau utilisé et prélevé sur le site du SANDRE, telle que décrite sur le site du SANDRE. Autant que possible au moment de l'échange, on tentera d'utiliser le référentiel en vigueur (en date du 06/10/2015, 2 pour la version intermédiaire). Exemple : 2, pour Version Intermédiaire 2013." size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="3" name="date_me" nullable="false" remarks="Date de consultation ou de prélèvement du référentiel sur le site du SANDRE. Attention, pour une même version, les informations peuvent changer d'une date à l'autre." size="13" type="date"/>
+         <column autoUpdated="false" digits="0" id="4" name="geom" nullable="true" remarks="Géométrie de la masse d’eau." size="2147483647" type="geometry"/>
+         <primaryKey column="code_me" sequenceNumberInPK="1"/>
+         <index name="masse_eau_pkey" unique="true">
+            <column ascending="true" name="code_me"/>
+         </index>
+         <index name="masse_eau_geom_idx" unique="false">
+            <column ascending="true" name="geom"/>
+         </index>
+         <index name="masse_eau_nom_me_key" unique="true">
+            <column ascending="true" name="nom_me"/>
+         </index>
+      </table>
+      <table name="test_a_supprimer" numRows="18" remarks="" schema="sig" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="code_en" nullable="true" remarks="" size="2147483647" type="text">
+            <parent column="code_en" foreignKey="Implied Constraint" implied="true" onDeleteCascade="false" schema="sig" table="espace_naturel"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="type_en" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="2" name="geom" nullable="true" remarks="" size="2147483647" type="geometry"/>
+         <index name="test_a_supprimer_geom_idx" unique="false">
+            <column ascending="true" name="geom"/>
+         </index>
+      </table>
+      <table name="tpl_observation_brute_centroid" numRows="0" remarks="" schema="sig" type="VIEW" viewSql=" SELECT 1 AS cle_obs,&#10;    ''::text AS nom_cite,&#10;    '1'::bigint AS cd_nom,&#10;    '2015-01-01'::text AS date_debut,&#10;    ''::text AS identite_observateur,&#10;    'GEO'::text AS source_objet,&#10;    ''::text AS geojson,&#10;    (( SELECT observation.geom&#10;           FROM occtax.observation&#10;          ORDER BY (random())&#10;         LIMIT 1))::geometry(Point,2975) AS geom;">
+         <column autoUpdated="false" digits="0" id="0" name="cle_obs" nullable="true" remarks="" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="1" name="nom_cite" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="2" name="cd_nom" nullable="true" remarks="" size="19" type="int8"/>
+         <column autoUpdated="false" digits="0" id="3" name="date_debut" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="4" name="identite_observateur" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="5" name="source_objet" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="6" name="geojson" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="7" name="geom" nullable="true" remarks="" size="2147483647" type="geometry"/>
+      </table>
+      <table name="tpl_observation_brute_linestring" numRows="0" remarks="" schema="sig" type="VIEW" viewSql=" SELECT 1 AS cle_obs,&#10;    ''::text AS nom_cite,&#10;    '1'::bigint AS cd_nom,&#10;    '2015-01-01'::text AS date_debut,&#10;    ''::text AS identite_observateur,&#10;    'GEO'::text AS source_objet,&#10;    ''::text AS geojson,&#10;    (( SELECT st_exteriorring(st_buffer(observation.geom, (1000)::double precision)) AS geom&#10;           FROM occtax.observation&#10;          ORDER BY (random())&#10;         LIMIT 1))::geometry(LineString,2975) AS geom;">
+         <column autoUpdated="false" digits="0" id="0" name="cle_obs" nullable="true" remarks="" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="1" name="nom_cite" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="2" name="cd_nom" nullable="true" remarks="" size="19" type="int8"/>
+         <column autoUpdated="false" digits="0" id="3" name="date_debut" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="4" name="identite_observateur" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="5" name="source_objet" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="6" name="geojson" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="7" name="geom" nullable="true" remarks="" size="2147483647" type="geometry"/>
+      </table>
+      <table name="tpl_observation_brute_point" numRows="0" remarks="" schema="sig" type="VIEW" viewSql=" SELECT 1 AS cle_obs,&#10;    ''::text AS nom_cite,&#10;    '1'::bigint AS cd_nom,&#10;    '2015-01-01'::text AS date_debut,&#10;    ''::text AS identite_observateur,&#10;    'GEO'::text AS source_objet,&#10;    ''::text AS geojson,&#10;    (( SELECT observation.geom&#10;           FROM occtax.observation&#10;          ORDER BY (random())&#10;         LIMIT 1))::geometry(Point,2975) AS geom;">
+         <column autoUpdated="false" digits="0" id="0" name="cle_obs" nullable="true" remarks="" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="1" name="nom_cite" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="2" name="cd_nom" nullable="true" remarks="" size="19" type="int8"/>
+         <column autoUpdated="false" digits="0" id="3" name="date_debut" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="4" name="identite_observateur" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="5" name="source_objet" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="6" name="geojson" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="7" name="geom" nullable="true" remarks="" size="2147483647" type="geometry"/>
+      </table>
+      <table name="tpl_observation_brute_polygon" numRows="0" remarks="" schema="sig" type="VIEW" viewSql=" SELECT 1 AS cle_obs,&#10;    ''::text AS nom_cite,&#10;    '1'::bigint AS cd_nom,&#10;    '2015-01-01'::text AS date_debut,&#10;    ''::text AS identite_observateur,&#10;    'GEO'::text AS source_objet,&#10;    ''::text AS geojson,&#10;    (( SELECT st_buffer(observation.geom, (1000)::double precision) AS geom&#10;           FROM occtax.observation&#10;          ORDER BY (random())&#10;         LIMIT 1))::geometry(Polygon,2975) AS geom;">
+         <column autoUpdated="false" digits="0" id="0" name="cle_obs" nullable="true" remarks="" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="1" name="nom_cite" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="2" name="cd_nom" nullable="true" remarks="" size="19" type="int8"/>
+         <column autoUpdated="false" digits="0" id="3" name="date_debut" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="4" name="identite_observateur" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="5" name="source_objet" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="6" name="geojson" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="7" name="geom" nullable="true" remarks="" size="2147483647" type="geometry"/>
+      </table>
+      <table name="tpl_observation_maille" numRows="0" remarks="" schema="sig" type="VIEW" viewSql=" SELECT maille_02.id_maille AS mid,&#10;    maille_02.nom_maille AS maille,&#10;    10 AS nbobs,&#10;    3 AS nbtax,&#10;    410 AS rayon,&#10;    'red'::text AS color,&#10;    ''::text AS geojson,&#10;    (st_centroid(maille_02.geom))::geometry(Point,2975) AS geom&#10;   FROM sig.maille_02;">
+         <column autoUpdated="false" digits="0" id="0" name="mid" nullable="true" remarks="" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="1" name="maille" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="2" name="nbobs" nullable="true" remarks="" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="3" name="nbtax" nullable="true" remarks="" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="4" name="rayon" nullable="true" remarks="" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="5" name="color" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="6" name="geojson" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="7" name="geom" nullable="true" remarks="" size="2147483647" type="geometry"/>
+      </table>
+      <table name="zone_economique_exclusive" numRows="1" remarks="" schema="sig" type="TABLE">
+         <column autoUpdated="true" defaultValue="nextval('sig.zone_economique_exclusive_id_seq'::regclass)" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="serial"/>
+         <column autoUpdated="false" digits="0" id="1" name="désignati" nullable="true" remarks="" size="2147483647" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="2" name="superficie" nullable="true" remarks="" size="19" type="int8"/>
+         <column autoUpdated="false" digits="0" id="3" name="geom" nullable="true" remarks="" size="2147483647" type="geometry"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="zone_economique_exclusive_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="zone_economique_exclusive_geom_geom_idx" unique="false">
+            <column ascending="true" name="geom"/>
+         </index>
+      </table>
+   </tables>
+</database>

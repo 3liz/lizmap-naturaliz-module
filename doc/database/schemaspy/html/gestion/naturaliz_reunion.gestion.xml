@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<database name="naturaliz_reunion" schema="gestion" type="PostgreSQL - 9.6.9">
+   <tables>
+      <table name="acteur" numRows="10" remarks="Liste les acteurs liés à l'application. Cette table sert à stocker les personnes ressource: responsables des imports de données, référents des jeux de données, etc." schema="gestion" type="TABLE">
+         <column autoUpdated="true" defaultValue="nextval('gestion.acteur_id_acteur_seq'::regclass)" digits="0" id="0" name="id_acteur" nullable="false" remarks="Identifiant de l'acteur (entier auto-incrémenté)" size="10" type="serial">
+            <child column="id_acteur" foreignKey="demande_id_acteur_fk" implied="false" onDeleteCascade="false" schema="gestion" table="demande"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="nom" nullable="false" remarks="Nom de l'acteur" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="2" name="prenom" nullable="false" remarks="Prénom de l'acteur" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="3" name="civilite" nullable="false" remarks="Civilité de l'acteur" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="4" name="courriel" nullable="true" remarks="Courriel de l'acteur" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="5" name="tel_1" nullable="true" remarks="Numéro de téléphone principal de l'acteur" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="6" name="tel_2" nullable="true" remarks="Numéro de téléphone secondaire de l'acteur" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="7" name="fonction" nullable="true" remarks="Fonction de l'acteur (champ libre)" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="8" name="id_organisme" nullable="false" remarks="Identifiant de l'organisme de l'acteur (clé étrangère vers table organisme)" size="10" type="int4">
+            <parent column="id_organisme" foreignKey="acteur_id_organisme_fkey" implied="false" onDeleteCascade="false" schema="occtax" table="organisme"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="9" name="remarque" nullable="true" remarks="Remarque sur l'acteur (texte libre)" size="2147483647" type="text"/>
+         <column autoUpdated="false" defaultValue="true" digits="0" id="10" name="bulletin_information" nullable="true" remarks="Indique si l'acteur souhaite recevoir le bulletin d'information par courriel." size="1" type="bool"/>
+         <column autoUpdated="false" defaultValue="false" digits="0" id="11" name="reunion_sinp" nullable="true" remarks="Indique si l'acteur participe aux réunion du SINP local." size="1" type="bool"/>
+         <primaryKey column="id_acteur" sequenceNumberInPK="1"/>
+         <index name="acteur_pkey" unique="true">
+            <column ascending="true" name="id_acteur"/>
+         </index>
+         <index name="acteur_nom_prenom_id_organisme_key" unique="true">
+            <column ascending="true" name="nom"/>
+            <column ascending="true" name="prenom"/>
+            <column ascending="true" name="id_organisme"/>
+         </index>
+      </table>
+      <table name="demande" numRows="6" remarks="Liste des demandes d'acccès à l'application. Cette table permet de restreindre les accès aux données, par date, taxon, etc." schema="gestion" type="TABLE">
+         <column autoUpdated="true" defaultValue="nextval('gestion.demande_id_seq'::regclass)" digits="0" id="0" name="id" nullable="false" remarks="Identifiant auto de la demande (clé primaire)" size="10" type="serial"/>
+         <column autoUpdated="false" digits="0" id="1" name="usr_login" nullable="true" remarks="Login de l'utilisateur qui fait la demande, pour lequel activer une restriction. On peut avoir plusieurs lignes qui référencent le usr_login. Ce champ peut être vide quand on a pas encore validé la demande (et si on ne la valide jamais). Clé étrangère vers publi.jlx_user" size="50" type="varchar">
+            <parent column="usr_login" foreignKey="demande_user_login_fk" implied="false" onDeleteCascade="false" schema="public" table="jlx_user"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="2" name="id_acteur" nullable="false" remarks="Identifiant de l'acteur ayant émis la demande. Clé étrangère vers table acteur" size="10" type="int4">
+            <parent column="id_acteur" foreignKey="demande_id_acteur_fk" implied="false" onDeleteCascade="false" schema="gestion" table="acteur"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="3" name="id_organisme" nullable="false" remarks="Identifiant de l'organisme ayant émis la demande. Clé étrangère vers table organisme" size="10" type="int4">
+            <parent column="id_organisme" foreignKey="demande_id_organisme_fk" implied="false" onDeleteCascade="false" schema="occtax" table="organisme"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="4" name="motif" nullable="false" remarks="Motif de la demande d'accès aux données fourni par le demandeur" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="5" name="type_demande" nullable="false" remarks="Type de demande selon la typologie de la charte du SINP (exemple : mission régalienne, publication scientifique, etc.)" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="6" name="date_demande" nullable="false" remarks="Date d'émission de la demande (découplée de la date de création, qui est elle renseignée automatiquement" size="13" type="date"/>
+         <column autoUpdated="false" digits="0" id="7" name="commentaire" nullable="true" remarks="Remarques générales sur la demande." size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="8" name="date_validite_min" nullable="false" remarks="Date minimale de validité de la demande. Les accès sont bloqués si le demandeur consulte l'application avant cette date, pour cette demande." size="13" type="date"/>
+         <column autoUpdated="false" digits="0" id="9" name="date_validite_max" nullable="false" remarks="Date maximale de validité de la demande. Les accès sont bloqués si le demandeur consulte l'application après cette date, pour cette demande." size="13" type="date"/>
+         <column autoUpdated="false" digits="0" id="10" name="cd_ref" nullable="true" remarks="Tableau des identifiants cd_ref des taxons pour lesquels restreindre l'accès aux données" size="19" type="_int8"/>
+         <column autoUpdated="false" digits="0" id="11" name="group1_inpn" nullable="true" remarks="Noms des groupes INPN de type 1. Clé étrangère vers table taxon.t_group_categorie.groupe_nom" size="2147483647" type="_text"/>
+         <column autoUpdated="false" digits="0" id="12" name="group2_inpn" nullable="true" remarks="Noms des groupes INPN de type 2. Clé étrangère vers table taxon.t_group_categorie.groupe_nom" size="2147483647" type="_text"/>
+         <column autoUpdated="false" defaultValue="now()" digits="0" id="13" name="date_creation" nullable="true" remarks="Date de création de la ligne dans la table (automatique si aucune valeur passée)" size="13" type="date"/>
+         <column autoUpdated="false" digits="0" id="14" name="libelle_geom" nullable="true" remarks="Description littérale de la zone géographique sur laquelle porte la demande" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="15" name="geom" nullable="true" remarks="Géométrie dans laquelle restreindre les observations consultables. On fait une intersection entre les observation et cette géométrie." size="2147483647" type="geometry"/>
+         <column autoUpdated="false" defaultValue="ARRAY['1'::text, '2'::text, '3'::text, '4'::text, '5'::text]" digits="0" id="16" name="validite_niveau" nullable="false" remarks="Liste de niveaux de validité accessible à la personne, sous la forme d'un tableau." size="2147483647" type="_text"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="demande_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="demande_id_acteur_idx" unique="false">
+            <column ascending="true" name="id_acteur"/>
+         </index>
+         <index name="demande_usr_login_idx" unique="false">
+            <column ascending="true" name="usr_login"/>
+         </index>
+      </table>
+      <table name="g_nomenclature" numRows="6" remarks="Stockage de la t_nomenclature pour les champs des tables qui ont des listes de valeurs prédéfinies." schema="gestion" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="champ" nullable="false" remarks="Description de la valeur" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="1" name="code" nullable="false" remarks="Code associé à une valeur" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="2" name="valeur" nullable="true" remarks="Libellé court. Joue le rôle de valeur" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="3" name="description" nullable="true" remarks="Libellé court. Joue le rôle de valeur" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="4" name="g_order" nullable="true" remarks="Ordre (optionnel)" size="10" type="int4"/>
+         <primaryKey column="champ" sequenceNumberInPK="1"/>
+         <primaryKey column="code" sequenceNumberInPK="2"/>
+         <index name="g_nomenclature_pkey" unique="true">
+            <column ascending="true" name="champ"/>
+            <column ascending="true" name="code"/>
+         </index>
+         <index name="g_nomenclature_champ_code_idx" unique="false">
+            <column ascending="true" name="champ"/>
+            <column ascending="true" name="code"/>
+         </index>
+      </table>
+   </tables>
+</database>

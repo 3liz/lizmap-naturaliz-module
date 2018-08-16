@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<database name="naturaliz_reunion" schema="taxon" type="PostgreSQL - 9.6.9">
+   <tables>
+      <table name="menaces" numRows="1213" remarks="Données sur les menaces, issues des listes rouges" schema="taxon" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="cd_nom" nullable="false" remarks="" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="1" name="cd_ref" nullable="true" remarks="" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="2" name="nom_scientifique" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="3" name="auteur" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="4" name="nom_commun" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="5" name="rang" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="6" name="famille" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="7" name="endemisme" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="8" name="population" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="9" name="commentaire" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="10" name="categorie_france" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="11" name="criteres_france" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="12" name="tendance" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="13" name="liste_rouge_source" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="14" name="annee_publi" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="15" name="categorie_lr_europe" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="16" name="categorie_lr_monde" nullable="true" remarks="" size="2147483647" type="text"/>
+         <index name="menaces_cd_nom_idx" unique="false">
+            <column ascending="true" name="cd_nom"/>
+         </index>
+      </table>
+      <table name="protections" numRows="37682" remarks="Statuts de protection des espèces. Source: fichier du TAXREF listant les protections, par exemple : PROTECTION_ESPECES_10.csv. L'import ne conserve que les données pour les codes d'arrêtés spécifiés dans la configuration de l'application" schema="taxon" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="cd_nom" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="1" name="cd_protection" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="2" name="nom_cite" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="3" name="syn_cite" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="4" name="nom_francais_cite" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="5" name="precisions" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="6" name="cd_nom_cite" nullable="true" remarks="" size="2147483647" type="text"/>
+         <index name="protections_cd_nom_idx" unique="false">
+            <column ascending="true" name="cd_nom"/>
+         </index>
+      </table>
+      <table name="t_complement" numRows="260452" remarks="Stockage des données complémentaires sur les taxons, non présents dans TAXREF : données locales (endémicité, invasibilité, etc.), déterminants ZNIEFF" schema="taxon" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="cd_nom_fk" nullable="false" remarks="Identifiant du taxon, lien avec taxref.cd_nom" size="10" type="int4">
+            <child column="cd_nom_fk" foreignKey="Implied Constraint" implied="true" onDeleteCascade="false" schema="taxon" table="taxref_consolide"/>
+            <child column="cd_nom_fk" foreignKey="Implied Constraint" implied="true" onDeleteCascade="false" schema="taxon" table="taxref_consolide_all"/>
+            <child column="cd_nom_fk" foreignKey="Implied Constraint" implied="true" onDeleteCascade="false" schema="taxon" table="taxref_consolide_non_filtre"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="statut" nullable="true" remarks="Statut local" size="15" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="2" name="rarete" nullable="true" remarks="Rareté locale du taxon" size="10" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="3" name="endemicite" nullable="true" remarks="Endémicité locale du taxon" size="5" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="4" name="invasibilite" nullable="true" remarks="Invasibilité locale du taxon" size="5" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="5" name="menace" nullable="true" remarks="Menace locale sur le taxon" size="5" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="6" name="menace_monde" nullable="true" remarks="Menace mondiale sur le taxon" size="6" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="7" name="protection" nullable="true" remarks="Statut de protection local" size="5" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="8" name="det_znieff" nullable="true" remarks="Déterminant ZNIEFF" size="15" type="varchar"/>
+         <primaryKey column="cd_nom_fk" sequenceNumberInPK="1"/>
+         <index name="t_complement_pkey" unique="true">
+            <column ascending="true" name="cd_nom_fk"/>
+         </index>
+         <index name="t_complement_cd_nom_fk_idx" unique="false">
+            <column ascending="true" name="cd_nom_fk"/>
+         </index>
+         <index name="t_complement_det_znieff_idx" unique="false">
+            <column ascending="true" name="det_znieff"/>
+         </index>
+         <index name="t_complement_endemicite_idx" unique="false">
+            <column ascending="true" name="endemicite"/>
+         </index>
+         <index name="t_complement_invasibilite_idx" unique="false">
+            <column ascending="true" name="invasibilite"/>
+         </index>
+         <index name="t_complement_menace_idx" unique="false">
+            <column ascending="true" name="menace"/>
+         </index>
+         <index name="t_complement_protection_idx" unique="false">
+            <column ascending="true" name="protection"/>
+         </index>
+         <index name="t_complement_rarete_idx" unique="false">
+            <column ascending="true" name="rarete"/>
+         </index>
+         <index name="t_complement_statut_idx" unique="false">
+            <column ascending="true" name="statut"/>
+         </index>
+      </table>
+      <table name="t_group_categorie" numRows="36" remarks="Liste des catégories de groupes de taxons affichées dans la liste déroulante du filtre de recherche." schema="taxon" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="cat_nom" nullable="false" remarks="Libellé à afficher pour le groupe" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="1" name="groupe_nom" nullable="false" remarks="Nom du groupe INPN correspondant" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="2" name="groupe_type" nullable="true" remarks="Type de groupe INPN : group1_inpn ou group2_inpn" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="3" name="regne" nullable="true" remarks="Le règne du groupe INPN" size="2147483647" type="text"/>
+         <primaryKey column="cat_nom" sequenceNumberInPK="1"/>
+         <primaryKey column="groupe_nom" sequenceNumberInPK="2"/>
+         <index name="t_group_categorie_pkey" unique="true">
+            <column ascending="true" name="cat_nom"/>
+            <column ascending="true" name="groupe_nom"/>
+         </index>
+      </table>
+      <table name="t_nomenclature" numRows="51" remarks="Stockage de la t_nomenclature pour les champs des tables qui ont des listes de valeurs prédéfinies." schema="taxon" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="champ" nullable="false" remarks="Description de la valeur" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="1" name="code" nullable="false" remarks="Code associé à une valeur" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="2" name="valeur" nullable="true" remarks="Libellé court. Joue le rôle de valeur" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="3" name="description" nullable="true" remarks="Libellé court. Joue le rôle de valeur" size="2147483647" type="text"/>
+         <primaryKey column="champ" sequenceNumberInPK="1"/>
+         <primaryKey column="code" sequenceNumberInPK="2"/>
+         <index name="t_nomenclature_pkey" unique="true">
+            <column ascending="true" name="champ"/>
+            <column ascending="true" name="code"/>
+         </index>
+         <index name="t_nomenclature_champ_code_idx" unique="false">
+            <column ascending="true" name="champ"/>
+            <column ascending="true" name="code"/>
+         </index>
+      </table>
+      <table name="taxon_sensible" numRows="0" remarks="Liste des taxon sensibles. Les observations concernées par ces taxon ne seront visibles que pour les personnes avec des droits hauts." schema="taxon" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="cd_nom" nullable="false" remarks="Identifiant du taxon." size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="1" name="nom_valide" nullable="true" remarks="Nom valide du taxon, ajouté pour faciliter la lecture (optionnel)" size="2147483647" type="text"/>
+         <primaryKey column="cd_nom" sequenceNumberInPK="1"/>
+         <index name="taxon_sensible_pkey" unique="true">
+            <column ascending="true" name="cd_nom"/>
+         </index>
+      </table>
+      <table name="taxref" numRows="550843" remarks="Données taxonomiques TAXREF" schema="taxon" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="regne" nullable="true" remarks="Règne auquel le taxon appartient" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="1" name="phylum" nullable="true" remarks="Embranchement auquel le taxon appartient" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="2" name="classe" nullable="true" remarks="Classe à laquelle le taxon appartient" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="3" name="ordre" nullable="true" remarks="Ordre auquel le taxon appartient" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="4" name="famille" nullable="true" remarks="Famille à laquelle le taxon appartient" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="5" name="group1_inpn" nullable="true" remarks="Libellé Groupe 1 INPN pour ce taxon" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="6" name="group2_inpn" nullable="true" remarks="Libellé Groupe 1 INPN" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="7" name="cd_nom" nullable="false" remarks="Identifiant unique du nom scientifique" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="8" name="cd_taxsup" nullable="true" remarks="Identifiant (CD_NOM) du taxon supérieur" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="9" name="cd_sup" nullable="true" remarks="" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="10" name="cd_ref" nullable="true" remarks="Identifiant (CD_NOM) du taxon de référence (nom retenu)" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="11" name="rang" nullable="true" remarks="Rang taxonomique (lien vers TAXREF_RANG)" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="12" name="lb_nom" nullable="true" remarks="Nom scientifique du taxon (sans l’autorité)" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="13" name="lb_auteur" nullable="true" remarks="Autorité du taxon (Auteur, année, gestion des parenthèses)" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="14" name="nom_complet" nullable="true" remarks="Combinaison des champs pour donner le nom complet (~LB_NOM+&quot; &quot;+LB_AUTEUR)" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="15" name="nom_complet_html" nullable="true" remarks="Nom complet formatté en HTML" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="16" name="nom_valide" nullable="true" remarks="Le NOM_COMPLET du CD_REF" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="17" name="nom_vern" nullable="true" remarks="Noms vernaculaires français" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="18" name="nom_vern_eng" nullable="true" remarks="Noms vernaculaires anglais" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="19" name="habitat" nullable="true" remarks="Code de l’habitat (clé vers TAXREF_HABITATS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="20" name="fr" nullable="true" remarks="Statut biogéographique en France métropolitaine (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="21" name="gf" nullable="true" remarks="Statut biogéographique en Guyane française (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="22" name="mar" nullable="true" remarks="Statut biogéographique à la Martinique (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="23" name="gua" nullable="true" remarks="Statut biogéographique à la Guadeloupe (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="24" name="sm" nullable="true" remarks="Statut biogéographique à Saint-Martin (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="25" name="sb" nullable="true" remarks="Statut biogéographique à Saint-Barthélemy (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="26" name="spm" nullable="true" remarks="Statut biogéographique à Saint-Pierre et Miquelon (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="27" name="may" nullable="true" remarks="Statut biogéographique à Mayotte (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="28" name="epa" nullable="true" remarks="Statut biogéographique aux Îles Éparses (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="29" name="reu" nullable="true" remarks="Statut biogéographique à la Réunion (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="30" name="sa" nullable="true" remarks="Statut biogéographique aux îles subantarctiques ( (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="31" name="ta" nullable="true" remarks="Statut biogéographique en Terre Adélie (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="32" name="taaf" nullable="true" remarks="Statut biogéographique aux TAAF (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="33" name="pf" nullable="true" remarks="Statut biogéographique en Polynésie française (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="34" name="nc" nullable="true" remarks="Statut biogéographique en Nouvelle-Calédonie (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="35" name="wf" nullable="true" remarks="Statut biogéographique à Wallis et Futuna (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="36" name="cli" nullable="true" remarks="Statut biogéographique à Clipperton (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="37" name="url" nullable="true" remarks="Permalien INPN = ‘http://inpn.mnhn.fr/espece/cd_nom/’ + CD_NOM" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="38" name="sous_famille" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="39" name="tribu" nullable="true" remarks="" size="2147483647" type="text"/>
+         <primaryKey column="cd_nom" sequenceNumberInPK="1"/>
+         <index name="taxref_pkey" unique="true">
+            <column ascending="true" name="cd_nom"/>
+         </index>
+         <index name="taxref_cd_nom_idx" unique="false">
+            <column ascending="true" name="cd_nom"/>
+         </index>
+         <index name="taxref_cd_ref_idx" unique="false">
+            <column ascending="true" name="cd_ref"/>
+         </index>
+         <index name="taxref_group1_inpn_idx" unique="false">
+            <column ascending="true" name="group1_inpn"/>
+         </index>
+         <index name="taxref_group2_inpn_idx" unique="false">
+            <column ascending="true" name="group2_inpn"/>
+         </index>
+         <index name="taxref_habitat_idx" unique="false">
+            <column ascending="true" name="habitat"/>
+         </index>
+         <index name="taxref_regne_idx" unique="false">
+            <column ascending="true" name="regne"/>
+         </index>
+      </table>
+      <table name="taxref_changes" numRows="0" remarks="Changements apportés à la version de Taxref utilisée actuellement en base par rapport à la version précédente. Table importée depuis le fichier TAXREF_CHANGES.txt accompagnant Taxref" schema="taxon" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="cd_nom" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="1" name="num_version_init" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="2" name="num_version_final" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="3" name="champ" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="4" name="valeur_init" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="5" name="valeur_final" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="6" name="type_change" nullable="true" remarks="" size="2147483647" type="text"/>
+      </table>
+      <table name="taxref_consolide" numRows="0" remarks="Vue matérialisée pour gérer l'association des données du TAXREF (taxref) et des taxons locaux (taxref_local) avec les données complémentaires sur les statuts, la protection, les menaces (t_complement).&#10;&#10;Seuls les taxons valides sont présents dans cette table (car elle dépend de la vue matérialisée taxref_valide )&#10;&#10;Elle est principalement utilisée pour récupérer les cd_ref des sous-ensembles de taxons à filtrer lorsqu'on chercher des observations.&#10;&#10;C'est une vue matérialisée, c'est-à-dire une vue qui se comporte comme une table, et qu'on doit mettre à jour suite à un import de taxons (dans taxref ou taxref_local), ou suite à la mise à jour de taxref_valide, via `REFRESH MATERIALIZED VIEW taxref_consolide;`" schema="taxon" type="VIEW" viewSql=" SELECT t.regne,&#10;    t.phylum,&#10;    t.classe,&#10;    t.ordre,&#10;    t.famille,&#10;    t.sous_famille,&#10;    t.tribu,&#10;    t.group1_inpn,&#10;    t.group2_inpn,&#10;    t.cd_nom,&#10;    t.cd_taxsup,&#10;    t.cd_ref,&#10;    t.rang,&#10;    t.lb_nom,&#10;    t.lb_auteur,&#10;    t.nom_complet,&#10;    t.nom_complet_html,&#10;    t.nom_valide,&#10;    t.nom_vern,&#10;    t.nom_vern_eng,&#10;    t.habitat,&#10;    t.fr,&#10;    t.gf,&#10;    t.mar,&#10;    t.gua,&#10;    t.sm,&#10;    t.sb,&#10;    t.spm,&#10;    t.may,&#10;    t.epa,&#10;    t.reu,&#10;    t.sa,&#10;    t.ta,&#10;    t.taaf,&#10;    t.pf,&#10;    t.nc,&#10;    t.wf,&#10;    t.cli,&#10;    t.url,&#10;    c.cd_nom_fk,&#10;    c.statut,&#10;    c.rarete,&#10;    c.endemicite,&#10;    c.invasibilite,&#10;    c.menace,&#10;    c.menace_monde,&#10;    c.protection,&#10;    c.det_znieff&#10;   FROM (( SELECT taxref_valide.regne,&#10;            taxref_valide.phylum,&#10;            taxref_valide.classe,&#10;            taxref_valide.ordre,&#10;            taxref_valide.famille,&#10;            taxref_valide.sous_famille,&#10;            taxref_valide.tribu,&#10;            taxref_valide.group1_inpn,&#10;            taxref_valide.group2_inpn,&#10;            taxref_valide.cd_nom,&#10;            taxref_valide.cd_taxsup,&#10;            taxref_valide.cd_ref,&#10;            taxref_valide.rang,&#10;            taxref_valide.lb_nom,&#10;            taxref_valide.lb_auteur,&#10;            taxref_valide.nom_complet,&#10;            taxref_valide.nom_complet_html,&#10;            taxref_valide.nom_valide,&#10;            taxref_valide.nom_vern,&#10;            taxref_valide.nom_vern_eng,&#10;            taxref_valide.habitat,&#10;            taxref_valide.fr,&#10;            taxref_valide.gf,&#10;            taxref_valide.mar,&#10;            taxref_valide.gua,&#10;            taxref_valide.sm,&#10;            taxref_valide.sb,&#10;            taxref_valide.spm,&#10;            taxref_valide.may,&#10;            taxref_valide.epa,&#10;            taxref_valide.reu,&#10;            taxref_valide.sa,&#10;            taxref_valide.ta,&#10;            taxref_valide.taaf,&#10;            taxref_valide.pf,&#10;            taxref_valide.nc,&#10;            taxref_valide.wf,&#10;            taxref_valide.cli,&#10;            taxref_valide.url&#10;           FROM taxon.taxref_valide) t&#10;     LEFT JOIN taxon.t_complement c ON ((c.cd_nom_fk = t.cd_nom)));">
+         <column autoUpdated="false" digits="0" id="0" name="regne" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="1" name="phylum" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="2" name="classe" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="3" name="ordre" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="4" name="famille" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="5" name="sous_famille" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="6" name="tribu" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="7" name="group1_inpn" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="8" name="group2_inpn" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="9" name="cd_nom" nullable="true" remarks="" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="10" name="cd_taxsup" nullable="true" remarks="" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="11" name="cd_ref" nullable="true" remarks="" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="12" name="rang" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="13" name="lb_nom" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="14" name="lb_auteur" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="15" name="nom_complet" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="16" name="nom_complet_html" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="17" name="nom_valide" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="18" name="nom_vern" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="19" name="nom_vern_eng" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="20" name="habitat" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="21" name="fr" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="22" name="gf" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="23" name="mar" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="24" name="gua" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="25" name="sm" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="26" name="sb" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="27" name="spm" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="28" name="may" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="29" name="epa" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="30" name="reu" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="31" name="sa" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="32" name="ta" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="33" name="taaf" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="34" name="pf" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="35" name="nc" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="36" name="wf" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="37" name="cli" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="38" name="url" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="39" name="cd_nom_fk" nullable="true" remarks="" size="10" type="int4">
+            <parent column="cd_nom_fk" foreignKey="Implied Constraint" implied="true" onDeleteCascade="false" schema="taxon" table="t_complement"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="40" name="statut" nullable="true" remarks="" size="15" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="41" name="rarete" nullable="true" remarks="" size="10" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="42" name="endemicite" nullable="true" remarks="" size="5" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="43" name="invasibilite" nullable="true" remarks="" size="5" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="44" name="menace" nullable="true" remarks="" size="5" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="45" name="menace_monde" nullable="true" remarks="" size="6" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="46" name="protection" nullable="true" remarks="" size="5" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="47" name="det_znieff" nullable="true" remarks="" size="15" type="varchar"/>
+      </table>
+      <table name="taxref_consolide_all" numRows="0" remarks="" schema="taxon" type="VIEW" viewSql=" WITH taxref_mnhn_et_local AS (&#10;         SELECT taxref.group1_inpn,&#10;            taxref.group2_inpn,&#10;            taxref.cd_nom&#10;           FROM taxon.taxref&#10;          WHERE (taxref.rang = ANY (ARRAY['FM'::text, 'GN'::text, 'AGES'::text, 'ES'::text, 'SSES'::text, 'NAT'::text, 'VAR'::text, 'SVAR'::text, 'FO'::text, 'SSFO'::text, 'RACE'::text, 'CAR'::text, 'AB'::text]))&#10;        UNION ALL&#10;         SELECT taxref_local.group1_inpn,&#10;            taxref_local.group2_inpn,&#10;            taxref_local.cd_nom&#10;           FROM taxon.taxref_local&#10;          WHERE ((taxref_local.rang = ANY (ARRAY['FM'::text, 'GN'::text, 'AGES'::text, 'ES'::text, 'SSES'::text, 'NAT'::text, 'VAR'::text, 'SVAR'::text, 'FO'::text, 'SSFO'::text, 'RACE'::text, 'CAR'::text, 'AB'::text])) AND (taxref_local.cd_nom_valide IS NULL))&#10;        )&#10; SELECT tml.group1_inpn,&#10;    tml.group2_inpn,&#10;    tml.cd_nom,&#10;    c.cd_nom_fk,&#10;    c.statut,&#10;    c.rarete,&#10;    c.endemicite,&#10;    c.invasibilite,&#10;    c.menace,&#10;    c.menace_monde,&#10;    c.protection,&#10;    c.det_znieff&#10;   FROM (taxref_mnhn_et_local tml&#10;     LEFT JOIN taxon.t_complement c ON ((c.cd_nom_fk = tml.cd_nom)));">
+         <column autoUpdated="false" digits="0" id="0" name="group1_inpn" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="1" name="group2_inpn" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="2" name="cd_nom" nullable="true" remarks="" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="3" name="cd_nom_fk" nullable="true" remarks="" size="10" type="int4">
+            <parent column="cd_nom_fk" foreignKey="Implied Constraint" implied="true" onDeleteCascade="false" schema="taxon" table="t_complement"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="4" name="statut" nullable="true" remarks="" size="15" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="5" name="rarete" nullable="true" remarks="" size="10" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="6" name="endemicite" nullable="true" remarks="" size="5" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="7" name="invasibilite" nullable="true" remarks="" size="5" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="8" name="menace" nullable="true" remarks="" size="5" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="9" name="menace_monde" nullable="true" remarks="" size="6" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="10" name="protection" nullable="true" remarks="" size="5" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="11" name="det_znieff" nullable="true" remarks="" size="15" type="varchar"/>
+      </table>
+      <table name="taxref_consolide_non_filtre" numRows="0" remarks="" schema="taxon" type="VIEW" viewSql=" WITH taxref_mnhn_et_local AS (&#10;         SELECT taxref.regne,&#10;            taxref.phylum,&#10;            taxref.classe,&#10;            taxref.ordre,&#10;            taxref.famille,&#10;            taxref.sous_famille,&#10;            taxref.tribu,&#10;            taxref.group1_inpn,&#10;            taxref.group2_inpn,&#10;            taxref.cd_nom,&#10;            taxref.cd_taxsup,&#10;            taxref.cd_ref,&#10;            taxref.rang,&#10;            taxref.lb_nom,&#10;            taxref.lb_auteur,&#10;            taxref.nom_complet,&#10;            taxref.nom_complet_html,&#10;            taxref.nom_valide,&#10;            taxref.nom_vern,&#10;            taxref.nom_vern_eng,&#10;            taxref.habitat,&#10;            taxref.fr,&#10;            taxref.gf,&#10;            taxref.mar,&#10;            taxref.gua,&#10;            taxref.sm,&#10;            taxref.sb,&#10;            taxref.spm,&#10;            taxref.may,&#10;            taxref.epa,&#10;            taxref.reu,&#10;            taxref.sa,&#10;            taxref.ta,&#10;            taxref.taaf,&#10;            taxref.pf,&#10;            taxref.nc,&#10;            taxref.wf,&#10;            taxref.cli,&#10;            taxref.url&#10;           FROM taxon.taxref&#10;          WHERE true&#10;        UNION ALL&#10;         SELECT taxref_local.regne,&#10;            taxref_local.phylum,&#10;            taxref_local.classe,&#10;            taxref_local.ordre,&#10;            taxref_local.famille,&#10;            taxref_local.sous_famille,&#10;            taxref_local.tribu,&#10;            taxref_local.group1_inpn,&#10;            taxref_local.group2_inpn,&#10;            taxref_local.cd_nom,&#10;            taxref_local.cd_taxsup,&#10;            taxref_local.cd_ref,&#10;            taxref_local.rang,&#10;            taxref_local.lb_nom,&#10;            taxref_local.lb_auteur,&#10;            taxref_local.nom_complet,&#10;            taxref_local.nom_complet_html,&#10;            taxref_local.nom_valide,&#10;            taxref_local.nom_vern,&#10;            taxref_local.nom_vern_eng,&#10;            taxref_local.habitat,&#10;            taxref_local.fr,&#10;            taxref_local.gf,&#10;            taxref_local.mar,&#10;            taxref_local.gua,&#10;            taxref_local.sm,&#10;            taxref_local.sb,&#10;            taxref_local.spm,&#10;            taxref_local.may,&#10;            taxref_local.epa,&#10;            taxref_local.reu,&#10;            taxref_local.sa,&#10;            taxref_local.ta,&#10;            taxref_local.taaf,&#10;            taxref_local.pf,&#10;            taxref_local.nc,&#10;            taxref_local.wf,&#10;            taxref_local.cli,&#10;            taxref_local.url&#10;           FROM taxon.taxref_local&#10;          WHERE (true AND (taxref_local.cd_nom_valide IS NULL))&#10;        )&#10; SELECT tml.regne,&#10;    tml.phylum,&#10;    tml.classe,&#10;    tml.ordre,&#10;    tml.famille,&#10;    tml.sous_famille,&#10;    tml.tribu,&#10;    tml.group1_inpn,&#10;    tml.group2_inpn,&#10;    tml.cd_nom,&#10;    tml.cd_taxsup,&#10;    tml.cd_ref,&#10;    tml.rang,&#10;    tml.lb_nom,&#10;    tml.lb_auteur,&#10;    tml.nom_complet,&#10;    tml.nom_complet_html,&#10;    tml.nom_valide,&#10;    tml.nom_vern,&#10;    tml.nom_vern_eng,&#10;    tml.habitat,&#10;    tml.fr,&#10;    tml.gf,&#10;    tml.mar,&#10;    tml.gua,&#10;    tml.sm,&#10;    tml.sb,&#10;    tml.spm,&#10;    tml.may,&#10;    tml.epa,&#10;    tml.reu,&#10;    tml.sa,&#10;    tml.ta,&#10;    tml.taaf,&#10;    tml.pf,&#10;    tml.nc,&#10;    tml.wf,&#10;    tml.cli,&#10;    tml.url,&#10;    c.cd_nom_fk,&#10;    c.statut,&#10;    c.rarete,&#10;    c.endemicite,&#10;    c.invasibilite,&#10;    c.menace,&#10;    c.menace_monde,&#10;    c.protection,&#10;    c.det_znieff&#10;   FROM (taxref_mnhn_et_local tml&#10;     LEFT JOIN taxon.t_complement c ON ((c.cd_nom_fk = tml.cd_nom)));">
+         <column autoUpdated="false" digits="0" id="0" name="regne" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="1" name="phylum" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="2" name="classe" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="3" name="ordre" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="4" name="famille" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="5" name="sous_famille" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="6" name="tribu" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="7" name="group1_inpn" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="8" name="group2_inpn" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="9" name="cd_nom" nullable="true" remarks="" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="10" name="cd_taxsup" nullable="true" remarks="" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="11" name="cd_ref" nullable="true" remarks="" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="12" name="rang" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="13" name="lb_nom" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="14" name="lb_auteur" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="15" name="nom_complet" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="16" name="nom_complet_html" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="17" name="nom_valide" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="18" name="nom_vern" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="19" name="nom_vern_eng" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="20" name="habitat" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="21" name="fr" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="22" name="gf" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="23" name="mar" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="24" name="gua" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="25" name="sm" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="26" name="sb" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="27" name="spm" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="28" name="may" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="29" name="epa" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="30" name="reu" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="31" name="sa" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="32" name="ta" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="33" name="taaf" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="34" name="pf" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="35" name="nc" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="36" name="wf" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="37" name="cli" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="38" name="url" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="39" name="cd_nom_fk" nullable="true" remarks="" size="10" type="int4">
+            <parent column="cd_nom_fk" foreignKey="Implied Constraint" implied="true" onDeleteCascade="false" schema="taxon" table="t_complement"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="40" name="statut" nullable="true" remarks="" size="15" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="41" name="rarete" nullable="true" remarks="" size="10" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="42" name="endemicite" nullable="true" remarks="" size="5" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="43" name="invasibilite" nullable="true" remarks="" size="5" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="44" name="menace" nullable="true" remarks="" size="5" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="45" name="menace_monde" nullable="true" remarks="" size="6" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="46" name="protection" nullable="true" remarks="" size="5" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="47" name="det_znieff" nullable="true" remarks="" size="15" type="varchar"/>
+      </table>
+      <table name="taxref_fts" numRows="0" remarks="Vue matérialisée pour le stockage des informations de recherche plein texte visible dans naturaliz.&#10;&#10;Cette vue se base sur une UNION des taxons, valides ou non, des tables taxref et taxref_local. On n'a gardé que les taxons des rangs: FM, GN, AGES, ES, SSES, NAT, VAR, SVAR, FO, SSFO, RACE, CAR, AB&#10;&#10;Un champ poids permet de prioriser la recherche dans cet ordre, avec les poids respectifs 6, 4 et 2:&#10;* noms (nom_valide) des taxons valides (cd_nom = cd_ref)&#10;* noms vernaculaires (nom_vern) des taxons valides (cd_nom = cd_ref)&#10;* noms (nom_complet) des taxons synonymes (cd_nom != cd_ref)&#10;&#10;Cette vue doit être rafraîchie dès qu'on modifie les données dans les tables taxref et/ou taxref_local: `REFRESH MATERIALIZED VIEW taxref_fts`" schema="taxon" type="VIEW" viewSql=" WITH taxref_mnhn_et_local AS (&#10;         SELECT taxref.cd_nom,&#10;            taxref.cd_ref,&#10;            taxref.nom_valide,&#10;            taxref.nom_vern,&#10;            taxref.nom_complet,&#10;            taxref.group2_inpn,&#10;            taxref.rang&#10;           FROM taxon.taxref&#10;        UNION ALL&#10;         SELECT taxref_local.cd_nom,&#10;            taxref_local.cd_ref,&#10;            taxref_local.nom_valide,&#10;            taxref_local.nom_vern,&#10;            taxref_local.nom_complet,&#10;            taxref_local.group2_inpn,&#10;            taxref_local.rang&#10;           FROM taxon.taxref_local&#10;          WHERE (taxref_local.cd_nom_valide IS NULL)&#10;        )&#10; SELECT (taxref_mnhn_et_local.cd_nom)::bigint AS cd_nom,&#10;    (taxref_mnhn_et_local.cd_ref)::bigint AS cd_ref,&#10;    taxref_mnhn_et_local.nom_valide AS val,&#10;    taxref_mnhn_et_local.nom_valide,&#10;    (6)::smallint AS poids,&#10;    taxref_mnhn_et_local.group2_inpn,&#10;    to_tsvector(taxon.unaccent(COALESCE(taxref_mnhn_et_local.nom_valide, ''::text))) AS vec&#10;   FROM taxref_mnhn_et_local&#10;  WHERE ((taxref_mnhn_et_local.cd_nom = taxref_mnhn_et_local.cd_ref) AND (taxref_mnhn_et_local.rang = ANY (ARRAY['FM'::text, 'GN'::text, 'AGES'::text, 'ES'::text, 'SSES'::text, 'NAT'::text, 'VAR'::text, 'SVAR'::text, 'FO'::text, 'SSFO'::text, 'RACE'::text, 'CAR'::text, 'AB'::text])))&#10;UNION ALL&#10; SELECT (taxref_mnhn_et_local.cd_nom)::bigint AS cd_nom,&#10;    (taxref_mnhn_et_local.cd_ref)::bigint AS cd_ref,&#10;    taxref_mnhn_et_local.nom_vern AS val,&#10;    taxref_mnhn_et_local.nom_valide,&#10;    (4)::smallint AS poids,&#10;    taxref_mnhn_et_local.group2_inpn,&#10;    to_tsvector(taxon.unaccent(COALESCE(taxref_mnhn_et_local.nom_vern, ''::text))) AS vec&#10;   FROM taxref_mnhn_et_local&#10;  WHERE ((taxref_mnhn_et_local.cd_nom = taxref_mnhn_et_local.cd_ref) AND (taxref_mnhn_et_local.nom_vern IS NOT NULL) AND (taxref_mnhn_et_local.nom_vern &lt;&gt; ''::text) AND (taxref_mnhn_et_local.rang = ANY (ARRAY['FM'::text, 'GN'::text, 'AGES'::text, 'ES'::text, 'SSES'::text, 'NAT'::text, 'VAR'::text, 'SVAR'::text, 'FO'::text, 'SSFO'::text, 'RACE'::text, 'CAR'::text, 'AB'::text])))&#10;UNION ALL&#10; SELECT (taxref_mnhn_et_local.cd_nom)::bigint AS cd_nom,&#10;    (taxref_mnhn_et_local.cd_ref)::bigint AS cd_ref,&#10;    taxref_mnhn_et_local.nom_complet AS val,&#10;    taxref_mnhn_et_local.nom_valide,&#10;    (2)::smallint AS poids,&#10;    taxref_mnhn_et_local.group2_inpn,&#10;    to_tsvector(taxon.unaccent(COALESCE(taxref_mnhn_et_local.nom_complet, ''::text))) AS vec&#10;   FROM taxref_mnhn_et_local&#10;  WHERE ((taxref_mnhn_et_local.cd_nom &lt;&gt; taxref_mnhn_et_local.cd_ref) AND (taxref_mnhn_et_local.rang = ANY (ARRAY['FM'::text, 'GN'::text, 'AGES'::text, 'ES'::text, 'SSES'::text, 'NAT'::text, 'VAR'::text, 'SVAR'::text, 'FO'::text, 'SSFO'::text, 'RACE'::text, 'CAR'::text, 'AB'::text])));">
+         <column autoUpdated="false" digits="0" id="0" name="cd_nom" nullable="true" remarks="Identifiant du taxon (cd_nom) en lien avec la table taxref" size="19" type="int8"/>
+         <column autoUpdated="false" digits="0" id="1" name="cd_ref" nullable="true" remarks="Identifiant du taxon valide (cd_ref)" size="19" type="int8"/>
+         <column autoUpdated="false" digits="0" id="2" name="val" nullable="true" remarks="Valeur à afficher (nom du taxon, group1_inpn, etc.)" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="3" name="nom_valide" nullable="true" remarks="Nom valide correspondant" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="4" name="poids" nullable="true" remarks="Importance de l objet dans la recherche, fonction du type" size="5" type="int2"/>
+         <column autoUpdated="false" digits="0" id="5" name="group2_inpn" nullable="true" remarks="Groupe INPN - utilisé pour afficher des icônes" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="6" name="vec" nullable="true" remarks="Vecteur de la recherche plein texte" size="2147483647" type="tsvector"/>
+      </table>
+      <table name="taxref_local" numRows="0" remarks="Données taxonomiques qui ne sont pas dans TAXREF. L'identifiant donné est négatif temporaire, jusqu'à la création du taxon dans le TAXREF officiel. La structure de la table est complètement identique à celle de TAXREF pour permettre une UNION entre les 2 tables" schema="taxon" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="regne" nullable="true" remarks="Règne auquel le taxon appartient" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="1" name="phylum" nullable="true" remarks="Embranchement auquel le taxon appartient" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="2" name="classe" nullable="true" remarks="Classe à laquelle le taxon appartient" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="3" name="ordre" nullable="true" remarks="Ordre auquel le taxon appartient" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="4" name="famille" nullable="true" remarks="Famille à laquelle le taxon appartient" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="5" name="group1_inpn" nullable="true" remarks="Libellé Groupe 1 INPN pour ce taxon" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="6" name="group2_inpn" nullable="true" remarks="Libellé Groupe 1 INPN" size="2147483647" type="text"/>
+         <column autoUpdated="true" defaultValue="nextval('taxon.taxref_local_cd_nom_seq'::regclass)" digits="0" id="7" name="cd_nom" nullable="false" remarks="Identifiant unique du nom scientifique" size="10" type="serial"/>
+         <column autoUpdated="false" digits="0" id="8" name="cd_taxsup" nullable="true" remarks="Identifiant (CD_NOM) du taxon supérieur" size="10" type="int4"/>
+         <column autoUpdated="false" defaultValue="currval('taxon.taxref_local_cd_nom_seq'::regclass)" digits="0" id="9" name="cd_ref" nullable="false" remarks="Identifiant (CD_NOM) du taxon de référence (nom retenu)" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="10" name="rang" nullable="true" remarks="Rang taxonomique (lien vers TAXREF_RANG)" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="11" name="lb_nom" nullable="true" remarks="Nom scientifique du taxon (sans l’autorité)" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="12" name="lb_auteur" nullable="true" remarks="Autorité du taxon (Auteur, année, gestion des parenthèses)" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="13" name="nom_complet" nullable="true" remarks="Combinaison des champs pour donner le nom complet (~LB_NOM+&quot; &quot;+LB_AUTEUR)" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="14" name="nom_complet_html" nullable="true" remarks="Nom complet formatté en HTML" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="15" name="nom_valide" nullable="true" remarks="Le NOM_COMPLET du CD_REF" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="16" name="nom_vern" nullable="true" remarks="Noms vernaculaires français" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="17" name="nom_vern_eng" nullable="true" remarks="Noms vernaculaires anglais" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="18" name="habitat" nullable="true" remarks="Code de l’habitat (clé vers TAXREF_HABITATS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="19" name="fr" nullable="true" remarks="Statut biogéographique en France métropolitaine (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="20" name="gf" nullable="true" remarks="Statut biogéographique en Guyane française (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="21" name="mar" nullable="true" remarks="Statut biogéographique à la Martinique (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="22" name="gua" nullable="true" remarks="Statut biogéographique à la Guadeloupe (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="23" name="sm" nullable="true" remarks="Statut biogéographique à Saint-Martin (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="24" name="sb" nullable="true" remarks="Statut biogéographique à Saint-Barthélemy (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="25" name="spm" nullable="true" remarks="Statut biogéographique à Saint-Pierre et Miquelon (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="26" name="may" nullable="true" remarks="Statut biogéographique à Mayotte (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="27" name="epa" nullable="true" remarks="Statut biogéographique aux Îles Éparses (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="28" name="reu" nullable="true" remarks="Statut biogéographique à la Réunion (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="29" name="sa" nullable="true" remarks="Statut biogéographique îles subantarctiques (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="30" name="ta" nullable="true" remarks="Statut biogéographique en Terre Adélie (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="31" name="taaf" nullable="true" remarks="Statut biogéographique aux TAAF (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="32" name="pf" nullable="true" remarks="Statut biogéographique en Polynésie française (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="33" name="nc" nullable="true" remarks="Statut biogéographique en Nouvelle-Calédonie (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="34" name="wf" nullable="true" remarks="Statut biogéographique à Wallis et Futuna (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="35" name="cli" nullable="true" remarks="Statut biogéographique à Clipperton (clé vers TAXREF_STATUTS)" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="36" name="url" nullable="true" remarks="cd_nom du taxon valide, à renseigner après import d'un nouveau TAXREF, pour pouvoir modifier ensuite les observations qui faisaient référence au cd_nom négatif provisoire de la ligne. Penser à supprimer la ligne une fois les modifications faites sur les observations" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="37" name="cd_nom_valide" nullable="true" remarks="" size="19" type="int8"/>
+         <column autoUpdated="false" digits="0" id="38" name="local_identifiant_origine" nullable="false" remarks="Identifiant du taxon (équivalent cd_nom) dans la base de données d'origine." size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="39" name="local_identifiant_origine_ref" nullable="true" remarks="Identifiant du taxon de référence (équivalent cd_ref) dans la base de données d'origine." size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="40" name="cd_sup" nullable="true" remarks="" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="41" name="local_bdd_code" nullable="false" remarks="Base de données source. Ce champ est une clé étrangère liée à la table taxref_local_source, vers le code" size="2147483647" type="text">
+            <parent column="code" foreignKey="taxref_local_bdd_code" implied="false" onDeleteCascade="false" schema="taxon" table="taxref_local_source"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="42" name="sous_famille" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="43" name="tribu" nullable="true" remarks="" size="2147483647" type="text"/>
+         <primaryKey column="cd_nom" sequenceNumberInPK="1"/>
+         <index name="taxref_local_pkey" unique="true">
+            <column ascending="true" name="cd_nom"/>
+         </index>
+         <index name="taxref_local_cd_nom_idx" unique="false">
+            <column ascending="true" name="cd_nom"/>
+         </index>
+         <index name="taxref_local_cd_ref_idx" unique="false">
+            <column ascending="true" name="cd_ref"/>
+         </index>
+         <index name="taxref_local_group1_inpn_idx" unique="false">
+            <column ascending="true" name="group1_inpn"/>
+         </index>
+         <index name="taxref_local_group2_inpn_idx" unique="false">
+            <column ascending="true" name="group2_inpn"/>
+         </index>
+         <index name="taxref_local_habitat_idx" unique="false">
+            <column ascending="true" name="habitat"/>
+         </index>
+         <index name="taxref_local_regne_idx" unique="false">
+            <column ascending="true" name="regne"/>
+         </index>
+      </table>
+      <table name="taxref_local_source" numRows="3" remarks="Stockage des informations sur les sources de données des taxons" schema="taxon" type="TABLE">
+         <column autoUpdated="true" defaultValue="nextval('taxon.taxref_local_source_id_seq'::regclass)" digits="0" id="0" name="id" nullable="false" remarks="Identifiant automatique" size="10" type="serial"/>
+         <column autoUpdated="false" digits="0" id="1" name="code" nullable="false" remarks="Code court de la base de données. Par exemple: CBNM. Doit être unique" size="2147483647" type="text">
+            <child column="local_bdd_code" foreignKey="taxref_local_bdd_code" implied="false" onDeleteCascade="false" schema="taxon" table="taxref_local"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="2" name="titre" nullable="false" remarks="Titre de la base de données. Par exemple: Index de la flore vasculaire de La Réunion" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="3" name="description" nullable="true" remarks="Description de la base de données. Optionnelle" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="4" name="info_url" nullable="false" remarks="URL vers une page décrivant la base de données source. Ex: http://mascarine.cbnm.org/" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="5" name="taxon_url" nullable="false" remarks="URL vers la fiche d'un taxon dans la base de données source. Le texte {$id} sera remplacé par l'identifiant d'origine du taxon dans la bdd source. Ex: http://mascarine.cbnm.org/index.php/flore/index-de-la-flore/nom?code_taxref={$id}" size="2147483647" type="text"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="taxref_local_source_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="taxref_local_source_code_key" unique="true">
+            <column ascending="true" name="code"/>
+         </index>
+      </table>
+      <table name="taxref_valide" numRows="0" remarks="Vue matérialisée pour récupérer uniquement les taxons valides (cd_nom = cd_ref) dans la table taxref et dans la table taxref_local.&#10;&#10;Elle fait une union entre les 2 tables source et ne conserve que les taxons des rangs: FM, GN, AGES, ES, SSES, NAT, VAR, SVAR, FO, SSFO, RACE, CAR, AB.&#10;&#10;Elle doit être rafraîchie dès qu'on réalise un import dans une ou l'autre des tables sources: `REFRESH MATERIALIZED VIEW taxref_valide;`" schema="taxon" type="VIEW" viewSql=" WITH taxref_mnhn_et_local AS (&#10;         SELECT taxref.regne,&#10;            taxref.phylum,&#10;            taxref.classe,&#10;            taxref.ordre,&#10;            taxref.famille,&#10;            taxref.sous_famille,&#10;            taxref.tribu,&#10;            taxref.group1_inpn,&#10;            taxref.group2_inpn,&#10;            taxref.cd_nom,&#10;            taxref.cd_taxsup,&#10;            taxref.cd_ref,&#10;            taxref.rang,&#10;            taxref.lb_nom,&#10;            taxref.lb_auteur,&#10;            taxref.nom_complet,&#10;            taxref.nom_complet_html,&#10;            taxref.nom_valide,&#10;            taxref.nom_vern,&#10;            taxref.nom_vern_eng,&#10;            taxref.habitat,&#10;            taxref.fr,&#10;            taxref.gf,&#10;            taxref.mar,&#10;            taxref.gua,&#10;            taxref.sm,&#10;            taxref.sb,&#10;            taxref.spm,&#10;            taxref.may,&#10;            taxref.epa,&#10;            taxref.reu,&#10;            taxref.sa,&#10;            taxref.ta,&#10;            taxref.taaf,&#10;            taxref.pf,&#10;            taxref.nc,&#10;            taxref.wf,&#10;            taxref.cli,&#10;            taxref.url&#10;           FROM taxon.taxref&#10;        UNION ALL&#10;         SELECT taxref_local.regne,&#10;            taxref_local.phylum,&#10;            taxref_local.classe,&#10;            taxref_local.ordre,&#10;            taxref_local.famille,&#10;            taxref_local.sous_famille,&#10;            taxref_local.tribu,&#10;            taxref_local.group1_inpn,&#10;            taxref_local.group2_inpn,&#10;            taxref_local.cd_nom,&#10;            taxref_local.cd_taxsup,&#10;            taxref_local.cd_ref,&#10;            taxref_local.rang,&#10;            taxref_local.lb_nom,&#10;            taxref_local.lb_auteur,&#10;            taxref_local.nom_complet,&#10;            taxref_local.nom_complet_html,&#10;            taxref_local.nom_valide,&#10;            taxref_local.nom_vern,&#10;            taxref_local.nom_vern_eng,&#10;            taxref_local.habitat,&#10;            taxref_local.fr,&#10;            taxref_local.gf,&#10;            taxref_local.mar,&#10;            taxref_local.gua,&#10;            taxref_local.sm,&#10;            taxref_local.sb,&#10;            taxref_local.spm,&#10;            taxref_local.may,&#10;            taxref_local.epa,&#10;            taxref_local.reu,&#10;            taxref_local.sa,&#10;            taxref_local.ta,&#10;            taxref_local.taaf,&#10;            taxref_local.pf,&#10;            taxref_local.nc,&#10;            taxref_local.wf,&#10;            taxref_local.cli,&#10;            taxref_local.url&#10;           FROM taxon.taxref_local&#10;          WHERE (taxref_local.cd_nom_valide IS NULL)&#10;        )&#10; SELECT taxref_mnhn_et_local.regne,&#10;    taxref_mnhn_et_local.phylum,&#10;    taxref_mnhn_et_local.classe,&#10;    taxref_mnhn_et_local.ordre,&#10;    taxref_mnhn_et_local.famille,&#10;    taxref_mnhn_et_local.sous_famille,&#10;    taxref_mnhn_et_local.tribu,&#10;    taxref_mnhn_et_local.group1_inpn,&#10;    taxref_mnhn_et_local.group2_inpn,&#10;    taxref_mnhn_et_local.cd_nom,&#10;    taxref_mnhn_et_local.cd_taxsup,&#10;    taxref_mnhn_et_local.cd_ref,&#10;    taxref_mnhn_et_local.rang,&#10;    taxref_mnhn_et_local.lb_nom,&#10;    taxref_mnhn_et_local.lb_auteur,&#10;    taxref_mnhn_et_local.nom_complet,&#10;    taxref_mnhn_et_local.nom_complet_html,&#10;    taxref_mnhn_et_local.nom_valide,&#10;    taxref_mnhn_et_local.nom_vern,&#10;    taxref_mnhn_et_local.nom_vern_eng,&#10;    taxref_mnhn_et_local.habitat,&#10;    taxref_mnhn_et_local.fr,&#10;    taxref_mnhn_et_local.gf,&#10;    taxref_mnhn_et_local.mar,&#10;    taxref_mnhn_et_local.gua,&#10;    taxref_mnhn_et_local.sm,&#10;    taxref_mnhn_et_local.sb,&#10;    taxref_mnhn_et_local.spm,&#10;    taxref_mnhn_et_local.may,&#10;    taxref_mnhn_et_local.epa,&#10;    taxref_mnhn_et_local.reu,&#10;    taxref_mnhn_et_local.sa,&#10;    taxref_mnhn_et_local.ta,&#10;    taxref_mnhn_et_local.taaf,&#10;    taxref_mnhn_et_local.pf,&#10;    taxref_mnhn_et_local.nc,&#10;    taxref_mnhn_et_local.wf,&#10;    taxref_mnhn_et_local.cli,&#10;    taxref_mnhn_et_local.url&#10;   FROM taxref_mnhn_et_local&#10;  WHERE (true AND (taxref_mnhn_et_local.cd_nom = taxref_mnhn_et_local.cd_ref) AND (taxref_mnhn_et_local.rang = ANY (ARRAY['FM'::text, 'GN'::text, 'AGES'::text, 'ES'::text, 'SSES'::text, 'NAT'::text, 'VAR'::text, 'SVAR'::text, 'FO'::text, 'SSFO'::text, 'RACE'::text, 'CAR'::text, 'AB'::text])));">
+         <column autoUpdated="false" digits="0" id="0" name="regne" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="1" name="phylum" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="2" name="classe" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="3" name="ordre" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="4" name="famille" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="5" name="sous_famille" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="6" name="tribu" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="7" name="group1_inpn" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="8" name="group2_inpn" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="9" name="cd_nom" nullable="true" remarks="" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="10" name="cd_taxsup" nullable="true" remarks="" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="11" name="cd_ref" nullable="true" remarks="" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="12" name="rang" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="13" name="lb_nom" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="14" name="lb_auteur" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="15" name="nom_complet" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="16" name="nom_complet_html" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="17" name="nom_valide" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="18" name="nom_vern" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="19" name="nom_vern_eng" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="20" name="habitat" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="21" name="fr" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="22" name="gf" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="23" name="mar" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="24" name="gua" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="25" name="sm" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="26" name="sb" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="27" name="spm" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="28" name="may" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="29" name="epa" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="30" name="reu" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="31" name="sa" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="32" name="ta" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="33" name="taaf" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="34" name="pf" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="35" name="nc" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="36" name="wf" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="37" name="cli" nullable="true" remarks="" size="1" type="varchar"/>
+         <column autoUpdated="false" digits="0" id="38" name="url" nullable="true" remarks="" size="2147483647" type="text"/>
+      </table>
+      <table name="taxvern" numRows="53168" remarks="Nom vernaculaires. Nouveau depuis TAXREF V11" schema="taxon" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="cd_vern" nullable="false" remarks="" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="1" name="cd_nom" nullable="true" remarks="" size="10" type="int4"/>
+         <column autoUpdated="false" digits="0" id="2" name="lb_vern" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="3" name="nom_vern_source" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="4" name="langue" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="5" name="iso639_3" nullable="true" remarks="" size="2147483647" type="text"/>
+         <column autoUpdated="false" digits="0" id="6" name="pays" nullable="true" remarks="" size="2147483647" type="text"/>
+         <primaryKey column="cd_vern" sequenceNumberInPK="1"/>
+         <index name="taxvern_pkey" unique="true">
+            <column ascending="true" name="cd_vern"/>
+         </index>
+         <index name="taxvern_cd_nom_idx" unique="false">
+            <column ascending="true" name="cd_nom"/>
+         </index>
+         <index name="taxvern_iso639_3_idx" unique="false">
+            <column ascending="true" name="iso639_3"/>
+         </index>
+      </table>
+   </tables>
+</database>

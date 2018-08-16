@@ -1,0 +1,8 @@
+spatial_ref_sys
+jacl2_group
+jacl2_subject_group
+jlx_user
+jacl2_subject
+geobookmark
+jacl2_user_group
+jacl2_rights

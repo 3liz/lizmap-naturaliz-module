@@ -1,0 +1,3478 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>naturaliz_reunion Database</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon.png">
+  <!-- Bootstrap 3.3.5 -->
+  <link rel="stylesheet" href="bower/admin-lte/bootstrap/css/bootstrap.min.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="bower/font-awesome/css/font-awesome.min.css">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="bower/ionicons/css/ionicons.min.css">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="bower/datatables.net-bs/css/dataTables.bootstrap.min.css">
+  <link rel="stylesheet" href="bower/datatables.net-buttons-bs/css/buttons.bootstrap.min.css">
+  <!-- Code Mirror -->
+  <link rel="stylesheet" href="bower/codemirror/codemirror.css">
+  <!-- Fonts -->
+  <link href='fonts/indieflower/indie-flower.css' rel='stylesheet' type='text/css'>
+  <link href='fonts/source-sans-pro/source-sans-pro.css' rel='stylesheet' type='text/css'>
+
+  <!-- Theme style -->
+  <link rel="stylesheet" href="bower/admin-lte/dist/css/AdminLTE.min.css">
+  <!-- Salvattore -->
+  <link rel="stylesheet" href="bower/salvattore/salvattore.css">
+  <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+  <link rel="stylesheet" href="bower/admin-lte/dist/css/skins/_all-skins.min.css">
+  <!-- SchemaSpy -->
+  <link rel="stylesheet" href="schemaSpy.css">
+  
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+  <script src="bower/html5shiv/html5shiv.min.js"></script>
+  <script src="bower/respond/respond.min.js"></script>
+  <![endif]-->
+</head>
+<!-- ADD THE CLASS layout-top-nav TO REMOVE THE SIDEBAR. -->
+<body class="hold-transition skin-blue layout-top-nav">
+<div class="wrapper">
+  <header class="main-header">
+    <nav class="navbar navbar-static-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a href="index.html" class="navbar-brand"><b>naturaliz_reunion</b> Database</a>
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+            <i class="fa fa-bars"></i>
+          </button>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse pull-left" id="navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="index.html">Tables <span class="sr-only">(current)</span></a></li>
+			<li><a href="columns.html" title="All of the columns in the schema">Columns</a></li>
+			<li><a href="constraints.html" title="Useful for diagnosing error messages that just give constraint name or number">Constraints</a></li>
+			<li><a href="relationships.html" title="Diagram of table relationships">Relationships</a></li>
+			<li><a href="orphans.html" title="View of tables with neither parents nor children">Orphan&nbsp;Tables</a></li>				
+			<li><a href="anomalies.html" title="Things that might not be quite right">Anomalies</a></li>
+			<li><a href="routines.html" title="Procedures and functions">Routines</a></li>
+          </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+        <!-- Navbar Right Menu -->
+
+      </div>
+      <!-- /.container-fluid -->
+    </nav>
+  </header>
+  <!-- Main content -->
+  <!-- Full Width Column -->
+  <div class="content-wrapper">
+          <!-- Content Header (Page header) -->
+      <section class="content-header">
+        <h1>Columns</h1>
+      </section>
+      <!-- Main content -->
+      <section class="content">
+		<div class="box box-primary">
+			<div class="box-header with-border">
+			  <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
+              <h3 class="box-title">Columns</h3>
+            </div>	
+            <div class="box-body">
+				<div class="row">
+					<div id="button_group_one" class="col-md-3 col-sm-6"></div>
+					<div id="button_group_two" class="col-md-2 col-sm-4 pull-right text-right"></div>
+				</div>
+				<table id="column_table" class="table table-bordered table-striped dataTable" role="grid">
+				<thead align='left'>
+					<tr>
+					  <th>Table</th>
+					  <th>Type</th>
+					  <th>Column</th>
+					  <th>Type</th>
+					  <th>Size</th>
+					  <th title='Are nulls allowed?'>Nulls</th>
+					  <th title='Is column automatically updated?'>Auto</th>
+					  <th title='Default value'>Default</th>
+					  <th title='Comments' class="toggle"><span>Comments</span></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+					 <td>taxref_consolide_all</td>
+					 <td>View</td>
+					 <td>menace_monde</td>
+					 <td>varchar</td>
+					 <td>6</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>ordre</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>nom_complet_html</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Nom complet formatté en HTML</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>nom_vern</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>nc</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>regne</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>may</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>cd_ref</td>
+					 <td>int4</td>
+					 <td>10</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>lb_nom</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_all</td>
+					 <td>View</td>
+					 <td>menace</td>
+					 <td>varchar</td>
+					 <td>5</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>group2_inpn</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>reu</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique à la Réunion (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_fts</td>
+					 <td>View</td>
+					 <td>cd_ref</td>
+					 <td>int8</td>
+					 <td>19</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Identifiant du taxon valide (cd_ref)</p></td>
+					</tr>
+					<tr>
+					 <td>menaces</td>
+					 <td>Table</td>
+					 <td>criteres_france</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>classe</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>wf</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>phylum</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Embranchement auquel le taxon appartient</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>mar</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique à la Martinique (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>statut</td>
+					 <td>varchar</td>
+					 <td>15</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>sb</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique à Saint-Barthélemy (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>nc</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique en Nouvelle-Calédonie (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_changes</td>
+					 <td>Table</td>
+					 <td>type_change</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>url</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>cd_nom du taxon valide, à renseigner après import d'un nouveau TAXREF, pour pouvoir modifier ensuite les observations qui faisaient référence au cd_nom négatif provisoire de la ligne. Penser à supprimer la ligne une fois les modifications faites sur les observations</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>epa</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique aux Îles Éparses (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>sm</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>group2_inpn</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>spm</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique à Saint-Pierre et Miquelon (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>protections</td>
+					 <td>Table</td>
+					 <td>cd_nom_cite</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>url</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>ordre</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>local_identifiant_origine_ref</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Identifiant du taxon de référence (équivalent cd_ref) dans la base de données d'origine.</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_fts</td>
+					 <td>View</td>
+					 <td>group2_inpn</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Groupe INPN - utilisé pour afficher des icônes</p></td>
+					</tr>
+					<tr>
+					 <td>menaces</td>
+					 <td>Table</td>
+					 <td class='indexedColumn' title='Indexed'><i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'></i>cd_nom</td>
+					 <td>int4</td>
+					 <td>10</td>
+					 <td title=''></td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>habitat</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>t_nomenclature</td>
+					 <td>Table</td>
+					 <td>valeur</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Libellé court. Joue le rôle de valeur</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>sous_famille</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>may</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique à Mayotte (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>menaces</td>
+					 <td>Table</td>
+					 <td>categorie_lr_monde</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_all</td>
+					 <td>View</td>
+					 <td>group1_inpn</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>t_complement</td>
+					 <td>Table</td>
+					 <td class='indexedColumn' title='Indexed'><i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'></i>statut</td>
+					 <td>varchar</td>
+					 <td>15</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut local</p></td>
+					</tr>
+					<tr>
+					 <td>t_complement</td>
+					 <td>Table</td>
+					 <td class='indexedColumn' title='Indexed'><i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'></i>protection</td>
+					 <td>varchar</td>
+					 <td>5</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut de protection local</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_fts</td>
+					 <td>View</td>
+					 <td>val</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Valeur à afficher (nom du taxon, group1_inpn, etc.)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>lb_nom</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>protections</td>
+					 <td>Table</td>
+					 <td>nom_cite</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>nom_complet_html</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>phylum</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>gf</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique en Guyane française (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td class='primaryKey' title='Primary Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i>cd_nom</td>
+					 <td>serial</td>
+					 <td>10</td>
+					 <td title=''></td>
+					 <td title='Automatically updated by the database'>√</td>
+					 <td>nextval(&#39;taxon.taxref_local_cd_nom_seq&#39;::regclass)</td>
+					 <td><p>Identifiant unique du nom scientifique</p></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>ta</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique en Terre Adélie (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>statut</td>
+					 <td>varchar</td>
+					 <td>15</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>sb</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique à Saint-Barthélemy (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>mar</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>rang</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Rang taxonomique (lien vers TAXREF_RANG)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>cd_sup</td>
+					 <td>int4</td>
+					 <td>10</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>wf</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique à Wallis et Futuna (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>nom_valide</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Le NOM_COMPLET du CD_REF</p></td>
+					</tr>
+					<tr>
+					 <td>t_group_categorie</td>
+					 <td>Table</td>
+					 <td>regne</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Le règne du groupe INPN</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>nom_complet</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Combinaison des champs pour donner le nom complet (~LB_NOM+" "+LB_AUTEUR)</p></td>
+					</tr>
+					<tr>
+					 <td>menaces</td>
+					 <td>Table</td>
+					 <td>famille</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>cli</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>cli</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>nom_complet_html</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Nom complet formatté en HTML</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>cd_nom</td>
+					 <td>int4</td>
+					 <td>10</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td class='foreignKey' title='Foreign Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i>cd_nom_fk</td>
+					 <td>int4</td>
+					 <td>10</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>sa</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique aux îles subantarctiques ( (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td class='indexedColumn' title='Indexed'><i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'></i>cd_ref</td>
+					 <td>int4</td>
+					 <td>10</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Identifiant (CD_NOM) du taxon de référence (nom retenu)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>lb_auteur</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>sous_famille</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>lb_nom</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Nom scientifique du taxon (sans l’autorité)</p></td>
+					</tr>
+					<tr>
+					 <td>t_complement</td>
+					 <td>Table</td>
+					 <td>menace_monde</td>
+					 <td>varchar</td>
+					 <td>6</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Menace mondiale sur le taxon</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>may</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique à Mayotte (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>t_complement</td>
+					 <td>Table</td>
+					 <td class='indexedColumn' title='Indexed'><i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'></i>det_znieff</td>
+					 <td>varchar</td>
+					 <td>15</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Déterminant ZNIEFF</p></td>
+					</tr>
+					<tr>
+					 <td>t_nomenclature</td>
+					 <td>Table</td>
+					 <td>description</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Libellé court. Joue le rôle de valeur</p></td>
+					</tr>
+					<tr>
+					 <td>menaces</td>
+					 <td>Table</td>
+					 <td>tendance</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local_source</td>
+					 <td>Table</td>
+					 <td class='primaryKey' title='Primary Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i>id</td>
+					 <td>serial</td>
+					 <td>10</td>
+					 <td title=''></td>
+					 <td title='Automatically updated by the database'>√</td>
+					 <td>nextval(&#39;taxon.taxref_local_source_id_seq&#39;::regclass)</td>
+					 <td><p>Identifiant automatique</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>cd_ref</td>
+					 <td>int4</td>
+					 <td>10</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>rang</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>t_group_categorie</td>
+					 <td>Table</td>
+					 <td class='primaryKey' title='Primary Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i>cat_nom</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title=''></td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Libellé à afficher pour le groupe</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_all</td>
+					 <td>View</td>
+					 <td>rarete</td>
+					 <td>varchar</td>
+					 <td>10</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>t_complement</td>
+					 <td>Table</td>
+					 <td class='primaryKey' title='Primary Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i>cd_nom_fk</td>
+					 <td>int4</td>
+					 <td>10</td>
+					 <td title=''></td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Identifiant du taxon, lien avec taxref.cd_nom</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_fts</td>
+					 <td>View</td>
+					 <td>vec</td>
+					 <td>tsvector</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Vecteur de la recherche plein texte</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>sb</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>group2_inpn</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>lb_auteur</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Autorité du taxon (Auteur, année, gestion des parenthèses)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>menace</td>
+					 <td>varchar</td>
+					 <td>5</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>ordre</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Ordre auquel le taxon appartient</p></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>gf</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique en Guyane française (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>mar</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>sm</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>phylum</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>local_identifiant_origine</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title=''></td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Identifiant du taxon (équivalent cd_nom) dans la base de données d'origine.</p></td>
+					</tr>
+					<tr>
+					 <td>protections</td>
+					 <td>Table</td>
+					 <td>syn_cite</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>t_nomenclature</td>
+					 <td>Table</td>
+					 <td class='primaryKey' title='Primary Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i>code</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title=''></td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Code associé à une valeur</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>cd_nom</td>
+					 <td>int4</td>
+					 <td>10</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>regne</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>nc</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique en Nouvelle-Calédonie (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxvern</td>
+					 <td>Table</td>
+					 <td>langue</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>gua</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>ta</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>t_group_categorie</td>
+					 <td>Table</td>
+					 <td class='primaryKey' title='Primary Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i>groupe_nom</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title=''></td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Nom du groupe INPN correspondant</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_changes</td>
+					 <td>Table</td>
+					 <td>num_version_final</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td class='indexedColumn' title='Indexed'><i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'></i>habitat</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Code de l’habitat (clé vers TAXREF_HABITATS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxvern</td>
+					 <td>Table</td>
+					 <td>lb_vern</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>reu</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>cd_sup</td>
+					 <td>int4</td>
+					 <td>10</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>taaf</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique aux TAAF (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>protections</td>
+					 <td>Table</td>
+					 <td>precisions</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>url</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>menaces</td>
+					 <td>Table</td>
+					 <td>nom_scientifique</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>phylum</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>nc</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>nom_valide</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>pf</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique en Polynésie française (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>nom_complet</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>tribu</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>nom_vern_eng</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>menaces</td>
+					 <td>Table</td>
+					 <td>rang</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>gua</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique à la Guadeloupe (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>nom_complet</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>sb</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>protections</td>
+					 <td>Table</td>
+					 <td class='indexedColumn' title='Indexed'><i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'></i>cd_nom</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>nom_complet</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_all</td>
+					 <td>View</td>
+					 <td>group2_inpn</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>epa</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique aux Îles Éparses (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td class='indexedColumn' title='Indexed'><i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'></i>regne</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Règne auquel le taxon appartient</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_local_source</td>
+					 <td>Table</td>
+					 <td class='indexedColumn' title='Indexed'><i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'></i>code</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title=''></td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Code court de la base de données. Par exemple: CBNM. Doit être unique</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_changes</td>
+					 <td>Table</td>
+					 <td>cd_nom</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>menace_monde</td>
+					 <td>varchar</td>
+					 <td>6</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>menace</td>
+					 <td>varchar</td>
+					 <td>5</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local_source</td>
+					 <td>Table</td>
+					 <td>titre</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title=''></td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Titre de la base de données. Par exemple: Index de la flore vasculaire de La Réunion</p></td>
+					</tr>
+					<tr>
+					 <td>menaces</td>
+					 <td>Table</td>
+					 <td>population</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>ta</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>pf</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>protections</td>
+					 <td>Table</td>
+					 <td>cd_protection</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>nom_complet_html</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td class='indexedColumn' title='Indexed'><i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'></i>group1_inpn</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Libellé Groupe 1 INPN pour ce taxon</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_changes</td>
+					 <td>Table</td>
+					 <td>valeur_final</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>nom_valide</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>menace_monde</td>
+					 <td>varchar</td>
+					 <td>6</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>gf</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>nom_vern_eng</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Noms vernaculaires anglais</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>cd_ref</td>
+					 <td>int4</td>
+					 <td>10</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>t_complement</td>
+					 <td>Table</td>
+					 <td class='indexedColumn' title='Indexed'><i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'></i>endemicite</td>
+					 <td>varchar</td>
+					 <td>5</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Endémicité locale du taxon</p></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>rang</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Rang taxonomique (lien vers TAXREF_RANG)</p></td>
+					</tr>
+					<tr>
+					 <td>menaces</td>
+					 <td>Table</td>
+					 <td>liste_rouge_source</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>cd_nom_valide</td>
+					 <td>int8</td>
+					 <td>19</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>group1_inpn</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>epa</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>protections</td>
+					 <td>Table</td>
+					 <td>nom_francais_cite</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxvern</td>
+					 <td>Table</td>
+					 <td class='indexedColumn' title='Indexed'><i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'></i>iso639_3</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>gf</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>endemicite</td>
+					 <td>varchar</td>
+					 <td>5</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>menaces</td>
+					 <td>Table</td>
+					 <td>nom_commun</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_changes</td>
+					 <td>Table</td>
+					 <td>num_version_init</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>taaf</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique aux TAAF (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>cli</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>reu</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique à la Réunion (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>taaf</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>lb_auteur</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Autorité du taxon (Auteur, année, gestion des parenthèses)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>gua</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>lb_nom</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Nom scientifique du taxon (sans l’autorité)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>tribu</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>nom_vern</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Noms vernaculaires français</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>famille</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_all</td>
+					 <td>View</td>
+					 <td>invasibilite</td>
+					 <td>varchar</td>
+					 <td>5</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>spm</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique à Saint-Pierre et Miquelon (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>pf</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_fts</td>
+					 <td>View</td>
+					 <td>poids</td>
+					 <td>int2</td>
+					 <td>5</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Importance de l objet dans la recherche, fonction du type</p></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>sous_famille</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxon_sensible</td>
+					 <td>Table</td>
+					 <td class='primaryKey' title='Primary Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i>cd_nom</td>
+					 <td>int4</td>
+					 <td>10</td>
+					 <td title=''></td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Identifiant du taxon.</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_local_source</td>
+					 <td>Table</td>
+					 <td>taxon_url</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title=''></td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>URL vers la fiche d'un taxon dans la base de données source. Le texte {$id} sera remplacé par l'identifiant d'origine du taxon dans la bdd source. Ex: http://mascarine.cbnm.org/index.php/flore/index-de-la-flore/nom?code_taxref={$id}</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>sous_famille</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td class='indexedColumn' title='Indexed'><i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'></i>group2_inpn</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Libellé Groupe 1 INPN</p></td>
+					</tr>
+					<tr>
+					 <td>taxvern</td>
+					 <td>Table</td>
+					 <td>nom_vern_source</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>lb_nom</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>gf</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>classe</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Classe à laquelle le taxon appartient</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>fr</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique en France métropolitaine (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>nom_valide</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>pf</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique en Polynésie française (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>nc</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>classe</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>gua</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>wf</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>t_complement</td>
+					 <td>Table</td>
+					 <td class='indexedColumn' title='Indexed'><i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'></i>invasibilite</td>
+					 <td>varchar</td>
+					 <td>5</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Invasibilité locale du taxon</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>tribu</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>regne</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>det_znieff</td>
+					 <td>varchar</td>
+					 <td>15</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>url</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Permalien INPN = ‘http://inpn.mnhn.fr/espece/cd_nom/’ + CD_NOM</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>classe</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>pf</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>menaces</td>
+					 <td>Table</td>
+					 <td>cd_ref</td>
+					 <td>int4</td>
+					 <td>10</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>menaces</td>
+					 <td>Table</td>
+					 <td>auteur</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>fr</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>cli</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique à Clipperton (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>gua</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique à la Guadeloupe (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>ta</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique en Terre Adélie (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>protection</td>
+					 <td>varchar</td>
+					 <td>5</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>menaces</td>
+					 <td>Table</td>
+					 <td>categorie_france</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>rarete</td>
+					 <td>varchar</td>
+					 <td>10</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local_source</td>
+					 <td>Table</td>
+					 <td>info_url</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title=''></td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>URL vers une page décrivant la base de données source. Ex: http://mascarine.cbnm.org/</p></td>
+					</tr>
+					<tr>
+					 <td>taxvern</td>
+					 <td>Table</td>
+					 <td>pays</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_all</td>
+					 <td>View</td>
+					 <td class='foreignKey' title='Foreign Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i>cd_nom_fk</td>
+					 <td>int4</td>
+					 <td>10</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>wf</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique à Wallis et Futuna (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>ta</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>famille</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Famille à laquelle le taxon appartient</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>reu</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>habitat</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>invasibilite</td>
+					 <td>varchar</td>
+					 <td>5</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>det_znieff</td>
+					 <td>varchar</td>
+					 <td>15</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_all</td>
+					 <td>View</td>
+					 <td>protection</td>
+					 <td>varchar</td>
+					 <td>5</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>spm</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>nom_valide</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Le NOM_COMPLET du CD_REF</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td class='foreignKey' title='Foreign Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i>local_bdd_code</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title=''></td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Base de données source. Ce champ est une clé étrangère liée à la table taxref_local_source, vers le code</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>epa</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>taaf</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>t_nomenclature</td>
+					 <td>Table</td>
+					 <td class='primaryKey' title='Primary Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i>champ</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title=''></td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Description de la valeur</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_local_source</td>
+					 <td>Table</td>
+					 <td>description</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Description de la base de données. Optionnelle</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>epa</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>menaces</td>
+					 <td>Table</td>
+					 <td>commentaire</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>menaces</td>
+					 <td>Table</td>
+					 <td>categorie_lr_europe</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>cli</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique à Clipperton (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>cd_taxsup</td>
+					 <td>int4</td>
+					 <td>10</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Identifiant (CD_NOM) du taxon supérieur</p></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td class='indexedColumn' title='Indexed'><i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'></i>group1_inpn</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Libellé Groupe 1 INPN pour ce taxon</p></td>
+					</tr>
+					<tr>
+					 <td>taxvern</td>
+					 <td>Table</td>
+					 <td class='primaryKey' title='Primary Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i>cd_vern</td>
+					 <td>int4</td>
+					 <td>10</td>
+					 <td title=''></td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>mar</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>rang</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>nom_vern_eng</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>mar</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique à la Martinique (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_all</td>
+					 <td>View</td>
+					 <td>det_znieff</td>
+					 <td>varchar</td>
+					 <td>15</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>sa</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>cd_taxsup</td>
+					 <td>int4</td>
+					 <td>10</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td class='indexedColumn' title='Indexed'><i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'></i>cd_ref</td>
+					 <td>int4</td>
+					 <td>10</td>
+					 <td title=''></td>
+					 <td title=''></td>
+					 <td>currval(&#39;taxon.taxref_local_cd_nom_seq&#39;::regclass)</td>
+					 <td><p>Identifiant (CD_NOM) du taxon de référence (nom retenu)</p></td>
+					</tr>
+					<tr>
+					 <td>menaces</td>
+					 <td>Table</td>
+					 <td>endemisme</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>nom_vern</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_fts</td>
+					 <td>View</td>
+					 <td>nom_valide</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Nom valide correspondant</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>endemicite</td>
+					 <td>varchar</td>
+					 <td>5</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>habitat</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>lb_auteur</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>fr</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>sa</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>ordre</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Ordre auquel le taxon appartient</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>famille</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td class='indexedColumn' title='Indexed'><i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'></i>habitat</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Code de l’habitat (clé vers TAXREF_HABITATS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxon_sensible</td>
+					 <td>Table</td>
+					 <td>nom_valide</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Nom valide du taxon, ajouté pour faciliter la lecture (optionnel)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>spm</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>sous_famille</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>cd_taxsup</td>
+					 <td>int4</td>
+					 <td>10</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>invasibilite</td>
+					 <td>varchar</td>
+					 <td>5</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>group1_inpn</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>cd_taxsup</td>
+					 <td>int4</td>
+					 <td>10</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>t_complement</td>
+					 <td>Table</td>
+					 <td class='indexedColumn' title='Indexed'><i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'></i>rarete</td>
+					 <td>varchar</td>
+					 <td>10</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Rareté locale du taxon</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>tribu</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>spm</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>wf</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>sb</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>nom_vern_eng</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>nom_vern</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>fr</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>cd_taxsup</td>
+					 <td>int4</td>
+					 <td>10</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Identifiant (CD_NOM) du taxon supérieur</p></td>
+					</tr>
+					<tr>
+					 <td>t_group_categorie</td>
+					 <td>Table</td>
+					 <td>groupe_type</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Type de groupe INPN : group1_inpn ou group2_inpn</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>famille</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>nom_complet_html</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>sm</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique à Saint-Martin (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_fts</td>
+					 <td>View</td>
+					 <td>cd_nom</td>
+					 <td>int8</td>
+					 <td>19</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Identifiant du taxon (cd_nom) en lien avec la table taxref</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_changes</td>
+					 <td>Table</td>
+					 <td>champ</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>tribu</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_all</td>
+					 <td>View</td>
+					 <td>cd_nom</td>
+					 <td>int4</td>
+					 <td>10</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>url</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>nom_vern_eng</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Noms vernaculaires anglais</p></td>
+					</tr>
+					<tr>
+					 <td>menaces</td>
+					 <td>Table</td>
+					 <td>annee_publi</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>t_complement</td>
+					 <td>Table</td>
+					 <td class='indexedColumn' title='Indexed'><i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'></i>menace</td>
+					 <td>varchar</td>
+					 <td>5</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Menace locale sur le taxon</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>rang</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>lb_auteur</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td class='indexedColumn' title='Indexed'><i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'></i>regne</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Règne auquel le taxon appartient</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>sa</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique îles subantarctiques (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>sa</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>may</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>fr</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique en France métropolitaine (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>cd_nom</td>
+					 <td>int4</td>
+					 <td>10</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxvern</td>
+					 <td>Table</td>
+					 <td class='indexedColumn' title='Indexed'><i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'></i>cd_nom</td>
+					 <td>int4</td>
+					 <td>10</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>group1_inpn</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td class='foreignKey' title='Foreign Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i>cd_nom_fk</td>
+					 <td>int4</td>
+					 <td>10</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_all</td>
+					 <td>View</td>
+					 <td>endemicite</td>
+					 <td>varchar</td>
+					 <td>5</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>phylum</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Embranchement auquel le taxon appartient</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>rarete</td>
+					 <td>varchar</td>
+					 <td>10</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td class='indexedColumn' title='Indexed'><i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'></i>group2_inpn</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Libellé Groupe 1 INPN</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>ordre</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_valide</td>
+					 <td>View</td>
+					 <td>sm</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>taaf</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>may</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td class='primaryKey' title='Primary Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i>cd_nom</td>
+					 <td>int4</td>
+					 <td>10</td>
+					 <td title=''></td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Identifiant unique du nom scientifique</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_changes</td>
+					 <td>Table</td>
+					 <td>valeur_init</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide</td>
+					 <td>View</td>
+					 <td>protection</td>
+					 <td>varchar</td>
+					 <td>5</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>classe</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Classe à laquelle le taxon appartient</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_non_filtre</td>
+					 <td>View</td>
+					 <td>reu</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>famille</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Famille à laquelle le taxon appartient</p></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>nom_vern</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Noms vernaculaires français</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_local</td>
+					 <td>Table</td>
+					 <td>sm</td>
+					 <td>varchar</td>
+					 <td>1</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Statut biogéographique à Saint-Martin (clé vers TAXREF_STATUTS)</p></td>
+					</tr>
+					<tr>
+					 <td>taxref_consolide_all</td>
+					 <td>View</td>
+					 <td>statut</td>
+					 <td>varchar</td>
+					 <td>15</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td></td>
+					</tr>
+					<tr>
+					 <td>taxref</td>
+					 <td>Table</td>
+					 <td>nom_complet</td>
+					 <td>text</td>
+					 <td>2147483647</td>
+					 <td title='nullable'>√</td>
+					 <td title=''></td>
+					 <td>null</td>
+					 <td><p>Combinaison des champs pour donner le nom complet (~LB_NOM+" "+LB_AUTEUR)</p></td>
+					</tr>
+								</tbody>
+				</table>				
+			</div>
+		</div>	
+      </section>
+	  <script>
+          var config = {
+	          pagination: true
+          }
+	  </script>    
+  </div>
+  <!-- /.content-wrapper -->
+  <footer class="main-footer">
+    <div>
+      <div class="pull-right hidden-xs">
+        <a href="https://github.com/schemaspy/schemaspy" title="GitHub for SchemaSpy"><i class="fa fa-github-square fa-2x"></i></a>
+        <a href="http://stackoverflow.com/questions/tagged/schemaspy" title="StackOverflow for SchemaSpy"><i class="fa fa-stack-overflow fa-2x"></i></a>
+      </div>
+      <strong>Generated by <a href="http://schemaspy.org/" class="logo-text"><i class="fa fa-database"></i> SchemaSpy 6.0.0</a></strong>
+    </div>
+    <!-- /.container -->
+  </footer>
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery 2.2.3 -->
+<script src="bower/admin-lte/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script src="bower/admin-lte/plugins/jQueryUI/jquery-ui.min.js"></script>
+<!-- Bootstrap 3.3.5 -->
+<script src="bower/admin-lte/bootstrap/js/bootstrap.min.js"></script>
+<!-- DataTables -->
+<script src="bower/datatables.net/jquery.dataTables.min.js"></script>
+<script src="bower/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<script src="bower/datatables.net-buttons/dataTables.buttons.min.js"></script>
+<script src="bower/datatables.net-buttons-bs/js/buttons.bootstrap.min.js"></script>
+<script src="bower/datatables.net-buttons/buttons.html5.min.js"></script>
+<script src="bower/datatables.net-buttons/buttons.print.min.js"></script>
+<script src="bower/datatables.net-buttons/buttons.colVis.min.js"></script>
+<!-- SheetJS -->
+<script src="bower/js-xlsx/xlsx.full.min.js"></script>
+<!-- pdfmake -->
+<script src="bower/pdfmake/pdfmake.min.js"></script>
+<script src="bower/pdfmake/vfs_fonts.js"></script>
+<!-- SlimScroll -->
+<script src="bower/admin-lte/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+<!-- FastClick -->
+<script src="bower/admin-lte/plugins/fastclick/fastclick.js"></script>
+<!-- Salvattore -->
+<script src="bower/salvattore/salvattore.min.js"></script>
+<!-- AnchorJS -->
+<script src="bower/anchor-js/anchor.min.js"></script>
+<!-- CodeMirror -->
+<script src="bower/codemirror/codemirror.js"></script>
+<script src="bower/codemirror/sql.js"></script>
+<!-- AdminLTE App -->
+<script src="bower/admin-lte/dist/js/app.min.js"></script>
+<script src="column.js"></script>
+<script src="schemaSpy.js"></script>
+</body>
+</html>
