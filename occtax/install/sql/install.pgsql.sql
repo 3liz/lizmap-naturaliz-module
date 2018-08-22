@@ -12,7 +12,8 @@ CREATE TABLE nomenclature (
     champ text,
     code text,
     valeur text,
-    description text
+    description text,
+    ordre smallint DEFAULT 0
 );
 
 ALTER TABLE nomenclature ADD PRIMARY KEY (champ, code);
@@ -22,7 +23,7 @@ COMMENT ON COLUMN nomenclature.champ IS 'Nom du champ';
 COMMENT ON COLUMN nomenclature.code IS 'Code associé à une valeur';
 COMMENT ON COLUMN nomenclature.valeur IS 'Libellé court. Joue le rôle de valeur';
 COMMENT ON COLUMN nomenclature.champ IS 'Description de la valeur';
-
+COMMENT ON COLUMN nomenclature.ordre IS 'Ordre d''apparition souhaité, utilisé par exemple dans les listes déroulantes du formulaire de recherche.';
 
 -- Vue pour avoir une nomenclature à plat
 DROP VIEW IF EXISTS v_nomenclature_plat CASCADE;

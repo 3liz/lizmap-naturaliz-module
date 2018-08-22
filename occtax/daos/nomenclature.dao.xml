@@ -8,6 +8,7 @@
         <property name="code" fieldname="code" datatype="text" required="true"/>
         <property name="valeur" fieldname="valeur" datatype="text"/>
         <property name="description" fieldname="description" datatype="text"/>
+        <property name="ordre" fieldname="ordre" datatype="integer"/>
         <!--<property name="" fieldname="" datatype="string/int/float/date"
         required="yes" maxlength="" minlength="" regexp="" sequence=""
         updatepattern="" insertpattern="" selectpattern=""/>-->
@@ -19,6 +20,7 @@
                 <eq property="champ" expr="$champ" />
             </conditions>
             <order>
+                <orderitem property="ordre" way="asc" />
                 <orderitem property="valeur" way="asc" />
             </order>
         </method>

@@ -1,5 +1,7 @@
+BEGIN;
+
 -- gestion des adhérents
-CREATE TABLE gestion.adherent
+CREATE TABLE IF NOT EXISTS gestion.adherent
 (
   id_adherent BIGSERIAL NOT NULL PRIMARY KEY, -- Identifiant autogénéré de l'adhérent
   id_organisme integer, -- Identifiant de la structure de l'adhérent
@@ -19,14 +21,10 @@ CREATE TABLE gestion.adherent
       REFERENCES occtax.organisme (id_organisme) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION,
   CONSTRAINT statut_valide CHECK (statut = ANY (ARRAY['Pré-adhérent'::text, 'Adhérent'::text, 'Adhésion résiliée'::TEXT, 'Adhérent exclu'::TEXT]))
-)
-WITH (
-  OIDS=FALSE
 );
 
 
-COMMENT ON TABLE gestion.adherent
-  IS 'Table listant les structures ou personnes physiques ayant fait une demande d''adhésion à la charte du SINP 974, et le statut de leur adhésion.';
+COMMENT ON TABLE gestion.adherent IS 'Table listant les structures ou personnes physiques ayant fait une demande d''adhésion à la charte du SINP 974, et le statut de leur adhésion.';
 
 COMMENT ON COLUMN gestion.adherent.id_adherent IS 'Identifiant autogénéré de l''adhérent';
 COMMENT ON COLUMN gestion.adherent.id_organisme IS 'Identifiant de la structure de l''adhérent';
@@ -42,13 +40,13 @@ COMMENT ON COLUMN gestion.adherent.remarque IS 'Remarque sur l''avancement de l'
 
 
 -- Complément de la table gestion.acteur avec de nouveaux champs
-ALTER TABLE gestion.acteur ADD COLUMN service TEXT ;
-ALTER TABLE gestion.acteur ADD COLUMN date_maj timestamp without time zone DEFAULT (now())::timestamp without time zone ;
+ALTER TABLE gestion.acteur ADD COLUMN IF NOT EXISTS service TEXT ;
+ALTER TABLE gestion.acteur ADD COLUMN IF NOT EXISTS date_maj timestamp without time zone DEFAULT (now())::timestamp without time zone ;
 
 COMMENT ON COLUMN gestion.acteur.service IS 'Service ou direction de rattachement au sein de l''organisme';
 COMMENT ON COLUMN gestion.acteur.date_maj IS 'Date à laquelle l''enregistrement a été modifié pour la dernière fois (automatiquement renseigné)' ;
 
-CREATE TRIGGER tr_date_maj
+CREATE TRIGGER IF NOT EXISTS tr_date_maj
   BEFORE UPDATE
   ON gestion.acteur
   FOR EACH ROW
@@ -56,17 +54,21 @@ CREATE TRIGGER tr_date_maj
 
 
 -- Modification sur demande
+ALTER TABLE gestion.demande DROP CONSTRAINT IF EXISTS demande_type_demande_valide;
 ALTER TABLE gestion.demande ADD CONSTRAINT demande_type_demande_valide
 CHECK ( type_demande = ANY (ARRAY['Étude d''impact', 'Mission régaliennes', 'Gestion des milieux naturels', 'Sensibilisation et communication', 'Publication scientifique', 'Accès producteur', 'Accès tête de réseau']));
 
-ALTER TABLE gestion.demande ADD COLUMN motif_anonyme BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE gestion.demande ADD COLUMN IF NOT EXISTS motif_anonyme BOOLEAN NOT NULL DEFAULT FALSE;
 COMMENT ON COLUMN demande.motif_anonyme IS 'Indique si le motif de la demande doit être anonymisé temporairement. Pour les études d''impact, la charte régionale du SINP peut permettre au demandeur de solliciter une anonymisation du motif de sa demande dans la diffusion grand public. L''anonymisation est levée au plus tard au moment de l''ouverture de la procédure de participation du public.';
 
-ALTER TABLE gestion.demande ADD COLUMN statut text DEFAULT 'A traiter';
+ALTER TABLE gestion.demande ADD COLUMN IF NOT EXISTS statut text DEFAULT 'A traiter';
+
+ALTER TABLE gestion.demande DROP CONSTRAINT IF EXISTS demande_statut_valide;
 ALTER TABLE gestion.demande ADD CONSTRAINT demande_statut_valide
 CHECK ( type_demande = ANY (ARRAY['A traiter', 'Acceptée', 'Refusée']));
 COMMENT ON COLUMN gestion.demande.statut IS 'Etat d''avancement de la demande d''accès aux données : A traiter, Acceptée ou Refusée';
 
-ALTER TABLE gestion.demande ADD COLUMN detail_decision text;
+ALTER TABLE gestion.demande ADD COLUMN IF NOT EXISTS detail_decision text;
 COMMENT ON COLUMN gestion.demande.detail_decision IS 'Détail de la décision pour cette demande';
 
+COMMIT;

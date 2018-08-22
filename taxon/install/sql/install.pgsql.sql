@@ -411,6 +411,7 @@ CREATE TABLE t_nomenclature
   code text NOT NULL, -- Code associé à une valeur
   valeur text, -- Libellé court. Joue le rôle de valeur
   description text,
+  ordre smallint DEFAULT 0,
   CONSTRAINT t_nomenclature_pkey PRIMARY KEY (champ, code)
 )
 WITH (
@@ -422,6 +423,7 @@ COMMENT ON COLUMN t_nomenclature.champ IS 'Description de la valeur';
 COMMENT ON COLUMN t_nomenclature.code IS 'Code associé à une valeur';
 COMMENT ON COLUMN t_nomenclature.valeur IS 'Libellé court. Joue le rôle de valeur';
 COMMENT ON COLUMN t_nomenclature.description IS 'Libellé court. Joue le rôle de valeur';
+COMMENT ON COLUMN t_nomenclature.ordre IS 'Ordre d''apparition souhaité, utilisé par exemple dans les listes déroulantes du formulaire de recherche.';
 
 CREATE INDEX ON t_nomenclature (champ, code);
 
