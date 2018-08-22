@@ -54,3 +54,19 @@ CREATE TRIGGER tr_date_maj
   FOR EACH ROW
   EXECUTE PROCEDURE occtax.maj_date();
 
+
+-- Modification sur demande
+ALTER TABLE gestion.demande ADD CONSTRAINT demande_type_demande_valide
+CHECK ( type_demande = ANY (ARRAY['Étude d''impact', 'Mission régaliennes', 'Gestion des milieux naturels', 'Sensibilisation et communication', 'Publication scientifique', 'Accès producteur', 'Accès tête de réseau']));
+
+ALTER TABLE gestion.demande ADD COLUMN motif_anonyme BOOLEAN NOT NULL DEFAULT FALSE;
+COMMENT ON COLUMN demande.motif_anonyme IS 'Indique si le motif de la demande doit être anonymisé temporairement. Pour les études d''impact, la charte régionale du SINP peut permettre au demandeur de solliciter une anonymisation du motif de sa demande dans la diffusion grand public. L''anonymisation est levée au plus tard au moment de l''ouverture de la procédure de participation du public.';
+
+ALTER TABLE gestion.demande ADD COLUMN statut text DEFAULT 'A traiter';
+ALTER TABLE gestion.demande ADD CONSTRAINT demande_statut_valide
+CHECK ( type_demande = ANY (ARRAY['A traiter', 'Acceptée', 'Refusée']));
+COMMENT ON COLUMN gestion.demande.statut IS 'Etat d''avancement de la demande d''accès aux données : A traiter, Acceptée ou Refusée';
+
+ALTER TABLE gestion.demande ADD COLUMN detail_decision text;
+COMMENT ON COLUMN gestion.demande.detail_decision IS 'Détail de la décision pour cette demande';
+

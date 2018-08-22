@@ -30,9 +30,12 @@ CREATE TABLE demande (
     id_acteur integer NOT NULL,
     id_organisme integer NOT NULL,
     motif text NOT NULL,
+    motif_anonyme BOOLEAN NOT NULL DEFAULT FALSE,
     type_demande text NOT NULL,
     date_demande date NOT NULL,
     commentaire text,
+    statut text DEFAULT 'A traiter',
+    detail_decision text,
     date_validite_min date NOT NULL,
     date_validite_max date NOT NULL,
     cd_ref bigint[],
@@ -54,8 +57,13 @@ FOREIGN KEY (id_organisme) REFERENCES occtax."organisme" (id_organisme)
 ON DELETE RESTRICT;
 
 ALTER TABLE demande ADD CONSTRAINT demande_valide
-CHECK ( Coalesce(cd_ref::text, group1_inpn::text, group2_inpn::text, '') != '' )
-;
+CHECK ( Coalesce(cd_ref::text, group1_inpn::text, group2_inpn::text, '') != '' );
+
+ALTER TABLE demande ADD CONSTRAINT demande_type_demande_valide
+CHECK ( type_demande = ANY (ARRAY['Étude d''impact', 'Mission régaliennes', 'Gestion des milieux naturels', 'Sensibilisation et communication', 'Publication scientifique', 'Accès producteur', 'Accès tête de réseau']));
+
+ALTER TABLE gestion.demande ADD CONSTRAINT demande_statut_valide
+CHECK ( type_demande = ANY (ARRAY['A traiter', 'Acceptée', 'Refusée']));
 
 COMMENT ON TABLE demande IS 'Liste des demandes d''acccès à l''application. Cette table permet de restreindre les accès aux données, par date, taxon, etc.';
 COMMENT ON COLUMN demande.id IS 'Identifiant auto de la demande (clé primaire)';
@@ -63,6 +71,7 @@ COMMENT ON COLUMN demande.usr_login IS 'Login de l''utilisateur qui fait la dema
 COMMENT ON COLUMN demande.id_organisme IS 'Identifiant de l''organisme ayant émis la demande. Clé étrangère vers table organisme';
 COMMENT ON COLUMN demande.id_acteur IS 'Identifiant de l''acteur ayant émis la demande. Clé étrangère vers table acteur';
 COMMENT ON COLUMN demande.motif IS 'Motif de la demande d''accès aux données fourni par le demandeur';
+COMMENT ON COLUMN demande.motif_anonyme IS 'Indique si le motif de la demande doit être anonymisé temporairement. Pour les études d''impact, la charte régionale du SINP peut permettre au demandeur de solliciter une anonymisation du motif de sa demande dans la diffusion grand public. L''anonymisation est levée au plus tard au moment de l''ouverture de la procédure de participation du public.';
 COMMENT ON COLUMN demande.type_demande IS 'Type de demande selon la typologie de la charte du SINP (exemple : mission régalienne, publication scientifique, etc.)';
 COMMENT ON COLUMN demande.date_demande IS 'Date d''émission de la demande (découplée de la date de création, qui est elle renseignée automatiquement';
 
@@ -76,7 +85,8 @@ COMMENT ON COLUMN demande.date_creation IS 'Date de création de la ligne dans l
 COMMENT ON COLUMN demande.libelle_geom IS 'Description littérale de la zone géographique sur laquelle porte la demande';
 COMMENT ON COLUMN demande.validite_niveau IS 'Liste de niveaux de validité accessible à la personne, sous la forme d''un tableau.';
 COMMENT ON COLUMN demande.geom IS 'Géométrie dans laquelle restreindre les observations consultables. On fait une intersection entre les observation et cette géométrie.';
-
+COMMENT ON COLUMN gestion.demande.statut IS 'Etat d''avancement de la demande d''accès aux données : A traiter, Acceptée ou Refusée';
+COMMENT ON COLUMN gestion.demande.detail_decision IS 'Détail de la décision pour cette demande';
 
 -- table acteur
 CREATE TABLE acteur(
