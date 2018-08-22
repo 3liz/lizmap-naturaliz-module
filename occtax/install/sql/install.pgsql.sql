@@ -554,7 +554,8 @@ CREATE TABLE jdd (
     jdd_code text NOT NULL,
     jdd_description text,
     jdd_metadonnee_dee_id text NOT NULL,
-    jdd_cadre text
+    jdd_cadre text,
+    ayants_droit jsonb
 );
 
 COMMENT ON TABLE jdd IS 'Recense les jeux de données officiels du standard Occurence de taxons. Un jeu de données correspond souvent à une base de données';
@@ -563,7 +564,7 @@ COMMENT ON COLUMN jdd.jdd_code IS 'Le nom, l’acronyme, le code ou l’initiale
 COMMENT ON COLUMN jdd.jdd_description IS 'Description du jeu de données';
 COMMENT ON COLUMN jdd.jdd_metadonnee_dee_id IS 'Identifiant permanent et unique de la fiche métadonnées du jeu de données auquel appartient la donnée. Cet identifiant est attribué par la plateforme';
 COMMENT ON COLUMN jdd.jdd_cadre IS 'Cadre d''acquisition qui permet de regrouper des jdd de même producteur. Ex: on peut avoir un jdd_id par annee pour le même cadre d''acquisition';
-
+COMMENT ON COLUMN jdd.ayants_droit IS 'Liste et rôle des structures ayant des droits sur le jeu de données, et rôle concerné (ex : financeur, maître d''oeuvre...). Stocker les structures via leur id_organisme';
 
 
 -- Table lien_observation_identifiant_permanent
@@ -593,7 +594,18 @@ ADD CONSTRAINT lien_observation_identifiant__jdd_id_identifiant_origine_id_key U
 -- Table organisme
 CREATE TABLE "organisme" (
     id_organisme serial PRIMARY KEY,
-    nom_organisme text NOT NULL
+    nom_organisme text NOT NULL,
+    sigle TEXT, -- Sigle de la structure
+    responsable text, -- Nom de la personne responsable de la structure, pour les envois postaux officiels
+    adresse1 TEXT, -- Adresse de niveau 1
+    adresse2 TEXT, -- Adresse de niveau 2
+    cs TEXT, -- Courrier spécial
+    cp integer, -- Code postal
+    commune TEXT, -- Commune
+    cedex TEXT, -- CEDEX
+    csr boolean, -- Indique si la structure est membre du Comité de suivi régional du SINP
+    commentaire character varying, -- Commentaire sur la structure
+    date_maj timestamp without time zone DEFAULT (now())::timestamp without time zone -- Date à laquelle l'enregistrement a été modifé pour la dernière fois (rempli automatiquement)
 );
 ALTER TABLE "organisme" ADD UNIQUE (nom_organisme);
 
@@ -601,8 +613,25 @@ ALTER TABLE "organisme" ADD UNIQUE (nom_organisme);
 COMMENT ON TABLE "organisme" IS 'Organismes listés dans l''application. Par exemple, les organismes liés aux observations peuvent être liés à cette table. Ou les demandes du module optionnel de gestion sont rattachées à un organisme.';
 COMMENT ON COLUMN "organisme".id_organisme IS 'Identifiant de l''organisme.';
 COMMENT ON COLUMN "organisme".nom_organisme IS 'Nom de l''organisme.';
+COMMENT ON COLUMN occtax.organisme.sigle IS 'Sigle de la structure' ;
+COMMENT ON COLUMN occtax.organisme.responsable IS 'Nom de la personne responsable de la structure, pour les envois postaux officiels' ;
+COMMENT ON COLUMN occtax.organisme.adresse1 IS 'Adresse de niveau 1' ;
+COMMENT ON COLUMN occtax.organisme.adresse2 IS 'Adresse de niveau 2' ;
+COMMENT ON COLUMN occtax.organisme.cs IS 'Courrier spécial' ;
+COMMENT ON COLUMN occtax.organisme.cp IS 'Code postal' ;
+COMMENT ON COLUMN occtax.organisme.commune IS 'Commune' ;
+COMMENT ON COLUMN occtax.organisme.cedex IS 'CEDEX' ;
+COMMENT ON COLUMN occtax.organisme.csr IS 'Indique si la structure est membre du Comité de suivi régional du SINP' ;
+COMMENT ON COLUMN occtax.organisme.commentaire IS 'Commentaire sur la structure' ;
+COMMENT ON COLUMN occtax.organisme.date_maj IS 'Date à laquelle l''enregistrement a été modifé pour la dernière fois (rempli automatiquement)' ;
 
 
+-- Fonction trigger mettant à jour le champ automatiquement
+CREATE TRIGGER tr_date_maj
+  BEFORE UPDATE
+  ON occtax.organisme
+  FOR EACH ROW
+  EXECUTE PROCEDURE occtax.maj_date();
 
 
 -- View to help query observateurs, determinateurs, validateurs
@@ -1008,6 +1037,20 @@ CREATE OR REPLACE VIEW sig.tpl_observation_brute_centroid AS
 SELECT 1::integer AS cle_obs, ''::text AS nom_cite, '1'::bigint AS cd_nom, '2015-01-01'::text AS date_debut, ''::text AS identite_observateur, 'GEO'::text AS source_objet, ''::text AS geojson, (SELECT geom FROM occtax.observation ORDER BY random() LIMIT 1)::geometry(Point, {$SRID}) AS geom;
 
 
+-- Fonction trigger mettant à jour un champ date_maj automatiquement
+DROP FUNCTION IF EXISTS occtax.maj_date();
+CREATE OR REPLACE FUNCTION occtax.maj_date()
+RETURNS trigger AS
+$BODY$
+    BEGIN
+        NEW.date_maj=current_TIMESTAMP(0);
+        RETURN NEW ;
+    END;
+$BODY$
+LANGUAGE plpgsql VOLATILE
+COST 100;
+
+
 -- Fonction pour calculer la sensibilité des données
 SET search_path TO occtax,sig,public,pg_catalog;
 
@@ -1235,6 +1278,8 @@ $BODY$
 --
 -- Extension validation : voir fichier extension_validation.pgsql.sql
 --
+
+
 
 
 COMMIT;
