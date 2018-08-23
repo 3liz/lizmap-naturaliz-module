@@ -261,7 +261,8 @@ CREATE TABLE personne (
     mail text,
     organisme text NOT NULL,
     anonymiser boolean,
-    CONSTRAINT personne_identite_valide CHECK ( identite NOT LIKE '%,%' )
+    CONSTRAINT personne_identite_valide CHECK ( identite NOT LIKE '%,%' ),
+    CONSTRAINT personne_identite_organisme_mail_key UNIQUE (identite, organisme, mail)
 );
 ALTER TABLE personne ADD PRIMARY KEY (id_personne);
 

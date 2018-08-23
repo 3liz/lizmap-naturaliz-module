@@ -63,4 +63,10 @@ UPDATE occtax.nomenclature SET ordre = 4 WHERE champ ='validite_niveau' AND code
 UPDATE occtax.nomenclature SET ordre = 5 WHERE champ ='validite_niveau' AND code = '5';
 UPDATE occtax.nomenclature SET ordre = 6 WHERE champ ='validite_niveau' AND code = '6';
 
+-- Contraintes sur la table personne
+ALTER TABLE occtax.personne DROP CONSTRAINT IF EXISTS personne_identite_valide;
+ALTER TABLE occtax.personne DROP CONSTRAINT IF EXISTS personne_identite_organisme_mail_key;
+ALTER TABLE occtax.personne ADD CONSTRAINT personne_identite_valide CHECK (identite !~~ '%,%'::text);
+ALTER TABLE occtax.personne ADD CONSTRAINT personne_identite_organisme_mail_key UNIQUE (identite, organisme, mail);
+
 COMMIT;
