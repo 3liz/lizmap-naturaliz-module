@@ -1,7 +1,7 @@
 BEGIN;
 
 -- Ajout d'un champ ordre dans la table de nomenclature
-ALTER TABLE taxon.t_nomenclature ADD COLUMN IF NOT EXISTS IF NOT EXISTS ordre smallint DEFAULT 0;
+ALTER TABLE taxon.t_nomenclature ADD COLUMN IF NOT EXISTS ordre smallint DEFAULT 0;
 COMMENT ON COLUMN taxon.t_nomenclature.ordre IS 'Ordre d''apparition souhaité, utilisé par exemple dans les listes déroulantes du formulaire de recherche.';
 
 

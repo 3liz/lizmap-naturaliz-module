@@ -56,14 +56,11 @@ ALTER TABLE demande ADD CONSTRAINT demande_id_organisme_fk
 FOREIGN KEY (id_organisme) REFERENCES occtax."organisme" (id_organisme)
 ON DELETE RESTRICT;
 
-ALTER TABLE demande ADD CONSTRAINT demande_valide
-CHECK ( Coalesce(cd_ref::text, group1_inpn::text, group2_inpn::text, '') != '' );
-
 ALTER TABLE demande ADD CONSTRAINT demande_type_demande_valide
-CHECK ( type_demande = ANY (ARRAY['Étude d''impact', 'Mission régaliennes', 'Gestion des milieux naturels', 'Sensibilisation et communication', 'Publication scientifique', 'Accès producteur', 'Accès tête de réseau']));
+CHECK ( type_demande IN ('Étude d''impact', 'Mission régalienne', 'Gestion des milieux naturels', 'Sensibilisation et communication', 'Publication scientifique', 'Accès producteur', 'Accès tête de réseau', 'Programme de conservation', 'Autre') );
 
 ALTER TABLE gestion.demande ADD CONSTRAINT demande_statut_valide
-CHECK ( type_demande = ANY (ARRAY['A traiter', 'Acceptée', 'Refusée']));
+CHECK ( statut IN ('A traiter', 'Acceptée', 'Refusée') );
 
 COMMENT ON TABLE demande IS 'Liste des demandes d''acccès à l''application. Cette table permet de restreindre les accès aux données, par date, taxon, etc.';
 COMMENT ON COLUMN demande.id IS 'Identifiant auto de la demande (clé primaire)';
@@ -167,9 +164,9 @@ ON DELETE RESTRICT
 -- gestion des adhérents
 CREATE TABLE gestion.adherent
 (
-  id_adherent BIGSERIAL NOT NULL PRIMARY KEY, -- Identifiant autogénéré de l'adhérent
+  id_adherent serial NOT NULL PRIMARY KEY, -- Identifiant autogénéré de l'adhérent
   id_organisme integer, -- Identifiant de la structure de l'adhérent
-  id_referent integer, -- Identifiant du contact de référence pour cet adhérent
+  id_acteur integer, -- Identifiant du contact de référence pour cet adhérent
   date_demande date, -- Date du courrier de demande d'adhésion
   date_adhesion date, -- Date du courrier de notification de l'adhésion au SINP
   statut text, -- Statut d'adhésion (pré-adhérent ou adhérent)
@@ -196,7 +193,7 @@ COMMENT ON TABLE gestion.adherent
 
 COMMENT ON COLUMN gestion.adherent.id_adherent IS 'Identifiant autogénéré de l''adhérent';
 COMMENT ON COLUMN gestion.adherent.id_organisme IS 'Identifiant de la structure de l''adhérent';
-COMMENT ON COLUMN gestion.adherent.id_referent IS 'Identifiant du contact de référence pour cet adhérent';
+COMMENT ON COLUMN gestion.adherent.id_acteur IS 'Identifiant du contact de référence pour cet adhérent';
 COMMENT ON COLUMN gestion.adherent.date_demande IS 'Date du courrier de demande d''adhésion';
 COMMENT ON COLUMN gestion.adherent.date_adhesion IS 'Date du courrier de notification de l''adhésion au SINP';
 COMMENT ON COLUMN gestion.adherent.statut IS 'Statut d''adhésion (pré-adhérent ou adhérent)';

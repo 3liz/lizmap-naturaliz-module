@@ -1,7 +1,6 @@
 BEGIN;
 
 -- Fonction trigger mettant à jour le champ date_maj automatiquement
-DROP FUNCTION IF EXISTS occtax.maj_date();
 CREATE OR REPLACE FUNCTION occtax.maj_date()
 RETURNS trigger AS
 $BODY$
@@ -40,7 +39,8 @@ COMMENT ON COLUMN occtax.organisme.commentaire IS 'Commentaire sur la structure'
 COMMENT ON COLUMN occtax.organisme.date_maj IS 'Date à laquelle l''enregistrement a été modifé pour la dernière fois (rempli automatiquement)' ;
 
 -- Fonction trigger mettant à jour le champ automatiquement
-CREATE TRIGGER IF NOT EXISTS tr_date_maj
+DROP TRIGGER IF EXISTS tr_date_maj ON occtax.organisme;
+CREATE TRIGGER tr_date_maj
   BEFORE UPDATE
   ON occtax.organisme
   FOR EACH ROW
@@ -53,7 +53,7 @@ COMMENT ON COLUMN occtax.jdd.ayants_droit IS 'Liste et rôle des structures ayan
 
 
 -- Ajout d'un champ ordre dans la table de nomenclature
-ALTER TABLE occtax.nomenclature ADD COLUMN IF NOT EXISTS IF NOT EXISTS ordre smallint DEFAULT 0;
+ALTER TABLE occtax.nomenclature ADD COLUMN IF NOT EXISTS ordre smallint DEFAULT 0;
 COMMENT ON COLUMN occtax.nomenclature.ordre IS 'Ordre d''apparition souhaité, utilisé par exemple dans les listes déroulantes du formulaire de recherche.';
 
 UPDATE occtax.nomenclature SET ordre = 1 WHERE champ ='validite_niveau' AND code = '1';
