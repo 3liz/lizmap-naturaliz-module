@@ -51,6 +51,8 @@ WHERE id_acteur = (SELECT id_acteur FROM acteur WHERE nom = 'DOUCHIN' AND prenom
 AND motif = 'test de demande'
 ;
 
+-- EXEMPLES DE MODIFICATION
+
 -- Modification du filtrer de sensibilité
 UPDATE demande
 SET validite_niveau = ARRAY['1', '2', '3', '4', '5', '6']
@@ -71,4 +73,11 @@ SET group2_inpn = array['Angiospermes', 'Oiseaux']
 WHERE id_acteur = (SELECT id_acteur FROM acteur WHERE nom = 'DOUCHIN' AND prenom = 'Michaël')
 AND motif = 'test de demande'
 ;
+
+-- Ajouter un critère de filtre spécifique
+UPDATE gestion.demande
+SET critere_additionnel = 'date_debut >= ''2013-01-01''::date '
+WHERE usr_login = 'mdouchin';
+;
+
 SELECT * FROM demande
