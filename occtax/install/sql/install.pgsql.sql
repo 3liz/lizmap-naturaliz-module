@@ -274,7 +274,7 @@ COMMENT ON COLUMN personne.nom IS 'Nom de la personne.';
 COMMENT ON COLUMN personne.mail IS 'Email de la personne. Optionnel';
 COMMENT ON COLUMN personne.organisme IS 'Organisme de la personne.
 Règles : "Indépendant" si la personne n''est pas affiliée à un organisme; "Inconnu" si l''affiliation à un organisme n''est pas connue.';
-COMMENT ON COLUMN personne.anonymiser IS 'Si vrai, alors on ne doit pas diffuser le nom de l''observateur ou autre rôle dans le détail des observations.';
+COMMENT ON COLUMN personne.anonymiser IS 'Si vrai, alors on ne doit pas diffuser le nom de l''observateur ou autre rôle, ni son organisme dans le détail des observations.';
 
 -- Table pivot entre observation et personne
 CREATE TABLE observation_personne (
@@ -641,7 +641,7 @@ CREATE OR REPLACE VIEW v_observateur AS
 SELECT
 CASE WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE p.identite END AS identite,
 CASE WHEN p.anonymiser IS TRUE THEN '' ELSE p.mail END AS mail,
-Coalesce(p.organisme, 'Inconnu') AS organisme,
+CASE WHEN p.anonymiser IS TRUE THEN 'Inconnu' ELSE Coalesce(p.organisme, 'Inconnu') END AS organisme,
 op.id_personne, op.cle_obs, p.prenom, p.nom, p.anonymiser
 FROM observation_personne op
 INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = 'Obs'
@@ -650,7 +650,7 @@ INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = '
 CREATE OR REPLACE VIEW v_validateur AS
 SELECT CASE WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE p.identite END AS identite,
 CASE WHEN p.anonymiser IS TRUE THEN '' ELSE p.mail END AS mail,
-Coalesce(p.organisme, 'Inconnu') AS organisme,
+CASE WHEN p.anonymiser IS TRUE THEN 'Inconnu' ELSE Coalesce(p.organisme, 'Inconnu') END AS organisme,
 op.id_personne, op.cle_obs, p.prenom, p.nom, p.anonymiser
 FROM observation_personne op
 INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = 'Val'
@@ -659,7 +659,7 @@ INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = '
 CREATE OR REPLACE VIEW v_determinateur AS
 SELECT CASE WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE p.identite END AS identite,
 CASE WHEN p.anonymiser IS TRUE THEN '' ELSE p.mail END AS mail,
-Coalesce(p.organisme, 'Inconnu') AS organisme,
+CASE WHEN p.anonymiser IS TRUE THEN 'Inconnu' ELSE Coalesce(p.organisme, 'Inconnu') END AS organisme,
 op.id_personne, op.cle_obs, p.prenom, p.nom, p.anonymiser
 FROM observation_personne op
 INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = 'Det'
