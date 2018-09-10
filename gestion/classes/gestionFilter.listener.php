@@ -68,6 +68,11 @@ class gestionFilterListener extends jEventListener{
                 $sql_demande[] = ' now()::date <= ' . $cnx->quote($demande->date_validite_max) . '::date ' ;
             }
 
+            // Add critere_additionnel
+            if(!empty($demande->critere_additionnel)){
+                $sql_demande[] = ' ( ' . $demande->critere_additionnel . ' ) ';
+            }
+
             // Build full sql for this demand
             if(count($sql_demande) > 0){
                 $table_demandes[] = ' ( ' . implode( ' AND ', $sql_demande) . ' ) ';

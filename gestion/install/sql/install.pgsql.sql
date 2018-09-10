@@ -43,7 +43,8 @@ CREATE TABLE demande (
     group2_inpn text[],
     date_creation date DEFAULT now(),
     libelle_geom text,
-    validite_niveau text[] NOT NULL DEFAULT ARRAY['1', '2', '3', '4', '5']::text[]
+    validite_niveau text[] NOT NULL DEFAULT ARRAY['1', '2', '3', '4', '5']::text[],
+    critere_additionnel text
 
 );
 SELECT AddGeometryColumn('demande', 'geom', {$SRID}, 'MULTIPOLYGON', 2);
@@ -84,6 +85,7 @@ COMMENT ON COLUMN demande.validite_niveau IS 'Liste de niveaux de validité acce
 COMMENT ON COLUMN demande.geom IS 'Géométrie dans laquelle restreindre les observations consultables. On fait une intersection entre les observation et cette géométrie.';
 COMMENT ON COLUMN gestion.demande.statut IS 'Etat d''avancement de la demande d''accès aux données : A traiter, Acceptée ou Refusée';
 COMMENT ON COLUMN gestion.demande.detail_decision IS 'Détail de la décision pour cette demande';
+COMMENT ON COLUMN gestion.demande.critere_additionnel IS 'Critère additionnel de filtrage pour la demande, au format SQL.';
 
 -- table acteur
 CREATE TABLE acteur(
