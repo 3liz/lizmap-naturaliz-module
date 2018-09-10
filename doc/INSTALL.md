@@ -183,7 +183,7 @@ nano lizmap/var/config/profiles.ini.php
 
 Vous aurez alors un contenu du type
 
-```
+```ini
 [jdb:jauth]
 driver=pgsql
 database=naturaliz
@@ -349,7 +349,7 @@ lizmap/install/set_rights.sh www-data www-data
 
 Dans le fichier `lizmap/var/config/profiles.ini.php`, vous aurez donc les 2 sections `[jdb:jauth]` et `[jdb:jauth_super]` suivantes (adapter les mots de passe, et nom de la bdd si besoin):
 
-```
+```ini
 [jdb:jauth]
 driver=pgsql
 database=naturaliz
@@ -743,7 +743,7 @@ service php5-fpm reload
 
 Lorsqu'une nouvelle version des modules Naturaliz est sortie, il faut les mettre à jour. Par exemple via ce type de procédure
 
-```
+```bash
 # 1 - mettre à jour les modules via git
 cd /CHEMIN/REPERTOIRE/SOURCE/MODULES
 git status -s
