@@ -36,11 +36,14 @@ class gestionFilterListener extends jEventListener{
             }
             jClasses::inc('occtax~occtaxSearchObservation');
             $dsearch = new occtaxSearchObservation( null, $dparams, 1 );
-            $sql_demande[] = preg_replace(
-                '/WHERE +True( +AND +)?/i',
-                '',
-                $dsearch->getWhereClause()
-            );
+            $dtwhere = $dsearch->getWhereClause();
+            if( !empty($dtwhere) ){
+                $sql_demande[] = preg_replace(
+                    '/WHERE +True( +AND +)?/i',
+                    '',
+                    $dtwhere
+                );
+            }
 
             // Add geometry filter if set
             if($demande->geom){
