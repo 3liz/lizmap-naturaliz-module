@@ -57,8 +57,8 @@ ALTER TABLE demande ADD CONSTRAINT demande_id_organisme_fk
 FOREIGN KEY (id_organisme) REFERENCES occtax."organisme" (id_organisme)
 ON DELETE RESTRICT;
 
-ALTER TABLE demande ADD CONSTRAINT demande_type_demande_valide
-CHECK ( type_demande IN ('Étude d''impact', 'Mission régalienne', 'Gestion des milieux naturels', 'Sensibilisation et communication', 'Publication scientifique', 'Accès producteur', 'Accès tête de réseau', 'Programme de conservation', 'Autre') );
+ALTER TABLE gestion.demande ADD CONSTRAINT demande_type_demande_valide
+CHECK ( type_demande IN ('EI','MR','GM','SC','PS','AP','AT','CO','AU') );
 
 ALTER TABLE gestion.demande ADD CONSTRAINT demande_statut_valide
 CHECK ( statut IN ('A traiter', 'Acceptée', 'Refusée') );
@@ -141,11 +141,11 @@ CREATE TRIGGER tr_date_maj
 
 -- Ajout de champs dans la table occtax.jdd_import
 ALTER TABLE occtax.jdd_import
-ADD COLUMN acteur_referent integer not null;
+ADD COLUMN IF NOT EXISTS acteur_referent integer not null;
 COMMENT ON COLUMN jdd_import.acteur_referent IS 'Acteur référent (celui qui est responsable des données, par exemple dans son pôle thématique). En lien avec la table gestion.acteur';
 
 ALTER TABLE occtax.jdd_import
-ADD COLUMN acteur_importateur integer not null;
+ADD COLUMN IF NOT EXISTS acteur_importateur integer not null;
 COMMENT ON COLUMN jdd_import.acteur_importateur IS 'Acteur qui a réalisé l''import des données dans la base. En lien avec la table acteur.';
 
 ALTER TABLE occtax.jdd_import ADD CONSTRAINT jdd_import_acteur_referent_fkey
