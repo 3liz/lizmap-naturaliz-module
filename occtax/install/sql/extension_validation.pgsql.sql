@@ -660,11 +660,24 @@ o.geom, o.altitude_moy,  o.precision_geometrie, o.nature_objet_geo,
 
 --Personnes
 string_agg(
-    vobs.identite || concat(' - ' || vobs.mail, ' (' || vobs.organisme || ')' ),
+    vobs.identite || concat(
+        ' - ' || vobs.mail,
+        CASE
+            WHEN vobs.organisme = 'ANONYME' THEN ''
+            ELSE ' (' || vobs.organisme|| ')'
+        END
+    ),
     ', '
 ) AS observateurs,
 string_agg(
-    vdet.identite || concat(' - ' || vdet.mail, ' (' || vdet.organisme || ')' ),
+    vdet.identite || concat(
+        ' - ' || vdet.mail,
+
+        CASE
+            WHEN vdet.organisme = 'ANONYME' THEN ''
+            ELSE ' (' || vdet.organisme|| ')'
+        END
+    ),
     ', '
 ) AS determinateurs,
 
@@ -764,7 +777,7 @@ v.proc_ref,
 v.comm_val,
 -- vlt : ajout de :
 vp.niv_val, n.valeur, vp.date_ctrl, vvalp.identite, vvalp.organisme;
-;
+
 
 
 -- validation_personne

@@ -278,7 +278,13 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             'join' => ' JOIN ',
             'joinClause' => " ON pobs.cle_obs = o.cle_obs ",
             'returnFields' => array(
-                "string_agg( DISTINCT concat( pobs.identite, ' (' || pobs.organisme|| ')' ), ', ' ) AS observateur" => 'observateur'
+                "string_agg( DISTINCT concat(
+                    pobs.identite,
+                    CASE
+                        WHEN pobs.organisme = 'ANONYME' THEN ''
+                        ELSE ' (' || pobs.organisme|| ')'
+                    END
+                ), ', ' ) AS observateur" => 'observateur'
             )
         ),
         'v_validateur'  => array(
@@ -288,7 +294,13 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             'join' => ' LEFT JOIN ',
             'joinClause' => " ON pval.cle_obs = o.cle_obs ",
             'returnFields' => array(
-                "string_agg( DISTINCT concat( pval.identite, ' (' || pval.organisme|| ')' ), ', ' ) AS validateur" => 'validateur'
+                "string_agg( DISTINCT concat(
+                    pval.identite,
+                    CASE
+                        WHEN pval.organisme = 'ANONYME' THEN ''
+                        ELSE ' (' || pval.organisme|| ')'
+                    END
+                ), ', ' ) AS validateur" => 'validateur'
             )
         ),
         'v_determinateur'  => array(
@@ -298,7 +310,13 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             'join' => ' LEFT JOIN ',
             'joinClause' => " ON pdet.cle_obs = o.cle_obs ",
             'returnFields' => array(
-                "string_agg( DISTINCT concat( pdet.identite, ' (' || pdet.organisme|| ')' ), ', ' ) AS determinateur" => 'determinateur'
+                "string_agg( DISTINCT concat(
+                    pdet.identite,
+                    CASE
+                        WHEN pdet.organisme = 'ANONYME' THEN ''
+                        ELSE ' (' || pdet.organisme|| ')'
+                    END
+                ), ', ' ) AS determinateur" => 'determinateur'
             )
         ),
 

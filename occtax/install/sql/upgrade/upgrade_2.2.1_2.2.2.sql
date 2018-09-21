@@ -1,5 +1,36 @@
 BEGIN;
 
+SET search_path TO occtax,public,pg_catalog;
+
+-- Utilisation de ANONYME au lieu d'INCONNU
+CREATE OR REPLACE VIEW v_observateur AS
+SELECT
+CASE WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE p.identite END AS identite,
+CASE WHEN p.anonymiser IS TRUE THEN '' ELSE p.mail END AS mail,
+CASE WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE Coalesce(p.organisme, 'INCONNU') END AS organisme,
+op.id_personne, op.cle_obs, p.prenom, p.nom, p.anonymiser
+FROM observation_personne op
+INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = 'Obs'
+;
+
+CREATE OR REPLACE VIEW v_validateur AS
+SELECT CASE WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE p.identite END AS identite,
+CASE WHEN p.anonymiser IS TRUE THEN '' ELSE p.mail END AS mail,
+CASE WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE Coalesce(p.organisme, 'INCONNU') END AS organisme,
+op.id_personne, op.cle_obs, p.prenom, p.nom, p.anonymiser
+FROM observation_personne op
+INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = 'Val'
+;
+
+CREATE OR REPLACE VIEW v_determinateur AS
+SELECT CASE WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE p.identite END AS identite,
+CASE WHEN p.anonymiser IS TRUE THEN '' ELSE p.mail END AS mail,
+CASE WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE Coalesce(p.organisme, 'INCONNU') END AS organisme,
+op.id_personne, op.cle_obs, p.prenom, p.nom, p.anonymiser
+FROM observation_personne op
+INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = 'Det'
+;
+
 -- VALIDATION : vue et triggers pour validation par les validateurs agréés
 CREATE OR REPLACE VIEW occtax.v_observation_validation AS
 
@@ -55,11 +86,24 @@ o.geom, o.altitude_moy,  o.precision_geometrie, o.nature_objet_geo,
 
 --Personnes
 string_agg(
-    vobs.identite || concat(' - ' || vobs.mail, ' (' || vobs.organisme || ')' ),
+    vobs.identite || concat(
+        ' - ' || vobs.mail,
+        CASE
+            WHEN vobs.organisme = 'ANONYME' THEN ''
+            ELSE ' (' || vobs.organisme|| ')'
+        END
+    ),
     ', '
 ) AS observateurs,
 string_agg(
-    vdet.identite || concat(' - ' || vdet.mail, ' (' || vdet.organisme || ')' ),
+    vdet.identite || concat(
+        ' - ' || vdet.mail,
+
+        CASE
+            WHEN vdet.organisme = 'ANONYME' THEN ''
+            ELSE ' (' || vdet.organisme|| ')'
+        END
+    ),
     ', '
 ) AS determinateurs,
 
@@ -158,7 +202,7 @@ v."procedure",
 v.proc_ref,
 v.comm_val,
 -- vlt : ajout de :
-vp.niv_val, n.valeur, vp.date_ctrl, vvalp.identite, vvalp.organisme;
+vp.niv_val, n.valeur, vp.date_ctrl, vvalp.identite, vvalp.organisme
 ;
 
 COMMIT;
