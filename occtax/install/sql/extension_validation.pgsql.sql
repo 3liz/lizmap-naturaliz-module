@@ -606,20 +606,19 @@ INSERT INTO nomenclature VALUES ('ech_val', '3', 'Validation nationale', 'Valida
 
 
 -- VALIDATION : vue et triggers pour validation par les validateurs agréés
-DROP VIEW IF EXISTS occtax.v_observation_validation CASCADE;
 CREATE OR REPLACE VIEW occtax.v_observation_validation AS
 
 SELECT
 -- Observation
-o.cle_obs, statut_observation,
+o.cle_obs, o.identifiant_permanent, statut_observation,
 
 --Taxon
 o.cd_nom, o.cd_ref, nom_cite,
 
-t.nom_valide, t.reu, t.nom_vern, t.group1_inpn, t.group2_inpn,
+t.nom_valide, t.reu, t.nom_vern, t.group2_inpn, t.ordre, t.famille,
 
 --Individus observés
-denombrement_min, denombrement_max, objet_denombrement, type_denombrement,
+o.denombrement_min, o.denombrement_max, o.objet_denombrement, o.type_denombrement,
 
 -- Descriptif sujet
 REPLACE(replace((jsonb_pretty(array_to_json(array_agg(json_build_object(
@@ -651,13 +650,13 @@ REPLACE(replace((jsonb_pretty(array_to_json(array_agg(json_build_object(
     dict->>(concat('occ_methode_determination', '_', occ_methode_determination))
 )))::jsonb)::text), '"', ''), ':', ' : ') AS descriptif_sujet,
 
-date_determination,
+o.date_determination,
 
 -- Quand ?
-date_debut, date_fin, heure_debut, heure_fin,
+o.date_debut, o.date_fin, o.heure_debut, o.heure_fin,
 
 --Où ?
-geom, altitude_moy,  precision_geometrie, nature_objet_geo,
+o.geom, o.altitude_moy,  o.precision_geometrie, o.nature_objet_geo,
 
 --Personnes
 string_agg(
@@ -669,43 +668,56 @@ string_agg(
     ', '
 ) AS determinateurs,
 
-organisme_gestionnaire_donnees,
+o.organisme_gestionnaire_donnees,
 
 --Généralités
-commentaire, code_idcnp_dispositif,  dee_date_transformation, dee_date_derniere_modification,
+o.commentaire, o.code_idcnp_dispositif,  o.dee_date_transformation, o.dee_date_derniere_modification,
 
 jdd.jdd_code, jdd.jdd_id, jdd.jdd_description, jdd.jdd_metadonnee_dee_id,
-statut_source, reference_biblio,
+o.statut_source, o.reference_biblio,
 
 -- Diffusion
-ds_publique, diffusion_niveau_precision, sensi_niveau,
+o.ds_publique, o.diffusion_niveau_precision, o.sensi_niveau,
 
 --Validation
-validite_niveau, validite_date_validation,
+o.validite_niveau, o.validite_date_validation,
 -- table validation_observation
-id_validation,
-date_ctrl,
-niv_val,
-typ_val,
-ech_val,
-peri_val,
+v.id_validation,
+v.date_ctrl,
+v.niv_val,
+v.typ_val,
+v.ech_val,
+v.peri_val,
 string_agg( vval.identite || concat(' - ' || vval.mail, ' (' || vval.organisme || ')' ), ', ') AS validateur,
-proc_vers,
-producteur,
-date_contact,
-"procedure",
-proc_ref,
-comm_val
+v.proc_vers,
+
+
+
+CASE
+    WHEN vp.niv_val IS NOT NULL THEN concat(n.valeur, ' (Validation le ', COALESCE(vp.date_ctrl::text, 'Date non connue'), ' par ', vvalp.identite, ' - ', vvalp.organisme, ')')
+    ELSE NULL::text
+    END AS validation_producteur,
+-- vlt : ajout de validation_producteur
+v.producteur,
+v.date_contact,
+v."procedure",
+v.proc_ref,
+v.comm_val
 
 
 FROM occtax.observation o
 LEFT JOIN taxon.taxref AS t USING (cd_nom)
 LEFT JOIN occtax.v_observateur AS vobs USING (cle_obs)
-LEFT JOIN occtax.personne AS vval USING (id_personne)
+
 LEFT JOIN occtax.v_determinateur AS vdet USING (cle_obs)
 LEFT JOIN occtax.jdd USING (jdd_id)
 -- plateforme régionale
 LEFT JOIN occtax.validation_observation v ON "ech_val" = '2' AND v.identifiant_permanent = o.identifiant_permanent
+-- vlt : ajout des 4 lignes suivantes :
+LEFT JOIN validation_observation vp ON vp.ech_val = '1'::text AND vp.identifiant_permanent = o.identifiant_permanent
+LEFT JOIN occtax.personne vval ON vval.id_personne=v.validateur
+LEFT JOIN occtax.personne vvalp ON vvalp.id_personne=vp.validateur
+LEFT JOIN nomenclature n ON n.champ = 'niv_val_auto'::text AND n.code = vp.niv_val
 left join lateral
 jsonb_to_recordset(o.descriptif_sujet) AS (
     obs_methode text,
@@ -724,31 +736,34 @@ jsonb_to_recordset(o.descriptif_sujet) AS (
 ) ON TRUE,
 occtax.v_nomenclature_plat
 GROUP BY
-o.cle_obs, statut_observation,
+o.cle_obs, o.identifiant_permanent, o.statut_observation,
 o.cd_nom, nom_cite,
-t.nom_valide, t.reu, t.nom_vern, t.group1_inpn, t.group2_inpn,
-denombrement_min, denombrement_max, objet_denombrement, type_denombrement,
+t.nom_valide, t.reu, t.nom_vern, t.ordre, t.famille, t.group1_inpn, t.group2_inpn,
+-- ajout de t.ordre, t.famille, supression de t.group1_inpn,
+o.denombrement_min, o.denombrement_max, o.objet_denombrement, o.type_denombrement,
 
-date_determination,  date_debut, date_fin, heure_debut, heure_fin,
-geom, altitude_moy,  precision_geometrie, nature_objet_geo,
-commentaire, code_idcnp_dispositif,  dee_date_transformation, dee_date_derniere_modification,
+o.date_determination,  o.date_debut, o.date_fin, o.heure_debut, o.heure_fin,
+o.geom, o.altitude_moy,  o.precision_geometrie, o.nature_objet_geo,
+o.commentaire, o.code_idcnp_dispositif,  o.dee_date_transformation, o.dee_date_derniere_modification,
 jdd.jdd_code, jdd.jdd_id, jdd.jdd_description, jdd.jdd_metadonnee_dee_id,
-statut_source, reference_biblio,
-ds_publique, diffusion_niveau_precision, sensi_niveau,
-validite_niveau, validite_date_validation,
-id_validation,
-date_ctrl,
-niv_val,
-typ_val,
-ech_val,
-peri_val,
-validateur,
-proc_vers,
-producteur,
-date_contact,
-"procedure",
-proc_ref,
-comm_val
+o.statut_source, o.reference_biblio,
+o.ds_publique, o.diffusion_niveau_precision, o.sensi_niveau,
+o.validite_niveau, o.validite_date_validation,
+v.id_validation,
+v.date_ctrl,
+v.niv_val,
+v.typ_val,
+v.ech_val,
+v.peri_val,
+v.validateur,
+v.proc_vers,
+v.producteur,
+v.date_contact,
+v."procedure",
+v.proc_ref,
+v.comm_val,
+-- vlt : ajout de :
+vp.niv_val, n.valeur, vp.date_ctrl, vvalp.identite, vvalp.organisme;
 ;
 
 
