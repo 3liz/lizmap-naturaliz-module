@@ -63,6 +63,15 @@ GRANT USAGE ON validation_observation_id_validation_seq TO validation_acme;
 GRANT USAGE ON SCHEMA sig TO validation_acme;
 GRANT SELECT ON ALL TABLES IN SCHEMA sig TO validation_acme;
 
+-- On donne le droite sur les champs de la table occtax.observation
+-- Nécessaire à cause du trigger occtax.update_observation_set_validation_fields()
+-- ON donne ce qui est strictement nécessaire, pas plus
+GRANT 
+    SELECT (cle_obs, identifiant_permanent, validite_niveau, validite_date_validation), 
+    UPDATE (validite_niveau, validite_date_validation) 
+ON occtax.observation TO validation_acme
+;
+
 -- On ajoute le TRIGGER pour déclencher la fonction qui modifiera la table occtax.validation_observation
 CREATE TRIGGER trg_validation_observation_acme
 INSTEAD OF INSERT OR UPDATE OR DELETE ON occtax.v_observation_validation_acme
@@ -70,3 +79,4 @@ FOR EACH ROW EXECUTE PROCEDURE occtax.update_observation_validation();
 
 
 COMMIT;
+
