@@ -32,6 +32,7 @@ INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = '
 ;
 
 -- VALIDATION : vue et triggers pour validation par les validateurs agréés
+DROP VIEW IF EXISTS occtax.v_observation_validation CASCADE;
 CREATE OR REPLACE VIEW occtax.v_observation_validation AS
 
 SELECT
