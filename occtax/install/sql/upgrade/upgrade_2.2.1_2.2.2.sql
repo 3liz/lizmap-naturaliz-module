@@ -31,6 +31,7 @@ FROM observation_personne op
 INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = 'Det'
 ;
 
+
 -- VALIDATION : vue et triggers pour validation par les validateurs agréés
 DROP VIEW IF EXISTS occtax.v_observation_validation CASCADE;
 CREATE OR REPLACE VIEW occtax.v_observation_validation AS
@@ -146,7 +147,7 @@ v.comm_val
 
 
 FROM occtax.observation o
-LEFT JOIN taxon.taxref AS t USING (cd_nom)
+LEFT JOIN taxon.taxref_consolide_non_filtre AS t USING (cd_nom)
 LEFT JOIN occtax.v_observateur AS vobs USING (cle_obs)
 
 LEFT JOIN occtax.v_determinateur AS vdet USING (cle_obs)
@@ -205,5 +206,10 @@ v.comm_val,
 -- vlt : ajout de :
 vp.niv_val, n.valeur, vp.date_ctrl, vvalp.identite, vvalp.organisme
 ;
+
+-- Taxon
+CREATE INDEX ON taxref_consolide (famille);
+CREATE INDEX ON taxon.taxref_consolide_all (cd_ref);
+CREATE INDEX ON taxon.taxref_consolide_non_filtre (famille);
 
 COMMIT;

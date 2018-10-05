@@ -483,11 +483,11 @@ Elle est principalement utilisée pour récupérer les cd_ref des sous-ensembles
 
 C''est une vue matérialisée, c''est-à-dire une vue qui se comporte comme une table, et qu''on doit mettre à jour suite à un import de taxons (dans taxref ou taxref_local), ou suite à la mise à jour de taxref_valide, via `REFRESH MATERIALIZED VIEW taxref_consolide;`
 ';
-CREATE INDEX ON taxref_consolide (regne);
 CREATE INDEX ON taxref_consolide (group1_inpn);
 CREATE INDEX ON taxref_consolide (group2_inpn);
 CREATE INDEX ON taxref_consolide (cd_ref);
 CREATE INDEX ON taxref_consolide (cd_nom);
+CREATE INDEX ON taxref_consolide (famille);
 
 
 -- statuts de protection
@@ -549,6 +549,7 @@ SELECT tml.*, c.*
 FROM taxref_mnhn_et_local AS tml
 LEFT JOIN t_complement AS c ON c.cd_nom_fk = tml.cd_nom
 ;
+CREATE INDEX ON taxon.taxref_consolide_all (cd_ref);
 CREATE INDEX ON taxon.taxref_consolide_all (cd_nom);
 CREATE INDEX ON taxon.taxref_consolide_all (protection);
 
@@ -597,6 +598,7 @@ CREATE INDEX ON taxon.taxref_consolide_non_filtre (menace);
 CREATE INDEX ON taxon.taxref_consolide_non_filtre (protection);
 CREATE INDEX ON taxon.taxref_consolide_non_filtre (rarete);
 CREATE INDEX ON taxon.taxref_consolide_non_filtre (statut);
+CREATE INDEX ON taxon.taxref_consolide_non_filtre (famille);
 
 
 -- Noms vernaculaires : nouveau depuis TAXREF V11

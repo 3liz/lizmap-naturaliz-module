@@ -719,7 +719,7 @@ v.comm_val
 
 
 FROM occtax.observation o
-LEFT JOIN taxon.taxref AS t USING (cd_nom)
+LEFT JOIN taxon.taxref_consolide_non_filtre AS t USING (cd_nom)
 LEFT JOIN occtax.v_observateur AS vobs USING (cle_obs)
 
 LEFT JOIN occtax.v_determinateur AS vdet USING (cle_obs)
