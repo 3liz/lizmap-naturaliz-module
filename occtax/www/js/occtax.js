@@ -356,6 +356,12 @@ lizMap.events.on({
                     fo = 0.2;
                 }
                 return fo;
+            },
+            getDefaultStrokeColor:function(feat) {
+                var sc = 'white';
+                if( 'strokeColor' in OccTax.config )
+                    sc = OccTax.config.strokeColor;
+                return sc;
             }
         };
 
@@ -363,7 +369,7 @@ lizMap.events.on({
             pointRadius: "${getPointRadius}",
             fillColor: "${getPointColor}",
             fillOpacity: "${getFillOpacity}",
-            strokeColor: "white",
+            strokeColor: "${getDefaultStrokeColor}",
             strokeOpacity: 1,
             strokeDashstyle: "solid",
             strokeWidth:1,

@@ -61,8 +61,13 @@
                     $mo[$menu] = $mi;
                     $mi++;
                 }
+
+                $strokeColor = $ini->getValue('strokeColor', 'occtax');
+                if( empty($strokeColor) )
+                    $strokeColor = 'white';
                 $occtaxClientConfig = array(
                     'maxAreaQuery'=> (integer)$maxAreaQuery,
+                    'strokeColor' => $strokeColor,
                     'menuOrder' => $mo
                 );
 

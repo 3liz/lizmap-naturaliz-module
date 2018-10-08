@@ -74,6 +74,9 @@ validite_niveaux_grand_public=1,2
 ; -1 permet une taille illimitée
 maxAreaQuery=32000000
 
+; couleur de  bordure des mailles et des cercles
+strokeColor=#FFFFFF80
+
 ; configuration des classes de légende pour les mailles
 ; on doit mettre, dans l'ordre et séparé par point-virgule:
 ; intitulé de la classe; borne inférieure; borne supérieure; couleur

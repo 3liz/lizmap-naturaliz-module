@@ -52,6 +52,7 @@ Les modules Naturaliz lisent dans le fichier **lizmap/var/config/localconfig.ini
 * la **liste des types de mailles à utiliser** de la section [occtax]. Par exemple: `mailles_a_utiliser=maille_02,maille_10`
 * la **liste des niveaux de validité**, séparés par virgule, pour filtrer les observations pour le grand public, c'est-à-dire que seules les observations qui ont un niveau de validité correspondant à un des éléments de la liste pourront être visibles pour le grand public. Variable **validite_niveaux_grand_public** de la section [occtax]. Par exemple validite_niveaux_grand_public=1,2
 * la **taille maximale du polygone ou cercle de requête** que l'utilisateur peut dessiner sur la carte: **maxAreaQuery** . On met une valeur en m2, ou -1 pour désactiver le contrôle
+* la **couleur de bordure** des observations affichées (mailles et ronds): **strokeColor** Par défault à "#FFFFFF80". On peut gérer la transparence, par exemple via #fff0 pour une transparence totale
 * la **configuration des classes de légende** pour les affichages par maille: **legend_class**. On peut utiliser autant de legend_class[] que nécessaire, et on doit les écrire avec les informations suivantes séparées par point-virgule: intitulé de la classe; borne inférieure; borne supérieure; couleur. Ex: legend_class[]="De 1 à 10 observations; 1; 10; #FFFBC3"
 * Les **rayons min et max pour les cercles représentant les mailles** : **legend_min_radius** et **legend_max_radius**. L'application calcule automatiquement le rayon pour une classe à partir de ces 2 valeurs et du nombre de classes. Les valeurs doivent être indiquées pour que le cercle tienne dans un carré de 1000m de côté. L'application calcule le rayon en fonction de la maille ( X2 pour les mailles 2km, X10 pour les mailles de 10km, etc.. Par exemple 100 et 410 m respectivement.
 * La **liste des champs à afficher ou à exporter** dans la fiche d'observation (détail) et l'export en CSV ou WFS: **observation_card_fields**, **observation_card_fields_unsensitive**, **observation_card_children**, **observation_exported_fields** **observation_exported_fields_unsensitive**, **observation_exported_children**
@@ -128,6 +129,9 @@ validite_niveaux_grand_public=1,2
 ; taille maximum en m2 des polygones dessinés pour rechercher des observations
 ; -1 permet une taille illimitée
 maxAreaQuery=-1
+
+; couleur de  bordure des mailles et des cercles
+strokeColor=#FFFFFF80
 
 ; configuration des classes de légende pour les mailles
 ; on doit mettre, dans l'ordre et séparé par point-virgule:
