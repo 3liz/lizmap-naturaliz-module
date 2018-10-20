@@ -549,7 +549,6 @@ SELECT tml.*, c.*
 FROM taxref_mnhn_et_local AS tml
 LEFT JOIN t_complement AS c ON c.cd_nom_fk = tml.cd_nom
 ;
-CREATE INDEX ON taxon.taxref_consolide_all (cd_ref);
 CREATE INDEX ON taxon.taxref_consolide_all (cd_nom);
 CREATE INDEX ON taxon.taxref_consolide_all (protection);
 

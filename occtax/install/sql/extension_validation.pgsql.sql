@@ -710,7 +710,7 @@ CASE
     WHEN vp.niv_val IS NOT NULL THEN concat(n.valeur, ' (Validation le ', COALESCE(vp.date_ctrl::text, 'Date non connue'), ' par ', vvalp.identite, ' - ', vvalp.organisme, ')')
     ELSE NULL::text
     END AS validation_producteur,
--- vlt : ajout de validation_producteur
+
 v.producteur,
 v.date_contact,
 v."procedure",
@@ -726,7 +726,6 @@ LEFT JOIN occtax.v_determinateur AS vdet USING (cle_obs)
 LEFT JOIN occtax.jdd USING (jdd_id)
 -- plateforme régionale
 LEFT JOIN occtax.validation_observation v ON "ech_val" = '2' AND v.identifiant_permanent = o.identifiant_permanent
--- vlt : ajout des 4 lignes suivantes :
 LEFT JOIN validation_observation vp ON vp.ech_val = '1'::text AND vp.identifiant_permanent = o.identifiant_permanent
 LEFT JOIN occtax.personne vval ON vval.id_personne=v.validateur
 LEFT JOIN occtax.personne vvalp ON vvalp.id_personne=vp.validateur
@@ -752,7 +751,6 @@ GROUP BY
 o.cle_obs, o.identifiant_permanent, o.statut_observation,
 o.cd_nom, nom_cite,
 t.nom_valide, t.reu, t.nom_vern, t.ordre, t.famille, t.group1_inpn, t.group2_inpn,
--- ajout de t.ordre, t.famille, supression de t.group1_inpn,
 o.denombrement_min, o.denombrement_max, o.objet_denombrement, o.type_denombrement,
 
 o.date_determination,  o.date_debut, o.date_fin, o.heure_debut, o.heure_fin,
@@ -775,7 +773,6 @@ v.date_contact,
 v."procedure",
 v.proc_ref,
 v.comm_val,
--- vlt : ajout de :
 vp.niv_val, n.valeur, vp.date_ctrl, vvalp.identite, vvalp.organisme;
 
 
