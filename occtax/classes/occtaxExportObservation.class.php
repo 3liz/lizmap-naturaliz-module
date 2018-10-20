@@ -812,6 +812,8 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             $this->returnFields,
             array('geojson', 'wkt', 'descriptif_sujet')
         );
+        if(!in_array('cle_obs', $group_attributes))
+            $group_attributes[] = 'cle_obs';
         $sql.= " GROUP BY ";
         $sql.= implode(', ', $group_attributes ) . ',dict,geom';
 
