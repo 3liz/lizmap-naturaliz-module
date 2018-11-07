@@ -489,6 +489,7 @@ class occtaxSearch {
 
         if( $this->params ){
             foreach( $this->params as $k=>$v ){
+                jLog::log("$k = $v");
                 if( array_key_exists( $k, $this->queryFilters ) and array_key_exists( 'table', $this->queryFilters[$k] ) and $v ){
                     $q = $this->queryFilters[$k];
                     // IF filter by uploaded geojson

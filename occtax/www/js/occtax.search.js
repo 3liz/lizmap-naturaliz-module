@@ -670,6 +670,7 @@ OccTax.events.on({
               getObservationDetail( identifiant_permanent );
               return false;
           });
+          $('#'+tableId+' span.identite_observateur').tooltip();
         });
     }
 

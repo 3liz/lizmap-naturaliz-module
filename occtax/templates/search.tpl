@@ -216,9 +216,6 @@ RESULTATS DE RECHERCHE (TABLEAUX)
             <input type="text" name="offset"></input>
             <input type="text" name="order"></input>
             <input type="text" name="group"></input>
-<!--
-            <input type="text" name="search"></input>
--->
           </form>
           {zone 'taxon~datatable', array('classId'=>'occtax~occtaxSearchObservationTaxon','tableId'=>'occtax_results_taxon_table')}
         </div>

@@ -79,6 +79,9 @@
         <hidden ref="type_maille">
         </hidden>
 
+        <hidden ref="nom_valide">
+        </hidden>
+
         <hidden ref="geom">
             <label locale="occtax~search.input.geom"/>
         </hidden>

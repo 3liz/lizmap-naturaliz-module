@@ -1364,6 +1364,7 @@ min(lc.code_commune) AS code_commune_unique,
 jsonb_agg(DISTINCT ld.code_departement) AS code_departement,
 jsonb_agg(DISTINCT lme.code_me) AS code_me,
 jsonb_agg(DISTINCT len.code_en) AS code_en,
+jsonb_agg(DISTINCT len.type_en) AS type_en,
 
 od.diffusion,
 string_agg( DISTINCT concat(

@@ -19,12 +19,17 @@ class occtaxSearchObservation extends occtaxSearch {
         'date_debut',
         'nom_cite',
         'geojson',
-        'identite_observateur',
+        'observateur',
         'source_objet',
         'detail'
     );
 
     protected $tplFields = array(
+        'observateur' => '
+            <span class="identite_observateur" title="{$line->identite_observateur|eschtml}">
+                {$line->identite_observateur|truncate:40}
+            </span>
+        ',
         'detail' => '<a class="openObservation" href="#" title="{@occtax~search.output.detail.title@}"><i class="icon-file"></i></a>'
     );
 
@@ -33,7 +38,7 @@ class occtaxSearchObservation extends occtaxSearch {
     protected $displayFields = array(
         'date_debut' => array( 'type' => 'string', 'sortable' => "true"),
         'nom_cite' => array( 'type' => 'string', 'sortable' => "true"),
-        'identite_observateur' => array( 'type' => 'string', 'sortable' => "true"),
+        'observateur' => array( 'type' => 'string', 'sortable' => "true"),
         'source_objet' => array( 'type' => 'string', 'sortable' => "true"),
         'detail' => array( 'type' => 'string', 'sortable' => 0)
     );
@@ -102,7 +107,7 @@ class occtaxSearchObservation extends occtaxSearch {
         ),
         'code_masse_eau' => array (
             'table' => 'vm_observation',
-            'clause' => ' AND lme.code_me ?| ARRAY[@]',
+            'clause' => ' AND code_me ?| ARRAY[@]',
             'type' => 'string',
             'label'=> array(
                 'dao'=>'occtax~masse_eau',
@@ -119,7 +124,7 @@ class occtaxSearchObservation extends occtaxSearch {
 
         'type_en' => array (
             'table' => 'vm_observation',
-            'clause' => ' AND len.type_en ?| ARRAY[@]',
+            'clause' => ' AND type_en ?| ARRAY[@]',
             'type' => 'string',
             'label'=> array(
                 'dao'=>'occtax~nomenclature',
@@ -149,6 +154,12 @@ class occtaxSearchObservation extends occtaxSearch {
                 'column'=>'valeur'
             )
         ),
+
+        //'nom_valide' => array (
+            //'table' => 'vm_observation',
+            //'clause' => ' AND o.nom_valide ILIKE ( @ )',
+            //'type' => 'partial'
+        //),
     );
 
 
