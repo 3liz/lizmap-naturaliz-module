@@ -169,216 +169,89 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
 
 
     protected $querySelectors = array(
-        'observation' => array(
+        'vm_observation' => array(
             'alias' => 'o',
             'required' => True,
             'join' => '',
             'joinClause' => '',
             'returnFields' => array(
-                'o.cle_obs' => 'cle_obs',
-                'o.identifiant_permanent'=> 'identifiant_permanent',
-                'o.statut_observation'=> 'statut_observation',
-                'CASE WHEN o.cd_nom > 0 THEN o.cd_nom ELSE NULL END AS cd_nom' => 'cd_nom',
-                'CASE WHEN o.cd_ref > 0 THEN o.cd_ref ELSE NULL END AS cd_ref' => 'cd_ref',
-                'o.version_taxref' => 'version_taxref',
-                'o.nom_cite' => 'nom_cite',
+                'o.cle_obs' => Null, // Null mean there wil be no GROUP BY for the field
+                'o.identifiant_permanent'=> Null,
+                'o.statut_observation'=> Null,
+                'CASE WHEN o.cd_nom > 0 THEN o.cd_nom ELSE NULL END AS cd_nom' => Null,
+                'CASE WHEN o.cd_ref > 0 THEN o.cd_ref ELSE NULL END AS cd_ref' => Null,
+                'o.version_taxref' => Null,
+                'o.nom_cite' => Null,
 
                 // effectif
-                'o.denombrement_min' => 'denombrement_min',
-                'o.denombrement_max' => 'denombrement_max',
-                'o.objet_denombrement' => 'objet_denombrement',
-                'o.type_denombrement' => 'type_denombrement',
+                'o.denombrement_min' => Null,
+                'o.denombrement_max' => Null,
+                'o.objet_denombrement' => Null,
+                'o.type_denombrement' => Null,
 
-                'o.commentaire' => 'commentaire',
+                'o.commentaire' => Null,
 
                 // dates
-                "to_char( date_debut, 'YYYY-MM-DD') AS date_debut" => 'date_debut',
-                "to_char( heure_debut::time, 'HH24:MI') AS heure_debut" => 'heure_debut',
-                "to_char( date_fin, 'YYYY-MM-DD') AS date_fin" => 'date_fin',
-                "to_char( heure_fin::time, 'HH24:MI') AS heure_fin" => 'heure_fin',
-                "to_char( date_determination, 'YYYY-MM-DD') AS date_determination" => 'date_determination',
+                "date_debut" => Null,
+                "to_char( heure_debut::time, 'HH24:MI') AS heure_debut" => Null,
+                "date_fin" => Null,
+                "to_char( heure_fin::time, 'HH24:MI') AS heure_fin" => Null,
+                "date_determination" => Null,
 
                 // localisation
-                'o.altitude_min' => 'altitude_min',
-                'o.altitude_moy' => 'altitude_moy',
-                'o.altitude_max' => 'altitude_max',
-                'o.profondeur_min' => 'profondeur_min',
-                'o.profondeur_moy' => 'profondeur_moy',
-                'o.profondeur_max' => 'profondeur_max',
+                'o.altitude_min' => Null,
+                'o.altitude_moy' => Null,
+                'o.altitude_max' => Null,
+                'o.profondeur_min' => Null,
+                'o.profondeur_moy' => Null,
+                'o.profondeur_max' => Null,
 
                 // source
-                'o.code_idcnp_dispositif'=> 'code_idcnp_dispositif',
-                'o.dee_date_derniere_modification'=> 'dee_date_derniere_modification',
-                'o.dee_date_transformation'=> 'dee_date_transformation',
-                'o.dee_floutage' => 'dee_floutage',
-                'o.diffusion_niveau_precision' => 'diffusion_niveau_precision',
-                'o.ds_publique'=> 'ds_publique',
-                'o.identifiant_origine'=> 'identifiant_origine',
-                'o.jdd_code'=> 'jdd_code',
-                'o.jdd_id'=> 'jdd_id',
-                'o.jdd_metadonnee_dee_id'=> 'jdd_metadonnee_dee_id',
-                'o.jdd_source_id'=> 'jdd_source_id',
-                'o.organisme_gestionnaire_donnees' => 'organisme_gestionnaire_donnees',
-                'o.organisme_standard' => 'organisme_standard',
-                'o.org_transformation' => 'org_transformation',
-                'o.statut_source' => 'statut_source',
-                'o.reference_biblio'=> 'reference_biblio',
-                'o.sensible' => 'sensible',
-                'o.sensi_date_attribution' => 'sensi_date_attribution',
-                'o.sensi_niveau' => 'sensi_niveau',
-                'o.sensi_referentiel' => 'sensi_referentiel',
-                'o.sensi_version_referentiel' => 'sensi_version_referentiel',
+                'o.code_idcnp_dispositif'=> Null,
+                'o.dee_date_derniere_modification'=> Null,
+                'o.dee_date_transformation'=> Null,
+                'o.dee_floutage' => Null,
+                'o.diffusion_niveau_precision' => Null,
+                'o.ds_publique'=> Null,
+                'o.identifiant_origine'=> Null,
+                'o.jdd_code'=> Null,
+                'o.jdd_id'=> Null,
+                'o.jdd_metadonnee_dee_id'=> Null,
+                'o.jdd_source_id'=> Null,
+                'o.organisme_gestionnaire_donnees' => Null,
+                'o.organisme_standard' => Null,
+                'o.org_transformation' => Null,
+                'o.statut_source' => Null,
+                'o.reference_biblio'=> Null,
+                'o.sensible' => Null,
+                'o.sensi_date_attribution' => Null,
+                'o.sensi_niveau' => Null,
+                'o.sensi_referentiel' => Null,
+                'o.sensi_version_referentiel' => Null,
 
                 // descriptif du sujet
-                'o.descriptif_sujet::json AS descriptif_sujet' => 'descriptif_sujet',
+                'o.descriptif_sujet::json AS descriptif_sujet' => Null,
 
                 // validite
-                'o.validite_niveau' => 'validite_niveau',
-                'o.validite_date_validation' => 'validite_date_validation',
+                'o.validite_niveau' => Null,
+                'o.validite_date_validation' => Null,
 
                 // geometrie
-                'o.precision_geometrie' => 'precision_geometrie',
-                'o.nature_objet_geo' => 'nature_objet_geo',
-                'ST_Transform(o.geom, 4326) AS geom' => 'geom',
-                "CASE
-                    WHEN o.geom IS NOT NULL THEN
-                        CASE
-                            WHEN GeometryType(geom) IN ('POLYGON', 'MULTIPOLYGON') THEN 'Polygone'
-                            WHEN GeometryType(geom) IN ('LINESTRING', 'MULTILINESTRING') THEN 'Ligne'
-                            WHEN GeometryType(geom) IN ('POINT', 'MULTIPOINT') THEN 'Point'
-                            ELSE 'Géométrie'
-                        END
-                    WHEN lm05.code_maille IS NOT NULL THEN 'M05'
-                    WHEN lm10.code_maille IS NOT NULL THEN 'M10'
-                    WHEN lc.code_commune IS NOT NULL THEN 'COM'
-                    WHEN lme.code_me IS NOT NULL THEN 'ME'
-                    WHEN len.code_en IS NOT NULL THEN 'EN'
-                    WHEN ld.code_departement IS NOT NULL THEN 'DEP'
-                    ELSE 'NO'
-                END AS source_objet" => "source_objet"
-            )
-        ),
-        'observation_diffusion'  => array(
-            'alias' => 'od',
-            'required' => True,
-            'join' => ' JOIN ',
-            'joinClause' => " ON od.cle_obs = o.cle_obs ",
-            'returnFields' => array(
-                "od.diffusion" => 'diffusion'
-            )
-        ),
-        // personnes
-        'v_observateur'  => array(
-            'alias' => 'pobs',
-            'required' => True,
-            'multi' => True,
-            'join' => ' JOIN ',
-            'joinClause' => " ON pobs.cle_obs = o.cle_obs ",
-            'returnFields' => array(
-                "string_agg( DISTINCT concat(
-                    pobs.identite,
-                    CASE
-                        WHEN pobs.organisme = 'ANONYME' THEN ''
-                        ELSE ' (' || pobs.organisme|| ')'
-                    END
-                ), ', ' ) AS observateur" => 'observateur'
-            )
-        ),
-        'v_validateur'  => array(
-            'alias' => 'pval',
-            'required' => True,
-            'multi' => True,
-            'join' => ' LEFT JOIN ',
-            'joinClause' => " ON pval.cle_obs = o.cle_obs ",
-            'returnFields' => array(
-                "string_agg( DISTINCT concat(
-                    pval.identite,
-                    CASE
-                        WHEN pval.organisme = 'ANONYME' THEN ''
-                        ELSE ' (' || pval.organisme|| ')'
-                    END
-                ), ', ' ) AS validateur" => 'validateur'
-            )
-        ),
-        'v_determinateur'  => array(
-            'alias' => 'pdet',
-            'required' => True,
-            'multi' => True,
-            'join' => ' LEFT JOIN ',
-            'joinClause' => " ON pdet.cle_obs = o.cle_obs ",
-            'returnFields' => array(
-                "string_agg( DISTINCT concat(
-                    pdet.identite,
-                    CASE
-                        WHEN pdet.organisme = 'ANONYME' THEN ''
-                        ELSE ' (' || pdet.organisme|| ')'
-                    END
-                ), ', ' ) AS determinateur" => 'determinateur'
-            )
-        ),
+                'o.precision_geometrie' => Null,
+                'o.nature_objet_geo' => Null,
+                'ST_Transform(o.geom, 4326) AS geom' => Null,
+                "o.source_objet" => Null,
 
-        // spatial
-        'localisation_maille_05'  => array(
-            'alias' => 'lm05',
-            'required' => True,
-            'multi' => True,
-            'join' => ' LEFT JOIN ',
-            'joinClause' => ' ON lm05.cle_obs = o.cle_obs ',
-            'returnFields' => array(
-                //"string_agg(DISTINCT lm05.code_maille, '|') AS code_maille_05" => 'code_maille_05'
-            )
-        ),
-        'localisation_maille_10'  => array(
-            'alias' => 'lm10',
-            'required' => True,
-            'multi' => True,
-            'join' => ' LEFT JOIN ',
-            'joinClause' => ' ON lm10.cle_obs = o.cle_obs ',
-            'returnFields' => array(
-                //"string_agg(DISTINCT lm10.code_maille, '|') AS code_maille_10" => 'code_maille_10'
-            )
-        ),
-        'localisation_commune'  => array(
-            'alias' => 'lc',
-            'required' => True,
-            'multi' => True,
-            'join' => ' LEFT JOIN ',
-            'joinClause' => ' ON lc.cle_obs = o.cle_obs ',
-            'returnFields' => array(
-                //"string_agg(DISTINCT lc.code_commune, '|') AS code_commune" => 'code_commune'
-            )
-        ),
-        'localisation_departement'  => array(
-            'alias' => 'ld',
-            'required' => True,
-            'multi' => True,
-            'join' => ' LEFT JOIN ',
-            'joinClause' => ' ON ld.cle_obs = o.cle_obs ',
-            'returnFields' => array(
-                //"string_agg(DISTINCT lc.code_departement, '|') AS code_departement" => ''
-            )
-        ),
-        'localisation_masse_eau'  => array(
-            'alias' => 'lme',
-            'required' => True,
-            'multi' => True,
-            'join' => ' LEFT JOIN ',
-            'joinClause' => ' ON lme.cle_obs = o.cle_obs ',
-            'returnFields' => array(
-                //"string_agg(DISTINCT lme.code_me, '|') AS code_me" => ''
-            )
-        ),
-        'v_localisation_espace_naturel'  => array(
-            'alias' => 'len',
-            'required' => True,
-            'multi' => False,
-            'join' => ' LEFT JOIN ',
-            'joinClause' => ' ON len.cle_obs = o.cle_obs ',
-            'returnFields' => array(
-                //"string_agg(DISTINCT len.code_en, '|') AS code_en" => ''
-            )
-        ),
+                // diffusion
+                "o.diffusion" => Null,
 
+                // personnes
+                "o.identite_observateur AS observateur" => Null,
+                "o.validateur" => Null,
+                "o.determinateur" => Null
+
+            )
+        )
 
     );
 

@@ -45,46 +45,28 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
 
     public function __construct ($token=Null, $params=Null, $demande=Null) {
 
-        // Remove unnecessary LEFT JOIN to improve performances
-        $this->querySelectors['localisation_maille_05']['required'] = False;
-        $this->querySelectors['localisation_maille_10']['required'] = False;
-        $this->querySelectors['localisation_commune']['required'] = False;
-        $this->querySelectors['localisation_departement']['required'] = False;
-        $this->querySelectors['localisation_masse_eau']['required'] = False;
-        $this->querySelectors['v_localisation_espace_naturel']['required'] = False;
-        $this->querySelectors['observation']['returnFields'] = array(
-            'o.cle_obs'=> 'cle_obs',
-            'o.nom_cite' => 'nom_cite',
-            'o.cd_nom' => 'cd_nom',
-            "to_char(date_debut, 'YYYY-MM-DD') AS date_debut" => 'date_debut'
-        );
-        $this->querySelectors['v_observateur']['returnFields'] = array(
-            "string_agg(pobs.identite, ', ') AS identite_observateur" => 'identite_observateur'
+        $this->querySelectors = array(
+
+            'vm_observation' => array(
+                'alias' => 'o',
+                'required' => True,
+                'join' => '',
+                'joinClause' => '',
+                'returnFields' => array(
+                    'o.cd_nom' => 'cd_nom',
+                    'o.nom_valide' => 'nom_valide',
+                    'o.nom_vern' => 'nom_vern',
+                    'o.url' => 'url',
+                    'o.categorie' => 'categorie',
+                    'count(o.cle_obs) AS nbobs'=> Null
+                )
+            )
         );
         // Remove ORDER BY
         $this->orderClause = '';
 
 
         parent::__construct($token, $params, $demande);
-    }
-
-    function setSql() {
-        parent::setSql();
-
-        $sql = " SELECT f.cd_nom, t.nom_valide, count(DISTINCT cle_obs) AS nbobs,";
-        $sql.= " t.nom_vern,";
-        $sql.= " t.url,";
-        $sql.= " (regexp_split_to_array( Coalesce( g1.cat_nom, g2.cat_nom) , ' '))[1] AS categorie";
-        $sql.= " FROM (";
-        $sql.= $this->sql;
-        $sql.= " ) AS f";
-        $sql.= " INNER JOIN taxref_consolide t ON t.cd_nom = f.cd_nom";
-        $sql.= " LEFT JOIN t_group_categorie g1 ON g1.groupe_nom = t.group1_inpn";
-        $sql.= " LEFT JOIN t_group_categorie g2 ON g2.groupe_nom = t.group2_inpn";
-        $sql.= ' GROUP BY f.cd_nom, t.nom_valide, categorie, t.nom_vern, t.url';
-        $sql.= ' ORDER BY t.nom_valide';
-
-        $this->sql = $sql;
     }
 
     protected function getResult( $limit=50, $offset=0, $order='' ) {

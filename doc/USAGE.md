@@ -4,6 +4,19 @@
 
 Lors de l'installation, une structure de données conforme au standard "Occurences de taxon" a été créée dans la base de données. Pour pouvoir exploiter l'application, il faut importer des données d'observations.
 
+
+Une fois les données importées, il faut absolument rafraîchir certaines vues matérialisées utilisées par l'application.
+
+```sql
+
+-- Vue qui calcul la sensibilité des données pour contrôler leur diffusion
+REFRESH MATERIALIZED VIEW observation_diffusion;
+
+-- Vue qui rassemble à plat dans une seule entité la plupart des informations sur les observations
+REFRESH MATERIALIZED VIEW occtax.vm_observation;
+
+```
+
 ## Jeux de données
 
 todo: expliquer la notion et les tables utilisées

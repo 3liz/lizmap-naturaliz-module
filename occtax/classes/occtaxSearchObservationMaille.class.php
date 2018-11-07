@@ -38,68 +38,41 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
         'filter' => array( 'type' => 'string', 'sortable' => 0)
     );
 
+    protected $orderClause = ' ORDER BY id_maille';
+
     public function __construct ($token=Null, $params=Null, $demande=Null) {
         // Set maille depending on rights
         // do it first because parent::__construct do setSql
         if ( $this->maille == 'maille_01' and !jAcl2::check("visualisation.donnees.maille_01") )
             $this->maille = 'maille_02';
 
-        // Remove unnecessary LEFT JOIN to improve performances
-        $this->querySelectors['localisation_maille_05']['required'] = False;
-        $this->querySelectors['localisation_maille_10']['required'] = False;
-        $this->querySelectors['localisation_commune']['required'] = False;
-        $this->querySelectors['localisation_departement']['required'] = False;
-        $this->querySelectors['localisation_masse_eau']['required'] = False;
-        $this->querySelectors['v_localisation_espace_naturel']['required'] = False;
-        $this->querySelectors['observation']['returnFields'] = array(
-            'o.cle_obs'=> 'cle_obs',
-            'o.nom_cite' => 'nom_cite',
-            'o.cd_nom' => 'cd_nom',
-            "to_char(date_debut, 'YYYY-MM-DD') AS date_debut" => 'date_debut'
+        // Reset querySelectors to group result by maille
+        $this->querySelectors = array(
+            $this->maille => array(
+                'alias' => 'm',
+                'required' => True,
+                'join' => '',
+                'joinClause' => '',
+                'returnFields' => array (
+                    'id_maille' => 'id_maille', // PKEY added here to improve GroupAggregate performance
+                    'code_maille AS mid' => Null, // With id_maille added, no need to group by following cols
+                    'nom_maille AS maille' => Null,
+                    'ST_AsGeoJSON( ST_Transform( ST_Centroid(m.geom), 4326 ), 6 ) AS geojson' => Null
+                )
+            ),
+
+            'vm_observation' => array(
+                'alias' => 'o',
+                'required' => True,
+                'multi' => True,
+                'join' => ' JOIN ',
+                'joinClause' => ' ON m.code_maille = code_' . $this->maille . '_unique',
+                'returnFields' => array(
+                    'count(o.cle_obs) AS nbobs'=> Null,
+                    'count(DISTINCT o.cd_ref) AS nbtax' => Null
+                )
+            )
         );
-
-
-        // Change geometry exported value for users depending on sensibiliy
-        if( !jAcl2::check("visualisation.donnees.brutes") ){
-            $question = "WHEN od.diffusion ? 'g' ";
-            if($this->maille == 'maille_01' and jAcl2::check("visualisation.donnees.maille_01")){
-                $question.= " OR od.diffusion ? 'm01' ";
-            }
-            if($this->maille == 'maille_02'){
-                $question.= " OR od.diffusion ? 'm02' ";
-            }
-            //if($this->maille == 'maille_05'){
-                //$question.= " OR od.diffusion ? 'm05' ";
-            //}
-            if($this->maille == 'maille_10'){
-                $question.= " OR od.diffusion ? 'm10' ";
-            }
-            $this->querySelectors['observation']['returnFields']["
-                CASE
-                    $question
-                    THEN geom
-                    ELSE NULL
-                END AS geom
-            "] = 'geom';
-
-        }else{
-            $this->querySelectors['observation']['returnFields']['o.geom'] = 'geom';
-        }
-
-
-
-        $this->querySelectors['v_observateur']['returnFields'] = array(
-            "string_agg(pobs.identite, ', ') AS identite_observateur" => 'identite_observateur'
-        );
-        // Remove ORDER BY
-        $this->orderClause = '';
-
-        parent::__construct($token, $params, $demande);
-
-    }
-
-    protected function setSql() {
-        parent::setSql();
 
         // Get maille type (1 or 2)
         $m = 2;
@@ -107,18 +80,8 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
             $m = 1;
         if($this->maille == 'maille_02')
             $m = 2;
-        //if($this->maille == 'maille_05')
-            //$m = 5;
         if($this->maille == 'maille_10')
             $m = 10;
-
-        // Build SQL
-        $sql = ' SELECT m.code_maille AS mid, m.nom_maille AS maille, ';
-        $sql.= " count(f.cle_obs) AS nbobs, count(DISTINCT f.cd_nom) AS nbtax, ";
-
-        $sql.= "
-            CASE
-            ";
 
         // Get legend classes parameters
         $this->setLegendClasses();
@@ -128,44 +91,61 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
         $inter = $this->legend_max_radius - $this->legend_min_radius;
         $step = $inter / $nb;
         $x = 0;
+        $sqlr = "
+            CASE
+            ";
         foreach($this->legend_classes as $class){
             $rad = $this->legend_min_radius + $x * $step;
             $c = array_map( 'trim', explode(';', $class) );
-            $sql.= "
-            WHEN count(DISTINCT f.cle_obs) >= $c[1] AND count(DISTINCT f.cle_obs) <= $c[2] THEN $rad
+            $sqlr.= "
+            WHEN count(o.cle_obs) >= $c[1] AND count(o.cle_obs) <= $c[2] THEN $rad
             ";
             $x++;
         }
-        $sql.= "
+        $sqlr.= "
                 ELSE " . $this->legend_max_radius . "
-            END * $m AS rayon,";
+            END * $m AS rayon";
+        $this->querySelectors[$this->maille]['returnFields'][$sqlr] = array();
 
         // Color
-        $sql.= "
+        $sqlc = "
             CASE
             ";
         foreach($this->legend_classes as $class){
             $c = array_map( 'trim', explode(';', $class) );
-            $sql.= "
-                WHEN count(DISTINCT f.cle_obs) >= $c[1] AND count(DISTINCT f.cle_obs) <= $c[2] THEN '$c[3]'::text
+            $sqlc.= "
+                WHEN count(o.cle_obs) >= $c[1] AND count(o.cle_obs) <= $c[2] THEN '$c[3]'::text
             ";
         }
-        $sql.= "
+        $sqlc.= "
                 ELSE 'black'::text
             END AS color
         ";
+        $this->querySelectors[$this->maille]['returnFields'][$sqlc] = array();
+        parent::__construct($token, $params, $demande);
 
-        $sql.= ", ST_AsGeoJSON( ST_Transform( ST_Centroid(m.geom), 4326 ), 6 ) AS geojson";
-        $sql.= " FROM (";
-        $sql.= $this->sql;
-        $sql.= " ) AS f";
-        $sql.= ' INNER JOIN "' . $this->maille .'" AS m ';
-        $sql.= ' ON ST_Intersects( m.geom, f.geom  ) ';
-        $sql.= ' GROUP BY m.code_maille, m.nom_maille, m.geom';
+    }
 
-        $this->sql = $sql;
+    protected function setWhereClause(){
+        $sql = parent::setWhereClause();
 
-//jLog::log($this->sql);
+        // Filter geometry for users depending on sensibiliy
+        if( !jAcl2::check("visualisation.donnees.brutes") ){
+            $question = "AND ( o.diffusion ? 'g' ";
+            if($this->maille == 'maille_01' and jAcl2::check("visualisation.donnees.maille_01")){
+                $question.= " OR o.diffusion ? 'm01' ";
+            }
+            if($this->maille == 'maille_02'){
+                $question.= " OR o.diffusion ? 'm02' ";
+            }
+            if($this->maille == 'maille_10'){
+                $question.= " OR o.diffusion ? 'm10' ";
+            }
+
+            $sql.= $question . ')';
+        }
+        return $sql;
+
     }
 
     protected function getResult( $limit=50, $offset=0, $order="" ) {

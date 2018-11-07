@@ -398,24 +398,24 @@ class occtaxSearch {
             // Get table alias
             $alias = $tdata['alias'];
             // Add fields to select and optionnally groupByFields
-            foreach( $fields as $field => $type ){
+            foreach( $fields as $field => $group ){
 
                 // Build select clause for this table
                 $sql.= $c . $field;
                 $c = ",
                 ";
                 $a = $alias . '.';
-                if( $type == 'source_objet' ) // remove source_objet from SELECT
+                if( $group == 'source_objet' ) // remove source_objet from SELECT
                     $a = '';
 
                 // Add fields to groupByField array
-                if( !$multi ){
+                if( !$multi and !empty($group)){
 
-                    if( !is_array( $type ) ){
-                        $gField = $a . $type;
+                    if( !is_array( $group ) ){
+                        $gField = $a . $group;
                         $groupByFields[] = $gField;
                     }else{
-                        foreach( $type as $ty ){
+                        foreach( $group as $ty ){
                             $gField = $a . $ty;
                             $groupByFields[] = $gField;
                         }
@@ -439,7 +439,10 @@ class occtaxSearch {
                 $required = $d['required'];
                 if( $required ){
                     $sql.= ' ' . $d['join'];
-                    $sql.= ' "' . $table . '" ';
+                    if( substr(trim($table), 0, 1) == '(' )
+                        $sql.= $table;
+                    else
+                        $sql.= ' "' . $table . '" ';
                     $sql.= ' AS ' . $d['alias'] . ' ';
                     $sql.= $d['joinClause'] . ' ';
                     $sql.= '

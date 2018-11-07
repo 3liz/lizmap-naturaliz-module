@@ -39,121 +39,33 @@ class occtaxSearchObservation extends occtaxSearch {
     );
 
     protected $querySelectors = array(
-        'observation' => array(
+        'vm_observation' => array(
             'alias' => 'o',
             'required' => True,
             'join' => '',
             'joinClause' => '',
             'returnFields' => array(
-                'o.cle_obs'=> 'cle_obs',
-                'o.nom_cite' => 'nom_cite',
-                'o.cd_nom' => 'cd_nom',
-                "to_char(date_debut, 'YYYY-MM-DD') AS date_debut" => 'date_debut',
-
-                "CASE
-                    WHEN o.geom IS NOT NULL THEN
-                        CASE
-                            WHEN GeometryType(geom) IN ('POLYGON', 'MULTIPOLYGON') THEN 'Polygone'
-                            WHEN GeometryType(geom) IN ('LINESTRING', 'MULTILINESTRING') THEN 'Ligne'
-                            WHEN GeometryType(geom) IN ('POINT', 'MULTIPOINT') THEN 'Point'
-                            ELSE 'Géométrie'
-                        END
-                    WHEN lm10.code_maille IS NOT NULL THEN 'M10'
-                    WHEN lc.code_commune IS NOT NULL THEN 'COM'
-                    WHEN lme.code_me IS NOT NULL THEN 'ME'
-                    WHEN len.code_en IS NOT NULL THEN 'EN'
-                    WHEN ld.code_departement IS NOT NULL THEN 'DEP'
-                    ELSE ''
-                END AS source_objet
-                " => "source_objet",
-
-                'ST_AsGeoJSON( ST_Transform(o.geom, 4326), 6 ) AS geojson' => 'geom',
-                'o.geom' => 'geom'
-
+                'o.cle_obs'=> Null,
+                'o.nom_cite' => Null,
+                'o.cd_nom' => Null,
+                "date_debut" => Null,
+                "source_objet" => Null,
+                'ST_AsGeoJSON( ST_Transform(o.geom, 4326), 6 ) AS geojson' => Null,
+                'o.geom' => Null,
+                "o.diffusion" => Null,
+                "identite_observateur" => Null
             )
-        ),
-        'observation_diffusion'  => array(
-            'alias' => 'od',
-            'required' => True,
-            'join' => ' JOIN ',
-            'joinClause' => " ON od.cle_obs = o.cle_obs ",
-            'returnFields' => array(
-                "od.diffusion" => 'diffusion'
-            )
-        ),
-
-
-        'v_observateur'  => array(
-            'alias' => 'pobs',
-            'required' => True,
-            'multi' => True,
-            'join' => ' JOIN ',
-            'joinClause' => " ON pobs.cle_obs = o.cle_obs ",
-            'returnFields' => array(
-                "string_agg(DISTINCT pobs.identite, ', ') AS identite_observateur" => 'identite_observateur'
-            )
-        ),
-
-        'localisation_maille_10'  => array(
-            'alias' => 'lm10',
-            'required' => True,
-            'multi' => True,
-            'join' => ' LEFT JOIN ',
-            'joinClause' => ' ON lm10.cle_obs = o.cle_obs ',
-            'returnFields' => array(
-                //~ "string_agg(lm10.code_maille, '|') AS code_maille_10" => 'code_maille_10'
-            )
-        ),
-        'localisation_commune'  => array(
-            'alias' => 'lc',
-            'required' => True,
-            'multi' => True,
-            'join' => ' LEFT JOIN ',
-            'joinClause' => ' ON lc.cle_obs = o.cle_obs ',
-            'returnFields' => array(
-                //~ "string_agg(lc.code_commune, '|') AS code_commune" => ''
-            )
-        ),
-        'localisation_departement'  => array(
-            'alias' => 'ld',
-            'required' => True,
-            'multi' => True,
-            'join' => ' LEFT JOIN ',
-            'joinClause' => ' ON ld.cle_obs = o.cle_obs ',
-            'returnFields' => array(
-                //~ "string_agg(lc.code_commune, '|') AS code_commune" => ''
-            )
-        ),
-        'localisation_masse_eau'  => array(
-            'alias' => 'lme',
-            'required' => True,
-            'multi' => True,
-            'join' => ' LEFT JOIN ',
-            'joinClause' => ' ON lme.cle_obs = o.cle_obs ',
-            'returnFields' => array(
-                //~ "string_agg(lme.code_me, '|') AS code_me" => ''
-            )
-        ),
-        'v_localisation_espace_naturel'  => array(
-            'alias' => 'len',
-            'required' => True,
-            'multi' => False,
-            'join' => ' LEFT JOIN ',
-            'joinClause' => ' ON len.cle_obs = o.cle_obs ',
-            'returnFields' => array(
-            )
-        ),
-
+        )
     );
 
     protected $queryFilters = array(
         'cle_obs' => array (
-            'table' => 'observation',
+            'table' => 'vm_observation',
             'clause' => ' AND o.cle_obs IN (@)',
             'type'=> 'string'
         ),
         'cd_nom' => array (
-            'table' => 'observation',
+            'table' => 'vm_observation',
             'clause' => ' AND o.cd_ref IN (@)',
             //'clause' => ' AND o.cd_ref = ANY ( ARRAY[ @ ] )',
             'type'=> 'integer',
@@ -164,23 +76,23 @@ class occtaxSearchObservation extends occtaxSearch {
             )
         ),
         'geom' => array (
-            'table' => 'observation',
+            'table' => 'vm_observation',
             'clause' => ' AND ST_Intersects(o.geom, fg.fgeom ) ',
             'type' => 'geom'
         ),
         'date_min' => array (
-            'table' => 'observation',
+            'table' => 'vm_observation',
             'clause' => ' AND ( date_debut >= @::timestamp OR date_fin >= @::timestamp ) ',
             'type' => 'timestamp'
         ),
         'date_max' => array (
-            'table' => 'observation',
+            'table' => 'vm_observation',
             'clause' => ' AND ( date_debut <= @::timestamp OR date_fin <= @::timestamp ) ',
             'type' => 'timestamp'
         ),
         'code_commune' => array (
-            'table' => 'localisation_commune',
-            'clause' => ' AND lc.code_commune IN ( @ )',
+            'table' => 'vm_observation',
+            'clause' => ' AND code_commune ?| ARRAY[@]',
             'type' => 'string',
             'label'=> array(
                 'dao'=>'occtax~commune',
@@ -189,8 +101,8 @@ class occtaxSearchObservation extends occtaxSearch {
             )
         ),
         'code_masse_eau' => array (
-            'table' => 'localisation_masse_eau',
-            'clause' => ' AND lme.code_me IN ( @ )',
+            'table' => 'vm_observation',
+            'clause' => ' AND lme.code_me ?| ARRAY[@]',
             'type' => 'string',
             'label'=> array(
                 'dao'=>'occtax~masse_eau',
@@ -200,14 +112,14 @@ class occtaxSearchObservation extends occtaxSearch {
         ),
 
         'observateur' => array (
-            'table' => 'v_observateur',
+            'table' => 'vm_observation',
             'clause' => ' AND o.cle_obs IN (SELECT cle_obs FROM v_observateur vo WHERE vo.identite ILIKE ( @ )  )',
             'type' => 'partial'
         ),
 
         'type_en' => array (
-            'table' => 'v_localisation_espace_naturel',
-            'clause' => ' AND len.type_en IN ( @ )',
+            'table' => 'vm_observation',
+            'clause' => ' AND len.type_en ?| ARRAY[@]',
             'type' => 'string',
             'label'=> array(
                 'dao'=>'occtax~nomenclature',
@@ -217,7 +129,7 @@ class occtaxSearchObservation extends occtaxSearch {
         ),
 
         'jdd_id' => array (
-            'table' => 'observation',
+            'table' => 'vm_observation',
             'clause' => ' AND o.jdd_id IN ( @ )',
             'type' => 'string',
             'label'=> array(
@@ -228,7 +140,7 @@ class occtaxSearchObservation extends occtaxSearch {
         ),
 
         'validite_niveau' => array (
-            'table' => 'observation',
+            'table' => 'vm_observation',
             'clause' => ' AND o.validite_niveau IN ( @ )',
             'type' => 'string',
             'label'=> array(
@@ -291,12 +203,6 @@ class occtaxSearchObservation extends occtaxSearch {
 
     protected function setWhereClause(){
         $sql = parent::setWhereClause();
-
-        // commenté car on utilise maintenant le principe de diffusion et de sensibilité
-        // sensibilité
-        //if( !jAcl2::check("visualisation.donnees.sensibles") ){
-            //$sql.= " AND o.cd_nom NOT IN (SELECT cd_nom FROM taxon.taxon_sensible) ";
-        //}
 
         // Dot not query sensitive data if user has queried via spatial tools
         // to avoid guessing position of sensitive data
@@ -377,6 +283,7 @@ class occtaxSearchObservation extends occtaxSearch {
         return $sql;
 
     }
+
 
 }
 

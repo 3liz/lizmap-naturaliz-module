@@ -132,11 +132,12 @@ class observationCtrl extends jController {
         // Nomenclature
         $dao = jDao::get('nomenclature');
         $find = $dao->findAll();
+jLog::log(json_encode($find));
         $nomenclature = array();
         foreach($find as $nom){
+
             $nomenclature[$nom->champ . '|' . $nom->code] = $nom->valeur;
         }
-
         $tpl->assign('observation_card_fields', $observation_card_fields);
         $tpl->assign('nomenclature', $nomenclature);
 

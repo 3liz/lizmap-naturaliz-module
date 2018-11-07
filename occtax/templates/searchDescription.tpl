@@ -29,6 +29,7 @@
     {assign $inter = $max - $min}
     {if $nb > 0}
         {assign $step = $inter / $nb}
+        {assign $x = 1}
         {foreach $legend_classes as $class}
         <tr>
             <td>
