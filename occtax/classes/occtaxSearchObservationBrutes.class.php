@@ -290,6 +290,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
 //jLog::log($this->sql);
     }
 
+    // Override getResult to get all data (no limit nor offset)
     protected function getResult( $limit=50, $offset=0, $order="" ) {
         $cnx = jDb::getConnection();
         return $cnx->query( $this->sql );

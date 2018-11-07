@@ -212,6 +212,13 @@ RESULTATS DE RECHERCHE (TABLEAUX)
         <div id="occtax_results_taxon_table_div" class="tab-pane bottom-content attribute-content">
           <form id="occtax_service_search_taxon_form" method="post" action="{jurl 'occtax~service:searchGroupByTaxon'}" style="display:none;">
             <input type="text" name="token"></input>
+            <input type="text" name="limit"></input>
+            <input type="text" name="offset"></input>
+            <input type="text" name="order"></input>
+            <input type="text" name="group"></input>
+<!--
+            <input type="text" name="search"></input>
+-->
           </form>
           {zone 'taxon~datatable', array('classId'=>'occtax~occtaxSearchObservationTaxon','tableId'=>'occtax_results_taxon_table')}
         </div>

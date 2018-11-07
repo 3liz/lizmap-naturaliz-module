@@ -62,17 +62,15 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
                 )
             )
         );
-        // Remove ORDER BY
-        $this->orderClause = '';
-
 
         parent::__construct($token, $params, $demande);
+
+        // Override parent (ie observations) recordsTotal
+        // Problems : this re-run the taxon query to count the result
+        $this->setRecordsTotal();
+
     }
 
-    protected function getResult( $limit=50, $offset=0, $order='' ) {
-        //jLog::log($this->sql);
-        $cnx = jDb::getConnection();
-        return $cnx->query( $this->sql );
-    }
+
 }
 

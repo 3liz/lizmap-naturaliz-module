@@ -71,6 +71,7 @@ class occtaxSearchObservationStats extends occtaxSearchObservation {
         parent::__construct($token, $params, $demande);
     }
 
+    // Override getResult to get all data (no limit nor offset)
     protected function getResult( $limit=50, $offset=0, $order="" ) {
 //jLog::log($this->sql);
         $cnx = jDb::getConnection();

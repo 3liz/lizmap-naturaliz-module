@@ -273,6 +273,10 @@ OccTax.events.on({
             "ajax": function (param, callback, settings) {
                 var searchForm = $('#occtax_service_search_stats_form');
 
+                // Do not run the query if no token has been found
+                var mytoken = searchForm.find('input[name="token"]').val();
+                if(!mytoken)
+                  return false;
                 $.getJSON(searchForm.attr('action'), searchForm.serialize(),
                     function( results ) {
                           var tData = {
@@ -323,13 +327,14 @@ OccTax.events.on({
       var displayFields = datatableColumns[1];
       $('#'+tableId+'').DataTable( {
             "lengthChange": false,
-            "searching": false,
-            "dom":'ipft',
-            "pageLength":1000,
-            "paging": false,
+            "pageLength":100,
+            "paging": true,
             "deferRender": true,
             "scrollY": '100%',
             "scrollX": '95%',
+            //"searching": true,
+            "searching": false,
+            "dom":'ipft',
             "language": {url: jFormsJQ.config.basePath +  lizUrls["dataTableLanguage"]},
             "oLanguage": {
               "sInfoEmpty": "",
@@ -340,10 +345,23 @@ OccTax.events.on({
                 "sNext": "Suivant"
               }
             },
+            "processing": true,
+            "serverSide": true,
             "columns": DT_Columns,
             "ajax": function (param, callback, settings) {
                 var searchForm = $('#occtax_service_search_taxon_form');
+                searchForm.find('input[name="limit"]').val(param.length);
+                searchForm.find('input[name="offset"]').val(param.start);
+                searchForm.find('input[name="group"]').val('');
+                //searchForm.find('input[name="search"]').val(param.search.value);
+                searchForm.find('input[name="order"]').val(
+                  DT_Columns[param.order[0]['column']]['data'] + ':' + param.order[0]['dir']
+                );
 
+                // Do not run the query if no token has been found
+                var mytoken = searchForm.find('input[name="token"]').val();
+                if(!mytoken)
+                  return false;
                 $.getJSON(searchForm.attr('action'), searchForm.serialize(),
                     function( results ) {
                           var tData = {
@@ -373,7 +391,7 @@ OccTax.events.on({
                             $('#occtax_search_description_content').html(
                               dhtml.replace(
                                 '<span style="display:none">nb_taxon',
-                                '<span> / ' + results.data.length.toLocaleString()
+                                '<span> / ' + results.recordsTotal.toLocaleString()
                               )
                             );
 
@@ -445,6 +463,10 @@ OccTax.events.on({
             "ajax": function (param, callback, settings) {
                 var searchForm = $('#occtax_service_search_maille_form_' + type_maille);
 
+                // Do not run the query if no token has been found
+                var mytoken = searchForm.find('input[name="token"]').val();
+                if(!mytoken)
+                  return false;
                 $.getJSON(searchForm.attr('action'), searchForm.serialize(),
                     function( results ) {
                           var tData = {
@@ -576,10 +598,11 @@ OccTax.events.on({
               searchForm.find('input[name="order"]').val(
                 DT_Columns[param.order[0]['column']]['data'] + ':' + param.order[0]['dir']
               );
-               //Get new token if needed
-              //if( param.search.value != '' ){
-                //return false;
-              //}
+
+              // Do not run the query if no token has been found
+              var mytoken = searchForm.find('input[name="token"]').val();
+              if(!mytoken)
+                return false;
               $.getJSON(searchForm.attr('action'), searchForm.serialize(),
                 function( results ) {
                   //console.log( results );
@@ -809,6 +832,11 @@ OccTax.events.on({
               searchForm.find('input[name="order"]').val(
                 DT_Columns[param.order[0]['column']]['data'] + ':' + param.order[0]['dir']
               );
+
+              // Do not run the query if no token has been found
+              var mytoken = searchForm.find('input[name="token"]').val();
+              if(!mytoken)
+                return false;
               $.getJSON(searchForm.attr('action'), searchForm.serialize(),
                 function( results ) {
                   //console.log( results );
@@ -1204,10 +1232,13 @@ OccTax.events.on({
       // Get search token corresponding to form inputs
       unblockSearchForm();
       $('#'+tokenFormId).submit(function(){
+        // Bloc submit if a previous submit is in progress
         if(blocme){
           return false;
         }
         blocme = true;
+
+        // Do nothing if token is not defined
 
         var self = $(this);
 

@@ -148,6 +148,7 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
 
     }
 
+    // Override getResult to get all data (no limit nor offset)
     protected function getResult( $limit=50, $offset=0, $order="" ) {
 //jLog::log($this->sql);
         $cnx = jDb::getConnection();
