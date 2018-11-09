@@ -17,11 +17,11 @@ class defaultCtrl extends lizMapCtrl {
 
     function __construct ( $request){
 
-        $monfichier = jApp::configPath('localconfig.ini.php');
+        $monfichier = jApp::configPath('naturaliz.ini.php');
         $ini = new jIniFileModifier($monfichier);
 
-        $defaultRep = $ini->getValue('defaultRepository', 'occtax');
-        $defaultProject = $ini->getValue('defaultProject', 'occtax');
+        $defaultRep = $ini->getValue('defaultRepository', 'naturaliz');
+        $defaultProject = $ini->getValue('defaultProject', 'naturaliz');
 
         $request->params['repository'] = $defaultRep;
         $request->params['project'] = $defaultProject;
@@ -50,11 +50,11 @@ class defaultCtrl extends lizMapCtrl {
             $rep->body->assign( 'auth_url_return', jUrl::get('occtax~default:index') );
 
             // Get local configuration (application name, projects name, etc.)
-            $localConfig = jApp::configPath('localconfig.ini.php');
+            $localConfig = jApp::configPath('naturaliz.ini.php');
             $ini = new jIniFileModifier($localConfig);
 
-            $rep->body->assign( 'WMSServiceTitle', $ini->getValue('projectName', 'occtax') );
-            $rep->title = $ini->getValue('projectName', 'occtax');
+            $rep->body->assign( 'WMSServiceTitle', $ini->getValue('projectName', 'naturaliz') );
+            $rep->title = $ini->getValue('projectName', 'naturaliz');
             $rep->body->assign( 'repositoryLabel', $ini->getValue('appName', 'naturaliz') );
             $bp = jApp::config()->urlengine['basePath'];
             $rep->addJsLink( $bp.'js/fileUpload/jquery.iframe-transport.js' );
@@ -62,7 +62,7 @@ class defaultCtrl extends lizMapCtrl {
             $rep->addJsLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/occtax.js')));
             $rep->addJsLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/occtax.search.js')));
 
-            $rep->addHeadContent( '<style>' . $ini->getValue('projectCss', 'occtax') . '</style>');
+            $rep->addHeadContent( '<style>' . $ini->getValue('projectCss', 'naturaliz') . '</style>');
         }
 
         return $rep;

@@ -17,13 +17,13 @@ class serviceCtrl extends jController {
     function __construct( $request ){
 
         // Get SRID
-        $localConfig = jApp::configPath('localconfig.ini.php');
+        $localConfig = jApp::configPath('naturaliz.ini.php');
         $ini = new jIniFileModifier($localConfig);
         $srid = $ini->getValue('srid', 'naturaliz');
         $this->srid = $srid;
 
         // Mailles
-        $mailles_a_utiliser = $ini->getValue('mailles_a_utiliser', 'occtax');
+        $mailles_a_utiliser = $ini->getValue('mailles_a_utiliser', 'naturaliz');
         if( !$mailles_a_utiliser or empty(trim($mailles_a_utiliser)) ){
             $mailles_a_utiliser = 'maille_02,maille_10';
         }

@@ -46,10 +46,10 @@
 
                 // Get configuration for some client side occtax parameters
                 // Get local configuration (application name, projects name, etc.)
-                $localConfig = jApp::configPath('localconfig.ini.php');
+                $localConfig = jApp::configPath('naturaliz.ini.php');
                 $ini = new jIniFileModifier($localConfig);
-                $maxAreaQuery = $ini->getValue('maxAreaQuery', 'occtax');
-                $menuOrder = $ini->getValue('menuOrder', 'occtax');
+                $maxAreaQuery = $ini->getValue('maxAreaQuery', 'naturaliz');
+                $menuOrder = $ini->getValue('menuOrder', 'naturaliz');
                 if( empty($maxAreaQuery) )
                     $maxAreaQuery = 32000000;
                 if( empty($menuOrder) )
@@ -62,7 +62,7 @@
                     $mi++;
                 }
 
-                $strokeColor = $ini->getValue('strokeColor', 'occtax');
+                $strokeColor = $ini->getValue('strokeColor', 'naturaliz');
                 if( empty($strokeColor) )
                     $strokeColor = 'white';
                 $occtaxClientConfig = array(
@@ -71,7 +71,7 @@
                     'menuOrder' => $mo
                 );
 
-                $mailles_a_utiliser = $ini->getValue('mailles_a_utiliser', 'occtax');
+                $mailles_a_utiliser = $ini->getValue('mailles_a_utiliser', 'naturaliz');
                 if( !$mailles_a_utiliser or empty(trim($mailles_a_utiliser)) ){
                     $mailles_a_utiliser = 'maille_02,maille_10';
                 }
@@ -100,13 +100,13 @@
 
 
                 // Get local configuration (application name, projects name, etc.)
-                $localConfig = jApp::configPath('localconfig.ini.php');
+                $localConfig = jApp::configPath('naturaliz.ini.php');
                 $ini = new jIniFileModifier($localConfig);
 
                 // PRESENTATION
                 $presentationTpl = new jTpl();
                 $presentation = '';
-                $projectDescriptionConfig = $ini->getValue('projectDescription', 'occtax');
+                $projectDescriptionConfig = $ini->getValue('projectDescription', 'naturaliz');
                 if( !empty($projectDescriptionConfig) ){
                     $presentation = html_entity_decode( $projectDescriptionConfig );
                 }

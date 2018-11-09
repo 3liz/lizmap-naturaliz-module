@@ -282,9 +282,9 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
         // Le WKT est exporté dans le CSV, pour le grand public également
         // donc pour eux on ne diffuse la geom que si la diffusion est possible cad 'g'
         if( !jAcl2::check("visualisation.donnees.brutes") ){
-            $this->querySelectors['observation']['returnFields']["CASE WHEN od.diffusion ? 'g' THEN (ST_AsText( ST_Transform(o.geom, 4326) )) ELSE NULL END AS wkt"] = Null;
+            $this->querySelectors['vm_observation']['returnFields']["CASE WHEN diffusion ? 'g' THEN (ST_AsText( ST_Transform(o.geom, 4326) )) ELSE NULL END AS wkt"] = Null;
         }else{
-            $this->querySelectors['observation']['returnFields']["ST_AsText(ST_Transform(o.geom, 4326)) AS wkt"] = Null;
+            $this->querySelectors['vm_observation']['returnFields']["ST_AsText(ST_Transform(o.geom, 4326)) AS wkt"] = Null;
         }
 
         parent::__construct($token, $params, $demande);

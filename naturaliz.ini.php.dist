@@ -1,19 +1,17 @@
 ;<?php die(''); ?>
 ;for security reasons , don't remove or modify the first line
 
-; put here configuration variables that are specific to this installation
+[naturaliz]
 
-[modules]
-lizmap.installparam=demo
+; projection de reference
+srid=2975
+appName=Naturaliz
 
-taxon.access=2
-occtax.access=2
-occtax_admin.access=2
-;mascarine.access=0
-;mascarine_admin.access=0
+defaultRepository=
+defaultProject=
+projectName=Occurences de Taxon
+projectDescription=Cette application permet de consulter les observations faunistiques et floristiques.
 
-
-[taxon]
 ; champ determinant le statut local : valeures possibles fr, gf, mar, gua, sm, sb, spm, may, epa, reu, taff, pf, nc, wf, cli
 colonne_locale=reu
 endemicite_description_endemique=Réunion
@@ -25,41 +23,8 @@ code_arrete_protection_internationale="AIBA2,AIBA3,CCA,CCB,CCC,CCD,IAAP,IAO2,IAO
 code_arrete_protection_communautaire="CDH2,CDH4,CDH5,CDO1,CDO21,CDO22,CDO31,CDO32"
 code_arrete_protection_nationale="VP974,NM,NMAMmar2,NM2,NO3,NO4,NO6,NTAA1,NTM1,NTM8,OC3,REUEA2,REUEA3,REUEA4,REUI2"
 
-[naturaliz]
-; projection de reference
-srid=2975
-appName=Naturaliz
-
-[occtax]
-
 ; liste séparée par virgule de mailles à utiliser. Par ex: maille_01,maille_10
 mailles_a_utiliser=maille_02,maille_10
-
-defaultRepository=
-defaultProject=
-projectName=Occurences de Taxon
-projectDescription=Cette application permet de consulter les observations faunistiques et floristiques.
-projectCss="
-#header {
-background: url('/css/img/bandeau.jpg') #8baf29 no-repeat;
-background-position-y: 50%;
-}
-#auth, #title {
-background: transparent;
-}
-#logo {
-background:none;
-}
-#title h1, #title h2 {
-color: transparent;
-}
-
-#auth ul.nav {
-background-color: rgba(255, 255, 255, 0.4);
-color: #344116;
-}
-
-"
 
 ; typename WFS pour les imports
 znieff1_terre=reu_znieff1
@@ -80,10 +45,7 @@ strokeColor=#FFFFFF80
 ; configuration des classes de légende pour les mailles
 ; on doit mettre, dans l'ordre et séparé par point-virgule:
 ; intitulé de la classe; borne inférieure; borne supérieure; couleur
-legend_class[]="De 1 à 10 observations; 1; 10; #FFFBC3"
-legend_class[]="De 11 à 100 observations; 11; 100; #FFFF00"
-legend_class[]="De 101 à 500 observations; 101; 500; #FFAD00"
-legend_class[]="Supérieur à 500 observations; 501; 1000000; #FF5500"
+legend_class[]="De 1 à 10 observations; 1; 10; #FFFBC3|De 11 à 100 observations; 11; 100; #FFFF00|De 101 à 500 observations; 101; 500; #FFAD00|Supérieur à 500 observations; 501; 1000000; #FF5500"
 
 ; rayon min et max pour les ronds représentant les mailles
 ; ( pour tenir dans un carré de 1000 m)

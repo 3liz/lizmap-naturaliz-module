@@ -114,10 +114,10 @@ class lizmapServiceCtrl extends serviceCtrl {
 
     $url = $this->services->wmsServerURL.'?';
 
-    $localConfig = jApp::configPath('localconfig.ini.php');
+    $localConfig = jApp::configPath('naturaliz.ini.php');
     $ini = new jIniFileModifier($localConfig);
 
-    $mailles_a_utiliser = $ini->getValue('mailles_a_utiliser', 'occtax');
+    $mailles_a_utiliser = $ini->getValue('mailles_a_utiliser', 'naturaliz');
     if( !$mailles_a_utiliser or empty(trim($mailles_a_utiliser)) ){
         $mailles_a_utiliser = 'maille_02,maille_10';
     }
@@ -393,7 +393,7 @@ class lizmapServiceCtrl extends serviceCtrl {
     $rep->content = $data;
     $rep->doDownload  =  false;
 
-    $appName = $ini->getValue('projectName', 'occtax');
+    $appName = $ini->getValue('projectName', 'naturaliz');
     $rep->outputFileName  =  $appName . ' - impression des résultats' . '.' . $this->params['format'];
 
     // Log

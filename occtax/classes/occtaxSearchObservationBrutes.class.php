@@ -615,19 +615,19 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
     ){
 
         // Get configuration from ini file
-        $localConfig = jApp::configPath('localconfig.ini.php');
+        $localConfig = jApp::configPath('naturaliz.ini.php');
         $ini = new jIniFileModifier($localConfig);
 
         // Get values
-        if($limited_fields = $ini->getValue($variable, 'occtax')){
+        if($limited_fields = $ini->getValue($variable, 'naturaliz')){
             $this->$variable = array_map('trim', explode(',', $limited_fields));
         }
         // Get unsensitive
-        if($limited_fields_unsensitive = $ini->getValue($variable_unsensitive, 'occtax')){
+        if($limited_fields_unsensitive = $ini->getValue($variable_unsensitive, 'naturaliz')){
             $this->$variable_unsensitive = array_map('trim', explode(',', $limited_fields_unsensitive));
         }
         // Get children
-        if($limited_children = $ini->getValue($children_variable, 'occtax')){
+        if($limited_children = $ini->getValue($children_variable, 'naturaliz')){
             $this->$children_variable = array_map('trim', explode(',', $limited_children));
         }
 

@@ -78,7 +78,7 @@ class occtaxSearch {
         $this->demande = $demande;
 
         // Get SRID
-        $localConfig = jApp::configPath('localconfig.ini.php');
+        $localConfig = jApp::configPath('naturaliz.ini.php');
         $ini = new jIniFileModifier($localConfig);
         $srid = $ini->getValue('srid', 'naturaliz');
         if( $srid )
@@ -128,7 +128,7 @@ class occtaxSearch {
         }
 
         // Niveaux de validité des observations accessibles au grand public
-        $vniv = $ini->getValue('validite_niveaux_grand_public', 'occtax');
+        $vniv = $ini->getValue('validite_niveaux_grand_public', 'naturaliz');
         if( !$vniv )
             $vniv = '1';
         $vniv = implode( ', ', array_map(function($item){return $this->myquote($item);}, explode(',', $vniv)));
@@ -167,9 +167,9 @@ class occtaxSearch {
     */
     protected function setLegendClasses(){
         // Get min, max, and colors for classes
-        $localConfig = jApp::configPath('localconfig.ini.php');
+        $localConfig = jApp::configPath('naturaliz.ini.php');
         $ini = new jIniFileModifier($localConfig);
-        $legend_classes = $ini->getValue('legend_class', 'occtax');
+        $legend_classes = $ini->getValue('legend_class', 'naturaliz');
         if( !$legend_classes or empty($legend_classes) ){
             $legend_classes = array();
             $legend_classes[] = "De 1 à 10 observations; 1; 10; #FFFBC3";
@@ -177,9 +177,9 @@ class occtaxSearch {
             $legend_classes[] = "De 101 à 500 observations; 101; 500; #FFAD00";
             $legend_classes[] = "Supérieur à 500 observations; 501; 1000000; #FF5500";
         }
-        $this->legend_classes = $legend_classes;
-        $legend_min_radius = $ini->getValue('legend_min_radius', 'occtax');
-        $legend_max_radius = $ini->getValue('legend_max_radius', 'occtax');
+        $this->legend_classes = explode('|', $legend_classes);
+        $legend_min_radius = $ini->getValue('legend_min_radius', 'naturaliz');
+        $legend_max_radius = $ini->getValue('legend_max_radius', 'naturaliz');
         if($legend_min_radius)
             $this->legend_min_radius = $legend_min_radius;
         if($legend_max_radius)
@@ -394,7 +394,8 @@ class occtaxSearch {
 
             // Check if "group by" needed and add fields to groupByFields
             $multi = array_key_exists( 'multi', $tdata );
-
+jLog::log($table);
+jLog::log(json_encode($tdata));
             // Get table alias
             $alias = $tdata['alias'];
             // Add fields to select and optionnally groupByFields

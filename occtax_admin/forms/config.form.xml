@@ -1,29 +1,137 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form xmlns="http://jelix.org/ns/forms/1.1">
 
-<menulist ref="defaultRepository" required="true">
-  <label locale="admin~admin.form.admin_services.defaultRepository.label"/>
-  <emptyitem>Sélectionner un répertoire</emptyitem>
-  <datasource class="admin~listRepositoryDatasource" />
-</menulist>
+<group ref="lizmap">
+  <label>LIZMAP</label>
 
-<menulist ref="defaultProject" required="true">
-  <label locale="admin~admin.form.admin_services.defaultProject.label"/>
-  <datasource class="occtax_admin~listOcctaxProjectDatasource" criteriafrom="defaultRepository"/>
-</menulist>
+  <menulist ref="defaultRepository" required="true">
+    <label locale="admin~admin.form.admin_services.defaultRepository.label"/>
+    <emptyitem>Sélectionner un répertoire</emptyitem>
+    <datasource class="admin~listRepositoryDatasource" />
+  </menulist>
 
-<input ref="projectName" type="string">
- <label locale="occtax_admin~admin.form.projectName.label" />
-</input>
+  <input ref="defaultProject" type="string" required="true">
+   <label locale="admin~admin.form.admin_services.defaultProject.label" />
+  </input>
 
-<textarea ref="projectDescription">
- <label locale="occtax_admin~admin.form.projectDescription.label" />
-</textarea>
+  <input ref="projectName" type="string">
+   <label locale="occtax_admin~admin.form.projectName.label" />
+  </input>
 
-<textarea ref="projectCss">
- <label locale="occtax_admin~admin.form.projectCss.label" />
-</textarea>
+  <input ref="appName" type="string">
+   <label locale="occtax_admin~admin.form.appName.label" />
+  </input>
 
+  <input type="integer" ref="srid">
+   <label locale="occtax_admin~admin.form.srid.label" />
+  </input>
+
+  <textarea ref="projectDescription">
+   <label locale="occtax_admin~admin.form.projectDescription.label" />
+  </textarea>
+
+</group>
+
+<group ref="taxon">
+  <label>TAXON</label>
+
+  <input ref="colonne_locale" type="string">
+   <label locale="occtax_admin~admin.form.colonne_locale.label" />
+  </input>
+
+  <input ref="endemicite_description_endemique" type="string">
+   <label locale="occtax_admin~admin.form.endemicite_description_endemique.label" />
+  </input>
+
+  <input ref="endemicite_description_subendemique" type="string">
+   <label locale="occtax_admin~admin.form.endemicite_description_subendemique.label" />
+  </input>
+
+  <textarea ref="code_arrete_protection_simple">
+   <label locale="occtax_admin~admin.form.code_arrete_protection_simple.label" />
+  </textarea>
+
+  <textarea ref="code_arrete_protection_internationale">
+   <label locale="occtax_admin~admin.form.code_arrete_protection_internationale.label" />
+  </textarea>
+
+  <textarea ref="code_arrete_protection_communautaire">
+   <label locale="occtax_admin~admin.form.code_arrete_protection_communautaire.label" />
+  </textarea>
+
+  <textarea ref="code_arrete_protection_nationale">
+   <label locale="occtax_admin~admin.form.code_arrete_protection_nationale.label" />
+  </textarea>
+
+
+</group>
+
+<group ref="occtax">
+  <label>OCCTAX</label>
+
+  <input ref="mailles_a_utiliser" type="string" defaultvalue="maille_02,maille_10">
+   <label locale="occtax_admin~admin.form.mailles_a_utiliser.label" />
+  </input>
+
+  <input ref="znieff1_terre" type="string" defaultvalue="reu_znieff1">
+   <label locale="occtax_admin~admin.form.znieff1_terre.label" />
+  </input>
+  <input ref="znieff1_mer" type="string" defaultvalue="reu_znieff1_mer">
+   <label locale="occtax_admin~admin.form.znieff1_mer.label" />
+  </input>
+  <input ref="znieff2_terre" type="string" defaultvalue="reu_znieff2">
+   <label locale="occtax_admin~admin.form.znieff2_terre.label" />
+  </input>
+  <input ref="znieff2_mer" type="string" defaultvalue="reu_znieff2_mer">
+   <label locale="occtax_admin~admin.form.znieff2_mer.label" />
+  </input>
+
+  <input ref="validite_niveaux_grand_public" type="string" defaultvalue="1,2,6">
+   <label locale="occtax_admin~admin.form.validite_niveaux_grand_public.label" />
+  </input>
+
+  <input ref="maxAreaQuery" type="integer" defaultvalue="-1">
+   <label locale="occtax_admin~admin.form.maxAreaQuery.label" />
+  </input>
+
+  <input ref="strokeColor" type="string" defaultvalue="#FFFFFF80">
+   <label locale="occtax_admin~admin.form.strokeColor.label" />
+  </input>
+  <textarea ref="legend_class" defaultvalue="De 1 à 10 observations; 1; 10; #FFFBC3|De 11 à 100 observations; 11; 100; #FFFF00|De 101 à 500 observations; 101; 500; #FFAD00|Supérieur à 500 observations; 501; 1000000; #FF5500">
+   <label locale="occtax_admin~admin.form.legend_class.label" />
+  </textarea>
+  <input ref="legend_min_radius" type="integer" defaultvalue="100">
+   <label locale="occtax_admin~admin.form.legend_min_radius.label" />
+  </input>
+  <input ref="legend_max_radius" type="integer" defaultvalue="410">
+   <label locale="occtax_admin~admin.form.legend_max_radius.label" />
+  </input>
+
+  <textarea ref="observation_card_fields" defaultvalue="cle_obs, identifiant_permanent, statut_observation, nom_cite, denombrement_min, denombrement_max, objet_denombrement, commentaire, date_debut, date_fin, date_determination, ds_publique, jdd_metadonnee_dee_id, organisme_gestionnaire_donnees, statut_source, sensi_niveau, observateur, determinateur, validateur, descriptif_sujet, obs_methode, occ_etat_biologique, occ_naturalite, occ_sexe, occ_stade_de_vie, occ_statut_biologique, obs_contexte, obs_description, occ_methode_determination, validite_niveau, validite_date_validation, precision_geometrie">
+   <label locale="occtax_admin~admin.form.observation_card_fields.label" />
+  </textarea>
+  <textarea ref="observation_card_fields_unsensitive" defaultvalue="cle_obs, identifiant_permanent, statut_source, nom_cite, date_debut, date_fin, organisme_gestionnaire_donnees, source_objet, code_commune, code_departement, code_maille_10">
+   <label locale="occtax_admin~admin.form.observation_card_fields_unsensitive.label" />
+  </textarea>
+  <textarea ref="observation_card_children" defaultvalue="commune, maille_01, maille_02, maille_10, espace_naturel, masse_eau, habitat, departement">
+   <label locale="occtax_admin~admin.form.observation_card_children.label" />
+  </textarea>
+  <textarea ref="observation_exported_fields" defaultvalue="cle_obs, identifiant_permanent, identifiant_origine, statut_observation, cd_nom, cd_ref, version_taxref, nom_cite, nom_valide, nom_vern, group1_inpn, group2_inpn, denombrement_min, denombrement_max, type_denombrement, objet_denombrement, commentaire, date_debut, heure_debut, date_fin, heure_fin, altitude_moy, profondeur_moy, date_determination, ds_publique, jdd_metadonnee_dee_id, dee_date_derniere_modification, jdd_code, reference_biblio, organisme_gestionnaire_donnees, statut_source, sensi_niveau, observateur, determinateur, validateur, descriptif_sujet, validite_niveau, validite_date_validation, precision_geometrie, nature_objet_geo, wkt">
+   <label locale="occtax_admin~admin.form.observation_exported_fields.label" />
+  </textarea>
+
+  <textarea ref="observation_exported_fields_unsensitive" defaultvalue="cle_obs, identifiant_permanent, statut_source, nom_cite, date_debut, date_fin, organisme_gestionnaire_donnees, source_objet, code_commune, code_departement, code_maille_10, wkt">
+   <label locale="occtax_admin~admin.form.observation_exported_fields_unsensitive.label" />
+  </textarea>
+  <textarea ref="observation_exported_children"  defaultvalue="commune, departement, maille_01, maille_02, maille_10, espace_naturel, masse_eau, habitat">
+   <label locale="occtax_admin~admin.form.observation_exported_children.label" />
+  </textarea>
+
+  <textarea ref="menuOrder" defaultvalue="home, occtax-presentation, switcher, occtax, dataviz, print, measure, permaLink, occtax-legal, taxon, metadata">
+   <label locale="occtax_admin~admin.form.menuOrder.label" />
+  </textarea>
+
+</group>
 
 <submit ref="_submit">
     <label locale="admin~admin.form.admin_services.submit.label"/>

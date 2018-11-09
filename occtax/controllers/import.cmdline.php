@@ -171,7 +171,7 @@ class importCtrl extends jControllerCmdLine {
 
         $rep = $this->getResponse(); // cmdline response by default
 
-        $localConfig = jApp::configPath('localconfig.ini.php');
+        $localConfig = jApp::configPath('naturaliz.ini.php');
         $ini = new jIniFileModifier($localConfig);
 
         $assign = array();
@@ -191,9 +191,8 @@ class importCtrl extends jControllerCmdLine {
             throw new jException('occtax~script.import.script.not.found');
 
         // Get default profile
-        //$profileConfig = jApp::configPath('profiles.ini.php');
-        //$pini = new jIniFileModifier( $profileConfig );
-        //$profile = $pini->getValue( 'default', 'jdb' );
+        $profileConfig = jApp::configPath('profiles.ini.php');
+        $pini = new jIniFileModifier( $profileConfig );
         $profile = 'jauth_super';
 
         // Get content of SQL template script
@@ -215,22 +214,22 @@ class importCtrl extends jControllerCmdLine {
         $assign['srid'] = $srid;
 
         // Some typenames are different for different carmen WFS servers
-        $znieff1_terre = $ini->getValue('znieff1_terre', 'occtax');
+        $znieff1_terre = $ini->getValue('znieff1_terre', 'naturaliz');
         if( !$znieff1_terre )
             $znieff1_terre = 'Znieff1';
         $assign['znieff1_terre'] = $znieff1_terre;
 
-        $znieff1_mer = $ini->getValue('znieff1_mer', 'occtax');
+        $znieff1_mer = $ini->getValue('znieff1_mer', 'naturaliz');
         if( !$znieff1_mer )
             $znieff1_mer = 'Znieff1_mer';
         $assign['znieff1_mer'] = $znieff1_mer;
 
-        $znieff2_terre = $ini->getValue('znieff2_terre', 'occtax');
+        $znieff2_terre = $ini->getValue('znieff2_terre', 'naturaliz');
         if( !$znieff2_terre )
             $znieff2_terre = 'Znieff2';
         $assign['znieff2_terre'] = $znieff2_terre;
 
-        $znieff2_mer = $ini->getValue('znieff2_mer', 'occtax');
+        $znieff2_mer = $ini->getValue('znieff2_mer', 'naturaliz');
         if( !$znieff2_mer )
             $znieff2_mer = 'Znieff2_mer';
         $assign['znieff2_mer'] = $znieff2_mer;
@@ -334,7 +333,7 @@ class importCtrl extends jControllerCmdLine {
         $assign['dbport'] = $ini->getValue( 'port', 'jdb:' . $profile );
         $assign['dbschema'] = 'sig';
 
-        $localConfig = jApp::configPath('localconfig.ini.php');
+        $localConfig = jApp::configPath('naturaliz.ini.php');
         $ini = new jIniFileModifier($localConfig);
         $srid = $ini->getValue('srid', 'naturaliz');
         if( !$srid )

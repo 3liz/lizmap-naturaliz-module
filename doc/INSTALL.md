@@ -42,15 +42,15 @@ L'installateur lit certains fichiers de configuration, que vous devez donc crée
 
 #### Configuration locale
 
-Les modules Naturaliz lisent dans le fichier **lizmap/var/config/localconfig.ini.php** des informations relatives à l'adaptation au contexte local: projection, codes spécifiques, etc. Vous pouvez copier le contenu du fichier **lizmap/lizmap-modules/localconfig.ini.php.dist** et le poser dans le fichier correspondant dans lizmap. Ce fichier doit contenir:
+Les modules Naturaliz lisent dans le fichier **lizmap/var/config/naturaliz.ini.php** des informations relatives à l'adaptation au contexte local: projection, codes spécifiques, etc. Vous pouvez copier le contenu du fichier **lizmap/lizmap-modules/naturaliz.ini.php.dist** et le poser dans le fichier correspondant dans lizmap. Ce fichier doit contenir:
 
 * la **colonne locale des données TAXREF** correspondant au lieu principal de l'installation (par exemple "gua" pour la Guadeloupe) : variable **colonne_locale** de la section [taxon]
 * un **intitulé** pour les zones correspondant à l'endémicité (endémique et subendémique): variables **endemicite_description_endemique** (ex: Réunion) et **endemicite_description_subendemique** (Ex: Mascareignes)
 * la **liste des codes d'arrêtés de protection** pour la zone concernée: variables **code_arrete_protection_simple**, **code_arrete_protection_internationale**, **code_arrete_protection_nationale**, **code_arrete_protection_communautaire** de la section  [taxon]
 * le **code SRID** du système de coordonnées de références des données spatiales du projet : variable **srid** de la section [naturaliz].
 * le **mot de passe de l'utilisateur admin**: variable **adminPassword** de la section [naturaliz].
-* la **liste des types de mailles à utiliser** de la section [occtax]. Par exemple: `mailles_a_utiliser=maille_02,maille_10`
-* la **liste des niveaux de validité**, séparés par virgule, pour filtrer les observations pour le grand public, c'est-à-dire que seules les observations qui ont un niveau de validité correspondant à un des éléments de la liste pourront être visibles pour le grand public. Variable **validite_niveaux_grand_public** de la section [occtax]. Par exemple validite_niveaux_grand_public=1,2
+* la **liste des types de mailles à utiliser** de la section [naturaliz]. Par exemple: `mailles_a_utiliser=maille_02,maille_10`
+* la **liste des niveaux de validité**, séparés par virgule, pour filtrer les observations pour le grand public, c'est-à-dire que seules les observations qui ont un niveau de validité correspondant à un des éléments de la liste pourront être visibles pour le grand public. Variable **validite_niveaux_grand_public** de la section [naturaliz]. Par exemple validite_niveaux_grand_public=1,2
 * la **taille maximale du polygone ou cercle de requête** que l'utilisateur peut dessiner sur la carte: **maxAreaQuery** . On met une valeur en m2, ou -1 pour désactiver le contrôle
 * la **couleur de bordure** des observations affichées (mailles et ronds): **strokeColor** Par défault à "#FFFFFF80". On peut gérer la transparence, par exemple via #fff0 pour une transparence totale
 * la **configuration des classes de légende** pour les affichages par maille: **legend_class**. On peut utiliser autant de legend_class[] que nécessaire, et on doit les écrire avec les informations suivantes séparées par point-virgule: intitulé de la classe; borne inférieure; borne supérieure; couleur. Ex: legend_class[]="De 1 à 10 observations; 1; 10; #FFFBC3"
@@ -63,15 +63,15 @@ Pour le module mascarine:
 
 * le code officiel (cf standard "Occurence de taxon", champ ) des habitats de la zone d'étude (par exemple GUAEAR )
 
-Voir l'exemple localconfig.ini.php.dist à la racine de ce dépôt.
+Voir l'exemple naturaliz.ini.php.dist à la racine de ce dépôt.
 
 ```bash
 cd /srv/lizmap_web_client/
-cp lizmap/lizmap-modules/localconfig.ini.php.dist lizmap/var/config/localconfig.ini.php
-nano lizmap/var/config/localconfig.ini.php # Faire les modifications nécessaires
+cp lizmap/lizmap-modules/naturaliz.ini.php.dist lizmap/var/config/naturaliz.ini.php
+nano lizmap/var/config/naturaliz.ini.php # Faire les modifications nécessaires
 ```
 
-Exemple de contenu:
+Exemple de contenu
 
 ```ini
 ;<?php die(''); ?>
@@ -79,17 +79,19 @@ Exemple de contenu:
 
 ; put here configuration variables that are specific to this installation
 
+[naturaliz]
 
-[modules]
-lizmap.installparam=demo
+; projection de reference
+srid=2975
+appName=Naturaliz
 
-taxon.access=2
-occtax.access=2
-occtax_admin.access=2
-;mascarine.access=0
-;mascarine_admin.access=0
+defaultRepository=
+defaultProject=
+projectName=Occurences de Taxon
+projectDescription=Cette application permet de consulter les observations faunistiques et floristiques.
+projectCss=""
 
-[taxon]
+
 ; champ determinant le statut local : valeures possibles fr, gf, mar, gua, sm, sb, spm, may, epa, reu, sa, ta, taff, pf, nc, wf, cli
 colonne_locale=reu
 endemicite_description_endemique=Réunion
@@ -101,21 +103,11 @@ code_arrete_protection_internationale="AIBA2,AIBA3,CCA,CCB,CCC,CCD,IAAP,IAO2,IAO
 code_arrete_protection_communautaire="CDH2,CDH4,CDH5,CDO1,CDO21,CDO22,CDO31,CDO32"
 code_arrete_protection_nationale="VP974,NM,NMAMmar2,NM2,NO3,NO4,NO6,NTAA1,NTM1,NTM8,OC3,REUEA2,REUEA3,REUEA4,REUI2"
 
-[naturaliz]
-; projection de reference
-srid=2975
-appName=Naturaliz
 
-[occtax]
+
 
 ; liste séparée par virgule de mailles à utiliser. Par ex: maille_01,maille_10
 mailles_a_utiliser=maille_02,maille_10
-
-defaultRepository=
-defaultProject=
-projectName=Occurences de Taxon
-projectDescription=Cette application permet de consulter les observations faunistiques et floristiques.
-projectCss=""
 
 ; typename WFS pour les imports
 znieff1_terre=Znieff1
@@ -136,10 +128,7 @@ strokeColor=#FFFFFF80
 ; configuration des classes de légende pour les mailles
 ; on doit mettre, dans l'ordre et séparé par point-virgule:
 ; intitulé de la classe; borne inférieure; borne supérieure; couleur
-legend_class[]="De 1 à 10 observations; 1; 10; #FFFBC3"
-legend_class[]="De 11 à 100 observations; 11; 100; #FFFF00"
-legend_class[]="De 101 à 500 observations; 101; 500; #FFAD00"
-legend_class[]="Supérieur à 500 observations; 501; 1000000; #FF5500"
+legend_class="De 1 à 10 observations; 1; 10; #FFFBC3|De 11 à 100 observations; 11; 100; #FFFF00|De 101 à 500 observations; 101; 500; #FFAD00|Supérieur à 500 observations; 501; 1000000; #FF5500"
 
 ; rayon min et max pour les ronds représentant les mailles
 ; ( pour tenir dans un carré de 1000 m)
@@ -197,6 +186,27 @@ user=postgres
 password="********"
 persistent=off
 search_path=""
+```
+
+Vous devez aussi déclarer dans le fichier `localconfig.ini.php` quels modules vous souhaitez installer:
+
+```bash
+cd /srv/lizmap_web_client/
+nano lizmap/var/config/localconfig.ini.php
+```
+
+Exemple de contenu à ajouter dans la section [modules]
+
+```ini
+[modules]
+lizmap.installparam=demo
+
+taxon.access=2
+occtax.access=2
+occtax_admin.access=2
+;mascarine.access=0
+;mascarine_admin.access=0
+
 ```
 
 ### Lancer l'installation des modules Naturaliz
@@ -449,7 +459,7 @@ categorie_lr_monde text
 
 #### Protections
 
-On doit spécifier dans le fichier lizmap/var/config/localconfig.ini.php la liste des codes des arrêtés sur les protections des espèces, par exemple:
+On doit spécifier dans le fichier `lizmap/var/config/naturaliz.ini.php` la liste des codes des arrêtés sur les protections des espèces, par exemple:
 * Guadeloupe
 
 ```ini
@@ -505,7 +515,7 @@ Une fois les données récupérées, vous pouvez l'import de données via la com
 
 ```bash
 # Vérifier les codes d'arrêtés de protection dans la configuration locale
-nano lizmap/var/config/localconfig.ini.php
+nano lizmap/var/config/naturaliz.ini.php
 
 # Copier les fichiers dans le répertoire /tmp/ du serveur (par exemple : changer les chemins)
 cp -R /votre/repertoire/vers/referentiels /tmp/referentiels
@@ -567,7 +577,7 @@ Deux scripts permettent d'importer ces données dans la base, un pour les donné
 * Shapefile : les communes, les mailles 1 et 2, les réserves naturelles nationales, et les habitats
 * WFS : les différents espaces naturels disponibles via le serveur, les mailles 10, les masses d'eau
 
-Pour que l'import des données via les serveurs WFS fonctionne, il faut absolument préciser dans le fichier **lizmap/var/config/localconfig.ini.php** les paramètres suivants dans la partie **[occtax]**
+Pour que l'import des données via les serveurs WFS fonctionne, il faut absolument préciser dans le fichier **lizmap/var/config/naturaliz.ini.php** les paramètres suivants dans la partie **[naturaliz]**
 
 ```ini
 ; typename WFS pour les imports
@@ -717,7 +727,7 @@ et dans lizmap/var/config/index/config.ini.php
 auth="index/authldap.coord.ini.php"
 ```
 
-Il faut aussi installer le certificat racine SSL du serveur ldap, sur le serveur
+Il faut parfois aussi installer le certificat racine SSL du serveur ldap, sur le serveur
 apache/php, sinon la connexion au ldap ne pourra se faire. En tant que root:
 
 ```bash

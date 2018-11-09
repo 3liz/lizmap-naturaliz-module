@@ -28,8 +28,7 @@
                 "taxon/",
                 "occtax/",
                 "occtax_admin/",
-                "mascarine/",
-                "mascarine_admin/"
+                "gestion/"
             ]
         }
     }

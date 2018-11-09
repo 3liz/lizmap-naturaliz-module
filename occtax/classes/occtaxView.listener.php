@@ -3,18 +3,18 @@ class occtaxViewListener extends jEventListener{
 
     function onmainviewGetMaps ($event) {
         // Get local configuration (application name, projects name, etc.)
-        $localConfig = jApp::configPath('localconfig.ini.php');
+        $localConfig = jApp::configPath('naturaliz.ini.php');
         $ini = new jIniFileModifier($localConfig);
 
-        $defaultRep = $ini->getValue('defaultRepository', 'occtax');
-        $defaultProject = $ini->getValue('defaultProject', 'occtax');
+        $defaultRep = $ini->getValue('defaultRepository', 'naturaliz');
+        $defaultProject = $ini->getValue('defaultProject', 'naturaliz');
 
         $request->params['repository'] = $defaultRep;
         $request->params['project'] = $defaultProject;
 
         $applicationName = $ini->getValue('appName', 'naturaliz');
-        $projectName = $ini->getValue('projectName', 'occtax');
-        $projectDescription = html_entity_decode($ini->getValue('projectDescription', 'occtax') );
+        $projectName = $ini->getValue('projectName', 'naturaliz');
+        $projectDescription = html_entity_decode($ini->getValue('projectDescription', 'naturaliz') );
 
         if ( $defaultRep && $defaultProject ) {
             $lrep = lizmap::getRepository( $defaultRep );

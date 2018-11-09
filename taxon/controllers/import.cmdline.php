@@ -152,20 +152,20 @@ class importCtrl extends jControllerCmdLine {
         $assign['protection'] = $protectionSourcePath;
 
         // Get the field corresponding to local for TAXREF among fr, gf, mar, gua, sm, sb, spm, may, epa, reu, taff, pf, nc, wf, cli
-        $localConfig = jApp::configPath('localconfig.ini.php');
+        $localConfig = jApp::configPath('naturaliz.ini.php');
         $ini = new jIniFileModifier($localConfig);
-        $colonne_locale = $ini->getValue('colonne_locale', 'taxon');
+        $colonne_locale = $ini->getValue('colonne_locale', 'naturaliz');
         if( !$colonne_locale )
             $colonne_locale = 'fr';
         $assign['colonne_locale'] = $colonne_locale;
 
         // Get endemicite description
-        $endemicite_description_endemique = $ini->getValue('endemicite_description_endemique', 'taxon');
+        $endemicite_description_endemique = $ini->getValue('endemicite_description_endemique', 'naturaliz');
         if( !$endemicite_description_endemique )
             $endemicite_description_endemique = '';
         $assign['endemicite_description_endemique'] = $endemicite_description_endemique;
 
-        $endemicite_description_subendemique = $ini->getValue('endemicite_description_subendemique', 'taxon');
+        $endemicite_description_subendemique = $ini->getValue('endemicite_description_subendemique', 'naturaliz');
         if( !$endemicite_description_subendemique )
             $endemicite_description_subendemique = '';
         $assign['endemicite_description_subendemique'] = $endemicite_description_subendemique;
@@ -178,7 +178,7 @@ class importCtrl extends jControllerCmdLine {
                 'code_arrete_protection_communautaire'
         );
         foreach($liste_codes as $code ){
-                $cd = $ini->getValue($code, 'taxon');
+                $cd = $ini->getValue($code, 'naturaliz');
                 if( !$cd )
                     $cd = '';
                 $code_arrete_protection = array_map( 'trim', explode(',', $cd ) );

@@ -25,7 +25,7 @@ class configCtrl extends jController {
 
     function __construct( $request ) {
         parent::__construct( $request );
-        $monfichier = jApp::configPath('localconfig.ini.php');
+        $monfichier = jApp::configPath('naturaliz.ini.php');
         $this->ini = new jIniFileModifier ($monfichier);
     }
 
@@ -43,7 +43,7 @@ class configCtrl extends jController {
         // Set form data values
         foreach ( $form->getControls() as $ctrl ) {
             if ( $ctrl->type != 'submit' ){
-                $val = $this->ini->getValue( $ctrl->ref, 'occtax' );
+                $val = $this->ini->getValue( $ctrl->ref, 'naturaliz' );
                 if( $ctrl->ref == 'projectDescription' or $ctrl->ref == 'projectCss' )
                     $val =  html_entity_decode( $val );
                 $form->setData( $ctrl->ref, $val );
@@ -72,7 +72,7 @@ class configCtrl extends jController {
         // Set form data values
         foreach ( $form->getControls() as $ctrl ) {
             if ( $ctrl->type != 'submit' ){
-                $val = $this->ini->getValue( $ctrl->ref, 'occtax' );
+                $val = $this->ini->getValue( $ctrl->ref, 'naturaliz' );
                 if( $ctrl->ref == 'projectDescription' or $ctrl->ref == 'projectCss' )
                     $val =  html_entity_decode( $val );
                 $form->setData( $ctrl->ref, $val );
@@ -153,7 +153,7 @@ class configCtrl extends jController {
             $val = $form->getData( $ctrl->ref );
             if( $ctrl->ref == 'projectDescription' or $ctrl->ref == 'projectCss' )
                 $val = htmlentities( $val );
-            $this->ini->setValue( $ctrl->ref, $val, 'occtax' );
+            $this->ini->setValue( $ctrl->ref, $val, 'naturaliz' );
         }
     }
     $this->ini->save();

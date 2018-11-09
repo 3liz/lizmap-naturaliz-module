@@ -10,10 +10,10 @@ N'importe quel projet QGIS peut être utilisé pour support de la carte de l'app
 
 Une fois ce projet configuré et publié, vous pouvez configurer via l'interface d'administration de Lizmap, dans le menu Occtax, le répertoire et le projet utilisé pour l'application.
 
-Vous pouvez aussi modifier directement ce paramètre dans le fichier `lizmap/var/config/localconfig.ini.php` de l'application, dans la section occtax. Il faut utiliser les codes du répertoire Lizmap et du projet.
+Vous pouvez aussi modifier directement ce paramètre dans le fichier `lizmap/var/config/naturaliz.ini.php` de l'application, dans la section occtax. Il faut utiliser les codes du répertoire Lizmap et du projet.
 
 ```
-[occtax]
+[naturaliz]
 defaultRepository=
 defaultProject=
 ```

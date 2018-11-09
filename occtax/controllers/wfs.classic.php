@@ -18,7 +18,7 @@ class wfsCtrl extends jController {
     function __construct( $request ){
 
         // Get SRID
-        $localConfig = jApp::configPath('localconfig.ini.php');
+        $localConfig = jApp::configPath('naturaliz.ini.php');
         $ini = new jIniFileModifier($localConfig);
         $srid = $ini->getValue('srid', 'naturaliz');
         $this->srid = $srid;

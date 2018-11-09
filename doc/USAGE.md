@@ -49,7 +49,9 @@ Voir [un exemple d'ajout de critères et de calcul de sensibilité automatique](
 
 ### Gestion de la validité des données
 
-Validite niveau et date -> expliquer grand public limité via localconfig et loggués limités via demande
+Le grand public (personnes non connectées à l'application) ne doivent pas pouvoir visualiser certaines observations. Pour cela, il existe la variable de configuration `validite_niveaux_grand_public` modifiable depuis l'interface d'administration, menu Occtax.
+
+Par défaut, les personnes non connectées ne peuvent visualiser que les données dont le niveau de validation est 1 ou 2
 
 * Voir un exemple d'ajout de critères et de calcul de validation automatique:
 
@@ -238,7 +240,7 @@ todo : ajouter comment fonctionne la table demande, en précisant notamment qu'o
 
 #### Depuis l'application
 
-L'application permet d'exporter les données résultats d'une requête sous plusieurs formats. La liste des champs exportés est définie dans le fichier de configuration local de l'application `lizmap/var/config/localconfig.ini.php`, dans les variables suivantes :
+L'application permet d'exporter les données résultats d'une requête sous plusieurs formats. La liste des champs exportés est définie dans le fichier de configuration local de l'application `lizmap/var/config/naturaliz.ini.php`, dans les variables suivantes :
 
 ```
 ; liste blanche des champs à exporter
@@ -266,7 +268,7 @@ Ce fichier est ensuite complété par l'application avec:
 
 ### Fiche de détail d'une observation
 
-L'application permet d'afficher pour chaque observation une fiche. Les champs contenus dans cette fiche, ainsi que les données rattachées, sont définis dans le fichier de configuration local de l'application `lizmap/var/config/localconfig.ini.php`, dans les variables suivantes :
+L'application permet d'afficher pour chaque observation une fiche. Les champs contenus dans cette fiche, ainsi que les données rattachées, sont définis dans le fichier de configuration local de l'application `lizmap/var/config/naturaliz.ini.php`, dans les variables suivantes :
 
 ```
 ; liste blanche des champs à afficher dans la fiche d'observation

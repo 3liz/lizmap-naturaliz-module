@@ -48,7 +48,7 @@ class gestionFilterListener extends jEventListener{
             // Add geometry filter if set
             if($demande->geom){
                 // Get SRID
-                $localConfig = jApp::configPath('localconfig.ini.php');
+                $localConfig = jApp::configPath('naturaliz.ini.php');
                 $ini = new jIniFileModifier($localConfig);
                 $srid = $ini->getValue('srid', 'naturaliz');
                 if( !$srid )

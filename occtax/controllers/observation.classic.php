@@ -79,12 +79,12 @@ class observationCtrl extends jController {
         }
 
         // Read local config
-        $localConfig = jApp::configPath('localconfig.ini.php');
+        $localConfig = jApp::configPath('naturaliz.ini.php');
         $ini = new jIniFileModifier($localConfig);
 
         // Children to display
         $observation_card_children = array();
-        if($observation_card_children = $ini->getValue('observation_card_children', 'occtax')){
+        if($observation_card_children = $ini->getValue('observation_card_children', 'naturaliz')){
             $observation_card_children = array_map('trim', explode(',', $observation_card_children));
         }else{
             $observation_card_children = array(
@@ -125,17 +125,15 @@ class observationCtrl extends jController {
 
         // Fields to display ( here again, to manage json properties for descriptfi_sujet )
         $observation_card_fields = array();
-        if($observation_card_fields = $ini->getValue('observation_card_fields', 'occtax')){
+        if($observation_card_fields = $ini->getValue('observation_card_fields', 'naturaliz')){
             $observation_card_fields = array_map('trim', explode(',', $observation_card_fields));
         }
 
         // Nomenclature
         $dao = jDao::get('nomenclature');
         $find = $dao->findAll();
-jLog::log(json_encode($find));
         $nomenclature = array();
         foreach($find as $nom){
-
             $nomenclature[$nom->champ . '|' . $nom->code] = $nom->valeur;
         }
         $tpl->assign('observation_card_fields', $observation_card_fields);
