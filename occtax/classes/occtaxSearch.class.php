@@ -394,8 +394,7 @@ class occtaxSearch {
 
             // Check if "group by" needed and add fields to groupByFields
             $multi = array_key_exists( 'multi', $tdata );
-jLog::log($table);
-jLog::log(json_encode($tdata));
+
             // Get table alias
             $alias = $tdata['alias'];
             // Add fields to select and optionnally groupByFields
@@ -490,7 +489,6 @@ jLog::log(json_encode($tdata));
 
         if( $this->params ){
             foreach( $this->params as $k=>$v ){
-                jLog::log("$k = $v");
                 if( array_key_exists( $k, $this->queryFilters ) and array_key_exists( 'table', $this->queryFilters[$k] ) and $v ){
                     $q = $this->queryFilters[$k];
                     // IF filter by uploaded geojson
@@ -549,7 +547,6 @@ jLog::log(json_encode($tdata));
 
 
     protected function setOrderClause( $order ){
-
         $orderClause = '';
         if( !$order or empty( $order ) )
             return $orderClause;
@@ -562,6 +559,9 @@ jLog::log(json_encode($tdata));
             && in_array( strtoupper( $orderExp[1] ), array( 'ASC', 'DESC' )   )
         ){
             $orderCol = $orderExp[0];
+            if( array_key_exists($orderCol, $this->displayFields) && array_key_exists('sorting_field', $this->displayFields[$orderCol]) ){
+                $orderCol = $this->displayFields[$orderCol]['sorting_field'];
+            }
             $orderDir = strtoupper( $orderExp[1] );
             $orderClause = " ORDER BY " . $orderCol . " " . $orderDir;
         }
