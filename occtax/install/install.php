@@ -23,46 +23,61 @@ class occtaxModuleInstaller extends jInstallerModule {
             $this->copyFile('config/LISEZ-MOI.geojson.md', $readmeDestinationPath);
         }
 
+        // Copy naturaliz configuration file
+        $naturalizConfigPath = jApp::configPath('naturaliz.ini.php');
+        if (!file_exists($naturalizConfigPath)) {
+            $this->copyFile('config/naturaliz.ini.php.dist', $naturalizConfigPath);
+        }
+
         // Install occtax schema into database if needed
         if ($this->firstDbExec()) {
 
-            // Add occtax schema and tables
-            $sqlPath = $this->path . 'install/sql/install.pgsql.sql';
-            $sqlTpl = jFile::read( $sqlPath );
+            try {
+                // Get SRID
+                $srid = $this->getParameter('srid');
+                if(empty($srid)){
+                    $localConfig = jApp::configPath('naturaliz.ini.php');
+                    $ini = new jIniFileModifier($localConfig);
+                    $srid = $ini->getValue('srid', 'naturaliz');
+                }
 
-            // Add extension validation
-            $sqlPath = $this->path . 'install/sql/extension_validation.pgsql.sql';
-            $sqlTpl.= jFile::read( $sqlPath );
-            $tpl = new jTpl();
+                // Add occtax schema and tables
+                $sqlPath = $this->path . 'install/sql/install.pgsql.sql';
+                $sqlTpl = jFile::read( $sqlPath );
+                $tpl = new jTpl();
+                $tpl->assign('SRID', $srid);
+                $sql = $tpl->fetchFromString($sqlTpl, 'text');
 
-            // Get SRID
-            $localConfig = jApp::configPath('localconfig.ini.php');
-            $ini = new jIniFileModifier($localConfig);
-            $srid = $ini->getValue('srid', 'naturaliz');
-            $tpl->assign('SRID', $srid);
-            $sql = $tpl->fetchFromString($sqlTpl, 'text');
-            $db = $this->dbConnection();
-            $db->exec($sql);
+                // Add extension validation
+                // DO NOT USE TEMPLATE : no need (no srid) AND bug with some PostgreSQL regexp inside
+                $sqlPath = $this->path . 'install/sql/extension_validation.pgsql.sql';
+                $sql.= jFile::read( $sqlPath );
+                $db = $this->dbConnection();
+                $db->exec($sql);
 
-            // Add data for lists
-            $this->execSQLScript('sql/data');
+                // Add data for lists
+                $this->execSQLScript('sql/data');
 
-            // Add occtax to search_path
-            $profileConfig = jApp::configPath('profiles.ini.php');
-            $ini = new jIniFileModifier($profileConfig);
-            $defaultProfile = $ini->getValue('default', 'jdb');
-            $search_path = $ini->getValue('search_path', 'jdb:' . $defaultProfile);
-            if( empty( $search_path ) )
-                $search_path = 'public';
-            if( !preg_match( '#sig#', $search_path ) ){
-                $search_path = $search_path . ',sig';
-                $ini->setValue('search_path', $search_path, 'jdb:' . $defaultProfile);
+                // Add occtax to search_path
+                $profileConfig = jApp::configPath('profiles.ini.php');
+                $ini = new jIniFileModifier($profileConfig);
+                $defaultProfile = $ini->getValue('default', 'jdb');
+                $search_path = $ini->getValue('search_path', 'jdb:' . $defaultProfile);
+                if( empty( $search_path ) )
+                    $search_path = 'public';
+                if( !preg_match( '#sig#', $search_path ) ){
+                    $search_path = $search_path . ',sig';
+                    $ini->setValue('search_path', $search_path, 'jdb:' . $defaultProfile);
+                }
+                if( !preg_match( '#occtax#', $search_path ) ){
+                    $search_path = $search_path . ',occtax';
+                    $ini->setValue('search_path', $search_path, 'jdb:' . $defaultProfile);
+                }
+                $ini->save();
+            } catch (Exception $e){
+                jLog::log("Cannot install PostgreSQL database structure");
+                jLog::log($e->getMessage());
             }
-            if( !preg_match( '#occtax#', $search_path ) ){
-                $search_path = $search_path . ',occtax';
-                $ini->setValue('search_path', $search_path, 'jdb:' . $defaultProfile);
-            }
-            $ini->save();
 
         }
 
@@ -217,13 +232,6 @@ class occtaxModuleInstaller extends jInstallerModule {
                 )
             );
 
-            //Modify admin password
-            $localConfig = jApp::configPath('localconfig.ini.php');
-            $ini = new jIniFileModifier($localConfig);
-            $adminPassword = $ini->getValue('adminPassword', 'naturaliz');
-            if( $adminPassword ){
-                jAuth::changePassword('admin', $adminPassword );
-            }
         }
 
 

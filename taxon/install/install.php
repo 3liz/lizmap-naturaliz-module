@@ -21,22 +21,29 @@ class taxonModuleInstaller extends jInstallerModule {
 
         // Install taxon structure into database if needed
         if ($this->firstDbExec()) {
-            // Add taxon schema and tables
-            $this->execSQLScript('sql/install');
 
-            // Add data for lists
-            $this->execSQLScript('sql/data');
+            try {
+                // Add taxon schema and tables
+                $this->execSQLScript('sql/install');
 
-            // Add taxon to search_path
-            $profileConfig = jApp::configPath('profiles.ini.php');
-            $ini = new jIniFileModifier($profileConfig);
-            $defaultProfile = $ini->getValue('default', 'jdb');
-            $search_path = $ini->getValue('search_path', 'jdb:' . $defaultProfile);
-            if( empty( $search_path ) )
-                $search_path = 'public';
-            if( !preg_match( '#taxon#', $search_path ) )
-                $ini->setValue('search_path', $search_path . ',taxon', 'jdb:' . $defaultProfile);
-            $ini->save();
+                // Add data for lists
+                $this->execSQLScript('sql/data');
+
+                // Add taxon to search_path
+                $profileConfig = jApp::configPath('profiles.ini.php');
+                $ini = new jIniFileModifier($profileConfig);
+                $defaultProfile = $ini->getValue('default', 'jdb');
+                $search_path = $ini->getValue('search_path', 'jdb:' . $defaultProfile);
+                if( empty( $search_path ) )
+                    $search_path = 'public';
+                if( !preg_match( '#taxon#', $search_path ) )
+                    $ini->setValue('search_path', $search_path . ',taxon', 'jdb:' . $defaultProfile);
+                $ini->save();
+
+            } catch (Exception $e){
+                jLog::log("Cannot install PostgreSQL database structure");
+                jLog::log($e->getMessage());
+            }
 
         }
 

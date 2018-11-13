@@ -628,7 +628,21 @@ COMMENT ON COLUMN occtax.organisme.commentaire IS 'Commentaire sur la structure'
 COMMENT ON COLUMN occtax.organisme.date_maj IS 'Date à laquelle l''enregistrement a été modifé pour la dernière fois (rempli automatiquement)' ;
 
 
--- Fonction trigger mettant à jour le champ automatiquement
+-- Fonction trigger mettant à jour un champ date_maj automatiquement
+DROP FUNCTION IF EXISTS occtax.maj_date();
+CREATE OR REPLACE FUNCTION occtax.maj_date()
+RETURNS trigger AS
+$BODY$
+    BEGIN
+        NEW.date_maj=current_TIMESTAMP(0);
+        RETURN NEW ;
+    END;
+$BODY$
+LANGUAGE plpgsql VOLATILE
+COST 100;
+
+
+-- Trigger mettant à jour le champ automatiquement
 CREATE TRIGGER tr_date_maj
   BEFORE UPDATE
   ON occtax.organisme
@@ -1039,20 +1053,6 @@ SELECT 1::integer AS cle_obs, ''::text AS nom_cite, '1'::bigint AS cd_nom, '2015
 DROP VIEW IF EXISTS sig.tpl_observation_brute_centroid;
 CREATE OR REPLACE VIEW sig.tpl_observation_brute_centroid AS
 SELECT 1::integer AS cle_obs, ''::text AS nom_cite, '1'::bigint AS cd_nom, '2015-01-01'::text AS date_debut, ''::text AS identite_observateur, 'GEO'::text AS source_objet, ''::text AS geojson, (SELECT geom FROM occtax.observation LIMIT 1)::geometry(Point, {$SRID}) AS geom;
-
-
--- Fonction trigger mettant à jour un champ date_maj automatiquement
-DROP FUNCTION IF EXISTS occtax.maj_date();
-CREATE OR REPLACE FUNCTION occtax.maj_date()
-RETURNS trigger AS
-$BODY$
-    BEGIN
-        NEW.date_maj=current_TIMESTAMP(0);
-        RETURN NEW ;
-    END;
-$BODY$
-LANGUAGE plpgsql VOLATILE
-COST 100;
 
 
 -- Fonction pour calculer la sensibilité des données
