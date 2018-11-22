@@ -57,7 +57,8 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
                     'id_maille' => 'id_maille', // PKEY added here to improve GroupAggregate performance
                     'code_maille AS mid' => Null, // With id_maille added, no need to group by following cols
                     'nom_maille AS maille' => Null,
-                    'ST_AsGeoJSON( ST_Transform( ST_Centroid(m.geom), 4326 ), 6 ) AS geojson' => Null
+                    'ST_AsGeoJSON( ST_Transform( ST_Centroid(m.geom), 4326 ), 6 ) AS geojson' => Null,
+                    'ST_Centroid(m.geom) AS geom' => Null
                 )
             ),
 
