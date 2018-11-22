@@ -39,9 +39,24 @@ ON CONFLICT DO NOTHING;
 DROP VIEW IF EXISTS occtax.v_observation_validation_acme;
 CREATE VIEW occtax.v_observation_validation_acme AS
 SELECT *
-FROM v_observation_validation o
+FROM occtax.v_observation_validation o
 WHERE TRUE
 AND group2_inpn = 'Oiseaux';
+
+-- On crée une vue pour mettre à plat descriptif sujet
+-- à partir de la vue précédente
+DROP VIEW IF EXISTS occtax.v_descriptif_sujet_acme;
+CREATE VIEW occtax.v_descriptif_sujet_acme AS
+SELECT cle_obs, ds.*
+FROM occtax.v_observation_validation_acme o
+join
+jsonb_to_recordset(o.descriptif_sujet) AS ds (
+    obs_methode text, occ_etat_biologique text, occ_naturalite text, occ_sexe text,
+    occ_stade_de_vie text, occ_statut_biogeographique text, occ_statut_biologique text,
+    preuve_existante text, preuve_numerique text, preuve_non_numerique text,
+    obs_contexte text, obs_description text, occ_methode_determination text
+) ON TRUE
+;
 
 
 -- On donne les droits de sélection et de modification sur cette vue
@@ -49,9 +64,21 @@ GRANT SELECT, UPDATE ON occtax.v_observation_validation_acme TO validation_acme;
 -- on enlève les droits sur occtax.observation
 REVOKE SELECT, INSERT, UPDATE ON occtax.observation FROM validation_acme;
 
+-- ON donne les droits la vue de mise à plat de descriptif_sujet
+GRANT SELECT ON occtax.v_descriptif_sujet_acme TO validation_acme;
+
 -- donner le droit de SELECT, INSERT et d'UPDATE sur la table validation_observation
 -- c'est obligatoire mais sans souci pour la sécurité car seulement table avec contenu du standard validation
 GRANT SELECT, INSERT, UPDATE ON occtax.validation_observation TO validation_acme;
+
+-- On donne le droite sur les champs de la table occtax.observation
+-- Nécessaire à cause du trigger occtax.update_observation_set_validation_fields()
+-- ON donne ce qui est strictement nécessaire, pas plus
+GRANT
+    SELECT (cle_obs, identifiant_permanent, validite_niveau, validite_date_validation),
+    UPDATE (validite_niveau, validite_date_validation)
+ON occtax.observation TO validation_acme
+;
 
 -- Droit en lecture sur les tables nomenclature, validation_procedure, validation_personne
 GRANT SELECT ON occtax.nomenclature, occtax.validation_procedure, occtax.validation_personne TO validation_acme;
@@ -63,14 +90,9 @@ GRANT USAGE ON validation_observation_id_validation_seq TO validation_acme;
 GRANT USAGE ON SCHEMA sig TO validation_acme;
 GRANT SELECT ON ALL TABLES IN SCHEMA sig TO validation_acme;
 
--- On donne le droite sur les champs de la table occtax.observation
--- Nécessaire à cause du trigger occtax.update_observation_set_validation_fields()
--- ON donne ce qui est strictement nécessaire, pas plus
-GRANT 
-    SELECT (cle_obs, identifiant_permanent, validite_niveau, validite_date_validation), 
-    UPDATE (validite_niveau, validite_date_validation) 
-ON occtax.observation TO validation_acme
-;
+-- On peut enlever les droits sur des données de sig sensibles
+REVOKE ALL PRIVILEGES ON sig.validation_couche_sensible_pour_autre_validateur, sig.validation_couche_sensible_pour_autre_validateur_bis
+FROM validation_acme;
 
 -- On ajoute le TRIGGER pour déclencher la fonction qui modifiera la table occtax.validation_observation
 CREATE TRIGGER trg_validation_observation_acme
