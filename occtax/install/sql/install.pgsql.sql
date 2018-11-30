@@ -655,7 +655,7 @@ CREATE OR REPLACE VIEW v_observateur AS
 SELECT
 CASE WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE p.identite END AS identite,
 CASE WHEN p.anonymiser IS TRUE THEN '' ELSE p.mail END AS mail,
-CASE WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE Coalesce(p.organisme, 'INCONNU') END AS organisme,
+CASE WHEN p.anonymiser IS TRUE OR lower(p.identite) = lower(p.organisme) THEN NULL ELSE Coalesce(p.organisme, 'INCONNU') END AS organisme,
 op.id_personne, op.cle_obs, p.prenom, p.nom, p.anonymiser
 FROM observation_personne op
 INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = 'Obs'
@@ -664,7 +664,7 @@ INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = '
 CREATE OR REPLACE VIEW v_validateur AS
 SELECT CASE WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE p.identite END AS identite,
 CASE WHEN p.anonymiser IS TRUE THEN '' ELSE p.mail END AS mail,
-CASE WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE Coalesce(p.organisme, 'INCONNU') END AS organisme,
+CASE WHEN p.anonymiser IS TRUE OR lower(p.identite) = lower(p.organisme) THEN NULL ELSE Coalesce(p.organisme, 'INCONNU') END AS organisme,
 op.id_personne, op.cle_obs, p.prenom, p.nom, p.anonymiser
 FROM observation_personne op
 INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = 'Val'
@@ -673,12 +673,15 @@ INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = '
 CREATE OR REPLACE VIEW v_determinateur AS
 SELECT CASE WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE p.identite END AS identite,
 CASE WHEN p.anonymiser IS TRUE THEN '' ELSE p.mail END AS mail,
-CASE WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE Coalesce(p.organisme, 'INCONNU') END AS organisme,
+CASE WHEN p.anonymiser IS TRUE OR lower(p.identite) = lower(p.organisme) THEN NULL ELSE Coalesce(p.organisme, 'INCONNU') END AS organisme,
 op.id_personne, op.cle_obs, p.prenom, p.nom, p.anonymiser
 FROM observation_personne op
 INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = 'Det'
 ;
 
+
+CREATE INDEX IF NOT EXISTS personne_identite_lower_idx ON occtax.personne (lower(identite));
+CREATE INDEX IF NOT EXISTS personne_organisme_lower_idx ON occtax.personne (lower(organisme));
 
 -- imports
 CREATE TABLE jdd_import (
@@ -1370,21 +1373,21 @@ od.diffusion,
 string_agg( DISTINCT concat(
     pobs.identite,
     CASE
-        WHEN pobs.organisme = 'ANONYME' THEN ''
+        WHEN pobs.organisme IS NULL OR pobs.organisme = '' THEN ''
         ELSE ' (' || pobs.organisme|| ')'
     END
 ), ', ' ) AS identite_observateur,
 string_agg( DISTINCT concat(
     pval.identite,
     CASE
-        WHEN pval.organisme = 'ANONYME' THEN ''
+        WHEN pval.organisme IS NULL OR pval.organisme = '' THEN ''
         ELSE ' (' || pval.organisme|| ')'
     END
 ), ', ' ) AS validateur,
 string_agg( DISTINCT concat(
     pdet.identite,
     CASE
-        WHEN pdet.organisme = 'ANONYME' THEN ''
+        WHEN pdet.organisme IS NULL OR pdet.organisme = '' THEN ''
         ELSE ' (' || pdet.organisme|| ')'
     END
 ), ', ' ) AS determinateur
