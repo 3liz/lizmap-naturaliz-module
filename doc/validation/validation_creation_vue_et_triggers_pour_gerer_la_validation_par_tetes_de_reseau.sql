@@ -4,16 +4,16 @@ BEGIN;
 
 SET search_path TO occtax,public;
 
--- DROP ROLE validation_acme;
+-- DROP ROLE validation_test;
 CREATE ROLE validation_acme LOGIN NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;
 ALTER ROLE validation_acme WITH PASSWORD 'acme';
 GRANT USAGE ON SCHEMA occtax TO validation_acme;
 
 -- créer un nouvel utilisateur et le mettre dans le groupe
-CREATE ROLE john_doe_acme LOGIN NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;
-ALTER ROLE john_doe_acme WITH PASSWORD 'acme';
+CREATE ROLE validation_test LOGIN NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;
+ALTER ROLE validation_test WITH PASSWORD 'V@L1D_**TeSt%';
 -- on met cet utilisateur dans le groupe validation_acme
-GRANT validation_acme TO john_doe_acme;
+GRANT validation_acme TO validation_test;
 
 -- ajout dans validation_personne
 INSERT INTO occtax.personne (identite, nom, prenom, mail, organisme)
@@ -24,7 +24,7 @@ INSERT INTO validation_personne
 (id_personne, role_postgresql, role_postgresql_groupe)
 VALUES (
     (SELECT id_personne FROM personne WHERE nom = 'DOE' AND prenom = 'John' AND mail = 'john.doe@acme.acme' ),
-    'john_doe_acme',
+    'validation_test',
     'validation_acme'
 );
 
@@ -36,8 +36,8 @@ ON CONFLICT DO NOTHING;
 
 -- On crée une vue qui filtre les données comme on le souhaite
 -- dans cet exemple, on a filtré sur le group2_inpn. On pourrait très bien filtrer sur d'autres critères
-DROP VIEW IF EXISTS occtax.v_observation_validation_acme;
-CREATE VIEW occtax.v_observation_validation_acme AS
+DROP VIEW IF EXISTS occtax.v_observation_validation_test;
+CREATE VIEW occtax.v_observation_validation_test AS
 SELECT *
 FROM occtax.v_observation_validation o
 WHERE TRUE
@@ -45,10 +45,10 @@ AND group2_inpn = 'Oiseaux';
 
 -- On crée une vue pour mettre à plat descriptif sujet
 -- à partir de la vue précédente
-DROP VIEW IF EXISTS occtax.v_descriptif_sujet_acme;
-CREATE VIEW occtax.v_descriptif_sujet_acme AS
+DROP VIEW IF EXISTS occtax.v_descriptif_sujet_test;
+CREATE VIEW occtax.v_descriptif_sujet_test AS
 SELECT cle_obs, ds.*
-FROM occtax.v_observation_validation_acme o
+FROM occtax.v_observation_validation_test o
 join
 jsonb_to_recordset(o.descriptif_sujet) AS ds (
     obs_methode text, occ_etat_biologique text, occ_naturalite text, occ_sexe text,
@@ -60,12 +60,12 @@ jsonb_to_recordset(o.descriptif_sujet) AS ds (
 
 
 -- On donne les droits de sélection et de modification sur cette vue
-GRANT SELECT, UPDATE ON occtax.v_observation_validation_acme TO validation_acme;
+GRANT SELECT, UPDATE ON occtax.v_observation_validation_test TO validation_acme;
 -- on enlève les droits sur occtax.observation
 REVOKE SELECT, INSERT, UPDATE ON occtax.observation FROM validation_acme;
 
 -- ON donne les droits la vue de mise à plat de descriptif_sujet
-GRANT SELECT ON occtax.v_descriptif_sujet_acme TO validation_acme;
+GRANT SELECT ON occtax.v_descriptif_sujet_test TO validation_acme;
 
 -- donner le droit de SELECT, INSERT et d'UPDATE sur la table validation_observation
 -- c'est obligatoire mais sans souci pour la sécurité car seulement table avec contenu du standard validation
@@ -95,8 +95,8 @@ REVOKE ALL PRIVILEGES ON sig.validation_couche_sensible_pour_autre_validateur, s
 FROM validation_acme;
 
 -- On ajoute le TRIGGER pour déclencher la fonction qui modifiera la table occtax.validation_observation
-CREATE TRIGGER trg_validation_observation_acme
-INSTEAD OF INSERT OR UPDATE OR DELETE ON occtax.v_observation_validation_acme
+CREATE TRIGGER trg_validation_observation_test
+INSTEAD OF INSERT OR UPDATE OR DELETE ON occtax.v_observation_validation_test
 FOR EACH ROW EXECUTE PROCEDURE occtax.update_observation_validation();
 
 

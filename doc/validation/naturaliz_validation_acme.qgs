@@ -1,11 +1,11 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis projectname="" version="2.18.25">
+<qgis projectname="" version="2.18.22">
   <title></title>
   <autotransaction active="0"/>
   <evaluateDefaultValues active="0"/>
   <layer-tree-group expanded="1" checked="Qt::PartiallyChecked" name="">
     <customproperties/>
-    <layer-tree-layer expanded="1" providerKey="postgres" checked="Qt::Checked" id="v_observation_validation_acme20171206175247744" source="dbname='naturaliz' host=localhost port=5432 user='acme' sslmode=disable key='cle_obs' estimatedmetadata=true srid=2975 type=Point table=&quot;occtax&quot;.&quot;v_observation_validation_acme&quot; (geom) sql=" name="Observations à valider manuellement">
+    <layer-tree-layer expanded="1" providerKey="postgres" checked="Qt::Checked" id="v_observation_validation_test20171206175247744" source="dbname='naturaliz' host=localhost port=5432 user='validation_test' sslmode=disable key='cle_obs' estimatedmetadata=true srid=2975 type=Point table=&quot;occtax&quot;.&quot;v_observation_validation_test&quot; (geom) sql=" name="Observations">
       <customproperties>
         <property key="expandedLegendNodes">
           <value>{6972df55-5cfc-421d-a761-748f45e72a79}</value>
@@ -14,58 +14,55 @@
         <property key="showFeatureCount" value="0"/>
       </customproperties>
     </layer-tree-layer>
-    <layer-tree-layer expanded="1" providerKey="postgres" checked="Qt::Checked" id="v_descriptif_sujet_acme20181116122154218" source="dbname='naturaliz' host=localhost port=5432 user='john_doe_acme' sslmode=disable key='cle_obs' estimatedmetadata=true table=&quot;occtax&quot;.&quot;v_descriptif_sujet_acme&quot; sql=" name="Description des individus">
-      <customproperties/>
-    </layer-tree-layer>
     <layer-tree-group expanded="1" checked="Qt::Unchecked" name="Données de référence">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Unchecked" id="limite_terre_mer20180830112111892" source="dbname='/home/mdouchin/Documents/3liz/DEAL_Reunion/naturaliz/echange/validation/data/exported_layers.sqlite' table=&quot;limite_terre_mer&quot; (geometry) sql=" name="Limite terre-mer (Polmar)">
-        <customproperties/>
-      </layer-tree-layer>
     </layer-tree-group>
     <layer-tree-group expanded="1" checked="Qt::PartiallyChecked" name="Fonds">
       <customproperties/>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Unchecked" id="zone_economique_exclusive20171207093950270" source="dbname='/home/mdouchin/Documents/3liz/DEAL_Reunion/naturaliz/echange/validation/data/exported_layers.sqlite' key='id' estimatedmetadata=true table=&quot;zone_economique_exclusive&quot; (geometry) sql=" name="Zone économique exclusive">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Unchecked" id="zone_economique_exclusive20171207093950270" source="dbname='./data/exported_layers.sqlite' key='id' estimatedmetadata=true table=&quot;zone_economique_exclusive&quot; (geometry) sql=" name="Zone économique exclusive">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="0" providerKey="ogr" checked="Qt::Unchecked" id="exported_layers20181115180347257" source="/home/mdouchin/Documents/3liz/DEAL_Reunion/naturaliz/echange/validation/data/exported_layers.sqlite|layername=exported_layers" name="Espaces naturels">
+      <layer-tree-layer expanded="0" providerKey="ogr" checked="Qt::Unchecked" id="exported_layers20181115180347257" source="./data/exported_layers.sqlite|layername=exported_layers" name="Espaces naturels">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Unchecked" id="commune20171207093853482" source="dbname='/home/mdouchin/Documents/3liz/DEAL_Reunion/naturaliz/echange/validation/data/exported_layers.sqlite' key='code_commune' estimatedmetadata=true table=&quot;commune&quot; (geometry) sql=" name="Communes">
+      <layer-tree-layer expanded="1" providerKey="spatialite" checked="Qt::Unchecked" id="commune20171207093853482" source="dbname='./data/exported_layers.sqlite' key='code_commune' estimatedmetadata=true table=&quot;commune&quot; (geometry) sql=" name="Communes">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="ogr" checked="Qt::Checked" id="t_nomenclature20180830114807373" source="/home/mdouchin/Documents/3liz/DEAL_Reunion/naturaliz/echange/validation/data/exported_layers.sqlite|layername=t_nomenclature" name="t_nomenclature">
-        <customproperties/>
-      </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="ogr" checked="Qt::Checked" id="nomenclature20171206180403796" source="/home/mdouchin/Documents/3liz/DEAL_Reunion/naturaliz/echange/validation/data/exported_layers.sqlite|layername=nomenclature" name="nomenclature">
-        <customproperties/>
-      </layer-tree-layer>
-    </layer-tree-group>
-    <layer-tree-group expanded="1" checked="Qt::Checked" mutually-exclusive="1" name="Fonds de carte" mutually-exclusive-child="1">
-      <customproperties/>
       <layer-tree-layer expanded="1" providerKey="wms" checked="Qt::Unchecked" id="osm_mapnik20171213110303879" source="crs=EPSG:3857&amp;format=&amp;type=xyz&amp;url=http://tile.openstreetmap.org/%7Bz%7D/%7Bx%7D/%7By%7D.png" name="osm-mapnik">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="wms" checked="Qt::Checked" id="google_satellite20171213143618024" source="crs=EPSG:3857&amp;format=&amp;type=xyz&amp;url=http://mt.google.com/vt/lyrs%3Ds%26x%3D%7Bx%7D%26y%3D%7By%7D%26z%3D%7Bz%7D" name="google-satellite">
+      <layer-tree-layer expanded="1" providerKey="wms" checked="Qt::Unchecked" id="google_satellite20171213143618024" source="crs=EPSG:3857&amp;format=&amp;type=xyz&amp;url=http://mt.google.com/vt/lyrs%3Ds%26x%3D%7Bx%7D%26y%3D%7By%7D%26z%3D%7Bz%7D" name="google-satellite">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="wms" checked="Qt::Unchecked" id="google_terrain20171213143512180" source="crs=EPSG:3857&amp;format=&amp;type=xyz&amp;url=http://mt1.google.com/vt/lyrs%3Dp%26x%3D%7Bx%7D%26y%3D%7By%7D%26z%3D%7Bz%7D" name="google-terrain">
+      <layer-tree-layer expanded="1" providerKey="wms" checked="Qt::Checked" id="google_terrain20171213143512180" source="crs=EPSG:3857&amp;format=&amp;type=xyz&amp;url=http://mt1.google.com/vt/lyrs%3Dp%26x%3D%7Bx%7D%26y%3D%7By%7D%26z%3D%7Bz%7D" name="google-terrain">
+        <customproperties/>
+      </layer-tree-layer>
+    </layer-tree-group>
+    <layer-tree-group expanded="0" checked="Qt::Checked" name="Tables annexes">
+      <customproperties/>
+      <layer-tree-layer expanded="1" providerKey="postgres" checked="Qt::Checked" id="v_descriptif_sujet_test20181116122154218" source="dbname='naturaliz' host=localhost port=5432 user='validation_test' sslmode=disable key='cle_obs' estimatedmetadata=true table=&quot;occtax&quot;.&quot;v_descriptif_sujet_test&quot; sql=" name="Description des individus">
+        <customproperties/>
+      </layer-tree-layer>
+      <layer-tree-layer expanded="1" providerKey="ogr" checked="Qt::Checked" id="t_nomenclature20180830114807373" source="./data/exported_layers.sqlite|layername=t_nomenclature" name="t_nomenclature">
+        <customproperties/>
+      </layer-tree-layer>
+      <layer-tree-layer expanded="1" providerKey="ogr" checked="Qt::Checked" id="nomenclature20171206180403796" source="./data/exported_layers.sqlite|layername=nomenclature" name="nomenclature">
         <customproperties/>
       </layer-tree-layer>
     </layer-tree-group>
   </layer-tree-group>
   <relations>
-    <relation referencingLayer="v_descriptif_sujet_acme20181116122154218" referencedLayer="v_observation_validation_acme20171206175247744" id="v_descript_cle_obs_v_observat_cle_obs" name="Description des individus">
+    <relation referencingLayer="v_descriptif_sujet_test20181116122154218" referencedLayer="v_observation_validation_test20171206175247744" id="v_descript_cle_obs_v_observat_cle_obs" name="Description des individus">
       <fieldRef referencedField="cle_obs" referencingField="cle_obs"/>
     </relation>
   </relations>
   <mapcanvas>
     <units>meters</units>
     <extent>
-      <xmin>329835.45151556975906715</xmin>
-      <ymin>7662119.59251764696091413</ymin>
-      <xmax>338057.52889543253695592</xmax>
-      <ymax>7669395.87458858545869589</ymax>
+      <xmin>303914.61367868894012645</xmin>
+      <ymin>7620715.41502887289971113</ymin>
+      <xmax>394971.75686429528286681</xmax>
+      <ymax>7703666.09320326242595911</ymax>
     </extent>
     <rotation>0</rotation>
     <projections>1</projections>
@@ -82,41 +79,102 @@
       </spatialrefsys>
     </destinationsrs>
     <rendermaptile>0</rendermaptile>
-    <layer_coordinate_transform_info/>
+    <layer_coordinate_transform_info>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="validation_reptiles_amphibiens_3_furpar20181119101945540"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="limite_terre_mer20180830112111892"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="exported_layers_espace_naturel20181115173947762"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="cetaces_5_habitat_ta20180830103550982"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="validation_reptiles_amphibiens_3_phelin20181119101946552"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="validation_reptiles_amphibiens_3_gehmut20181119101945618"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="validation_reptiles_amphibiens_3_hemtyp20181119101945967"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="reptiles_amphibiens_3_pheine20180918150048915"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="reptiles_amphibiens_3_indbra20180918150013807"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="oiseaux_habitat20180831152138335"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="validation_reptiles_amphibiens_3_hempar20181119101945872"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:3857" srcDatumTransform="-1" destDatumTransform="-1" layerid="Google_Terrain20171213143405739"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="reptiles_amphibiens_3_hemfre20180918145945567"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="cetaces_4_habitat_tt20180830103551247"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="reptiles_amphibiens_3_amigut20180918145914463"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:3857" srcDatumTransform="-1" destDatumTransform="-1" layerid="google_terrain20171213143512180"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:3857" srcDatumTransform="-1" destDatumTransform="-1" layerid="google_satellite20171213143618024"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="reptiles_amphibiens_3_hemtyp20180918150006774"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:3857" srcDatumTransform="-1" destDatumTransform="-1" layerid="osm_mapnik20171213110303879"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="reptiles_amphibiens_3_pheast20180918150028028"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="exported_layers20181115180347257"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="validation_reptiles_amphibiens_3_phelat20181119101946474"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="reptiles_amphibiens_3_gehmut20180918145924597"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:3857" srcDatumTransform="-1" destDatumTransform="-1" layerid="Google_Satellite20171213110302758"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="validation_reptiles_amphibiens_3_lycaul20181119101946124"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="validation_reptiles_amphibiens_3_phebor20181119101946282"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="v_observation_validation_test20171206175247744"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="zone_economique_exclusive20171207093950270"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="reptiles_amhibiens_3_phebor20180831082511759"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="reptiles_amphibiens_3_calver20180918145938862"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="validation_reptiles_amphibiens_3_agaaga20181119101945290"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="maille_0220171207093956825"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="espace_naturel20171207093947834"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="reptiles_amphibiens_3_agaaga20180918145847153"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="reptiles_amhibiens_3_agaaga20180831081653234"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="oiseaux_habitat20181119103043223"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="reunion_300k20171207112240880"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="validation_reptiles_amphibiens_3_hemfre20181119101945713"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="cetaces_4_habitat_tt20180830105314889"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="reptiles20180918163536581"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="masse_eau20171207093937734"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="reptiles_amphibiens_3_lycaul20180918150020918"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="exported_layers_commune20181115174349277"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="cetaces_5_habitat_ta20180830105324531"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="validation_reptiles_amphibiens_3_indbra20181119101946046"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="reptiles_amphibiens_3_furpar20180918145931767"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="cetaces_6_habitat_sl20180830105249045"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="reptiles_amphibiens_3_phebor20180918150034779"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="validation_reptiles_amphibiens_3_hemmer20181119101945792"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="maille_1020171207093954652"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="reptiles_amphibiens_3_phelat20180918150055557"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="tortues_marines_620180830134600513"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="validation_reptiles_amphibiens_3_calver20181119101945462"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="reptiles_amphibiens_3_agaaga20181119114902157"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:3857" srcDatumTransform="-1" destDatumTransform="-1" layerid="Landsat__Gis_Lab_info_20171213145330398"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="tortues_marines_720180830134600648"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:4326" srcDatumTransform="-1" destDatumTransform="-1" layerid="espace_naturel20181115180140187"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="validation_reptiles_amphibiens_3_pheine20181119101922035"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="validation_reptiles_amphibiens_3_phegra20181119101946394"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="reptiles_amphibiens_3_ptymas20180918145903062"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="validation_reptiles_amphibiens_3_amigut20181119101945384"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="Observations_à_valider_copier20171213110332872"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="validation_reptiles_amphibiens_3_pheast20181119101946202"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="validation_reptiles_amphibiens_3_ptymas20181119101946646"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="reptiles_amphibiens_3_phelin20180918150102653"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="oiseaux_habitat20180830181217261"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="reptiles_amphibiens_3_hemmer20180918145952600"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:4326" srcDatumTransform="-1" destDatumTransform="-1" layerid="espace_naturel20181115175324524"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="reptiles_amphibiens_3_phegra20180918150041867"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="commune20171207093853482"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="reptiles_amphibiens_3_hempar20180918145959664"/>
+      <layer_coordinate_transform destAuthId="EPSG:2975" srcAuthId="EPSG:2975" srcDatumTransform="-1" destDatumTransform="-1" layerid="cetaces_6_habitat_sl20180830103551122"/>
+    </layer_coordinate_transform_info>
   </mapcanvas>
   <layer-tree-canvas>
     <custom-order enabled="0">
-      <item>v_observation_validation_acme20171206175247744</item>
+      <item>v_observation_validation_test20171206175247744</item>
       <item>nomenclature20171206180403796</item>
       <item>commune20171207093853482</item>
       <item>zone_economique_exclusive20171207093950270</item>
       <item>osm_mapnik20171213110303879</item>
       <item>google_terrain20171213143512180</item>
       <item>google_satellite20171213143618024</item>
-      <item>limite_terre_mer20180830112111892</item>
       <item>t_nomenclature20180830114807373</item>
       <item>exported_layers20181115180347257</item>
-      <item>v_descriptif_sujet_acme20181116122154218</item>
+      <item>v_descriptif_sujet_test20181116122154218</item>
     </custom-order>
   </layer-tree-canvas>
   <legend updateDrawingOrder="true">
-    <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="Observations à valider manuellement" showFeatureCount="0">
+    <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="Observations" showFeatureCount="0">
       <filegroup open="true" hidden="false">
-        <legendlayerfile isInOverview="0" layerid="v_observation_validation_acme20171206175247744" visible="1"/>
+        <legendlayerfile isInOverview="0" layerid="v_observation_validation_test20171206175247744" visible="1"/>
       </filegroup>
     </legendlayer>
-    <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="Description des individus" showFeatureCount="0">
-      <filegroup open="true" hidden="false">
-        <legendlayerfile isInOverview="0" layerid="v_descriptif_sujet_acme20181116122154218" visible="1"/>
-      </filegroup>
-    </legendlayer>
-    <legendgroup open="true" checked="Qt::Unchecked" name="Données de référence">
-      <legendlayer drawingOrder="-1" open="true" checked="Qt::Unchecked" name="Limite terre-mer (Polmar)" showFeatureCount="0">
-        <filegroup open="true" hidden="false">
-          <legendlayerfile isInOverview="0" layerid="limite_terre_mer20180830112111892" visible="0"/>
-        </filegroup>
-      </legendlayer>
-    </legendgroup>
+    <legendgroup open="true" checked="Qt::Unchecked" name="Données de référence"/>
     <legendgroup open="true" checked="Qt::PartiallyChecked" name="Fonds">
       <legendlayer drawingOrder="-1" open="true" checked="Qt::Unchecked" name="Zone économique exclusive" showFeatureCount="0">
         <filegroup open="true" hidden="false">
@@ -133,6 +191,28 @@
           <legendlayerfile isInOverview="0" layerid="commune20171207093853482" visible="0"/>
         </filegroup>
       </legendlayer>
+      <legendlayer drawingOrder="-1" open="true" checked="Qt::Unchecked" name="osm-mapnik" showFeatureCount="0">
+        <filegroup open="true" hidden="false">
+          <legendlayerfile isInOverview="0" layerid="osm_mapnik20171213110303879" visible="0"/>
+        </filegroup>
+      </legendlayer>
+      <legendlayer drawingOrder="-1" open="true" checked="Qt::Unchecked" name="google-satellite" showFeatureCount="0">
+        <filegroup open="true" hidden="false">
+          <legendlayerfile isInOverview="0" layerid="google_satellite20171213143618024" visible="0"/>
+        </filegroup>
+      </legendlayer>
+      <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="google-terrain" showFeatureCount="0">
+        <filegroup open="true" hidden="false">
+          <legendlayerfile isInOverview="0" layerid="google_terrain20171213143512180" visible="1"/>
+        </filegroup>
+      </legendlayer>
+    </legendgroup>
+    <legendgroup open="false" checked="Qt::Checked" name="Tables annexes">
+      <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="Description des individus" showFeatureCount="0">
+        <filegroup open="true" hidden="false">
+          <legendlayerfile isInOverview="0" layerid="v_descriptif_sujet_test20181116122154218" visible="1"/>
+        </filegroup>
+      </legendlayer>
       <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="t_nomenclature" showFeatureCount="0">
         <filegroup open="true" hidden="false">
           <legendlayerfile isInOverview="0" layerid="t_nomenclature20180830114807373" visible="1"/>
@@ -141,23 +221,6 @@
       <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="nomenclature" showFeatureCount="0">
         <filegroup open="true" hidden="false">
           <legendlayerfile isInOverview="0" layerid="nomenclature20171206180403796" visible="1"/>
-        </filegroup>
-      </legendlayer>
-    </legendgroup>
-    <legendgroup open="true" checked="Qt::Checked" name="Fonds de carte">
-      <legendlayer drawingOrder="-1" open="true" checked="Qt::Unchecked" name="osm-mapnik" showFeatureCount="0">
-        <filegroup open="true" hidden="false">
-          <legendlayerfile isInOverview="0" layerid="osm_mapnik20171213110303879" visible="0"/>
-        </filegroup>
-      </legendlayer>
-      <legendlayer drawingOrder="-1" open="true" checked="Qt::Checked" name="google-satellite" showFeatureCount="0">
-        <filegroup open="true" hidden="false">
-          <legendlayerfile isInOverview="0" layerid="google_satellite20171213143618024" visible="1"/>
-        </filegroup>
-      </legendlayer>
-      <legendlayer drawingOrder="-1" open="true" checked="Qt::Unchecked" name="google-terrain" showFeatureCount="0">
-        <filegroup open="true" hidden="false">
-          <legendlayerfile isInOverview="0" layerid="google_terrain20171213143512180" visible="0"/>
         </filegroup>
       </legendlayer>
     </legendgroup>
@@ -1051,320 +1114,6 @@ def my_form_open(dialog, layer, feature):
       </pipe>
       <blendMode>0</blendMode>
     </maplayer>
-    <maplayer simplifyAlgorithm="0" minimumScale="0" maximumScale="1e+08" simplifyDrawingHints="1" minLabelScale="0" maxLabelScale="1e+08" simplifyDrawingTol="1" readOnly="0" geometry="Polygon" simplifyMaxScale="1" type="vector" hasScaleBasedVisibilityFlag="0" simplifyLocal="1" scaleBasedLabelVisibilityFlag="0">
-      <id>limite_terre_mer20180830112111892</id>
-      <datasource>dbname='./data/exported_layers.sqlite' table="limite_terre_mer" (geometry) sql=</datasource>
-      <keywordList>
-        <value></value>
-      </keywordList>
-      <layername>Limite terre-mer (Polmar)</layername>
-      <srs>
-        <spatialrefsys>
-          <proj4>+proj=utm +zone=40 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
-          <srsid>942</srsid>
-          <srid>2975</srid>
-          <authid>EPSG:2975</authid>
-          <description>RGR92 / UTM zone 40S</description>
-          <projectionacronym>utm</projectionacronym>
-          <ellipsoidacronym>GRS80</ellipsoidacronym>
-          <geographicflag>false</geographicflag>
-        </spatialrefsys>
-      </srs>
-      <provider encoding="UTF-8">spatialite</provider>
-      <vectorjoins/>
-      <layerDependencies/>
-      <expressionfields/>
-      <map-layer-style-manager current="">
-        <map-layer-style name=""/>
-      </map-layer-style-manager>
-      <edittypes>
-        <edittype widgetv2type="TextEdit" name="ogc_fid">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="objectid">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="shape_leng">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
-        </edittype>
-      </edittypes>
-      <renderer-v2 forceraster="0" symbollevels="0" type="singleSymbol" enableorderby="0">
-        <symbols>
-          <symbol alpha="1" clip_to_extent="1" type="fill" name="0">
-            <layer pass="0" class="SimpleFill" locked="0">
-              <prop k="border_width_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="color" v="4,171,154,255"/>
-              <prop k="joinstyle" v="bevel"/>
-              <prop k="offset" v="0,0"/>
-              <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
-              <prop k="offset_unit" v="MM"/>
-              <prop k="outline_color" v="248,0,0,255"/>
-              <prop k="outline_style" v="dash"/>
-              <prop k="outline_width" v="0.66"/>
-              <prop k="outline_width_unit" v="MM"/>
-              <prop k="style" v="no"/>
-            </layer>
-          </symbol>
-        </symbols>
-        <rotation/>
-        <sizescale scalemethod="diameter"/>
-      </renderer-v2>
-      <labeling type="simple"/>
-      <customproperties>
-        <property key="embeddedWidgets/count" value="0"/>
-        <property key="labeling" value="pal"/>
-        <property key="labeling/addDirectionSymbol" value="false"/>
-        <property key="labeling/angleOffset" value="0"/>
-        <property key="labeling/blendMode" value="0"/>
-        <property key="labeling/bufferBlendMode" value="0"/>
-        <property key="labeling/bufferColorA" value="255"/>
-        <property key="labeling/bufferColorB" value="255"/>
-        <property key="labeling/bufferColorG" value="255"/>
-        <property key="labeling/bufferColorR" value="255"/>
-        <property key="labeling/bufferDraw" value="false"/>
-        <property key="labeling/bufferJoinStyle" value="128"/>
-        <property key="labeling/bufferNoFill" value="false"/>
-        <property key="labeling/bufferSize" value="1"/>
-        <property key="labeling/bufferSizeInMapUnits" value="false"/>
-        <property key="labeling/bufferSizeMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/bufferTransp" value="0"/>
-        <property key="labeling/centroidInside" value="false"/>
-        <property key="labeling/centroidWhole" value="false"/>
-        <property key="labeling/decimals" value="3"/>
-        <property key="labeling/displayAll" value="false"/>
-        <property key="labeling/dist" value="0"/>
-        <property key="labeling/distInMapUnits" value="false"/>
-        <property key="labeling/distMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/drawLabels" value="false"/>
-        <property key="labeling/enabled" value="false"/>
-        <property key="labeling/fieldName" value=""/>
-        <property key="labeling/fitInPolygonOnly" value="false"/>
-        <property key="labeling/fontCapitals" value="0"/>
-        <property key="labeling/fontFamily" value="MS Shell Dlg 2"/>
-        <property key="labeling/fontItalic" value="false"/>
-        <property key="labeling/fontLetterSpacing" value="0"/>
-        <property key="labeling/fontLimitPixelSize" value="false"/>
-        <property key="labeling/fontMaxPixelSize" value="10000"/>
-        <property key="labeling/fontMinPixelSize" value="3"/>
-        <property key="labeling/fontSize" value="8.25"/>
-        <property key="labeling/fontSizeInMapUnits" value="false"/>
-        <property key="labeling/fontSizeMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/fontStrikeout" value="false"/>
-        <property key="labeling/fontUnderline" value="false"/>
-        <property key="labeling/fontWeight" value="50"/>
-        <property key="labeling/fontWordSpacing" value="0"/>
-        <property key="labeling/formatNumbers" value="false"/>
-        <property key="labeling/isExpression" value="true"/>
-        <property key="labeling/labelOffsetInMapUnits" value="true"/>
-        <property key="labeling/labelOffsetMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/labelPerPart" value="false"/>
-        <property key="labeling/leftDirectionSymbol" value="&lt;"/>
-        <property key="labeling/limitNumLabels" value="false"/>
-        <property key="labeling/maxCurvedCharAngleIn" value="25"/>
-        <property key="labeling/maxCurvedCharAngleOut" value="-25"/>
-        <property key="labeling/maxNumLabels" value="2000"/>
-        <property key="labeling/mergeLines" value="false"/>
-        <property key="labeling/minFeatureSize" value="0"/>
-        <property key="labeling/multilineAlign" value="4294967295"/>
-        <property key="labeling/multilineHeight" value="1"/>
-        <property key="labeling/namedStyle" value="Normal"/>
-        <property key="labeling/obstacle" value="true"/>
-        <property key="labeling/obstacleFactor" value="1"/>
-        <property key="labeling/obstacleType" value="0"/>
-        <property key="labeling/offsetType" value="0"/>
-        <property key="labeling/placeDirectionSymbol" value="0"/>
-        <property key="labeling/placement" value="1"/>
-        <property key="labeling/placementFlags" value="10"/>
-        <property key="labeling/plussign" value="false"/>
-        <property key="labeling/predefinedPositionOrder" value="TR,TL,BR,BL,R,L,TSR,BSR"/>
-        <property key="labeling/preserveRotation" value="true"/>
-        <property key="labeling/previewBkgrdColor" value="#ffffff"/>
-        <property key="labeling/priority" value="5"/>
-        <property key="labeling/quadOffset" value="4"/>
-        <property key="labeling/repeatDistance" value="0"/>
-        <property key="labeling/repeatDistanceMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/repeatDistanceUnit" value="1"/>
-        <property key="labeling/reverseDirectionSymbol" value="false"/>
-        <property key="labeling/rightDirectionSymbol" value=">"/>
-        <property key="labeling/scaleMax" value="10000000"/>
-        <property key="labeling/scaleMin" value="1"/>
-        <property key="labeling/scaleVisibility" value="false"/>
-        <property key="labeling/shadowBlendMode" value="6"/>
-        <property key="labeling/shadowColorB" value="0"/>
-        <property key="labeling/shadowColorG" value="0"/>
-        <property key="labeling/shadowColorR" value="0"/>
-        <property key="labeling/shadowDraw" value="false"/>
-        <property key="labeling/shadowOffsetAngle" value="135"/>
-        <property key="labeling/shadowOffsetDist" value="1"/>
-        <property key="labeling/shadowOffsetGlobal" value="true"/>
-        <property key="labeling/shadowOffsetMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/shadowOffsetUnits" value="1"/>
-        <property key="labeling/shadowRadius" value="1.5"/>
-        <property key="labeling/shadowRadiusAlphaOnly" value="false"/>
-        <property key="labeling/shadowRadiusMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/shadowRadiusUnits" value="1"/>
-        <property key="labeling/shadowScale" value="100"/>
-        <property key="labeling/shadowTransparency" value="30"/>
-        <property key="labeling/shadowUnder" value="0"/>
-        <property key="labeling/shapeBlendMode" value="0"/>
-        <property key="labeling/shapeBorderColorA" value="255"/>
-        <property key="labeling/shapeBorderColorB" value="128"/>
-        <property key="labeling/shapeBorderColorG" value="128"/>
-        <property key="labeling/shapeBorderColorR" value="128"/>
-        <property key="labeling/shapeBorderWidth" value="0"/>
-        <property key="labeling/shapeBorderWidthMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/shapeBorderWidthUnits" value="1"/>
-        <property key="labeling/shapeDraw" value="false"/>
-        <property key="labeling/shapeFillColorA" value="255"/>
-        <property key="labeling/shapeFillColorB" value="255"/>
-        <property key="labeling/shapeFillColorG" value="255"/>
-        <property key="labeling/shapeFillColorR" value="255"/>
-        <property key="labeling/shapeJoinStyle" value="64"/>
-        <property key="labeling/shapeOffsetMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/shapeOffsetUnits" value="1"/>
-        <property key="labeling/shapeOffsetX" value="0"/>
-        <property key="labeling/shapeOffsetY" value="0"/>
-        <property key="labeling/shapeRadiiMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/shapeRadiiUnits" value="1"/>
-        <property key="labeling/shapeRadiiX" value="0"/>
-        <property key="labeling/shapeRadiiY" value="0"/>
-        <property key="labeling/shapeRotation" value="0"/>
-        <property key="labeling/shapeRotationType" value="0"/>
-        <property key="labeling/shapeSVGFile" value=""/>
-        <property key="labeling/shapeSizeMapUnitScale" value="0,0,0,0,0,0"/>
-        <property key="labeling/shapeSizeType" value="0"/>
-        <property key="labeling/shapeSizeUnits" value="1"/>
-        <property key="labeling/shapeSizeX" value="0"/>
-        <property key="labeling/shapeSizeY" value="0"/>
-        <property key="labeling/shapeTransparency" value="0"/>
-        <property key="labeling/shapeType" value="0"/>
-        <property key="labeling/substitutions" value="&lt;substitutions/>"/>
-        <property key="labeling/textColorA" value="255"/>
-        <property key="labeling/textColorB" value="0"/>
-        <property key="labeling/textColorG" value="0"/>
-        <property key="labeling/textColorR" value="0"/>
-        <property key="labeling/textTransp" value="0"/>
-        <property key="labeling/upsidedownLabels" value="0"/>
-        <property key="labeling/useSubstitutions" value="false"/>
-        <property key="labeling/wrapChar" value=""/>
-        <property key="labeling/xOffset" value="0"/>
-        <property key="labeling/yOffset" value="0"/>
-        <property key="labeling/zIndex" value="0"/>
-        <property key="variableNames"/>
-        <property key="variableValues"/>
-      </customproperties>
-      <blendMode>0</blendMode>
-      <featureBlendMode>0</featureBlendMode>
-      <layerTransparency>0</layerTransparency>
-      <displayfield>id</displayfield>
-      <label>0</label>
-      <labelattributes>
-        <label fieldname="" text="Étiquette"/>
-        <family fieldname="" name="MS Shell Dlg 2"/>
-        <size fieldname="" units="pt" value="12"/>
-        <bold fieldname="" on="0"/>
-        <italic fieldname="" on="0"/>
-        <underline fieldname="" on="0"/>
-        <strikeout fieldname="" on="0"/>
-        <color fieldname="" red="0" blue="0" green="0"/>
-        <x fieldname=""/>
-        <y fieldname=""/>
-        <offset x="0" y="0" units="pt" yfieldname="" xfieldname=""/>
-        <angle fieldname="" value="0" auto="0"/>
-        <alignment fieldname="" value="center"/>
-        <buffercolor fieldname="" red="255" blue="255" green="255"/>
-        <buffersize fieldname="" units="pt" value="1"/>
-        <bufferenabled fieldname="" on=""/>
-        <multilineenabled fieldname="" on=""/>
-        <selectedonly on=""/>
-      </labelattributes>
-      <SingleCategoryDiagramRenderer diagramType="Histogram" sizeLegend="0" attributeLegend="1">
-        <DiagramCategory penColor="#000000" labelPlacementMethod="XHeight" penWidth="0" diagramOrientation="Up" sizeScale="0,0,0,0,0,0" minimumSize="0" barWidth="5" penAlpha="255" maxScaleDenominator="1e+08" backgroundColor="#ffffff" transparency="0" width="15" scaleDependency="Area" backgroundAlpha="255" angleOffset="1440" scaleBasedVisibility="0" enabled="0" height="15" lineSizeScale="0,0,0,0,0,0" sizeType="MM" lineSizeType="MM" minScaleDenominator="inf">
-          <fontProperties description="MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0" style=""/>
-          <attribute field="" color="#000000" label=""/>
-        </DiagramCategory>
-        <symbol alpha="1" clip_to_extent="1" type="marker" name="sizeSymbol">
-          <layer pass="0" class="SimpleMarker" locked="0">
-            <prop k="angle" v="0"/>
-            <prop k="color" v="255,0,0,255"/>
-            <prop k="horizontal_anchor_point" v="1"/>
-            <prop k="joinstyle" v="bevel"/>
-            <prop k="name" v="circle"/>
-            <prop k="offset" v="0,0"/>
-            <prop k="offset_map_unit_scale" v="0,0,0,0,0,0"/>
-            <prop k="offset_unit" v="MM"/>
-            <prop k="outline_color" v="0,0,0,255"/>
-            <prop k="outline_style" v="solid"/>
-            <prop k="outline_width" v="0"/>
-            <prop k="outline_width_map_unit_scale" v="0,0,0,0,0,0"/>
-            <prop k="outline_width_unit" v="MM"/>
-            <prop k="scale_method" v="diameter"/>
-            <prop k="size" v="2"/>
-            <prop k="size_map_unit_scale" v="0,0,0,0,0,0"/>
-            <prop k="size_unit" v="MM"/>
-            <prop k="vertical_anchor_point" v="1"/>
-          </layer>
-        </symbol>
-      </SingleCategoryDiagramRenderer>
-      <DiagramLayerSettings yPosColumn="-1" showColumn="-1" linePlacementFlags="10" placement="0" dist="0" xPosColumn="-1" priority="0" obstacle="0" zIndex="0" showAll="1"/>
-      <annotationform>.</annotationform>
-      <aliases>
-        <alias field="ogc_fid" index="0" name=""/>
-        <alias field="objectid" index="1" name=""/>
-        <alias field="shape_leng" index="2" name=""/>
-      </aliases>
-      <excludeAttributesWMS/>
-      <excludeAttributesWFS/>
-      <attributeactions default="-1"/>
-      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
-        <columns>
-          <column width="-1" hidden="0" type="field" name="id"/>
-          <column width="-1" hidden="0" type="field" name="objectid"/>
-          <column width="-1" hidden="0" type="field" name="shape_leng"/>
-          <column width="-1" hidden="1" type="actions"/>
-        </columns>
-      </attributetableconfig>
-      <editform>.</editform>
-      <editforminit/>
-      <editforminitcodesource>0</editforminitcodesource>
-      <editforminitfilepath>.</editforminitfilepath>
-      <editforminitcode><![CDATA[# -*- coding: utf-8 -*-
-"""
-Les formulaires QGIS peuvent avoir une fonction Python qui sera appelée à l'ouverture du formulaire.
-
-Utilisez cette fonction pour ajouter plus de fonctionnalités à vos formulaires.
-
-Entrez le nom de la fonction dans le champ "Fonction d'initialisation Python".
-Voici un exemple à suivre:
-"""
-from qgis.PyQt.QtWidgets import QWidget
-
-def my_form_open(dialog, layer, feature):
-    geom = feature.geometry()
-    control = dialog.findChild(QWidget, "MyLineEdit")
-
-]]></editforminitcode>
-      <featformsuppress>0</featformsuppress>
-      <editorlayout>generatedlayout</editorlayout>
-      <widgets>
-        <widget name="id">
-          <config>
-            <option key="IsMultiline" value="false"/>
-            <option key="UseHtml" value="false"/>
-          </config>
-        </widget>
-      </widgets>
-      <conditionalstyles>
-        <rowstyles/>
-        <fieldstyles/>
-      </conditionalstyles>
-      <defaults>
-        <default field="ogc_fid" expression=""/>
-        <default field="objectid" expression=""/>
-        <default field="shape_leng" expression=""/>
-      </defaults>
-      <previewExpression></previewExpression>
-    </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>nomenclature20171206180403796</id>
       <datasource>./data/exported_layers.sqlite|layername=nomenclature</datasource>
@@ -1633,8 +1382,8 @@ def my_form_open(dialog, layer, feature):
       <previewExpression>COALESCE("ogc_fid", '&lt;NULL>')||', '||COALESCE("champ", '&lt;NULL>')||', '||COALESCE("code", '&lt;NULL>')||', '||COALESCE("valeur", '&lt;NULL>')||', '||COALESCE("description", '&lt;NULL>')||', '||COALESCE("ordre", '&lt;NULL>')</previewExpression>
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
-      <id>v_descriptif_sujet_acme20181116122154218</id>
-      <datasource>dbname='naturaliz' host=localhost port=5432 user='john_doe_acme' password='acme' sslmode=disable key='cle_obs' estimatedmetadata=true table="occtax"."v_descriptif_sujet_acme" sql=</datasource>
+      <id>v_descriptif_sujet_test20181116122154218</id>
+      <datasource>dbname='naturaliz' host=localhost port=5432 user='validation_test' sslmode=disable key='cle_obs' estimatedmetadata=true table="occtax"."v_descriptif_sujet_test" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -1698,7 +1447,7 @@ def my_form_open(dialog, layer, feature):
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="obs_contexte">
-          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+          <widgetv2config IsMultiline="1" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="obs_description">
           <widgetv2config IsMultiline="1" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -1710,19 +1459,19 @@ def my_form_open(dialog, layer, feature):
       <annotationform>.</annotationform>
       <aliases>
         <alias field="cle_obs" index="0" name=""/>
-        <alias field="obs_methode" index="1" name=""/>
-        <alias field="occ_etat_biologique" index="2" name=""/>
-        <alias field="occ_naturalite" index="3" name=""/>
-        <alias field="occ_sexe" index="4" name=""/>
-        <alias field="occ_stade_de_vie" index="5" name=""/>
-        <alias field="occ_statut_biogeographique" index="6" name=""/>
-        <alias field="occ_statut_biologique" index="7" name=""/>
-        <alias field="preuve_existante" index="8" name=""/>
-        <alias field="preuve_numerique" index="9" name=""/>
-        <alias field="preuve_non_numerique" index="10" name=""/>
-        <alias field="obs_contexte" index="11" name=""/>
-        <alias field="obs_description" index="12" name=""/>
-        <alias field="occ_methode_determination" index="13" name=""/>
+        <alias field="obs_methode" index="1" name="Méthode d'observation"/>
+        <alias field="occ_etat_biologique" index="2" name="Etat biologique"/>
+        <alias field="occ_naturalite" index="3" name="Naturalité"/>
+        <alias field="occ_sexe" index="4" name="Sexe"/>
+        <alias field="occ_stade_de_vie" index="5" name="Stade de vie"/>
+        <alias field="occ_statut_biogeographique" index="6" name="Statut biogéographique"/>
+        <alias field="occ_statut_biologique" index="7" name="Statut biologique"/>
+        <alias field="preuve_existante" index="8" name="Existence de preuve"/>
+        <alias field="preuve_numerique" index="9" name="Preuve numérique"/>
+        <alias field="preuve_non_numerique" index="10" name="Preuve non numérique"/>
+        <alias field="obs_contexte" index="11" name="Contexte"/>
+        <alias field="obs_description" index="12" name="Description"/>
+        <alias field="occ_methode_determination" index="13" name="Méthode de détermination"/>
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
@@ -1770,19 +1519,19 @@ def my_form_open(dialog, layer, feature):
       <editorlayout>tablayout</editorlayout>
       <attributeEditorForm>
         <attributeEditorContainer showLabel="1" visibilityExpressionEnabled="0" visibilityExpression="" name="Descriptif" groupBox="0" columnCount="2">
-          <attributeEditorField showLabel="1" index="1" name="obs_methode"/>
-          <attributeEditorField showLabel="1" index="13" name="occ_methode_determination"/>
           <attributeEditorField showLabel="1" index="2" name="occ_etat_biologique"/>
-          <attributeEditorField showLabel="1" index="3" name="occ_naturalite"/>
+          <attributeEditorField showLabel="1" index="1" name="obs_methode"/>
           <attributeEditorField showLabel="1" index="4" name="occ_sexe"/>
+          <attributeEditorField showLabel="1" index="13" name="occ_methode_determination"/>
           <attributeEditorField showLabel="1" index="5" name="occ_stade_de_vie"/>
-          <attributeEditorField showLabel="1" index="6" name="occ_statut_biogeographique"/>
-          <attributeEditorField showLabel="1" index="7" name="occ_statut_biologique"/>
           <attributeEditorField showLabel="1" index="8" name="preuve_existante"/>
+          <attributeEditorField showLabel="1" index="7" name="occ_statut_biologique"/>
           <attributeEditorField showLabel="1" index="9" name="preuve_numerique"/>
+          <attributeEditorField showLabel="1" index="3" name="occ_naturalite"/>
           <attributeEditorField showLabel="1" index="10" name="preuve_non_numerique"/>
-          <attributeEditorField showLabel="1" index="11" name="obs_contexte"/>
           <attributeEditorField showLabel="1" index="12" name="obs_description"/>
+          <attributeEditorField showLabel="1" index="11" name="obs_contexte"/>
+          <attributeEditorField showLabel="1" index="6" name="occ_statut_biogeographique"/>
         </attributeEditorContainer>
       </attributeEditorForm>
       <widgets/>
@@ -1815,12 +1564,12 @@ def my_form_open(dialog, layer, feature):
         <xmax>374068.22715700202388689</xmax>
         <ymax>7689726.9537584101781249</ymax>
       </extent>
-      <id>v_observation_validation_acme20171206175247744</id>
-      <datasource>dbname='naturaliz' host=localhost port=5432 user='john_doe_acme' sslmode=disable key='cle_obs' estimatedmetadata=true srid=2975 type=Point table="occtax"."v_observation_validation_acme" (geom) sql=</datasource>
+      <id>v_observation_validation_test20171206175247744</id>
+      <datasource>dbname='naturaliz' host=localhost port=5432 user='validation_test' sslmode=disable key='cle_obs' estimatedmetadata=true srid=2975 type=Point table="occtax"."v_observation_validation_test" (geom) sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
-      <layername>Observations à valider manuellement</layername>
+      <layername>Observations</layername>
       <srs>
         <spatialrefsys>
           <proj4>+proj=utm +zone=40 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
@@ -1891,8 +1640,8 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="ValueRelation" name="type_denombrement">
           <widgetv2config OrderByValue="1" AllowNull="1" FilterExpression="champ='type_denombrement'" UseCompleter="0" fieldEditable="0" Key="code" constraint="" Layer="nomenclature20171206180403796" Value="valeur" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="descriptif_sujet">
-          <widgetv2config IsMultiline="1" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
+        <edittype widgetv2type="TextEdit" name="preuve_existante">
+          <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="date_determination">
           <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
@@ -2008,7 +1757,7 @@ def my_form_open(dialog, layer, feature):
       </edittypes>
       <renderer-v2 forceraster="0" symbollevels="0" type="RuleRenderer" enableorderby="0">
         <rules key="{2fd9854e-fd10-42a0-8b0b-553b730cebf5}">
-          <rule filter="&quot;niv_val&quot; IS NULL OR &quot;typ_val&quot; = 'A'" key="{6972df55-5cfc-421d-a761-748f45e72a79}" label="A valider manuellement">
+          <rule filter="&quot;typ_val&quot; IS NULL OR &quot;typ_val&quot; = 'A'" key="{6972df55-5cfc-421d-a761-748f45e72a79}" label="A valider manuellement">
             <rule filter="&quot;niv_val&quot; = '1'" key="{e27606ba-2661-4a03-bbdc-b346bbba8c7a}" symbol="0" label="Certaine"/>
             <rule filter="&quot;niv_val&quot; = '2'" key="{bbcb75b7-6d90-49ef-a0a6-e6b4f464f27b}" symbol="1" label="Probable"/>
             <rule filter="&quot;niv_val&quot; = '3'" key="{30518f95-1bcc-4858-bfa2-6451210b4e3b}" symbol="2" label="Douteuse"/>
@@ -2016,7 +1765,7 @@ def my_form_open(dialog, layer, feature):
             <rule filter="&quot;niv_val&quot; = '5'" key="{b6c9aaf7-2fee-4e08-ac09-ba12f7208aa0}" symbol="4" label="Non réalisable"/>
             <rule filter="&quot;niv_val&quot; = '6' OR &quot;niv_val&quot; IS NULL" key="{fa31b247-ba9f-4482-8a01-bad321167600}" symbol="5" label="Non évaluée"/>
           </rule>
-          <rule filter="&quot;niv_val&quot; IS NOT NULL AND typ_val IN ('M', 'C')" key="{09f0d419-c17c-4b07-9875-b4b9c63e64fd}" label="Déjà validées manuellement">
+          <rule filter="&quot;typ_val&quot; IN ('M', 'C')" key="{09f0d419-c17c-4b07-9875-b4b9c63e64fd}" label="Déjà validées manuellement">
             <rule filter="&quot;niv_val&quot; = '1'" key="{6d4fc791-cf5f-4c0b-87e5-8b20c66d43a3}" symbol="6" label="Certaine"/>
             <rule filter="&quot;niv_val&quot; = '2'" key="{6cfc5a97-08ba-4e24-b2a0-ed73ed511ed7}" symbol="7" label="Probable"/>
             <rule filter="&quot;niv_val&quot; = '3'" key="{852c9d56-c12f-4f40-a094-8f067fa73c24}" symbol="8" label="Douteuse"/>
@@ -2042,7 +1791,7 @@ def my_form_open(dialog, layer, feature):
               <prop k="outline_width_map_unit_scale" v="0,0,0,0,0,0"/>
               <prop k="outline_width_unit" v="MM"/>
               <prop k="scale_method" v="diameter"/>
-              <prop k="size" v="3"/>
+              <prop k="size" v="2.4"/>
               <prop k="size_map_unit_scale" v="0,0,0,0,0,0"/>
               <prop k="size_unit" v="MM"/>
               <prop k="vertical_anchor_point" v="1"/>
@@ -2064,7 +1813,7 @@ def my_form_open(dialog, layer, feature):
               <prop k="outline_width_map_unit_scale" v="0,0,0,0,0,0"/>
               <prop k="outline_width_unit" v="MM"/>
               <prop k="scale_method" v="diameter"/>
-              <prop k="size" v="3"/>
+              <prop k="size" v="2.4"/>
               <prop k="size_map_unit_scale" v="0,0,0,0,0,0"/>
               <prop k="size_unit" v="MM"/>
               <prop k="vertical_anchor_point" v="1"/>
@@ -2130,7 +1879,7 @@ def my_form_open(dialog, layer, feature):
               <prop k="outline_width_map_unit_scale" v="0,0,0,0,0,0"/>
               <prop k="outline_width_unit" v="MM"/>
               <prop k="scale_method" v="diameter"/>
-              <prop k="size" v="3"/>
+              <prop k="size" v="2.4"/>
               <prop k="size_map_unit_scale" v="0,0,0,0,0,0"/>
               <prop k="size_unit" v="MM"/>
               <prop k="vertical_anchor_point" v="1"/>
@@ -2152,7 +1901,7 @@ def my_form_open(dialog, layer, feature):
               <prop k="outline_width_map_unit_scale" v="0,0,0,0,0,0"/>
               <prop k="outline_width_unit" v="MM"/>
               <prop k="scale_method" v="diameter"/>
-              <prop k="size" v="3"/>
+              <prop k="size" v="2.4"/>
               <prop k="size_map_unit_scale" v="0,0,0,0,0,0"/>
               <prop k="size_unit" v="MM"/>
               <prop k="vertical_anchor_point" v="1"/>
@@ -2174,7 +1923,7 @@ def my_form_open(dialog, layer, feature):
               <prop k="outline_width_map_unit_scale" v="0,0,0,0,0,0"/>
               <prop k="outline_width_unit" v="MM"/>
               <prop k="scale_method" v="diameter"/>
-              <prop k="size" v="3"/>
+              <prop k="size" v="2.4"/>
               <prop k="size_map_unit_scale" v="0,0,0,0,0,0"/>
               <prop k="size_unit" v="MM"/>
               <prop k="vertical_anchor_point" v="1"/>
@@ -2196,7 +1945,7 @@ def my_form_open(dialog, layer, feature):
               <prop k="outline_width_map_unit_scale" v="0,0,0,0,0,0"/>
               <prop k="outline_width_unit" v="MM"/>
               <prop k="scale_method" v="diameter"/>
-              <prop k="size" v="3"/>
+              <prop k="size" v="2.4"/>
               <prop k="size_map_unit_scale" v="0,0,0,0,0,0"/>
               <prop k="size_unit" v="MM"/>
               <prop k="vertical_anchor_point" v="1"/>
@@ -2323,8 +2072,8 @@ def my_form_open(dialog, layer, feature):
         <property key="labeling/fieldName" value=""/>
         <property key="labeling/fitInPolygonOnly" value="false"/>
         <property key="labeling/fontCapitals" value="0"/>
-        <property key="labeling/fontFamily" value="Ubuntu"/>
-        <property key="labeling/fontItalic" value="false"/>
+        <property key="labeling/fontFamily" value="MS Shell Dlg 2"/>
+        <property key="labeling/fontItalic" value="true"/>
         <property key="labeling/fontLetterSpacing" value="0"/>
         <property key="labeling/fontLimitPixelSize" value="false"/>
         <property key="labeling/fontMaxPixelSize" value="10000"/>
@@ -2508,7 +2257,7 @@ def my_form_open(dialog, layer, feature):
         <alias field="denombrement_max" index="13" name="Dénombrement max"/>
         <alias field="objet_denombrement" index="14" name="Objet dénombrement"/>
         <alias field="type_denombrement" index="15" name="Type dénombrement"/>
-        <alias field="descriptif_sujet" index="16" name="Descriptif sujet"/>
+        <alias field="preuve_existante" index="16" name="Preuve associée"/>
         <alias field="date_determination" index="17" name="Date de détermination"/>
         <alias field="date_debut" index="18" name="Date de début"/>
         <alias field="date_fin" index="19" name="Date de fin"/>
@@ -2549,10 +2298,10 @@ def my_form_open(dialog, layer, feature):
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
-      <attributeactions default="-1">
-        <actionsetting showInAttributeTable="1" action="[%'https://inpn.mnhn.fr/mtd/cadre/jdd/export/xml/GetRecordById?id=' ||  &quot;jdd_metadonnee_dee_id&quot; %]" icon="" capture="0" type="5" name="Ouvrir fiche de métadonnées" shortTitle=""/>
+      <attributeactions default="0">
+        <actionsetting showInAttributeTable="1" action="[%'https://inpn.mnhn.fr/espece/jeudonnees/' || &quot;jdd_id&quot; %]" icon="" capture="0" type="5" name="Ouvrir fiche de métadonnées" shortTitle=""/>
       </attributeactions>
-      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="&quot;niv_val&quot;" sortOrder="1">
+      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="&quot;niv_val&quot;" sortOrder="0">
         <columns>
           <column width="-1" hidden="0" type="field" name="cle_obs"/>
           <column width="-1" hidden="0" type="field" name="statut_observation"/>
@@ -2608,7 +2357,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="famille"/>
           <column width="-1" hidden="0" type="field" name="identite_observateur"/>
           <column width="-1" hidden="0" type="field" name="determinateur"/>
-          <column width="-1" hidden="0" type="field" name="descriptif_sujet"/>
+          <column width="-1" hidden="0" type="field" name="preuve_existante"/>
         </columns>
       </attributetableconfig>
       <editform>.</editform>
@@ -2649,6 +2398,7 @@ def my_form_open(dialog, layer, feature):
             <attributeEditorField showLabel="1" index="15" name="type_denombrement"/>
             <attributeEditorField showLabel="1" index="7" name="reu"/>
             <attributeEditorField showLabel="1" index="28" name="commentaire"/>
+            <attributeEditorField showLabel="1" index="16" name="preuve_existante"/>
           </attributeEditorContainer>
           <attributeEditorContainer showLabel="1" visibilityExpressionEnabled="0" visibilityExpression="" name="Qui" groupBox="1" columnCount="2">
             <attributeEditorField showLabel="1" index="25" name="identite_observateur"/>
@@ -2676,12 +2426,11 @@ def my_form_open(dialog, layer, feature):
             <attributeEditorField showLabel="1" index="36" name="reference_biblio"/>
             <attributeEditorField showLabel="1" index="31" name="dee_date_derniere_modification"/>
             <attributeEditorField showLabel="1" index="32" name="jdd_code"/>
-            <attributeEditorField showLabel="1" index="34" name="jdd_metadonnee_dee_id"/>
             <attributeEditorField showLabel="1" index="-1" name="jdd_description"/>
           </attributeEditorContainer>
         </attributeEditorContainer>
         <attributeEditorContainer showLabel="1" visibilityExpressionEnabled="0" visibilityExpression="" name="Description des individus" groupBox="0" columnCount="2">
-          <attributeEditorRelation showLinkButton="1" relation="v_descript_cle_obs_v_observat_cle_obs" showLabel="1" showUnlinkButton="1" name="v_descript_cle_obs_v_observat_cle_obs"/>
+          <attributeEditorRelation showLinkButton="1" relation="v_descript_cle_obs_v_observat_cle_obs" showLabel="0" showUnlinkButton="1" name="v_descript_cle_obs_v_observat_cle_obs"/>
         </attributeEditorContainer>
         <attributeEditorContainer showLabel="1" visibilityExpressionEnabled="0" visibilityExpression="" name="Fiche taxon MNHN" groupBox="0" columnCount="2">
           <attributeEditorField showLabel="1" index="53" name="webcdnom"/>
@@ -2731,7 +2480,7 @@ def my_form_open(dialog, layer, feature):
         <default field="denombrement_max" expression=""/>
         <default field="objet_denombrement" expression=""/>
         <default field="type_denombrement" expression=""/>
-        <default field="descriptif_sujet" expression=""/>
+        <default field="preuve_existante" expression=""/>
         <default field="date_determination" expression=""/>
         <default field="date_debut" expression=""/>
         <default field="date_fin" expression=""/>
@@ -3155,8 +2904,26 @@ def my_form_open(dialog, layer, feature):
       <LayerSnappingList type="QStringList">
         <value>commune20171207093853482</value>
         <value>exported_layers20181115180347257</value>
-        <value>limite_terre_mer20180830112111892</value>
-        <value>v_observation_validation_acme20171206175247744</value>
+        <value>oiseaux_habitat20181119103043223</value>
+        <value>v_observation_validation_test20171206175247744</value>
+        <value>validation_reptiles_amphibiens_3_agaaga20181119101945290</value>
+        <value>validation_reptiles_amphibiens_3_amigut20181119101945384</value>
+        <value>validation_reptiles_amphibiens_3_calver20181119101945462</value>
+        <value>validation_reptiles_amphibiens_3_furpar20181119101945540</value>
+        <value>validation_reptiles_amphibiens_3_gehmut20181119101945618</value>
+        <value>validation_reptiles_amphibiens_3_hemfre20181119101945713</value>
+        <value>validation_reptiles_amphibiens_3_hemmer20181119101945792</value>
+        <value>validation_reptiles_amphibiens_3_hempar20181119101945872</value>
+        <value>validation_reptiles_amphibiens_3_hemtyp20181119101945967</value>
+        <value>validation_reptiles_amphibiens_3_indbra20181119101946046</value>
+        <value>validation_reptiles_amphibiens_3_lycaul20181119101946124</value>
+        <value>validation_reptiles_amphibiens_3_pheast20181119101946202</value>
+        <value>validation_reptiles_amphibiens_3_phebor20181119101946282</value>
+        <value>validation_reptiles_amphibiens_3_phegra20181119101946394</value>
+        <value>validation_reptiles_amphibiens_3_pheine20181119101922035</value>
+        <value>validation_reptiles_amphibiens_3_phelat20181119101946474</value>
+        <value>validation_reptiles_amphibiens_3_phelin20181119101946552</value>
+        <value>validation_reptiles_amphibiens_3_ptymas20181119101946646</value>
         <value>zone_economique_exclusive20171207093950270</value>
       </LayerSnappingList>
       <LayerSnappingEnabledList type="QStringList">
@@ -3164,6 +2931,24 @@ def my_form_open(dialog, layer, feature):
         <value>enabled</value>
         <value>disabled</value>
         <value>enabled</value>
+        <value>disabled</value>
+        <value>disabled</value>
+        <value>disabled</value>
+        <value>disabled</value>
+        <value>disabled</value>
+        <value>disabled</value>
+        <value>disabled</value>
+        <value>disabled</value>
+        <value>disabled</value>
+        <value>disabled</value>
+        <value>disabled</value>
+        <value>disabled</value>
+        <value>disabled</value>
+        <value>disabled</value>
+        <value>disabled</value>
+        <value>disabled</value>
+        <value>disabled</value>
+        <value>disabled</value>
         <value>enabled</value>
       </LayerSnappingEnabledList>
       <SnappingMode type="QString">current_layer</SnappingMode>
@@ -3173,9 +2958,45 @@ def my_form_open(dialog, layer, feature):
         <value>1</value>
         <value>2</value>
         <value>1</value>
+        <value>2</value>
+        <value>2</value>
+        <value>2</value>
+        <value>2</value>
+        <value>2</value>
+        <value>2</value>
+        <value>2</value>
+        <value>2</value>
+        <value>2</value>
+        <value>2</value>
+        <value>2</value>
+        <value>2</value>
+        <value>2</value>
+        <value>2</value>
+        <value>2</value>
+        <value>2</value>
+        <value>2</value>
+        <value>2</value>
         <value>1</value>
       </LayerSnappingToleranceUnitList>
       <LayerSnapToList type="QStringList">
+        <value>to_vertex_and_segment</value>
+        <value>to_vertex_and_segment</value>
+        <value>to_vertex_and_segment</value>
+        <value>to_vertex_and_segment</value>
+        <value>to_vertex_and_segment</value>
+        <value>to_vertex_and_segment</value>
+        <value>to_vertex_and_segment</value>
+        <value>to_vertex_and_segment</value>
+        <value>to_vertex_and_segment</value>
+        <value>to_vertex_and_segment</value>
+        <value>to_vertex_and_segment</value>
+        <value>to_vertex_and_segment</value>
+        <value>to_vertex_and_segment</value>
+        <value>to_vertex_and_segment</value>
+        <value>to_vertex_and_segment</value>
+        <value>to_vertex_and_segment</value>
+        <value>to_vertex_and_segment</value>
+        <value>to_vertex_and_segment</value>
         <value>to_vertex_and_segment</value>
         <value>to_vertex_and_segment</value>
         <value>to_vertex_and_segment</value>
@@ -3189,6 +3010,24 @@ def my_form_open(dialog, layer, feature):
         <value>10.000000</value>
         <value>0.000000</value>
         <value>10.000000</value>
+        <value>0.000000</value>
+        <value>0.000000</value>
+        <value>0.000000</value>
+        <value>0.000000</value>
+        <value>0.000000</value>
+        <value>0.000000</value>
+        <value>0.000000</value>
+        <value>0.000000</value>
+        <value>0.000000</value>
+        <value>0.000000</value>
+        <value>0.000000</value>
+        <value>0.000000</value>
+        <value>0.000000</value>
+        <value>0.000000</value>
+        <value>0.000000</value>
+        <value>0.000000</value>
+        <value>0.000000</value>
+        <value>0.000000</value>
         <value>10.000000</value>
       </LayerSnappingToleranceList>
     </Digitizing>
