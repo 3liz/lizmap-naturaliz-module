@@ -259,7 +259,7 @@ CREATE TABLE personne (
     prenom text,
     nom text,
     mail text,
-    organisme text NOT NULL,
+    id_organisme integer NOT NULL DEFAULT -1,
     anonymiser boolean,
     CONSTRAINT personne_identite_valide CHECK ( identite NOT LIKE '%,%' ),
     CONSTRAINT personne_identite_organisme_mail_key UNIQUE (identite, organisme, mail)
@@ -272,7 +272,7 @@ COMMENT ON COLUMN personne.identite IS 'Identité de la personne. NOM Prénom (o
 COMMENT ON COLUMN personne.prenom IS 'Prénom de la personne.';
 COMMENT ON COLUMN personne.nom IS 'Nom de la personne.';
 COMMENT ON COLUMN personne.mail IS 'Email de la personne. Optionnel';
-COMMENT ON COLUMN personne.organisme IS 'Organisme de la personne.
+COMMENT ON COLUMN personne.id_organisme IS 'Identifiant de l''organisme, en lien avec la table observation. On utilise -1 par défaut, qui correspond à un organisme non défini, à remplacer par organisme inconnu ou indépendant.
 Règles : "Indépendant" si la personne n''est pas affiliée à un organisme; "Inconnu" si l''affiliation à un organisme n''est pas connue.';
 COMMENT ON COLUMN personne.anonymiser IS 'Si vrai, alors on ne doit pas diffuser le nom de l''observateur ou autre rôle, ni son organisme dans le détail des observations.';
 
@@ -607,6 +607,7 @@ CREATE TABLE "organisme" (
     cedex TEXT, -- CEDEX
     csr boolean, -- Indique si la structure est membre du Comité de suivi régional du SINP
     commentaire character varying, -- Commentaire sur la structure
+    uuid_national text, -- Identifiant national (UUID)
     date_maj timestamp without time zone DEFAULT (now())::timestamp without time zone -- Date à laquelle l'enregistrement a été modifé pour la dernière fois (rempli automatiquement)
 );
 ALTER TABLE "organisme" ADD UNIQUE (nom_organisme);
@@ -625,8 +626,8 @@ COMMENT ON COLUMN occtax.organisme.commune IS 'Commune' ;
 COMMENT ON COLUMN occtax.organisme.cedex IS 'CEDEX' ;
 COMMENT ON COLUMN occtax.organisme.csr IS 'Indique si la structure est membre du Comité de suivi régional du SINP' ;
 COMMENT ON COLUMN occtax.organisme.commentaire IS 'Commentaire sur la structure' ;
+COMMENT ON COLUMN occtax.organisme.uuid_national IS 'Identifiant de l''organisme au niveau national (uuid)';
 COMMENT ON COLUMN occtax.organisme.date_maj IS 'Date à laquelle l''enregistrement a été modifé pour la dernière fois (rempli automatiquement)' ;
-
 
 -- Fonction trigger mettant à jour un champ date_maj automatiquement
 DROP FUNCTION IF EXISTS occtax.maj_date();
@@ -649,39 +650,57 @@ CREATE TRIGGER tr_date_maj
   FOR EACH ROW
   EXECUTE PROCEDURE occtax.maj_date();
 
+-- Ajout d'un organisme avec id = -1 pour faciliter les imports (en évitant soucis de contraintes de clé étrangère)
+INSERT INTO organisme (id_organisme, nom_organisme, commentaire)
+VALUES (-1, 'Non défini', 'Organisme non défini. Utiliser pour éviter les soucis de contrainte de clé étrangère avec la table personne. Il faut utiliser l''organisme inconnu ou indépendant à la place')
+ON CONFLICT DO NOTHING
+;
+
+-- Contrainte d'intégrité entre personne et organisme
+ALTER TABLE personne DROP CONSTRAINT IF EXISTS personne_id_organisme_fkey;
+ALTER TABLE personne ADD CONSTRAINT personne_id_organisme_fkey
+FOREIGN KEY (id_organisme)
+REFERENCES organisme (id_organisme) MATCH SIMPLE
+ON UPDATE CASCADE
+ON DELETE RESTRICT;
+
 
 -- View to help query observateurs, determinateurs, validateurs
 CREATE OR REPLACE VIEW v_observateur AS
 SELECT
 CASE WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE p.identite END AS identite,
 CASE WHEN p.anonymiser IS TRUE THEN '' ELSE p.mail END AS mail,
-CASE WHEN p.anonymiser IS TRUE OR lower(p.identite) = lower(p.organisme) THEN NULL ELSE Coalesce(p.organisme, 'INCONNU') END AS organisme,
+CASE WHEN p.anonymiser IS TRUE OR lower(p.identite) = lower(nom_organisme) THEN NULL ELSE Coalesce(nom_organisme, 'INCONNU') END AS organisme,
 op.id_personne, op.cle_obs, p.prenom, p.nom, p.anonymiser
 FROM observation_personne op
 INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = 'Obs'
+INNER JOIN organisme o ON o.id_organisme = p.id_organisme
 ;
 
 CREATE OR REPLACE VIEW v_validateur AS
 SELECT CASE WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE p.identite END AS identite,
 CASE WHEN p.anonymiser IS TRUE THEN '' ELSE p.mail END AS mail,
-CASE WHEN p.anonymiser IS TRUE OR lower(p.identite) = lower(p.organisme) THEN NULL ELSE Coalesce(p.organisme, 'INCONNU') END AS organisme,
+CASE WHEN p.anonymiser IS TRUE OR lower(p.identite) = lower(nom_organisme) THEN NULL ELSE Coalesce(nom_organisme, 'INCONNU') END AS organisme,
 op.id_personne, op.cle_obs, p.prenom, p.nom, p.anonymiser
 FROM observation_personne op
 INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = 'Val'
+INNER JOIN organisme o ON o.id_organisme = p.id_organisme
 ;
 
 CREATE OR REPLACE VIEW v_determinateur AS
 SELECT CASE WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE p.identite END AS identite,
 CASE WHEN p.anonymiser IS TRUE THEN '' ELSE p.mail END AS mail,
-CASE WHEN p.anonymiser IS TRUE OR lower(p.identite) = lower(p.organisme) THEN NULL ELSE Coalesce(p.organisme, 'INCONNU') END AS organisme,
+CASE WHEN p.anonymiser IS TRUE OR lower(p.identite) = lower(nom_organisme) THEN NULL ELSE Coalesce(nom_organisme, 'INCONNU') END AS organisme,
 op.id_personne, op.cle_obs, p.prenom, p.nom, p.anonymiser
 FROM observation_personne op
 INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = 'Det'
+INNER JOIN organisme o ON o.id_organisme = p.id_organisme
 ;
 
 
+CREATE INDEX IF NOT EXISTS personne_id_organisme_idx ON personne (id_organisme);
 CREATE INDEX IF NOT EXISTS personne_identite_lower_idx ON occtax.personne (lower(identite));
-CREATE INDEX IF NOT EXISTS personne_organisme_lower_idx ON occtax.personne (lower(organisme));
+CREATE INDEX IF NOT EXISTS organisme_nom_organisme_lower_idx ON occtax.organisme (lower(nom_organisme));
 
 -- imports
 CREATE TABLE jdd_import (
