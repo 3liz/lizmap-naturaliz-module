@@ -75,6 +75,13 @@ observation_exported_children=commune, departement, maille_01, maille_02, maille
 ; ordre des items de menu Lizmap (barre de menu de gauche)
 menuOrder=home, occtax-presentation, switcher, occtax, dataviz, print, measure, permaLink, occtax-legal, taxon, metadata
 
+; utilisateur PostgreSQL avec accès en lecture seule
+dbuser_readonly=naturaliz
+
+; utilisateur PostgreSQL avec propriété sur les objets
+dbuser_owner=lizmap
+
+
 
 [mascarine]
 defaultRepository=
