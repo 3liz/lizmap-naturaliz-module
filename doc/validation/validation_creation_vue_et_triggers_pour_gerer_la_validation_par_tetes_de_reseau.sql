@@ -47,14 +47,13 @@ AND group2_inpn = 'Oiseaux';
 -- à partir de la vue précédente
 DROP VIEW IF EXISTS occtax.v_descriptif_sujet_test;
 CREATE VIEW occtax.v_descriptif_sujet_test AS
-SELECT cle_obs, ds.*
-FROM occtax.v_observation_validation_test o
-join
-jsonb_to_recordset(o.descriptif_sujet) AS ds (
-    obs_methode text, occ_etat_biologique text, occ_naturalite text, occ_sexe text,
-    occ_stade_de_vie text, occ_statut_biogeographique text, occ_statut_biologique text,
-    preuve_existante text, preuve_numerique text, preuve_non_numerique text,
-    obs_contexte text, obs_description text, occ_methode_determination text
+SELECT o.cle_obs, ds.*
+FROM v_observation_validation_test o
+JOIN LATERAL jsonb_to_recordset(o.descriptif_sujet) ds(
+    obs_methode text, occ_etat_biologique text, occ_naturalite text, occ_sexe text, occ_stade_de_vie text,
+    occ_statut_biogeographique text, occ_statut_biologique text, preuve_existante text, preuve_numerique text,
+    preuve_non_numerique text, obs_contexte text, obs_description text, occ_methode_determination text,
+    occ_denombrement_min text, occ_denombrement_max text, occ_objet_denombrement text, occ_type_denombrement text
 ) ON TRUE
 ;
 
