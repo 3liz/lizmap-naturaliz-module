@@ -32,6 +32,19 @@
 
 </group>
 
+<group ref="bdd">
+  <label>BDD</label>
+
+  <input ref="dbuser_readonly" type="string">
+   <label locale="occtax_admin~admin.form.dbuser_readonly.label" />
+  </input>
+
+  <input ref="dbuser_owner" type="string">
+   <label locale="occtax_admin~admin.form.dbuser_owner.label" />
+  </input>
+
+</group>
+
 <group ref="taxon">
   <label>TAXON</label>
 
