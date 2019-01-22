@@ -28,6 +28,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
             'cd_ref' => "Integer",
             'version_taxref' => "String",
             'nom_cite' => "String",
+            'lb_nom_valide' => "String",
 
             // effectif
             'denombrement_min' => "Integer",
@@ -182,6 +183,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
                 'CASE WHEN o.cd_ref > 0 THEN o.cd_ref ELSE NULL END AS cd_ref' => Null,
                 'o.version_taxref' => Null,
                 'o.nom_cite' => Null,
+                'o.lb_nom_valide' => Null,
 
                 // effectif
                 'o.denombrement_min' => Null,

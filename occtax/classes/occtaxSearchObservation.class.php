@@ -17,7 +17,7 @@ class occtaxSearchObservation extends occtaxSearch {
     protected $returnFields = array(
         'cle_obs',
         'date_debut',
-        'nom_cite',
+        'lb_nom_valide',
         'geojson',
         'observateur',
         'source_objet',
@@ -37,7 +37,7 @@ class occtaxSearchObservation extends occtaxSearch {
 
     protected $displayFields = array(
         'date_debut' => array( 'type' => 'string', 'sortable' => "true"),
-        'nom_cite' => array( 'type' => 'string', 'sortable' => "true"),
+        'lb_nom_valide' => array( 'type' => 'string', 'sortable' => "true"),
         'observateur' => array( 'type' => 'string', 'sortable' => "true", 'sorting_field' => 'identite_observateur'),
         'source_objet' => array( 'type' => 'string', 'sortable' => "true"),
         'detail' => array( 'type' => 'string', 'sortable' => 0)
@@ -51,7 +51,7 @@ class occtaxSearchObservation extends occtaxSearch {
             'joinClause' => '',
             'returnFields' => array(
                 'o.cle_obs'=> Null,
-                'o.nom_cite' => Null,
+                'o.lb_nom_valide' => Null,
                 'o.cd_nom' => Null,
                 "date_debut" => Null,
                 "source_objet" => Null,
@@ -188,7 +188,7 @@ class occtaxSearchObservation extends occtaxSearch {
                 $token = $params['search_token'];
                 jClasses::inc('taxon~taxonSearch');
                 $taxonSearch = new taxonSearch( $token );
-                $description.= $taxonSearch->getSearchDescription();
+                $description.= $taxonSearch->getSearchDescription($format);
 
                 $mat = array();
                 $test = preg_match('#^' . jLocale::get('occtax~search.description.no.filters') . '#', $parent_description, $mat);

@@ -120,7 +120,6 @@ class wfsCtrl extends jController {
     // URL Decode some Params
     foreach($params as $k=>$v){
       if(in_array($k, array('observateur', 'autocomplete', 'group', 'group1_inpn', 'group2_inpn'))){
-        jLog::log( "$k = $v" );
         if(is_array($v)){
           $av = array();
           foreach($v as $vv){

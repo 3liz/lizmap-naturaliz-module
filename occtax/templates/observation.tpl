@@ -54,6 +54,13 @@
         </tr>
         {/if}
 
+        {if array_key_exists('lb_nom_valide', $data)}
+        <tr>
+            <th>{@occtax~observation.output.lb_nom_valide@}</th>
+            <td>{$data['lb_nom_valide']}</td>
+        </tr>
+        {/if}
+
         {if array_key_exists('denombrement_min', $data)}
         <tr>
             <th>{@occtax~observation.output.denombrement_min@}</th>

@@ -251,7 +251,7 @@ class taxonSearch {
     /**
      * Get search description
     */
-    public function getSearchDescription(){
+    public function getSearchDescription($format='html'){
         $tpl = new jTpl();
         $filters = array();
         $qf = $this->queryFilters;
@@ -271,6 +271,9 @@ class taxonSearch {
         }
         $tpl->assign('filters', $filters);
         $description = $tpl->fetch('taxon~searchDescription');
+        if($format == 'text'){
+            $description = strip_tags($description);
+        }
         return $description;
     }
 
