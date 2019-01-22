@@ -608,44 +608,74 @@ INSERT INTO nomenclature VALUES ('ech_val', '3', 'Validation nationale', 'Valida
 -- VALIDATION : vue et triggers pour validation par les validateurs agréés
 DROP VIEW IF EXISTS occtax.v_observation_validation CASCADE;
 CREATE VIEW occtax.v_observation_validation AS (
-SELECT
--- Observation
-cle_obs, identifiant_permanent, statut_observation,
---Taxon
-cd_nom, cd_ref, nom_cite,
-nom_valide, reu, nom_vern, group2_inpn, ordre, famille,
---Individus observés
-denombrement_min, denombrement_max, objet_denombrement, type_denombrement,
-
--- Descriptif sujet
-descriptif_sujet,
-
+SELECT o.cle_obs,
+o.identifiant_permanent,
+o.statut_observation,
+o.cd_nom,
+o.cd_ref,
+o.nom_cite,
+o.nom_valide,
+o.reu,
+o.nom_vern,
+o.group2_inpn,
+o.ordre,
+o.famille,
+o.lb_nom_valide,
+o.nom_vern_valide,
+o.denombrement_min,
+o.denombrement_max,
+o.objet_denombrement,
+o.type_denombrement,
+o.descriptif_sujet,
 -- Preuve existante: on cherche dans descriptif_sujet. Si au moins une preuve n'est pas oui, on met Non
 CASE
-    WHEN descriptif_sujet IS NULL OR descriptif_sujet::text ~* '"preuve_existante": ("(0|2|3)"|null)'
+    WHEN descriptif_sujet IS NULL OR descriptif_sujet::text ~* '"preuve_existante": ((")?(0|2|3)(")?|null)'
         THEN 'Non'
     ELSE 'Oui'
 END AS preuve_existante,
-date_determination,
--- Quand ?
-date_debut, date_fin, heure_debut, heure_fin,
---Où ?
-geom, altitude_moy,  precision_geometrie, nature_objet_geo,
---Personnes
-identite_observateur,
-determinateur,
---Généralités
-organisme_gestionnaire_donnees,
-commentaire, code_idcnp_dispositif,  dee_date_transformation, dee_date_derniere_modification,
-jdd_code, jdd_id, jdd_metadonnee_dee_id,
-statut_source, reference_biblio,
--- Diffusion
-ds_publique, diffusion_niveau_precision, sensi_niveau,
---Validation
-v.id_validation, v.date_ctrl, v.niv_val, v.typ_val, v.ech_val, v.peri_val,
-v.val_validateur AS validateur, v.proc_vers, v.producteur, v.date_contact, v."procedure",
-v.proc_ref, v.comm_val
-
+o.date_determination,
+o.date_debut,
+o.date_fin,
+o.heure_debut,
+o.heure_fin,
+o.geom,
+o.altitude_moy,
+o.precision_geometrie,
+o.nature_objet_geo,
+o.identite_observateur,
+o.determinateur,
+o.organisme_gestionnaire_donnees,
+o.commentaire,
+o.code_idcnp_dispositif,
+o.dee_date_transformation,
+o.dee_date_derniere_modification,
+o.jdd_code,
+o.jdd_id,
+o.jdd_metadonnee_dee_id,
+o.statut_source,
+o.reference_biblio,
+o.ds_publique,
+o.diffusion_niveau_precision,
+o.sensi_niveau,
+v.id_validation,
+v.date_ctrl,
+v.niv_val,
+v.typ_val,
+v.ech_val,
+v.peri_val,
+v.val_validateur AS validateur,
+v.proc_vers,
+v.producteur,
+v.date_contact,
+v.procedure,
+v.proc_ref,
+v.comm_val,
+-- on doit stocker les informations relatives à la validation producteur :
+CASE
+    WHEN vprod.id_validation IS NOT NULL
+        THEN concat('Niveau de validité attribué le ', vprod.date_ctrl::TEXT, ' par ', vprod.val_validateur ,  ' : ', vprod.valeur, '.', vprod.comm_val)
+    ELSE NULL
+END AS validation_producteur
 FROM vm_observation o
 LEFT JOIN (
     SELECT vv.*,
@@ -653,9 +683,19 @@ LEFT JOIN (
     FROM validation_observation vv
     LEFT JOIN personne p ON vv.validateur = p.id_personne
     LEFT JOIN organisme o ON p.id_organisme = o.id_organisme
+    WHERE ech_val = '2' -- uniquement validation de niveau régional
 ) v USING (identifiant_permanent)
-
-)
+-- jointure pour avoir les informations relatives à la validation producteur
+LEFT JOIN (
+    SELECT vv.*,
+    n.valeur,
+    identite || concat(' - ' || mail, ' (' || o.nom_organisme || ')' ) AS val_validateur
+    FROM validation_observation vv
+    LEFT JOIN personne p ON vv.validateur = p.id_personne
+    LEFT JOIN organisme o ON p.id_organisme = o.id_organisme
+    LEFT JOIN occtax.nomenclature n ON n.champ='niv_val_mancom' AND n.code=vv.niv_val
+    WHERE vv.ech_val = '1' -- uniquement validation producteur
+) vprod USING (identifiant_permanent)
 ;
 
 

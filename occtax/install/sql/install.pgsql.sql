@@ -1314,8 +1314,9 @@ o.cd_nom,
 o.cd_ref,
 o.version_taxref,
 o.nom_cite,
-t.nom_valide, t.reu, t.nom_vern, t.group1_inpn, t.group2_inpn, t.ordre, t.famille, t.protection, t.url,
+t.nom_valide, t.reu, trim(t.nom_vern) AS nom_vern, t.group1_inpn, t.group2_inpn, t.ordre, t.famille, t.protection, t.url,
 (regexp_split_to_array( Coalesce( tgc1.cat_nom, tgc2.cat_nom, 'Autres' ), ' '))[1] AS categorie,
+tv.lb_nom AS lb_nom_valide, tv.nom_vern AS nom_vern_valide,
 o.denombrement_min,
 o.denombrement_max,
 o.objet_denombrement,
@@ -1416,6 +1417,7 @@ string_agg( DISTINCT concat(
 FROM occtax."observation"  AS o
 JOIN  occtax."observation_diffusion"  AS od  ON od.cle_obs = o.cle_obs
 LEFT JOIN taxon."taxref_consolide_non_filtre" AS t USING (cd_nom)
+LEFT JOIN taxon."taxref_valide" AS tv ON tv.cd_nom = t.cd_ref
 LEFT JOIN taxon."t_group_categorie" AS tgc1  ON tgc1.groupe_nom = t.group1_inpn AND tgc1.groupe_type = 'group1_inpn'
 LEFT JOIN taxon."t_group_categorie" AS tgc2  ON tgc2.groupe_nom = t.group2_inpn AND tgc2.groupe_type = 'group2_inpn'
 LEFT JOIN occtax."v_observateur"  AS pobs  ON pobs.cle_obs = o.cle_obs
@@ -1431,7 +1433,8 @@ LEFT JOIN occtax."v_localisation_espace_naturel"  AS len  ON len.cle_obs = o.cle
 
 WHERE True
 GROUP BY o.cle_obs, o.nom_cite, t.nom_valide, t.reu, t.nom_vern, t.group1_inpn, t.group2_inpn, t.ordre, t.famille, t.protection, t.url,
-o.cd_nom, o.date_debut, source_objet, o.geom, o.geom, od.diffusion, categorie
+o.cd_nom, o.date_debut, source_objet, o.geom, o.geom, od.diffusion, categorie,
+tv.lb_nom, tv.nom_vern
 ;
 
 CREATE INDEX vm_observation_cle_obs_idx ON occtax.vm_observation (cle_obs);
