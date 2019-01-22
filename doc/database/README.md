@@ -18,3 +18,8 @@ cd doc/database/schemaspy/
 ```
 
 Cela va créer un fichier `index.html` dans le répertoire `html/` avec un lien pour chacun des schémas vers la documentation.
+
+NB: les binaires java peuvent être téléchargés ici:
+
+* SchemaSpy: https://github.com/schemaspy/schemaspy/releases Par exemple `schemaspy-6.0.0.jar`
+* Driver PostgreSQL: https://jdbc.postgresql.org/download.html Par exemple `postgresql-42.2.5.jar`

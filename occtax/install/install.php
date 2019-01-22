@@ -81,6 +81,7 @@ class occtaxModuleInstaller extends jInstallerModule {
 
         }
 
+        try{
         if ($this->firstExec('acl2') ) {
             $this->useDbProfile('auth');
 
@@ -107,12 +108,6 @@ class occtaxModuleInstaller extends jInstallerModule {
             // create some users in jAuth
             require_once(JELIX_LIB_PATH.'auth/jAuth.class.php');
             require_once(JELIX_LIB_PATH.'plugins/auth/db/db.auth.php');
-
-            $authconfig = $this->config->getValue('auth','coordplugins');
-            $confIni = parse_ini_file(jApp::configPath($authconfig), true);
-            $authConfig = jAuth::loadConfig($confIni);
-            $driver = new dbAuthDriver($authConfig['Db']);
-            $cn = $this->dbConnection();
 
             // Create Jacl2 group
             for( $i=1; $i<=5; $i++ ) {
@@ -234,6 +229,9 @@ class occtaxModuleInstaller extends jInstallerModule {
 
         }
 
+        }catch (Exception $e){
+            jLog::log($e->getMessage());
+        }
 
         // Modifiy localconfig to add responses
         $this->config->setValue('csv', 'occtax~jResponseCsv', 'responses');

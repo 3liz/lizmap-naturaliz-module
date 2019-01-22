@@ -3,6 +3,8 @@ BEGIN;
 CREATE EXTENSION IF NOT EXISTS "postgis";
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+DROP SCHEMA IF EXISTS occtax CASCADE;
+DROP SCHEMA IF EXISTS sig CASCADE;
 -- Schéma
 CREATE SCHEMA occtax;
 SET search_path TO occtax,public,pg_catalog;
@@ -262,7 +264,7 @@ CREATE TABLE personne (
     id_organisme integer NOT NULL DEFAULT -1,
     anonymiser boolean,
     CONSTRAINT personne_identite_valide CHECK ( identite NOT LIKE '%,%' ),
-    CONSTRAINT personne_identite_organisme_mail_key UNIQUE (identite, organisme, mail)
+    CONSTRAINT personne_identite_organisme_mail_key UNIQUE (identite, id_organisme, mail)
 );
 ALTER TABLE personne ADD PRIMARY KEY (id_personne);
 
@@ -710,8 +712,8 @@ CREATE TABLE jdd_import (
     remarque text,
     date_reception date not null,
     date_import date not null,
-    nb_donnees_source smallint,
-    nb_donnees_import smallint,
+    nb_donnees_source integer,
+    nb_donnees_import integer,
     date_obs_min date,
     date_obs_max date
 );

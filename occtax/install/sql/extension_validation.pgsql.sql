@@ -84,7 +84,7 @@ CREATE TABLE critere_validation (
     condition text NOT NULL,
     table_jointure text,
     niveau text NOT NULL,
-    CONSTRAINT critere_validation_niveau_valide CHECK ( niveau IN ( '1', '2', '3', '4', '5' ) )
+    CONSTRAINT critere_validation_niveau_valide CHECK ( niveau IN ( '1', '2', '3', '4', '5', '6' ) )
 
 );
 ALTER TABLE critere_validation ADD PRIMARY KEY (id_critere);
@@ -254,7 +254,7 @@ BEGIN
         sql_template :=  '
         WHERE True
         -- cd_noms
-        AND cd_nom = ANY (''%s''::BIGINT[])
+        AND o.cd_nom = ANY (''%s''::BIGINT[])
         -- condition
         AND (
             %s
@@ -399,7 +399,7 @@ BEGIN
             ''A'',  --automatique
             ''2'', -- ech_val
             ''1'', -- perimetre minimal
-            ''Validation automatique du '' || now()::DATE,
+            ''Validation automatique du '' || now()::DATE || '' : '' || cv.libelle,
             $1, -- validateur
 
             -- On utilise les valeurs de la table procedure
@@ -649,9 +649,10 @@ v.proc_ref, v.comm_val
 FROM vm_observation o
 LEFT JOIN (
     SELECT vv.*,
-    identite || concat(' - ' || mail, ' (' || organisme || ')' ) AS val_validateur
+    identite || concat(' - ' || mail, ' (' || o.nom_organisme || ')' ) AS val_validateur
     FROM validation_observation vv
     LEFT JOIN personne p ON vv.validateur = p.id_personne
+    LEFT JOIN organisme o ON p.id_organisme = o.id_organisme
 ) v USING (identifiant_permanent)
 
 )

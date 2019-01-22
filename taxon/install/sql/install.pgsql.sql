@@ -290,14 +290,15 @@ CREATE INDEX ON taxref_valide (habitat);
 
 
 -- Ajout des capacités de recherche plein texte
+SET search_path TO public,pg_catalog;
 DROP TEXT SEARCH CONFIGURATION IF EXISTS french_text_search;
 CREATE TEXT SEARCH CONFIGURATION french_text_search (COPY = french);
 CREATE EXTENSION IF NOT EXISTS unaccent;
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
 ALTER TEXT SEARCH CONFIGURATION french_text_search ALTER MAPPING FOR hword, hword_part, word, asciihword, asciiword, hword_asciipart WITH unaccent, french_stem;
-
--- Moteur de recherche défini par défaut
 SET default_text_search_config TO french_text_search;
+
+SET search_path TO taxon,public,pg_catalog;
 
 -- Création de la table de stockage des vecteurs pour la recherche plein texte sur taxref
 DROP MATERIALIZED VIEW IF EXISTS taxref_fts;
