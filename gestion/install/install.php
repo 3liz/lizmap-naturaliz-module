@@ -50,6 +50,15 @@ class gestionModuleInstaller extends jInstallerModule {
                 jLog::log($e->getMessage());
             }
 
+            // Pouvoir voir toutes les données non filtrées même si pas de demande
+            jAcl2DbManager::addSubject( 'visualisation.donnees.non.filtrees', 'occtax~jacl2.visualisation.donnees.non.filtrees', 'naturaliz.subject.group');
+            jAcl2DbManager::setRightsOnGroup(
+                'admins',
+                array(
+                    'visualisation.donnees.non.filtrees'=>true
+                )
+            );
+
 
         }
     }

@@ -87,7 +87,7 @@ class gestionFilterListener extends jEventListener{
             $filter = ' AND ( ' . $filter . ' ) ';
         }else{
             // Remove all rights to see any observation if the user has no line in demande table, and is not admin
-            if( !jAcl2::check("occtax.admin.config.gerer") ){
+            if( !jAcl2::check("visualisation.donnees.non.filtrees") ){
                 $filter = ' AND False ';
             }
         }
