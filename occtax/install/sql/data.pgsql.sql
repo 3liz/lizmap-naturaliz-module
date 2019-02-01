@@ -254,6 +254,7 @@ INSERT INTO nomenclature (champ, code, valeur, description) VALUES ('diffusion_n
 INSERT INTO nomenclature (champ, code, valeur, description) VALUES ('diffusion_niveau_precision', '3', 'Département', 'Diffusion floutée par rattachement au département.');
 INSERT INTO nomenclature (champ, code, valeur, description) VALUES ('diffusion_niveau_precision', '4', 'Aucune', 'Aucune diffusion (cas exceptionnel), correspond à une donnée de sensibilité 4.');
 INSERT INTO nomenclature (champ, code, valeur, description) VALUES ('diffusion_niveau_precision', '5', 'Précise', 'Diffusion telle quelle : si une donnée précise existe, elle doit être diffusée telle quelle.');
+INSERT INTO nomenclature (champ, code, valeur, description) VALUES ('diffusion_niveau_precision', 'm02', 'Maille 2km', 'Diffusion floutée par rattachement à la maille 2 x 2 km');
 
 
 INSERT INTO nomenclature (champ, code, valeur, description) VALUES ('objet_denombrement', 'COL', 'Colonie', 'Nombre de colonies observées.');

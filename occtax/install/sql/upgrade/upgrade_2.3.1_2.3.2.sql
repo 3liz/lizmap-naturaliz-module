@@ -152,10 +152,28 @@ BEGIN
 
 END
 $BODY$
-  LANGUAGE plpgsql VOLATILE
-  COST 100;
+LANGUAGE plpgsql VOLATILE
+COST 100
+;
 
-ALTER TABLE occtax.critere_validation DROP CONSTRAINT IF EXISTS critere_validation_niveau_valide ;
-ALTER TABLE occtax.critere_validation ADD CONSTRAINT critere_validation_niveau_valide CHECK ( niveau IN ( '1', '2', '3', '4', '5', '6' ) ) ;
+
+-- ajout maille m02 dans la nomenclature et modif de la maille 10
+
+INSERT INTO occtax.nomenclature (champ, code, valeur, description, ordre)
+VALUES (
+    'diffusion_niveau_precision',
+    'm02',
+    'Maille 2km',
+    'Diffusion floutée par rattachement à la maille 2 x 2 km',
+    0
+)
+ON CONFLICT DO NOTHING ;
+UPDATE occtax.nomenclature
+SET valeur = 'Maille 10km'
+WHERE code = '2' AND champ = 'diffusion_niveau_precision'
+;
+
+
+
 
 COMMIT;
