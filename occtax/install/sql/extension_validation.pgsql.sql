@@ -399,7 +399,7 @@ BEGIN
             ''A'',  --automatique
             ''2'', -- ech_val
             ''1'', -- perimetre minimal
-            ''Validation automatique du '' || now()::DATE || '' : '' || cv.libelle,
+            EXCLUDED.comm_val,
             $1, -- validateur
 
             -- On utilise les valeurs de la table procedure
