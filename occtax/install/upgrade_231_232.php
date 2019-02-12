@@ -13,7 +13,12 @@ class occtaxModuleUpgrader_231_232 extends jInstallerModule {
             $sqlPath = $this->path . 'install/sql/upgrade/upgrade_2.3.1_2.3.2.sql';
             $sql = jFile::read( $sqlPath );
             $db = $this->dbConnection();
-            $db->exec($sql);
+            try {
+                $db->exec($sql);
+            } catch (Exception $e){
+                jLog::log("Erreur lors de la mise à jour");
+                jLog::log($e->getMessage());
+            }
 
             // Grant rights
             $sqlPath = $this->path . 'install/sql/grant_rights.sql';
@@ -39,17 +44,17 @@ class occtaxModuleUpgrader_231_232 extends jInstallerModule {
             $tpl->assign('DBUSER_OWNER', $dbuser_owner );
             $sql = $tpl->fetchFromString($sqlTpl, 'text');
             $db = $this->dbConnection();
-            $db->exec($sql);
+            try {
+                $db->exec($sql);
+            } catch (Exception $e){
+                jLog::log("Erreur lors de la mise à jour");
+                jLog::log($e->getMessage());
+            }
 
 
             // Pouvoir voir toutes les données non filtrées même si pas de demande
             jAcl2DbManager::addSubject( 'visualisation.donnees.non.filtrees', 'occtax~jacl2.visualisation.donnees.non.filtrees', 'naturaliz.subject.group');
-            jAcl2DbManager::setRightsOnGroup(
-                'admins',
-                array(
-                    'visualisation.donnees.non.filtrees'=>true
-                )
-            );
+            jAcl2DbManager::addRight('admins', 'visualisation.donnees.non.filtrees');
         }
     }
 }

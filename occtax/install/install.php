@@ -208,24 +208,16 @@ class occtaxModuleInstaller extends jInstallerModule {
                 )
             );
 
-            jAcl2DbManager::setRightsOnGroup(
-                '__anonymous',
-                array(
-                    'requete.spatiale.maille_02'=>true,
-                    'visualisation.donnees.maille_02'=>true
-                )
-            );
+            // Add some rights for anonymous
+            jAcl2DbManager::addRight('__anonymous', 'requete.spatiale.maille_02');
+            jAcl2DbManager::addRight('__anonymous', 'visualisation.donnees.maille_02');
 
             // Add admin to group naturaliz_profil_1
             jAcl2DbUserGroup::addUserToGroup('admin', 'naturaliz_profil_1');
 
             // Ajout du droit d'accès à l'administration de Naturaliz pour l'admin
-            jAcl2DbManager::setRightsOnGroup(
-                'admins',
-                array(
-                    'occtax.admin.config.gerer'=>true
-                )
-            );
+            jAcl2DbManager::addRight('admins', 'occtax.admin.config.gerer');
+            jAcl2DbManager::addRight('admins', 'visualisation.donnees.non.filtrees');
 
         }
 
