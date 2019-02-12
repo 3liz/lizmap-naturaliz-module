@@ -1043,8 +1043,8 @@ OccTax.events.on({
                         }
                         // sum total surface
                         totalSurf += geom.getArea();
-                        // break if total surface is enough than maxAreaQuery
-                        if ( totalSurf >= OccTax.config.maxAreaQuery ) {
+                        // break if total surface is enough than maxAreaQuery (only if maxAreaQuery != -1
+                        if ( OccTax.config.maxAreaQuery > 0 && totalSurf >= OccTax.config.maxAreaQuery ) {
                             lizMap.addMessage( 'La surface totale des objets est trop importante (doit être < ' +  OccTax.config.maxAreaQuery + ' )', 'error', true );
                             multiPoly = null;
                             break;
