@@ -175,6 +175,8 @@ CREATE SEQUENCE taxref_local_cd_nom_seq INCREMENT -1 START -1;
 ALTER TABLE taxref_local ALTER COLUMN cd_nom SET DEFAULT nextval('taxref_local_cd_nom_seq');
 ALTER TABLE taxref_local ALTER COLUMN cd_ref SET DEFAULT currval('taxref_local_cd_nom_seq');
 
+ALTER TABLE taxon.taxref_local ADD CONSTRAINT taxref_local_lb_nom UNIQUE (lb_nom);
+
 COMMENT ON TABLE taxref_local  IS 'Données taxonomiques qui ne sont pas dans TAXREF. L''identifiant donné est négatif temporaire, jusqu''à la création du taxon dans le TAXREF officiel. La structure de la table est complètement identique à celle de TAXREF pour permettre une UNION entre les 2 tables';
 COMMENT ON COLUMN taxref_local.regne IS 'Règne auquel le taxon appartient';
 COMMENT ON COLUMN taxref_local.phylum IS 'Embranchement auquel le taxon appartient';
