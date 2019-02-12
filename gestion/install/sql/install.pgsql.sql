@@ -173,7 +173,7 @@ CREATE TABLE gestion.adherent
   date_adhesion date, -- Date du courrier de notification de l'adhésion au SINP
   statut text, -- Statut d'adhésion (pré-adhérent ou adhérent)
   date_envoi_donnees_historiques date, -- Date fixée pour la fourniture initiale des données et métadonnées au SINP
-  date_envoi_annuel date, -- Date fixée pour la fourniture annuelle des nouvelles données et métadonnées au SINP
+  date_envoi_annuel text, -- Date fixée pour la fourniture annuelle des nouvelles données et métadonnées au SINP
   anonymisation_personnes boolean, -- Indique si le nom des personnes doit être anonymisé pour la diffusion des données
   diffusion_grand_public text, -- Indique les modalités de diffusion au grand public souhaitées par le producteur (doit permettre de renseigner le champ observation.diffusion_niveau_precision)
   remarque text, -- Remarque sur l'avancement de l'adhésion
@@ -200,7 +200,7 @@ COMMENT ON COLUMN gestion.adherent.date_demande IS 'Date du courrier de demande 
 COMMENT ON COLUMN gestion.adherent.date_adhesion IS 'Date du courrier de notification de l''adhésion au SINP';
 COMMENT ON COLUMN gestion.adherent.statut IS 'Statut d''adhésion (pré-adhérent ou adhérent)';
 COMMENT ON COLUMN gestion.adherent.date_envoi_donnees_historiques IS 'Date fixée pour la fourniture initiale des données et métadonnées au SINP';
-COMMENT ON COLUMN gestion.adherent.date_envoi_annuel IS 'Date fixée pour la fourniture annuelle des nouvelles données et métadonnées au SINP';
+COMMENT ON COLUMN gestion.adherent.date_envoi_annuel IS 'Date fixée pour la fourniture annuelle des nouvelles données et métadonnées au SINP. Au format texte, par ex: 15 décembre';
 COMMENT ON COLUMN gestion.adherent.anonymisation_personnes IS 'Indique si le nom des personnes doit être anonymisé pour la diffusion des données';
 COMMENT ON COLUMN gestion.adherent.diffusion_grand_public IS 'Indique les modalités de diffusion au grand public souhaitées par le producteur (doit permettre de renseigner le champ observation.diffusion_niveau_precision)';
 COMMENT ON COLUMN gestion.adherent.remarque IS 'Remarque sur l''avancement de l''adhésion';
