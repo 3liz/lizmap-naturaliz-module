@@ -30,6 +30,15 @@
 
                 // OCCTAX dock
                 $form = jForms::create("occtax~search");
+                $cnx = jDb::getConnection();
+                $sql = "SELECT min(date_debut)::text AS date_min FROM occtax.observation;";
+                $result = $cnx->query( $sql );
+                $date_min = '1600-01-01';
+                foreach( $result->fetchAll() as $line ) {
+                    $date_min = $line->date_min;
+                }
+                $form->setData('date_min', $date_min);
+
                 $formUpload = jForms::create("occtax~upload_geojson");
                 $formTax = jForms::create("taxon~search");
 
