@@ -27,16 +27,18 @@ class taxonSearch {
     protected $returnFields = array(
         'cd_nom',
         'cd_ref',
-        'nom_valide',
         'nom_vern',
+        'nom_valide', // bizarrement nom_valide doit être placé après nom_vern dans cette liste si nom_valide est un tplField...
         'group2_inpn',
         'redlist',
-        'inpn',
         'illustration',
         'add'
     );
 
     protected $tplFields = array(
+        //'nom_valide' => '{$line->nom_valide}',
+        'nom_valide' => '{if !(empty($line->url))}<a href="{$line->url}" target="_blank" title="{@taxon~search.output.inpn.title@}">{$line->nom_valide}</a>{else}{$line->nom_valide}{/if}',
+
         'group2_inpn' => '
             {assign $image= "no_image"}
             {assign $groupe = ""}
@@ -53,8 +55,6 @@ class taxonSearch {
 
         'redlist' => '<span class="redlist {$line->menace}" title="{@taxon~search.output.redlist.title@} : {$libmenace}">{$line->menace}</span>',
 
-        'inpn' => '<a href="{$line->url}" target="_blank" title="{@taxon~search.output.inpn.title@}"><i class="icon-info-sign">&nbsp;</i></a>',
-
         'illustration' => '{if $illustration}<a href="{$illustration}" target="_blank" title="{@taxon~search.output.illustration.title@}"><i class="icon-picture">&nbsp;</i></a>{else}-{/if}',
 
         'add' => '<a class="addTaxon" href="#" title="{@taxon~search.output.add.title@}"><i class="icon-plus-sign"></i></a>'
@@ -65,11 +65,10 @@ class taxonSearch {
     protected $row_label = 'nom_valide';
 
     protected $displayFields = array(
-        'nom_valide' => array( 'type' => 'string', 'sortable' => "true"),
+        'nom_valide' => array( 'type' => 'string', 'sortable' => "true", 'sorting_field' => 'nom_valide'),
         'nom_vern' => array( 'type' => 'string', 'sortable' => "true"),
         'group2_inpn' => array( 'type' => 'string', 'sortable' => "0"),
         'redlist' => array( 'type' => 'string', 'sortable' => "0"),
-        'inpn' => array( 'type' => 'string', 'sortable' => "0"),
         'illustration' => array( 'type' => 'string', 'sortable' => "0"),
         'add' => array( 'type' => 'string', 'sortable' => "0"),
     );

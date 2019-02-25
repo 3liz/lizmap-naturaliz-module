@@ -696,6 +696,7 @@ LEFT JOIN (
     LEFT JOIN occtax.nomenclature n ON n.champ='niv_val_mancom' AND n.code=vv.niv_val
     WHERE vv.ech_val = '1' -- uniquement validation producteur
 ) vprod USING (identifiant_permanent)
+)
 ;
 
 

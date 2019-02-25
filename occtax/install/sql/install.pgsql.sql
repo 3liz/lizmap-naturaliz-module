@@ -1317,6 +1317,7 @@ o.nom_cite,
 t.nom_valide, t.reu, trim(t.nom_vern) AS nom_vern, t.group1_inpn, t.group2_inpn, t.ordre, t.famille, t.protection, tv.url,
 (regexp_split_to_array( Coalesce( tgc1.cat_nom, tgc2.cat_nom, 'Autres' ), ' '))[1] AS categorie,
 trim(tv.lb_nom, ' ,\t') AS lb_nom_valide, trim(tv.nom_vern, ' ,\t') AS nom_vern_valide,
+t.menace, t.rang, t.habitat,
 o.denombrement_min,
 o.denombrement_max,
 o.objet_denombrement,
@@ -1433,6 +1434,7 @@ LEFT JOIN occtax."v_localisation_espace_naturel"  AS len  ON len.cle_obs = o.cle
 
 WHERE True
 GROUP BY o.cle_obs, o.nom_cite, t.nom_valide, t.reu, t.nom_vern, t.group1_inpn, t.group2_inpn, t.ordre, t.famille, t.protection, tv.url,
+t.menace, t.rang, t.habitat,
 o.cd_nom, o.date_debut, source_objet, o.geom, o.geom, od.diffusion, categorie,
 tv.lb_nom, tv.nom_vern
 ;
@@ -1504,14 +1506,6 @@ WHERE True
 GROUP BY periode
 ORDER BY periode
 ;
-
-
-
---
--- Extension validation : voir fichier extension_validation.pgsql.sql
---
-
-
 
 
 COMMIT;

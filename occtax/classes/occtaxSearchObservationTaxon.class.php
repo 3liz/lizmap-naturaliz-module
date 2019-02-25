@@ -15,20 +15,23 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
 
     protected $returnFields = array(
         'cd_ref',
-        'lb_nom_valide',
+        'nom_valide',
         'nom_vern_valide',
         'nbobs',
         'groupe',
-        'inpn',
+        'redlist',
         'filter'
     );
 
     protected $tplFields = array(
+
+        'nom_valide' => '{if !(empty($line->url))}<a href="{$line->url}" target="_blank" title="{@taxon~search.output.inpn.title@}">{$line->lb_nom_valide}</a>{else}{$line->lb_nom_valide}{/if}',
+
         'groupe' => '<img src="{$j_basepath}css/images/taxon/{$line->categorie}.png" width="20px" title="{$line->categorie}"/>',
 
-        'inpn' => '{if !(empty($line->url))}<a href="{$line->url}" target="_blank" title="{@taxon~search.output.inpn.title@}"><i class="icon-info-sign">&nbsp;</i></a>{/if}',
+        'filter' => '<a class="filterByTaxon" href="#" title="{@occtax~search.output.filter.taxon.title@}"><i class="icon-filter"></i></a>',
 
-        'filter' => '<a class="filterByTaxon" href="#" title="{@occtax~search.output.filter.taxon.title@}"><i class="icon-filter"></i></a>'
+        'redlist' => '<span class="redlist {$line->menace}" title="{@taxon~search.output.redlist.title@} : {$line->lib_menace}">{$line->menace}</span>',
 
     );
 
@@ -36,11 +39,11 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
     protected $row_label = 'lb_nom_valide';
 
     protected $displayFields = array(
-        'lb_nom_valide' => array( 'type' => 'string', 'sortable' => "true"),
+        'nom_valide' => array( 'type' => 'string', 'sortable' => "true", 'sorting_field' => 'lb_nom_valide'),
         'nom_vern_valide' => array( 'type' => 'string', 'sortable' => "true"),
         'nbobs' => array( 'type' => 'num', 'sortable' => "true"),
         'groupe' => array( 'type' => 'string', 'sortable' => "true", 'sorting_field' => 'categorie'),
-        'inpn' => array( 'type' => 'string', 'sortable' => 0),
+        'redlist' => array( 'type' => 'string', 'sortable' => "true", 'sorting_field' => 'menace'),
         'filter' => array( 'type' => 'string', 'sortable' => 0)
     );
 
@@ -59,7 +62,17 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
                     'o.nom_vern_valide' => 'nom_vern_valide',
                     'o.url' => 'url',
                     'o.categorie' => 'categorie',
+                    'o.menace' => 'menace',
                     'count(o.cle_obs) AS nbobs'=> Null
+                )
+            ),
+            't_nomenclature' => array(
+                'alias' => 'n',
+                'required' => True,
+                'join' => ' LEFT JOIN ',
+                'joinClause' => " ON n.champ = 'menace' AND o.menace = n.code ",
+                'returnFields' => array(
+                    "n.valeur AS lib_menace" => 'valeur'
                 )
             )
         );
