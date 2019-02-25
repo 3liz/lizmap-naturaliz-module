@@ -33,9 +33,9 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
 
     protected $displayFields = array(
         'maille' => array( 'type' => 'string', 'sortable' => "true"),
-        'nbobs' => array( 'type' => 'num', 'sortable' => "true"),
-        'nbtax' => array( 'type' => 'num', 'sortable' => "true"),
-        'filter' => array( 'type' => 'string', 'sortable' => 0)
+        'nbobs' => array( 'type' => 'num', 'sortable' => "true", 'className' => 'dt-right'),
+        'nbtax' => array( 'type' => 'num', 'sortable' => "true", 'className' => 'dt-right'),
+        'filter' => array( 'type' => 'string', 'sortable' => 0, 'className' => 'dt-center')
     );
 
     protected $orderClause = ' ORDER BY id_maille';

@@ -67,10 +67,10 @@ class taxonSearch {
     protected $displayFields = array(
         'nom_valide' => array( 'type' => 'string', 'sortable' => "true", 'sorting_field' => 'nom_valide'),
         'nom_vern' => array( 'type' => 'string', 'sortable' => "true"),
-        'group2_inpn' => array( 'type' => 'string', 'sortable' => "0"),
-        'redlist' => array( 'type' => 'string', 'sortable' => "0"),
-        'illustration' => array( 'type' => 'string', 'sortable' => "0"),
-        'add' => array( 'type' => 'string', 'sortable' => "0"),
+        'group2_inpn' => array( 'type' => 'string', 'sortable' => "0", 'className' => 'dt-center'),
+        'redlist' => array( 'type' => 'string', 'sortable' => "0", 'className' => 'dt-center'),
+        'illustration' => array( 'type' => 'string', 'sortable' => "0", 'className' => 'dt-center'),
+        'add' => array( 'type' => 'string', 'sortable' => "0", 'className' => 'dt-center'),
     );
 
     protected $queryFields = array(

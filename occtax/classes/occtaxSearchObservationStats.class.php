@@ -37,10 +37,10 @@ class occtaxSearchObservationStats extends occtaxSearchObservation {
     protected $displayFields = array(
         'categorie_image' => array( 'type' => 'string', 'sortable' => 0),
         'categorie_nom' => array( 'type' => 'string', 'sortable' => "true"),
-        'nbobs' => array( 'type' => 'num', 'sortable' => "true"),
+        'nbobs' => array( 'type' => 'num', 'sortable' => "true", 'className' => 'dt-right'),
         //~ 'nb_maille' => array( 'type' => 'num', 'sortable' => "true"),
-        'nb_taxon_present' => array( 'type' => 'num', 'sortable' => "true"),
-        'nb_taxon_protege' => array( 'type' => 'num', 'sortable' => "true"),
+        'nb_taxon_present' => array( 'type' => 'num', 'sortable' => "true", 'className' => 'dt-right'),
+        'nb_taxon_protege' => array( 'type' => 'num', 'sortable' => "true", 'className' => 'dt-right'),
         //'nb_taxon_determinant' => array( 'type' => 'num', 'sortable' => "true")
     );
 

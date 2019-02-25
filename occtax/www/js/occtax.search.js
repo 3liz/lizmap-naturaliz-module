@@ -35,6 +35,9 @@ OccTax.events.on({
             'type': sp[1],
             'sortable': (sp[2] == 'true')
           }
+          if(sp.length == 4){
+            ret['className'] = sp[3];
+          }
           return ret;
         }
       ).get();

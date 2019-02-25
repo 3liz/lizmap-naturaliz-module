@@ -42,9 +42,9 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
         'nom_valide' => array( 'type' => 'string', 'sortable' => "true", 'sorting_field' => 'lb_nom_valide'),
         'nom_vern_valide' => array( 'type' => 'string', 'sortable' => "true"),
         'nbobs' => array( 'type' => 'num', 'sortable' => "true"),
-        'groupe' => array( 'type' => 'string', 'sortable' => "true", 'sorting_field' => 'categorie'),
-        'redlist' => array( 'type' => 'string', 'sortable' => "true", 'sorting_field' => 'menace'),
-        'filter' => array( 'type' => 'string', 'sortable' => 0)
+        'groupe' => array( 'type' => 'string', 'sortable' => "true", 'sorting_field' => 'categorie', 'className' => 'dt-center'),
+        'redlist' => array( 'type' => 'string', 'sortable' => "true", 'sorting_field' => 'menace', 'className' => 'dt-center'),
+        'filter' => array( 'type' => 'string', 'sortable' => 0, 'className' => 'dt-center')
     );
 
     public function __construct ($token=Null, $params=Null, $demande=Null) {

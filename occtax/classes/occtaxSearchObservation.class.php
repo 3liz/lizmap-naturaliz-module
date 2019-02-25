@@ -36,11 +36,11 @@ class occtaxSearchObservation extends occtaxSearch {
     protected $row_id = 'cle_obs';
 
     protected $displayFields = array(
-        'date_debut' => array( 'type' => 'string', 'sortable' => "true"),
+        'date_debut' => array( 'type' => 'string', 'sortable' => "true", 'className' => 'dt-center'),
         'lb_nom_valide' => array( 'type' => 'string', 'sortable' => "true"),
         'observateur' => array( 'type' => 'string', 'sortable' => "true", 'sorting_field' => 'identite_observateur'),
-        'source_objet' => array( 'type' => 'string', 'sortable' => "true"),
-        'detail' => array( 'type' => 'string', 'sortable' => 0)
+        'source_objet' => array( 'type' => 'string', 'sortable' => "true", 'className' => 'dt-center'),
+        'detail' => array( 'type' => 'string', 'sortable' => 0, 'className' => 'dt-center')
     );
 
     protected $querySelectors = array(
