@@ -36,7 +36,8 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
     );
 
     protected $row_id = 'cd_ref';
-    protected $row_label = 'lb_nom_valide';
+
+    protected $row_label = 'nom_valide';
 
     protected $displayFields = array(
         'nom_valide' => array( 'type' => 'string', 'sortable' => "true", 'sorting_field' => 'lb_nom_valide'),
