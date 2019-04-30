@@ -206,7 +206,36 @@ COMMENT ON COLUMN gestion.adherent.diffusion_grand_public IS 'Indique les modali
 COMMENT ON COLUMN gestion.adherent.remarque IS 'Remarque sur l''avancement de l''adhésion';
 
 
+-- echange_inpn
+CREATE TABLE gestion.echange_inpn
+(
+    id_echange serial NOT NULL PRIMARY KEY,
+    date date,
+    type text,
+    description text,
+    interlocuteur text,
+    nb_donnees integer,
+    commentaire text
+)
+;
+
+COMMENT ON TABLE gestion.echange_inpn IS 'Table destinée à stocker les informations relatives aux échanges de données avec la plate-forme nationale SINP';
+
+COMMENT ON COLUMN gestion.echange_inpn.id_echange IS 'Identifiant unique auto-incrémenté';
+COMMENT ON COLUMN gestion.echange_inpn.date IS 'Date à laquelle l''échange a lieu (date du courriel de transmission)';
+COMMENT ON COLUMN gestion.echange_inpn.type IS 'Type d''échange (export depuis Borbonica ou import dans Borbonica)';
+COMMENT ON COLUMN gestion.echange_inpn.description IS 'Description littérale de l''échange';
+COMMENT ON COLUMN gestion.echange_inpn.interlocuteur IS 'Coordonnées de l''interlorcuteur qui a envoyé les données (import) ou à qui elles sont destinées (export)';
+COMMENT ON COLUMN gestion.echange_inpn.nb_donnees IS 'Nombre de données (observations) concernées par l''échange';
+COMMENT ON COLUMN gestion.echange_inpn.commentaire IS 'Commentaire libre sur l''échange';
+
+ALTER TABLE gestion.echange_inpn ADD CONSTRAINT echange_inpn_type
+CHECK ( type IN ('Import', 'Export') );
+
+
 -- INDEXES
 CREATE INDEX ON demande (usr_login);
 CREATE INDEX ON demande (id_acteur);
+
+
 

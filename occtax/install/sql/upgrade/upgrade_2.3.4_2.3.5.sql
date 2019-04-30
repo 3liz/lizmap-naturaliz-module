@@ -1,5 +1,52 @@
 BEGIN;
 
+-- GESTION
+--
+-- nomenclature
+INSERT INTO g_nomenclature VALUES ('civilite', 'M', 'Monsieur', NULL, 1) ON CONFLICT (champ, code) DO NOTHING;
+INSERT INTO g_nomenclature VALUES ('civilite', 'Mme', 'Madame', NULL, 2) ON CONFLICT (champ, code) DO NOTHING;
+INSERT INTO g_nomenclature VALUES ('civilite', 'Mlle', 'Mademoiselle', NULL, 3) ON CONFLICT (champ, code) DO NOTHING;
+
+INSERT INTO g_nomenclature VALUES ('statut_adhesion', 'Pré-adhérent', 'Pré-adhérent', NULL, 1) ON CONFLICT (champ, code) DO NOTHING;
+INSERT INTO g_nomenclature VALUES ('statut_adhesion', 'Adhérent', 'Adhérent', NULL, 2) ON CONFLICT (champ, code) DO NOTHING;
+INSERT INTO g_nomenclature VALUES ('statut_adhesion', 'Adhésion résiliée', 'Adhésion résiliée', NULL, 3) ON CONFLICT (champ, code) DO NOTHING;
+INSERT INTO g_nomenclature VALUES ('statut_adhesion', 'Adhérent exclu', 'Adhérent exclu', NULL, 4) ON CONFLICT (champ, code) DO NOTHING;
+
+INSERT INTO g_nomenclature VALUES ('statut_demande', 'A traiter', 'A traiter', NULL, 1) ON CONFLICT (champ, code) DO NOTHING;
+INSERT INTO g_nomenclature VALUES ('statut_demande', 'Acceptée', 'Acceptée', NULL, 2) ON CONFLICT (champ, code) DO NOTHING;
+INSERT INTO g_nomenclature VALUES ('statut_demande', 'Refusée', 'Refusée', NULL, 3) ON CONFLICT (champ, code) DO NOTHING;
+
+INSERT INTO g_nomenclature VALUES ('type_echange_inpn', 'Import', 'Import', NULL, 1) ON CONFLICT (champ, code) DO NOTHING;
+INSERT INTO g_nomenclature VALUES ('type_echange_inpn', 'Export', 'Export', NULL, 2) ON CONFLICT (champ, code) DO NOTHING;
+
+
+CREATE TABLE IF NOT EXISTS gestion.echange_inpn
+(
+    id_echange serial NOT NULL PRIMARY KEY,
+    date date,
+    type text,
+    description text,
+    interlocuteur text,
+    nb_donnees integer,
+    commentaire text
+)
+;
+
+COMMENT ON TABLE gestion.echange_inpn IS 'Table destinée à stocker les informations relatives aux échanges de données avec la plate-forme nationale SINP';
+
+COMMENT ON COLUMN gestion.echange_inpn.id_echange IS 'Identifiant unique auto-incrémenté';
+COMMENT ON COLUMN gestion.echange_inpn.date IS 'Date à laquelle l''échange a lieu (date du courriel de transmission)';
+COMMENT ON COLUMN gestion.echange_inpn.type IS 'Type d''échange (export depuis Borbonica ou import dans Borbonica)';
+COMMENT ON COLUMN gestion.echange_inpn.description IS 'Description littérale de l''échange';
+COMMENT ON COLUMN gestion.echange_inpn.interlocuteur IS 'Coordonnées de l''interlorcuteur qui a envoyé les données (import) ou à qui elles sont destinées (export)';
+COMMENT ON COLUMN gestion.echange_inpn.nb_donnees IS 'Nombre de données (observations) concernées par l''échange';
+COMMENT ON COLUMN gestion.echange_inpn.commentaire IS 'Commentaire libre sur l''échange';
+
+ALTER TABLE gestion.echange_inpn DROP CONSTRAINT IF EXISTS echange_inpn_type;
+ALTER TABLE gestion.echange_inpn ADD CONSTRAINT echange_inpn_type
+CHECK ( type IN ('Import', 'Export') );
+
+
 -- OCCTAX
 --
 
