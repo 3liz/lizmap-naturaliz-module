@@ -687,13 +687,14 @@ CREATE OR REPLACE VIEW v_validateur AS
 SELECT CASE WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE p.identite END AS identite,
 CASE WHEN p.anonymiser IS TRUE THEN '' ELSE p.mail END AS mail,
 CASE WHEN p.anonymiser IS TRUE OR lower(p.identite) = lower(nom_organisme) THEN NULL ELSE Coalesce(nom_organisme, 'INCONNU') END AS organisme,
-op.id_personne, op.cle_obs, p.prenom, p.nom, p.anonymiser,
+p.id_personne, vv.identifiant_permanent, p.prenom, p.nom, p.anonymiser,
 p.identite AS identite_non_floutee,
 p.mail AS mail_non_floute,
 Coalesce(nom_organisme, 'INCONNU') AS organisme_non_floute
-FROM observation_personne op
-INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = 'Val'
-INNER JOIN organisme o ON o.id_organisme = p.id_organisme
+FROM validation_observation vv
+LEFT JOIN personne p ON vv.validateur = p.id_personne
+LEFT JOIN organisme o ON p.id_organisme = o.id_organisme
+WHERE ech_val = '2' -- uniquement validation de niveau régional
 ;
 
 CREATE OR REPLACE VIEW v_determinateur AS
@@ -1370,87 +1371,7 @@ WITH s AS (
 
     FROM occtax."observation"  AS o
     LEFT JOIN occtax."v_observateur"  AS pobs  ON pobs.cle_obs = o.cle_obs
-    LEFT JOIN occtax."v_validateur"  AS pval  ON pval.cle_obs = o.cle_obs
-    LEFT JOIN occtax."v_determinateur"  AS pdet  ON pdet.cle_obs = o.cle_obs
-    LEFT JOIN occtax."localisation_maille_01"  AS lm01  ON lm01.cle_obs = o.cle_obs
-    LEFT JOIN occtax."localisation_maille_02"  AS lm02  ON lm02.cle_obs = o.cle_obs
-    LEFT JOIN occtax."localisation_maille_10"  AS lm10  ON lm10.cle_obs = o.cle_obs
-    LEFT JOIN occtax."localisation_commune"  AS lc  ON lc.cle_obs = o.cle_obs
-    LEFT JOIN occtax."localisation_departement"  AS ld  ON ld.cle_obs = o.cle_obs
-    LEFT JOIN occtax."localisation_masse_eau"  AS lme  ON lme.cle_obs = o.cle_obs
-    LEFT JOIN occtax."v_localisation_espace_naturel"  AS len  ON len.cle_obs = o.cle_obs
-
-    WHERE True
-    GROUP BY o.cle_obs
-)
-SELECT
-o.cle_obs,
-o.identifiant_permanent,
-o.statut_observation,
-o.cd_nom,
-o.cd_ref,
-o.version_taxref,
-o.nom_cite,
-t.nom_valide, t.reu, trim(t.nom_vern) AS nom_vern, t.group1_inpn, t.group2_inpn, t.ordre, t.famille, t.protection, tv.url,
-(regexp_split_to_array( Coalesce( tgc1.cat_nom, tgc2.cat_nom, 'Autres' ), ' '))[1] AS categorie,
-trim(tv.lb_nom, ' ,\t') AS lb_nom_valide, trim(tv.nom_vern, ' ,\t') AS nom_vern_valide,
-o.denombrement_min,
-o.denombrement_max,CREATE MATERIALIZED VIEW occtax.vm_observation AS
-WITH s AS (
-    SELECT
-    o.cle_obs,
-    jsonb_agg(DISTINCT lm01.code_maille) AS code_maille_01,
-    min(lm01.code_maille) AS code_maille_01_unique,
-    jsonb_agg(DISTINCT lm02.code_maille) AS code_maille_02,
-    min(lm02.code_maille) AS code_maille_02_unique,
-    jsonb_agg(DISTINCT lm10.code_maille) AS code_maille_10,
-    min(lm10.code_maille) AS code_maille_10_unique,
-    jsonb_agg(DISTINCT lc.code_commune) AS code_commune,
-    min(lc.code_commune) AS code_commune_unique,
-    jsonb_agg(DISTINCT ld.code_departement) AS code_departement,
-    jsonb_agg(DISTINCT lme.code_me) AS code_me,
-    jsonb_agg(DISTINCT len.code_en) AS code_en,
-    jsonb_agg(DISTINCT len.type_en) AS type_en,
-
-    string_agg( DISTINCT concat(
-        pobs.identite,
-        CASE
-            WHEN pobs.organisme IS NULL OR pobs.organisme = '' THEN ''
-            ELSE ' (' || pobs.organisme|| ')'
-        END
-    ), ', ' ) AS identite_observateur,
-    string_agg( DISTINCT concat(
-        pobs.identite_non_floutee,
-        CASE
-            WHEN pobs.organisme_non_floute IS NULL OR pobs.organisme_non_floute = '' THEN ''
-            ELSE ' (' || pobs.organisme_non_floute|| ')'
-        END
-    ), ', ' ) AS identite_observateur_non_floute,
-    string_agg( DISTINCT concat(
-        pval.identite,
-        CASE
-            WHEN pval.organisme IS NULL OR pval.organisme = '' THEN ''
-            ELSE ' (' || pval.organisme|| ')'
-        END
-    ), ', ' ) AS validateur,
-    string_agg( DISTINCT concat(
-        pdet.identite,
-        CASE
-            WHEN pdet.organisme IS NULL OR pdet.organisme = '' THEN ''
-            ELSE ' (' || pdet.organisme|| ')'
-        END
-    ), ', ' ) AS determinateur,
-    string_agg( DISTINCT concat(
-        pdet.identite_non_floutee,
-        CASE
-            WHEN pdet.organisme_non_floute IS NULL OR pdet.organisme_non_floute = '' THEN ''
-            ELSE ' (' || pdet.organisme_non_floute|| ')'
-        END
-    ), ', ' ) AS determinateur_non_floute
-
-    FROM occtax."observation"  AS o
-    LEFT JOIN occtax."v_observateur"  AS pobs  ON pobs.cle_obs = o.cle_obs
-    LEFT JOIN occtax."v_validateur"  AS pval  ON pval.cle_obs = o.cle_obs
+    LEFT JOIN occtax."v_validateur"  AS pval  ON pval.identifiant_permanent = o.identifiant_permanent
     LEFT JOIN occtax."v_determinateur"  AS pdet  ON pdet.cle_obs = o.cle_obs
     LEFT JOIN occtax."localisation_maille_01"  AS lm01  ON lm01.cle_obs = o.cle_obs
     LEFT JOIN occtax."localisation_maille_02"  AS lm02  ON lm02.cle_obs = o.cle_obs
@@ -1476,85 +1397,6 @@ t.nom_valide, t.reu, trim(t.nom_vern) AS nom_vern, t.group1_inpn, t.group2_inpn,
 trim(tv.lb_nom, ' ,\t') AS lb_nom_valide, trim(tv.nom_vern, ' ,\t') AS nom_vern_valide,
 o.denombrement_min,
 o.denombrement_max,
-o.objet_denombrement,
-o.type_denombrement,
-o.commentaire,
-o.date_debut,
-o.heure_debut,
-o.date_fin,
-o.heure_fin,
-o.date_determination,
-o.altitude_min,
-o.altitude_moy,
-o.altitude_max,
-o.profondeur_min,
-o.profondeur_moy,
-o.profondeur_max,
-o.code_idcnp_dispositif,
-o.dee_date_derniere_modification,
-o.dee_date_transformation,
-o.dee_floutage,
-o.diffusion_niveau_precision,
-o.ds_publique,
-o.identifiant_origine,
-o.jdd_code,
-o.jdd_id,
-o.jdd_metadonnee_dee_id,
-o.jdd_source_id,
-o.organisme_gestionnaire_donnees,
-o.organisme_standard,
-o.org_transformation,
-o.statut_source,
-o.reference_biblio,
-o.sensible,
-o.sensi_date_attribution,
-o.sensi_niveau,
-o.sensi_referentiel,
-o.sensi_version_referentiel,
-o.descriptif_sujet AS descriptif_sujet,
-o.validite_niveau,
-o.validite_date_validation,
-o.precision_geometrie,
-o.nature_objet_geo,
-o.geom,
-CASE
-    WHEN o.geom IS NOT NULL THEN
-        CASE
-            WHEN GeometryType(geom) IN ('POLYGON', 'MULTIPOLYGON') THEN 'Polygone'
-            WHEN GeometryType(geom) IN ('LINESTRING', 'MULTILINESTRING') THEN 'Ligne'
-            WHEN GeometryType(geom) IN ('POINT', 'MULTIPOINT') THEN 'Point'
-            ELSE 'Géométrie'
-        END
-    WHEN s.code_maille_10 IS NOT NULL THEN 'M10'
-    WHEN s.code_commune IS NOT NULL THEN 'COM'
-    WHEN s.code_me IS NOT NULL THEN 'ME'
-    WHEN s.code_en IS NOT NULL THEN 'EN'
-    WHEN s.code_departement IS NOT NULL THEN 'DEP'
-    ELSE 'NO'
-END AS source_objet,
-
-s.code_maille_01,
-s.code_maille_01_unique,
-s.code_maille_02,
-s.code_maille_02_unique,
-s.code_maille_10,
-s.code_maille_10_unique,
-s.code_commune,
-s.code_commune_unique,
-s.code_departement,
-s.code_me,
-s.code_en,
-s.type_en,
-od.diffusion,
-s.identite_observateur,
-s.identite_observateur_non_floute,
-s.validateur,
-s.determinateur,
-s.determinateur_non_floute
-FROM occtax.observation o
-INNER JOIN s ON s.cle_obs = o.cle_obs
-INNER JOIN  occtax."observation_diffusion"  AS od  ON od.cle_obs = o.cle_obs
-
 o.objet_denombrement,
 o.type_denombrement,
 o.commentaire,
