@@ -1345,7 +1345,8 @@ WITH s AS (
         CASE
             WHEN pobs.organisme_non_floute IS NULL OR pobs.organisme_non_floute = '' THEN ''
             ELSE ' (' || pobs.organisme_non_floute|| ')'
-        END
+        END,
+        ' - ' || pobs.mail_non_floute
     ), ', ' ) AS identite_observateur_non_floute,
     string_agg( DISTINCT concat(
         pval.identite,
@@ -1366,7 +1367,8 @@ WITH s AS (
         CASE
             WHEN pdet.organisme_non_floute IS NULL OR pdet.organisme_non_floute = '' THEN ''
             ELSE ' (' || pdet.organisme_non_floute|| ')'
-        END
+        END,
+        ' - ' || pdet.mail_non_floute
     ), ', ' ) AS determinateur_non_floute
 
     FROM occtax."observation"  AS o
@@ -1395,6 +1397,7 @@ o.nom_cite,
 t.nom_valide, t.reu, trim(t.nom_vern) AS nom_vern, t.group1_inpn, t.group2_inpn, t.ordre, t.famille, t.protection, tv.url,
 (regexp_split_to_array( Coalesce( tgc1.cat_nom, tgc2.cat_nom, 'Autres' ), ' '))[1] AS categorie,
 trim(tv.lb_nom, ' ,\t') AS lb_nom_valide, trim(tv.nom_vern, ' ,\t') AS nom_vern_valide,
+t.menace, t.rang, t.habitat,
 o.denombrement_min,
 o.denombrement_max,
 o.objet_denombrement,

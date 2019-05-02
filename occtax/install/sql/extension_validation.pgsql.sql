@@ -642,8 +642,8 @@ o.geom,
 o.altitude_moy,
 o.precision_geometrie,
 o.nature_objet_geo,
-o.identite_observateur,
-o.determinateur,
+o.identite_observateur_non_floute,
+o.determinateur_non_floute,
 o.organisme_gestionnaire_donnees,
 o.commentaire,
 o.code_idcnp_dispositif,
@@ -698,6 +698,7 @@ LEFT JOIN (
 ) vprod USING (identifiant_permanent)
 )
 ;
+
 
 
 
