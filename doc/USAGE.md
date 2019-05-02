@@ -223,18 +223,24 @@ Module de gestion des données au format Occurence de Taxon
 
 Gestion des accès via table demande. Nous avons simplifié l'utilisation des groupes pour gérer les accès:
 
-* Groupe admins = les super-utilisateurs de l'application (plateforme régionale) qui peuvent accéder à toutes les données sans restriction
-* Groupe acteurs = les personnes qui peuvent voir les données brutes, mais filtrées selon certains critères, comme les taxons, la validité
-* Groupe virtuel anonymous = les personnes non connectées à l'application.
+- Groupe **admins** = les super-utilisateurs de l'application (plateforme régionale) qui peuvent accéder à toutes les données sans restriction
+- Groupe **acteurs** = les personnes qui peuvent voir les données brutes, mais filtrées selon certains critères, comme les taxons, la validité
+- Groupe virtuel **anonymous** = les personnes non connectées à l'application.
 
-Les acteurs vont être gérés dans des tables créées lors de l'installation par le module **gestion**.
+Les droits d'accès du groupe *acteurs* peuvent être gérés finement avec la table demande. Une demande est définie par:
 
-Un exemple de script SQL est disponible dans les sources de l'application, et montre comment insérer des nouveaux acteurs, organismes, etc., et comment leur donner des droits sur les données.
+- des champs de **description générale* : identité de l'acteur (=personne) et de l'organisme à l'origine de la demande, description littérale et date de la demande,etc.
+- des champs définissant la **période de validité de l'accès** : l'accès n'est ouvert qu'entre les dates définies par date_validite_min et date_validite_max
+- des **champs de filtre**, utilisés pour restreindre l'accès de l'acteur aux données : groupe taxonomique, géométrie de zone d'étude, niveau de validation... Un champ générique intitulé critere_additionnel a été ajouté afin de pouvoir affiner de manière très poussée le filtre sans créer un nouveau champ à chaque fois. Les critères doivent être écrits en langage SQL au format TEXT (ie entre ' ', en pensant donc bien à doublers les ' si besoin, par exemple : critere_additionnel='jdd_code=''geir_201805'''). L'ensemble des filtres sont cumulatifs : l'application opère des filtres AND et pas OR.
 
-`referentiels/gestion/ajout_demande.sql`
 
+Un acteur peut avoir plusieurs demandes en cours : les droits d'accès sont alors cumulatifs, l'accès lui étant ouvert à l'ensemble des données couvertes par les demandes en cours.
 
-todo : ajouter comment fonctionne la table demande, en précisant notamment qu'on opère des filtres AND et non OR entre les différents champs de la table demande . (important pour cd_ref, group1_inpn, group2_inpn )
+Les acteurs sont gérés dans des tables créées lors de l'installation par le module gestion, dans la table `gestion.acteur`.
+
+Un exemple de script SQL est disponible dans les sources de l'application: [ajout_demande.sql](referentiels/gestion/ajout_demande.sql). Il montre comment insérer des nouveaux acteurs, organismes, etc., et comment leur donner des droits sur les données.
+
+Le module de gestion des adhésions permettra également une gestion plus ergonomique de ces aspects via les possibilités offertes par les formulaires QGIS et la publication sur Lizmap.
 
 ### Export des données
 
