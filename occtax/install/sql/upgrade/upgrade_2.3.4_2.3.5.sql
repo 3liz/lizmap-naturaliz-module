@@ -406,5 +406,50 @@ LEFT JOIN (
 ;
 
 
+-- Modifications tierces
+-- 1. Ajout d'une colonne code_critere pour faciliter la gestion de la table critere_validation
+----------------------------------------------------------------------------------------------
+ALTER TABLE occtax.critere_validation ADD COLUMN code_critere TEXT ;
+COMMENT ON COLUMN occtax.critere_validation.code_critere IS 'code du critère dans la base source (ex : tortues_marines_1)' ;
+ALTER TABLE occtax.critere_validation ADD CONSTRAINT critere_validation_code_critere_unique UNIQUE(code_critere) ;
+
+
+-- 2. Ajout d'une colonne code_critere pour faciliter la gestion de la table critere_sensibilite
+----------------------------------------------------------------------------------------------
+ALTER TABLE occtax.critere_sensibilite ADD COLUMN code_critere TEXT ;
+COMMENT ON COLUMN occtax.critere_sensibilite.code_critere IS 'code du critère dans la base source (ex : sensibilite_528679)' ;
+ALTER TABLE occtax.critere_sensibilite ADD CONSTRAINT critere_sensibilite_code_critere_unique UNIQUE(code_critere) ;
+
+-- 3. Ajout d'une table occtax.cadre
+---------------------------------------
+CREATE TABLE occtax.cadre
+(
+    cadre_id TEXT NOT NULL,
+    cadre_uuid TEXT NOT NULL,
+    libelle TEXT NOT NULL,
+    description TEXT,
+    ayants_droit jsonb,
+    date_lancement DATE,
+    date_cloture DATE,
+    CONSTRAINT cadre_pkey PRIMARY KEY (cadre_id)
+)
+;
+
+COMMENT ON TABLE occtax.cadre
+    IS 'Recense les cadres d''acquisition tels que renseignés dans l''application nationale https://inpn.mnhn.fr/mtd/. Un cadre d''acquisition regroupe de 1 à n jeux de données. On cherchera la cohérence dans le remplissage par rapport à ce qui est renseigné en ligne.';
+COMMENT ON COLUMN occtax.cadre.cadre_id IS 'Identifiant unique du cadre d''acquisition attribué par la plate-forme nationale INPN (du type ''2393'').';
+COMMENT ON COLUMN occtax.cadre.cadre_uuid IS 'Identifiant unique du cadre d''acquisition attribué par la plate-forme nationale INPN (au format UUID).';
+COMMENT ON COLUMN occtax.cadre.libelle IS 'Nom complet du cadre d''acquisition' ;
+COMMENT ON COLUMN occtax.cadre.description IS 'Description du cadre d''acquisition';
+COMMENT ON COLUMN occtax.cadre.ayants_droit IS 'Liste et rôle des structures ayant des droits sur le jeu de données, et rôle concerné (ex : financeur, maître d''oeuvre, maître d''ouvrage, fournisseur...). Stocker les structures via leur id_organisme';
+COMMENT ON COLUMN occtax.cadre.date_lancement IS 'Date de lancement du cadre d''acquisition' ;
+COMMENT ON COLUMN occtax.cadre.date_cloture IS 'Date de clôture du cadre d''acquisition' ;
+
+-- Index: cadre_cadre_id_idx
+CREATE INDEX cadre_cadre_id_idx
+    ON occtax.cadre USING btree
+    (cadre_id)
+    TABLESPACE pg_default;
+
 
 COMMIT;
