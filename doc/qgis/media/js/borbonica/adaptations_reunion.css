@@ -1,0 +1,10 @@
+#mapmenu .nav-list > li.dataviz.active .icon,
+#mapmenu .nav-list > li.dataviz a:hover .icon {
+    background-image: url("dataviz-icon-dark.png");
+    background-position: 0px 0px;
+}
+
+#mapmenu .nav-list > li.dataviz .icon {
+    background-image: url("dataviz-icon-white.png");
+    background-position: 0px 0px;
+}

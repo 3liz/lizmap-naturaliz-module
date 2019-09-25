@@ -48,6 +48,12 @@ class occtaxModuleInstaller extends jInstallerModule {
                 $tpl->assign('SRID', $srid);
                 $sql = $tpl->fetchFromString($sqlTpl, 'text');
 
+                // Add materialized views
+                $sqlPath = $this->path . 'install/sql/materialized_views.pgsql.sql';
+                $sql.= jFile::read( $sqlPath );
+                $db = $this->dbConnection();
+                $db->exec($sql);
+
                 // Add extension validation
                 // DO NOT USE TEMPLATE : no need (no srid) AND bug with some PostgreSQL regexp inside
                 $sqlPath = $this->path . 'install/sql/extension_validation.pgsql.sql';

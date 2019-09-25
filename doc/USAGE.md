@@ -303,8 +303,19 @@ php lizmap/scripts/script.php occtax~export:dee -output /tmp/donnees_dee.xml
 
 
 
+### Statistiques sur les observations
 
+Pour réaliser des statistiques sur les données de la base, on utilise PostgreSQL et on enregistre les requêtes comme des **vues matérialisées**, dans un schéma **stats**.
 
+Pour mettre à jour régulièrement les statistiques, il faut rafraîchir les vues matérialisées. Pour cela, une fonction utilitaire a été créée, nommée `occtax.manage_materialized_objects`, qui s'appuie sur une table `occtax.materialized_object_list` listant les vues à rafraîchir, avec un ordre bien défini (pour gérer les dépendances de vues).
+
+On peut alors utiliser le script bash  [rafraichissement_vues_materialisees.sh](doc/scripts/rafraichissement_vues_materialisees.sh) pour rafraîchir les vues. Il peut être lancé via `crontab` toutes les nuits
+
+```bash
+0 5 * * * /root/scripts/vues_materialisees/rafraichissement_vues_materialisees.sh > /root/scripts/vues_materialisees/rafraichissement_vues_materialisees.log
+```
+
+Pour fonctionner, le script bash a besoin d'un fichier SQL [grant_rights.sql](doc/scripts/grant_rights.sql) qui réapplique les droits sur les objets après rafraichissement des vues. Il faut bien sûr adapter le script bash et le fichier SQL selon son environnement (nom des utilisateurs, nom des bases de données)
 
 ## Module Mascarine
 
