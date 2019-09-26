@@ -298,13 +298,21 @@ class serviceCtrl extends jController {
         // Get main observation data
         $limit = $this->intParam( 'limit' );
         $offset = $this->intParam( 'offset' );
+        $delimiter = ',';
         $order = $this->param( 'order', '' );
+        $principal = array();
+        $geometryTypes = array(
+            'point', 'linestring', 'polygon', 'nogeom'
+        );
         $principal = array();
         try {
             $topic = 'principal';
-            $csv = $occtaxSearch->writeCsv( $topic, $limit, $offset );
-            $csvt = $occtaxSearch->writeCsvT( $topic );
-            $principal = array( $csv, $csvt );
+            $csvs = $occtaxSearch->writeCsv( $topic, $limit, $offset, $delimiter );
+            foreach($geometryTypes as $geometryType){
+                $csv = $csvs[$geometryType];
+                $csvt = $occtaxSearch->writeCsvT( $topic, $delimiter, $geometryType );
+                $principal[$geometryType] = array( $csv, $csvt );
+            }
         }
         catch( Exception $e ) {
             $rep = $this->getResponse('json');
@@ -315,13 +323,15 @@ class serviceCtrl extends jController {
         }
 
         // Add principal
-        if(file_exists($principal[0]) ){
-            $rep->content->addFile( $principal[0], 'st_' . 'principal' . '.csv' );
-            unlink( $principal[0] );
-        }
-        if(file_exists($principal[1]) ){
-            $rep->content->addFile( $principal[1], 'st_' . 'principal' . '.csvt' );
-            unlink( $principal[1] );
+        foreach($geometryTypes as $geometryType){
+            if(file_exists($principal[$geometryType][0]) ){
+                $rep->content->addFile( $principal[$geometryType][0], 'st_' . 'principal' . '_' . $geometryType . '.csv' );
+                unlink( $principal[$geometryType][0] );
+            }
+            if(file_exists($principal[$geometryType][1]) ){
+                $rep->content->addFile( $principal[$geometryType][1], 'st_' . 'principal' . '_' . $geometryType . '.csvt' );
+                unlink( $principal[$geometryType][1] );
+            }
         }
         // Get other files
         $topics = array(

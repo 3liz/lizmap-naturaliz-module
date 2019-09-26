@@ -317,6 +317,11 @@ On peut alors utiliser le script bash  [rafraichissement_vues_materialisees.sh](
 
 Pour fonctionner, le script bash a besoin d'un fichier SQL [grant_rights.sql](doc/scripts/grant_rights.sql) qui réapplique les droits sur les objets après rafraichissement des vues. Il faut bien sûr adapter le script bash et le fichier SQL selon son environnement (nom des utilisateurs, nom des bases de données)
 
+Une fois les vues matérialisées crées et remplies, il faut utiliser un projet QGIS pour publier les graphiques via Lizmap. Le fichier de projet QGIS et la configuration Lizmap sont les suivants
+
+* [projet QGIS](doc/qgis/stat_borbonica.qgs)
+* [configuration Lizmap](doc/qgis/stat_borbonica.qgs.cfg)
+
 ## Module Mascarine
 
 Module de saisie d'observation floristiques en suivant les bordereaux d'inventaire conçus par le Conservatoire Botanique National de Mascarin (CBN-CBIE Mascarine, La Réunion)

@@ -309,12 +309,29 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
 
         $cnx = jDb::getConnection();
 
-        // Create temporary file name
-        $path = '/tmp/' . time() . session_id() . $topic . '.csv';
-        $fp = fopen($path, 'w');
-        fwrite($fp, '');
-        fclose($fp);
-        chmod($path, 0666);
+        if($topic == 'principal'){
+            $geometryTypes = array(
+                'point', 'linestring', 'polygon', 'nogeom'
+            );
+        }else{
+            $geometryTypes = array('other');
+        }
+
+        // Create temporary files
+        $paths = array();
+        foreach($geometryTypes as $geometryType){
+            $path = '/tmp/' . time() . session_id() . $topic;
+            if($geometryType != ''){
+                $path.= '_' . $geometryType;
+            }
+            $path.= '.csv';
+            $fp = fopen($path, 'w');
+            fwrite($fp, '');
+            fclose($fp);
+            chmod($path, 0666);
+            $paths[$geometryType] = $path;
+        }
+
 
         // Build query
         $sql = "
@@ -333,8 +350,9 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
         $sql.= "
             FROM (
         ";
-        if($topic == 'principal')
+        if($topic == 'principal'){
             $sql.= $this->sql;
+        }
         else{
             $sql.= $this->getTopicData($topic, 'sql');
         }
@@ -349,7 +367,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             }
         }
         $sql.= ") foo";
-
+//jLog::log($sql);
 
         // Use COPY: DEACTIVATED BECAUSE NEEDS SUPERUSER PG RIGHTS
         //$sqlcopy = " COPY (" . $sql ;
@@ -363,8 +381,11 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
         //$cnx->exec($sqlcopy);
 
         // Write header
-        $fd = fopen($path, 'w');
-        fputcsv($fd, $attributes, $delimiter);
+        $fds = array();
+        foreach($geometryTypes as $geometryType){
+            $fds[$geometryType] = fopen($paths[$geometryType], 'w');
+            fputcsv($fds[$geometryType], $attributes, $delimiter);
+        }
 
         // Get nomenclature
         $sqlnom = "SELECT * FROM occtax.v_nomenclature_plat";
@@ -376,6 +397,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
 
         // Fetch data and fill in the file
         $res = $cnx->query($sql);
+        $gt = 'other';
         foreach($res as $line){
             $ldata = array();
             foreach($attributes as $att){
@@ -403,29 +425,57 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                     }
                     $val = json_encode($dnew, JSON_UNESCAPED_UNICODE);
                 }
+                // detect geometry type
+                if($att == 'wkt' and $topic == 'principal'){
+                    if( $val == '' ){
+                        $gt = 'nogeom';
+                    }else{
+                        if (preg_match('#^(MULTI)?POINT#', $val)) {
+                            $gt = 'point';
+                        }
+                        elseif (preg_match('#^(MULTI)?LINESTRING#', $val)) {
+                            $gt = 'linestring';
+                        }
+                        elseif (preg_match('#^(MULTI)?POLYGON#', $val)) {
+                            $gt = 'polygon';
+                        }
+                    }
+                }
                 $ldata[] = $val;
             }
-            fputcsv($fd, $ldata, $delimiter);
+            fputcsv($fds[$gt], $ldata, $delimiter);
         }
-        fclose($fd);
-        if( !file_exists($path) ){
-            //jLog::log( "Erreur lors de l'export en CSV");
-            return Null;
+        fclose($fds[$gt]);
+
+        foreach($geometryTypes as $geometryType){
+            if( !file_exists($paths[$geometryType]) ){
+                //jLog::log( "Erreur lors de l'export en CSV");
+                return Null;
+            }
         }
-        return $path;
+        if($topic == 'principal'){
+            return $paths;
+        }else{
+            return $paths[$gt];
+        }
 
     }
 
-    public function writeCsvT( $topic, $delimiter=',' ) {
+    public function writeCsvT( $topic, $delimiter=',', $geometryType='' ) {
         // Do not export topic if not defined in localConfig
-        if( $topic!= 'principal' and !in_array($topic, $this->observation_exported_children) ){
+        if ($topic!= 'principal' and !in_array($topic, $this->observation_exported_children) ) {
             return Null;
         }
 
         // Create temporary file
         $_dirname = '/tmp';
         //$_tmp_file = tempnam($_dirname, 'wrt');
-        $_tmp_file = '/tmp/' . time() . session_id() . $topic . '.csvt';
+        $_tmp_file = '/tmp/' . time() . session_id() . $topic;
+        if($geometryType != ''){
+            $_tmp_file.= '_' . $geometryType;
+        }
+        $_tmp_file.= '.csvt';
+
         if (!($fd = @fopen($_tmp_file, 'wb'))) {
             $_tmp_file = $_dirname . '/' . uniqid('wrt');
             if (!($fd = @fopen($_tmp_file, 'wb'))) {
