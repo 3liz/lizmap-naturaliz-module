@@ -1286,7 +1286,7 @@ OccTax.events.on({
                     $('#occtax-search-replay').hide();
 
                     // Change wfs export URL
-                    $('a.btn-get-wfs').attr('href', tData.wfsUrl);
+                    $('a#btn-get-wfs').attr('href', tData.wfsUrl);
 
                     // Hide form div
                     $('#occtax_search_input').hide();
@@ -1453,23 +1453,47 @@ OccTax.events.on({
           }
           //return False;
       });
-      $('a.btn-export-search').click(function() {
-        var eFormat = $(this).text();
-        var exportUrl = $('#'+tokenFormId).attr('action');
-        if( eFormat.toLowerCase() == 'dee' )
-          exportUrl = exportUrl.replace('initSearch', 'exportDee');
-        else if( eFormat.toLowerCase() == 'geojson' )
-          exportUrl = exportUrl.replace('initSearch', 'exportGeoJSON');
-        else
-          exportUrl = exportUrl.replace('initSearch', 'exportCsv');
 
-        exportUrl+= '?token=' + $('#occtax_service_search_stats_form input[name="token"]').val();
-        exportUrl+= '&format=' + eFormat;
+      // Export des donnees
+      $('#occtax_result_export_form').submit(function(){
+        if(!uiprete) return false;
 
-        window.open(exportUrl);
+        var exportUrl = '';
+        var eFormat = $('#export_format').val();
+        if( eFormat == 'WFS' ){
+          exportUrl = $('a#btn-get-wfs').attr('href');
+          $('#input-get-wfs')
+          .val(exportUrl)
+          .show()
+          .select()
+          ;
+          lizMap.addMessage( 'Vous pouvez copier l\'url WFS correspondant à votre requête pour l\'utiliser dans votre SIG', 'info', true );
+        }else{
+          exportUrl+= $('#'+tokenFormId).attr('action');
+          if( eFormat == 'DEE' )
+            exportUrl = exportUrl.replace('initSearch', 'exportDee');
+          else if( eFormat == 'GeoJSON' )
+            exportUrl = exportUrl.replace('initSearch', 'exportGeoJSON');
+          else
+            exportUrl = exportUrl.replace('initSearch', 'exportCsv');
+          exportUrl+= '?token=' + $('#occtax_service_search_stats_form input[name="token"]').val();
+          exportUrl+= '&format=' + eFormat;
+          window.open(exportUrl);
+        }
+
         return false;
+      })
 
-      });
+      $('#export_format').change(function(){
+        var isWFS = ($(this).val() == 'WFS');
+        $('#input-get-wfs')
+        .val('')
+        .toggle(isWFS);
+        if(isWFS){
+          $('#occtax_result_export_form').submit();
+          return false;
+        }
+      })
 
       // Toggle search div via h3
       $('h3.occtax_search').click(function(){

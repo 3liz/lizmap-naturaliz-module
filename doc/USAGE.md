@@ -309,6 +309,18 @@ Pour réaliser des statistiques sur les données de la base, on utilise PostgreS
 
 Pour mettre à jour régulièrement les statistiques, il faut rafraîchir les vues matérialisées. Pour cela, une fonction utilitaire a été créée, nommée `occtax.manage_materialized_objects`, qui s'appuie sur une table `occtax.materialized_object_list` listant les vues à rafraîchir, avec un ordre bien défini (pour gérer les dépendances de vues).
 
+On peut lancer manuellement le rafraîchissement des vues matérialisées via la requête suivante:
+
+```sql
+-- la fonction a 3 paramètres
+-- p_action: 'refresh' ou 'delete'. On utilisera très rarement 'delete' qui supprime tout
+-- p_cascade: True ou False. utilisé pour 'delete'. Permet de supprimer en cascade
+-- p_object_schema: NULL ou nom du schéma. Si rempli, la fonction ne travaille que sur les objet de ce schéma
+--
+SELECT occtax.manage_materialized_objects('refresh', False, NULL);
+
+```
+
 On peut alors utiliser le script bash  [rafraichissement_vues_materialisees.sh](doc/scripts/rafraichissement_vues_materialisees.sh) pour rafraîchir les vues. Il peut être lancé via `crontab` toutes les nuits
 
 ```bash

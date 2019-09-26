@@ -108,26 +108,14 @@ RESUME DE LA RECHERCHE ET DES RESULTATS
         <button id="occtax-search-replay" type="button" class="btn" name="mod" value="replay" style="display:none;">{@occtax~search.button.replay.search@}</button>
 
             <span class="pull-right" id="occtax_result_button_bar" style="display:none;">
-                <div class="dropup btn-group" role="group">
 
-                    <button type="button" class="btn btn-mini dropdown-toggle"  data-toggle="dropdown" aria-expanded="false" style="background:#E6E6E6; padding:2px;" title="{@occtax~search.result.export.title@}">
-                        <i class="icon-download"></i>
-                    </button>
-
-                    <ul class="dropdown-menu pull-right" role="menu">
-                        <li><a href="" class="btn-export-search">CSV</a></li>
-                        {ifacl2 "visualisation.donnees.brutes"}
-                        <li><a href="" class="btn-get-wfs" target="_blank">WFS</a></li>
-                        <li><a href="" class="btn-export-search">GeoJSON</a></li>
-                        {/ifacl2}
-                    </ul>
-                </div>
                 <div class="btn-group">
                     <button id="occtax_results_zoom" type="button" class="btn btn-mini" style="background:#E6E6E6; padding:2px;"  title="{@occtax~search.result.zoom.title@}">
                         <i class="icon-search"></i>
                     </button>
                 </div>
             </span>
+
     </div>
 </div>
 
@@ -197,6 +185,11 @@ RESULTATS DE RECHERCHE (TABLEAUX)
         {ifacl2 "visualisation.donnees.brutes"}
         <li><a id="occtax_results_observation_table_tab" href="#occtax_results_observation_table_div" data-toggle="tab">{@occtax~search.result.observation@}</a></li>
         {/ifacl2}
+
+<!--
+        exports
+-->
+        <li><a id="occtax_results_export_tab" href="#occtax_results_export_div" data-toggle="tab">{@occtax~search.result.export.short.title@}</a></li>
       </ul>
 
 
@@ -289,7 +282,57 @@ RESULTATS DE RECHERCHE (TABLEAUX)
           {zone 'taxon~datatable', array('classId'=>'occtax~occtaxSearchObservation','tableId'=>'occtax_results_observation_table')}
         </div>
         {/ifacl2}
+
+<!--
+      export
+-->
+        <div id="occtax_results_export_div" class="tab-pane bottom-content attribute-content">
+
+            <form class="form-horizontal" id="occtax_result_export_form">
+                <legend>{@occtax~search.result.export.legend@}</legend>
+<!--
+                <div class="control-group">
+                    <label class="control-label" for="export_projection">Projection</label>
+                    <div class="controls">
+                        <select id="export_projection">
+                            <option value="locale">Projection locale</option>
+                            <option value="4326">EPSG:4326</option>
+                        </select>
+                    </div>
+                </div>
+-->
+
+                <div class="control-group">
+                    <label class="control-label" for="export_format">Format</label>
+                    <div class="controls">
+                        <select id="export_format">
+                            <option value="CSV">CSV</option>
+                            {ifacl2 "visualisation.donnees.brutes"}
+                            <option value="GeoJSON">GeoJSON</option>
+                            <option value="WFS">WFS</option>
+                            {/ifacl2}
+                        </select>
+                    </div>
+                    {ifacl2 "visualisation.donnees.brutes"}
+                    <a id="btn-get-wfs" href="" style="display:none;"></a>
+                    <div class="controls">
+                        <input type="text" id="input-get-wfs" value="" style="display:none;">
+                    </div>
+                    {/ifacl2}
+                </div>
+
+                <div class="control-group">
+                    <div class="controls">
+                        <button type="submit" class="btn btn-primary">{@occtax~search.result.export.short.title@}</button>
+                    </div>
+                </div>
+            </form>
       </div>
+  </div>
+
+
+
+
  </div>
 
 </div>
