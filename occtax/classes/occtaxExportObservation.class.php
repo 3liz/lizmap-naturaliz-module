@@ -448,6 +448,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 if($att == 'descriptif_sujet'){
                     $dnew = array();
                     $jval = json_decode($val);
+                    $di = 1;
                     foreach($jval as $jitem){
                         $ditem = array();
                         foreach($jitem as $j=>$v){
@@ -457,9 +458,13 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                             }
                             $ditem[$j] = $vv;
                         }
-                        $dnew[] = $ditem;
+                        $dnew["Groupe d'individus n°" . $di] = $ditem;
+                        $di++;
                     }
-                    $val = json_encode($dnew, JSON_UNESCAPED_UNICODE);
+                    $val = json_encode($dnew, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+                    // Make it more readable
+                    $val = str_replace(array('{', '}', '    "'), array('','',''), $val);
+                    $val = str_replace('"', '', $val);
                 }
                 // detect geometry type
                 if($att == 'wkt' and $topic == 'principal'){
@@ -576,7 +581,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 }
                 if($el == 'descriptif_sujet'){
                     $champ = "
-                    REPLACE(replace((jsonb_pretty(array_to_json(array_agg(json_build_object(
+                    translate(replace(replace((jsonb_pretty(array_to_json(array_agg(json_build_object(
                         'obs_methode',
                         dict->>(concat('obs_methode', '_', obs_methode)) ,
                         'occ_etat_biologique',
@@ -603,7 +608,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                         obs_description,
                         'occ_methode_determination',
                         dict->>(concat('occ_methode_determination', '_', occ_methode_determination))
-                    )))::jsonb)::text), '\"', ''), ':', ' : ')
+                    )))::jsonb)::text), '    \"', ''), '    {', '- Groupe d''individus :'), '\"}[]', ' ')
                     ";
                 }
                 // Ajout du nom de champ
@@ -745,7 +750,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 }
                 if($el == 'descriptif_sujet'){
                     $champ = "
-                    REPLACE(replace((jsonb_pretty(array_to_json(array_agg(json_build_object(
+                    translate(replace(replace((jsonb_pretty(array_to_json(array_agg(json_build_object(
                         'obs_methode',
                         dict->>(concat('obs_methode', '_', obs_methode)) ,
                         'occ_etat_biologique',
@@ -772,7 +777,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                         obs_description,
                         'occ_methode_determination',
                         dict->>(concat('occ_methode_determination', '_', occ_methode_determination))
-                    )))::jsonb)::text), '\"', ''), ':', ' : ')
+                    )))::jsonb)::text), '    \"', ''), '    {', '- Groupe d''individus :'), '\"}[]', ' ')
                     ";
                 }
                 // Ajout du nom de balise XML
