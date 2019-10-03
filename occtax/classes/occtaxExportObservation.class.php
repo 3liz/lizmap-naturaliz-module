@@ -255,10 +255,6 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 'o.precision_geometrie' => Null,
                 'o.nature_objet_geo' => Null,
 
-                 // reprojection needed for GeoJSON standard
-                '(ST_AsGeoJSON( ST_Transform(o.geom, 4326), 6 ))::jsonb AS geojson' => Null,
-                'ST_Transform(o.geom, 4326) AS geom' => Null,
-
                 // diffusion
                 "o.diffusion" => Null,
 
@@ -272,7 +268,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
 
     );
 
-    public function __construct ($token=Null, $params=Null, $demande=Null) {
+    public function __construct ($token=Null, $params=Null, $demande=Null, $projection='4326') {
 
         // Limit fields to export (ie to export in this class)
         $this->limitFields(
@@ -281,13 +277,53 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             'observation_exported_children'
         );
 
-        // Le WKT est exporté dans le CSV, pour le grand public également
-        // donc pour eux on ne diffuse la geom que si la diffusion est possible cad 'g'
-        if( !jAcl2::check("visualisation.donnees.brutes") ){
-            $this->querySelectors['vm_observation']['returnFields']["CASE WHEN diffusion ? 'g' THEN (ST_AsText( ST_Transform(o.geom, 4326) )) ELSE NULL END AS wkt"] = Null;
-        }else{
-            $this->querySelectors['vm_observation']['returnFields']["ST_AsText(ST_Transform(o.geom, 4326)) AS wkt"] = Null;
+        // Manage geometries
+        // We do it here because it is used by the setSql method
+        // We need to modify the returnFields of the querySelector depending on rights
+
+        // CSV: output column "wkt"
+        // GeoJSON: output "geom" and "geojson"
+        $ckey = Null;
+        $gkey = Null;
+
+        // Change export projection
+        $transform = "o.geom";
+        if($projection == '4326'){
+            $transform = "ST_Transform(o.geom, 4326)";
         }
+
+        if (!jAcl2::check("visualisation.donnees.brutes") ) {
+            // On ne peut pas voir toutes les données brutes = GRAND PUBLIC
+            if (jAcl2::check("export.geometries.brutes.selon.diffusion")) {
+                // on peut voir les géométries si la diffusion est 'g'
+                $ckey = "CASE WHEN diffusion ? 'g' THEN (ST_AsText( ".$transform." )) ELSE NULL END AS wkt";
+                $gkey = " CASE WHEN diffusion ? 'g' ";
+                $gkey.= " THEN (ST_AsGeoJSON( ".$transform.", 6 ))::jsonb ";
+                $gkey.= " ELSE NULL::jsonb ";
+                $gkey.= " END AS geometry";
+                // Utiliser comme avant la maille 10 au lieu de NULL pour le GeoJSON ?
+                //(SELECT ST_AsGeoJSON(ST_Transform(m.geom, 1) FROM sig.maille_10 m WHERE ST_Intersects(lg.geom, m.geom) LIMIT 1)::jsonb As geometry,
+
+            }else{
+                // on ne peut pas voir les géométries même si la diffusion le permet
+                $ckey = "NULL AS wkt";
+                $gkey = "NULL::jsonb AS geometry";
+            }
+        }else{
+            // On peut voir toutes les données brutes: admins ou personnes avec demandes
+            $ckey = "ST_AsText(".$transform.") AS wkt";
+            $gkey = "(ST_AsGeoJSON( ".$transform.", 6 ))::jsonb AS geometry";
+        }
+        if($ckey){
+            $this->querySelectors['vm_observation']['returnFields'][$ckey] = Null;
+        }
+        if($gkey){
+            $this->querySelectors['vm_observation']['returnFields'][$gkey] = Null;
+            // On doit ajouter un champ geojson car ajouté dans group by de la requête
+            $this->querySelectors['vm_observation']['returnFields']["NULL::text AS geojson"] = Null;
+        }
+        // For WFS export, add geometry only in 4326
+        $this->querySelectors['vm_observation']['returnFields']["ST_Transform(o.geom, 4326) AS geom"] = Null;
 
         parent::__construct($token, $params, $demande);
     }
@@ -519,11 +555,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 SELECT
                     'Feature' As type,
         ";
-        if( jAcl2::check("visualisation.donnees.brutes") ){
-            $sql.= "lg.geojson::jsonb As geometry,";
-        }else{
-            $sql.= "(SELECT ST_AsGeoJSON(m.geom, 1) FROM sig.maille_10 m WHERE ST_Intersects(lg.geom, m.geom) LIMIT 1)::jsonb As geometry,";
-        }
+        $sql.= "lg.geometry,";
 
         $sql.= "
                     row_to_json(
@@ -610,7 +642,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             array('geojson', 'wkt', 'descriptif_sujet')
         );
         $sql.= " GROUP BY ";
-        $sql.= implode(', ', $group_attributes ) . ',dict,geojson';
+        $sql.= implode(', ', $group_attributes ) . ',dict,geojson,geometry';
 
         $sql.= "
 

@@ -1460,6 +1460,7 @@ OccTax.events.on({
 
         var exportUrl = '';
         var eFormat = $('#export_format').val();
+        // WFS
         if( eFormat == 'WFS' ){
           exportUrl = $('a#btn-get-wfs').attr('href');
           $('#input-get-wfs')
@@ -1468,7 +1469,9 @@ OccTax.events.on({
           .select()
           ;
           lizMap.addMessage( 'Vous pouvez copier l\'url WFS correspondant à votre requête pour l\'utiliser dans votre SIG', 'info', true );
-        }else{
+        }
+        // CSV or GeoJSON
+        else{
           exportUrl+= $('#'+tokenFormId).attr('action');
           if( eFormat == 'DEE' )
             exportUrl = exportUrl.replace('initSearch', 'exportDee');
@@ -1478,6 +1481,9 @@ OccTax.events.on({
             exportUrl = exportUrl.replace('initSearch', 'exportCsv');
           exportUrl+= '?token=' + $('#occtax_service_search_stats_form input[name="token"]').val();
           exportUrl+= '&format=' + eFormat;
+
+          // Projection
+          exportUrl+= '&projection=' + $('#export_projection').val();
           window.open(exportUrl);
         }
 

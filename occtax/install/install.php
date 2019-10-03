@@ -110,6 +110,8 @@ class occtaxModuleInstaller extends jInstallerModule {
             jAcl2DbManager::addSubject( 'visualisation.donnees.maille_01', 'occtax~jacl2.visualisation.donnees.maille_01', 'naturaliz.subject.group');
             jAcl2DbManager::addSubject( 'visualisation.donnees.maille_02', 'occtax~jacl2.visualisation.donnees.maille_02', 'naturaliz.subject.group');
             jAcl2DbManager::addSubject( 'visualisation.donnees.sensibles', 'occtax~jacl2.visualisation.donnees.sensibles', 'naturaliz.subject.group');
+            jAcl2DbManager::addSubject( 'visualisation.donnees.non.filtrees', 'occtax~jacl2.visualisation.donnees.non.filtrees', 'naturaliz.subject.group');
+            jAcl2DbManager::addSubject( 'export.geometries.brutes.selon.diffusion', 'occtax~jacl2.export.geometries.brutes.selon.diffusion', 'naturaliz.subject.group');
 
             // create some users in jAuth
             require_once(JELIX_LIB_PATH.'auth/jAuth.class.php');
@@ -224,6 +226,7 @@ class occtaxModuleInstaller extends jInstallerModule {
             // Ajout du droit d'accès à l'administration de Naturaliz pour l'admin
             jAcl2DbManager::addRight('admins', 'occtax.admin.config.gerer');
             jAcl2DbManager::addRight('admins', 'visualisation.donnees.non.filtrees');
+            jAcl2DbManager::addRight('admins', 'export.geometries.brutes.selon.diffusion');
 
         }
 

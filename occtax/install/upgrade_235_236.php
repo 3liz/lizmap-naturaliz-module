@@ -8,6 +8,15 @@ class occtaxModuleUpgrader_235_236 extends jInstallerModule {
 
     function install() {
         if( $this->firstDbExec() ) {
+            try{
+                // Ajouter le droit export.geometries.brutes.selon.diffusion
+                jAcl2DbManager::addSubject( 'export.geometries.brutes.selon.diffusion', 'occtax~jacl2.export.geometries.brutes.selon.diffusion', 'naturaliz.subject.group');
+                jAcl2DbManager::addRight('admins', 'export.geometries.brutes.selon.diffusion');
+            } catch (Exception $e){
+                jLog::log("Erreur lors de l'ajout du droit export.geometries.brutes.selon.diffusion");
+                jLog::log($e->getMessage());
+            }
+
             // modify jlx_user columns
             $this->useDbProfile('jauth_super');
             $sqlPath = $this->path . 'install/sql/upgrade/upgrade_2.3.5_2.3.6.sql';

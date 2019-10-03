@@ -290,7 +290,6 @@ RESULTATS DE RECHERCHE (TABLEAUX)
 
             <form class="form-horizontal" id="occtax_result_export_form">
                 <legend>{@occtax~search.result.export.legend@}</legend>
-<!--
                 <div class="control-group">
                     <label class="control-label" for="export_projection">Projection</label>
                     <div class="controls">
@@ -300,7 +299,6 @@ RESULTATS DE RECHERCHE (TABLEAUX)
                         </select>
                     </div>
                 </div>
--->
 
                 <div class="control-group">
                     <label class="control-label" for="export_format">Format</label>

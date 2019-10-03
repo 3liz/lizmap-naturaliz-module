@@ -247,7 +247,8 @@ class serviceCtrl extends jController {
         $token = $this->param('token');
         jClasses::inc('occtax~occtaxExportObservation');
 
-        $occtaxSearch = new occtaxExportObservation( $token, null );
+        $projection = $this->param('projection', '4326');
+        $occtaxSearch = new occtaxExportObservation( $token, null, null, $projection );
         if( !$occtaxSearch ){
             $return['status'] = 0;
             $return['msg'][] = jLocale::get( 'occtax~search.invalid.token' );
@@ -286,8 +287,9 @@ class serviceCtrl extends jController {
 
         // Get occtaxSearch from token
         $token = $this->param('token');
+        $projection = $this->param('projection', '4326');
         jClasses::inc('occtax~occtaxExportObservation');
-        $occtaxSearch = new occtaxExportObservation( $token, null );
+        $occtaxSearch = new occtaxExportObservation( $token, null, null, $projection );
         if( !$occtaxSearch ){
             $return['status'] = 0;
             $return['msg'][] = jLocale::get( 'occtax~search.invalid.token' );
