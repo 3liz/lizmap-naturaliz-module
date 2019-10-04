@@ -4,7 +4,7 @@ class occtaxModuleUpgrader_235_236 extends jInstallerModule {
     public $targetVersions = array(
         '2.3.6'
     );
-    public $date = '2019-09-25';
+    public $date = '2019-10-04';
 
     function install() {
         if( $this->firstDbExec() ) {
@@ -22,12 +22,12 @@ class occtaxModuleUpgrader_235_236 extends jInstallerModule {
             $sqlPath = $this->path . 'install/sql/upgrade/upgrade_2.3.5_2.3.6.sql';
             $sql = jFile::read( $sqlPath );
             $db = $this->dbConnection();
-            try {
+            //try {
                 $db->exec($sql);
-            } catch (Exception $e){
-                jLog::log("Erreur lors de la mise à jour");
-                jLog::log($e->getMessage());
-            }
+            //} catch (Exception $e){
+                //jLog::log("Erreur lors de la mise à jour");
+                //jLog::log($e->getMessage());
+            //}
 
             // Grant rights
             $sqlPath = $this->path . 'install/sql/grant_rights.sql';
