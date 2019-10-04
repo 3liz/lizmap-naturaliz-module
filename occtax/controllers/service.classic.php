@@ -14,6 +14,12 @@ class serviceCtrl extends jController {
 
     protected $mailles_a_utiliser = 'maille_02,maille_10';
 
+    protected $geometryTypeTranslation = array(
+        'point'=>'point', 'linestring'=>'ligne',
+        'polygon'=>'polygone', 'nogeom'=> 'sans_geometrie',
+        'other'=>'autre'
+    );
+
     function __construct( $request ){
 
         // Get SRID
@@ -327,11 +333,11 @@ class serviceCtrl extends jController {
         // Add principal
         foreach($geometryTypes as $geometryType){
             if(file_exists($principal[$geometryType][0]) ){
-                $rep->content->addFile( $principal[$geometryType][0], 'st_' . 'principal' . '_' . $geometryType . '.csv' );
+                $rep->content->addFile( $principal[$geometryType][0], 'st_' . 'principal' . '_' . $this->geometryTypeTranslation[$geometryType] . '.csv' );
                 unlink( $principal[$geometryType][0] );
             }
             if(file_exists($principal[$geometryType][1]) ){
-                $rep->content->addFile( $principal[$geometryType][1], 'st_' . 'principal' . '_' . $geometryType . '.csvt' );
+                $rep->content->addFile( $principal[$geometryType][1], 'st_' . 'principal' . '_' . $this->geometryTypeTranslation[$geometryType] . '.csvt' );
                 unlink( $principal[$geometryType][1] );
             }
         }
