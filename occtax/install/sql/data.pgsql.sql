@@ -335,3 +335,21 @@ INSERT INTO nomenclature (champ, code, valeur, description) VALUES ('peri_val', 
 INSERT INTO nomenclature (champ, code, valeur, description) VALUES ('ech_val', '1', 'Validation producteur', 'Validation scientifique des données par le producteur');
 INSERT INTO nomenclature (champ, code, valeur, description) VALUES ('ech_val', '2', 'Validation régionale', 'Validation scientifique effectuée par la plateforme régionale');
 INSERT INTO nomenclature (champ, code, valeur, description) VALUES ('ech_val', '3', 'Validation nationale', 'Validation scientifique effectuée par la plateforme nationale');
+
+
+INSERT INTO nomenclature (champ, code, valeur, description) VALUES ('occ_objet_denombrement', 'COL', 'Colonie', 'Nombre de colonies observées.');
+INSERT INTO nomenclature (champ, code, valeur, description) VALUES ('occ_objet_denombrement', 'CPL', 'Couple', 'Nombre de couples observé.');
+INSERT INTO nomenclature (champ, code, valeur, description) VALUES ('occ_objet_denombrement', 'HAM', 'Hampe florale', 'Nombre de hampes florales observées.');
+INSERT INTO nomenclature (champ, code, valeur, description) VALUES ('occ_objet_denombrement', 'IND', 'Individu', 'Nombre d''individus observés.');
+INSERT INTO nomenclature (champ, code, valeur, description) VALUES ('occ_objet_denombrement', 'NID', 'Nid', 'Nombre de nids observés.');
+INSERT INTO nomenclature (champ, code, valeur, description) VALUES ('occ_objet_denombrement', 'NSP', 'Ne Sait Pas', 'La méthode de dénombrement n''est pas connue.');
+INSERT INTO nomenclature (champ, code, valeur, description) VALUES ('occ_objet_denombrement', 'PON', 'Ponte', 'Nombre de pontes observées.');
+INSERT INTO nomenclature (champ, code, valeur, description) VALUES ('occ_objet_denombrement', 'SURF', 'Surface', 'Zone aréale occupée par le taxon, en mètres carrés.');
+INSERT INTO nomenclature (champ, code, valeur, description) VALUES ('occ_objet_denombrement', 'TIGE', 'Tige', 'Nombre de tiges observées.');
+INSERT INTO nomenclature (champ, code, valeur, description) VALUES ('occ_objet_denombrement', 'TOUF', 'Touffe', 'Nombre de touffes observées.');
+
+
+INSERT INTO nomenclature (champ, code, valeur, description) VALUES ('occ_type_denombrement', 'Ca', 'Calculé', 'Calculé : Dénombrement par opération mathématique');
+INSERT INTO nomenclature (champ, code, valeur, description) VALUES ('occ_type_denombrement', 'Co', 'Compté', 'Compté : Dénombrement par énumération des individus');
+INSERT INTO nomenclature (champ, code, valeur, description) VALUES ('occ_type_denombrement', 'Es', 'Estimé', 'Estimé : Dénombrement qualifié d’estimé lorsque le produit concerné n''a fait l''objet d''aucune action de détermination de cette valeur du paramètre par le biais d''une technique de mesure.');
+INSERT INTO nomenclature (champ, code, valeur, description) VALUES ('occ_type_denombrement', 'NSP', 'Ne sait pas', 'Ne sait Pas : La méthode de dénombrement n’est pas connue');

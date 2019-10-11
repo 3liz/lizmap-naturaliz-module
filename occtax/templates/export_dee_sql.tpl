@@ -14,6 +14,10 @@ xmlelement(
                 name "cont:DescriptifSujet",
                 xmlforest (
                     dsi->'occ_sexe' AS "cont:occSexe",
+                    dsi->'occ_denombrement_min' AS "cont:occDenombrementMin",
+                    dsi->'occ_denombrement_max' AS "cont:occDenombrementMax",
+                    dsi->'occ_type_denombrement' AS "cont:occTypeDenombrement",
+                    dsi->'occ_objet_denombrement' AS "cont:occObjetDenombrement",
                     dsi->'obs_methode' AS "cont:obsMethode",
                     dsi->'obs_contexte' AS "cont:obsContexte",
                     dsi->'occ_naturalite' AS "cont:occNaturalite",

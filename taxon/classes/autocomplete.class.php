@@ -29,12 +29,12 @@ class autocomplete {
                 ts_rank(vec, query) AS rnk,
                 query,
                 similarity(trim( $1 ), val) AS sim
-                FROM taxref_fts f,
+                FROM taxon.taxref_fts f,
                 to_tsquery('french_text_search', regexp_replace( unaccent( trim( $1 ) ), '[^0-9a-zA-Z]+', ' & ', 'g') || ':*' ) AS query
                 WHERE query @@ vec
                 ORDER BY sim DESC, poids DESC, rnk DESC
                 LIMIT $2
-            ) foo LEFT JOIN t_group_categorie cat ON cat.groupe_nom = foo.group2_inpn
+            ) foo LEFT JOIN taxon.t_group_categorie cat ON cat.groupe_nom = foo.group2_inpn
         ";
     }
 

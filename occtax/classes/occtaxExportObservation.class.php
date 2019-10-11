@@ -434,6 +434,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
         // Fetch data and fill in the file
         $res = $cnx->query($sql);
         $gt = 'other';
+
         foreach($res as $line){
             $ldata = array();
             foreach($attributes as $att){
@@ -584,30 +585,55 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                     trim(translate(replace(replace(replace(replace((jsonb_pretty(array_to_json(array_agg(json_build_object(
                         'obs_methode',
                         dict->>(concat('obs_methode', '_', obs_methode)) ,
+
+                        'occ_denombrement_min',
+                        occ_denombrement_min,
+
+                        'occ_denombrement_max',
+                        occ_denombrement_max,
+
+                        occ_type_denombrement,
+                        dict->>(concat('occ_type_denombrement', '_', occ_type_denombrement)),
+
+                        occ_objet_denombrement,
+                        dict->>(concat('occ_objet_denombrement', '_', occ_objet_denombrement)),
+
                         'occ_etat_biologique',
                         dict->>(concat('occ_etat_biologique', '_', occ_etat_biologique)),
+
                         'occ_naturalite',
                         dict->>(concat('occ_naturalite', '_', occ_naturalite)),
+
                         'occ_sexe',
                         dict->>(concat('occ_sexe', '_', occ_sexe)),
+
                         'occ_stade_de_vie',
                         dict->>(concat('occ_stade_de_vie', '_', occ_stade_de_vie)),
+
                         'occ_statut_biogeographique',
                         dict->>(concat('occ_statut_biogeographique', '_', occ_statut_biogeographique)),
+
                         'occ_statut_biologique',
                         dict->>(concat('occ_statut_biologique', '_', occ_statut_biologique)),
+
                         'preuve_existante',
                         dict->>(concat('preuve_existante', '_', preuve_existante)),
+
                         'preuve_numerique',
                         preuve_numerique,
-                        'preuve_numerique',
+
+                        'preuve_non_numerique',
                         preuve_non_numerique,
+
                         'obs_contexte',
                         obs_contexte,
+
                         'obs_description',
                         obs_description,
+
                         'occ_methode_determination',
                         dict->>(concat('occ_methode_determination', '_', occ_methode_determination))
+
                     )))::jsonb)::text), '    \"', ''), '    {', '- Groupe d''individus :'), '\"\"', '-'), 'null', '-'), '\"}[]', ' '))
                     ";
                 }
@@ -626,6 +652,10 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 LEFT JOIN LATERAL
                 jsonb_to_recordset(lg.descriptif_sujet::jsonb) AS (
                     obs_methode text,
+                    occ_denombrement_min integer,
+                    occ_denombrement_max integer,
+                    occ_type_denombrement text,
+                    occ_objet_denombrement text,
                     occ_etat_biologique text,
                     occ_naturalite text,
                     occ_sexe text,
@@ -753,30 +783,55 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                     trim(translate(replace(replace(replace(replace((jsonb_pretty(array_to_json(array_agg(json_build_object(
                         'obs_methode',
                         dict->>(concat('obs_methode', '_', obs_methode)) ,
+
+                        'occ_denombrement_min',
+                        occ_denombrement_min,
+
+                        'occ_denombrement_max',
+                        occ_denombrement_max,
+
+                        occ_type_denombrement,
+                        dict->>(concat('occ_type_denombrement', '_', occ_type_denombrement)),
+
+                        occ_objet_denombrement,
+                        dict->>(concat('occ_objet_denombrement', '_', occ_objet_denombrement)),
+
                         'occ_etat_biologique',
                         dict->>(concat('occ_etat_biologique', '_', occ_etat_biologique)),
+
                         'occ_naturalite',
                         dict->>(concat('occ_naturalite', '_', occ_naturalite)),
+
                         'occ_sexe',
                         dict->>(concat('occ_sexe', '_', occ_sexe)),
+
                         'occ_stade_de_vie',
                         dict->>(concat('occ_stade_de_vie', '_', occ_stade_de_vie)),
+
                         'occ_statut_biogeographique',
                         dict->>(concat('occ_statut_biogeographique', '_', occ_statut_biogeographique)),
+
                         'occ_statut_biologique',
                         dict->>(concat('occ_statut_biologique', '_', occ_statut_biologique)),
+
                         'preuve_existante',
                         dict->>(concat('preuve_existante', '_', preuve_existante)),
+
                         'preuve_numerique',
                         preuve_numerique,
-                        'preuve_numerique',
+
+                        'preuve_non_numerique',
                         preuve_non_numerique,
+
                         'obs_contexte',
                         obs_contexte,
+
                         'obs_description',
                         obs_description,
+
                         'occ_methode_determination',
                         dict->>(concat('occ_methode_determination', '_', occ_methode_determination))
+
                     )))::jsonb)::text), '    \"', ''), '    {', '- Groupe d''individus :'), '\"\"', '-'), 'null', '-'), '\"}[]', ' '))
                     ";
                 }
@@ -799,6 +854,10 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
         LEFT JOIN LATERAL
         jsonb_to_recordset(source.descriptif_sujet::jsonb) AS (
             obs_methode text,
+            occ_denombrement_min integer,
+            occ_denombrement_max integer,
+            occ_type_denombrement text,
+            occ_objet_denombrement text,
             occ_etat_biologique text,
             occ_naturalite text,
             occ_sexe text,
