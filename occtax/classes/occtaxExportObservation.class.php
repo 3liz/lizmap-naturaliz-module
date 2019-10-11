@@ -466,10 +466,10 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                         $dnew["Groupe d'individus n°" . $di] = $ditem;
                         $di++;
                     }
-                    $val = json_encode($dnew, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+                    $val = trim(json_encode($dnew, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
                     // Make it more readable
                     $val = str_replace(array('null','{','}','    "'), array('-','','',''), $val);
-                    $val = str_replace('"', '', $val);
+                    $val = trim(str_replace('"', '', $val));
                 }
                 // detect geometry type
                 if($att == 'wkt' and $topic == 'principal'){
