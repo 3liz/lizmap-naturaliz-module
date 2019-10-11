@@ -46,6 +46,16 @@
   min-width:370px;
 }
 
+#occtax_results_tabs.nav-tabs > li > a,
+#occtax_results_tabs.nav-tabs > li > a:hover,
+#occtax_results_tabs.nav-tabs > li > a:focus {
+  padding: 5px;
+}
+
+#occtax_results_export_div > form > legend {
+  font-size: 12px;
+}
+
 /*
 Left Menu button
 */
