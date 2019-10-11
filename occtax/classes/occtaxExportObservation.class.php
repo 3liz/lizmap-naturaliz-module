@@ -271,10 +271,14 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
     public function __construct ($token=Null, $params=Null, $demande=Null, $projection='4326') {
 
         // Limit fields to export (ie to export in this class)
+        $children = 'observation_exported_children';
+        if( !jAcl2::check("visualisation.donnees.brutes") ){
+            $children = 'observation_exported_children_unsensitive';
+        }
         $this->limitFields(
             'observation_exported_fields',
             'observation_exported_fields_unsensitive',
-            'observation_exported_children'
+            $children
         );
 
         // Manage geometries

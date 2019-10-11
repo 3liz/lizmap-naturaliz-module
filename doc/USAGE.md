@@ -259,6 +259,11 @@ observation_exported_fields_unsensitive=cle_obs, identifiant_permanent, statut_s
 ;observation_exported_children=commune, departement, maille_02, maille_10, espace_naturel, masse_eau, habitat, attribut_additionnel
 observation_exported_children=commune, departement, maille_02, maille_10, espace_naturel, masse_eau, habitat
 
+; liste blanche des données filles à exporter pour le grand public
+observation_exported_children_unsensitive="commune, departement, maille_02, maille_10"
+
+
+
 ```
 
 Ces variables influencent la liste des champs exportés (CSV, WFS) et aussi la liste des champs visibles dans la

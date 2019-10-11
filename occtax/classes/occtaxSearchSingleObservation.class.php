@@ -20,12 +20,15 @@ class occtaxSearchSingleObservation extends occtaxSearchObservationBrutes {
 
     public function __construct ($token=Null, $params=Null, $demande=Null) {
 
-
         // Limit fields to export (ie to "display in the card" in this class)
+        $children = 'observation_exported_children';
+        if( !jAcl2::check("visualisation.donnees.brutes") ){
+            $children = 'observation_exported_children_unsensitive';
+        }
         $this->limitFields(
             'observation_card_fields',
             'observation_card_fields_unsensitive',
-            'observation_card_children'
+            $children
         );
 
         parent::__construct($token, $params, $demande);

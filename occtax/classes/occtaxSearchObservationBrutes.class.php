@@ -630,7 +630,8 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         }
         // Get children
         if($limited_children = $ini->getValue($children_variable, 'naturaliz')){
-            $this->$children_variable = array_map('trim', explode(',', $limited_children));
+            $cv = str_replace('_unsensitive', '', $children_variable);
+            $this->$cv = array_map('trim', explode(',', $limited_children));
         }
 
         // Override exported fields
