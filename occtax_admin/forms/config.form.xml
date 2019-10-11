@@ -26,6 +26,10 @@
    <label locale="occtax_admin~admin.form.srid.label" />
   </input>
 
+  <input ref="srid" type="string">
+   <label locale="occtax_admin~admin.form.libelle_srid.label" />
+  </input>
+
   <textarea ref="projectDescription">
    <label locale="occtax_admin~admin.form.projectDescription.label" />
   </textarea>

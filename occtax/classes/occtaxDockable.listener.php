@@ -59,10 +59,16 @@
                 $ini = new jIniFileModifier($localConfig);
                 $maxAreaQuery = $ini->getValue('maxAreaQuery', 'naturaliz');
                 $menuOrder = $ini->getValue('menuOrder', 'naturaliz');
+                $srid = $ini->getValue('srid', 'naturaliz');
+                $libelle_srid = $ini->getValue('libelle_srid', 'naturaliz');
                 if( empty($maxAreaQuery) )
                     $maxAreaQuery = 32000000;
                 if( empty($menuOrder) )
                     $menuOrder = 'home, taxon, metadata, switcher, occtax, dataviz, print, measure, permaLink';
+                if( empty($srid) )
+                    $srid = '2154';
+                if( empty($libelle_srid) )
+                    $libelle_srid = 'Projection locale';
 
                 $menuOrder = array_map('trim', explode(',', $menuOrder));
                 $mi = 0; $mo = array();
@@ -91,7 +97,9 @@
                     'formUpload' => $formUpload,
                     'formTax' => $formTax,
                     'occtaxClientConfig' => json_encode($occtaxClientConfig),
-                    'mailles_a_utiliser' => $mailles_a_utiliser
+                    'mailles_a_utiliser' => $mailles_a_utiliser,
+                    'srid' => $srid,
+                    'libelle_srid' => $libelle_srid
                 );
                 $content = array( 'occtax~search', $assign );
 

@@ -294,8 +294,8 @@ RESULTATS DE RECHERCHE (TABLEAUX)
                     <label class="control-label" for="export_projection">Projection</label>
                     <div class="controls">
                         <select id="export_projection">
-                            <option value="locale">Projection locale</option>
-                            <option value="4326">EPSG:4326</option>
+                            <option value="locale">{$libelle_srid} (EPSG:{$srid})</option>
+                            <option value="4326">Longitude/Latitude (EPSG:4326)</option>
                         </select>
                     </div>
                 </div>

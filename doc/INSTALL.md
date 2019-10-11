@@ -48,6 +48,7 @@ Les modules Naturaliz lisent dans le fichier **lizmap/var/config/naturaliz.ini.p
 * un **intitulé** pour les zones correspondant à l'endémicité (endémique et subendémique): variables **endemicite_description_endemique** (ex: Réunion) et **endemicite_description_subendemique** (Ex: Mascareignes)
 * la **liste des codes d'arrêtés de protection** pour la zone concernée: variables **code_arrete_protection_simple**, **code_arrete_protection_internationale**, **code_arrete_protection_nationale**, **code_arrete_protection_communautaire** de la section  [taxon]
 * le **code SRID** du système de coordonnées de références des données spatiales du projet : variable **srid** de la section [naturaliz].
+* le **libellé de la projection locale**: variable **libelle_srid**
 * le **mot de passe de l'utilisateur admin**: variable **adminPassword** de la section [naturaliz].
 * la **liste des types de mailles à utiliser** de la section [naturaliz]. Par exemple: `mailles_a_utiliser=maille_02,maille_10`
 * la **liste des niveaux de validité**, séparés par virgule, pour filtrer les observations pour le grand public, c'est-à-dire que seules les observations qui ont un niveau de validité correspondant à un des éléments de la liste pourront être visibles pour le grand public. Variable **validite_niveaux_grand_public** de la section [naturaliz]. Par exemple validite_niveaux_grand_public=1,2
@@ -83,6 +84,7 @@ Exemple de contenu
 
 ; projection de reference
 srid=2975
+libelle_srid="Projection locale"
 appName=Naturaliz
 
 defaultRepository=

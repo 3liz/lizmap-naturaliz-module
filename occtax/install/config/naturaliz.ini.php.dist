@@ -5,6 +5,7 @@
 
 ; projection de reference
 srid=2975
+libelle_srid="Projection locale"
 appName=Naturaliz
 
 defaultRepository=
