@@ -596,10 +596,10 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                         'occ_denombrement_max',
                         occ_denombrement_max,
 
-                        occ_type_denombrement,
+                        'occ_type_denombrement',
                         dict->>(concat('occ_type_denombrement', '_', occ_type_denombrement)),
 
-                        occ_objet_denombrement,
+                        'occ_objet_denombrement',
                         dict->>(concat('occ_objet_denombrement', '_', occ_objet_denombrement)),
 
                         'occ_etat_biologique',
@@ -794,10 +794,10 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                         'occ_denombrement_max',
                         occ_denombrement_max,
 
-                        occ_type_denombrement,
+                        'occ_type_denombrement',
                         dict->>(concat('occ_type_denombrement', '_', occ_type_denombrement)),
 
-                        occ_objet_denombrement,
+                        'occ_objet_denombrement',
                         dict->>(concat('occ_objet_denombrement', '_', occ_objet_denombrement)),
 
                         'occ_etat_biologique',
