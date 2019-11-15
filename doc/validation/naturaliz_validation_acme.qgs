@@ -1613,7 +1613,7 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="TextEdit" name="nom_valide">
           <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="ValueRelation" name="reu">
+        <edittype widgetv2type="ValueRelation" name="loc">
           <widgetv2config OrderByValue="1" AllowNull="0" FilterExpression=" &quot;champ&quot; =  'statut_taxref' " UseCompleter="0" fieldEditable="0" Key="code" constraint="" Layer="t_nomenclature20180830114807373" Value="valeur" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="nom_vern">
@@ -2248,7 +2248,7 @@ def my_form_open(dialog, layer, feature):
         <alias field="cd_ref" index="4" name="CDREF"/>
         <alias field="nom_cite" index="5" name="Nom cité"/>
         <alias field="nom_valide" index="6" name="Nom valide (Taxref)"/>
-        <alias field="reu" index="7" name="Statut biogéographique"/>
+        <alias field="loc" index="7" name="Statut biogéographique"/>
         <alias field="nom_vern" index="8" name="Nom vernaculaire"/>
         <alias field="group2_inpn" index="9" name="Groupe taxonomique"/>
         <alias field="ordre" index="10" name="Ordre"/>
@@ -2309,7 +2309,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="cd_ref"/>
           <column width="-1" hidden="0" type="field" name="nom_cite"/>
           <column width="-1" hidden="0" type="field" name="nom_valide"/>
-          <column width="-1" hidden="0" type="field" name="reu"/>
+          <column width="-1" hidden="0" type="field" name="loc"/>
           <column width="-1" hidden="0" type="field" name="nom_vern"/>
           <column width="-1" hidden="0" type="field" name="group2_inpn"/>
           <column width="-1" hidden="0" type="field" name="denombrement_min"/>
@@ -2396,7 +2396,7 @@ def my_form_open(dialog, layer, feature):
             <attributeEditorField showLabel="1" index="14" name="objet_denombrement"/>
             <attributeEditorField showLabel="1" index="9" name="group2_inpn"/>
             <attributeEditorField showLabel="1" index="15" name="type_denombrement"/>
-            <attributeEditorField showLabel="1" index="7" name="reu"/>
+            <attributeEditorField showLabel="1" index="7" name="loc"/>
             <attributeEditorField showLabel="1" index="28" name="commentaire"/>
             <attributeEditorField showLabel="1" index="16" name="preuve_existante"/>
           </attributeEditorContainer>
@@ -2471,7 +2471,7 @@ def my_form_open(dialog, layer, feature):
         <default field="cd_ref" expression=""/>
         <default field="nom_cite" expression=""/>
         <default field="nom_valide" expression=""/>
-        <default field="reu" expression=""/>
+        <default field="loc" expression=""/>
         <default field="nom_vern" expression=""/>
         <default field="group2_inpn" expression=""/>
         <default field="ordre" expression=""/>

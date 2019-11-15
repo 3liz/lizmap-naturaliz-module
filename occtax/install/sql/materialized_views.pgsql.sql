@@ -189,7 +189,7 @@ o.cd_nom,
 o.cd_ref,
 o.version_taxref,
 o.nom_cite,
-t.nom_valide, t.reu, trim(t.nom_vern) AS nom_vern, t.group1_inpn, t.group2_inpn, t.ordre, t.famille, t.protection, tv.url,
+t.nom_valide, t.{$colonne_locale} AS loc, trim(t.nom_vern) AS nom_vern, t.group1_inpn, t.group2_inpn, t.ordre, t.famille, t.protection, tv.url,
 (regexp_split_to_array( Coalesce( tgc1.cat_nom, tgc2.cat_nom, 'Autres' ), ' '))[1] AS categorie,
 trim(tv.lb_nom, ' ,\t') AS lb_nom_valide, trim(tv.nom_vern, ' ,\t') AS nom_vern_valide,
 t.menace, t.rang, t.habitat, t.statut, t.endemicite, t.invasibilite,
@@ -430,7 +430,7 @@ FROM occtax.vm_observation o
 LEFT JOIN ( SELECT group2_inpn, count(DISTINCT cd_ref) AS nb_taxons_taxref
       FROM taxon.taxref
       -- on ne prend que les espèces et sous-espèces des taxons présents ou ayant été présents à La Réunion
-      WHERE reu IS NOT NULL AND reu NOT IN ('Q','A') AND rang IN ('ES', 'SSES')
+      WHERE {$colonne_locale} IS NOT NULL AND {$colonne_locale} NOT IN ('Q','A') AND rang IN ('ES', 'SSES')
       GROUP BY group2_inpn
       ) stat_taxref ON stat_taxref.group2_inpn=o.group2_inpn
 WHERE o.rang IN ('ES', 'SSES')
@@ -723,11 +723,11 @@ COMMENT ON MATERIALIZED VIEW stats.rangs_taxonomiques IS 'Nombre d''observations
 
 -- nombre_taxons_par_statut_biogeographique
 CREATE MATERIALIZED VIEW IF NOT EXISTS stats.nombre_taxons_par_statut_biogeographique AS
-SELECT concat_ws( ' - ', o.reu, COALESCE(n.valeur, 'Non renseigné par Taxref')) AS reu,
+SELECT concat_ws( ' - ', o.loc, COALESCE(n.valeur, 'Non renseigné par Taxref')) AS loc,
   count(DISTINCT o.cd_ref) AS nb_taxons
 FROM occtax.vm_observation o
-LEFT JOIN taxon.t_nomenclature n ON n.code::TEXT=o.reu::TEXT AND n.champ='statut_taxref'
-GROUP BY concat_ws( ' - ', o.reu, COALESCE(n.valeur, 'Non renseigné par Taxref'))
+LEFT JOIN taxon.t_nomenclature n ON n.code::TEXT=o.loc::TEXT AND n.champ='statut_taxref'
+GROUP BY concat_ws( ' - ', o.loc, COALESCE(n.valeur, 'Non renseigné par Taxref'))
 ORDER BY count(o.cd_ref) DESC
 ;
 
@@ -735,11 +735,11 @@ COMMENT ON MATERIALIZED VIEW stats.nombre_taxons_par_statut_biogeographique IS '
 
 -- nombre_obs_par_statut_biogeographique
 CREATE MATERIALIZED VIEW IF NOT EXISTS stats.nombre_obs_par_statut_biogeographique AS
-SELECT concat_ws( ' - ', o.reu, COALESCE(n.valeur, 'Non renseigné par Taxref')) AS reu,
+SELECT concat_ws( ' - ', o.loc, COALESCE(n.valeur, 'Non renseigné par Taxref')) AS loc,
   count(DISTINCT cle_obs) AS nb_obs
 FROM occtax.vm_observation o
-LEFT JOIN taxon.t_nomenclature n ON n.code::TEXT=o.reu::TEXT AND n.champ='statut_taxref'
-GROUP BY concat_ws( ' - ', o.reu, COALESCE(n.valeur, 'Non renseigné par Taxref'))
+LEFT JOIN taxon.t_nomenclature n ON n.code::TEXT=o.loc::TEXT AND n.champ='statut_taxref'
+GROUP BY concat_ws( ' - ', o.loc, COALESCE(n.valeur, 'Non renseigné par Taxref'))
 ORDER BY count(o.cle_obs) DESC
 ;
 
@@ -927,7 +927,7 @@ COMMENT ON MATERIALIZED VIEW stats.liste_organismes IS 'liste des organismes con
 
 -- Liste des taxons observés
 CREATE MATERIALIZED VIEW IF NOT EXISTS stats.liste_taxons_observes AS
-SELECT o.cd_ref, t.lb_nom, t.nom_vern, t.group2_inpn, t.reu, t.rang,
+SELECT o.cd_ref, t.lb_nom, t.nom_vern, t.group2_inpn, t.{$colonne_locale} AS loc, t.rang,
 m.valeur AS menace_uicn,
 count(o.cle_obs) AS nb_observations,
 max(EXTRACT(YEAR FROM COALESCE(o.date_fin, o.date_debut))) AS annee_derniere_obs,
@@ -935,13 +935,13 @@ string_agg(DISTINCT jdd.jdd_description, ' | ' ORDER BY jdd.jdd_description) AS 
 t.url AS fiche_taxon
 FROM occtax.observation o
 LEFT JOIN (
-    SELECT cd_ref, lb_nom, nom_vern, group2_inpn, reu, rang, url, menace
+    SELECT cd_ref, lb_nom, nom_vern, group2_inpn, {$colonne_locale}, rang, url, menace
     FROM taxon.taxref_consolide_non_filtre
     WHERE cd_nom=cd_ref
         )t USING(cd_ref)
 LEFT JOIN (SELECT * FROM taxon.t_nomenclature WHERE champ='menace')m ON m.code=t.menace
 LEFT JOIN occtax.jdd USING(jdd_code)
-GROUP BY o.cd_ref, t.lb_nom, t.nom_vern, t.group2_inpn, t.reu, t.rang, m.valeur, t.url
+GROUP BY o.cd_ref, t.lb_nom, t.nom_vern, t.group2_inpn, t.{$colonne_locale}, t.rang, m.valeur, t.url
 ORDER BY count(o.cle_obs) DESC ;
 
 COMMENT ON MATERIALIZED VIEW stats.liste_taxons_observes IS 'Liste des taxons faisant l''objet d''au moins une observation dans Borbonica et statuts associés' ;

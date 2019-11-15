@@ -52,10 +52,10 @@
       <layer-tree-layer expanded="1" providerKey="postgres" checked="Qt::Checked" id="nombre_taxons20190225112718502" source="service='naturaliz' sslmode=disable key='group2_inpn' estimatedmetadata=true table=&quot;stats&quot;.&quot;nombre_taxons&quot; sql=" name="nombre_taxons">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="postgres" checked="Qt::Checked" id="nombre_obs_par_statut_biogeographique20190228180437522" source="service='naturaliz' sslmode=disable key='reu' estimatedmetadata=true table=&quot;stats&quot;.&quot;nombre_obs_par_statut_biogeographique&quot; sql=" name="nombre_obs_par_statut_biogeographique">
+      <layer-tree-layer expanded="1" providerKey="postgres" checked="Qt::Checked" id="nombre_obs_par_statut_biogeographique20190228180437522" source="service='naturaliz' sslmode=disable key='loc' estimatedmetadata=true table=&quot;stats&quot;.&quot;nombre_obs_par_statut_biogeographique&quot; sql=" name="nombre_obs_par_statut_biogeographique">
         <customproperties/>
       </layer-tree-layer>
-      <layer-tree-layer expanded="1" providerKey="postgres" checked="Qt::Checked" id="nombre_taxons_par_statut_biogeographique20190228180340126" source="service='naturaliz' sslmode=disable key='reu' estimatedmetadata=true table=&quot;stats&quot;.&quot;nombre_taxons_par_statut_biogeographique&quot; sql=" name="nombre_taxons_par_statut_biogeographique">
+      <layer-tree-layer expanded="1" providerKey="postgres" checked="Qt::Checked" id="nombre_taxons_par_statut_biogeographique20190228180340126" source="service='naturaliz' sslmode=disable key='loc' estimatedmetadata=true table=&quot;stats&quot;.&quot;nombre_taxons_par_statut_biogeographique&quot; sql=" name="nombre_taxons_par_statut_biogeographique">
         <customproperties/>
       </layer-tree-layer>
       <layer-tree-layer expanded="1" providerKey="postgres" checked="Qt::Checked" id="nombre_obs_par_menace20190228182045076" source="service='naturaliz' sslmode=disable key='ordre' estimatedmetadata=true table=&quot;stats&quot;.&quot;nombre_obs_par_menace&quot; sql=" name="nombre_obs_par_menace">
@@ -1261,7 +1261,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>nombre_obs_par_statut_biogeographique20190228180437522</id>
-      <datasource>service='naturaliz' sslmode=disable key='reu' estimatedmetadata=true table="stats"."nombre_obs_par_statut_biogeographique" sql=</datasource>
+      <datasource>service='naturaliz' sslmode=disable key='loc' estimatedmetadata=true table="stats"."nombre_obs_par_statut_biogeographique" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -1291,7 +1291,7 @@ def my_form_open(dialog, layer, feature):
         <map-layer-style name=""/>
       </map-layer-style-manager>
       <edittypes>
-        <edittype widgetv2type="TextEdit" name="reu">
+        <edittype widgetv2type="TextEdit" name="loc">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="nb_obs">
@@ -1300,15 +1300,15 @@ def my_form_open(dialog, layer, feature):
       </edittypes>
       <annotationform>.</annotationform>
       <aliases>
-        <alias field="reu" index="0" name="Statut biogéographique"/>
+        <alias field="loc" index="0" name="Statut biogéographique"/>
         <alias field="nb_obs" index="1" name="Nombre d'observations"/>
       </aliases>
       <excludeAttributesWMS/>
       <excludeAttributesWFS/>
       <attributeactions default="-1"/>
-      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="&quot;reu&quot;" sortOrder="0">
+      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="&quot;loc&quot;" sortOrder="0">
         <columns>
-          <column width="483" hidden="0" type="field" name="reu"/>
+          <column width="483" hidden="0" type="field" name="loc"/>
           <column width="-1" hidden="0" type="field" name="nb_obs"/>
           <column width="-1" hidden="1" type="actions"/>
         </columns>
@@ -1341,10 +1341,10 @@ def my_form_open(dialog, layer, feature):
         <fieldstyles/>
       </conditionalstyles>
       <defaults>
-        <default field="reu" expression=""/>
+        <default field="loc" expression=""/>
         <default field="nb_obs" expression=""/>
       </defaults>
-      <previewExpression>COALESCE("reu", '&lt;NULL>')</previewExpression>
+      <previewExpression>COALESCE("loc", '&lt;NULL>')</previewExpression>
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>nombre_taxons20190225112718502</id>
@@ -1549,7 +1549,7 @@ def my_form_open(dialog, layer, feature):
     </maplayer>
     <maplayer minimumScale="0" maximumScale="1e+08" readOnly="0" geometry="No geometry" type="vector" hasScaleBasedVisibilityFlag="0">
       <id>nombre_taxons_par_statut_biogeographique20190228180340126</id>
-      <datasource>service='naturaliz' sslmode=disable key='reu' estimatedmetadata=true table="stats"."nombre_taxons_par_statut_biogeographique" sql=</datasource>
+      <datasource>service='naturaliz' sslmode=disable key='loc' estimatedmetadata=true table="stats"."nombre_taxons_par_statut_biogeographique" sql=</datasource>
       <keywordList>
         <value></value>
       </keywordList>
@@ -1579,7 +1579,7 @@ def my_form_open(dialog, layer, feature):
         <map-layer-style name=""/>
       </map-layer-style-manager>
       <edittypes>
-        <edittype widgetv2type="TextEdit" name="reu">
+        <edittype widgetv2type="TextEdit" name="loc">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="nb_taxons">
@@ -1588,7 +1588,7 @@ def my_form_open(dialog, layer, feature):
       </edittypes>
       <annotationform>.</annotationform>
       <aliases>
-        <alias field="reu" index="0" name="Statut biogéographique"/>
+        <alias field="loc" index="0" name="Statut biogéographique"/>
         <alias field="nb_taxons" index="1" name="Nombre de taxons"/>
       </aliases>
       <excludeAttributesWMS/>
@@ -1596,7 +1596,7 @@ def my_form_open(dialog, layer, feature):
       <attributeactions default="-1"/>
       <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
         <columns>
-          <column width="-1" hidden="0" type="field" name="reu"/>
+          <column width="-1" hidden="0" type="field" name="loc"/>
           <column width="-1" hidden="0" type="field" name="nb_taxons"/>
           <column width="-1" hidden="1" type="actions"/>
         </columns>
@@ -1629,7 +1629,7 @@ def my_form_open(dialog, layer, feature):
         <fieldstyles/>
       </conditionalstyles>
       <defaults>
-        <default field="reu" expression=""/>
+        <default field="loc" expression=""/>
         <default field="nb_taxons" expression=""/>
       </defaults>
       <previewExpression></previewExpression>

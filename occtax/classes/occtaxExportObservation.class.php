@@ -37,6 +37,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             //'statut_biogeographique' => "String",
             'menace' => "String",
             'protection' => "String",
+            'loc' => "String",
 
             // effectif
             'denombrement_min' => "Integer",
@@ -213,6 +214,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 //'o.statut_biogeographique' => Null,
                 'o.menace' => Null,
                 'o.protection' => Null,
+                'o.loc' => Null,
 
                 // effectif
                 'o.denombrement_min' => Null,

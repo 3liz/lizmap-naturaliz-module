@@ -33,11 +33,13 @@ class occtaxModuleInstaller extends jInstallerModule {
         if ($this->firstDbExec()) {
 
             try {
+                $db = $this->dbConnection();
+
                 // Get SRID
+                $localConfig = jApp::configPath('naturaliz.ini.php');
+                $ini = new jIniFileModifier($localConfig);
                 $srid = $this->getParameter('srid');
                 if(empty($srid)){
-                    $localConfig = jApp::configPath('naturaliz.ini.php');
-                    $ini = new jIniFileModifier($localConfig);
                     $srid = $ini->getValue('srid', 'naturaliz');
                 }
 
@@ -50,15 +52,22 @@ class occtaxModuleInstaller extends jInstallerModule {
 
                 // Add materialized views
                 $sqlPath = $this->path . 'install/sql/materialized_views.pgsql.sql';
-                $sql.= jFile::read( $sqlPath );
-                $db = $this->dbConnection();
+                $sqlTpl = jFile::read( $sqlPath );
+                $tpl = new jTpl();
+                $colonne_locale = $ini->getValue('colonne_locale', 'naturaliz');
+                $tpl->assign('colonne_locale', $colonne_locale);
+                $sql.= $tpl->fetchFromString($sqlTpl, 'text');
+
                 $db->exec($sql);
 
                 // Add extension validation
                 // DO NOT USE TEMPLATE : no need (no srid) AND bug with some PostgreSQL regexp inside
                 $sqlPath = $this->path . 'install/sql/extension_validation.pgsql.sql';
-                $sql.= jFile::read( $sqlPath );
-                $db = $this->dbConnection();
+                $sqlTpl = jFile::read( $sqlPath );
+                $tpl = new jTpl();
+                $colonne_locale = $ini->getValue('colonne_locale', 'naturaliz');
+                $tpl->assign('colonne_locale', $colonne_locale);
+                $sql = jFile::read( $sqlPath );
                 $db->exec($sql);
 
                 // Add data for lists
