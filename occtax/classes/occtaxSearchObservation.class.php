@@ -174,41 +174,41 @@ class occtaxSearchObservation extends occtaxSearch {
             )
         ),
 
-        //'statut' => array (
-            //'table' => 'vm_observation',
-            //'clause' => ' AND o.statut IN ( @ )',
-            //'type' => 'string',
-            //'label'=> array(
-                //'dao'=>'taxon~t_nomenclature',
-                //'method'=>'getLabel',
-                //'champ'=>'statut',
-                //'column'=>'valeur'
-            //)
-        //),
+        'statut' => array (
+            'table' => 'vm_observation',
+            'clause' => ' AND o.statut IN ( @ )',
+            'type' => 'string',
+            'label'=> array(
+                'dao'=>'taxon~t_nomenclature',
+                'method'=>'getLabel',
+                'champ'=>'statut',
+                'column'=>'valeur'
+            )
+        ),
 
-        //'endemicite' => array (
-            //'table' => 'vm_observation',
-            //'clause' => ' AND o.endemicite IN ( @ )',
-            //'type' => 'string',
-            //'label'=> array(
-                //'dao'=>'taxon~t_nomenclature',
-                //'method'=>'getLabel',
-                //'champ'=>'endemicite',
-                //'column'=>'valeur'
-            //)
-        //),
+        'endemicite' => array (
+            'table' => 'vm_observation',
+            'clause' => ' AND o.endemicite IN ( @ )',
+            'type' => 'string',
+            'label'=> array(
+                'dao'=>'taxon~t_nomenclature',
+                'method'=>'getLabel',
+                'champ'=>'endemicite',
+                'column'=>'valeur'
+            )
+        ),
 
-        //'invasibilite' => array (
-            //'table' => 'vm_observation',
-            //'clause' => ' AND o.invasibilite IN ( @ )',
-            //'type' => 'string',
-            //'label'=> array(
-                //'dao'=>'taxon~t_nomenclature',
-                //'method'=>'getLabel',
-                //'champ'=>'invasibilite',
-                //'column'=>'valeur'
-            //)
-        //),
+        'invasibilite' => array (
+            'table' => 'vm_observation',
+            'clause' => ' AND o.invasibilite IN ( @ )',
+            'type' => 'string',
+            'label'=> array(
+                'dao'=>'taxon~t_nomenclature',
+                'method'=>'getLabel',
+                'champ'=>'invasibilite',
+                'column'=>'valeur'
+            )
+        ),
 
         'menace' => array (
             'table' => 'vm_observation',

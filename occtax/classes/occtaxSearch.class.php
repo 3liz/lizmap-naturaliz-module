@@ -475,7 +475,8 @@ class occtaxSearch {
             foreach( $this->params as $k=>$v ){
                 if( array_key_exists( $k, $this->queryFilters ) and array_key_exists( 'table', $this->queryFilters[$k] ) and $v ){
                     $q = $this->queryFilters[$k];
-                    // IF filter by uploaded geojson
+
+                    // Geometrie
                     if( $q['type'] == 'geom' ){
                         $wktgeom = $v;
                         if( preg_match('#\%#', $v) ){
@@ -488,19 +489,25 @@ class occtaxSearch {
                         $this->fromClause.= $geoFilter;
                     }
 
-
+                    // Prise en compte des inputs de type array (ex: cd_nom[])
                     if( is_array( $v ) ){
                         if( in_array( $q['type'], array( 'string', 'timestamp', 'geom' ) ) )
                             $v = array_map( function($item){return $this->myquote($item);}, $v );
                         $v = implode( ', ', $v );
                     }
+
+                    // Valeurs simples
                     else{
                         $cnx = jDb::getConnection();
+                        // Cas des recherche standard
                         if( in_array( $q['type'], array( 'string', 'timestamp', 'geom' ) ) )
                             $v = $cnx->quote( $v );
+                        // Cas des recherches de type LIKE : type partial
                         if( $q['type'] == 'partial' )
                             $v = $cnx->quote( '%' . $v .    '%' );
                     }
+
+                    // Remplacement de @ par la valeur du formulaire
                     $sql.= ' ' . str_replace('@', $v, $q['clause']);
                     $sql.= '
 ';

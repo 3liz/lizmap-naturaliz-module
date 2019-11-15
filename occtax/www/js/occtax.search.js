@@ -709,7 +709,7 @@ OccTax.events.on({
     }
 
 
-    function initFormTaxon() {
+    function initTaxonAutocomplete() {
       var formId = $('#div_form_occtax_search_token form').attr('id');
       $('#'+formId+'_autocomplete').autocomplete({
         minLength:2,
@@ -760,7 +760,7 @@ OccTax.events.on({
         }
       }).autocomplete( "widget" ).css("z-index","1050");
 
-      // Manage taxon form submit
+      // Add image to the proposed items
       $('#'+formId+'_autocomplete').autocomplete( "instance" )._renderItem = function( ul, item ) {
         return $( "<li>" )
         .append( $("<a>").html(  $("<a>").html( '<img src="'+ jFormsJQ.config.basePath + 'css/images/taxon/' + item.groupe + '.png" width="15" height="15"/>&nbsp;' + item.label )  ) )
@@ -1276,7 +1276,17 @@ OccTax.events.on({
       addResultsMailleTable('m10');
       addResultsObservationTable();
 
-      initFormTaxon();
+      // Initialize autocompletion
+      initTaxonAutocomplete();
+
+      // Replace taxon group values by values coherent with vm_obsevation.categorie
+      $('#jforms_occtax_search_group option').each(function(){
+        var v = $(this).val();
+        console.log(v);
+        var vv = v.split(' ')[0];
+        console.log(vv);
+        $(this).val(vv);
+      });
 
       $('#occtax_results_draw .btn').click(function() {
         var self = $(this);
