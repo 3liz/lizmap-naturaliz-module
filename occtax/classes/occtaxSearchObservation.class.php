@@ -155,6 +155,86 @@ class occtaxSearchObservation extends occtaxSearch {
             )
         ),
 
+        // TAXONS
+        'group' => array (
+            'table' => 'vm_observation',
+            'clause' => ' AND o.categorie IN ( @ )',
+            'type' => 'string'
+        ),
+
+        'habitat' => array (
+            'table' => 'vm_observation',
+            'clause' => ' AND o.habitat IN ( @ )',
+            'type' => 'string',
+            'label'=> array(
+                'dao'=>'taxon~t_nomenclature',
+                'method'=>'getLabel',
+                'champ'=>'habitat',
+                'column'=>'valeur'
+            )
+        ),
+
+        //'statut' => array (
+            //'table' => 'vm_observation',
+            //'clause' => ' AND o.statut IN ( @ )',
+            //'type' => 'string',
+            //'label'=> array(
+                //'dao'=>'taxon~t_nomenclature',
+                //'method'=>'getLabel',
+                //'champ'=>'statut',
+                //'column'=>'valeur'
+            //)
+        //),
+
+        //'endemicite' => array (
+            //'table' => 'vm_observation',
+            //'clause' => ' AND o.endemicite IN ( @ )',
+            //'type' => 'string',
+            //'label'=> array(
+                //'dao'=>'taxon~t_nomenclature',
+                //'method'=>'getLabel',
+                //'champ'=>'endemicite',
+                //'column'=>'valeur'
+            //)
+        //),
+
+        //'invasibilite' => array (
+            //'table' => 'vm_observation',
+            //'clause' => ' AND o.invasibilite IN ( @ )',
+            //'type' => 'string',
+            //'label'=> array(
+                //'dao'=>'taxon~t_nomenclature',
+                //'method'=>'getLabel',
+                //'champ'=>'invasibilite',
+                //'column'=>'valeur'
+            //)
+        //),
+
+        'menace' => array (
+            'table' => 'vm_observation',
+            'clause' => ' AND o.menace IN ( @ )',
+            'type' => 'string',
+            'label'=> array(
+                'dao'=>'taxon~t_nomenclature',
+                'method'=>'getLabel',
+                'champ'=>'menace',
+                'column'=>'valeur'
+            )
+        ),
+
+        'protection' => array (
+            'table' => 'vm_observation',
+            'clause' => ' AND o.protection IN ( @ )',
+            'type' => 'string',
+            'label'=> array(
+                'dao'=>'taxon~t_nomenclature',
+                'method'=>'getLabel',
+                'champ'=>'protection',
+                'column'=>'valeur'
+            )
+        ),
+
+
         //'nom_valide' => array (
             //'table' => 'vm_observation',
             //'clause' => ' AND o.nom_valide ILIKE ( @ )',
@@ -184,23 +264,7 @@ class occtaxSearchObservation extends occtaxSearch {
             $parent_description = parent::getSearchDescription($format, $drawLegend);
 
             // Get search description for TAXON list
-            if ( count($this->taxon_params) > 0 ){
-                $token = $params['search_token'];
-                jClasses::inc('taxon~taxonSearch');
-                $taxonSearch = new taxonSearch( $token );
-                $description.= $taxonSearch->getSearchDescription($format);
-
-                $mat = array();
-                $test = preg_match('#^' . jLocale::get('occtax~search.description.no.filters') . '#', $parent_description, $mat);
-                if( !$test ){
-                    $description.= $parent_description;
-                }else{
-                    $description.= preg_replace('#^' . jLocale::get('occtax~search.description.no.filters') . '#', '', $parent_description);
-                }
-            }else{
-                $description.= $parent_description;
-            }
-
+            $description.= $parent_description;
 
         }
 
@@ -248,48 +312,6 @@ class occtaxSearchObservation extends occtaxSearch {
             $sql.= " AND o.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
         }
 
-        // taxons
-        $params = $this->getParams();
-        if ( $params ) {
-            // Get taxon from taxon search
-            if ( array_key_exists( 'search_token', $params ) && $params['search_token'] ) {
-                $token = $params['search_token'];
-                jClasses::inc('taxon~taxonSearch');
-
-                $taxonSearch = new taxonSearch( $token );
-                $tsFields = $taxonSearch->getFields();
-
-                $conditions = $taxonSearch->getConditions();
-
-                $tsql = array();
-                foreach($conditions->condition->conditions as $condition){
-                    $csql = '"' . $condition['field_id'];
-                    $csql.= '" ' . $condition['operator'];
-
-                    $value = $condition['value'];
-                    if(is_array($value)){
-                        $values = array_map( function($item){return $this->myquote($item);}, $value );
-                        // on doit faire le quote ici car on ne passe pas par jelix pour construire le sql
-                        $csql.= ' ( ' . implode(',', $values)  .' ) ';
-                    }else{
-                        if($condition['operator'] == 'IN'){
-                            $csql.= ' ( ';
-                        }
-                        $csql.= ' ' . $this->myquote($value) . ' ';
-                        if($condition['operator'] == 'IN'){
-                            $csql.= ' ) ';
-                        }
-                    }
-                    $tsql[] = $csql;
-
-                }
-                if( count($tsql) > 0 ){
-                    $taxonSql = " AND o.cd_ref IN (SELECT cd_ref FROM taxon.taxref_consolide_non_filtre WHERE ";
-                    $taxonSql.= implode( ' AND ', $tsql  ) . " ) ";
-                    $sql.= $taxonSql;
-                }
-            }
-        }
 //jLog::log($sql);
         return $sql;
 

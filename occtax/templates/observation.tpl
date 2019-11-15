@@ -61,6 +61,48 @@
         </tr>
         {/if}
 
+        {if array_key_exists('nom_vern', $data)}
+        <tr>
+            <th>{@occtax~observation.output.nom_vern@}</th>
+            <td>{$data['nom_vern']}</td>
+        </tr>
+        {/if}
+
+        {if array_key_exists('famille', $data)}
+        <tr>
+            <th>{@occtax~observation.output.famille@}</th>
+            <td>{$data['famille']}</td>
+        </tr>
+        {/if}
+
+        {if array_key_exists('group2_inpn', $data)}
+        <tr>
+            <th>{@occtax~observation.output.group2_inpn@}</th>
+            <td>{$data['group2_inpn']}</td>
+        </tr>
+        {/if}
+
+        {if array_key_exists('statut_biogeographique', $data)}
+        <tr>
+            <th>{@occtax~observation.output.statut_biogeographique@}</th>
+            <td>{$data['statut_biogeographique']}</td>
+        </tr>
+        {/if}
+
+        {if array_key_exists('menace', $data)}
+        <tr>
+            <th>{@occtax~observation.output.menace@}</th>
+            <td>{$data['menace']}</td>
+        </tr>
+        {/if}
+
+        {if array_key_exists('protection', $data)}
+        <tr>
+            <th>{@occtax~observation.output.protection@}</th>
+            <td>{$data['protection']}</td>
+        </tr>
+        {/if}
+
         {if array_key_exists('denombrement_min', $data)}
         <tr>
             <th>{@occtax~observation.output.denombrement_min@}</th>

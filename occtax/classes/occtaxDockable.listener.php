@@ -12,12 +12,12 @@
 
                 // TAXON dock
                 // Create search form
-                $searchForm = jForms::create("taxon~search");
-
-                $assign = array(
-                    'form' => $searchForm
-                );
-                $content = array( 'taxon~search', $assign );
+                //$searchForm = jForms::create("taxon~search");
+                //$assign = array(
+                    //'form' => $searchForm
+                //);
+                //$content = array( 'taxon~search', $assign );
+                $content = '';
 
                 $dock = new lizmapMapDockItem(
                     'taxon',
@@ -40,7 +40,6 @@
                 $form->setData('date_min', $date_min);
 
                 $formUpload = jForms::create("occtax~upload_geojson");
-                $formTax = jForms::create("taxon~search");
 
                 // Remove some fields via rights
                 if( !jAcl2::check("requete.jdd.observation") ){
@@ -95,7 +94,6 @@
                 $assign = array(
                     'form' => $form,
                     'formUpload' => $formUpload,
-                    'formTax' => $formTax,
                     'occtaxClientConfig' => json_encode($occtaxClientConfig),
                     'mailles_a_utiliser' => $mailles_a_utiliser,
                     'srid' => $srid,

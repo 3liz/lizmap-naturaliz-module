@@ -6,20 +6,39 @@ FORMULAIRE DE RECHERCHE
 
 <div id="occtax_search_input">
 
+
+<!--
+Onglets taxons vides,qu'on déplace dans le formulaire
+et dans dans lequel on déplace les champs liés au taxon
+-->
+<div id="occtax_taxon_tab_div" class="container" style="width:100%;">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#recherche_taxon_panier" data-toggle="tab">Sélection de taxons</a></li>
+        <li class=""><a href="#recherche_taxon_attributs" data-toggle="tab">Filtre par attributs</a></li>
+    </ul>
+    <div class="tab-content">
+        <div id="recherche_taxon_panier" class="tab-pane active">
+        </div>
+        <div id="recherche_taxon_attributs" class="tab-pane ">
+        </div>
+    </div>
+</div>
+
+<!--
+  Bloc qui contient le panier de taxon
+  Déplacé par JS dans le formulaire
+-->
     <div id="occtax_taxon_select_div" class="control-group">
-      <label class="jforms-label control-label">
-        <button type="button" id="occtax_taxon_select_toggle" class="btn" style="padding:2px;">{@occtax~search.button.add.taxon@}</button>
-      </label>
-      <div class="controls">
-        <ul id="occtax_taxon_select_list" style="width:220px; height:65px; overflow-x:auto; margin:0px;
-         background-color:#FFF; border:solid #CCC 1px; border-radius:4px;">
-        </ul><button id="clearTaxonSearch" class="btn btn-mini">x</button>
-
-        <div id="occtax_taxon_select_params" style="display:none;"></div>
-
-      </div>
+        <ul id="occtax_taxon_select_list" style="display:none; overflow-x:auto; margin:0px;
+         background-color:lightgray; border:solid #CCC 1px; border-radius:4px;">
+        </ul>
+        <button id="clearTaxonSearch" class="btn btn-mini">x</button>
     </div>
 
+<!--
+Bloc qui contient les boutons de recherche spatiale
+Déplacé par JS dans le formulaire WHERE
+-->
     <div id="obs-spatial-query-buttons" class="controls">
       <div class="btn-group" data-toggle="buttons-radio">
         <button type="button" id="obs-spatial-query-commune" data-value="queryPoint" class="btn commune" title="Sélectionner une commune" alt="Cliquer sur la carte pour sélectionner la commune">
@@ -71,8 +90,6 @@ FORMULAIRE DE RECHERCHE
 
       </div>
 
-
-
       <div id="obs-spatial-upload-geojson" style="display:none;">
         {formfull $formUpload, 'occtax~service:uploadGeoJSON', array(), 'htmlbootstrap'}
       </div>
@@ -82,6 +99,7 @@ FORMULAIRE DE RECHERCHE
     <div id="div_form_occtax_search_token" class="menu-content">
         {formfull $form, 'occtax~service:initSearch', array(), 'htmlbootstrap'}
     </div>
+
 </div>
 
 <div style="display:none;">
@@ -91,6 +109,21 @@ FORMULAIRE DE RECHERCHE
   </form>
   <form id="form_occtax_service_maille" method="post" action="{jurl 'occtax~service:getMaille'}">
   </form>
+
+  <form id="form_taxon_service_autocomplete" method="post" action="{jurl 'taxon~service:autocomplete'}">
+    <input type="text" name="limit" value="50"></input>
+    <input type="text" name="term"></input>
+  </form>
+
+<!--
+  <form id="form_taxon_service_search" method="post" action="{jurl 'taxon~service:search'}">
+    <input type="text" name="token"></input>
+    <input type="text" name="limit"></input>
+    <input type="text" name="offset"></input>
+    <input type="text" name="order"></input>
+  </form>
+-->
+
 </div>
 
 

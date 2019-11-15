@@ -46,7 +46,7 @@
             <parameter name="champ" />
             <conditions logic="and">
                 <eq property="code" expr="$code" />
-                <eq property="champ" value="$champ" />
+                <eq property="champ" expr="$champ" />
             </conditions>
         </method>
         <!--<method name="findByStage" type="select/selectfirst/delete/update/php">

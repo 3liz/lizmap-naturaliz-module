@@ -205,23 +205,34 @@ OccTax.events.on({
         }
     }
 
-    $('#occtax_taxon_select_toggle').click(function(){
-        //console.log('affiche la recherche par taxon');
-        $('#button-taxon').click();
-    });
-
     function addTaxonToSearch( cd_nom, nom_cite ) {
         //console.log(cd_nom, nom_cite);
-        $('#div_form_occtax_search_token form [name="search_token"]').val('');
-        $('#occtax_taxon_select_params').html( '' ).hide();
+        // todo supprimer commentaires
+        // Vider le search_token
+        //$('#div_form_occtax_search_token form [name="search_token"]').val('');
+
+        // Afficher la liste
         $('#occtax_taxon_select_list').show();
+
+        // Ajout des données au champ caché cd_nom
         var ctrl_cd_nom = $('#div_form_occtax_search_token form [name="cd_nom[]"]');
         var selectVals = ctrl_cd_nom.val();
         if ( selectVals == null )
             selectVals = [];
+
+        // Ajout d'un item au panier
         if ( selectVals.indexOf( cd_nom ) == -1 ) {
             ctrl_cd_nom.append('<option selected value="'+cd_nom+'">'+nom_cite+'</option>');
-            var li = $('<li data-value="'+cd_nom+'" style="height:20px; margin-left:2px;"><span style="display:inline-block; width:190px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">'+nom_cite+'</span><button type="button" class="close" value="'+cd_nom+'" aria-hidden="true">&times;</button></li>');
+            var licontent = '<li data-value="';
+            licontent+= cd_nom;
+            licontent+= '" style="height:20px; margin-left:2px;">';
+            licontent+= '<span style="display:inline-block; width:190px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">';
+            licontent+= nom_cite;
+            licontent+= '</span>';
+            licontent+= '<button type="button" class="close" value="'+cd_nom+'" aria-hidden="true">&times;</button>';
+            licontent+= '</li>';
+            var li = $(licontent);
+
             $('#occtax_taxon_select_list').append(li);
             li.find('.close').click(function(){
                 deleteTaxonToSearch( $(this).attr('value') );
@@ -235,14 +246,28 @@ OccTax.events.on({
       var li = $('#occtax_taxon_select_list li[data-value="'+cd_nom+'"]');
       li.find('.close').unbind('click');
       li.remove();
+      if($('#occtax_taxon_select_list li').length == 0){
+        $('#occtax_taxon_select_list').hide();
+      }
     }
 
-    function clearTaxonFromSearch() {
+    function clearTaxonFromSearch(removePanier, removeFilters) {
+      var formId = 'jforms_occtax_search';
+      if(removePanier){
+        // Remove content from taxon panier
         $('#div_form_occtax_search_token form [name="cd_nom[]"]').html('');
-        $('#div_form_occtax_search_token form [name="search_token"]').val('');
+        // Remove content from taxon panier
         $('#occtax_taxon_select_list .close').unbind('click');
-        $('#occtax_taxon_select_list').html('').show();
-        $('#occtax_taxon_select_params').html('');
+        $('#occtax_taxon_select_list').html('');
+        $('#'+formId+' input[name="autocomplete"]').val('');
+      }
+      if(removeFilters){
+        // Remove data from taxon inputs
+        $('#'+formId+'_filter select option').prop('selected', function() {
+          return this.defaultSelected;
+        });
+      }
+
     }
 
     function addResultsStatsTable() {
@@ -423,8 +448,14 @@ OccTax.events.on({
               //~ console.log( cd_nom );
               var row_label = $('#'+tableId+' thead tr th.row-label').attr('data-value');
               row_label = row_label.split(',')[0];
-              clearTaxonFromSearch();
+
+              // Remove previous taxon searches
+              var removePanier = true;
+              var removeFilters = true;
+              clearTaxonFromSearch(removePanier, removeFilters);
               //~ console.log( cd_nom, d[row_label] );
+
+              // Add new taxon to search
               addTaxonToSearch( cd_nom, d[row_label] );
               $('#div_form_occtax_search_token form').submit();
               return false;
@@ -678,29 +709,8 @@ OccTax.events.on({
     }
 
 
-    function manageTaxonSubmit(aCallBack){
-      var formId = $('#div_form_taxon_search_token form').attr('id');
-      var self = $('#'+formId);
-      aCallBack = typeof aCallBack !== 'undefined' ?  aCallBack : null;
-
-      $.getJSON(self.attr('action'), self.serialize(),
-        function(tData) {
-
-          //(tData);
-          if (tData.status == 1) {
-            $('#form_taxon_service_search input[name="token"]').val(tData.token);
-            $('#table_taxon_results').DataTable().ajax.reload();
-            $('#div_taxon_search_description').html( tData.description );
-
-            if(aCallBack){
-              aCallBack();
-            }
-          }
-        });
-    }
-
     function initFormTaxon() {
-      var formId = $('#div_form_taxon_search_token form').attr('id');
+      var formId = $('#div_form_occtax_search_token form').attr('id');
       $('#'+formId+'_autocomplete').autocomplete({
         minLength:2,
         autoFocus: true,
@@ -727,13 +737,25 @@ OccTax.events.on({
           $('#'+formId+'_cd_ref').val( '' );
         },
         select: function( e, ui ) {
-          $(this).val( $('<a>').html(ui.item.label.split(' = ')[0]).text() );
+
+          // Ajout du cd_ref dans le champ masqué
           $('#'+formId+'_cd_ref').val( ui.item.cd_ref );
-          $('#'+formId+' select').val('');
+
+          // Hide search comboboxes
           if ( $('#'+formId+'_filter > div').is(':visible') ) {
             $('#'+formId+'_filter > legend > button').click();
           }
-          $('#'+formId).submit();
+
+          // Mise en forme du résultat
+          var label = ui.item.label.split(' = ')[0];
+          var valeur = $('<a>').html(label).text();
+
+          // Suppression du contenu et perte du focus
+          $(this).val( '' ).blur();
+
+          // Ajout du taxon au panier
+          addTaxonToSearch( ui.item.cd_ref, label );
+
           return false;
         }
       }).autocomplete( "widget" ).css("z-index","1050");
@@ -744,155 +766,7 @@ OccTax.events.on({
         .append( $("<a>").html(  $("<a>").html( '<img src="'+ jFormsJQ.config.basePath + 'css/images/taxon/' + item.groupe + '.png" width="15" height="15"/>&nbsp;' + item.label )  ) )
         .appendTo( ul );
       };
-      // Search taxon and display results
-      $('#'+formId).submit(function(){
-        manageTaxonSubmit();
-        return false;
-      });
-      // Reinit search form
-      $('#'+formId+'_reinit').click(function(){
-          $('#'+formId+'_cd_ref').val( '' );
-          $('#jforms_taxon_search input[name="autocomplete"]').val('')
-          $('#jforms_taxon_search select option').prop('selected', function() {
-            return this.defaultSelected;
-          });
-          return false;
-      });
-      // Go back to occtax panel (do nothing else)
-      $('#'+formId+'_back').click(function(){
-          $('#button-occtax').click();
-          return false;
-      });
-      // Search taxon & display result in taxon panel
-      $('#'+formId+'_submit').click(function(){
-        manageTaxonSubmit();
-        return false;
-      });
 
-      // Search taxon, and run the corresponding filter in occtax panel
-      $('#'+formId+'_obsfilter').click(function(){
-
-        manageTaxonSubmit(function(){
-          // check if a search has been run
-          var token = $('#form_taxon_service_search input[name="token"]').val();
-          var cdref = $('#jforms_taxon_search input[name="cd_ref"]').val();
-          if(!token && !cdref){
-            msg = "Vous devez lancer une recherche sur les taxons pour pouvoir filtrer les observations.";
-            lizMap.addMessage( msg, 'error', true );
-            return false;
-          }
-          var description = $('#div_taxon_search_description').html();
-          clearTaxonFromSearch();
-          $('#div_form_occtax_search_token form [name="search_token"]').val( token );
-          $('#occtax_taxon_select_list').hide();
-          $('#occtax_taxon_select_params').html( description ).show();
-          $('#button-occtax').click();
-          $('#div_form_occtax_search_token form').submit();
-
-        });
-        return false;
-      });
-
-
-      $('#'+formId+'_filter > div').hide();
-      $('#'+formId+'_filter > legend').html('<button class="btn" data-toggle="button">'+$('#'+formId+'_filter > legend').text()+'<span class="caret"></span></button>');
-      $('#'+formId+'_filter > legend > button').click( function(){
-        //$(this).toggle();
-        $('#'+formId+'_filter > div').toggle();
-        return false;
-      });
-    }
-
-    function addTaxonTable() {
-      var tableId = 'table_taxon_results';
-      // Get fields to display
-      var returnFields = $('#'+tableId+'').attr('data-value').split(',');
-      var DT_RowId = $('#'+tableId+' thead tr').attr('data-value');
-      var datatableColumns = getDatatableColumns( tableId );
-      var DT_Columns = datatableColumns[0];
-      var displayFields = datatableColumns[1];
-      // Display data via datatable
-      $('#'+tableId+'').DataTable( {
-            "lengthChange": false,
-            "searching": false,
-            "dom":'ipt',
-            "language": {url:jFormsJQ.config.basePath + lizUrls["dataTableLanguage"]},
-            "oLanguage": {
-              "sInfoEmpty": "",
-              "sEmptyTable": "Aucun résultat",
-              "sInfo": "Affichage des taxons _START_ à _END_ sur _TOTAL_ taxons",
-              "oPaginate" : {
-                "sPrevious": "Précédent",
-                "sNext": "Suivant"
-              }
-            },
-            "processing": true,
-            "serverSide": true,
-            "columns": DT_Columns,
-            "ajax": function (param, callback, settings) {
-              var searchForm = $('#form_taxon_service_search');
-              searchForm.find('input[name="limit"]').val(param.length);
-              searchForm.find('input[name="offset"]').val(param.start);
-              searchForm.find('input[name="order"]').val(
-                DT_Columns[param.order[0]['column']]['data'] + ':' + param.order[0]['dir']
-              );
-
-              // Do not run the query if no token has been found
-              var mytoken = searchForm.find('input[name="token"]').val();
-              if(!mytoken)
-                return false;
-              $.getJSON(searchForm.attr('action'), searchForm.serialize(),
-                function( results ) {
-                  //console.log( results );
-                  var tData = {
-                    "recordsTotal": 0,
-                    "recordsFiltered": 0,
-                    "data": []
-                  };
-                  if ( results.status = 1 ) {
-                    tData.recordsTotal = results.recordsTotal;
-                    tData.recordsFiltered = results.recordsFiltered;
-
-                    for( var i=0, len=results.data.length; i<len; i++ ) {
-
-                      // Add data to table
-                      var r = {};
-                      var d = results.data[i];
-                      r['DT_RowId'] = d[ returnFields.indexOf( DT_RowId ) ];
-                      for( var j=0, jlen = displayFields.length; j < jlen; j++ ) {
-                        var f = displayFields[j];
-                        r[ f ] = d[ returnFields.indexOf( f ) ];
-                      }
-                      tData.data.push( r );
-                    }
-                  } else {
-                    if ( results.msg.length != 0 )
-                        lizMap.addMessage( results.msg.join('<br/>'), 'error', true );
-                    else
-                        lizMap.addMessage( 'Error', 'error', true );
-                  }
-                  $('#'+tableId+' a').unbind('click');
-                  callback( tData );
-                });
-            }
-        });
-        $('#'+tableId+'').on( 'page.dt', function() {
-          $('#'+tableId+' a').unbind('click');
-        });
-        $('#'+tableId+'').on( 'draw.dt', function() {
-          $('#'+tableId+' a.addTaxon').click(function(){
-              var tr = $($(this).parents('tr')[0]);
-              var d = $('#'+tableId+'').DataTable().row( tr ).data();
-              var cd_nom = tr.attr('id');
-              var row_label = $('#'+tableId+' thead tr th.row-label').attr('data-value');
-              row_label = row_label.split(',')[0];
-              addTaxonToSearch( cd_nom, d[row_label] );
-              $('#div_form_occtax_search_token form').submit();
-              // Show observation search form
-              $('#mapmenu #button-occtax').click();
-              return false;
-          });
-        });
     }
 
     function getObservationDetail( id ) {
@@ -1242,8 +1116,6 @@ OccTax.events.on({
         }
         blocme = true;
 
-        // Do nothing if token is not defined
-
         var self = $(this);
 
         // The Occtax events trigger an error on first load (when page not entirely loaded)
@@ -1269,6 +1141,21 @@ OccTax.events.on({
            var anerror = 1;
            //console.error(e);
         }
+
+        // Remove taxon input values depending on active tab
+        if( $('#occtax_taxon_tab_div > div.tab-content > div.active').length == 1 ) {
+          var aid = $('#occtax_taxon_tab_div > div.tab-content > div.active')[0].id;
+          if(aid == 'recherche_taxon_panier'){
+              var removePanier = false;
+              var removeFilters = true;
+          }else{
+              var removePanier = true;
+              var removeFilters = false;
+          }
+          clearTaxonFromSearch(removePanier, removeFilters);
+        }
+
+        // Send request and get token
         $.getJSON(self.attr('action'), self.serialize(),
             function(tData) {
                 blocme = false;
@@ -1328,20 +1215,39 @@ OccTax.events.on({
         return false;
       });
 
-
+      // Move spatial query buttons to WHERE group
       $('#'+tokenFormId+'_where').append( $('#obs-spatial-query-buttons') );
-      //~ $('#'+tokenFormId+'_where .jforms-table-group').hide();
-      $('#'+tokenFormId+'_what').append( $('#occtax_taxon_select_div') );
-      //~ $('#'+tokenFormId+'_what .jforms-table-group').hide();
-      $('#'+tokenFormId+'_what .jforms-table-group .control-group:nth-last-child(-n+2)').hide();
+
+      // Move taxon tabs to the top
+      $('#'+tokenFormId).prepend($('#occtax_taxon_tab_div'));
+
+      // Move taxon panier to the taxon main group
+      $('#'+tokenFormId+'_main').append( $('#occtax_taxon_select_div'));
+
+      // Move taxon main group to the panier tab
+      $('#recherche_taxon_panier').append($('#'+tokenFormId+'_main'));
+
+      // Move taxon advanced filter to the attributes
+      $('#recherche_taxon_attributs').append($('#'+tokenFormId+'_filter'));
+
+      // Hide cd_nom
+      $('#'+tokenFormId+'_cd_nom').parent('.controls').parent('.control-group').hide();
+      //$('#'+tokenFormId+'_main .jforms-table-group .control-group:nth-last-child(-n+2)').hide();
 
       // Réinitialisation du formulaire
       // On supprime les géométries de recherche
       // On masque les résultats
       $('#'+tokenFormId+'_reinit').click(function(){
-          clearTaxonFromSearch();
+          // Reinit taxon
+          var removePanier = true;
+          var removeFilters = true;
+          clearTaxonFromSearch(removePanier, removeFilters);
+
+          // Reinit spatial button
           clearSpatialSearch();
           OccTax.emptyDrawqueryLayer('queryLayer');
+
+          // Reinit tables
           try{
             OccTax.events.triggerEvent('mailledatareceived_' + 'm01', {'results':null});
             OccTax.events.triggerEvent('mailledatareceived_' + 'm02', {'results':null});
@@ -1352,12 +1258,13 @@ OccTax.events.on({
             var myerror = e;
           }
 
+          // Hide description, result and card panels
           $('#occtax_search_result, #occtax_search_description, #occtax_search_observation_card')
           .hide()
           .prev('h3.occtax_search').hide()
           ;
 
-          //return false;
+          return false;
       });
 
 
@@ -1370,7 +1277,6 @@ OccTax.events.on({
       addResultsObservationTable();
 
       initFormTaxon();
-      addTaxonTable();
 
       $('#occtax_results_draw .btn').click(function() {
         var self = $(this);
@@ -1522,19 +1428,16 @@ OccTax.events.on({
 
 
       // Clear Taxon search with button
+      $('#clearTaxonSearch').hide(); // Hide this useless button to remove them all
       $('#clearTaxonSearch').click(function(){
-        clearTaxonFromSearch();
+        var removePanier = true;
+        var removeFilters = false;
+        clearTaxonFromSearch(removePanier, removeFilters);
         return false;
       });
 
       // Hide taxon menu icon in menubar
       $('#button-taxon').parent('li.taxon').hide();
-      // Hide occtax table menu icon
-      //$('#mapmenu li.occtax_tables').hide();
-
-
-      // Ajout du logo
-      //$('#attribution-box').append('<img src="'+ jFormsJQ.config.basePath + 'css/img/logo_europe_mini.jpg" title="KaruNati est cofinancé par l’Union européenne. L’Europe s’engage en Guadeloupe avec le FEDER" />');
 
       // Masquer le metadata
       $('#mapmenu li.metadata').hide();

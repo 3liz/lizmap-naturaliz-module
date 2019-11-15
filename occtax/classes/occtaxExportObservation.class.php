@@ -24,11 +24,19 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             'cle_obs' => "Integer",
             'identifiant_permanent' => "String",
             'statut_observation' => "String",
+
+            // taxon
             'cd_nom' => "Integer",
             'cd_ref' => "Integer",
             'version_taxref' => "String",
             'nom_cite' => "String",
             'lb_nom_valide' => "String",
+            'nom_vern' => "String",
+            'group2_inpn' => "String",
+            'famille' => "String",
+            //'statut_biogeographique' => "String",
+            'menace' => "String",
+            'protection' => "String",
 
             // effectif
             'denombrement_min' => "Integer",
@@ -192,11 +200,19 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 'o.cle_obs' => Null, // Null signifie qu'on ne fait pas de GROUP BY pour ce champ
                 'o.identifiant_permanent'=> Null,
                 'o.statut_observation'=> Null,
+
+                // taxon
                 'CASE WHEN o.cd_nom > 0 THEN o.cd_nom ELSE NULL END AS cd_nom' => Null,
                 'CASE WHEN o.cd_ref > 0 THEN o.cd_ref ELSE NULL END AS cd_ref' => Null,
                 'o.version_taxref' => Null,
                 'o.nom_cite' => Null,
                 'o.lb_nom_valide' => Null,
+                'o.nom_vern' => Null,
+                'o.famille' => Null,
+                'o.group2_inpn' => Null,
+                //'o.statut_biogeographique' => Null,
+                'o.menace' => Null,
+                'o.protection' => Null,
 
                 // effectif
                 'o.denombrement_min' => Null,

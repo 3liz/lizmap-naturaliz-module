@@ -98,35 +98,6 @@ class occtaxSearch {
         if(empty($this->params))
             return false;
 
-        // Taxon params : 2 things
-        // 1/ Get taxon search params if a taxon token has been given via param "search_token"
-        jClasses::inc('taxon~taxonSearch');
-        if ( array_key_exists( 'search_token', $this->params ) && !empty($this->params['search_token']) ) {
-            $taxon_token = $this->params['search_token'];
-            $taxonSearch = new taxonSearch( $taxon_token );
-            $this->taxon_params = $taxonSearch->getParams();
-            if(count($this->taxon_params)>0){
-                foreach($this->taxon_params as $k=>$v){
-                    if(!empty($v))
-                        $this->params[$k] = $v;
-                }
-            }
-        }else{
-
-            // 2/ Build a taxon search and get token if params given
-            $given_taxon_params = array();
-            foreach($this->params as $k=>$v){
-                if(in_array($k, $this->taxon_params_list))
-                    $given_taxon_params[$k] = $v;
-            }
-            if( count($this->taxon_params) == 0 and count($given_taxon_params) > 0 ){
-                $taxonSearch = new taxonSearch( $this->token, $given_taxon_params );
-                $this->taxon_params = $taxonSearch->getParams();
-
-                $this->params['search_token'] = $taxonSearch->id();
-            }
-        }
-
         // Niveaux de validité des observations accessibles au grand public
         $vniv = $ini->getValue('validite_niveaux_grand_public', 'naturaliz');
         if( !$vniv )
@@ -286,17 +257,26 @@ class occtaxSearch {
             return $v;
 
         // Return value if no correspondance needed
-        if( !array_key_exists( 'label', $qf[$k] ) )
+        if( !array_key_exists( 'label', $qf[$k] ) ){
             return $v;
+        }
 
         $qfl = $qf[$k]['label'];
         $dao = jDao::get( $qfl['dao']);
         $method = $qfl['method'];
+        $champ = null;
+        if( array_key_exists( 'champ', $qfl ) ){
+            $champ = $qfl['champ'];
+        }
         $label = '';
         if( is_array($v) ){
             $sep = '';
             foreach( $v as $i ){
-                $item = $dao->$method($i);
+                if(!empty($champ)){
+                    $item = $dao->$method($i, $champ);
+                }else{
+                    $item = $dao->$method($i);
+                }
                 if( $item ){
                     $col = (string)$qfl['column'];
                     $label.= $sep . $item->$col;
@@ -306,7 +286,11 @@ class occtaxSearch {
                 }
             }
         }else{
-            $item = $dao->$method($v);
+            if(!empty($champ)){
+                $item = $dao->$method($v, $champ);
+            }else{
+                $item = $dao->$method($v);
+            }
             if($item){
                 $col = (string)$qfl['column'];
                 $label = $item->$col;

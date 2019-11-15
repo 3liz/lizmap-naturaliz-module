@@ -25,6 +25,15 @@
             </order>
         </method>
 
+        <method name="getLabel" type="selectfirst">
+            <parameter name="code" />
+            <parameter name="champ" />
+            <conditions logic="and">
+                <eq property="code" expr="$code" />
+                <eq property="champ" expr="$champ" />
+            </conditions>
+        </method>
+
         <method name="getProtections" type="select">
             <conditions logic="and">
                 <eq property="champ" value="protection" />
