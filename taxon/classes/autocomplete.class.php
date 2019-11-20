@@ -13,15 +13,15 @@ class autocomplete {
 
     protected $separator = '=';
 
-    protected function getSql() {
-        return "
+    protected function getSql($taxons_locaux='true', $taxons_bdd='true') {
+        $sql = "
             SELECT foo.cd_nom AS value, foo.nom_valide, ts_headline(foo.val, query) AS label, foo.cd_ref, CASE
                 WHEN cat.cat_nom IS NOT NULL THEN (regexp_split_to_array(cat.cat_nom, ' '))[1]
                 ELSE 'no_image'
             END AS groupe
             FROM
             (
-                SELECT f.cd_nom, f.cd_ref, f.nom_valide, group2_inpn,
+                SELECT f.cd_nom, f.cd_ref, f.nom_valide, f.group2_inpn,
                 CASE
                         WHEN f.val = f.nom_valide THEN f.val
                         ELSE f.val || ' " . $this->separator . " ' || f.nom_valide
@@ -31,11 +31,32 @@ class autocomplete {
                 similarity(trim( $1 ), val) AS sim
                 FROM taxon.taxref_fts f,
                 to_tsquery('french_text_search', regexp_replace( unaccent( trim( $1 ) ), '[^0-9a-zA-Z]+', ' & ', 'g') || ':*' ) AS query
-                WHERE query @@ vec
+        ";
+
+        // Where
+        $sql.= "
+                WHERE True
+        ";
+
+        // Get only taxons locaux
+        if($taxons_locaux == 'true'){
+            $sql.= "
+            AND f.loc IS NOT NULL AND f.loc NOT IN ('Q', 'A')
+            ";
+        }
+        // Get only taxon in data
+        if($taxons_bdd == 'true'){
+            $sql.= "
+            AND f.cd_ref IN (SELECT DISTINCT o.cd_ref FROM vm_observation o)
+            ";
+        }
+        $sql.= "
+                AND query @@ vec
                 ORDER BY sim DESC, poids DESC, rnk DESC
                 LIMIT $2
             ) foo LEFT JOIN taxon.t_group_categorie cat ON cat.groupe_nom = foo.group2_inpn
         ";
+        return $sql;
     }
 
     /**
@@ -57,10 +78,12 @@ class autocomplete {
     * @param $term Searched term
     * @return List of matching taxons
     */
-    function getData($term, $limit=15) {
+    function getData($term, $limit=15, $taxons_locaux='true', $taxons_bdd='true') {
 
-        $sql = $this->getSql();
-        return $this->query( $sql, array( $term, $limit) );
+        $sql = $this->getSql($taxons_locaux, $taxons_bdd);
+
+        $return = $this->query( $sql, array( $term, $limit) );
+        return $return;
     }
 
 }

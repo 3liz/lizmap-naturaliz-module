@@ -20,9 +20,11 @@ class serviceCtrl extends jController {
 
         $term = $this->param( 'term' );
         $limit = $this->intParam( 'limit', 10 );
+        $taxons_locaux = $this->param( 'taxons_locaux' );
+        $taxons_bdd = $this->param( 'taxons_bdd' );
 
         $autocomplete = jClasses::getService('taxon~autocomplete');
-        $result = $autocomplete->getData( $term, $limit );
+        $result = $autocomplete->getData( $term, $limit, $taxons_locaux, $taxons_bdd );
 
         $rep->data = $result;
 

@@ -114,7 +114,7 @@ COMMENT ON COLUMN taxref_local_source.code IS 'Code court de la base de données
 COMMENT ON COLUMN taxref_local_source.titre IS 'Titre de la base de données. Par exemple: Index de la flore vasculaire de La Réunion';
 COMMENT ON COLUMN taxref_local_source.description IS 'Description de la base de données. Optionnelle';
 COMMENT ON COLUMN taxref_local_source.info_url IS 'URL vers une page décrivant la base de données source. Ex: http://mascarine.cbnm.org/';
-COMMENT ON COLUMN taxref_local_source.taxon_url IS 'URL vers la fiche d''un taxon dans la base de données source. Le texte {$id} sera remplacé par l''identifiant d''origine du taxon dans la bdd source. Ex: http://mascarine.cbnm.org/index.php/flore/index-de-la-flore/nom?code_taxref={$id}';
+COMMENT ON COLUMN taxref_local_source.taxon_url IS 'URL vers la fiche d''un taxon dans la base de données source.';
 
 
 
@@ -306,16 +306,16 @@ SET search_path TO taxon,public,pg_catalog;
 DROP MATERIALIZED VIEW IF EXISTS taxref_fts;
 CREATE MATERIALIZED VIEW taxref_fts AS
 WITH taxref_mnhn_et_local AS (
-  SELECT cd_nom, cd_ref, nom_valide, nom_vern, nom_complet, group2_inpn, rang
+  SELECT cd_nom, cd_ref, nom_valide, nom_vern, nom_complet, group2_inpn, rang, {$colonne_locale} AS loc
   FROM taxref
   UNION ALL
-  SELECT cd_nom, cd_ref, nom_valide, nom_vern, nom_complet, group2_inpn, rang
+  SELECT cd_nom, cd_ref, nom_valide, nom_vern, nom_complet, group2_inpn, rang, {$colonne_locale} AS loc
   FROM taxref_local
   WHERE cd_nom_valide IS NULL
 )
 -- Noms valides
 SELECT cd_nom::bigint, cd_ref::bigint, nom_valide AS val, nom_valide, 6::smallint AS poids,
-group2_inpn, to_tsvector( unaccent(coalesce(nom_valide,'')) )::tsvector AS vec
+group2_inpn, to_tsvector( unaccent(coalesce(nom_valide,'')) )::tsvector AS vec, loc
 FROM taxref_mnhn_et_local
 WHERE cd_nom = cd_ref
 AND rang IN ('FM', 'GN', 'AGES', 'ES', 'SSES', 'NAT', 'VAR', 'SVAR', 'FO', 'SSFO', 'RACE', 'CAR', 'AB')
@@ -324,7 +324,7 @@ AND rang IN ('FM', 'GN', 'AGES', 'ES', 'SSES', 'NAT', 'VAR', 'SVAR', 'FO', 'SSFO
 -- Noms vernaculaires
 UNION ALL
 SELECT cd_nom::bigint, cd_ref::bigint, nom_vern AS val, nom_valide, 4::smallint AS poids,
-group2_inpn, to_tsvector( unaccent(coalesce(nom_vern,'')) )::tsvector AS vec
+group2_inpn, to_tsvector( unaccent(coalesce(nom_vern,'')) )::tsvector AS vec, loc
 FROM taxref_mnhn_et_local
 WHERE cd_nom = cd_ref AND nom_vern IS NOT NULL AND nom_vern != ''
 AND rang IN ('FM', 'GN', 'AGES', 'ES', 'SSES', 'NAT', 'VAR', 'SVAR', 'FO', 'SSFO', 'RACE', 'CAR', 'AB')
@@ -333,7 +333,7 @@ AND rang IN ('FM', 'GN', 'AGES', 'ES', 'SSES', 'NAT', 'VAR', 'SVAR', 'FO', 'SSFO
 -- Noms synonymes
 UNION ALL
 SELECT cd_nom::bigint, cd_ref::bigint, nom_complet AS val, nom_valide, 2::smallint,
-group2_inpn, to_tsvector( unaccent(coalesce(nom_complet,'')) )::tsvector AS vec
+group2_inpn, to_tsvector( unaccent(coalesce(nom_complet,'')) )::tsvector AS vec, loc
 FROM taxref_mnhn_et_local
 WHERE cd_nom != cd_ref
 AND rang IN ('FM', 'GN', 'AGES', 'ES', 'SSES', 'NAT', 'VAR', 'SVAR', 'FO', 'SSFO', 'RACE', 'CAR', 'AB')

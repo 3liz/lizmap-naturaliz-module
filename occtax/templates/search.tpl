@@ -113,6 +113,8 @@ Déplacé par JS dans le formulaire WHERE
   <form id="form_taxon_service_autocomplete" method="post" action="{jurl 'taxon~service:autocomplete'}">
     <input type="text" name="limit" value="50"></input>
     <input type="text" name="term"></input>
+    <input type="text" name="taxons_locaux"></input>
+    <input type="text" name="taxons_bdd"></input>
   </form>
 
 <!--

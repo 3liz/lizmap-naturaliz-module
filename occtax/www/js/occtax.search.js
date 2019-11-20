@@ -716,6 +716,8 @@ OccTax.events.on({
         autoFocus: true,
         source:function( request, response ) {
             request.limit = $('#form_taxon_service_autocomplete input[name="limit"]').val();
+            request.taxons_locaux = $('#jforms_occtax_search_taxons_locaux').prop( "checked");
+            request.taxons_bdd = $('#jforms_occtax_search_taxons_bdd').prop( "checked");
             $.getJSON($('#form_taxon_service_autocomplete').attr('action'),
                 request, function( data, status, xhr ) {
                   //rearange data if necessary
@@ -831,6 +833,34 @@ OccTax.events.on({
         return a_place > b_place
       });
       ul.append(li);
+    }
+
+    function getTaxonCardFromApi(cd_nom, aCallback){
+
+      var url = 'https://taxref.mnhn.fr/api/taxa/';
+      var turl = url + cd_nom;
+      $.getJSON(turl, null,function( data ) {
+        var html = '';
+        html+= '<div style="background:darkgray;padding:5px;">';
+        html+= '<p>';
+        html+= data.referenceNameHtml;
+        html+= '</p>';
+        html+= '<p>';
+        html+= data.fullNameHtml;
+        html+= '</p>';
+        var hasMedia = false;
+        if(
+          data._links.length > 0
+          && 'media' in data._links
+        ){
+            html+= '<img src="';
+            html+= '"/>;'
+            hasMedia = true;
+        }
+        html+= '</div>';
+
+        aCallback(html, hasMedia, data);
+      });
     }
 
         //console.log('OccTax uicreated');
@@ -1280,13 +1310,26 @@ OccTax.events.on({
       initTaxonAutocomplete();
 
       // Replace taxon group values by values coherent with vm_obsevation.categorie
+      // Insectes (papillons, mouches, abeilles) -> Insectes
       $('#jforms_occtax_search_group option').each(function(){
         var v = $(this).val();
-        console.log(v);
         var vv = v.split(' ')[0];
-        console.log(vv);
         $(this).val(vv);
       });
+
+      // Toggle taxon checkbox depending on active taxon tab
+      //$('#occtax_taxon_tab_div > ul > li > a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        //var target = $(e.target).attr("href") // activated tab
+        //var showTaxonInBdd = false;
+        //if(target == '#recherche_taxon_panier'){
+          //showTaxonInBdd = true;
+        //}
+        //$('#jforms_occtax_search_taxons_bdd_label').toggle(showTaxonInBdd);
+      //});
+
+      // Hide taxon checkboxes labels
+      $('#jforms_occtax_search_taxons_locaux_label').hide();
+      $('#jforms_occtax_search_taxons_bdd_label').hide();
 
       $('#occtax_results_draw .btn').click(function() {
         var self = $(this);

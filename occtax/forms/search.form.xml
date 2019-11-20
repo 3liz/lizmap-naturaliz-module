@@ -8,7 +8,18 @@
 
         <input ref="autocomplete">
             <label locale="taxon~search.input.autocomplete"/>
+            <hint locale="taxon~search.input.autocomplete.help"/>
         </input>
+
+        <checkbox ref="taxons_locaux" defaultvalue="0">
+            <label locale="taxon~search.input.taxons_locaux"/>
+            <hint locale="taxon~search.input.taxons_locaux.help"/>
+        </checkbox>
+
+        <checkbox ref="taxons_bdd" defaultvalue="1">
+            <label locale="taxon~search.input.taxons_bdd"/>
+            <hint locale="taxon~search.input.taxons_bdd.help"/>
+        </checkbox>
 
         <hidden ref="cd_ref"/>
 

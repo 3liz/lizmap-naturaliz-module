@@ -674,4 +674,67 @@ LEFT JOIN (
 ;
 
 
+-- Vue pour l'autocompletion
+DROP MATERIALIZED VIEW IF EXISTS taxref_fts;
+CREATE MATERIALIZED VIEW taxref_fts AS
+WITH taxref_mnhn_et_local AS (
+  SELECT cd_nom, cd_ref, nom_valide, nom_vern, nom_complet, group2_inpn, rang, {$colonne_locale} AS loc
+  FROM taxref
+  UNION ALL
+  SELECT cd_nom, cd_ref, nom_valide, nom_vern, nom_complet, group2_inpn, rang, {$colonne_locale} AS loc
+  FROM taxref_local
+  WHERE cd_nom_valide IS NULL
+)
+-- Noms valides
+SELECT cd_nom::bigint, cd_ref::bigint, nom_valide AS val, nom_valide, 6::smallint AS poids,
+group2_inpn, to_tsvector( unaccent(coalesce(nom_valide,'')) )::tsvector AS vec, loc
+FROM taxref_mnhn_et_local
+WHERE cd_nom = cd_ref
+AND rang IN ('FM', 'GN', 'AGES', 'ES', 'SSES', 'NAT', 'VAR', 'SVAR', 'FO', 'SSFO', 'RACE', 'CAR', 'AB')
+
+
+-- Noms vernaculaires
+UNION ALL
+SELECT cd_nom::bigint, cd_ref::bigint, nom_vern AS val, nom_valide, 4::smallint AS poids,
+group2_inpn, to_tsvector( unaccent(coalesce(nom_vern,'')) )::tsvector AS vec, loc
+FROM taxref_mnhn_et_local
+WHERE cd_nom = cd_ref AND nom_vern IS NOT NULL AND nom_vern != ''
+AND rang IN ('FM', 'GN', 'AGES', 'ES', 'SSES', 'NAT', 'VAR', 'SVAR', 'FO', 'SSFO', 'RACE', 'CAR', 'AB')
+
+
+-- Noms synonymes
+UNION ALL
+SELECT cd_nom::bigint, cd_ref::bigint, nom_complet AS val, nom_valide, 2::smallint,
+group2_inpn, to_tsvector( unaccent(coalesce(nom_complet,'')) )::tsvector AS vec, loc
+FROM taxref_mnhn_et_local
+WHERE cd_nom != cd_ref
+AND rang IN ('FM', 'GN', 'AGES', 'ES', 'SSES', 'NAT', 'VAR', 'SVAR', 'FO', 'SSFO', 'RACE', 'CAR', 'AB')
+;
+
+
+COMMENT ON MATERIALIZED VIEW taxref_fts IS '
+Vue matérialisée pour le stockage des informations de recherche plein texte visible dans naturaliz.
+
+Cette vue se base sur une UNION des taxons, valides ou non, des tables taxref et taxref_local. On n''a gardé que les taxons des rangs: FM, GN, AGES, ES, SSES, NAT, VAR, SVAR, FO, SSFO, RACE, CAR, AB
+
+Un champ poids permet de prioriser la recherche dans cet ordre, avec les poids respectifs 6, 4 et 2:
+* noms (nom_valide) des taxons valides (cd_nom = cd_ref)
+* noms vernaculaires (nom_vern) des taxons valides (cd_nom = cd_ref)
+* noms (nom_complet) des taxons synonymes (cd_nom != cd_ref)
+
+Cette vue doit être rafraîchie dès qu''on modifie les données dans les tables taxref et/ou taxref_local: `REFRESH MATERIALIZED VIEW taxref_fts`
+';
+COMMENT ON COLUMN taxref_fts.cd_nom IS 'Identifiant du taxon (cd_nom) en lien avec la table taxref';
+COMMENT ON COLUMN taxref_fts.cd_ref IS 'Identifiant du taxon valide (cd_ref)';
+COMMENT ON COLUMN taxref_fts.val IS 'Valeur à afficher (nom du taxon, group1_inpn, etc.)';
+COMMENT ON COLUMN taxref_fts.nom_valide IS 'Nom valide correspondant';
+COMMENT ON COLUMN taxref_fts.poids IS 'Importance de l objet dans la recherche, fonction du type';
+COMMENT ON COLUMN taxref_fts.group2_inpn IS 'Groupe INPN - utilisé pour afficher des icônes';
+COMMENT ON COLUMN taxref_fts.vec IS 'Vecteur de la recherche plein texte';
+
+-- Ajout de l'index
+CREATE INDEX ON taxref_fts USING gin(vec);
+CREATE INDEX ON taxref_fts (group2_inpn);
+
+
 COMMIT;

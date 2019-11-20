@@ -24,7 +24,16 @@ class taxonModuleInstaller extends jInstallerModule {
 
             try {
                 // Add taxon schema and tables
-                $this->execSQLScript('sql/install');
+                $sqlPath = $this->path . 'install/sql/install.pgsql.sql';
+                $localConfig = jApp::configPath('naturaliz.ini.php');
+                $ini = new jIniFileModifier($localConfig);
+                $sqlTpl = jFile::read( $sqlPath );
+                $tpl = new jTpl();
+                $colonne_locale = $ini->getValue('colonne_locale', 'naturaliz');
+                $tpl->assign('colonne_locale', $colonne_locale);
+                $sql = $tpl->fetchFromString($sqlTpl, 'text');
+                $db = $this->dbConnection();
+                $db->exec($sql);
 
                 // Add data for lists
                 $this->execSQLScript('sql/data');
@@ -34,6 +43,7 @@ class taxonModuleInstaller extends jInstallerModule {
                 $ini = new jIniFileModifier($profileConfig);
                 $defaultProfile = $ini->getValue('default', 'jdb');
                 $search_path = $ini->getValue('search_path', 'jdb:' . $defaultProfile);
+
                 if( empty( $search_path ) )
                     $search_path = 'public';
                 if( !preg_match( '#taxon#', $search_path ) )
