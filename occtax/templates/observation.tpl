@@ -23,11 +23,12 @@
         <tr>
             <th>{@occtax~observation.output.statut_observation@}</th>
             <td>
-                {if array_key_exists('statut_observation' . '|' . $data['statut_observation'], $nomenclature) }
-                {assign $k = 'statut_observation' . '|' . $data['statut_observation']}
+                {assign $a = 'statut_observation'}
+                {if array_key_exists($a . '|' . $data[$a], $nomenclature) }
+                {assign $k = $a . '|' . $data[$a]}
                 {$nomenclature[$k]}
                 {else}
-                {$data['statut_observation']}
+                {$data[$a]}
                 {/if}
             </td>
         </tr>
@@ -68,10 +69,10 @@
         </tr>
         {/if}
 
-        {if array_key_exists('famille', $data)}
+        {if array_key_exists('nom_vern_valide', $data)}
         <tr>
-            <th>{@occtax~observation.output.famille@}</th>
-            <td>{$data['famille']}</td>
+            <th>{@occtax~observation.output.nom_vern_valide@}</th>
+            <td>{$data['nom_vern']}</td>
         </tr>
         {/if}
 
@@ -82,24 +83,70 @@
         </tr>
         {/if}
 
+        {if array_key_exists('loc', $data)}
+        <tr>
+            <th>{@occtax~observation.output.loc@}</th>
+            <td>
+                {assign $a = 'loc'}
+                {if array_key_exists('statut_taxref' . '|' . $data[$a], $nomenclature) }
+                {assign $k = 'statut_taxref' . '|' . $data[$a]}
+                {$nomenclature[$k]}
+                {else}
+                {$data[$a]}
+                {/if}
+            </td>
+        </tr>
+        {/if}
+
         {if array_key_exists('statut_biogeographique', $data)}
         <tr>
             <th>{@occtax~observation.output.statut_biogeographique@}</th>
-            <td>{$data['statut_biogeographique']}</td>
+            <td>
+                {assign $a = 'statut_biogeographique'}
+                {if array_key_exists($a . '|' . $data[$a], $nomenclature) }
+                {assign $k = $a . '|' . $data[$a]}
+                {$nomenclature[$k]}
+                {else}
+                {$data[$a]}
+                {/if}
+            </td>
+        </tr>
+        {/if}
+
+        {if array_key_exists('famille', $data)}
+        <tr>
+            <th>{@occtax~observation.output.famille@}</th>
+            <td>{$data['famille']}</td>
         </tr>
         {/if}
 
         {if array_key_exists('menace', $data)}
         <tr>
             <th>{@occtax~observation.output.menace@}</th>
-            <td>{$data['menace']}</td>
+            <td>
+                {assign $a = 'menace'}
+                {if array_key_exists($a . '|' . $data[$a], $nomenclature) }
+                {assign $k = $a . '|' . $data[$a]}
+                {$nomenclature[$k]}
+                {else}
+                {$data[$a]}
+                {/if}
+            </td>
         </tr>
         {/if}
 
         {if array_key_exists('protection', $data)}
         <tr>
             <th>{@occtax~observation.output.protection@}</th>
-            <td>{$data['protection']}</td>
+            <td>
+                {assign $a = 'protection'}
+                {if array_key_exists($a . '|' . $data[$a], $nomenclature) }
+                {assign $k = $a . '|' . $data[$a]}
+                {$nomenclature[$k]}
+                {else}
+                {$data[$a]}
+                {/if}
+            </td>
         </tr>
         {/if}
 

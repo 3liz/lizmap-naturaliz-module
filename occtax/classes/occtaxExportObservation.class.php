@@ -209,12 +209,12 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 'o.nom_cite' => Null,
                 'o.lb_nom_valide' => Null,
                 'o.nom_vern' => Null,
-                'o.famille' => Null,
+                'o.nom_vern_valide' => Null,
                 'o.group2_inpn' => Null,
-                //'o.statut_biogeographique' => Null,
+                'o.loc' => Null,
+                'o.famille' => Null,
                 'o.menace' => Null,
                 'o.protection' => Null,
-                'o.loc' => Null,
 
                 // effectif
                 'o.denombrement_min' => Null,

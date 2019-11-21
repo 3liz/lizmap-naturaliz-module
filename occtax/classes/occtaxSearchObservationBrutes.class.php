@@ -32,12 +32,12 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
             'nom_cite' => "String",
             'lb_nom_valide' => "String",
             'nom_vern' => "String",
+            'nom_vern_valide' => "String",
             'group2_inpn' => "String",
+            'loc' => "String",
             'famille' => "String",
-            //'statut_biogeographique' => "String",
             'menace' => "String",
             'protection' => "String",
-            'loc' => "String",
 
             // effectif
             'denombrement_min' => "Integer",

@@ -130,11 +130,18 @@ class observationCtrl extends jController {
         }
 
         // Nomenclature
-        $dao = jDao::get('nomenclature');
         $nomenclature = array();
-        foreach($dao->findAll() as $nom){
+        $sqlnom = "SELECT * FROM occtax.nomenclature";
+        $cnx = jDb::getConnection();
+        $reqnom = $cnx->query($sqlnom);
+        foreach($reqnom as $nom){
             $nomenclature[$nom->champ . '|' . $nom->code] = $nom->valeur;
         }
+        $daot = jDao::get('taxon~t_nomenclature');
+        foreach($daot->findAll() as $nom){
+            $nomenclature[$nom->champ . '|' . $nom->code] = $nom->valeur;
+        }
+
         $tpl->assign('observation_card_fields', $observation_card_fields);
         $tpl->assign('nomenclature', $nomenclature);
 
