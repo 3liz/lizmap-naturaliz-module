@@ -4,7 +4,7 @@ class occtaxModuleUpgrader_237_238 extends jInstallerModule {
     public $targetVersions = array(
         '2.3.8'
     );
-    public $date = '2019-11-15';
+    public $date = '2019-11-21';
 
     function install() {
         if( $this->firstDbExec() ) {
