@@ -736,5 +736,9 @@ COMMENT ON COLUMN taxref_fts.vec IS 'Vecteur de la recherche plein texte';
 CREATE INDEX ON taxref_fts USING gin(vec);
 CREATE INDEX ON taxref_fts (group2_inpn);
 
+-- Ajout d'un index sur cd_sup de taxon
+CREATE INDEX ON taxon.taxref (cd_sup);
+CREATE INDEX ON taxon.taxref_local (cd_sup);
+
 
 COMMIT;

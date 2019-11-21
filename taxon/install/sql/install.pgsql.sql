@@ -54,6 +54,7 @@ CREATE INDEX ON taxref (group1_inpn);
 CREATE INDEX ON taxref (group2_inpn);
 CREATE INDEX ON taxref (cd_ref);
 CREATE INDEX ON taxref (cd_nom);
+CREATE INDEX ON taxref (cd_sup); -- pour les requêtes récursives
 
 COMMENT ON TABLE taxref IS 'Données taxonomiques TAXREF';
 COMMENT ON COLUMN taxref.regne IS 'Règne auquel le taxon appartient';
@@ -225,6 +226,7 @@ CREATE INDEX taxref_local_cd_ref_idx ON taxref_local USING btree  (cd_ref);
 CREATE INDEX taxref_local_group1_inpn_idx ON taxref_local USING btree (group1_inpn);
 CREATE INDEX taxref_local_group2_inpn_idx ON taxref_local USING btree (group2_inpn);
 CREATE INDEX taxref_local_regne_idx ON taxref_local USING btree (regne);
+CREATE INDEX taxref_local_cd_sup_idx ON taxref_local (cd_sup);
 
 CREATE INDEX ON taxref (habitat);
 CREATE INDEX ON taxref_local (habitat);

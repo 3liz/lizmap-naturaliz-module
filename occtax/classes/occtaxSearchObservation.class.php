@@ -71,8 +71,22 @@ class occtaxSearchObservation extends occtaxSearch {
         ),
         'cd_nom' => array (
             'table' => 'vm_observation',
-            'clause' => ' AND o.cd_ref IN (@)',
-            //'clause' => ' AND o.cd_ref = ANY ( ARRAY[ @ ] )',
+            'clause' => ' AND (o.cd_ref IN (@) OR o.cd_ref IN (
+                WITH RECURSIVE parcours_taxref(cd_ref, cd_sup) AS (
+                    SELECT cd_ref, cd_sup
+                    FROM taxon.taxref
+                    WHERE cd_nom IN (@)
+                UNION ALL
+                    SELECT n.cd_ref, n.cd_sup
+                    FROM
+                    taxon.taxref AS n,
+                    parcours_taxref AS w
+                    WHERE TRUE
+                    AND n.cd_sup = w.cd_ref
+                )
+                SELECT DISTINCT cd_ref
+                FROM parcours_taxref
+            )) ',
             'type'=> 'integer',
             'label'=> array(
                 'dao'=>'taxon~taxref',

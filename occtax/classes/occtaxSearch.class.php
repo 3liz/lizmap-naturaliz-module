@@ -491,8 +491,9 @@ class occtaxSearch {
 
                     // Prise en compte des inputs de type array (ex: cd_nom[])
                     if( is_array( $v ) ){
-                        if( in_array( $q['type'], array( 'string', 'timestamp', 'geom' ) ) )
+                        if( in_array( $q['type'], array( 'string', 'timestamp', 'geom' ) ) ){
                             $v = array_map( function($item){return $this->myquote($item);}, $v );
+                        }
                         $v = implode( ', ', $v );
                     }
 
