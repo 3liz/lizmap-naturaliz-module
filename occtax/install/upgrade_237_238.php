@@ -9,12 +9,12 @@ class occtaxModuleUpgrader_237_238 extends jInstallerModule {
     function install() {
         if( $this->firstDbExec() ) {
             // Get variables
-            $db = $this->dbConnection();
             $localConfig = jApp::configPath('naturaliz.ini.php');
             $ini = new jIniFileModifier($localConfig);
 
             // modify jlx_user columns
             $this->useDbProfile('jauth_super');
+            $db = $this->dbConnection(); // A PLACER TOUJOUR DERRIERE $this->useDbProfile('jauth_super');
             $sqlPath = $this->path . 'install/sql/upgrade/upgrade_2.3.7_2.3.8.sql';
             $sqlTpl = jFile::read( $sqlPath );
             $tpl = new jTpl();
