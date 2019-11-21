@@ -38,6 +38,7 @@
                     $date_min = $line->date_min;
                 }
                 $form->setData('date_min', $date_min);
+                $form->setData('date_max', strftime("%Y-%m-%d",strtotime('now')));
 
                 $formUpload = jForms::create("occtax~upload_geojson");
 
