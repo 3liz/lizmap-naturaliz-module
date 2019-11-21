@@ -45,12 +45,8 @@ class occtaxModuleUpgrader_237_238 extends jInstallerModule {
             $tpl->assign('DBUSER_READONLY', $dbuser_readonly );
             $tpl->assign('DBUSER_OWNER', $dbuser_owner );
             $sql = $tpl->fetchFromString($sqlTpl, 'text');
-            try {
-                $db->exec($sql);
-            } catch (Exception $e){
-                jLog::log("Erreur lors de la mise à jour");
-                jLog::log($e->getMessage());
-            }
+            $db->exec($sql);
+
 
         }
     }

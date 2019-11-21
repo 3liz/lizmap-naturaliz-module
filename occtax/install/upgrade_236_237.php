@@ -13,6 +13,7 @@ class occtaxModuleUpgrader_236_237 extends jInstallerModule {
             $this->useDbProfile('jauth_super');
             $sqlPath = $this->path . 'install/sql/upgrade/upgrade_2.3.6_2.3.7.sql';
             $sql = jFile::read( $sqlPath );
+jLog::log("SQL 2.3.7 upgrade = " . $sql);
             $db = $this->dbConnection();
             $db->exec($sql);
 
@@ -39,13 +40,7 @@ class occtaxModuleUpgrader_236_237 extends jInstallerModule {
             $tpl->assign('DBUSER_READONLY', $dbuser_readonly );
             $tpl->assign('DBUSER_OWNER', $dbuser_owner );
             $sql = $tpl->fetchFromString($sqlTpl, 'text');
-            $db = $this->dbConnection();
-            try {
-                $db->exec($sql);
-            } catch (Exception $e){
-                jLog::log("Erreur lors de la mise à jour");
-                jLog::log($e->getMessage());
-            }
+            $db->exec($sql);
 
         }
     }

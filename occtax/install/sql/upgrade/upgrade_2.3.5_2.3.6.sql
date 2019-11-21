@@ -1,4 +1,3 @@
-BEGIN;
 
 CREATE TABLE IF NOT EXISTS occtax.materialized_object_list(
     ob_id serial NOT NULL PRIMARY KEY,
@@ -733,6 +732,3 @@ INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order")
 INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'liste_jdd', 21) ON CONFLICT DO NOTHING;
 INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'liste_demandes', 22) ON CONFLICT DO NOTHING;
 INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'liste_organismes', 23) ON CONFLICT DO NOTHING;
-
-
-COMMIT;

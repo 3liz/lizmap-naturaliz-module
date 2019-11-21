@@ -1,6 +1,3 @@
-BEGIN;
-
-
 -- OCCTAX
 --
 -- VUE MATERIALISEE DE CONSOLIDATION DES DONNEES
@@ -737,8 +734,5 @@ CREATE INDEX ON taxon.taxref_fts USING gin(vec);
 CREATE INDEX ON taxon.taxref_fts (group2_inpn);
 
 -- Ajout d'un index sur cd_sup de taxon
-CREATE INDEX ON taxon.taxon.taxref (cd_sup);
-CREATE INDEX ON taxon.taxon.taxref_local (cd_sup);
-
-
-COMMIT;
+CREATE INDEX ON taxon.taxref (cd_sup);
+CREATE INDEX ON taxon.taxref_local (cd_sup);

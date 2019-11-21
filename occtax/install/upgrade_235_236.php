@@ -22,12 +22,7 @@ class occtaxModuleUpgrader_235_236 extends jInstallerModule {
             $sqlPath = $this->path . 'install/sql/upgrade/upgrade_2.3.5_2.3.6.sql';
             $sql = jFile::read( $sqlPath );
             $db = $this->dbConnection();
-            //try {
-                $db->exec($sql);
-            //} catch (Exception $e){
-                //jLog::log("Erreur lors de la mise à jour");
-                //jLog::log($e->getMessage());
-            //}
+            $db->exec($sql);
 
             // Grant rights
             $sqlPath = $this->path . 'install/sql/grant_rights.sql';
@@ -52,13 +47,7 @@ class occtaxModuleUpgrader_235_236 extends jInstallerModule {
             $tpl->assign('DBUSER_READONLY', $dbuser_readonly );
             $tpl->assign('DBUSER_OWNER', $dbuser_owner );
             $sql = $tpl->fetchFromString($sqlTpl, 'text');
-            $db = $this->dbConnection();
-            try {
-                $db->exec($sql);
-            } catch (Exception $e){
-                jLog::log("Erreur lors de la mise à jour");
-                jLog::log($e->getMessage());
-            }
+            $db->exec($sql);
 
         }
     }
