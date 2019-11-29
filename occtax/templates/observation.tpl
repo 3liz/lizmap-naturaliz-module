@@ -51,14 +51,14 @@
         {if array_key_exists('nom_cite', $data)}
         <tr>
             <th>{@occtax~observation.output.nom_cite@}</th>
-            <td>{$data['nom_cite']}</td>
+            <td><a href="#" class="getTaxonDetail cd_nom_{$data['cd_nom']}">{$data['nom_cite']}</a></td>
         </tr>
         {/if}
 
         {if array_key_exists('lb_nom_valide', $data)}
         <tr>
             <th>{@occtax~observation.output.lb_nom_valide@}</th>
-            <td>{$data['lb_nom_valide']}</td>
+            <td><a href="#" class="getTaxonDetail cd_nom_{$data['cd_nom']}">{$data['lb_nom_valide']}</a></td>
         </tr>
         {/if}
 

@@ -62,10 +62,10 @@ class observationCtrl extends jController {
         }
 
         $data = array();
-
         if( count( $return ) > 0 ) {
             foreach($return as $line){
                 $i = 0;
+                // On boucle et ne récupère que les champs display
                 foreach($fields['display'] as $attr){
                     if( array_key_exists($i, $line)){
                         $data[$attr] = $line[$i];
@@ -77,7 +77,6 @@ class observationCtrl extends jController {
                 };
             }
         }
-
         // Read local config
         $localConfig = jApp::configPath('naturaliz.ini.php');
         $ini = new jIniFileModifier($localConfig);

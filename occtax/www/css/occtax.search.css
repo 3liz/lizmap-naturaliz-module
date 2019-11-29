@@ -1,3 +1,12 @@
+/*
+Formulaire de recherche
+*/
+
+
+
+/*
+Boutons de requête spatial
+*/
 #obs-spatial-query-buttons button.btn {
   width: 30px;
   height: 30px;
@@ -45,6 +54,11 @@
 #occtax_results_tabs {
   min-width:370px;
 }
+
+
+/*
+Onglets de résultat
+*/
 
 #occtax_results_tabs.nav-tabs > li > a,
 #occtax_results_tabs.nav-tabs > li > a:hover,

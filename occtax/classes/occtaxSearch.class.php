@@ -598,7 +598,7 @@ class occtaxSearch {
                     $item[] = $val;
                     unset($val);
                 }
-                // else if the key corresponds to a template field
+                // if the key corresponds to a template field
                 if( array_key_exists( $field, $this->tplFields ) ){
                     $tpl = new jTpl();
                     $tpl->assign('line', $line);

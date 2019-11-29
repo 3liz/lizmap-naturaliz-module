@@ -17,7 +17,7 @@ class occtaxSearchObservation extends occtaxSearch {
     protected $returnFields = array(
         'cle_obs',
         'date_debut',
-        'lb_nom_valide',
+        'lien_nom_valide',
         'geojson',
         'observateur',
         'source_objet',
@@ -25,7 +25,7 @@ class occtaxSearchObservation extends occtaxSearch {
     );
 
     protected $tplFields = array(
-        //'lb_nom_valide' => '<a class="getTaxonDetail" href="#" title="{@taxon~search.output.inpn.title@}">{$line->lb_nom_valide}</a>',
+        'lien_nom_valide' => '<a class="getTaxonDetail cd_nom_{$line->cd_ref}" href="#" title="{@taxon~search.output.inpn.title@}">{$line->lb_nom_valide}</a>',
         'observateur' => '
             <span class="identite_observateur" title="{$line->identite_observateur|eschtml}">
                 {$line->identite_observateur|truncate:40}
@@ -38,7 +38,7 @@ class occtaxSearchObservation extends occtaxSearch {
 
     protected $displayFields = array(
         'date_debut' => array( 'type' => 'string', 'sortable' => "true", 'className' => 'dt-center'),
-        'lb_nom_valide' => array( 'type' => 'string', 'sortable' => "true"),
+        'lien_nom_valide' => array( 'type' => 'string', 'sortable' => "true", 'sorting_field' => 'lb_nom_valide'),
         'observateur' => array( 'type' => 'string', 'sortable' => "true", 'sorting_field' => 'identite_observateur'),
         'source_objet' => array( 'type' => 'string', 'sortable' => "true", 'className' => 'dt-center'),
         'detail' => array( 'type' => 'string', 'sortable' => 0, 'className' => 'dt-center')
@@ -54,6 +54,7 @@ class occtaxSearchObservation extends occtaxSearch {
                 'o.cle_obs'=> Null,
                 'o.lb_nom_valide' => Null,
                 'o.cd_nom' => Null,
+                'o.cd_ref' => Null,
                 "date_debut" => Null,
                 "source_objet" => Null,
                 'ST_AsGeoJSON( ST_Transform(o.geom, 4326), 6 ) AS geojson' => Null,

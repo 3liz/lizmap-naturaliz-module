@@ -807,6 +807,15 @@ OccTax.events.on({
               return false;
           });
           $('#'+tableId+' span.identite_observateur').tooltip();
+          $('#'+tableId+' a.getTaxonDetail').click(function(){
+              var tr = $($(this).parents('tr')[0]);
+              var d = $('#'+tableId+'').DataTable().row( tr ).data();
+              var classes = $(d.lien_nom_valide).attr('class');
+              var cd_nom = classes.split(' ')[1].replace('cd_nom_', '');
+              displayTaxonDetail(cd_nom);
+              $('#occtax-highlight-message').remove();
+              return false;
+          });
         });
     }
 
@@ -889,8 +898,12 @@ OccTax.events.on({
                 // Hide description && result div
                 $('#occtax_search_result').hide();
                 $('#occtax_search_description').hide();
-
-
+                // Add event on click
+                $('#occtax_search_observation_card a.getTaxonDetail').click(function(){
+                    var classes = $(this).attr('class');
+                    var cd_nom = classes.split(' ')[1].replace('cd_nom_', '');
+                    displayTaxonDetail(cd_nom);
+                });
             }
         );
     }
