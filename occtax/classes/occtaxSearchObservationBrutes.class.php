@@ -296,10 +296,18 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
 
         // Fields with nomenclature
         $cnx = jDb::getConnection();
-        $sql = 'SELECT DISTINCT champ FROM occtax.nomenclature';
+        $sql = '
+            SELECT DISTINCT champ FROM occtax.nomenclature
+            UNION
+            SELECT DISTINCT champ FROM taxon.t_nomenclature
+        ';
         $nomreq = $cnx->query($sql);
         foreach($nomreq as $nom){
-            $this->nomenclatureFields[] = $nom->champ;
+            $nc = $nom->champ;
+            if($nc == 'statut_taxref'){
+                $nc = 'loc';
+            }
+            $this->nomenclatureFields[] = $nc;
         }
 
         parent::__construct($token, $params, $demande);

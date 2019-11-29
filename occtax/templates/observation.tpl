@@ -83,6 +83,13 @@
         </tr>
         {/if}
 
+        {if array_key_exists('famille', $data)}
+        <tr>
+            <th>{@occtax~observation.output.famille@}</th>
+            <td>{$data['famille']}</td>
+        </tr>
+        {/if}
+
         {if array_key_exists('loc', $data)}
         <tr>
             <th>{@occtax~observation.output.loc@}</th>
@@ -110,13 +117,6 @@
                 {$data[$a]}
                 {/if}
             </td>
-        </tr>
-        {/if}
-
-        {if array_key_exists('famille', $data)}
-        <tr>
-            <th>{@occtax~observation.output.famille@}</th>
-            <td>{$data['famille']}</td>
         </tr>
         {/if}
 
@@ -289,7 +289,7 @@ Pas d'individu décrit
         {if array_key_exists('date_debut', $data)}
         <tr>
             <th>{@occtax~observation.output.date_debut@}</th>
-            <td>{$data['date_debut']}</td>
+            <td>{$data['date_debut']|jdatetime:'db_date'}</td>
         </tr>
         {/if}
 
@@ -303,7 +303,7 @@ Pas d'individu décrit
         {if array_key_exists('date_fin', $data)}
         <tr>
             <th>{@occtax~observation.output.date_fin@}</th>
-            <td>{$data['date_fin']}</td>
+            <td>{$data['date_fin']|jdatetime:'db_date'}</td>
         </tr>
         {/if}
 
@@ -317,7 +317,7 @@ Pas d'individu décrit
         {if array_key_exists('date_determination', $data)}
         <tr>
             <th>{@occtax~observation.output.date_determination@}</th>
-            <td>{$data['date_determination']}</td>
+            <td>{$data['date_determination']|jdatetime:'db_date'}</td>
         </tr>
         {/if}
 
@@ -463,7 +463,7 @@ Pas d'individu décrit
             <th>{@occtax~observation.output.code_me@}</th>
             <td>
             {foreach $children['masse_eau'] as $item}
-                {$item->code_me} (version {$item->version_me}, {$item->date_me})<br/>
+                {$item->code_me} (version {$item->version_me}, {$item->date_me|jdatetime:'db_date'})<br/>
             {/foreach}
             </td>
         </tr>
@@ -503,14 +503,14 @@ Pas d'individu décrit
         {if array_key_exists('dee_date_derniere_modification', $data)}
         <tr>
             <th>{@occtax~observation.output.dee_date_derniere_modification@}</th>
-            <td>{$data['dee_date_derniere_modification']}</td>
+            <td>{$data['dee_date_derniere_modification']|jdatetime:'db_date'}</td>
         </tr>
         {/if}
 
         {if array_key_exists('dee_date_transformation', $data)}
         <tr>
             <th>{@occtax~observation.output.dee_date_transformation@}</th>
-            <td>{$data['dee_date_transformation']}</td>
+            <td>{$data['dee_date_transformation']|jdatetime:'db_date'}</td>
         </tr>
         {/if}
 
@@ -643,7 +643,7 @@ Pas d'individu décrit
         {if array_key_exists('sensi_date_attribution', $data)}
         <tr>
             <th>{@occtax~observation.output.sensi_date_attribution@}</th>
-            <td>{$data['sensi_date_attribution']}</td>
+            <td>{$data['sensi_date_attribution']|jdatetime:'db_date'}</td>
         </tr>
         {/if}
 
@@ -692,7 +692,7 @@ Pas d'individu décrit
         {if array_key_exists('validite_date_validation', $data)}
         <tr>
             <th>{@occtax~observation.output.validite_date_validation@}</th>
-            <td>{$data['validite_date_validation']}</td>
+            <td>{$data['validite_date_validation']|jdatetime:'db_date'}</td>
         </tr>
         {/if}
     </table>

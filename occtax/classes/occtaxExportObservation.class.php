@@ -34,10 +34,10 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             'nom_vern' => "String",
             'group2_inpn' => "String",
             'famille' => "String",
+            'loc' => "String",
             //'statut_biogeographique' => "String",
             'menace' => "String",
             'protection' => "String",
-            'loc' => "String",
 
             // effectif
             'denombrement_min' => "Integer",
@@ -211,8 +211,8 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 'o.nom_vern' => Null,
                 'o.nom_vern_valide' => Null,
                 'o.group2_inpn' => Null,
-                'o.loc' => Null,
                 'o.famille' => Null,
+                'o.loc' => Null,
                 'o.menace' => Null,
                 'o.protection' => Null,
 
@@ -452,12 +452,24 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
         foreach($reqnom as $nom){
             $codenom = (array)json_decode($nom->dict);
         }
+        $sqlnom = "
+            SELECT concat(champ, '_', code) AS nom,
+            valeur
+            FROM taxon.t_nomenclature
+        ";
+        $reqt = $cnx->query($sqlnom);
+        foreach($reqt as $t){
+            $nom = str_replace('statut_taxref_', 'loc_', $t->nom);
+            $codenom[$nom] = $t->valeur;
+        }
 
         // Fetch data and fill in the file
         $res = $cnx->query($sql);
         $gt = 'other';
+        $nblignes = 0;
 
         foreach($res as $line){
+            $nblignes++;
             $ldata = array();
             foreach($attributes as $att){
                 $val = $line->$att;
@@ -476,7 +488,10 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                         $ditem = array();
                         foreach($jitem as $j=>$v){
                             $vv = $v;
-                            if(in_array($j, $this->nomenclatureFields)){
+                            if(in_array($j, $this->nomenclatureFields)
+                            and array_key_exists($j . '_' . $v, $codenom)
+                            ){
+
                                 $vv = $codenom[$j . '_' . $v];
                             }
                             $ditem[$j] = $vv;
@@ -522,7 +537,6 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
         }else{
             return $paths[$gt];
         }
-
     }
 
     public function writeCsvT( $topic, $delimiter=',', $geometryType='' ) {

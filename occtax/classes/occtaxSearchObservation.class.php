@@ -25,6 +25,7 @@ class occtaxSearchObservation extends occtaxSearch {
     );
 
     protected $tplFields = array(
+        //'lb_nom_valide' => '<a class="getTaxonDetail" href="#" title="{@taxon~search.output.inpn.title@}">{$line->lb_nom_valide}</a>',
         'observateur' => '
             <span class="identite_observateur" title="{$line->identite_observateur|eschtml}">
                 {$line->identite_observateur|truncate:40}
