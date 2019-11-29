@@ -26,7 +26,7 @@ Il est fortement conseillé d'utiliser le compte root et non avec un simple sudo
 
 Vous pouvez le faire via l'outil git, en se connectant avec vos identifiants de la plateforme git (Gitlab ou Github). Ou bien vous rendre sur la plateforme, et télécharger au format ZIP, puis coller le ZIP dans le répertoire /root/ et dézipper.
 
-Dans l'exemple suivant, nous utilisons la plateforme Gitlab de 3liz, avec accès https: https://projects.3liz.org/clients/naturaliz-reunion.git
+Dans l'exemple suivant, nous utilisons la plateforme Github de 3liz, avec accès https: https://github.com/3liz/lizmap-naturaliz-module/
 
 ```bash
 cd /root/
