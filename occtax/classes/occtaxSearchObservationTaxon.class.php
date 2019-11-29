@@ -25,7 +25,7 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
 
     protected $tplFields = array(
 
-        'nom_valide' => '{if !(empty($line->url))}<a href="{$line->url}" target="_blank" title="{@taxon~search.output.inpn.title@}">{$line->lb_nom_valide}</a>{else}{$line->lb_nom_valide}{/if}',
+        'nom_valide' => '{if !(empty($line->url))}<a class="getTaxonDetail" href="#" title="{@taxon~search.output.inpn.title@}">{$line->lb_nom_valide}</a>{else}{$line->lb_nom_valide}{/if}',
 
         'groupe' => '<img src="{$j_basepath}css/images/taxon/{$line->categorie}.png" width="20px" title="{$line->categorie}"/>',
 

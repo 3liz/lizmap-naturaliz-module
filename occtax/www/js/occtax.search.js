@@ -222,13 +222,17 @@ OccTax.events.on({
 
         // Ajout d'un item au panier
         if ( selectVals.indexOf( cd_nom ) == -1 ) {
+            // Add cd_nom in hidden form input
             ctrl_cd_nom.append('<option selected value="'+cd_nom+'">'+nom_cite+'</option>');
+
+            // Add card in the interface
             var licontent = '<li data-value="';
             licontent+= cd_nom;
             licontent+= '" style="height:20px; margin-left:2px;">';
-            licontent+= '<span style="display:inline-block; width:190px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">';
+            licontent+= '<span style="cursor:pointer;display:inline-block; width:190px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">';
             licontent+= nom_cite;
             licontent+= '</span>';
+            licontent+= '<button type="button" class="detail" value="'+cd_nom+'" style="display:none;" >détail</button>';
             licontent+= '<button type="button" class="close" value="'+cd_nom+'" aria-hidden="true">&times;</button>';
             licontent+= '</li>';
             var li = $(licontent);
@@ -238,7 +242,98 @@ OccTax.events.on({
                 deleteTaxonToSearch( $(this).attr('value') );
                 //return false;
             });
+            li.find('span').click(function(){
+                var cd_nom = $(this).parent().find('button.detail').attr('value');
+                displayTaxonDetail(cd_nom);
+                //return false;
+            });
         }
+    }
+
+    function getTaxonDataFromApi(cd_nom, aCallback){
+
+      var turl = 'https://taxref.mnhn.fr/api/taxa/';
+      turl+= cd_nom;
+
+      $.getJSON(turl, null, function( tdata ) {
+        var keys = ['scientificName', 'authority', 'frenchVernacularName'];
+        var rdata = {};
+        for(var k in keys){
+          rdata[keys[k]] = tdata[keys[k]];
+        }
+        if('_links' in tdata){
+          rdata['inpnWebpage'] = tdata._links.inpnWebpage.href;
+        }
+        rdata['media'] = null;
+
+        if(
+          '_links' in tdata
+          && 'media' in tdata._links
+        ){
+          var murl = tdata._links.media.href;
+          $.getJSON(murl, null, function( mdata ) {
+            if(
+              '_embedded' in mdata
+              && 'media' in mdata._embedded
+              && mdata._embedded.media.length > 0
+            ){
+              var media = mdata._embedded.media[0]._links.thumbnailFile.href;
+              rdata['media'] = media;
+            }
+            aCallback(rdata);
+          });
+        }else{
+          aCallback(rdata);
+        }
+      });
+    }
+
+    function buildTaxonFicheHtml(data){
+        var html = '';
+        html+= '<h3><span class="title"><span class="text">Information</span></span></h3>';
+        html+= '<div class="menu-content" style="padding:5px;">';
+        html+= '<h4>';
+        html+= data.scientificName;
+        html+= ' ';
+        html+= data.authority;
+        html+= '</h4>';
+        if (data.frenchVernacularName !== null) {
+            html+= '<p>';
+            html+= data.frenchVernacularName;
+            html+= '</p>';
+        }
+        if (data.media !== null) {
+            html+= '<p>';
+            html+= '<img src="';
+            html+= data.media;
+            html+= '" width="100%">';
+            html+= '</p>';
+        }
+        html+= '<p>';
+        html+= '<a href="';
+        html+= data.inpnWebpage;
+        html+= '" class="btn btn-mini" target="_blank">Voir la fiche complète</a>';
+        html+= '</p>';
+        html+= '</div>';
+
+        return html;
+    };
+
+    function displayTaxonDetail(cd_nom){
+        getTaxonDataFromApi(cd_nom, function(data){
+            var html = buildTaxonFicheHtml(data);
+            html+=  '<button id="hide-sub-dock" class="btn btn-mini pull-right" style="margin-top:5px;" name="close" title="'+lizDict['generic.btn.close.title']+'">'+lizDict['generic.btn.close.title']+'</button>';
+            $('#sub-dock').html(html);
+            if( !lizMap.checkMobile() ){
+                var leftPos = lizMap.getDockRightPosition();
+                $('#sub-dock').css('left', leftPos).css('width', leftPos);
+            }
+            $('#hide-sub-dock').click(function(){
+                $('#sub-dock').hide().html('');
+            });
+            $('#sub-dock').show();
+
+        })
     }
 
     function deleteTaxonToSearch( cd_nom ) {
@@ -458,6 +553,13 @@ OccTax.events.on({
               // Add new taxon to search
               addTaxonToSearch( cd_nom, d[row_label] );
               $('#div_form_occtax_search_token form').submit();
+              return false;
+          });
+          $('#'+tableId+' a.getTaxonDetail').click(function(){
+              var tr = $($(this).parents('tr')[0]);
+              var d = $('#'+tableId+'').DataTable().row( tr ).data();
+              var cd_nom = tr.attr('id');
+              displayTaxonDetail(cd_nom);
               return false;
           });
         });
@@ -749,8 +851,7 @@ OccTax.events.on({
           }
 
           // Mise en forme du résultat
-          var label = ui.item.label.split(' = ')[0];
-          var valeur = $('<a>').html(label).text();
+          var label = ui.item.nom_valide;
 
           // Suppression du contenu et perte du focus
           $(this).val( '' ).blur();
@@ -835,33 +936,8 @@ OccTax.events.on({
       ul.append(li);
     }
 
-    function getTaxonCardFromApi(cd_nom, aCallback){
 
-      var url = 'https://taxref.mnhn.fr/api/taxa/';
-      var turl = url + cd_nom;
-      $.getJSON(turl, null,function( data ) {
-        var html = '';
-        html+= '<div style="background:darkgray;padding:5px;">';
-        html+= '<p>';
-        html+= data.referenceNameHtml;
-        html+= '</p>';
-        html+= '<p>';
-        html+= data.fullNameHtml;
-        html+= '</p>';
-        var hasMedia = false;
-        if(
-          data._links.length > 0
-          && 'media' in data._links
-        ){
-            html+= '<img src="';
-            html+= '"/>;'
-            hasMedia = true;
-        }
-        html+= '</div>';
 
-        aCallback(html, hasMedia, data);
-      });
-    }
 
         //console.log('OccTax uicreated');
         $('#occtax-message').remove();
