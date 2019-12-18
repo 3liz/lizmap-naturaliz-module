@@ -229,11 +229,11 @@ OccTax.events.on({
             var licontent = '<li data-value="';
             licontent+= cd_nom;
             licontent+= '" style="height:20px; margin-left:2px;">';
-            licontent+= '<span style="cursor:pointer;display:inline-block; width:190px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">';
+            licontent+= '<span title="Cliquer pour visualiser la fiche taxon">';
             licontent+= nom_cite;
             licontent+= '</span>';
             licontent+= '<button type="button" class="detail" value="'+cd_nom+'" style="display:none;" >détail</button>';
-            licontent+= '<button type="button" class="close" value="'+cd_nom+'" aria-hidden="true">&times;</button>';
+            licontent+= '<button type="button" class="close" value="'+cd_nom+'" aria-hidden="true" title="Supprimer de la sélection">&times;</button>';
             licontent+= '</li>';
             var li = $(licontent);
 
@@ -1335,7 +1335,7 @@ OccTax.events.on({
       });
 
       // Move spatial query buttons to WHERE group
-      $('#'+tokenFormId+'_where').append( $('#obs-spatial-query-buttons') );
+      $('#'+tokenFormId+'_where').append( $('#obs-spatial-query-buttons-container') );
 
       // Move taxon tabs to the top
       $('#'+tokenFormId).prepend($('#occtax_taxon_tab_div'));

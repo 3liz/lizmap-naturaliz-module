@@ -2,7 +2,64 @@
 Formulaire de recherche
 */
 
+/*
+Onglets taxons
+*/
+#div_form_occtax_search_token div.tab-content {
+  background: lightgray;
+}
+#div_form_occtax_search_token .nav-tabs > li > a{
+ background: #efefef;
+ color: #333333;
+ font-weight: normal;
+ border: 1px solid lightgray;
+}
+#div_form_occtax_search_token .nav-tabs > li > a:hover,
+#div_form_occtax_search_token .nav-tabs > .active > a,
+#div_form_occtax_search_token .nav-tabs > .active > a:hover,
+#div_form_occtax_search_token .nav-tabs > .active > a:focus {
+ background: lightgray;
+ font-weight: bold;
+}
 
+#recherche_taxon_attributs legend,
+#recherche_taxon_panier legend {
+  display: none;
+}
+#recherche_taxon_attributs fieldset,
+#recherche_taxon_panier fieldset {
+  padding-top: 10px;
+}
+
+
+/*
+Panier de taxons
+*/
+#occtax_taxon_select_div {
+  overflow-x: auto;
+  margin: 5px;
+  background-color: white;
+  border-radius: 5px;
+  color: #333333;
+}
+#occtax_taxon_select_div li span {
+  font-size: 1.1em;
+  display: inline;
+  cursor: pointer;
+  width: 190px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: bold;
+}
+#occtax_taxon_select_div li span:hover {
+  font-size: 1.1em;
+  display: inline !important;
+  color: #7cb0ff;
+}
+#occtax_taxon_select_list {
+  margin: 0px;
+}
 
 /*
 Boutons de requête spatial

@@ -12,9 +12,10 @@ Onglets taxons vides,qu'on déplace dans le formulaire
 et dans dans lequel on déplace les champs liés au taxon
 -->
 <div id="occtax_taxon_tab_div" class="container" style="width:100%;">
+    <legend>Filtrer les taxons</legend>
     <ul class="nav nav-tabs">
-        <li class="active"><a href="#recherche_taxon_panier" data-toggle="tab">Sélection de taxons</a></li>
-        <li class=""><a href="#recherche_taxon_attributs" data-toggle="tab">Filtre par attributs</a></li>
+        <li class="active"><a href="#recherche_taxon_panier" data-toggle="tab">{@taxon~search.group.main@}</a></li>
+        <li class=""><a href="#recherche_taxon_attributs" data-toggle="tab">taxon~search.group.filter</a></li>
     </ul>
     <div class="tab-content">
         <div id="recherche_taxon_panier" class="tab-pane active">
@@ -29,8 +30,7 @@ et dans dans lequel on déplace les champs liés au taxon
   Déplacé par JS dans le formulaire
 -->
     <div id="occtax_taxon_select_div" class="control-group">
-        <ul id="occtax_taxon_select_list" style="display:none; overflow-x:auto; margin:0px;
-         background-color:lightgray; border:solid #CCC 1px; border-radius:4px;">
+        <ul id="occtax_taxon_select_list" style="display:none;">
         </ul>
         <button id="clearTaxonSearch" class="btn btn-mini">x</button>
     </div>
@@ -39,56 +39,60 @@ et dans dans lequel on déplace les champs liés au taxon
 Bloc qui contient les boutons de recherche spatiale
 Déplacé par JS dans le formulaire WHERE
 -->
-    <div id="obs-spatial-query-buttons" class="controls">
-      <div class="btn-group" data-toggle="buttons-radio">
-        <button type="button" id="obs-spatial-query-commune" data-value="queryPoint" class="btn commune" title="Sélectionner une commune" alt="Cliquer sur la carte pour sélectionner la commune">
-        </button>
-        <button type="button" id="obs-spatial-query-masse_eau" data-value="queryPoint" class="btn masse_eau" title="Sélectionner une masse d'eau" alt="Cliquer sur la carte pour sélectionner la masse d'eau">
-        </button>
+            <div class="control-group" id="obs-spatial-query-buttons-container">
+                <label class="control-label jforms-label" for="" id="" title="Recherche spatiale">Recherche spatiale</label>
+                <div id="obs-spatial-query-buttons" class="controls">
+                  <div class="btn-group" data-toggle="buttons-radio">
+                    <button type="button" id="obs-spatial-query-commune" data-value="queryPoint" class="btn commune" title="Sélectionner une commune" alt="Cliquer sur la carte pour sélectionner la commune">
+                    </button>
+                    <button type="button" id="obs-spatial-query-masse_eau" data-value="queryPoint" class="btn masse_eau" title="Sélectionner une masse d'eau" alt="Cliquer sur la carte pour sélectionner la masse d'eau">
+                    </button>
 
-        {ifacl2 "visualisation.donnees.maille_01"}
-        {if in_array('maille_01', $mailles_a_utiliser)}
-        <button type="button" id="obs-spatial-query-maille-m01" data-value="queryPoint" class="btn maille m01" title="Sélectionner une maille 1x1km" alt="Sélectionner une maille en cliquant sur la carte">
-        </button>
-        {/if}
-        {/ifacl2}
+                    {ifacl2 "visualisation.donnees.maille_01"}
+                    {if in_array('maille_01', $mailles_a_utiliser)}
+                    <button type="button" id="obs-spatial-query-maille-m01" data-value="queryPoint" class="btn maille m01" title="Sélectionner une maille 1x1km" alt="Sélectionner une maille en cliquant sur la carte">
+                    </button>
+                    {/if}
+                    {/ifacl2}
 
-        {ifacl2 "visualisation.donnees.maille_02"}
-        {if in_array('maille_02', $mailles_a_utiliser)}
-        <button type="button" id="obs-spatial-query-maille-m02" data-value="queryPoint" class="btn maille m02" title="Sélectionner une maille 2x2km" alt="Sélectionner une maille en cliquant sur la carte">
-        </button>
-        {/if}
-        {/ifacl2}
-<!--
-        <button type="button" id="obs-spatial-query-maille-m05" data-value="queryPoint" class="btn maille m05" title="Sélectionner une maille 5x5km" alt="Sélectionner une maille en cliquant sur la carte">
-        </button>
--->
-        {if in_array('maille_10', $mailles_a_utiliser)}
-        <button type="button" id="obs-spatial-query-maille-m10" data-value="queryPoint" class="btn maille m10" title="Sélectionner une maille 10x10km" alt="Sélectionner une maille 10 en cliquant sur la carte">
-        </button>
-        {/if}
+                    {ifacl2 "visualisation.donnees.maille_02"}
+                    {if in_array('maille_02', $mailles_a_utiliser)}
+                    <button type="button" id="obs-spatial-query-maille-m02" data-value="queryPoint" class="btn maille m02" title="Sélectionner une maille 2x2km" alt="Sélectionner une maille en cliquant sur la carte">
+                    </button>
+                    {/if}
+                    {/ifacl2}
+            <!--
+                    <button type="button" id="obs-spatial-query-maille-m05" data-value="queryPoint" class="btn maille m05" title="Sélectionner une maille 5x5km" alt="Sélectionner une maille en cliquant sur la carte">
+                    </button>
+            -->
+                    {if in_array('maille_10', $mailles_a_utiliser)}
+                    <button type="button" id="obs-spatial-query-maille-m10" data-value="queryPoint" class="btn maille m10" title="Sélectionner une maille 10x10km" alt="Sélectionner une maille 10 en cliquant sur la carte">
+                    </button>
+                    {/if}
 
-        {ifacl2 "requete.spatiale.cercle"}
-        <button type="button" id="obs-spatial-query-circle" data-value="queryCircle" class="btn circle" title="Tracer un cercle" alt="Cliquer sur la carte puis tirer en maintenant le bouton enfoncé pour tracer le cercle.">
-        </button>
-        {/ifacl2}
-        {ifacl2 "requete.spatiale.polygone"}
-        <button type="button" id="obs-spatial-query-polygon" data-value="queryPolygon" class="btn polygon" title="Tracer un polygone" alt="Tracer un polygone en cliquant pour chaque sommet du polygone. Double-cliquer pour terminer le polygone.">
-        </button>
-        {/ifacl2}
-        {ifacl2 "requete.spatiale.import"}
-        <button type="button" id="obs-spatial-query-import" data-value="importPolygon" class="btn import" title="Choisissez un fichier au format GeoJSON">
-        </button>
-        {/ifacl2}
-        <button type="button" id="obs-spatial-query-delete" data-value="deleteGeom" class="btn delete" title="Supprimer la géométrie" alt="Un clic sur ce bouton supprime la géométrie">
-        </button>
+                    {ifacl2 "requete.spatiale.cercle"}
+                    <button type="button" id="obs-spatial-query-circle" data-value="queryCircle" class="btn circle" title="Tracer un cercle" alt="Cliquer sur la carte puis tirer en maintenant le bouton enfoncé pour tracer le cercle.">
+                    </button>
+                    {/ifacl2}
+                    {ifacl2 "requete.spatiale.polygone"}
+                    <button type="button" id="obs-spatial-query-polygon" data-value="queryPolygon" class="btn polygon" title="Tracer un polygone" alt="Tracer un polygone en cliquant pour chaque sommet du polygone. Double-cliquer pour terminer le polygone.">
+                    </button>
+                    {/ifacl2}
+                    {ifacl2 "requete.spatiale.import"}
+                    <button type="button" id="obs-spatial-query-import" data-value="importPolygon" class="btn import" title="Choisissez un fichier au format GeoJSON">
+                    </button>
+                    {/ifacl2}
+                    <button type="button" id="obs-spatial-query-delete" data-value="deleteGeom" class="btn delete" title="Supprimer la géométrie" alt="Un clic sur ce bouton supprime la géométrie">
+                    </button>
 
-        {ifacl2 "requete.spatiale.polygone"}
-        <button type="button" id="obs-spatial-query-modify" data-value="modifyPolygon" class="btn modify" title="Modifier un polygone" alt="Modifier un polygone en déplaçant les vertices" style="display:none;">
-        </button>
-        {/ifacl2}
+                    {ifacl2 "requete.spatiale.polygone"}
+                    <button type="button" id="obs-spatial-query-modify" data-value="modifyPolygon" class="btn modify" title="Modifier un polygone" alt="Modifier un polygone en déplaçant les vertices" style="display:none;">
+                    </button>
+                    {/ifacl2}
 
-      </div>
+                  </div>
+
+            </div>
 
       <div id="obs-spatial-upload-geojson" style="display:none;">
         {formfull $formUpload, 'occtax~service:uploadGeoJSON', array(), 'htmlbootstrap'}

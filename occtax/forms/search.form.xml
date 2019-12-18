@@ -36,6 +36,7 @@
             <datasource dao="taxon~t_group_categorie"
               method="getDistinctCategorie"
               labelproperty="cat_nom" valueproperty="cat_nom"/>
+            <hint locale="taxon~search.input.group.help"/>
         </menulist>
 
         <menulist ref="habitat">
@@ -45,6 +46,7 @@
               method="findByChamp" criteria="habitat"
               labelproperty="valeur"
               valueproperty="code"/>
+            <hint locale="taxon~search.input.habitat.help"/>
         </menulist>
 
         <menulist ref="statut">
@@ -54,6 +56,7 @@
               method="findByChamp" criteria="statut"
               labelproperty="valeur"  labelseparator=" - "
               valueproperty="code"/>
+            <hint locale="taxon~search.input.statut.help"/>
         </menulist>
 
 <!--
@@ -75,6 +78,7 @@ Désactivé car redondant et sujet à débat
               method="findByChamp" criteria="endemicite"
               labelproperty="valeur,description"  labelseparator=" "
               valueproperty="code"/>
+            <hint locale="taxon~search.input.endemicite.help"/>
         </menulist>
 
         <menulist ref="invasibilite">
@@ -84,6 +88,7 @@ Désactivé car redondant et sujet à débat
               method="findByChamp" criteria="invasibilite"
               labelproperty="valeur"  labelseparator=" - "
               valueproperty="code"/>
+            <hint locale="taxon~search.input.invasibilite.help"/>
         </menulist>
 
         <menulist ref="menace">
@@ -93,6 +98,7 @@ Désactivé car redondant et sujet à débat
               method="findByChamp" criteria="menace"
               labelproperty="valeur"  labelseparator=" - "
               valueproperty="code"/>
+            <hint locale="taxon~search.input.menace.help"/>
         </menulist>
 
 <!--
@@ -112,6 +118,7 @@ Masqué pour simplifier
             <emptyitem locale="taxon~search.input.emptyitem"/>
             <datasource dao="taxon~t_nomenclature"
               method="getProtections" labelproperty="valeur" valueproperty="code"/>
+            <hint locale="taxon~search.input.protection.help"/>
         </menulist>
 
 <!--
@@ -136,6 +143,7 @@ Masqué pour simplifier
             <datasource dao="occtax~jdd"
               method="getJddList" labelproperty="jdd_id,jdd_code"  labelseparator=" - "
               valueproperty="jdd_id"/>
+            <hint locale="occtax~search.input.jdd_id.help"/>
         </menulist>
 
         <menulist ref="validite_niveau">
@@ -145,6 +153,7 @@ Masqué pour simplifier
               method="findByChamp" criteria="validite_niveau"
               labelproperty="valeur"
               valueproperty="code"/>
+            <hint locale="occtax~search.input.validite_niveau.help"/>
         </menulist>
 
 <!--
@@ -160,6 +169,7 @@ Masqué pour simplifier
 
         <input ref="observateur">
             <label locale="occtax~search.input.observateur"/>
+            <hint locale="occtax~search.input.observateur.help"/>
         </input>
 
     </group>
@@ -169,10 +179,12 @@ Masqué pour simplifier
 
         <date ref="date_min" defaultvalue=""  mindate="1600-01-01" maxdate="now">
             <label locale="occtax~search.input.date_min"/>
+            <hint locale="occtax~search.input.date_min.help"/>
         </date>
 
         <date ref="date_max" defaultvalue=""  mindate="1600-01-01" maxdate="now">
             <label locale="occtax~search.input.date_max"/>
+            <hint locale="occtax~search.input.date_max.help"/>
         </date>
 
     </group>
@@ -184,6 +196,7 @@ Masqué pour simplifier
             <label locale="occtax~search.input.type_en"/>
             <emptyitem locale="occtax~search.input.emptyitem"/>
             <datasource class="occtax~listExistingTypeEn" />
+            <hint locale="occtax~search.input.type_en.help"/>
         </menulist>
 
         <hidden ref="code_commune">
@@ -212,10 +225,12 @@ Masqué pour simplifier
 
   <reset ref="reinit">
     <label locale="occtax~search.input.reinit"/>
+    <hint locale="occtax~search.input.reinit.help"/>
   </reset>
 
   <submit ref="submit">
     <label locale="occtax~search.input.submit"/>
+    <hint locale="occtax~search.input.submit.help"/>
   </submit>
 
 </form>
