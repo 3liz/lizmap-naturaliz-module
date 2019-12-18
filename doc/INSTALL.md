@@ -46,6 +46,7 @@ Les modules Naturaliz lisent dans le fichier **lizmap/var/config/naturaliz.ini.p
 
 * la **colonne locale des données TAXREF** correspondant au lieu principal de l'installation (par exemple "gua" pour la Guadeloupe) : variable **colonne_locale** de la section [taxon]
 * un **intitulé** pour les zones correspondant à l'endémicité (endémique et subendémique): variables **endemicite_description_endemique** (ex: Réunion) et **endemicite_description_subendemique** (Ex: Mascareignes)
+* la **liste des rangs** de taxons pour initialiser (seulement lors de l'installation ou de l'import d'une nouvelle version de taxref) la vue matérialisée de recherche plein texte. Variable **liste_rangs**. Par exemple `FM, GN, AGES, ES, SSES, NAT, VAR, SVAR, FO, SSFO, RACE, CAR, AB, KD, PH, CL, OR, SBFM, TR, SBOR, IFOR, SBCL`
 * la **liste des codes d'arrêtés de protection** pour la zone concernée: variables **code_arrete_protection_simple**, **code_arrete_protection_internationale**, **code_arrete_protection_nationale**, **code_arrete_protection_communautaire** de la section  [taxon]
 * le **code SRID** du système de coordonnées de références des données spatiales du projet : variable **srid** de la section [naturaliz].
 * le **libellé de la projection locale**: variable **libelle_srid**

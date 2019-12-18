@@ -156,7 +156,11 @@ class wfsCtrl extends jController {
 
         $assign = array();
         $assign['title'] = 'Requête sur les observations';
-        $assign['abstract'] = $this->search->getSearchDescription('text');
+        $assign['abstract'] = preg_replace(
+          '#&|linebreak|\*#',
+          ' ',
+          $this->search->getSearchDescription('text')
+        );
         $assign['url'] = urlencode(jUrl::getFull('occtax~wfs:index', $this->params));
         $assign['srs'] = 'EPSG:4326';
         $assign['minx'] = '-180.0';

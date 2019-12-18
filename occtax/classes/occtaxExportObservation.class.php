@@ -688,8 +688,8 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 LEFT JOIN LATERAL
                 jsonb_to_recordset(lg.descriptif_sujet::jsonb) AS (
                     obs_methode text,
-                    occ_denombrement_min integer,
-                    occ_denombrement_max integer,
+                    occ_denombrement_min text,
+                    occ_denombrement_max text,
                     occ_type_denombrement text,
                     occ_objet_denombrement text,
                     occ_etat_biologique text,
@@ -890,8 +890,8 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
         LEFT JOIN LATERAL
         jsonb_to_recordset(source.descriptif_sujet::jsonb) AS (
             obs_methode text,
-            occ_denombrement_min integer,
-            occ_denombrement_max integer,
+            occ_denombrement_min text,
+            occ_denombrement_max text,
             occ_type_denombrement text,
             occ_objet_denombrement text,
             occ_etat_biologique text,
