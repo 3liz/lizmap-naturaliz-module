@@ -274,7 +274,7 @@ fr, gf, mar, gua, sm, sb, spm, may, epa, reu, sa, ta, taaf, pf, nc, wf, cli, url
 FROM taxref_mnhn_et_local
 WHERE True
 AND cd_nom = cd_ref
-AND rang IN ('FM', 'GN', 'AGES', 'ES', 'SSES', 'NAT', 'VAR', 'SVAR', 'FO', 'SSFO', 'RACE', 'CAR', 'AB');
+AND rang IN ({$liste_rangs});
 
 COMMENT ON MATERIALIZED VIEW taxref_valide IS '
 Vue matérialisée pour récupérer uniquement les taxons valides (cd_nom = cd_ref) dans la table taxref et dans la table taxref_local.
@@ -320,7 +320,7 @@ SELECT cd_nom::bigint, cd_ref::bigint, nom_valide AS val, nom_valide, 6::smallin
 group2_inpn, to_tsvector( unaccent(coalesce(nom_valide,'')) )::tsvector AS vec, loc
 FROM taxref_mnhn_et_local
 WHERE cd_nom = cd_ref
-AND rang IN ('FM', 'GN', 'AGES', 'ES', 'SSES', 'NAT', 'VAR', 'SVAR', 'FO', 'SSFO', 'RACE', 'CAR', 'AB')
+AND rang IN ({$liste_rangs})
 
 
 -- Noms vernaculaires
@@ -329,7 +329,7 @@ SELECT cd_nom::bigint, cd_ref::bigint, nom_vern AS val, nom_valide, 4::smallint 
 group2_inpn, to_tsvector( unaccent(coalesce(nom_vern,'')) )::tsvector AS vec, loc
 FROM taxref_mnhn_et_local
 WHERE cd_nom = cd_ref AND nom_vern IS NOT NULL AND nom_vern != ''
-AND rang IN ('FM', 'GN', 'AGES', 'ES', 'SSES', 'NAT', 'VAR', 'SVAR', 'FO', 'SSFO', 'RACE', 'CAR', 'AB')
+AND rang IN ({$liste_rangs})
 
 
 -- Noms synonymes
@@ -338,7 +338,7 @@ SELECT cd_nom::bigint, cd_ref::bigint, nom_complet AS val, nom_valide, 2::smalli
 group2_inpn, to_tsvector( unaccent(coalesce(nom_complet,'')) )::tsvector AS vec, loc
 FROM taxref_mnhn_et_local
 WHERE cd_nom != cd_ref
-AND rang IN ('FM', 'GN', 'AGES', 'ES', 'SSES', 'NAT', 'VAR', 'SVAR', 'FO', 'SSFO', 'RACE', 'CAR', 'AB')
+AND rang IN ({$liste_rangs})
 ;
 
 
@@ -532,30 +532,6 @@ CREATE TABLE menaces (
 ;
 COMMENT ON TABLE menaces IS 'Données sur les menaces, issues des listes rouges';
 CREATE INDEX ON menaces (cd_nom);
-
-
--- Vue taxref_consolide_all pour pouvoir faire des statistiques
--- sur tous les taxons, valides ou non.
--- Sinon le tableau renvoit "Autre" car les taxons non valides ne sont pas bien pris en compte
-DROP MATERIALIZED VIEW IF EXISTS taxon.taxref_consolide_all;
-CREATE MATERIALIZED VIEW taxon.taxref_consolide_all AS
-WITH
-taxref_mnhn_et_local AS (
-  SELECT group1_inpn, group2_inpn, cd_nom
-  FROM taxref
-  WHERE rang IN ('FM', 'GN', 'AGES', 'ES', 'SSES', 'NAT', 'VAR', 'SVAR', 'FO', 'SSFO', 'RACE', 'CAR', 'AB')
-  UNION ALL
-  SELECT group1_inpn, group2_inpn, cd_nom
-  FROM taxref_local
-  WHERE rang IN ('FM', 'GN', 'AGES', 'ES', 'SSES', 'NAT', 'VAR', 'SVAR', 'FO', 'SSFO', 'RACE', 'CAR', 'AB')
-  AND cd_nom_valide IS NULL
-)
-SELECT tml.*, c.*
-FROM taxref_mnhn_et_local AS tml
-LEFT JOIN t_complement AS c ON c.cd_nom_fk = tml.cd_nom
-;
-CREATE INDEX ON taxon.taxref_consolide_all (cd_nom);
-CREATE INDEX ON taxon.taxref_consolide_all (protection);
 
 
 -- Vue qui rassemble tous les taxons de TAXREF et de taxref local:

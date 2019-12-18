@@ -31,6 +31,15 @@ class taxonModuleInstaller extends jInstallerModule {
                 $tpl = new jTpl();
                 $colonne_locale = $ini->getValue('colonne_locale', 'naturaliz');
                 $tpl->assign('colonne_locale', $colonne_locale);
+                $liste_rangs = $ini->getValue('liste_rangs', 'naturaliz');
+                if(empty($liste_rangs)){
+                    $liste_rangs = "FM, GN, AGES, ES, SSES, NAT, VAR, SVAR, FO, SSFO, RACE, CAR, AB";
+                }
+                $liste_rangs = "'" . implode(
+                      "', '",
+                      array_map( 'trim', explode(',', $liste_rangs) )
+                ) . "'";
+                $tpl->assign('liste_rangs', $liste_rangs);
                 $sql = $tpl->fetchFromString($sqlTpl, 'text');
                 $db = $this->dbConnection();
                 $db->exec($sql);

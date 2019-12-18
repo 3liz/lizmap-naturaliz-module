@@ -192,6 +192,5 @@ AND "iso639_3" IN ('fra', '{$taxvern_iso}')
 {/if}
 
 REFRESH MATERIALIZED VIEW taxref_consolide;
-REFRESH MATERIALIZED VIEW taxref_consolide_all;
 
 COMMIT;

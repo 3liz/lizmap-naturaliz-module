@@ -15,7 +15,7 @@ et dans dans lequel on déplace les champs liés au taxon
     <legend>Filtrer les taxons</legend>
     <ul class="nav nav-tabs">
         <li class="active"><a href="#recherche_taxon_panier" data-toggle="tab">{@taxon~search.group.main@}</a></li>
-        <li class=""><a href="#recherche_taxon_attributs" data-toggle="tab">taxon~search.group.filter</a></li>
+        <li class=""><a href="#recherche_taxon_attributs" data-toggle="tab">{@taxon~search.group.filter@}</a></li>
     </ul>
     <div class="tab-content">
         <div id="recherche_taxon_panier" class="tab-pane active">

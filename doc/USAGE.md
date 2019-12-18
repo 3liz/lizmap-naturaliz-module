@@ -188,11 +188,6 @@ AND o.cd_ref IN (SELECT cd_ref FROM taxon.taxref_consolide WHERE "menace" = 'EN'
 
 C'est une vue matérialisée, c'est-à-dire une vue qui se comporte comme une table, et qu'on doit mettre à jour suite à un import de taxons (dans taxref ou taxref_local), ou suite à la mise à jour de taxref_valide, via `REFRESH MATERIALIZED VIEW taxon.taxref_consolide;`
 
-#### taxref_consolide_all
-
-Elle consolide aussi les informations du Taxref et des taxons locaux, mais en prenant tous les taxons, pas seulement les valides.
-Cette vue est plus simple, et ne contient que les champs cd_nom, group1_inpn et group2_inpn. Elle est utilisée pour le tableau des statistiques et doit être aussi rafraîchie: `REFRESH MATERIALIZED VIEW taxon.taxref_consolide_all`
-
 #### taxref_fts
 
 Vue matérialisée pour le stockage des informations de recherche plein texte visible dans l'application naturaliz.
