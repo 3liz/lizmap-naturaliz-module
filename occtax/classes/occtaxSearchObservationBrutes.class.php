@@ -282,6 +282,8 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
 
     protected $observation_exported_children = array();
 
+    protected $observation_exported_children_unsensitive = array();
+
     protected $observation_card_fields = array();
 
     protected $observation_card_fields_unsensitive = array();
@@ -296,11 +298,11 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
 
         // Fields with nomenclature
         $cnx = jDb::getConnection();
-        $sql = '
+        $sql = "
             SELECT DISTINCT champ FROM occtax.nomenclature
             UNION
-            SELECT DISTINCT champ FROM taxon.t_nomenclature
-        ';
+            SELECT DISTINCT replace(champ, 'statut_taxref', 'loc') AS champ FROM taxon.t_nomenclature
+        ";
         $nomreq = $cnx->query($sql);
         foreach($nomreq as $nom){
             $nc = $nom->champ;

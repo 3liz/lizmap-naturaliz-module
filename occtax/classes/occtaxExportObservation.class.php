@@ -191,6 +191,8 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
 
     protected $observation_exported_children = array();
 
+    protected $observation_exported_children_unsensitive = array();
+
     protected $querySelectors = array(
         'vm_observation' => array(
             'alias' => 'o',
@@ -451,16 +453,6 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
         $codenom = array();
         foreach($reqnom as $nom){
             $codenom = (array)json_decode($nom->dict);
-        }
-        $sqlnom = "
-            SELECT concat(champ, '_', code) AS nom,
-            valeur
-            FROM taxon.t_nomenclature
-        ";
-        $reqt = $cnx->query($sqlnom);
-        foreach($reqt as $t){
-            $nom = str_replace('statut_taxref_', 'loc_', $t->nom);
-            $codenom[$nom] = $t->valeur;
         }
 
         // Fetch data and fill in the file
