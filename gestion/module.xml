@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module xmlns="http://jelix.org/ns/module/1.0">
     <info id="gestion3liz.com" name="gestion" createdate="2016-12-05">
-        <version date="2019-12-18">2.4.1</version>
+        <version date="2019-12-24">2.4.2</version>
         <label lang="en_US">gestion</label>
         <description lang="en_US" />
         <license URL="http://www.mozilla.org/MPL/">Mozilla Public License</license>
