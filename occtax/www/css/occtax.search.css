@@ -373,3 +373,30 @@ New dock presentatin et mentions legales*/
 #occtax-legal a {
   color: orange;
 }
+
+
+/*
+Boutons de changement de l'affichage carte: maille 1, 2, 10 ou  observations brutes
+* */
+#occtax_toggle_map_display {
+  bottom: 0;
+  margin-left: calc(50% - 100px);
+  position: absolute;
+  z-index: 6000;
+}
+
+/*
+Légende des mailles*/
+#map-content div.occtax-legend-container {
+  bottom: 50px;
+  position: absolute;
+  z-index: 2000;
+  margin-left: calc(50% - 100px);
+  background:rgba(255,255,255,0.4);
+  padding: 5px;
+  border-radius: 5px;
+  color: rgb(50,50,50);
+}
+#map-content div.occtax-legend-container b{
+  font-size: 14px;
+}

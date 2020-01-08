@@ -20,7 +20,7 @@
 
 
 {assign $nb = count($legend_classes)}
-
+<div class="occtax-legend-container">
 <b>{@occtax~search.legende.mailles.title@}</b>
 <table class="occtax-legend-table">
 
@@ -55,4 +55,5 @@
     {assign $x = 0}
 
 </table>
+</div>
 

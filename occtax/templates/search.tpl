@@ -143,7 +143,7 @@ RESUME DE LA RECHERCHE ET DES RESULTATS
 
     <div class="menu-content">
         <div id="occtax_search_description_content"></div>
-        <button id="occtax-search-modify" type="button" class="btn" name="mod" value="modify" style="">{@occtax~search.button.modify.search@}</button>
+        <button id="occtax-search-modify" type="button" class="btn btn-info" name="mod" value="modify" style="">{@occtax~search.button.modify.search@}</button>
         <button id="occtax-search-replay" type="button" class="btn" name="mod" value="replay" style="display:none;">{@occtax~search.button.replay.search@}</button>
 
             <span class="pull-right" id="occtax_result_button_bar" style="display:none;">
@@ -154,6 +154,32 @@ RESUME DE LA RECHERCHE ET DES RESULTATS
                     </button>
                 </div>
             </span>
+
+<!--
+        Barre d'outil pour basculer l'affichage carto entre mailles 1, 2, 10km et observations
+-->
+        <div id="occtax_toggle_map_display" class="btn-toolbar">
+          <div id="occtax_results_draw" class="btn-group" data-toggle="buttons-radio" style="">
+            {ifacl2 "visualisation.donnees.maille_01"}
+            {if in_array('maille_01', $mailles_a_utiliser)}
+            <button title="Basculer sur l'affichage par mailles de 1 km" id="occtax_results_draw_maille_m01" type="button" class="btn active" name="draw" value="m01">Mailles 1x1 km</button>
+            {/if}
+            {/ifacl2}
+
+            {ifacl2 "visualisation.donnees.maille_02"}
+            {if in_array('maille_02', $mailles_a_utiliser)}
+            <button title="Basculer sur l'affichage par mailles de 2 km"  id="occtax_results_draw_maille_m02" type="button" class="btn active btn-primary" name="draw" value="m02">Mailles 2x2 km</button>
+            {/if}
+            {/ifacl2}
+            {if in_array('maille_10', $mailles_a_utiliser)}
+            <button title="Basculer sur l'affichage par mailles de 10 km "  id="occtax_results_draw_maille_m10" type="button" class="btn" name="draw" value="m10">Mailles 10x10 km</button>
+            {/if}
+
+            {ifacl2 "visualisation.donnees.brutes"}
+            <button title="Basculer sur l'affichage des données brutes "  id="occtax_results_draw_observation" type="button" class="btn" name="draw" value="observation">Observations</button>
+            {/ifacl2}
+          </div>
+        </div>
 
     </div>
 </div>
@@ -168,57 +194,36 @@ RESULTATS DE RECHERCHE (TABLEAUX)
 
 <div id="occtax_search_result" style="display:none;">
 
-    <div class="btn-toolbar">
-      <div id="occtax_results_draw" class="btn-group" data-toggle="buttons-radio" style="display:none;">
-        {ifacl2 "visualisation.donnees.maille_01"}
-        {if in_array('maille_01', $mailles_a_utiliser)}
-        <button id="occtax_results_draw_maille_m01" type="button" class="btn active" name="draw" value="m01">Maille 1x1</button>
-        {/if}
-        {/ifacl2}
-
-        {ifacl2 "visualisation.donnees.maille_02"}
-        {if in_array('maille_02', $mailles_a_utiliser)}
-        <button id="occtax_results_draw_maille_m02" type="button" class="btn active" name="draw" value="m02">Maille 2x2</button>
-        {/if}
-        {/ifacl2}
 <!--
-        <button id="occtax_results_draw_maille_m05" type="button" class="btn active" name="draw" value="m05">Maille 5x5</button>
--->
-        {if in_array('maille_10', $mailles_a_utiliser)}
-        <button id="occtax_results_draw_maille_m10" type="button" class="btn" name="draw" value="m10">Maille 10x10</button>
-        {/if}
-
-        {ifacl2 "visualisation.donnees.brutes"}
-        <button id="occtax_results_draw_observation" type="button" class="btn" name="draw" value="observation">Observation</button>
-        {/ifacl2}
-      </div>
-    </div>
-
     <div id="occtax_search_observation_detail" style="display:none;">
         <h3><span class="title"><span class="icon search"></span>&nbsp;<span class="text">{@occtax~search.form.title@}</span></span></h3>
     </div>
+-->
 
     <div class="tabbable menu-content" style="overflow-x: hidden;">
 
       <ul id="occtax_results_tabs" class="nav nav-tabs">
         <li><a id="occtax_results_stats_table_tab" href="#occtax_results_stats_table_div" data-toggle="tab">{@occtax~search.result.stats@}</a></li>
         <li><a id="occtax_results_taxon_table_tab" href="#occtax_results_taxon_table_div" data-toggle="tab">{@occtax~search.result.taxon@}</a></li>
+
+<!--
+        On choisir de cacher les tableaux de maille
+        On doit les conserver car l'affichage carto est très lié au datatable
+-->
         {ifacl2 "visualisation.donnees.maille_01"}
         {if in_array('maille_01', $mailles_a_utiliser)}
-        <li><a id="occtax_results_maille_table_tab_m01" href="#occtax_results_maille_table_div_m01" data-toggle="tab">{@occtax~search.result.maille.m01@}</a></li>
+        <li style="display:none;"><a id="occtax_results_maille_table_tab_m01" href="#occtax_results_maille_table_div_m01" data-toggle="tab">{@occtax~search.result.maille.m01@}</a></li>
         {/if}
         {/ifacl2}
 
         {ifacl2 "visualisation.donnees.maille_02"}
         {if in_array('maille_02', $mailles_a_utiliser)}
-        <li class="active"><a id="occtax_results_maille_table_tab_m02" href="#occtax_results_maille_table_div_m02" data-toggle="tab">{@occtax~search.result.maille.m02@}</a></li>
+        <li style="display:none;" class="active"><a id="occtax_results_maille_table_tab_m02" href="#occtax_results_maille_table_div_m02" data-toggle="tab">{@occtax~search.result.maille.m02@}</a></li>
         {/if}
         {/ifacl2}
-<!--
-        <li><a id="occtax_results_maille_table_tab_m05" href="#occtax_results_maille_table_div_m05" data-toggle="tab">{@occtax~search.result.maille.m05@}</a></li>
--->
+
         {if in_array('maille_10', $mailles_a_utiliser)}
-        <li><a id="occtax_results_maille_table_tab_m10" href="#occtax_results_maille_table_div_m10" data-toggle="tab">{@occtax~search.result.maille.m10@}</a></li>
+        <li style="display:none;"><a id="occtax_results_maille_table_tab_m10" href="#occtax_results_maille_table_div_m10" data-toggle="tab">{@occtax~search.result.maille.m10@}</a></li>
         {/if}
 
         {ifacl2 "visualisation.donnees.brutes"}
@@ -257,7 +262,7 @@ RESULTATS DE RECHERCHE (TABLEAUX)
 -->
         {ifacl2 "visualisation.donnees.maille_01"}
         {if in_array('maille_01', $mailles_a_utiliser)}
-        <div id="occtax_results_maille_table_div_m01" class="tab-pane bottom-content attribute-content">
+        <div style="display:none;" id="occtax_results_maille_table_div_m01" class="tab-pane bottom-content attribute-content">
           <form id="occtax_service_search_maille_form_m01" method="post" action="{jurl 'occtax~service:searchGroupByMaille'}" style="display:none;">
             <input type="text" name="token"></input>
             <input type="text" name="type_maille" value="m01"></input>
@@ -271,7 +276,7 @@ RESULTATS DE RECHERCHE (TABLEAUX)
 -->
         {ifacl2 "visualisation.donnees.maille_02"}
         {if in_array('maille_02', $mailles_a_utiliser)}
-        <div id="occtax_results_maille_table_div_m02" class="tab-pane bottom-content attribute-content">
+        <div style="display:none;" id="occtax_results_maille_table_div_m02" class="tab-pane bottom-content attribute-content">
           <form id="occtax_service_search_maille_form_m02" method="post" action="{jurl 'occtax~service:searchGroupByMaille'}" style="display:none;">
             <input type="text" name="token"></input>
             <input type="text" name="type_maille" value="m02"></input>
@@ -280,24 +285,12 @@ RESULTATS DE RECHERCHE (TABLEAUX)
         </div>
         {/if}
         {/ifacl2}
-<!--
-        mailles 5
--->
-<!--
-        <div id="occtax_results_maille_table_div_m05" class="tab-pane bottom-content attribute-content">
-          <form id="occtax_service_search_maille_form_m05" method="post" action="{jurl 'occtax~service:searchGroupByMaille'}" style="display:none;">
-            <input type="text" name="token"></input>
-            <input type="text" name="type_maille" value="m05"></input>
-          </form>
-          {zone 'taxon~datatable', array('classId'=>'occtax~occtaxSearchObservationMaille','tableId'=>'occtax_results_maille_table_m05')}
-        </div>
--->
 
 <!--
         mailles 10
 -->
         {if in_array('maille_10', $mailles_a_utiliser)}
-        <div id="occtax_results_maille_table_div_m10" class="tab-pane bottom-content attribute-content">
+        <div style="display:none;" id="occtax_results_maille_table_div_m10" class="tab-pane bottom-content attribute-content">
           <form id="occtax_service_search_maille_form_m10" method="post" action="{jurl 'occtax~service:searchGroupByMaille'}" style="display:none;">
             <input type="text" name="token"></input>
             <input type="text" name="type_maille" value="m10"></input>

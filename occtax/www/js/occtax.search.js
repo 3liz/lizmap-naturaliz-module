@@ -895,9 +895,12 @@ OccTax.events.on({
                 // Show observation car h3 and div
                 $('#occtax_search_observation_card').prev('h3.occtax_search:first').show();
                 $('#occtax_search_observation_card').html( data ).show();
+
                 // Hide description && result div
+                $('#occtax_search_input').hide();
                 $('#occtax_search_result').hide();
                 $('#occtax_search_description').hide();
+
                 // Add event on click
                 $('#occtax_search_observation_card a.getTaxonDetail').click(function(){
                     var classes = $(this).attr('class');
@@ -1238,12 +1241,15 @@ OccTax.events.on({
         var self = $(this);
 
         // The Occtax events trigger an error on first load (when page not entirely loaded)
+        // this causes submit to another page because JS event has not been correctly added to the form
+        // we use try/catch to avoid it
         try{
           $('#occtax_result_button_bar').hide();
           // show statistics
           $('#occtax_results_stats_table_tab').tab('show');
           // deactivate geometry button
           $('#obs-spatial-query-buttons button.active').click();
+
           // Remove previous features : remove feature in all layers except queryLayer
           OccTax.emptyDrawqueryLayer('queryLayer');
           if($('#occtax_results_draw_maille_m01.btn').length){
@@ -1282,14 +1288,23 @@ OccTax.events.on({
                     // Display description div
                     var dHtml = tData.description;
                     $('#occtax_search_description_content').html(dHtml);
+                    // Show or hide depending on dock height
                     var dockHeight = $('#dock').height();
                     if(dockHeight >= 800)
                       $('#occtax_search_description').show();
                     else
                       $('#occtax_search_description').hide();
+                    // Show description title
                     $('#occtax_search_description').prev('h3.occtax_search').show();
                     $('#occtax-search-modify').show();
                     $('#occtax-search-replay').hide();
+
+                    // Move legend to map
+                    $('#map-content div.occtax-legend-container').remove();
+                    $('#dock div.occtax-legend-container')
+                    .appendTo($('#map-content'))
+                    .show();
+                    $('#occtax_toggle_map_display').show();
 
                     // Change wfs export URL
                     $('a#btn-get-wfs').attr('href', tData.wfsUrl);
@@ -1302,16 +1317,23 @@ OccTax.events.on({
                     $('#occtax_results_stats_table').DataTable().ajax.reload();
                     $('#occtax_service_search_taxon_form input[name="token"]').val(tData.token).change();
                     $('#occtax_results_taxon_table').DataTable().ajax.reload();
-                    $('#occtax_service_search_maille_form_m01 input[name="token"]').val(tData.token).change();
-                    $('#occtax_results_maille_table_m01').DataTable().ajax.reload();
-                    $('#occtax_service_search_maille_form_m02 input[name="token"]').val(tData.token).change();
-                    $('#occtax_results_maille_table_m02').DataTable().ajax.reload();
-                    //$('#occtax_service_search_maille_form_m05 input[name="token"]').val(tData.token).change();
-                    //$('#occtax_results_maille_table_m05').DataTable().ajax.reload();
-                    $('#occtax_service_search_maille_form_m10 input[name="token"]').val(tData.token).change();
-                    $('#occtax_results_maille_table_m10').DataTable().ajax.reload();
-                    $('#occtax_service_search_form input[name="token"]').val(tData.token).change();
-                    $('#occtax_results_observation_table').DataTable().ajax.reload();
+
+                    if($('#occtax_results_draw_maille_m01.btn').length){
+                        $('#occtax_service_search_maille_form_m01 input[name="token"]').val(tData.token).change();
+                        $('#occtax_results_maille_table_m01').DataTable().ajax.reload();
+                    }
+                    if($('#occtax_results_draw_maille_m02.btn').length){
+                        $('#occtax_service_search_maille_form_m02 input[name="token"]').val(tData.token).change();
+                        $('#occtax_results_maille_table_m02').DataTable().ajax.reload();
+                    }
+                    if($('#occtax_results_draw_maille_m10.btn').length){
+                        $('#occtax_service_search_maille_form_m10 input[name="token"]').val(tData.token).change();
+                        $('#occtax_results_maille_table_m10').DataTable().ajax.reload();
+                    }
+                    if($('#occtax_results_draw_observation.btn').length){
+                        $('#occtax_service_search_form input[name="token"]').val(tData.token).change();
+                        $('#occtax_results_observation_table').DataTable().ajax.reload();
+                    }
 
                     // Show result div
                     $('#occtax_search_result').show();
@@ -1370,7 +1392,6 @@ OccTax.events.on({
           try{
             OccTax.events.triggerEvent('mailledatareceived_' + 'm01', {'results':null});
             OccTax.events.triggerEvent('mailledatareceived_' + 'm02', {'results':null});
-            //OccTax.events.triggerEvent('mailledatareceived_' + 'm05', {'results':null});
             OccTax.events.triggerEvent('mailledatareceived_' + 'm10', {'results':null});
             OccTax.events.triggerEvent('observationdatareceived', {'results':null});
           }catch(e){
@@ -1383,6 +1404,13 @@ OccTax.events.on({
           .prev('h3.occtax_search').hide()
           ;
 
+          // Cacher la barre d'outil pour les boutons
+          $('#occtax_toggle_map_display').hide();
+
+          // Masquer la légende des mailles
+          $('#map-content div.occtax-legend-container').remove();
+
+
           return false;
       });
 
@@ -1391,7 +1419,6 @@ OccTax.events.on({
       addResultsTaxonTable();
       addResultsMailleTable('m01');
       addResultsMailleTable('m02');
-      //addResultsMailleTable('m05');
       addResultsMailleTable('m10');
       addResultsObservationTable();
 
@@ -1423,13 +1450,16 @@ OccTax.events.on({
       $('#occtax_results_draw .btn').click(function() {
         var self = $(this);
 
+        $('#occtax_results_draw .btn').removeClass('btn-primary');
+        self.addClass('btn-primary');
+
         // Get layer
         var rLayer = OccTax.layers['resultLayer'];
-
         rLayer.destroyFeatures();
         var the_features = OccTax.getResultFeatures( self.val());
 
-        // For mailles, add features to draw the underlying maille
+        // For mailles,
+        // We need to add features to draw the underlying maille
         if( self.val() == 'm01' || self.val() == 'm02' || self.val() == 'm05' || self.val() == 'm10' ){
           var sq_features = OccTax.getResultFeatures( self.val());
           if(sq_features){
@@ -1461,6 +1491,10 @@ OccTax.events.on({
 
         rLayer.setVisibility(true);
         rLayer.refresh();
+
+        // Toggle the legend depending on the clicked button
+        var displayLegend = (self.val() != 'observation');
+        $('#map-content div.occtax-legend-container').toggle(displayLegend);
         //return false;
       });
 
@@ -1587,7 +1621,6 @@ OccTax.events.on({
       // Déplacement des icônes Lizmap de la barre de menu de gauche
       moveLizmapMenuLi(occtaxClientConfig.menuOrder);
 
-
       // Modification du mot "Rechercher"
       $('#search-query').attr('placeholder', 'Rechercher un lieu');
 
@@ -1597,13 +1630,24 @@ OccTax.events.on({
       // Ajout des tooltip sur les boutons
       $('#occtax button').tooltip();
 
+      // Déplacement de la barre de modification de l'affichage
+      $('#occtax_toggle_map_display')
+      .appendTo($('#map-content'))
+      .hide()
+      ;
+
+      // Ajout de la classe btn-primary sur les boutons du formulaire
+      $('div.jforms-submit-buttons button.jforms-reset').addClass('btn').addClass('btn-info');
+      $('div.jforms-submit-buttons input.jforms-submit').addClass('btn').addClass('btn-primary');
+
       // Refresh datatable size when bottom dock changes
-    lizMap.events.on({
-        bottomdocksizechanged: function(evt) {
-           var mycontainer = $('#occtax_tables div.bottom-content.active');
-           refreshOcctaxDatatableSize(mycontainer);
-        }
-    });
+      // commented because tables are not in the bottom dock anymore
+        //lizMap.events.on({
+            //bottomdocksizechanged: function(evt) {
+               //var mycontainer = $('#occtax_tables div.bottom-content.active');
+               //refreshOcctaxDatatableSize(mycontainer);
+            //}
+        //});
 
 
     }
