@@ -24,6 +24,7 @@ CREATE TABLE validation_observation (
     procedure text,
     proc_ref text,
     comm_val text,
+    nom_retenu text,
     CONSTRAINT validation_observation_niv_val_ok CHECK (niv_val IN ( '1', '2', '3', '4', '5', '6' ) ),
     CONSTRAINT validation_observation_typ_val_ok CHECK (typ_val IN ( 'A', 'C', 'M') ),
     CONSTRAINT validation_observation_peri_val_ok CHECK (peri_val IN ( '1', '2' ) ),
@@ -69,6 +70,8 @@ COMMENT ON COLUMN validation_observation.proc_vers IS 'Version de la procédure 
 COMMENT ON COLUMN validation_observation.proc_ref IS 'Référence permettant de retrouver la procédure : URL, référence biblio, texte libre. Exemple : https://inpn.mnhn.fr/docs-web/docs/download/146208';
 
 COMMENT ON COLUMN validation_observation.comm_val IS 'Commentaire sur la validation.';
+
+COMMENT ON COLUMN occtax.validation_observation.nom_retenu IS 'Nom scientifique du taxon attribué par le validateur, dans le cas où ce taxon est différent du taxon cité initialement par l''observateur (sinon le champ reste NULL). Cela peut arriver en cas d''identification erronnée par l''observateur, ou bien lorsque le validateur valide l''observation au niveau d''un parent taxonomique. Le champ n''a toutefois pas vocation à stocker un nom qui serait synonyme de celui cité par l''observateur, Taxref permettant déjà de traiter les cas de synonymie.' ;
 
 
 -- Tables et fonctions de gestion de validation et sensibilite automatique
@@ -675,7 +678,8 @@ CASE
     WHEN vprod.id_validation IS NOT NULL
         THEN concat('Niveau de validité attribué le ', vprod.date_ctrl::TEXT, ' par ', vprod.val_validateur ,  ' : ', vprod.valeur, '.', vprod.comm_val)
     ELSE NULL
-END AS validation_producteur
+END AS validation_producteur,
+v.nom_retenu
 FROM vm_observation o
 LEFT JOIN (
     SELECT vv.*,

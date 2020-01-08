@@ -55,6 +55,7 @@ CREATE TABLE observation (
     cd_nom bigint,
     cd_ref bigint,
     version_taxref text,
+    cd_nom_cite bigint,
     nom_cite text NOT NULL,
 
     denombrement_min integer,
@@ -197,7 +198,6 @@ COMMENT ON COLUMN observation.type_denombrement IS 'Méthode utilisée pour le d
 
 COMMENT ON COLUMN observation.commentaire IS 'Champ libre pour informations complémentaires indicatives';
 
-
 COMMENT ON TABLE observation IS 'Une observation a une seule source qui peut être de 3 types différents : terrain, littérature ou collection. Ils ont des attributs communs JddId et JddCode qui précisent le support de la source, par exemple, le nom de la base de données où est gérée la Donnée Source ou le nom de la collection. Si la source est Littérature, un attribut est nécessaire pour préciser les références bibliographiques. En plus des attributs sur la source, des attributs permettent de caractériser la DEE (sensibilité ...) et de caractériser le sujet de l’observation: le nom du taxon observé, le dénombrement. Une observation est effectuée à une date au jour. En cas de doute sur la date exacte de l’observation, elle peut être représentée par des dates et heures de début et de fin présumées d’observation (période d’imprécision). L’heure de l’observation et la date de la détermination du taxon de l’observation peut être ajoutée.';
 
 COMMENT ON COLUMN observation.date_debut IS 'Date du jour de l’observation dans le système grégorien. En cas d’imprécision, cet attribut représente la date la plus ancienne de la période d’imprécision. Norme ISO8601 : aaaa-mm-jj. Exemple : 2013-11-15';
@@ -260,7 +260,7 @@ COMMENT ON COLUMN observation.validite_date_validation IS 'Date de réalisation 
 COMMENT ON COLUMN observation.descriptif_sujet IS 'Donnée sur le descriptif_sujet, au format JSON.';
 COMMENT ON COLUMN observation.donnee_complementaire IS 'Données complémentaires issues de la source de données, mais en dehors du format Occurences de taxon. Gardé ici pour conservation. Au format JSON';
 
-
+COMMENT ON COLUMN occtax.observation.cd_nom_cite IS 'Code du taxon « cd_nom » de TaxRef référençant au niveau national le taxon tel qu''il a été initialement cité par l''observateur dans le champ nom_cite. Le rang taxinomique de la donnée doit être celui de la donnée d''origine. Par défaut, cd_nom = cd_nom_cite. cd_nom peut être modifié dans le cas de la procédure de validation après accord du producteur selon les règles définies dans le protocole régional de validation.' ;
 
 -- Table personne
 CREATE TABLE personne (
@@ -564,20 +564,23 @@ COMMENT ON COLUMN attribut_additionnel.thematique IS 'Thématique relative à l'
 CREATE TABLE jdd (
     jdd_id text NOT NULL PRIMARY KEY,
     jdd_code text NOT NULL,
+    jdd_libelle text,
     jdd_description text,
     jdd_metadonnee_dee_id text NOT NULL,
     jdd_cadre text,
-    ayants_droit jsonb
+    ayants_droit jsonb,
+    date_minimum_de_diffusion date
 );
 
 COMMENT ON TABLE jdd IS 'Recense les jeux de données officiels du standard Occurence de taxons. Un jeu de données correspond souvent à une base de données';
 COMMENT ON COLUMN jdd.jdd_id IS 'Un identifiant pour la collection ou le jeu de données terrain d’où provient l’enregistrement. Exemple code IDCNP pour l’INPN : « 00-15 ».';
 COMMENT ON COLUMN jdd.jdd_code IS 'Le nom, l’acronyme, le code ou l’initiale identifiant la collection ou le jeu de données dont l’enregistrement de la Donnée Source provient. Exemple « INPN », « Silène », « BDMAP »';
+COMMENT ON COLUMN jdd.jdd_libelle IS 'Libellé court et intelligible du jeu de données';
 COMMENT ON COLUMN jdd.jdd_description IS 'Description du jeu de données';
 COMMENT ON COLUMN jdd.jdd_metadonnee_dee_id IS 'Identifiant permanent et unique de la fiche métadonnées du jeu de données auquel appartient la donnée. Cet identifiant est attribué par la plateforme';
 COMMENT ON COLUMN jdd.jdd_cadre IS 'Cadre d''acquisition qui permet de regrouper des jdd de même producteur. Ex: on peut avoir un jdd_id par annee pour le même cadre d''acquisition';
 COMMENT ON COLUMN jdd.ayants_droit IS 'Liste et rôle des structures ayant des droits sur le jeu de données, et rôle concerné (ex : financeur, maître d''oeuvre...). Stocker les structures via leur id_organisme';
-
+COMMENT ON COLUMN jdd.date_minimum_de_diffusion IS 'Pour les données de recherche, les producteurs peuvent attendre que la publication scientifique soit publiée avant de diffuser les données. Cette date est utilisée dans le requête de création de la vue matérialisée occtax.vm_observation pour ne pas prendre en compte les données dont la date minimum n''est pas atteinte';
 
 -- Table lien_observation_identifiant_permanent
 -- utilisée pour ne pas perdre les enregistrements permanents lors d'un réimport et écrasement de données d'un même jdd
@@ -1200,7 +1203,7 @@ AND o.jdd_id = ANY ( $1 )
 -- Départements
 DELETE FROM occtax.localisation_departement
 WHERE cle_obs IN (
-    SELECT cle_obs FROM occtax.observation WHERE jdd_id = ANY ( $1 )
+    SELECT cle_obs FROM occtax.observation WHERE jdd_id = ANY ( $1 ) AND geom IS NOT NULL
 );
 INSERT INTO occtax.localisation_departement
 SELECT DISTINCT
@@ -1216,7 +1219,7 @@ AND o.jdd_id = ANY ( $1 )
 -- -- -- localisation_maille_10
 DELETE FROM occtax.localisation_maille_10
 WHERE cle_obs IN (
-    SELECT cle_obs FROM occtax.observation WHERE jdd_id = ANY ( $1 )
+    SELECT cle_obs FROM occtax.observation WHERE jdd_id = ANY ( $1 ) AND geom IS NOT NULL
 );
 INSERT INTO occtax.localisation_maille_10
 SELECT DISTINCT
@@ -1232,7 +1235,7 @@ AND o.jdd_id = ANY ( $1 )
 -- -- -- localisation_maille_05
 DELETE FROM occtax.localisation_maille_05
 WHERE cle_obs IN (
-    SELECT cle_obs FROM occtax.observation WHERE jdd_id = ANY ( $1 )
+    SELECT cle_obs FROM occtax.observation WHERE jdd_id = ANY ( $1 ) AND geom IS NOT NULL
 );
 INSERT INTO occtax.localisation_maille_05
 SELECT DISTINCT
@@ -1248,7 +1251,7 @@ AND o.jdd_id = ANY ( $1 )
 -- -- -- localisation_maille_02
 DELETE FROM occtax.localisation_maille_02
 WHERE cle_obs IN (
-    SELECT cle_obs FROM occtax.observation WHERE jdd_id = ANY ( $1 )
+    SELECT cle_obs FROM occtax.observation WHERE jdd_id = ANY ( $1 ) AND geom IS NOT NULL
 );
 INSERT INTO occtax.localisation_maille_02
 SELECT DISTINCT
@@ -1264,7 +1267,7 @@ AND o.jdd_id = ANY ( $1 )
 -- -- -- localisation_maille_01
 DELETE FROM occtax.localisation_maille_01
 WHERE cle_obs IN (
-    SELECT cle_obs FROM occtax.observation WHERE jdd_id = ANY ( $1 )
+    SELECT cle_obs FROM occtax.observation WHERE jdd_id = ANY ( $1 ) AND geom IS NOT NULL
 );
 INSERT INTO occtax.localisation_maille_01
 SELECT DISTINCT
@@ -1280,7 +1283,7 @@ AND o.jdd_id = ANY ( $1 )
 -- -- -- localisation_masse_eau
 DELETE FROM occtax.localisation_masse_eau
 WHERE cle_obs IN (
-    SELECT cle_obs FROM occtax.observation WHERE jdd_id = ANY ( $1 )
+    SELECT cle_obs FROM occtax.observation WHERE jdd_id = ANY ( $1 ) AND geom IS NOT NULL
 );
 INSERT INTO occtax.localisation_masse_eau
 SELECT DISTINCT
@@ -1296,7 +1299,7 @@ AND o.jdd_id = ANY ( $1 )
 -- -- -- localisation_espace_naturel
 DELETE FROM occtax.localisation_espace_naturel
 WHERE cle_obs IN (
-    SELECT cle_obs FROM occtax.observation WHERE jdd_id = ANY ( $1 )
+    SELECT cle_obs FROM occtax.observation WHERE jdd_id = ANY ( $1 ) AND geom IS NOT NULL
 );
 INSERT INTO occtax.localisation_espace_naturel
 SELECT DISTINCT
