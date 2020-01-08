@@ -117,6 +117,27 @@ Boutons de requête spatial
 Onglets de résultat
 */
 
+#occtax_search_result div.tab-content{
+/*
+  background: lightgray;
+*/
+  border-top: 1px solid lightgray;
+}
+#occtax_search_result .nav-tabs > li > a{
+ background: #efefef;
+ color: #333333;
+ font-weight: normal;
+ border: 1px solid lightgray;
+ border-bottom: none;
+}
+#occtax_search_result .nav-tabs > li > a:hover,
+#occtax_search_result .nav-tabs > .active > a,
+#occtax_search_result .nav-tabs > .active > a:hover,
+#occtax_search_result .nav-tabs > .active > a:focus {
+ background: lightgray;
+ font-weight: bold;
+}
+
 #occtax_results_tabs.nav-tabs > li > a,
 #occtax_results_tabs.nav-tabs > li > a:hover,
 #occtax_results_tabs.nav-tabs > li > a:focus {
@@ -126,6 +147,8 @@ Onglets de résultat
 #occtax_results_export_div > form > legend {
   font-size: 12px;
 }
+
+
 
 /*
 Left Menu button
@@ -382,7 +405,14 @@ Boutons de changement de l'affichage carte: maille 1, 2, 10 ou  observations bru
   bottom: 0;
   margin-left: calc(50% - 100px);
   position: absolute;
-  z-index: 6000;
+  z-index: 1050;
+}
+#content.mobile #map-content #occtax_toggle_map_display {
+  left: 40px;
+  margin-left:0px;
+}
+#content.mobile #overview-box {
+  display: none;
 }
 
 /*
@@ -390,7 +420,7 @@ Légende des mailles*/
 #map-content div.occtax-legend-container {
   bottom: 50px;
   position: absolute;
-  z-index: 2000;
+  z-index: 1000;
   margin-left: calc(50% - 100px);
   background:rgba(255,255,255,0.4);
   padding: 5px;
@@ -399,4 +429,9 @@ Légende des mailles*/
 }
 #map-content div.occtax-legend-container b{
   font-size: 14px;
+}
+
+#content.mobile #map-content div.occtax-legend-container {
+  left: 40px;
+  margin-left:0px;
 }
