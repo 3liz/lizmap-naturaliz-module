@@ -206,10 +206,15 @@ OccTax.events.on({
     }
 
     function addTaxonToSearch( cd_nom, nom_cite ) {
-        //console.log(cd_nom, nom_cite);
         // todo supprimer commentaires
         // Vider le search_token
         //$('#div_form_occtax_search_token form [name="search_token"]').val('');
+
+        // On vérifie que l'onglet actif est bien celui du panier
+        // Important car le submit vérifie l'onglet actif pour supprimer les paramètres de l'autre onglet
+        if ($('#recherche_taxon_attributs').hasClass('active')) {
+          $('li a[href="#recherche_taxon_panier"]').click();
+        }
 
         // Afficher la liste
         $('#occtax_taxon_select_list').show();
@@ -247,7 +252,9 @@ OccTax.events.on({
                 displayTaxonDetail(cd_nom);
                 //return false;
             });
+
         }
+
     }
 
     function getTaxonDataFromApi(cd_nom, aCallback){
@@ -540,7 +547,7 @@ OccTax.events.on({
               var tr = $($(this).parents('tr')[0]);
               var d = $('#'+tableId+'').DataTable().row( tr ).data();
               var cd_nom = tr.attr('id');
-              //~ console.log( cd_nom );
+              //console.log( cd_nom );
               var row_label = $('#'+tableId+' thead tr th.row-label').attr('data-value');
               row_label = row_label.split(',')[0];
 
@@ -548,7 +555,7 @@ OccTax.events.on({
               var removePanier = true;
               var removeFilters = true;
               clearTaxonFromSearch(removePanier, removeFilters);
-              //~ console.log( cd_nom, d[row_label] );
+              // console.log( cd_nom, d[row_label] );
 
               // Add new taxon to search
               addTaxonToSearch( cd_nom, d[row_label] );
