@@ -234,12 +234,13 @@ class occtaxSearch {
             if( array_key_exists( 'jdd_id', $osParams ) and $osParams['jdd_id'] ){
                 $jdd_id = $osParams['jdd_id'];
                 $jdd = $dao_jdd->get( $jdd_id );
-                if( $jdd )
-                    $content.= '  * ' . $jdd->jdd_code . ' ( ' . $jdd->jdd_description . " )\r\n";
+                if( $jdd ){
+                    $content.= '  * ' . $jdd->jdd_libelle . ' ( ' . $jdd->jdd_description . " )\r\n";
+                }
             }else{
-                $jdds = $dao_jdd->findAll();
+                $jdds = $dao_jdd->getJddList();
                 foreach( $jdds as $jdd ){
-                    $content.= '  * ' . $jdd->jdd_code . ' ( ' . $jdd->jdd_description . " )\r\n";
+                    $content.= '  * ' . $jdd->jdd_libelle . ' ( ' . $jdd->jdd_description . " )\r\n";
                 }
                 $content.= "\r\n\r\n";
                 $content.= 'NB: La liste des jeux de données (JDD) ci-dessus montre l\'ensemble des JDD disponibles dans la plate-forme. Elle n\'est pas filtrée en fonction des résultats.';

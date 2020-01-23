@@ -7,14 +7,22 @@
         <property name="jdd_id" fieldname="jdd_id" datatype="text" required="true"/>
         <property name="jdd_code" fieldname="jdd_code" datatype="text" required="true"/>
         <property name="jdd_description" fieldname="jdd_description" datatype="text"/>
+        <property name="jdd_metadonnee_dee_id" fieldname="jdd_metadonnee_dee_id" datatype="text"/>
+        <property name="jdd_cadre" fieldname="jdd_cadre" datatype="text"/>
+        <property name="jdd_libelle" fieldname="jdd_libelle" datatype="text"/>
+        <property name="date_minimum_de_diffusion" fieldname="date_minimum_de_diffusion" datatype="date"/>
         <!--<property name="" fieldname="" datatype="string/int/float/date"
         required="yes" maxlength="" minlength="" regexp="" sequence=""
         updatepattern="" insertpattern="" selectpattern=""/>-->
     </record>
     <factory>
         <method name="getJddList" type="select">
+            <conditions logic="or">
+                <isnull property="date_minimum_de_diffusion"/>
+                <lteq property="date_minimum_de_diffusion" expr="now()" />
+            </conditions>
             <order>
-                <orderitem property="jdd_code" way="asc" />
+                <orderitem property="jdd_libelle" way="asc" />
             </order>
         </method>
         <!--<method name="findByStage" type="select/selectfirst/delete/update/php">

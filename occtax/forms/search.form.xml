@@ -141,13 +141,13 @@ Masqué pour simplifier
             <label locale="occtax~search.input.jdd_id"/>
             <emptyitem locale="occtax~search.input.emptyitem"/>
             <datasource dao="occtax~jdd"
-              method="getJddList" labelproperty="jdd_id,jdd_code"  labelseparator=" - "
+              method="getJddList" labelproperty="jdd_libelle"
               valueproperty="jdd_id"/>
             <hint locale="occtax~search.input.jdd_id.help"/>
         </menulist>
 
         <menulist ref="validite_niveau">
-            <label locale="occtax~search.input.validite_niveau"/>
+                <label locale="occtax~search.input.validite_niveau"/>
             <emptyitem locale="occtax~search.input.emptyitem"/>
             <datasource dao="occtax~nomenclature"
               method="findByChamp" criteria="validite_niveau"
