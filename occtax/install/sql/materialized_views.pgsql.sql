@@ -279,7 +279,7 @@ LEFT JOIN taxon."t_group_categorie" AS tgc1  ON tgc1.groupe_nom = t.group1_inpn 
 LEFT JOIN taxon."t_group_categorie" AS tgc2  ON tgc2.groupe_nom = t.group2_inpn AND tgc2.groupe_type = 'group2_inpn'
 LEFT JOIN occtax."jdd" ON jdd.jdd_id = o.jdd_id
 WHERE TRUE
-AND (jdd.date_minimum_de_diffusion IS NULL OR jdd.date_minimum_de_diffusion >= now() )
+AND (jdd.date_minimum_de_diffusion IS NULL OR jdd.date_minimum_de_diffusion <= now() )
 ;
 
 CREATE INDEX vm_observation_cle_obs_idx ON occtax.vm_observation (cle_obs);
