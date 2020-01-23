@@ -114,6 +114,13 @@ Boutons de requête spatial
 
 
 /*
+Boutons de submit du form
+*/
+div#div_form_occtax_search_token div.jforms-submit-buttons{
+  text-align: center;
+}
+
+/*
 Onglets de résultat
 */
 
