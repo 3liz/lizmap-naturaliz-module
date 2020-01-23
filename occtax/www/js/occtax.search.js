@@ -407,7 +407,7 @@ OccTax.events.on({
                 var mytoken = searchForm.find('input[name="token"]').val();
                 if(!mytoken)
                   return false;
-                $.getJSON(searchForm.attr('action'), searchForm.serialize(),
+                $.post(searchForm.attr('action'), searchForm.serialize(),
                     function( results ) {
                           var tData = {
                             "recordsTotal": 0,
@@ -442,7 +442,7 @@ OccTax.events.on({
                           $('#'+tableId+'').show();
 
                     }
-                );
+                , 'json');
             }
         });
     }
@@ -492,7 +492,7 @@ OccTax.events.on({
                 var mytoken = searchForm.find('input[name="token"]').val();
                 if(!mytoken)
                   return false;
-                $.getJSON(searchForm.attr('action'), searchForm.serialize(),
+                $.post(searchForm.attr('action'), searchForm.serialize(),
                     function( results ) {
                           var tData = {
                             "recordsTotal": 0,
@@ -536,7 +536,7 @@ OccTax.events.on({
                           callback( tData );
                           $('#'+tableId+'').show();
                     }
-                );
+                , 'json');
             }
         });
         $('#'+tableId+'').on( 'page.dt', function() {
@@ -610,7 +610,7 @@ OccTax.events.on({
                 var mytoken = searchForm.find('input[name="token"]').val();
                 if(!mytoken)
                   return false;
-                $.getJSON(searchForm.attr('action'), searchForm.serialize(),
+                $.post(searchForm.attr('action'), searchForm.serialize(),
                     function( results ) {
                           var tData = {
                             "recordsTotal": 0,
@@ -661,7 +661,7 @@ OccTax.events.on({
 
 
                     }
-                );
+                , 'json');
             }
         });
         $('#'+tableId+'').on( 'page.dt', function() {
@@ -746,7 +746,7 @@ OccTax.events.on({
               var mytoken = searchForm.find('input[name="token"]').val();
               if(!mytoken)
                 return false;
-              $.getJSON(searchForm.attr('action'), searchForm.serialize(),
+              $.post(searchForm.attr('action'), searchForm.serialize(),
                 function( results ) {
                   //console.log( results );
                   var tData = {
@@ -785,7 +785,7 @@ OccTax.events.on({
 
                   refreshOcctaxDatatableSize('#occtax_results_observation_table_div');
                   $('#'+tableId+'').show();
-                });
+                }, 'json');
             }
         });
         $('#'+tableId+'').on( 'page.dt', function() {
@@ -836,11 +836,11 @@ OccTax.events.on({
             request.limit = $('#form_taxon_service_autocomplete input[name="limit"]').val();
             request.taxons_locaux = $('#jforms_occtax_search_taxons_locaux').prop( "checked");
             request.taxons_bdd = $('#jforms_occtax_search_taxons_bdd').prop( "checked");
-            $.getJSON($('#form_taxon_service_autocomplete').attr('action'),
+            $.post($('#form_taxon_service_autocomplete').attr('action'),
                 request, function( data, status, xhr ) {
                   //rearange data if necessary
                   response( data );
-            });
+            }, 'json');
         },
         open: function( e, ui ) {
         },
@@ -1288,7 +1288,7 @@ OccTax.events.on({
         }
 
         // Send request and get token
-        $.getJSON(self.attr('action'), self.serialize(),
+        $.post(self.attr('action'), self.serialize(),
             function(tData) {
                 blocme = false;
                 if (tData.status == 1) {
@@ -1359,7 +1359,7 @@ OccTax.events.on({
                   lizMap.addMessage( tData.msg.join('<br/>'), 'error', true );
                 }
             }
-        );
+        ,'json');
         return false;
       });
 

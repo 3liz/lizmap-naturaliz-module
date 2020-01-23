@@ -691,7 +691,7 @@ LEFT JOIN (
 ;
 
 -- gestion
-ALTER TABLE gestion.echange_inpn ADD COLUMN liste_identifiant_permanent TEXT[] ;
+ALTER TABLE gestion.echange_inpn ADD COLUMN IF NOT EXISTS liste_identifiant_permanent TEXT[] ;
 COMMENT ON COLUMN gestion.echange_inpn.liste_identifiant_permanent IS 'Liste des identifiants permanents des observations transmises lors de l''échange de données. Ce champ est destiné à faciliter la traçabilité des données, afin notamment de ne pas exporter deux fois les mêmes données et de pouvoir transmettre à nouveau des observations qui auraient été modifiées (notamment validées) depuis le dernier échange.';
 
 

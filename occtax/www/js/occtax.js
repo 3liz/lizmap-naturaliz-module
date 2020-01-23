@@ -89,7 +89,6 @@ var OccTax = function() {
      */
     validGeometryFeature: function( feature ){
         if(OccTax.config.maxAreaQuery > 0 && feature.geometry.getArea() >= OccTax.config.maxAreaQuery) {
-            //mascarineService.displayMessage( 'error', "L'aire ne peut pas dépasser "+ OccTax.config.maxAreaQuery / 1000000 +" km² !");
             // suppression de la géométrie et on réduit le cercle à la surface max
             var myRadius = Math.sqrt( OccTax.config.maxAreaQuery / Math.PI );
             var myCentroid = feature.geometry.getCentroid();

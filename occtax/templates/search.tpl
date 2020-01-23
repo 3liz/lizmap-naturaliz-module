@@ -320,7 +320,7 @@ RESULTATS DE RECHERCHE (TABLEAUX)
 -->
         <div id="occtax_results_export_div" class="tab-pane bottom-content attribute-content">
 
-            <form class="form-horizontal" id="occtax_result_export_form">
+            <form class="form-horizontal" method="post" id="occtax_result_export_form">
                 <legend>{@occtax~search.result.export.legend@}</legend>
                 <div class="control-group">
                     <label class="control-label" for="export_projection">Projection</label>
