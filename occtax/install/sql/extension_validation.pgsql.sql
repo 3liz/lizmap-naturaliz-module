@@ -327,6 +327,7 @@ BEGIN
     SELECT INTO procedure_ref_record
         "procedure", proc_vers, proc_ref
     FROM occtax.validation_procedure
+    ORDER BY proc_vers DESC
     LIMIT 1;
     IF procedure_ref_record.proc_vers IS NULL THEN
         RAISE EXCEPTION '[naturaliz] La table validation_procedure est vide';
