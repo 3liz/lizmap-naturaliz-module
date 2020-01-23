@@ -1294,12 +1294,14 @@ OccTax.events.on({
                     // Display description div
                     var dHtml = tData.description;
                     $('#occtax_search_description_content').html(dHtml);
+
                     // Show or hide depending on dock height
                     var dockHeight = $('#dock').height();
                     if(dockHeight >= 800)
                       $('#occtax_search_description').show();
                     else
                       $('#occtax_search_description').hide();
+
                     // Show description title
                     $('#occtax_search_description').prev('h3.occtax_search').show();
                     $('#occtax-search-modify').show();
@@ -1307,10 +1309,12 @@ OccTax.events.on({
 
                     // Move legend to map
                     $('#map-content div.occtax-legend-container').remove();
-                    $('#dock div.occtax-legend-container')
-                    .appendTo($('#map-content'))
-                    .show();
-                    $('#occtax_toggle_map_display').show();
+                    if(tData.recordsTotal > 0){
+                        $('#dock div.occtax-legend-container')
+                        .appendTo($('#map-content'))
+                        .show();
+                        $('#occtax_toggle_map_display').show();
+                    }
 
                     // Change wfs export URL
                     $('a#btn-get-wfs').attr('href', tData.wfsUrl);
