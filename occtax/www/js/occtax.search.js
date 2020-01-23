@@ -126,9 +126,9 @@ OccTax.events.on({
                           } else {
                             theLayer.destroyFeatures();
                             if ( data.msg.length != 0 )
-                              lizMap.addMessage( data.msg.join('<br/>'), 'error', true );
+                              lizMap.addMessage( data.msg.join('<br/>'), 'error', true ).attr('id','occtax-highlight-message');
                             else
-                              lizMap.addMessage( 'Error', 'error', true );
+                              lizMap.addMessage( 'Error', 'error', true ).attr('id','occtax-highlight-message');
                             //~ console.log(data);
                           }
                       });
@@ -153,9 +153,9 @@ OccTax.events.on({
                           } else {
                             theLayer.destroyFeatures();
                             if ( data.msg.length != 0 )
-                              lizMap.addMessage( data.msg.join('<br/>'), 'error', true );
+                              lizMap.addMessage( data.msg.join('<br/>'), 'error', true ).attr('id','occtax-highlight-message');
                             else
-                              lizMap.addMessage( 'Error', 'error', true );
+                              lizMap.addMessage( 'Error', 'error', true ).attr('id','occtax-highlight-message');
                             //~ console.log(data);
                           }
                       });
@@ -180,9 +180,9 @@ OccTax.events.on({
                           } else {
                             theLayer.destroyFeatures();
                             if ( data.msg.length != 0 )
-                              lizMap.addMessage( data.msg.join('<br/>'), 'error', true );
+                              lizMap.addMessage( data.msg.join('<br/>'), 'error', true ).attr('id','occtax-highlight-message');
                             else
-                              lizMap.addMessage( 'Error', 'error', true );
+                              lizMap.addMessage( 'Error', 'error', true ).attr('id','occtax-highlight-message');
                             //~ console.log(data);
                           }
                       });
@@ -433,9 +433,9 @@ OccTax.events.on({
 
                           } else {
                               if ( results.msg.length != 0 )
-                                lizMap.addMessage( results.msg.join('<br/>'), 'error', true );
+                                lizMap.addMessage( results.msg.join('<br/>'), 'error', true ).attr('id','occtax-highlight-message');
                               else
-                                lizMap.addMessage( 'Error', 'error', true );
+                                lizMap.addMessage( 'Error', 'error', true ).attr('id','occtax-highlight-message');
                           }
                           refreshOcctaxDatatableSize('#occtax_results_stats_table_div');
                           callback( tData );
@@ -527,9 +527,9 @@ OccTax.events.on({
 
                           } else {
                             if ( results.msg.length != 0 )
-                                lizMap.addMessage( results.msg.join('<br/>'), 'error', true );
+                                lizMap.addMessage( results.msg.join('<br/>'), 'error', true ).attr('id','occtax-highlight-message');
                             else
-                                lizMap.addMessage( 'Error', 'error', true );
+                                lizMap.addMessage( 'Error', 'error', true ).attr('id','occtax-highlight-message');
                           }
                           refreshOcctaxDatatableSize('#occtax_results_taxon_table_div');
 
@@ -637,9 +637,9 @@ OccTax.events.on({
                             }
                           } else {
                             if ( results.msg.length != 0 )
-                                lizMap.addMessage( results.msg.join('<br/>'), 'error', true );
+                                lizMap.addMessage( results.msg.join('<br/>'), 'error', true ).attr('id','occtax-highlight-message');
                             else
-                                lizMap.addMessage( 'Error', 'error', true );
+                                lizMap.addMessage( 'Error', 'error', true ).attr('id','occtax-highlight-message');
                           }
                           $('#'+tableId+' a').unbind('click');
                           callback( tData );
@@ -775,9 +775,9 @@ OccTax.events.on({
                     }
                   } else {
                     if ( results.msg.length != 0 )
-                        lizMap.addMessage( results.msg.join('<br/>'), 'error', true );
+                        lizMap.addMessage( results.msg.join('<br/>'), 'error', true ).attr('id','occtax-highlight-message');
                     else
-                        lizMap.addMessage( 'Error', 'error', true );
+                        lizMap.addMessage( 'Error', 'error', true ).attr('id','occtax-highlight-message');
                   }
                   callback( tData );
                   if ( $('#occtax_results_draw_observation').hasClass('active') )
@@ -958,11 +958,9 @@ OccTax.events.on({
       ul.append(li);
     }
 
-
-
-
         //console.log('OccTax uicreated');
         $('#occtax-message').remove();
+        $('#occtax-highlight-message').remove();
         // Hide empty groups
         $('.jforms-table-group').each(function(){
             var tbContent = $(this).html().replace(/(\r\n|\n|\r)/gm,"");
@@ -1037,20 +1035,20 @@ OccTax.events.on({
                         // break if the geometry is not a polygon
                         if ( geom.CLASS_NAME != 'OpenLayers.Geometry.Polygon'
                           && geom.CLASS_NAME != 'OpenLayers.Geometry.MultiPolygon' ) {
-                            lizMap.addMessage( 'Geometrie incorrecte', 'error', true );
+                            lizMap.addMessage( 'Geometrie incorrecte', 'error', true ).attr('id','occtax-highlight-message');
                             multiPoly = null;
                             break;
                         }
                         // does not store geom if not in the map
                         if ( !lizMap.map.restrictedExtent.intersectsBounds( geom.getBounds() ) ){
-                            lizMap.addMessage( "La zone envoyée n'est pas dans l'emprise de la carte. La donnée doit être dans la projection de la carte :  " + lizMap.map.getProjection(), 'error', true );
+                            lizMap.addMessage( "La zone envoyée n'est pas dans l'emprise de la carte. La donnée doit être dans la projection de la carte :  " + lizMap.map.getProjection(), 'error', true ).attr('id','occtax-highlight-message');
                             break;
                         }
                         // sum total surface
                         totalSurf += geom.getArea();
                         // break if total surface is enough than maxAreaQuery (only if maxAreaQuery != -1
                         if ( OccTax.config.maxAreaQuery > 0 && totalSurf >= OccTax.config.maxAreaQuery ) {
-                            lizMap.addMessage( 'La surface totale des objets est trop importante (doit être < ' +  OccTax.config.maxAreaQuery + ' )', 'error', true );
+                            lizMap.addMessage( 'La surface totale des objets est trop importante (doit être < ' +  OccTax.config.maxAreaQuery + ' )', 'error', true ).attr('id','occtax-highlight-message');
                             multiPoly = null;
                             break;
                         }
@@ -1072,10 +1070,10 @@ OccTax.events.on({
                         var multiFeat = new OpenLayers.Feature.Vector( multiPoly );
                         OccTax.layers['queryLayer'].addFeatures( multiFeat );
                         onQueryFeatureAdded( multiFeat );
-                        lizMap.addMessage( data.msg.join('<br/>'), 'info', true );
+                        lizMap.addMessage( data.msg.join('<br/>'), 'info', true ).attr('id','occtax-highlight-message');
                     }
                 } else
-                    lizMap.addMessage( data.msg.join('<br/>'), 'error', true );
+                    lizMap.addMessage( data.msg.join('<br/>'), 'error', true ).attr('id','occtax-highlight-message');
             }
         });
 
@@ -1219,6 +1217,8 @@ OccTax.events.on({
 
       // Toggle pannel display
       $('#occtax-search-modify').click(function(){
+        $('#occtax-highlight-message').remove();
+        $('#occtax-message').remove();
         $('#occtax_search_input').show();
         $('#occtax_search_description').hide();
         $('#occtax_search_result').hide();
@@ -1272,6 +1272,10 @@ OccTax.events.on({
            var anerror = 1;
            //console.error(e);
         }
+
+        // Remove previous messages
+        $('#occtax-message').remove();
+        $('#occtax-highlight-message').remove();
 
         // Remove taxon input values depending on active tab
         if( $('#occtax_taxon_tab_div > div.tab-content > div.active').length == 1 ) {
@@ -1359,7 +1363,7 @@ OccTax.events.on({
                     refreshOcctaxDatatableSize(mycontainer);
 
                 }else{
-                  lizMap.addMessage( tData.msg.join('<br/>'), 'error', true );
+                  lizMap.addMessage( tData.msg.join('<br/>'), 'error', true ).attr('id','occtax-highlight-message');
                 }
             }
         ,'json');
@@ -1560,7 +1564,7 @@ OccTax.events.on({
           .show()
           .select()
           ;
-          lizMap.addMessage( 'Vous pouvez copier l\'url WFS correspondant à votre requête pour l\'utiliser dans votre SIG', 'info', true );
+          lizMap.addMessage( 'Vous pouvez copier l\'url WFS correspondant à votre requête pour l\'utiliser dans votre SIG', 'info', true ).attr('id','occtax-highlight-message');
         }
         // CSV or GeoJSON
         else{
