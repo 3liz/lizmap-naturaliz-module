@@ -15,6 +15,7 @@ COMMENT ON COLUMN occtax.validation_observation.nom_retenu IS 'Nom scientifique 
 -- jdd
 ALTER TABLE occtax.jdd ADD COLUMN IF NOT EXISTS jdd_libelle text;
 COMMENT ON COLUMN occtax.jdd.jdd_libelle IS 'Libellé court et intelligible du jeu de données';
+UPDATE occtax.jdd SET jdd_libelle = concat(jdd_id, ' - ', jdd_code) WHERE jdd_libelle IS NULL;
 ALTER TABLE occtax.jdd ADD COLUMN IF NOT EXISTS date_minimum_de_diffusion date;
 COMMENT ON COLUMN occtax.jdd.date_minimum_de_diffusion IS 'Pour les données de recherche, les producteurs peuvent attendre que la publication scientifique soit publiée avant de diffuser les données. Cette date est utilisée dans le requête de création de la vue matérialisée occtax.vm_observation pour ne pas prendre en compte les données dont la date minimum n''est pas atteinte';
 
@@ -707,7 +708,7 @@ sql_text := '
 -- -- localisation_commune
 DELETE FROM occtax.localisation_commune
 WHERE cle_obs IN (
-    SELECT cle_obs FROM occtax.observation WHERE jdd_id = ANY ( $1 )
+    SELECT cle_obs FROM occtax.observation WHERE jdd_id = ANY ( $1 ) AND geom IS NOT NULL
 );
 INSERT INTO occtax.localisation_commune
 SELECT DISTINCT
@@ -750,6 +751,7 @@ FROM occtax.observation o
 INNER JOIN sig.maille_10 m ON ST_Intersects( o.geom, m.geom )
 WHERE 2>1
 AND o.jdd_id = ANY ( $1 )
+AND o.geom IS NOT NULL
 ;
 
 -- -- -- localisation_maille_05
@@ -766,6 +768,7 @@ FROM occtax.observation o
 INNER JOIN sig.maille_05 m ON ST_Intersects( o.geom, m.geom )
 WHERE 2>1
 AND o.jdd_id = ANY ( $1 )
+AND o.geom IS NOT NULL
 ;
 
 -- -- -- localisation_maille_02
@@ -782,6 +785,7 @@ FROM occtax.observation o
 INNER JOIN sig.maille_02 m ON ST_Intersects( o.geom, m.geom )
 WHERE 2>1
 AND o.jdd_id = ANY ( $1 )
+AND o.geom IS NOT NULL
 ;
 
 -- -- -- localisation_maille_01
@@ -798,6 +802,7 @@ FROM occtax.observation o
 INNER JOIN sig.maille_01 m ON ST_Intersects( o.geom, m.geom )
 WHERE 2>1
 AND o.jdd_id = ANY ( $1 )
+AND o.geom IS NOT NULL
 ;
 
 -- -- -- localisation_masse_eau
@@ -814,6 +819,7 @@ FROM occtax.observation o
 INNER JOIN sig.masse_eau m ON ST_Intersects( o.geom, m.geom )
 WHERE 2>1
 AND o.jdd_id = ANY ( $1 )
+AND o.geom IS NOT NULL
 ;
 
 -- -- -- localisation_espace_naturel
@@ -830,6 +836,7 @@ FROM occtax.observation o
 INNER JOIN sig.espace_naturel en ON ST_Intersects( o.geom, en.geom )
 WHERE 2>1
 AND o.jdd_id = ANY ( $1 )
+AND o.geom IS NOT NULL
 ;
 
 ';
@@ -843,3 +850,4 @@ END
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
+
