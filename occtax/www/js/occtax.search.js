@@ -889,7 +889,6 @@ OccTax.events.on({
     }
 
     function getObservationDetail( id ) {
-      //console.log(id);
         if(!id)
             return;
         var tokenFormId = $('#div_form_occtax_search_token form').attr('id');
@@ -1184,9 +1183,9 @@ OccTax.events.on({
 
                     // on affiche la fiche de détail de l'observation
                     var ac = $('#occtax_search_result div.tab-pane.active').attr('id');
-                    if(ac == 'occtax_results_observation_table_div'){
+                    //if(ac == 'occtax_results_observation_table_div'){
                       getObservationDetail(evt.feature.fid);
-                    }
+                    //}
 
                     // on scroll dans le tableau : Le scroll ne fonctionne pas !
                     //var pos = tr.offset().top;
