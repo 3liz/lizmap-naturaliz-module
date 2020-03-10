@@ -68,8 +68,38 @@
    <Query/>
   </Operations>
   <FeatureType>
-   <Name>export_observation</Name>
-   <Title>export_observation</Title>
+   <Name>export_observation_point</Name>
+   <Title>export_observation_point</Title>
+   <Abstract>{$abstract}</Abstract>
+   <SRS>{$srs}</SRS>
+   <Operations>
+    <Query/>
+   </Operations>
+   <LatLongBoundingBox maxx="{$maxx}" maxy="{$maxy}" minx="{$minx}" miny="{$miny}"/>
+  </FeatureType>
+  <FeatureType>
+   <Name>export_observation_linestring</Name>
+   <Title>export_observation_linestring</Title>
+   <Abstract>{$abstract}</Abstract>
+   <SRS>{$srs}</SRS>
+   <Operations>
+    <Query/>
+   </Operations>
+   <LatLongBoundingBox maxx="{$maxx}" maxy="{$maxy}" minx="{$minx}" miny="{$miny}"/>
+  </FeatureType>
+  <FeatureType>
+   <Name>export_observation_polygon</Name>
+   <Title>export_observation_polygon</Title>
+   <Abstract>{$abstract}</Abstract>
+   <SRS>{$srs}</SRS>
+   <Operations>
+    <Query/>
+   </Operations>
+   <LatLongBoundingBox maxx="{$maxx}" maxy="{$maxy}" minx="{$minx}" miny="{$miny}"/>
+  </FeatureType>
+  <FeatureType>
+   <Name>export_observation_nogeom</Name>
+   <Title>export_observation_nogeom</Title>
    <Abstract>{$abstract}</Abstract>
    <SRS>{$srs}</SRS>
    <Operations>

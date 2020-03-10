@@ -194,6 +194,22 @@ class wfsCtrl extends jController {
         $keys = $this->search->getExportedFields( 'principal', 'name' );
         $vals = $this->search->getExportedFields( 'principal', 'type' );
         $assign['attributes'] = array_combine($keys, $vals);
+
+        $typename = 'export_observation_point';
+        $typenames = array(
+          'export_observation_point' => 'gml:PointPropertyType',
+          'export_observation_linestring' => 'gml:LineStringPropertyType',
+          'export_observation_polygon' => 'gml:MultiPolygonPropertyType',
+          'export_observation_nogeom' => 'String'
+        );
+        $p_typename = $this->params['typename'];
+        if (array_key_exists($p_typename, $typenames)) {
+          $typename = $p_typename;
+          $geometryType = $typenames[$p_typename];
+        }
+        $assign['typename'] = $typename;
+        $assign['geometryType'] = $typenames[$p_typename];
+
         $tpl->assign($assign);
         $data = $tpl->fetch('occtax~wfs_describefeaturetype');
 
@@ -222,7 +238,21 @@ class wfsCtrl extends jController {
         );
 
         $describeUrl = urlencode(jUrl::getFull('occtax~wfs:index', $params));
-        $path = $this->search->getGML($describeUrl);
+
+        $typename = 'export_observation_point';
+        $typenames = array(
+          'export_observation_point' => 'gml:PointPropertyType',
+          'export_observation_linestring' => 'gml:LineStringPropertyType',
+          'export_observation_polygon' => 'gml:MultiPolygonPropertyType',
+          'export_observation_nogeom' => 'String'
+        );
+        $p_typename = $this->params['typename'];
+        if (array_key_exists($p_typename, $typenames)) {
+          $typename = $p_typename;
+        }
+
+        $path = $this->search->getGML($describeUrl, $typename);
+
         $rep->fileName = $path;
         $rep->doDownload  =  false;
         $rep->outputFileName  =  'naturaliz_'.$service.'_data.gml';

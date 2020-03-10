@@ -479,20 +479,22 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                     $dnew = array();
                     $jval = json_decode($val);
                     $di = 1;
-                    foreach($jval as $jitem){
-                        $ditem = array();
-                        foreach($jitem as $j=>$v){
-                            $vv = $v;
-                            if(in_array($j, $this->nomenclatureFields)
-                            and array_key_exists($j . '_' . $v, $codenom)
-                            ){
+                    if(is_array($jval)){
+                        foreach($jval as $jitem){
+                            $ditem = array();
+                            foreach($jitem as $j=>$v){
+                                $vv = $v;
+                                if(in_array($j, $this->nomenclatureFields)
+                                and array_key_exists($j . '_' . $v, $codenom)
+                                ){
 
-                                $vv = $codenom[$j . '_' . $v];
+                                    $vv = $codenom[$j . '_' . $v];
+                                }
+                                $ditem[$j] = $vv;
                             }
-                            $ditem[$j] = $vv;
+                            $dnew["Groupe d'individus n°" . $di] = $ditem;
+                            $di++;
                         }
-                        $dnew["Groupe d'individus n°" . $di] = $ditem;
-                        $di++;
                     }
                     $val = trim(json_encode($dnew, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
                     // Make it more readable
@@ -764,11 +766,31 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
 
 
 
-    public function getGML( $describeUrl, $limit=Null, $offset=0) {
+    public function getGML( $describeUrl, $typename, $limit=Null, $offset=0) {
 
         $sql = "
         WITH source AS (
         ".$this->sql;
+
+        $typenames = array(
+          'export_observation_point' => 'POINT',
+          'export_observation_linestring' => 'LINESTRING',
+          'export_observation_polygon' => 'POLYGON',
+          'export_observation_nogeom' => Null
+        );
+        $geometryType = $typenames[$typename];
+        if($geometryType){
+            $sql.= "
+            AND GeometryType(geom) = '" . $geometryType .  "'
+            ";
+        }else{
+            $sql.= "
+            AND GeometryType(geom) NOT IN ('POINT', 'LINESTRING', 'POLYGON')
+            ";
+        }
+
+        // Restrict to given $typename geometry type
+
         if( $limit ){
             $sql.= " LIMIT ".$limit;
             if( $offset ){
@@ -783,7 +805,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             xmlelement(
                 name \"gml:featureMember\",
                 xmlelement(
-                    name \"qgs:export_observation\",
+                    name \"qgs:"  . $typename .  "\",
                     xmlattributes(source.cle_obs AS \"gml:id\"),
 
                     -- box
