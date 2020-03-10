@@ -236,11 +236,32 @@ class lizmapServiceCtrl extends serviceCtrl {
             $target = str_replace( '<', '&lt;', $target );
             $target = str_replace( '"', '\"', $target );
 
+            // Remove useless columns
+            $remove_cols = array(
+                'ST_AsGeoJSON( ST_Transform(o.geom, 4326), 6 ) AS geojson,',
+                'o.diffusion,',
+                'source_objet,'
+            );
+            foreach($remove_cols as $col){
+                $target = str_replace(
+                    $col,
+                    "",
+                    $target
+                );
+            }
+
+            // Remove diffusion column
+            $target = str_replace(
+                'o.diffusion,',
+                "",
+                $target
+            );
+
             // Replace source SQL by target depending on geometry type
             foreach( $this->data[$datatype]['originSql'] as $geomtype=>$source ){
                 $targetFinal = str_replace(
-                    'WHERE 2>1',
-                    "WHERE 2>1 AND GeometryType( g.geom ) IN ('" . $geomtype . "', 'MULTI" . $geomtype . "')",
+                    'WHERE True',
+                    "WHERE True AND GeometryType( o.geom ) IN ('" . $geomtype . "', 'MULTI" . $geomtype . "')",
                     $target
                 );
                 $pref = 'table="( ';
@@ -255,8 +276,8 @@ class lizmapServiceCtrl extends serviceCtrl {
             // So that we have a layer containing all data for all geometry types
             // This layer will be used for the attribute table
             $targetFinal = str_replace(
-                'g.geom FROM',
-                'ST_Centroid(g.geom) AS geom FROM',
+                '    o.geom,',
+                '    ST_Centroid(o.geom) AS geom,',
                 $target
             );
             $source = "SELECT * FROM tpl_observation_brute_centroid";
