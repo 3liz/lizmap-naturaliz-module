@@ -442,9 +442,11 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
 
         // Write header
         $fds = array();
+        $geometry_type_count = array();
         foreach($geometryTypes as $geometryType){
             $fds[$geometryType] = fopen($paths[$geometryType], 'w');
             fputcsv($fds[$geometryType], $attributes, $delimiter);
+            $geometry_type_count[$geometryType] = 0;
         }
 
         // Get nomenclature
@@ -463,6 +465,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
         foreach($res as $line){
             $nblignes++;
             $ldata = array();
+
             foreach($attributes as $att){
                 $val = $line->$att;
                 // on transforme les champs en nomenclature
@@ -515,6 +518,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 $ldata[] = $val;
             }
             fputcsv($fds[$gt], $ldata, $delimiter);
+            $geometry_type_count[$gt]+=1;
         }
         fclose($fds[$gt]);
 
@@ -524,10 +528,11 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 return Null;
             }
         }
+
         if($topic == 'principal'){
-            return $paths;
+            return array($paths, $geometry_type_count);
         }else{
-            return $paths[$gt];
+            return array($paths[$gt], $geometry_type_count[$gt]);
         }
     }
 

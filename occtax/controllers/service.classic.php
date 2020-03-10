@@ -315,8 +315,11 @@ class serviceCtrl extends jController {
         $principal = array();
         try {
             $topic = 'principal';
-            $csvs = $occtaxSearch->writeCsv( $topic, $limit, $offset, $delimiter );
+            list ($csvs, $counter) = $occtaxSearch->writeCsv( $topic, $limit, $offset, $delimiter );
             foreach($geometryTypes as $geometryType){
+                if($counter[$geometryType] == 0){
+                    continue;
+                }
                 $csv = $csvs[$geometryType];
                 $csvt = $occtaxSearch->writeCsvT( $topic, $delimiter, $geometryType );
                 $principal[$geometryType] = array( $csv, $csvt );
@@ -332,6 +335,9 @@ class serviceCtrl extends jController {
 
         // Add principal
         foreach($geometryTypes as $geometryType){
+            if(!array_key_exists($geometryType, $principal)){
+                continue;
+            }
             if(file_exists($principal[$geometryType][0]) ){
                 $rep->content->addFile( $principal[$geometryType][0], 'st_' . 'principal' . '_' . $this->geometryTypeTranslation[$geometryType] . '.csv' );
                 unlink( $principal[$geometryType][0] );
@@ -374,9 +380,9 @@ class serviceCtrl extends jController {
 
         foreach( $topics as $topic ) {
             // Write data to CSV and get csv file path
-            $csv = $occtaxSearch->writeCsv($topic );
+            list ($csv, $counter) = $occtaxSearch->writeCsv($topic );
             $csvt = $occtaxSearch->writeCsvT( $topic );
-            if($csv){
+            if($csv and $counter > 0){
                 $data[$topic] = array( $csv, $csvt );
             }
         }
