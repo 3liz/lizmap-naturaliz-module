@@ -1313,11 +1313,15 @@ OccTax.events.on({
 
                     // Move legend to map
                     $('#map-content div.occtax-legend-container').remove();
+                    // Hide or display legend and map maille toglle button depending on results
                     if(tData.recordsTotal > 0){
                         $('#dock div.occtax-legend-container')
                         .appendTo($('#map-content'))
                         .show();
                         $('#occtax_toggle_map_display').show();
+                    }else{
+                        $('#dock div.occtax-legend-container').remove();
+                        $('#occtax_toggle_map_display').hide();
                     }
 
                     // Change wfs export URL
