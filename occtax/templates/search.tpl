@@ -40,7 +40,7 @@ Bloc qui contient les boutons de recherche spatiale
 Déplacé par JS dans le formulaire WHERE
 -->
             <div class="control-group" id="obs-spatial-query-buttons-container">
-                <label class="control-label jforms-label" for="" id="" title="Recherche spatiale">Recherche spatiale</label>
+                <label class="control-label jforms-label" for="" id="" title="{@occtax~search.input.recherche_spatiale.help@}">{@occtax~search.input.recherche_spatiale@}</label>
                 <div id="obs-spatial-query-buttons" class="controls">
                   <div class="btn-group" data-toggle="buttons-radio">
                     <button type="button" id="obs-spatial-query-commune" data-value="queryPoint" class="btn commune" title="Sélectionner une commune" alt="Cliquer sur la carte pour sélectionner la commune">
@@ -203,8 +203,8 @@ RESULTATS DE RECHERCHE (TABLEAUX)
     <div class="tabbable menu-content" style="overflow-x: hidden;">
 
       <ul id="occtax_results_tabs" class="nav nav-tabs">
-        <li><a id="occtax_results_stats_table_tab" href="#occtax_results_stats_table_div" data-toggle="tab">{@occtax~search.result.stats@}</a></li>
-        <li><a id="occtax_results_taxon_table_tab" href="#occtax_results_taxon_table_div" data-toggle="tab">{@occtax~search.result.taxon@}</a></li>
+        <li><a id="occtax_results_stats_table_tab" href="#occtax_results_stats_table_div" data-toggle="tab" title="{@occtax~search.result.stats.help@}">{@occtax~search.result.stats@}</a></li>
+        <li><a id="occtax_results_taxon_table_tab" href="#occtax_results_taxon_table_div" data-toggle="tab" title="{@occtax~search.result.taxon@}">{@occtax~search.result.taxon@}</a></li>
 
 <!--
         On choisir de cacher les tableaux de maille
@@ -212,28 +212,28 @@ RESULTATS DE RECHERCHE (TABLEAUX)
 -->
         {ifacl2 "visualisation.donnees.maille_01"}
         {if in_array('maille_01', $mailles_a_utiliser)}
-        <li style="display:none;"><a id="occtax_results_maille_table_tab_m01" href="#occtax_results_maille_table_div_m01" data-toggle="tab">{@occtax~search.result.maille.m01@}</a></li>
+        <li style="display:none;"><a id="occtax_results_maille_table_tab_m01" href="#occtax_results_maille_table_div_m01" data-toggle="tab" title="{@occtax~search.result.maille.m01.help@}">{@occtax~search.result.maille.m01@}</a></li>
         {/if}
         {/ifacl2}
 
         {ifacl2 "visualisation.donnees.maille_02"}
         {if in_array('maille_02', $mailles_a_utiliser)}
-        <li style="display:none;" class="active"><a id="occtax_results_maille_table_tab_m02" href="#occtax_results_maille_table_div_m02" data-toggle="tab">{@occtax~search.result.maille.m02@}</a></li>
+        <li style="display:none;" class="active"><a id="occtax_results_maille_table_tab_m02" href="#occtax_results_maille_table_div_m02" data-toggle="tab" title="{@occtax~search.result.maille.m02.help@}">{@occtax~search.result.maille.m02@}</a></li>
         {/if}
         {/ifacl2}
 
         {if in_array('maille_10', $mailles_a_utiliser)}
-        <li style="display:none;"><a id="occtax_results_maille_table_tab_m10" href="#occtax_results_maille_table_div_m10" data-toggle="tab">{@occtax~search.result.maille.m10@}</a></li>
+        <li style="display:none;"><a id="occtax_results_maille_table_tab_m10" href="#occtax_results_maille_table_div_m10" data-toggle="tab" title="{@occtax~search.result.maille.m10.help@}">{@occtax~search.result.maille.m10@}</a></li>
         {/if}
 
         {ifacl2 "visualisation.donnees.brutes"}
-        <li><a id="occtax_results_observation_table_tab" href="#occtax_results_observation_table_div" data-toggle="tab">{@occtax~search.result.observation@}</a></li>
+        <li><a id="occtax_results_observation_table_tab" href="#occtax_results_observation_table_div" data-toggle="tab" title="{@occtax~search.result.observation.help@}">{@occtax~search.result.observation@}</a></li>
         {/ifacl2}
 
 <!--
         exports
 -->
-        <li><a id="occtax_results_export_tab" href="#occtax_results_export_div" data-toggle="tab">{@occtax~search.result.export.short.title@}</a></li>
+        <li><a id="occtax_results_export_tab" href="#occtax_results_export_div" data-toggle="tab" title="{@occtax~search.result.export.title.help@}">{@occtax~search.result.export.title@}</a></li>
       </ul>
 
 
@@ -353,7 +353,7 @@ RESULTATS DE RECHERCHE (TABLEAUX)
 
                 <div class="control-group">
                     <div class="controls">
-                        <button type="submit" class="btn btn-primary">{@occtax~search.result.export.short.title@}</button>
+                        <button type="submit" class="btn btn-primary">{@occtax~search.result.export.title@}</button>
                     </div>
                 </div>
             </form>

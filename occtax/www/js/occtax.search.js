@@ -1647,6 +1647,10 @@ OccTax.events.on({
 
       // Ajout des tooltip sur les boutons
       $('#occtax button').tooltip();
+      // Ajout sur les inputs de formulaire
+      $('#jforms_occtax_search select, #jforms_occtax_search input, #jforms_occtax_search  checkbox, #jforms_occtax_search label').tooltip();
+      // Onglets de résultat
+      $('#occtax_results_tabs > li > a').tooltip();
 
       // Déplacement de la barre de modification de l'affichage
       $('#occtax_toggle_map_display')
