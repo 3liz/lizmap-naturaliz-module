@@ -326,8 +326,8 @@ BEGIN
     -- On vérifie qu'on a des données pour le référentiel de validation
     SELECT INTO procedure_ref_record
         "procedure", proc_vers, proc_ref
-    FROM occtax.validation_procedure
-    ORDER BY proc_vers DESC
+    FROM occtax.validation_procedure, regexp_split_to_array(trim(proc_vers),  '\.')  AS a
+    ORDER BY concat(lpad(a[1], 3, '0'), lpad(a[2], 3, '0'), lpad(a[3], 3, '0')) DESC
     LIMIT 1;
     IF procedure_ref_record.proc_vers IS NULL THEN
         RAISE EXCEPTION '[naturaliz] La table validation_procedure est vide';
@@ -383,6 +383,12 @@ BEGIN
         WHERE True
         AND t.contexte = ''validation''
         AND t.identifiant_permanent = identifiant_permanent
+        -- on écarte les données d absence qui ne peuvent être validées automatiquement
+        AND t.identifiant_permanent NOT IN (
+            SELECT identifiant_permanent
+            FROM occtax.observation
+            WHERE statut_observation = ''No''
+        )
         ON CONFLICT ON CONSTRAINT validation_observation_identifiant_permanent_ech_val_unique
         DO UPDATE
         SET (
