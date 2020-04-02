@@ -1645,12 +1645,14 @@ OccTax.events.on({
       // On replie les couches
       $('#layers-fold-all').click();
 
+      // TOOLTIPS
       // Ajout des tooltip sur les boutons
       $('#occtax button').tooltip();
       // Ajout sur les inputs de formulaire
       $('#jforms_occtax_search select, #jforms_occtax_search input, #jforms_occtax_search  checkbox, #jforms_occtax_search label').tooltip();
       // Onglets de résultat
-      $('#occtax_results_tabs > li > a').tooltip();
+      //$('#occtax_results_tabs > li > a').tooltip();
+      //désactivé car entraîne le changement des données affichées sur la carte
 
       // Déplacement de la barre de modification de l'affichage
       $('#occtax_toggle_map_display')
