@@ -236,7 +236,7 @@ class serviceCtrl extends jController {
      */
     function exportGeoJSON(){
 
-
+        $rep = $this->getResponse('json');
         if( !jAcl2::check("visualisation.donnees.brutes") ) {
             $return['status'] = 0;
             $return['msg'][] = jLocale::get( 'occtax~search.form.error.right' );
@@ -244,7 +244,6 @@ class serviceCtrl extends jController {
             return $rep;
         }
 
-        $rep = $this->getResponse('json');
         $data = array();
         $return = array();
         $attributes = array();
@@ -266,16 +265,43 @@ class serviceCtrl extends jController {
         $offset = $this->intParam('offset');
         $geojson = $occtaxSearch->getGeoJSON($limit, $offset);
 
-        $rep = $this->getResponse('zip');
+        $rep = $this->getResponse('binary');
 
-        // Add geojson
-        $rep->content->addFile( $geojson , 'export_observations.geojson' );
+        // Get list of created files
+        $created_files = array();
+        $created_files[$geojson] = 'export_observations.geojson';
 
-        // Add readme file + search description to ZIP
-        $rep->content->addContentFile( 'LISEZ-MOI.txt', $occtaxSearch->getReadme('text', 'geojson') );
+        // Temp output folder
+        $temp_folder_name = 'output_' . time() . session_id();
+        $temp_folder = jApp::tempPath($temp_folder_name);
 
-        $rep->zipFilename = 'export_observations.zip';
+        // LISEZ-MOI.txt : Add readme file + search description to ZIP
+        $lpath = $temp_folder . '/' . 'LISEZ-MOI_' . time() . session_id() . '.txt';
+        jFile::write(
+            $lpath,
+            $occtaxSearch->getReadme('text', 'geojson')
+        );
+        $created_files[$lpath] = 'LISEZ-MOI.txt';
 
+        // Zip files
+        $zpath = jApp::tempPath('output_' . time() . session_id() . '.zip');
+        jFile::createDir($temp_folder);
+        jFile::createDir($temp_folder . '/' . $subdir);
+        $zipit = $this->zipFiles($created_files, $temp_folder, $zpath);
+        if (!$zipit) {
+            $return['status'] = 0;
+            $return['msg'][] = 'Cannot create ZIP file';
+            $rep = $this->getResponse('json');
+            $rep->data = $return;
+            return $rep;
+        }
+
+        // Return response
+        $rep->deleteFileAfterSending = true;
+        $rep->fileName = $zpath;
+        $rep->outputFileName = 'export_observations.zip';
+        $rep->mimeType = 'archive/zip';
+        $rep->doDownload = true;
         return $rep;
     }
 
@@ -285,11 +311,19 @@ class serviceCtrl extends jController {
      */
     function exportCsv() {
 
-        $rep = $this->getResponse('zip');
+        $rep = $this->getResponse('binary');
 
         $data = array();
         $return = array();
         $attributes = array();
+
+        // Create ZIP archive
+        // Tried PHP builtin zipArchive class
+        // NASTY BUG WITH TOO MUCH DATA !
+        // Infinite Loop when calling zip->close()
+        // We will use the bash zip tool with exec
+
+        $zpath = '/tmp/output_' . time() . session_id() . '.zip';
 
         // Get occtaxSearch from token
         $token = $this->param('token');
@@ -299,6 +333,7 @@ class serviceCtrl extends jController {
         if( !$occtaxSearch ){
             $return['status'] = 0;
             $return['msg'][] = jLocale::get( 'occtax~search.invalid.token' );
+            $rep = $this->getResponse('json');
             $rep->data = $return;
             return $rep;
         }
@@ -333,18 +368,19 @@ class serviceCtrl extends jController {
             return $rep;
         }
 
+        // Get list of created files
+        $created_files = array();
+
         // Add principal
         foreach($geometryTypes as $geometryType){
             if(!array_key_exists($geometryType, $principal)){
                 continue;
             }
             if(file_exists($principal[$geometryType][0]) ){
-                $rep->content->addFile( $principal[$geometryType][0], 'st_' . 'principal' . '_' . $this->geometryTypeTranslation[$geometryType] . '.csv' );
-                unlink( $principal[$geometryType][0] );
+                $created_files[$principal[$geometryType][0]] = 'st_' . 'principal' . '_' . $this->geometryTypeTranslation[$geometryType] . '.csv';
             }
             if(file_exists($principal[$geometryType][1]) ){
-                $rep->content->addFile( $principal[$geometryType][1], 'st_' . 'principal' . '_' . $this->geometryTypeTranslation[$geometryType] . '.csvt' );
-                unlink( $principal[$geometryType][1] );
+                $created_files[$principal[$geometryType][1]] = 'st_' . 'principal' . '_' . $this->geometryTypeTranslation[$geometryType] . '.csvt';
             }
         }
         // Get other files
@@ -389,25 +425,79 @@ class serviceCtrl extends jController {
 
         // Add other csv files to ZIP
         $subdir = 'rattachements';
-        $rep->content->addEmptyDir($subdir);
         foreach( $data as $topic=>$files ) {
             if(file_exists($files[0]) ){
-                $rep->content->addFile( $files[0], $subdir . '/' . 'st_' . $topic . '.csv' );
-                unlink( $files[0] );
+                $created_files[$files[0]] = $subdir . '/' . 'st_' . $topic . '.csv';
             }
             if(file_exists($files[1]) ){
-                $rep->content->addFile( $files[1], $subdir . '/' . 'st_' . $topic . '.csvt' );
-                unlink( $files[1] );
+                $created_files[$files[1]] = $subdir . '/' . 'st_' . $topic . '.csvt';
             }
         }
 
-        // Add readme file + search description to ZIP
-        $rep->content->addContentFile( 'LISEZ-MOI.txt', $occtaxSearch->getReadme('text', 'csv') );
+        // Temp output folder
+        $temp_folder_name = 'output_' . time() . session_id();
+        $temp_folder = jApp::tempPath($temp_folder_name);
 
-        $rep->zipFilename = 'export_observations.zip';
+        // LISEZ-MOI.txt : Add readme file + search description to ZIP
+        $lpath = $temp_folder . '/' . 'LISEZ-MOI_' . time() . session_id() . '.txt';
+        jFile::write(
+            $lpath,
+            $occtaxSearch->getReadme('text', 'csv')
+        );
+        $created_files[$lpath] = 'LISEZ-MOI.txt';
+
+        // Zip files
+        $zpath = jApp::tempPath('output_' . time() . session_id() . '.zip');
+        jFile::createDir($temp_folder);
+        jFile::createDir($temp_folder . '/' . $subdir);
+        $zipit = $this->zipFiles($created_files, $temp_folder, $zpath);
+        if (!$zipit) {
+            $return['status'] = 0;
+            $return['msg'][] = 'Cannot create ZIP file';
+            $rep = $this->getResponse('json');
+            $rep->data = $return;
+            return $rep;
+        }
+
+        // Return response
+        $rep->deleteFileAfterSending = true;
+        $rep->fileName = $zpath;
+        $rep->outputFileName = 'export_observations.zip';
+        $rep->mimeType = 'archive/zip';
+        $rep->doDownload = true;
         return $rep;
     }
 
+
+    private function zipFiles($created_files, $temp_folder, $output_path) {
+        // Move files to temp folder
+        $unlinks = array();
+        foreach ($created_files as $sourcefile=>$destpath) {
+            rename($sourcefile, $temp_folder . '/' . $destpath);
+            $unlinks[] = $temp_folder . '/' . $destpath;
+        }
+
+        // Zip files
+        try {
+            exec('cd "' . $temp_folder . '" && zip -r ' . $output_path . ' *');
+        } catch (Exception $e) {
+            jLog::log($e->getMessage(), 'error');
+            return False;
+        }
+
+        // Remove files
+        foreach ($unlinks as $file) {
+            unlink($file);
+        }
+        jFile::removeDir($temp_folder);
+
+        // Check file exists
+        if (!(is_file($output_path))) {
+            return False;
+        }
+
+        return True;
+    }
 
     function getCommune() {
         $rep = $this->getResponse('json');
