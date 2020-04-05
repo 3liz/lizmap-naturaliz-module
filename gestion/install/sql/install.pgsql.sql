@@ -238,6 +238,7 @@ CHECK ( type IN ('Import', 'Export') );
 -- INDEXES
 CREATE INDEX ON demande (usr_login);
 CREATE INDEX ON demande (id_acteur);
+CREATE INDEX ON demande (geom);
 
 
 
