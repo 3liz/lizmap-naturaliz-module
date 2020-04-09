@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module xmlns="http://jelix.org/ns/module/1.0">
     <info id="mascarine_admin3liz.com" name="occtax_admin" createdate="2015-02-04">
-        <version date="2020-04-02">2.5.2</version>
+        <version date="2020-04-09">2.5.3</version>
         <label lang="en_US">occtax_admin</label>
         <description lang="en_US" />
         <license URL="http://www.mozilla.org/MPL/">Mozilla Public License</license>
