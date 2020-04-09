@@ -1,22 +1,22 @@
 -- observation
 -- Ajout du champ cd_nom_cite
-ALTER TABLE occtax.observation ADD COLUMN IF NOT EXISTS cd_nom_cite BIGINT ;
+ALTER TABLE occtax.observation ADD COLUMN cd_nom_cite BIGINT ;
 COMMENT ON COLUMN occtax.observation.cd_nom_cite IS 'Code du taxon « cd_nom » de TaxRef référençant au niveau national le taxon tel qu''il a été initialement cité par l''observateur dans le champ nom_cite. Le rang taxinomique de la donnée doit être celui de la donnée d''origine. Par défaut, cd_nom = cd_nom_cite. cd_nom peut être modifié dans le cas de la procédure de validation après accord du producteur selon les règles définies dans le protocole régional de validation.' ;
 
 -- On met à jour par défaut le champ cd_nom_cite pour les observations déjà rentrées
 UPDATE occtax.observation SET cd_nom_cite = cd_nom ;
 
 -- Ajout du champ nom_retenu
-ALTER TABLE occtax.validation_observation ADD COLUMN IF NOT EXISTS nom_retenu TEXT ;
+ALTER TABLE occtax.validation_observation ADD COLUMN nom_retenu TEXT ;
 COMMENT ON COLUMN occtax.validation_observation.nom_retenu IS 'Nom scientifique du taxon attribué par le validateur, dans le cas où ce taxon est différent du taxon cité initialement par l''observateur (sinon le champ reste NULL). Cela peut arriver en cas d''identification erronnée par l''observateur, ou bien lorsque le validateur valide l''observation au niveau d''un parent taxonomique. Le champ n''a toutefois pas vocation à stocker un nom qui serait synonyme de celui cité par l''observateur, Taxref permettant déjà de traiter les cas de synonymie.' ;
 
 
 
 -- jdd
-ALTER TABLE occtax.jdd ADD COLUMN IF NOT EXISTS jdd_libelle text;
+ALTER TABLE occtax.jdd ADD COLUMN jdd_libelle text;
 COMMENT ON COLUMN occtax.jdd.jdd_libelle IS 'Libellé court et intelligible du jeu de données';
 UPDATE occtax.jdd SET jdd_libelle = concat(jdd_id, ' - ', jdd_code) WHERE jdd_libelle IS NULL;
-ALTER TABLE occtax.jdd ADD COLUMN IF NOT EXISTS date_minimum_de_diffusion date;
+ALTER TABLE occtax.jdd ADD COLUMN date_minimum_de_diffusion date;
 COMMENT ON COLUMN occtax.jdd.date_minimum_de_diffusion IS 'Pour les données de recherche, les producteurs peuvent attendre que la publication scientifique soit publiée avant de diffuser les données. Cette date est utilisée dans le requête de création de la vue matérialisée occtax.vm_observation pour ne pas prendre en compte les données dont la date minimum n''est pas atteinte';
 
 DROP MATERIALIZED VIEW IF EXISTS occtax.vm_observation CASCADE;
@@ -692,7 +692,7 @@ LEFT JOIN (
 ;
 
 -- gestion
-ALTER TABLE gestion.echange_inpn ADD COLUMN IF NOT EXISTS liste_identifiant_permanent TEXT[] ;
+ALTER TABLE gestion.echange_inpn ADD COLUMN liste_identifiant_permanent TEXT[] ;
 COMMENT ON COLUMN gestion.echange_inpn.liste_identifiant_permanent IS 'Liste des identifiants permanents des observations transmises lors de l''échange de données. Ce champ est destiné à faciliter la traçabilité des données, afin notamment de ne pas exporter deux fois les mêmes données et de pouvoir transmettre à nouveau des observations qui auraient été modifiées (notamment validées) depuis le dernier échange.';
 
 
