@@ -205,6 +205,10 @@ lizMap.events.on({
             datatype = 'b';
         }
 
+        // Get total records
+        var recordsTotal = $('#occtax_observation_records_total').val();
+
+        // Use occtax print only if searchForm is defined AND at least one record is found
         if( searchForm ) {
 
             var token = searchForm.find('input[name="token"]').val();
@@ -215,6 +219,8 @@ lizMap.events.on({
                 url = url.replace('/lizmap/service/', '/occtax/lizmapService/');
                 url += '&token=' + token;
                 url += '&datatype=' + datatype;
+                // Add total of records, because a layer with no record is invalid for QGIS Server
+                url += '&recordsTotal=' + recordsTotal;
                 if( datatype == 'b' )
                     url += '&limit=' + limit + '&offset=' + offset;
             }

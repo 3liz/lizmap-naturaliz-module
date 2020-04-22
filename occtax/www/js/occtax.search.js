@@ -1313,15 +1313,18 @@ OccTax.events.on({
 
                     // Move legend to map
                     $('#map-content div.occtax-legend-container').remove();
+                    // Add number of records in
                     // Hide or display legend and map maille toglle button depending on results
                     if(tData.recordsTotal > 0){
                         $('#dock div.occtax-legend-container')
                         .appendTo($('#map-content'))
                         .show();
                         $('#occtax_toggle_map_display').show();
+                        $('#occtax_observation_records_total').val(tData.recordsTotal);
                     }else{
                         $('#dock div.occtax-legend-container').remove();
                         $('#occtax_toggle_map_display').hide();
+                        $('#occtax_observation_records_total').val(0);
                     }
 
                     // Change wfs export URL
@@ -1402,9 +1405,18 @@ OccTax.events.on({
           var removeFilters = true;
           clearTaxonFromSearch(removePanier, removeFilters);
 
+          // Reinit other fields
+          $('#'+tokenFormId).trigger("reset");
+
+          // Reinit date picker
+          $('#'+tokenFormId+' .ui-datepicker-reset').click();
+
           // Reinit spatial button
           clearSpatialSearch();
           OccTax.emptyDrawqueryLayer('queryLayer');
+
+          // Reinit count
+          $('#occtax_observation_records_total').val(0);
 
           // Reinit tables
           try{

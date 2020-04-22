@@ -126,7 +126,9 @@ class lizmapServiceCtrl extends serviceCtrl {
     // Create temporary project from template if needed
     // And modify layers datasource via passed token and datatype
     $token = $this->params['token'];
+    $recordsTotal = $this->intParam('recordsTotal');
     $datatype = $this->params['datatype']; // m01 = maille 1, m02 = maille 2 , m05 = maille 5, m10 = maille 10, b = données brutes
+
     $dynamic = Null;
     if( $token and $datatype ) {
 
@@ -153,7 +155,8 @@ class lizmapServiceCtrl extends serviceCtrl {
         $newProjectContent = $projectTemplate;
 
         // Replace datasource for observation_maille
-        if( $datatype == 'm01' or $datatype == 'm02' or $datatype == 'm05' or $datatype == 'm10'){
+        // Only if recordsTotal > 0 to avoid QGIS Server bug with PostgreSQL layer with no data
+        if ($datatype == 'm01' or $datatype == 'm02' or $datatype == 'm05' or $datatype == 'm10') {
             if( $datatype == 'm10' ){
                 jClasses::inc('occtax~occtaxSearchObservationMaille10');
                 $occtaxSearch = new occtaxSearchObservationMaille10( $token, null );
@@ -171,53 +174,63 @@ class lizmapServiceCtrl extends serviceCtrl {
                 $occtaxSearch = new occtaxSearchObservationMaille( $token, null );
             }
 
-            $target = $occtaxSearch->getSql();
+            if ($recordsTotal and $recordsTotal > 0) {
+                $target = $occtaxSearch->getSql();
 
-            $target = str_replace(
-                'FROM (',
-                ', ST_Centroid(m.geom) AS geom FROM (',
-                $target
-            );
+                $target = str_replace(
+                    'FROM (',
+                    ', ST_Centroid(m.geom) AS geom FROM (',
+                    $target
+                );
 
-            // Dans QGIS 2.18, il ne faut pas remplacer de la même manière
-            // ce qui est dans <maplayer et ce qui est dans <layer-tree-layer
-            // on choisit de ne remplacer que le <maplauyer
-            // on n'utilise pas htmlentities car on veut échapper les " et pas les remplacer par code html
-            // On utilise le préfixe pour cela
-            $target = str_replace( '<', '&lt;', $target );
-            $target = str_replace( '"', '\"', $target );
-            $pref = 'table="(';
-            $source =  'SELECT * FROM tpl_observation_maille';
-            $newProjectContent = str_replace(
-                $pref . $source,
-                $pref . $target,
-                $newProjectContent
-            );
-
-            // Replace attribute table source
-            // todo
-            $newProjectContent = str_replace(
-                'vectorLayer="observation_brute_centroid"',
-                'vectorLayer="observation_maille"',
-                $newProjectContent
-            );
-
-            // Replace width of square under maille for maille 10
-            if( $datatype == 'm10' or $datatype == 'm02' or $datatype == 'm01'){
-                $mint = (int)preg_replace('#m0?#', '', $datatype);
+                // Dans QGIS 2.18, il ne faut pas remplacer de la même manière
+                // ce qui est dans <maplayer et ce qui est dans <layer-tree-layer
+                // on choisit de ne remplacer que le <maplauyer
+                // on n'utilise pas htmlentities car on veut échapper les " et pas les remplacer par code html
+                // On utilise le préfixe pour cela
+                $target = str_replace( '<', '&lt;', $target );
+                $target = str_replace( '"', '\"', $target );
+                $pref = 'table="(';
+                $source =  'SELECT * FROM tpl_observation_maille';
                 $newProjectContent = str_replace(
-                    '<prop k="size_dd_expression" v="2000"/>',
-                    '<prop k="size_dd_expression" v="'.$mint.'000"/>',
+                    $pref . $source,
+                    $pref . $target,
+                    $newProjectContent
+                );
+
+                // Replace attribute table source
+                // todo
+                $newProjectContent = str_replace(
+                    'vectorLayer="observation_brute_centroid"',
+                    'vectorLayer="observation_maille"',
+                    $newProjectContent
+                );
+
+                // Replace width of square under maille for maille 10
+                if( $datatype == 'm10' or $datatype == 'm02' or $datatype == 'm01'){
+                    $mint = (int)preg_replace('#m0?#', '', $datatype);
+                    $newProjectContent = str_replace(
+                        '<prop k="size_dd_expression" v="2000"/>',
+                        '<prop k="size_dd_expression" v="'.$mint.'000"/>',
+                        $newProjectContent
+                    );
+                }
+            } else {
+                // if no data, we need to remove lines from template maille
+                $target = 'SELECT * FROM tpl_observation_maille LIMIT 0';
+                $pref = 'table="(';
+                $source =  'SELECT * FROM tpl_observation_maille';
+                $newProjectContent = str_replace(
+                    $pref . $source,
+                    $pref . $target,
                     $newProjectContent
                 );
             }
-
-
-
         }
 
         // Données brutes
-        if( $datatype == 'b'){
+        // Replace only of some records have been found
+        if ($datatype == 'b') {
              // Limit and offset
             $lo = '';
             $limit = (integer)$this->iParam('limit');
@@ -231,39 +244,58 @@ class lizmapServiceCtrl extends serviceCtrl {
             // Get target SQL
             jClasses::inc('occtax~occtaxSearchObservation');
             $occtaxSearch = new occtaxSearchObservation( $token, null );
-            $target = $occtaxSearch->getSql();
-            $target.= $lo;
-            $target = str_replace( '<', '&lt;', $target );
-            $target = str_replace( '"', '\"', $target );
 
-            // Remove useless columns
-            $remove_cols = array(
-                'ST_AsGeoJSON( ST_Transform(o.geom, 4326), 6 ) AS geojson,',
-                'o.diffusion,',
-                'source_objet,'
-            );
-            foreach($remove_cols as $col){
+            if ($recordsTotal and $recordsTotal > 0) {
+                $target = $occtaxSearch->getSql();
+                $target.= $lo;
+                $target = str_replace( '<', '&lt;', $target );
+                $target = str_replace( '"', '\"', $target );
+
+                // Remove useless columns
+                $remove_cols = array(
+                    'ST_AsGeoJSON( ST_Transform(o.geom, 4326), 6 ) AS geojson,',
+                    'o.diffusion,',
+                    'source_objet,'
+                );
+                foreach($remove_cols as $col){
+                    $target = str_replace(
+                        $col,
+                        "",
+                        $target
+                    );
+                }
+
+                // Remove diffusion column
                 $target = str_replace(
-                    $col,
+                    'o.diffusion,',
                     "",
                     $target
                 );
-            }
 
-            // Remove diffusion column
-            $target = str_replace(
-                'o.diffusion,',
-                "",
-                $target
-            );
+                // Replace source SQL by target depending on geometry type
+                foreach( $this->data[$datatype]['originSql'] as $geomtype=>$source ){
+                    $targetFinal = str_replace(
+                        'WHERE True',
+                        "WHERE True AND GeometryType( o.geom ) IN ('" . $geomtype . "', 'MULTI" . $geomtype . "')",
+                        $target
+                    );
+                    $pref = 'table="( ';
+                    $newProjectContent = str_replace(
+                        $pref.$source,
+                        $pref.$targetFinal,
+                        $newProjectContent
+                    );
+                }
 
-            // Replace source SQL by target depending on geometry type
-            foreach( $this->data[$datatype]['originSql'] as $geomtype=>$source ){
+                // Replace observation_brute_centroid (used for attribute table)
+                // So that we have a layer containing all data for all geometry types
+                // This layer will be used for the attribute table
                 $targetFinal = str_replace(
-                    'WHERE True',
-                    "WHERE True AND GeometryType( o.geom ) IN ('" . $geomtype . "', 'MULTI" . $geomtype . "')",
+                    '    o.geom,',
+                    '    ST_Centroid(o.geom) AS geom,',
                     $target
                 );
+                $source = "SELECT * FROM tpl_observation_brute_centroid";
                 $pref = 'table="( ';
                 $newProjectContent = str_replace(
                     $pref.$source,
@@ -271,22 +303,6 @@ class lizmapServiceCtrl extends serviceCtrl {
                     $newProjectContent
                 );
             }
-
-            // Replace observation_brute_centroid (used for attribute table)
-            // So that we have a layer containing all data for all geometry types
-            // This layer will be used for the attribute table
-            $targetFinal = str_replace(
-                '    o.geom,',
-                '    ST_Centroid(o.geom) AS geom,',
-                $target
-            );
-            $source = "SELECT * FROM tpl_observation_brute_centroid";
-            $pref = 'table="( ';
-            $newProjectContent = str_replace(
-                $pref.$source,
-                $pref.$targetFinal,
-                $newProjectContent
-            );
         }
 
         // Set attribute table with correct source and columns
@@ -347,15 +363,17 @@ class lizmapServiceCtrl extends serviceCtrl {
         );
 
         // Replace layernames to avoid QGIS Server layer cache
-        $t = time();
-        $displayLayers = array();
-        foreach( $this->data[$datatype]['layers'] as $l ) {
-            $newProjectContent = preg_replace(
-                '/' . $l . '/i',
-                $l . '_' . $t,
-                $newProjectContent
-            );
-            $displayLayers[] = $l . '_' . $t;
+        if ($recordsTotal and $recordsTotal > 0) {
+            $t = time();
+            $displayLayers = array();
+            foreach( $this->data[$datatype]['layers'] as $l ) {
+                $newProjectContent = preg_replace(
+                    '/' . $l . '/i',
+                    $l . '_' . $t,
+                    $newProjectContent
+                );
+                $displayLayers[] = $l . '_' . $t;
+            }
         }
 
         // Write the new project in the cache directory
