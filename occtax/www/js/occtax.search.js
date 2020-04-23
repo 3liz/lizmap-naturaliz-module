@@ -1339,6 +1339,10 @@ OccTax.events.on({
         $('#occtax-message').remove();
         $('#occtax-highlight-message').remove();
 
+        // Deactivate (CSS) main div
+        $('#occtax').addClass('not_enabled');
+        lizMap.addMessage( 'Recherche en cours...', 'info', true ).attr('id','occtax-message');
+
         // Remove taxon input values depending on active tab
         if( $('#occtax_taxon_tab_div > div.tab-content > div.active').length == 1 ) {
           var aid = $('#occtax_taxon_tab_div > div.tab-content > div.active')[0].id;
@@ -1357,6 +1361,9 @@ OccTax.events.on({
             function(tData) {
                 blocme = false;
                 if (tData.status == 1) {
+                    $('#occtax').removeClass('not_enabled');
+                    $('#occtax-message').remove();
+
                     // Display description div
                     var dHtml = tData.description;
                     $('#occtax_search_description_content').html(dHtml);
@@ -1434,6 +1441,8 @@ OccTax.events.on({
                 }else{
                   lizMap.addMessage( tData.msg.join('<br/>'), 'error', true ).attr('id','occtax-highlight-message');
                 }
+                $('#occtax').removeClass('not_enabled');
+                $('#occtax-message').remove();
             }
         ,'json');
         return false;

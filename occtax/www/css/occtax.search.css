@@ -3,6 +3,14 @@ Formulaire de recherche
 */
 
 /*
+Désactivation CSS
+*/
+div#occtax.not_enabled {
+    pointer-events: none;
+    opacity: 0.4;
+}
+
+/*
 Onglets taxons
 */
 #div_form_occtax_search_token div.tab-content {
@@ -442,3 +450,4 @@ Légende des mailles*/
   left: 40px;
   margin-left:0px;
 }
+
