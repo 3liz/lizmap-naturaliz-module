@@ -497,22 +497,24 @@ COMMENT ON MATERIALIZED VIEW stats.observations_par_commune IS 'Nombre d''observ
 
 -- avancement_imports
 CREATE MATERIALIZED VIEW IF NOT EXISTS stats.avancement_imports AS
-WITH r AS (
-    SELECT LEFT((date_trunc('month', serie.date))::TEXT, 7) AS mois,
-    count(DISTINCT jdd_id) AS nb_jdd,
-    count(DISTINCT cle_obs) AS nb_obs
-    FROM
-      (SELECT generate_series(
-        (SELECT min(dee_date_transformation) FROM occtax.vm_observation),
-        now(),
-        '1 month') date) serie
-    LEFT JOIN occtax.vm_observation o ON date_trunc('month', serie.date)=date_trunc('month', o.dee_date_transformation)
-    GROUP BY date_trunc('month', serie.date)
-    ORDER BY date_trunc('month', serie.date)
-          )
-
-SELECT mois, sum(nb_jdd) OVER (ORDER BY mois) AS nb_jdd, sum(nb_obs) OVER (ORDER BY mois) AS nb_obs
-FROM r ;
+  WITH r AS (
+         SELECT LEFT(serie.date::TEXT, 7) AS mois,
+            count(DISTINCT o.jdd_id) AS nb_jdd,
+            count(DISTINCT o.cle_obs) AS nb_obs
+           FROM (SELECT generate_series(
+               (SELECT date_trunc('month'::text, min(vm_observation.dee_date_transformation)) AS min FROM vm_observation),
+               date_trunc('month'::text, now()),
+               '1 mon'::interval
+        ) AS date) serie
+           LEFT JOIN vm_observation o ON date_trunc('month'::text, serie.date) = date_trunc('month'::text, o.dee_date_transformation)
+          GROUP BY LEFT(serie.date::TEXT, 7)
+          ORDER BY LEFT(serie.date::TEXT, 7)
+        )
+ SELECT r.mois,
+    sum(r.nb_jdd) OVER (ORDER BY r.mois) AS nb_jdd,
+    sum(r.nb_obs) OVER (ORDER BY r.mois) AS nb_obs
+   FROM r
+;
 
 COMMENT ON MATERIALIZED VIEW stats.avancement_imports IS 'Nombre cumulé de données et de jeux de données importés dans Borbonica au fil du temps, traduisant la dynamique d''import dans Borbonica';
 
@@ -641,55 +643,46 @@ COMMENT ON MATERIALIZED VIEW stats.nombre_taxons_par_menace IS 'Nombre de taxons
 
 -- chiffres_cles
 CREATE MATERIALIZED VIEW IF NOT EXISTS stats.chiffres_cles AS
-SELECT 1 AS ordre,
+  SELECT 1 AS ordre,
     'Nombre total de données' AS libelle,
-    count(cle_obs) AS valeur
-FROM occtax.vm_observation
-
+    count(vm_observation.cle_obs) AS valeur
+   FROM vm_observation
 UNION
-SELECT 2 AS ordre,
+ SELECT 2 AS ordre,
     'Nombre total de jeux de données' AS libelle,
-    count(DISTINCT jdd_code) AS valeur
-FROM occtax.vm_observation
-
+    count(DISTINCT vm_observation.jdd_code) AS valeur
+   FROM vm_observation
 UNION
-SELECT 3 AS ordre,
+ SELECT 3 AS ordre,
     'Nombre de producteurs ayant transmis des jeux de données' AS libelle,
     count(DISTINCT r.id_organisme) AS valeur
-FROM (
-    SELECT  jdd_id,
-            (jsonb_array_elements(ayants_droit)->>'id_organisme')::INTEGER AS id_organisme,
-            jsonb_array_elements(ayants_droit)->>'role' AS role
-    FROM occtax.jdd
-    ) r
-
+   FROM ( SELECT jdd.jdd_id,
+            (jsonb_array_elements(jdd.ayants_droit) ->> 'id_organisme'::text)::integer AS id_organisme,
+            jsonb_array_elements(jdd.ayants_droit) ->> 'role'::text AS role
+           FROM jdd) r
 UNION
-SELECT 4 AS ordre,
+ SELECT 4 AS ordre,
     'Nombre d''observateurs cités' AS libelle,
-    count(DISTINCT op.id_personne) AS valeur
-FROM occtax.observation_personne op
-
+    count(DISTINCT p.nom || p.prenom) AS valeur
+   FROM observation_personne op
+     LEFT JOIN personne p USING (id_personne)
 UNION
-SELECT 5 AS ordre,
+ SELECT 5 AS ordre,
     'Nombre de taxons faisant l''objet d''observations' AS libelle,
-    count(DISTINCT cd_ref) AS valeur
-FROM occtax.vm_observation
-
-
+    count(DISTINCT vm_observation.cd_ref) AS valeur
+   FROM vm_observation
 UNION
-SELECT 6 AS ordre,
+ SELECT 6 AS ordre,
     'Nombre d''adhérents à la charte régionale SINP' AS libelle,
-    count(id_adherent) AS valeur
-FROM gestion.adherent
-WHERE statut='Adhérent'
-
+    count(adherent.id_adherent) AS valeur
+   FROM adherent
+  WHERE adherent.statut = 'Adhérent'
 UNION
-SELECT 7 AS ordre,
+ SELECT 7 AS ordre,
     'Nombre de demandes d''accès aux données ouvertes' AS libelle,
-    count(id) AS valeur
-FROM gestion.demande
-WHERE statut ilike 'acceptée'
-
+    count(demande.id) AS valeur
+   FROM demande
+  WHERE demande.statut ~~* 'acceptée'
 ORDER BY ordre
 ;
 
