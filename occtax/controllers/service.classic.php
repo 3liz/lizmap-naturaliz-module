@@ -39,6 +39,14 @@ class serviceCtrl extends jController {
 
     }
 
+    function isConnected() {
+        $rep = $this->getResponse('json');
+        $return = array();
+        $return['is_connected'] = jAuth::isConnected();
+        $rep->data = $return;
+        return $rep;
+    }
+
     function initSearch() {
 
         $rep = $this->getResponse('json');
@@ -137,6 +145,16 @@ class serviceCtrl extends jController {
             'data' => array(),
             'msg' => array()
         );
+
+        // Do not return data if not connected for observations
+        if ($searchClassName == 'occtaxSearchObservation') {
+            if( !jAcl2::check("visualisation.donnees.brutes") ) {
+                $return['status'] = 0;
+                $return['msg'][] = jLocale::get( 'occtax~search.form.error.right' );
+                $rep->data = $return;
+                return $rep;
+            }
+        }
 
         // Get occtaxSearch from token
         $token = $this->param('token');

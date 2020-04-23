@@ -83,7 +83,8 @@
                 $occtaxClientConfig = array(
                     'maxAreaQuery'=> (integer)$maxAreaQuery,
                     'strokeColor' => $strokeColor,
-                    'menuOrder' => $mo
+                    'menuOrder' => $mo,
+                    'is_connected' => jAuth::isConnected()
                 );
 
                 $mailles_a_utiliser = $ini->getValue('mailles_a_utiliser', 'naturaliz');

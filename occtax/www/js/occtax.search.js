@@ -1,5 +1,6 @@
 var uiprete = false;
 var blocme = true;
+var error_connection = false;
 
 function unblockSearchForm(){
     uiprete = true;
@@ -25,6 +26,33 @@ $( document ).ready(function() {
 OccTax.events.on({
     'uicreated':function(evt){
 
+    function checkConnection(){
+        // If the user was not connected, no souci
+        if (!(occtaxClientConfig.is_connected)) {
+            return true;
+        }
+
+        // If the user was connected, check if it is still connected
+        var tokenFormId = $('#div_form_occtax_search_token form').attr('id');
+        var url = $('#'+tokenFormId).attr('action').replace('initSearch', 'isConnected');
+        $.getJSON(url, null, function( cdata ) {
+            if ( !(cdata.is_connected) ) {
+                var baseUrl = window.location.protocol + '//' + document.domain + lizUrls.basepath;
+                var loginurl = baseUrl + 'admin.php/auth/login/?auth_url_return=%2Findex.php%2Focctax%2F';
+                if( !error_connection ) {
+                    if(!alert('Votre session a expiré ! La page va être rechargée.')){
+                        error_connection = true;
+                        window.location = loginurl;
+                    }
+                }else{
+                    window.location = loginurl;
+                }
+                return false;
+            }
+        });
+        return true;
+    }
+
     function getDatatableColumns( tableId ){
       var DT_Columns = $('#'+tableId+' thead tr th').map(
         function(){
@@ -49,6 +77,8 @@ OccTax.events.on({
     }
 
     function onQueryFeatureAdded( feature, callback ) {
+
+        checkConnection();
 
         /**
          * Initialisation
@@ -401,6 +431,11 @@ OccTax.events.on({
             },
             "columns": DT_Columns,
             "ajax": function (param, callback, settings) {
+                // Check user is still connected if he was
+                var ok = checkConnection();
+                if (!ok) {
+                    return false;
+                }
                 var searchForm = $('#occtax_service_search_stats_form');
 
                 // Do not run the query if no token has been found
@@ -479,6 +514,11 @@ OccTax.events.on({
             "serverSide": true,
             "columns": DT_Columns,
             "ajax": function (param, callback, settings) {
+                // Check user is still connected if he was
+                var ok = checkConnection();
+                if (!ok) {
+                    return false;
+                }
                 var searchForm = $('#occtax_service_search_taxon_form');
                 searchForm.find('input[name="limit"]').val(param.length);
                 searchForm.find('input[name="offset"]').val(param.start);
@@ -604,8 +644,12 @@ OccTax.events.on({
             },
             "columns": DT_Columns,
             "ajax": function (param, callback, settings) {
+                // Check user is still connected if he was
+                var ok = checkConnection();
+                if (!ok) {
+                    return false;
+                }
                 var searchForm = $('#occtax_service_search_maille_form_' + type_maille);
-
                 // Do not run the query if no token has been found
                 var mytoken = searchForm.find('input[name="token"]').val();
                 if(!mytoken)
@@ -733,6 +777,11 @@ OccTax.events.on({
             "serverSide": true,
             "columns": DT_Columns,
             "ajax": function (param, callback, settings) {
+                // Check user is still connected if he was
+                var ok = checkConnection();
+                if (!ok) {
+                    return false;
+                }
               var searchForm = $('#occtax_service_search_form');
               //console.log( param );
               searchForm.find('input[name="limit"]').val(param.length);
@@ -889,11 +938,17 @@ OccTax.events.on({
     }
 
     function getObservationDetail( id ) {
+        // Check user is still connected if he was
+        var ok = checkConnection();
+        if (!ok) {
+            return;
+        }
         if(!id)
             return;
         var tokenFormId = $('#div_form_occtax_search_token form').attr('id');
         var obsUrl = $('#'+tokenFormId).attr('action').replace('initSearch', 'getObservation');
         obsUrl = obsUrl.replace('service', 'observation');
+
         $.get(
             obsUrl,
             {'id': id},
@@ -1238,6 +1293,13 @@ OccTax.events.on({
       // Get search token corresponding to form inputs
       unblockSearchForm();
       $('#'+tokenFormId).submit(function(){
+
+        // Check user is still connected if he was
+        var ok = checkConnection();
+        if (!ok) {
+            return false;
+        }
+
         // Bloc submit if a previous submit is in progress
         if(blocme){
           return false;
