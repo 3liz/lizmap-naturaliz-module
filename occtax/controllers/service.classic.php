@@ -517,15 +517,50 @@ class serviceCtrl extends jController {
         return True;
     }
 
+    function getTaxon() {
+        $rep = $this->getResponse('json');
+
+        // Get x and y params
+        $cd_nom = trim($this->intParam('cd_nom'));
+        $return = array(
+            'status' => 0,
+            'msg' => array()
+        );
+        if (empty($cd_nom)) {
+            $msg[] = 'cd_nom invalide';
+            $rep->data = $return;
+            return $rep;
+        }
+
+        $cnx = jDb::getConnection();
+        $sql = ' SELECT cd_nom, nom_valide';
+        $sql.= ' FROM taxon.taxref_consolide';
+        $sql.= ' WHERE cd_ref = ' . $cd_nom;
+        $result = $cnx->limitQuery( $sql, 0, 1 );
+        $d = $result->fetch();
+        if ( $d ) {
+            $d->geojson = json_decode( $d->geojson );
+            $return['status'] = 1;
+            $return['result'] = $d;
+        } else {
+            $return['msg'][] = jLocale::get( $this->moduleName . '~search.getCommune.error' );
+        }
+        // Return data
+        $rep->data = $return;
+
+        return $rep;
+    }
+
     function getCommune() {
         $rep = $this->getResponse('json');
 
         // Get x and y params
         $x = $this->floatParam('x');
         $y = $this->floatParam('y');
+        $code = trim($this->param('code'));
 
         jClasses::inc('occtax~occtaxGeometryChecker');
-        $mgc = new occtaxGeometryChecker($x, $y, $this->srid, 'occtax');
+        $mgc = new occtaxGeometryChecker($x, $y, $this->srid, 'occtax', null, $code);
         $return = $mgc->getCommune();
 
         // Return data
@@ -541,9 +576,10 @@ class serviceCtrl extends jController {
         // Get x and y params
         $x = $this->floatParam('x');
         $y = $this->floatParam('y');
+        $code = trim($this->param('code'));
 
         jClasses::inc('occtax~occtaxGeometryChecker');
-        $mgc = new occtaxGeometryChecker($x, $y, $this->srid, 'occtax');
+        $mgc = new occtaxGeometryChecker($x, $y, $this->srid, 'occtax', null, $code);
         $return = $mgc->getMasseEau();
 
         // Return data
@@ -559,9 +595,10 @@ class serviceCtrl extends jController {
         $x = $this->floatParam('x');
         $y = $this->floatParam('y');
         $type_maille = $this->param('type_maille');
+        $code = trim($this->param('code'));
 
         jClasses::inc('occtax~occtaxGeometryChecker');
-        $mgc = new occtaxGeometryChecker($x, $y, $this->srid, 'occtax', $type_maille);
+        $mgc = new occtaxGeometryChecker($x, $y, $this->srid, 'occtax', $type_maille, $code);
         $return = $mgc->getMaille();
 
         // Return data

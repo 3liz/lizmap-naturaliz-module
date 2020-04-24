@@ -1013,6 +1013,190 @@ OccTax.events.on({
       ul.append(li);
     }
 
+    function getWhiteParams(context) {
+        var white_params = [
+            'taxons_bdd',
+            'group', 'habitat', 'statut', 'endemicite',
+            'invasibilite', 'menace', 'protection',
+            'cd_nom', 'cd_ref',
+            'code_commune', 'code_masse_eau',
+            'code_maille', 'type_maille',
+            'type_en',
+            'nom_valide',
+            'geom',
+            'jdd_id', 'validite_niveau', 'observateur',
+            'type_en',
+            'date_min', 'date_max'
+        ];
+        return white_params;
+    }
+
+    function updateFormInputsFromUrl() {
+        // Example URL
+        // ?cd_nom%5B0%5D=79700&cd_nom%5B1%5D=447404&observateur=durand&date_min=2000-05-01&date_max=2019-01-01
+        // detect parameters
+        var queryString = window.location.search;
+        if (queryString && queryString != '') {
+            var params = new URLSearchParams(queryString);
+            var targets = {};
+            params.forEach(function(value, key) {
+                // Crop name to remove array part
+                // cd_nom[0] -> cd_nom
+                var skey = key.split('[')[0];
+                if (!(skey in targets)) {
+                    targets[skey] = [];
+                }
+                targets[skey].push(value)
+            });
+
+            var tokenFormId = $('#div_form_occtax_search_token form').attr('id');
+            var trigger_submit = false;
+            var white_params = getWhiteParams('url');
+            var geometry_already_added = false;
+            var cd_nom_list = [];
+            for (var name in targets) {
+                if ($.inArray(name, white_params) == -1) {
+                    continue;
+                }
+                trigger_submit = true;
+                var input_name = name;
+                var input_value = targets[name];
+                //var input_value = decodeURIComponent(entry[1]);
+
+                if (( input_name == 'date_min' || input_name == 'date_max') && input_value[0] != '') {
+                    $('#' + tokenFormId + ' [name="'+input_name+'[year]"]').val(input_value[0].split('-')[0]);
+                    $('#' + tokenFormId + ' [name="'+input_name+'[month]"]').val(input_value[0].split('-')[1]);
+                    $('#' + tokenFormId + ' [name="'+input_name+'[day]"]').val(input_value[0].split('-')[2]);
+                    $('#' + tokenFormId + ' [name="'+input_name+'_hidden"]').val(input_value[0]);
+                }else if (input_name == 'cd_nom' && Array.isArray(input_value) && input_value.length > 0) {
+                    cd_nom_list = input_value;
+                    for (var i in input_value) {
+                        //console.log("Récupère le nom des taxon et les mets dans le panier");
+                        addTaxonToSearch( input_value[i], 'cd_nom = ' + input_value[i] );
+                    }
+                } else {
+                    $('#' + tokenFormId + ' [name="'+input_name+'"]').val(input_value);
+                }
+
+                // Bascule sur l'onglet de recherche par attribut
+                var attributes_items = [
+                    'group', 'habitat', 'statut', 'endemicite',
+                    'invasibilite', 'menace', 'protection'
+                ]
+                if ($.inArray(input_name, attributes_items) != -1 && input_value != '') {
+                    $('li a[href="#recherche_taxon_attributs"]').click();
+                }
+
+                // Récupère la géométrie dessinée et l'affiche sur la carte
+                if (input_name == 'geom' && input_value && input_value[0] != '') {
+                    var wkt = input_value[0].trim();
+                    var format = new OpenLayers.Format.WKT();
+                    var geom = format.read( wkt ).geometry;
+                    var theLayer = OccTax.layers['queryLayer'];
+                    theLayer.destroyFeatures();
+                    geom.transform('EPSG:4326', OccTax.map.projection);
+                    theLayer.addFeatures( [new OpenLayers.Feature.Vector( geom)] );
+                }
+
+                // Récupère la géométrie d'un objet spatial
+                var attributes_items = [
+                    'code_commune', 'code_masse_eau',
+                    'code_maille'
+                ]
+                if ($.inArray(input_name, attributes_items) != -1 && input_value != '') {
+                    if (geometry_already_added) {
+                        continue;
+                    }
+                    var geomform_getter = '#form_occtax_service_' + input_name.replace('code_', '');
+                    var type_maille = '';
+                    if (input_name == 'code_maille') {
+                        type_maille = targets['type_maille'];
+                    }
+                    $.post(
+                        $(geomform_getter).attr('action')
+                        ,{x:'', y:'', type_maille: type_maille, code: input_value[0]}
+                        , function( data ) {
+                        if ( data.status == 1 ) {
+                              var format = new OpenLayers.Format.GeoJSON();
+                              var geom = format.read( data.result.geojson )[0].geometry;
+                              var theLayer = OccTax.layers['queryLayer'];
+                              theLayer.destroyFeatures();
+                              geom.transform('EPSG:4326', OccTax.map.projection);
+                              theLayer.addFeatures( [new OpenLayers.Feature.Vector( geom)] );
+                        }
+                    }, 'json');
+                    geometry_already_added = true;
+                }
+
+            };
+
+            // Submit form
+            if (trigger_submit) {
+                $('#'+tokenFormId).submit();
+                if (cd_nom_list.length > 0) {
+                    // Change name of chosen cd_nom in bucket
+                    for (var i in cd_nom_list) {
+                        var form_getter = '#form_occtax_service_commune';
+                        $.post(
+                            $(form_getter).attr('action').replace('getCommune', 'getTaxon')
+                            ,{cd_nom: cd_nom_list[i]}
+                            , function( data ) {
+                            if ( data.status == 1 ) {
+                                deleteTaxonToSearch( data.result.cd_nom );
+                                addTaxonToSearch( data.result.cd_nom, data.result.nom_valide );
+                            }
+                        }, 'json');
+                    }
+                }
+            }
+        }
+    }
+
+    function updateUrlFromFormInput() {
+        var queryString = window.location.search;
+        //console.log(queryString)
+        var tokenFormId = $('#div_form_occtax_search_token form').attr('id');
+        var white_params = getWhiteParams('form');
+        var form_params = '';
+        for (var k in white_params) {
+            var name = white_params[k];
+
+            //console.log("FROM - " +name);
+            // Dates
+            var input_value = '';
+            if (name == "date_min") {
+                var input_value = $('#' + tokenFormId + ' [name="'+name+'[year]"]').val();
+                if (input_value != '') {
+                    input_value+= '-' + $('#' + tokenFormId + ' [name="'+name+'[month]"]').val();
+                    input_value+= '-' + $('#' + tokenFormId + ' [name="'+name+'[day]"]').val();
+                }
+            } else if (name == "date_max") {
+                var input_value = $('#' + tokenFormId + ' [name="'+name+'[year]"]').val();
+                if (input_value != '') {
+                    input_value+= '-' + $('#' + tokenFormId + ' [name="'+name+'[month]"]').val();
+                    input_value+= '-' + $('#' + tokenFormId + ' [name="'+name+'[day]"]').val();
+                }
+            } else if (name == "cd_nom") {
+                var cd_nom = $('#' + tokenFormId + ' [name="'+name+'[]"]').val();
+                var input_value = cd_nom;
+            } else {
+                var input_value = $('#' + tokenFormId + ' [name="'+name+'"]').val();
+            }
+            if (input_value && input_value != '') {
+                if (Array.isArray(input_value)) {
+                    for (var v in input_value) {
+                        form_params+= name+'['+v+']='+input_value[v]+'&';
+                    }
+                } else {
+                    form_params+= name+'='+input_value+'&';
+                }
+            }
+        }
+        if (form_params != '') {
+            window.history.pushState('', '', '?' + form_params.trim('&'));
+        }
+    }
+
         //console.log('OccTax uicreated');
         $('#occtax-message').remove();
         $('#occtax-highlight-message').remove();
@@ -1156,7 +1340,7 @@ OccTax.events.on({
             if ( dataValue == 'modifyPolygon' ) {
                 if(OccTax.controls['query']['modifyPolygonLayerCtrl'].active) {
                     self.removeClass('active');
-                    theLayer = OccTax.layers['queryLayer'];
+                    var theLayer = OccTax.layers['queryLayer'];
                     var feature = theLayer.features[0];
                     OccTax.validGeometryFeature( feature );
                     theLayer.drawFeature( feature );
@@ -1356,6 +1540,9 @@ OccTax.events.on({
           clearTaxonFromSearch(removePanier, removeFilters);
         }
 
+        // Add parameters in URL
+        updateUrlFromFormInput();
+
         // Send request and get token
         $.post(self.attr('action'), self.serialize(),
             function(tData) {
@@ -1514,6 +1701,8 @@ OccTax.events.on({
 
           return false;
       });
+
+
 
 
       addResultsStatsTable();
@@ -1755,6 +1944,10 @@ OccTax.events.on({
                //refreshOcctaxDatatableSize(mycontainer);
             //}
         //});
+
+
+        // Get URL parameters, set form inputs and submit search form
+        updateFormInputsFromUrl();
 
 
     }
