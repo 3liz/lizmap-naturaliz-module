@@ -57,8 +57,13 @@ class defaultCtrl extends lizMapCtrl {
             $rep->title = $ini->getValue('projectName', 'naturaliz');
             $rep->body->assign( 'repositoryLabel', $ini->getValue('appName', 'naturaliz') );
             $bp = jApp::config()->urlengine['basePath'];
+            // fileupload
             $rep->addJsLink( $bp.'js/fileUpload/jquery.iframe-transport.js' );
             $rep->addJsLink( $bp.'js/fileUpload/jquery.fileupload.js' );
+            // sumoselect
+            $rep->addJsLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/sumoselect/jquery.sumoselect.min.js')));
+            $rep->addCSSLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'css/sumoselect/sumoselect.css')));
+            // occtax
             $rep->addJsLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/occtax.js')));
             $rep->addJsLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/occtax.search.js')));
 

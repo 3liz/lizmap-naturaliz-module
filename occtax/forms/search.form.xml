@@ -30,16 +30,16 @@
 
     <group ref="filter">
     <label locale="taxon~search.group.filter"/>
-        <menulist ref="group">
+        <listbox multiple="true" ref="group">
             <label locale="taxon~search.input.group"/>
             <emptyitem locale="taxon~search.input.emptyitem"/>
             <datasource dao="taxon~t_group_categorie"
               method="getDistinctCategorie"
               labelproperty="cat_nom" valueproperty="cat_nom"/>
             <hint locale="taxon~search.input.group.help"/>
-        </menulist>
+        </listbox>
 
-        <menulist ref="habitat">
+        <listbox multiple="true" ref="habitat">
             <label locale="taxon~search.input.habitat"/>
             <emptyitem locale="taxon~search.input.emptyitem"/>
             <datasource dao="taxon~t_nomenclature"
@@ -47,9 +47,9 @@
               labelproperty="valeur"
               valueproperty="code"/>
             <hint locale="taxon~search.input.habitat.help"/>
-        </menulist>
+        </listbox>
 
-        <menulist ref="statut">
+        <listbox multiple="true" ref="statut">
             <label locale="taxon~search.input.statut"/>
             <emptyitem locale="taxon~search.input.emptyitem"/>
             <datasource dao="taxon~t_nomenclature"
@@ -57,21 +57,21 @@
               labelproperty="valeur"  labelseparator=" - "
               valueproperty="code"/>
             <hint locale="taxon~search.input.statut.help"/>
-        </menulist>
+        </listbox>
 
 <!--
 Désactivé car redondant et sujet à débat
-        <menulist ref="rarete">
+        <listbox multiple="true" ref="rarete">
             <label locale="taxon~search.input.rarete"/>
             <emptyitem locale="taxon~search.input.emptyitem"/>
             <datasource dao="taxon~t_nomenclature"
               method="findByChamp" criteria="rarete"
               labelproperty="valeur"  labelseparator=" - "
               valueproperty="code"/>
-        </menulist>
+        </listbox>
 -->
 
-        <menulist ref="endemicite">
+        <listbox multiple="true" ref="endemicite">
             <label locale="taxon~search.input.endemicite"/>
             <emptyitem locale="taxon~search.input.emptyitem"/>
             <datasource dao="taxon~t_nomenclature"
@@ -79,9 +79,9 @@ Désactivé car redondant et sujet à débat
               labelproperty="valeur,description"  labelseparator=" "
               valueproperty="code"/>
             <hint locale="taxon~search.input.endemicite.help"/>
-        </menulist>
+        </listbox>
 
-        <menulist ref="invasibilite">
+        <listbox multiple="true" ref="invasibilite">
             <label locale="taxon~search.input.invasibilite"/>
             <emptyitem locale="taxon~search.input.emptyitem"/>
             <datasource dao="taxon~t_nomenclature"
@@ -89,9 +89,9 @@ Désactivé car redondant et sujet à débat
               labelproperty="valeur"  labelseparator=" - "
               valueproperty="code"/>
             <hint locale="taxon~search.input.invasibilite.help"/>
-        </menulist>
+        </listbox>
 
-        <menulist ref="menace">
+        <listbox multiple="true" ref="menace">
             <label locale="taxon~search.input.menace"/>
             <emptyitem locale="taxon~search.input.emptyitem"/>
             <datasource dao="taxon~t_nomenclature"
@@ -99,37 +99,37 @@ Désactivé car redondant et sujet à débat
               labelproperty="valeur"  labelseparator=" - "
               valueproperty="code"/>
             <hint locale="taxon~search.input.menace.help"/>
-        </menulist>
+        </listbox>
 
 <!--
 Masqué pour simplifier
-        <menulist ref="menace_monde">
+        <listbox multiple="true" ref="menace_monde">
             <label locale="taxon~search.input.menace_monde"/>
             <emptyitem locale="taxon~search.input.emptyitem"/>
             <datasource dao="taxon~t_nomenclature"
               method="findByChamp" criteria="menace"
               labelproperty="valeur"  labelseparator=" - "
               valueproperty="code"/>
-        </menulist>
+        </listbox>
 -->
 
-        <menulist ref="protection">
+        <listbox multiple="true" ref="protection">
             <label locale="taxon~search.input.protection"/>
             <emptyitem locale="taxon~search.input.emptyitem"/>
             <datasource dao="taxon~t_nomenclature"
               method="getProtections" labelproperty="valeur" valueproperty="code"/>
             <hint locale="taxon~search.input.protection.help"/>
-        </menulist>
+        </listbox>
 
 <!--
-        <menulist ref="det_znieff">
+        <listbox multiple="true" ref="det_znieff">
             <label locale="taxon~search.input.det_znieff"/>
             <emptyitem locale="taxon~search.input.emptyitem"/>
             <datasource dao="taxon~t_nomenclature"
               method="findByChamp" criteria="det_znieff"
               labelproperty="valeur"  labelseparator=" - "
               valueproperty="code"/>
-        </menulist>
+        </listbox>
 -->
 
     </group>
@@ -137,16 +137,16 @@ Masqué pour simplifier
     <group ref="what">
         <label locale="occtax~search.group.what"/>
 
-        <menulist ref="jdd_id">
+        <listbox multiple="true" ref="jdd_id">
             <label locale="occtax~search.input.jdd_id"/>
             <emptyitem locale="occtax~search.input.emptyitem"/>
             <datasource dao="occtax~jdd"
               method="getJddList" labelproperty="jdd_libelle"
               valueproperty="jdd_id"/>
             <hint locale="occtax~search.input.jdd_id.help"/>
-        </menulist>
+        </listbox>
 
-        <menulist ref="validite_niveau">
+        <listbox multiple="true" ref="validite_niveau">
                 <label locale="occtax~search.input.validite_niveau"/>
             <emptyitem locale="occtax~search.input.emptyitem"/>
             <datasource dao="occtax~nomenclature"
@@ -154,7 +154,7 @@ Masqué pour simplifier
               labelproperty="valeur"
               valueproperty="code"/>
             <hint locale="occtax~search.input.validite_niveau.help"/>
-        </menulist>
+        </listbox>
 
 <!--
         <input ref="search_token">
@@ -192,12 +192,12 @@ Masqué pour simplifier
     <group ref="where">
         <label locale="occtax~search.group.where"/>
 
-        <menulist ref="type_en">
+        <listbox multiple="true" ref="type_en">
             <label locale="occtax~search.input.type_en"/>
             <emptyitem locale="occtax~search.input.emptyitem"/>
             <datasource class="occtax~listExistingTypeEn" />
             <hint locale="occtax~search.input.type_en.help"/>
-        </menulist>
+        </listbox>
 
         <hidden ref="code_commune">
             <label locale="occtax~search.input.code_commune"/>

@@ -1054,6 +1054,7 @@ OccTax.events.on({
             var white_params = getWhiteParams('url');
             var geometry_already_added = false;
             var cd_nom_list = [];
+
             for (var name in targets) {
                 if ($.inArray(name, white_params) == -1) {
                     continue;
@@ -1075,7 +1076,22 @@ OccTax.events.on({
                         addTaxonToSearch( input_value[i], 'cd_nom = ' + input_value[i] );
                     }
                 } else {
-                    $('#' + tokenFormId + ' [name="'+input_name+'"]').val(input_value);
+                    var input_item = $('#' + tokenFormId + ' [name="'+input_name+'"]');
+                    var ismulti = false;
+                    if (input_item.length == 0) {
+                        input_item = $('#' + tokenFormId + ' [name="'+input_name+'[]"]');
+                        ismulti = true;
+                    }
+                    input_item.val(input_value);
+                    // sumoselect too
+                    if (ismulti && input_item) {
+                        input_item[0].sumo.unSelectAll();
+                        for (var i in input_value) {
+                            console.log(input_value[i]);
+                            input_item[0].sumo.selectItem(input_value[i]);
+                        }
+                    }
+
                 }
 
                 // Bascule sur l'onglet de recherche par attribut
@@ -1154,14 +1170,12 @@ OccTax.events.on({
 
     function updateUrlFromFormInput() {
         var queryString = window.location.search;
-        //console.log(queryString)
+        console.log(queryString)
         var tokenFormId = $('#div_form_occtax_search_token form').attr('id');
         var white_params = getWhiteParams('form');
         var form_params = '';
         for (var k in white_params) {
             var name = white_params[k];
-
-            //console.log("FROM - " +name);
             // Dates
             var input_value = '';
             if (name == "date_min") {
@@ -1180,7 +1194,12 @@ OccTax.events.on({
                 var cd_nom = $('#' + tokenFormId + ' [name="'+name+'[]"]').val();
                 var input_value = cd_nom;
             } else {
-                var input_value = $('#' + tokenFormId + ' [name="'+name+'"]').val();
+                // Check if simple input can be found
+                var input_item = $('#' + tokenFormId + ' [name="'+name+'"]');
+                if (input_item.length == 0) {
+                    input_item = $('#' + tokenFormId + ' [name="'+name+'[]"]');
+                }
+                var input_value = input_item.val();
             }
             if (input_value && input_value != '') {
                 if (Array.isArray(input_value)) {
@@ -1913,6 +1932,19 @@ OccTax.events.on({
 
       // Modification du mot "Rechercher"
       $('#search-query').attr('placeholder', 'Rechercher un lieu');
+
+      // Ajout de sumoselect pour les listes déroulantes multiples
+      $('select.jforms-ctrl-listbox').SumoSelect(
+        {
+            placeholder: 'Choisir dans la liste',
+            captionFormat: '{0} sélectionné',
+            captionFormatAllSelected: '{0} tout est sélectionné !',
+            search: true,
+            searchText: 'Recherche...',
+            noMatch: 'Pas de correspondance pour "{0}"',
+            locale: ['OK', 'Annuler', 'Tout sélectionner']
+        }
+      );
 
       // On replie les couches
       $('#layers-fold-all').click();

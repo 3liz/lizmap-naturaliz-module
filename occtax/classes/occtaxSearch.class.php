@@ -167,7 +167,15 @@ class occtaxSearch {
         $qf = $this->queryFilters;
         foreach( $this->params as $k=>$v ){
             if( array_key_exists( $k, $qf ) and $v and $qf[$k]['type'] != 'geom' ){
-                $filters[$k] = $this->getValueLabel($k, $v);
+                if (is_array($v)) {
+                    $labels = array();
+                    foreach ($v as $vv) {
+                        $labels[] = $this->getValueLabel($k, $vv);
+                    }
+                    $filters[$k] = implode(', ', $labels);
+                } else {
+                    $filters[$k] = $this->getValueLabel($k, $v);
+                }
             }
             if($k == 'code_maille' and $v){
                 $filters[$k] = $this->getValueLabel($k, $v);
