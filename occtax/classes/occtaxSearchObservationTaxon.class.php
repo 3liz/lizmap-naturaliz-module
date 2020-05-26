@@ -19,19 +19,19 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
         'nom_vern_valide',
         'nbobs',
         'groupe',
-        'redlist',
+        //'redlist',
         'filter'
     );
 
     protected $tplFields = array(
 
-        'nom_valide' => '{if !(empty($line->url))}<a class="getTaxonDetail" href="#" title="{@taxon~search.output.inpn.title@}">{$line->lb_nom_valide}</a>{else}{$line->lb_nom_valide}{/if}',
+        'nom_valide' => '{if !(empty($line->url))}<a class="getTaxonDetail" href="#" title="{@taxon~search.output.inpn.title@}">{$line->lb_nom_valide}</a>{else}{$line->lb_nom_valide}{/if}{if !empty($line->menace)}&nbsp;<span class="redlist {$line->menace}" title="{@taxon~search.output.redlist.title@} : {$line->lib_menace}">{$line->menace}</span>{/if}{if !empty($line->protection)}&nbsp;<span class="protectionlist {$line->protection}" title="{@taxon~search.output.protection.title@} : {$line->protection}">{$line->protection}</span>{/if}',
 
         'groupe' => '<img src="{$j_basepath}css/images/taxon/{$line->categorie}.png" width="20px" title="{$line->categorie}"/>',
 
         'filter' => '<a class="filterByTaxon" href="#" title="{@occtax~search.output.filter.taxon.title@}"><i class="icon-filter"></i></a>',
 
-        'redlist' => '<span class="redlist {$line->menace}" title="{@taxon~search.output.redlist.title@} : {$line->lib_menace}">{$line->menace}</span>',
+        //'redlist' => '{if !empty($line->menace)}<span class="redlist {$line->menace}" title="{@taxon~search.output.redlist.title@} : {$line->lib_menace}">{$line->menace}</span>{/if}{if !empty($line->protection)}&nbsp;<span class="protectionlist {$line->protection}" title="{@taxon~search.output.protection.title@} : {$line->protection}">{$line->protection}</span>{/if}',
 
     );
 
@@ -44,7 +44,7 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
         'nom_vern_valide' => array( 'type' => 'string', 'sortable' => "true"),
         'nbobs' => array( 'type' => 'num', 'sortable' => "true"),
         'groupe' => array( 'type' => 'string', 'sortable' => "true", 'sorting_field' => 'categorie', 'className' => 'dt-center'),
-        'redlist' => array( 'type' => 'string', 'sortable' => "true", 'sorting_field' => 'menace', 'className' => 'dt-center'),
+        //'redlist' => array( 'type' => 'string', 'sortable' => "true", 'sorting_field' => 'menace', 'className' => 'dt-center'),
         'filter' => array( 'type' => 'string', 'sortable' => 0, 'className' => 'dt-center')
     );
 
@@ -64,6 +64,7 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
                     'o.url' => 'url',
                     'o.categorie' => 'categorie',
                     'o.menace' => 'menace',
+                    'o.protection' => 'protection',
                     'count(o.cle_obs) AS nbobs'=> Null
                 )
             ),
