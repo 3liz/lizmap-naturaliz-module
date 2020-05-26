@@ -84,13 +84,6 @@ class occtaxSearch {
         if( $srid )
             $this->srid = $srid;
 
-        // Remove useless params
-        foreach ($params as $k=>$v) {
-            if (is_array($v) and $v == array('')) {
-                $params[$k] = "";
-            }
-        }
-
         // Get parameters from cache if no parameters given
         $cache = $this->getFromCache($token);
         if($cache){
@@ -99,6 +92,12 @@ class occtaxSearch {
             $this->token = $token;
         }else{
             $this->token = time().session_id();
+            // Remove useless params
+            foreach ($params as $k=>$v) {
+                if (is_array($v) and $v == array('')) {
+                    $params[$k] = "";
+                }
+            }
             $this->params = $params;
         }
 

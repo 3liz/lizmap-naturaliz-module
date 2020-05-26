@@ -402,7 +402,9 @@ OccTax.events.on({
         });
         // sumoselect
         $('select.jforms-ctrl-listbox').each(function(){
-            $(this)[0].sumo.unSelectAll();
+            if ($(this).attr('id') != 'jforms_occtax_search_cd_nom') {
+                $(this)[0].sumo.unSelectAll();
+            }
         });
       }
 
@@ -1567,15 +1569,11 @@ OccTax.events.on({
           clearTaxonFromSearch(removePanier, removeFilters);
         }
 
-        // Remove type_en if value: type_en[]   ""
-
-
         // Add parameters in URL
         updateUrlFromFormInput();
-        var form_params = self.serialize();
 
         // Send request and get token
-        $.post(self.attr('action'), form_params,
+        $.post(self.attr('action'), self.serialize(),
             function(tData) {
                 blocme = false;
                 if (tData.status == 1) {
