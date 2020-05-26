@@ -21,7 +21,7 @@ class occtaxSearchObservation extends occtaxSearch {
         'geojson',
         'observateur',
         'source_objet',
-        'detail'
+        'detail',
     );
 
     protected $tplFields = array(
@@ -31,7 +31,7 @@ class occtaxSearchObservation extends occtaxSearch {
                 {$line->identite_observateur|truncate:40}
             </span>
         ',
-        'detail' => '<a class="openObservation" href="#" title="{@occtax~search.output.detail.title@}"><i class="icon-file"></i></a>'
+        'detail' => '<a class="openObservation" href="#" title="{@occtax~search.output.detail.title@}"><i class="icon-file"></i></a>  <a class="zoomToObservation" href="#" title="{@occtax~search.output.zoom.title@}"><i class="icon-search"></i></a>',
     );
 
     protected $row_id = 'cle_obs';
@@ -41,7 +41,7 @@ class occtaxSearchObservation extends occtaxSearch {
         'lien_nom_valide' => array( 'type' => 'string', 'sortable' => "true", 'sorting_field' => 'lb_nom_valide'),
         'observateur' => array( 'type' => 'string', 'sortable' => "true", 'sorting_field' => 'identite_observateur'),
         'source_objet' => array( 'type' => 'string', 'sortable' => "true", 'className' => 'dt-center'),
-        'detail' => array( 'type' => 'string', 'sortable' => 0, 'className' => 'dt-center')
+        'detail' => array( 'type' => 'string', 'sortable' => 0, 'className' => 'dt-center'),
     );
 
     protected $querySelectors = array(

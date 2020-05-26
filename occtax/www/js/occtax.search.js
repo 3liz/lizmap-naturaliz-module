@@ -863,11 +863,20 @@ OccTax.events.on({
               if( obs )
                 OccTax.controls['select']['highlightCtrl'].unhighlight( obs );
           });
+          // Open observation detail
           $('#'+tableId+' a.openObservation').click(function(){
               var tr = $($(this).parents('tr')[0]);
               var d = $('#'+tableId+'').DataTable().row( tr ).data();
               var identifiant_permanent = d['DT_RowId'];
               getObservationDetail( identifiant_permanent );
+              return false;
+          });
+          // Zoom to observation
+          $('#'+tableId+' a.zoomToObservation').click(function(){
+              var tr = $($(this).parents('tr')[0]);
+              var d = $('#'+tableId+'').DataTable().row( tr ).data();
+              var identifiant_permanent = d['DT_RowId'];
+              zoomToObservation( identifiant_permanent );
               return false;
           });
           $('#'+tableId+' span.identite_observateur').tooltip();
@@ -943,6 +952,20 @@ OccTax.events.on({
         .appendTo( ul );
       };
 
+    }
+
+    function zoomToObservation( id ) {
+        var ok = checkConnection();
+        if (!ok) {
+            return;
+        }
+        if(!id)
+            return;
+        var obsId = id;
+        var obs = OccTax.layers.resultLayer.getFeatureByFid(obsId);
+        if (!obs)
+            return;
+        OccTax.map.zoomToExtent( obs.geometry.bounds );
     }
 
     function getObservationDetail( id ) {
