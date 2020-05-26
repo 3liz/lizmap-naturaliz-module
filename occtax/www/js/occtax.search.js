@@ -2069,6 +2069,7 @@ OccTax.events.on({
             placeholder: 'Choisir dans la liste',
             captionFormat: '{0} sélectionnés',
             captionFormatAllSelected: '{0} tout est sélectionné !',
+            okCancelInMulti: true,
             search: true,
             searchText: 'Recherche...',
             noMatch: 'Pas de correspondance pour "{0}"',

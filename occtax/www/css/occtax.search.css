@@ -455,3 +455,9 @@ Légende des mailles*/
   margin-left:0px;
 }
 
+
+/*
+Tweak sumoselect*/
+.SumoSelect.open > .optWrapper {
+  position: initial !important;
+}
