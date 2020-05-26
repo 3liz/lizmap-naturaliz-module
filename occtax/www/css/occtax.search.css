@@ -9,6 +9,10 @@ div#occtax.not_enabled {
     pointer-events: none;
     opacity: 0.4;
 }
+div#occtax_search_observation_card.not_enabled {
+    pointer-events: none;
+    opacity: 0.4;
+}
 
 /*
 Onglets taxons

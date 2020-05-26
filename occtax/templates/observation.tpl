@@ -1,5 +1,12 @@
-
 <div style="height:100%;overflow:auto;">
+
+<div style="padding: 2px;">
+    <center>
+    <button class="btn btn-mini btn-info" id="occtax_fiche_before">Précédent</button>
+    <button class="btn btn-mini btn-info" id="occtax_fiche_next">Suivant</button>
+    <button class="btn btn-mini btn-info pull-right" id="occtax_fiche_zoom">Zoom</button>
+    </center>
+</div>
 
 <h3 class="dock-subtitle">{@occtax~observation.title.quoi@}</h3>
 <div class="dock-content">

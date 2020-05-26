@@ -980,10 +980,14 @@ OccTax.events.on({
         var obsUrl = $('#'+tokenFormId).attr('action').replace('initSearch', 'getObservation');
         obsUrl = obsUrl.replace('service', 'observation');
 
+        $('occtax_search_observation_card').addClass('not_enabled');
+
         $.get(
             obsUrl,
             {'id': id},
             function( data ) {
+                $('occtax_search_observation_card').removeClass('not_enabled');
+
                 // Show observation car h3 and div
                 $('#occtax_search_observation_card').prev('h3.occtax_search:first').show();
                 $('#occtax_search_observation_card').html( data ).show();
@@ -993,12 +997,58 @@ OccTax.events.on({
                 $('#occtax_search_result').hide();
                 $('#occtax_search_description').hide();
 
-                // Add event on click
+                // Taxon detail URL - Add event on click
                 $('#occtax_search_observation_card a.getTaxonDetail').click(function(){
                     var classes = $(this).attr('class');
                     var cd_nom = classes.split(' ')[1].replace('cd_nom_', '');
                     displayTaxonDetail(cd_nom);
+                    return false;
                 });
+
+                // Next and previous observation button
+                $('#occtax_fiche_next, #occtax_fiche_before').click(function(){
+                    var action = 'next';
+                    if ($(this).attr('id') == 'occtax_fiche_before') {
+                        action = 'before';
+                    }
+                    // find brother
+                    var tableId = 'occtax_results_observation_table';
+                    var current_tr = $('#'+tableId).find('tr#' + id);
+                    console.log(current_tr);
+                    if (action == 'next') {
+                        var brother_id = current_tr.next('tr').attr('id');
+                        var m = 'à la fin';
+                    } else {
+                        var brother_id = current_tr.prev('tr').attr('id');
+                        var m = 'au début';
+                    }
+                    if (!brother_id){
+                        $('#occtax-highlight-message').remove();
+                        lizMap.addMessage( "Vous êtes arrivés " + m + " du tableau d'observations", 'info', true ).attr('id','occtax-highlight-message');
+                        return false;
+                    }
+
+                    // Unhighligth current obs
+                    var current_obs = OccTax.layers.resultLayer.getFeatureByFid(id);
+                    OccTax.controls['select']['highlightCtrl'].unhighlight( current_obs );
+
+                    // Go to the next observation
+                    getObservationDetail(brother_id);
+                    return false;
+
+                });
+
+                $('#occtax_fiche_zoom').click(function(){
+                    zoomToObservation(id);
+                });
+
+                // Highlight obs
+                var obs = OccTax.layers.resultLayer.getFeatureByFid(id);
+                if (obs) {
+                    OccTax.controls['select']['highlightCtrl'].highlight( obs );
+                }
+
+
             }
         );
     }
