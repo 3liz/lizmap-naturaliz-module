@@ -1036,6 +1036,18 @@ OccTax.events.on({
                     return false;
                 });
 
+                // Add number of lines in the table and current position
+                var tableId = 'occtax_results_observation_table';
+                var current_line = $('#'+tableId).find('tr#' + id).index() + 1;
+                var total_count = $('#'+tableId+' tr').length - 1;
+                $('#occtax_fiche_position').text(current_line + ' / '+total_count);
+                if (current_line == 1){
+                    $('#occtax_fiche_before').addClass('disabled');
+                }
+                if (current_line == 100){
+                    $('#occtax_fiche_next').addClass('disabled');
+                }
+
                 // Next and previous observation button
                 $('#occtax_fiche_next, #occtax_fiche_before').click(function(){
                     // Remove taxon detail

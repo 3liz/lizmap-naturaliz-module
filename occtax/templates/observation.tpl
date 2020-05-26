@@ -2,9 +2,10 @@
 
 <div class="dock-content" style="padding: 2px;">
     <center>
-    <button class="btn btn-info" id="occtax_fiche_before">Précédent</button>
-    <button class="btn btn-info" id="occtax_fiche_next">Suivant</button>
-    <button class="btn btn-info pull-right" id="occtax_fiche_zoom">Zoom</button>
+        <button class="btn btn-info" id="occtax_fiche_before">Précédent</button>
+        <span style="font-weight: bold;" id="occtax_fiche_position" class=""></span>
+        <button class="btn btn-info" id="occtax_fiche_next">Suivant</button>
+        <button class="btn btn-info pull-right" id="occtax_fiche_zoom">Zoom</button>
     </center>
 </div>
 
