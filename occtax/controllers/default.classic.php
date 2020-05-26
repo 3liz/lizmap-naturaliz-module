@@ -67,6 +67,14 @@ class defaultCtrl extends lizMapCtrl {
             $rep->addJsLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/occtax.js')));
             $rep->addJsLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/occtax.search.js')));
 
+            // Add nomenclature
+            $nomenclature = array();
+            $daot = jDao::get('taxon~t_nomenclature');
+            foreach($daot->findAll() as $nom){
+                $nomenclature[$nom->champ . '|' . $nom->code] = $nom->valeur;
+            }
+            $rep->addJSCode("var t_nomenclature = " . json_encode($nomenclature) . ';');
+
             $rep->addHeadContent( '<style>' . $ini->getValue('projectCss', 'naturaliz') . '</style>');
         }
 

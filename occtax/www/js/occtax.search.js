@@ -617,7 +617,30 @@ OccTax.events.on({
               displayTaxonDetail(cd_nom);
               return false;
           });
+          // Replace taxon nomenclature key by values
+          $('#'+tableId+' span.redlist').each(function(){
+            replaceKeyByLabelFromNomenclature($(this), 'menace');
+          });
+          $('#'+tableId+' span.protectionlist').each(function(){
+            replaceKeyByLabelFromNomenclature($(this), 'protection');
+          });
         });
+    }
+
+    function replaceKeyByLabelFromNomenclature(span, target_field) {
+        for(var key in t_nomenclature) {
+            var label = t_nomenclature[key];
+            var champ = key.split('|')[0];
+            if (champ != target_field) {
+                continue;
+            }
+            var val = key.split('|')[1];
+            if ($(this).hasClass(val)) {
+                continue;
+            }
+            var title = span.attr('title');
+            span.attr('title', title.replace(val, label));
+        }
     }
 
     function addResultsMailleTable(type_maille) {
@@ -889,6 +912,14 @@ OccTax.events.on({
               $('#occtax-highlight-message').remove();
               return false;
           });
+          // Replace taxon nomenclature key by values
+          $('#'+tableId+' span.redlist').each(function(){
+            replaceKeyByLabelFromNomenclature($(this), 'menace');
+          });
+          $('#'+tableId+' span.protectionlist').each(function(){
+            replaceKeyByLabelFromNomenclature($(this), 'protection');
+          });
+
         });
     }
 
@@ -1007,6 +1038,10 @@ OccTax.events.on({
 
                 // Next and previous observation button
                 $('#occtax_fiche_next, #occtax_fiche_before').click(function(){
+                    // Remove taxon detail
+                    $('#sub-dock').hide().html('');
+
+                    // Get action based on clicked button
                     var action = 'next';
                     if ($(this).attr('id') == 'occtax_fiche_before') {
                         action = 'before';
@@ -2020,7 +2055,7 @@ OccTax.events.on({
       $('select.jforms-ctrl-listbox').SumoSelect(
         {
             placeholder: 'Choisir dans la liste',
-            captionFormat: '{0} sélectionné',
+            captionFormat: '{0} sélectionnés',
             captionFormatAllSelected: '{0} tout est sélectionné !',
             search: true,
             searchText: 'Recherche...',

@@ -1,10 +1,10 @@
 <div style="height:100%;overflow:auto;">
 
-<div style="padding: 2px;">
+<div class="dock-content" style="padding: 2px;">
     <center>
-    <button class="btn btn-mini btn-info" id="occtax_fiche_before">Précédent</button>
-    <button class="btn btn-mini btn-info" id="occtax_fiche_next">Suivant</button>
-    <button class="btn btn-mini btn-info pull-right" id="occtax_fiche_zoom">Zoom</button>
+    <button class="btn btn-info" id="occtax_fiche_before">Précédent</button>
+    <button class="btn btn-info" id="occtax_fiche_next">Suivant</button>
+    <button class="btn btn-info pull-right" id="occtax_fiche_zoom">Zoom</button>
     </center>
 </div>
 

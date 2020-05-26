@@ -25,7 +25,9 @@ class occtaxSearchObservation extends occtaxSearch {
     );
 
     protected $tplFields = array(
-        'lien_nom_valide' => '<a class="getTaxonDetail cd_nom_{$line->cd_ref}" href="#" title="{@taxon~search.output.inpn.title@}">{$line->lb_nom_valide}</a>',
+        'lien_nom_valide' => '
+            <a class="getTaxonDetail cd_nom_{$line->cd_ref}" href="#" title="{@taxon~search.output.inpn.title@}">{$line->lb_nom_valide}</a>
+            {if !empty($line->menace)}&nbsp;<span class="redlist {$line->menace}" title="{@taxon~search.output.redlist.title@} : {$line->menace}">{$line->menace}</span>{/if}{if !empty($line->protection)}&nbsp;<span class="protectionlist {$line->protection}" title="{@taxon~search.output.protection.title@} : {$line->protection}">{$line->protection}</span>{/if}',
         'observateur' => '
             <span class="identite_observateur" title="{$line->identite_observateur|eschtml}">
                 {$line->identite_observateur|truncate:40}
@@ -60,9 +62,12 @@ class occtaxSearchObservation extends occtaxSearch {
                 'ST_AsGeoJSON( ST_Transform(o.geom, 4326), 6 ) AS geojson' => Null,
                 'o.geom' => Null,
                 "o.diffusion" => Null,
-                "identite_observateur" => Null
+                "identite_observateur" => Null,
+                "o.menace" => Null,
+                "o.protection" => Null,
             )
         )
+
     );
 
     protected $queryFilters = array(
