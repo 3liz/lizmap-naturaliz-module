@@ -385,7 +385,8 @@ OccTax.events.on({
 
     function clearTaxonFromSearch(removePanier, removeFilters) {
       var formId = 'jforms_occtax_search';
-      if(removePanier){
+      // Panier de taxons
+      if (removePanier) {
         // Remove content from taxon panier
         $('#div_form_occtax_search_token form [name="cd_nom[]"]').html('');
         // Remove content from taxon panier
@@ -393,10 +394,15 @@ OccTax.events.on({
         $('#occtax_taxon_select_list').html('');
         $('#'+formId+' input[name="autocomplete"]').val('');
       }
-      if(removeFilters){
+      // Critères de recherche
+      if (removeFilters) {
         // Remove data from taxon inputs
         $('#'+formId+'_filter select option').prop('selected', function() {
           return this.defaultSelected;
+        });
+        // sumoselect
+        $('select.jforms-ctrl-listbox').each(function(){
+            $(this)[0].sumo.unSelectAll();
         });
       }
 
@@ -1087,7 +1093,6 @@ OccTax.events.on({
                     if (ismulti && input_item) {
                         input_item[0].sumo.unSelectAll();
                         for (var i in input_value) {
-                            console.log(input_value[i]);
                             input_item[0].sumo.selectItem(input_value[i]);
                         }
                     }
@@ -1170,7 +1175,6 @@ OccTax.events.on({
 
     function updateUrlFromFormInput() {
         var queryString = window.location.search;
-        console.log(queryString)
         var tokenFormId = $('#div_form_occtax_search_token form').attr('id');
         var white_params = getWhiteParams('form');
         var form_params = '';
@@ -1549,21 +1553,29 @@ OccTax.events.on({
         // Remove taxon input values depending on active tab
         if( $('#occtax_taxon_tab_div > div.tab-content > div.active').length == 1 ) {
           var aid = $('#occtax_taxon_tab_div > div.tab-content > div.active')[0].id;
-          if(aid == 'recherche_taxon_panier'){
+
+          // Panier de taxons
+          if (aid == 'recherche_taxon_panier') {
               var removePanier = false;
               var removeFilters = true;
-          }else{
+          }
+          // Recherche par critères
+          else {
               var removePanier = true;
               var removeFilters = false;
           }
           clearTaxonFromSearch(removePanier, removeFilters);
         }
 
+        // Remove type_en if value: type_en[]   ""
+
+
         // Add parameters in URL
         updateUrlFromFormInput();
+        var form_params = self.serialize();
 
         // Send request and get token
-        $.post(self.attr('action'), self.serialize(),
+        $.post(self.attr('action'), form_params,
             function(tData) {
                 blocme = false;
                 if (tData.status == 1) {
