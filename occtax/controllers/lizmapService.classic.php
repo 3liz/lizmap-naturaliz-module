@@ -215,16 +215,6 @@ class lizmapServiceCtrl extends serviceCtrl {
                         $newProjectContent
                     );
                 }
-            } else {
-                // if no data, we need to remove lines from template maille
-                $target = 'SELECT * FROM tpl_observation_maille LIMIT 0';
-                $pref = 'table="(';
-                $source =  'SELECT * FROM tpl_observation_maille';
-                $newProjectContent = str_replace(
-                    $pref . $source,
-                    $pref . $target,
-                    $newProjectContent
-                );
             }
         }
 
@@ -300,6 +290,28 @@ class lizmapServiceCtrl extends serviceCtrl {
                 $newProjectContent = str_replace(
                     $pref.$source,
                     $pref.$targetFinal,
+                    $newProjectContent
+                );
+            }
+        }
+
+        // No data
+        if ($recordsTotal <= 0) {
+            // if no data, we need to remove lines from template maille
+            $target = 'SELECT * FROM tpl_observation_maille LIMIT 0';
+            $pref = 'table="(';
+            $source =  'SELECT * FROM tpl_observation_maille';
+            $newProjectContent = str_replace(
+                $pref . $source,
+                $pref . $target,
+                $newProjectContent
+            );
+            // brute
+            foreach( $this->data['b']['originSql'] as $geomtype=>$source ){
+                $pref = 'table="( ';
+                $newProjectContent = str_replace(
+                    $pref.$source,
+                    $pref.$source. ' LIMIT 0',
                     $newProjectContent
                 );
             }
