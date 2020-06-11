@@ -461,3 +461,6 @@ Tweak sumoselect*/
 .SumoSelect.open > .optWrapper {
   position: initial !important;
 }
+.SumoSelect > .optWrapper > .options li label {
+  white-space: break-spaces !important;
+}
