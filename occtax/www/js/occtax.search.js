@@ -1697,8 +1697,6 @@ OccTax.events.on({
             function(tData) {
                 blocme = false;
                 if (tData.status == 1) {
-                    $('#occtax').removeClass('not_enabled');
-                    $('#occtax-message').remove();
 
                     // Display description div
                     var dHtml = tData.description;
@@ -1777,8 +1775,7 @@ OccTax.events.on({
                 }else{
                   lizMap.addMessage( tData.msg.join('<br/>'), 'error', true ).attr('id','occtax-highlight-message');
                 }
-                $('#occtax').removeClass('not_enabled');
-                $('#occtax-message').remove();
+
             }
         ,'json');
         return false;
@@ -1932,6 +1929,10 @@ OccTax.events.on({
 
         rLayer.setVisibility(true);
         rLayer.refresh();
+
+        // Enable left panel
+        $('#occtax').removeClass('not_enabled');
+        $('#occtax-message').remove();
 
         // Toggle the legend depending on the clicked button
         var displayLegend = (self.val() != 'observation');
