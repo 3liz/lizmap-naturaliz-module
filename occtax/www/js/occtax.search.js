@@ -38,7 +38,9 @@ OccTax.events.on({
         $.getJSON(url, null, function( cdata ) {
             if ( !(cdata.is_connected) ) {
                 var baseUrl = window.location.protocol + '//' + document.domain + lizUrls.basepath;
-                var loginurl = baseUrl + 'admin.php/auth/login/?auth_url_return=%2Findex.php%2Focctax%2F';
+                var url_return = '%2Findex.php%2Focctax%2F';
+                url_return+= encodeURIComponent(window.location.search);
+                var loginurl = baseUrl + 'admin.php/auth/login/?auth_url_return=' + url_return;
                 if( !error_connection ) {
                     if(!alert('Votre session a expiré ! La page va être rechargée.')){
                         error_connection = true;
