@@ -351,7 +351,7 @@ OccTax.events.on({
         html+= '<p>';
         html+= '<a href="';
         html+= data.inpnWebpage;
-        html+= '" class="btn btn-mini" target="_blank">Voir la fiche complète</a>';
+        html+= '" class="btn btn-primary" target="_blank">Voir la fiche complète</a>';
         html+= '</p>';
         html+= '</div>';
 
@@ -361,7 +361,7 @@ OccTax.events.on({
     function displayTaxonDetail(cd_nom){
         getTaxonDataFromApi(cd_nom, function(data){
             var html = buildTaxonFicheHtml(data);
-            html+=  '<button id="hide-sub-dock" class="btn btn-mini pull-right" style="margin-top:5px;" name="close" title="'+lizDict['generic.btn.close.title']+'">'+lizDict['generic.btn.close.title']+'</button>';
+            html+=  '<button id="hide-sub-dock" class="btn btn-primary pull-right" style="margin-top:5px;" name="close" title="'+lizDict['generic.btn.close.title']+'">'+lizDict['generic.btn.close.title']+'</button>';
             $('#sub-dock').html(html);
             if( !lizMap.checkMobile() ){
                 var leftPos = lizMap.getDockRightPosition();
@@ -2112,7 +2112,7 @@ OccTax.events.on({
       ;
 
       // Ajout de la classe btn-primary sur les boutons du formulaire
-      $('div.jforms-submit-buttons button.jforms-reset').addClass('btn').addClass('btn-info');
+      $('div.jforms-submit-buttons button.jforms-reset').addClass('btn').addClass('btn-primary');
       $('div.jforms-submit-buttons input.jforms-submit').addClass('btn').addClass('btn-primary');
 
       // Refresh datatable size when bottom dock changes
