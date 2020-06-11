@@ -88,7 +88,7 @@ class occtaxSearchObservation extends occtaxSearch {
                     FROM
                     taxon.taxref AS n,
                     parcours_taxref AS w
-                    WHERE TRUE
+                    WHERE 2>1 -- pas true sinon remplace par listener gestion
                     AND n.cd_sup = w.cd_ref
                 )
                 SELECT DISTINCT cd_ref
