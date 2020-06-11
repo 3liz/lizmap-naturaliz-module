@@ -1338,7 +1338,7 @@ OccTax.events.on({
             }
         }
         if (form_params != '') {
-            window.history.pushState('', '', '?' + form_params.trim('&'));
+            window.history.pushState('', '', '?bbox=' + lizMap.map.getExtent().toBBOX() + '&' + form_params.trim('&'));
         }
     }
 
@@ -1847,6 +1847,8 @@ OccTax.events.on({
           // Masquer la légende des mailles
           $('#map-content div.occtax-legend-container').remove();
 
+          // Remove URL parameters
+          window.history.pushState('', '', '?bbox=' + lizMap.map.getExtent().toBBOX());
 
           return false;
       });
@@ -2108,6 +2110,17 @@ OccTax.events.on({
             //}
         //});
 
+        // Refresh bbox in URL
+        lizMap.map.events.on({
+            moveend: function(evt) {
+                var queryString = window.location.search;
+                console.log(queryString);
+                var params = new URLSearchParams(queryString);
+                var new_bbox = lizMap.map.getExtent().toBBOX();
+                params.set('bbox', new_bbox);
+                window.history.replaceState({}, '', `${location.pathname}?${params}`);
+            }
+        });
 
         // Get URL parameters, set form inputs and submit search form
         updateFormInputsFromUrl();
