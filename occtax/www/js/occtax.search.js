@@ -402,8 +402,8 @@ OccTax.events.on({
         $('#'+formId+'_filter select option').prop('selected', function() {
           return this.defaultSelected;
         });
-        // sumoselect
-        $('select.jforms-ctrl-listbox').each(function(){
+        // sumoselect specific of taxon filter tab
+        $('#'+formId+'_filter select.jforms-ctrl-listbox').each(function(){
             if ($(this).attr('id') != 'jforms_occtax_search_cd_nom') {
                 $(this)[0].sumo.unSelectAll();
             }
@@ -1063,7 +1063,7 @@ OccTax.events.on({
                     // find brother
                     var tableId = 'occtax_results_observation_table';
                     var current_tr = $('#'+tableId).find('tr#' + id);
-                    console.log(current_tr);
+                    //console.log(current_tr);
                     if (action == 'next') {
                         var brother_id = current_tr.next('tr').attr('id');
                         var m = 'à la fin';
@@ -1304,6 +1304,7 @@ OccTax.events.on({
         var form_params = '';
         for (var k in white_params) {
             var name = white_params[k];
+
             // Dates
             var input_value = '';
             if (name == "date_min") {
@@ -1323,9 +1324,11 @@ OccTax.events.on({
                 var input_value = cd_nom;
             } else {
                 // Check if simple input can be found
-                var input_item = $('#' + tokenFormId + ' [name="'+name+'"]');
+                var input_selector = '#' + tokenFormId + ' [name="'+name+'"]';
+                var input_item = $(input_selector);
                 if (input_item.length == 0) {
-                    input_item = $('#' + tokenFormId + ' [name="'+name+'[]"]');
+                    var input_selector = '#' + tokenFormId + ' [name="'+name+'[]"]';
+                    var input_item = $(input_selector);
                 }
                 var input_value = input_item.val();
             }
@@ -1671,8 +1674,8 @@ OccTax.events.on({
         $('#occtax-highlight-message').remove();
 
         // Deactivate (CSS) main div
-        $('#occtax').addClass('not_enabled');
-        lizMap.addMessage( 'Recherche en cours...', 'info', true ).attr('id','occtax-message');
+        //$('#occtax').addClass('not_enabled');
+        //lizMap.addMessage( 'Recherche en cours...', 'info', true ).attr('id','occtax-message');
 
         // Remove taxon input values depending on active tab
         if( $('#occtax_taxon_tab_div > div.tab-content > div.active').length == 1 ) {
@@ -1813,6 +1816,12 @@ OccTax.events.on({
 
           // Reinit other fields
           $('#'+tokenFormId).trigger("reset");
+          // sumoselect
+          $('select.jforms-ctrl-listbox').each(function(){
+              if ($(this).attr('id') != 'jforms_occtax_search_cd_nom') {
+                  $(this)[0].sumo.unSelectAll();
+              }
+          });
 
           // Reinit date picker
           $('#'+tokenFormId+' .ui-datepicker-reset').click();
@@ -2074,11 +2083,13 @@ OccTax.events.on({
             placeholder: 'Choisir dans la liste',
             captionFormat: '{0} sélectionnés',
             captionFormatAllSelected: '{0} tout est sélectionné !',
-            okCancelInMulti: true,
+            okCancelInMulti: false,
+            isClickAwayOk: true,
+            //selectAll: true, // disabled because of bad perf
             search: true,
             searchText: 'Recherche...',
             noMatch: 'Pas de correspondance pour "{0}"',
-            locale: ['OK', 'Annuler', 'Tout sélectionner']
+            locale: ['OK', 'Annuler', 'Tous']
         }
       );
 
@@ -2117,7 +2128,6 @@ OccTax.events.on({
         lizMap.map.events.on({
             moveend: function(evt) {
                 var queryString = window.location.search;
-                console.log(queryString);
                 var params = new URLSearchParams(queryString);
                 var new_bbox = lizMap.map.getExtent().toBBOX();
                 params.set('bbox', new_bbox);

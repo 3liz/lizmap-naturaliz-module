@@ -32,7 +32,9 @@
     <label locale="taxon~search.group.filter"/>
         <listbox multiple="true" ref="group">
             <label locale="taxon~search.input.group"/>
+<!--
             <emptyitem locale="taxon~search.input.emptyitem"/>
+-->
             <datasource dao="taxon~t_group_categorie"
               method="getDistinctCategorie"
               labelproperty="cat_nom" valueproperty="cat_nom"/>
@@ -41,7 +43,9 @@
 
         <listbox multiple="true" ref="habitat">
             <label locale="taxon~search.input.habitat"/>
+<!--
             <emptyitem locale="taxon~search.input.emptyitem"/>
+-->
             <datasource dao="taxon~t_nomenclature"
               method="findByChamp" criteria="habitat"
               labelproperty="valeur"
@@ -51,7 +55,9 @@
 
         <listbox multiple="true" ref="statut">
             <label locale="taxon~search.input.statut"/>
+<!--
             <emptyitem locale="taxon~search.input.emptyitem"/>
+-->
             <datasource dao="taxon~t_nomenclature"
               method="findByChamp" criteria="statut"
               labelproperty="valeur"  labelseparator=" - "
@@ -73,7 +79,9 @@ Désactivé car redondant et sujet à débat
 
         <listbox multiple="true" ref="endemicite">
             <label locale="taxon~search.input.endemicite"/>
+<!--
             <emptyitem locale="taxon~search.input.emptyitem"/>
+-->
             <datasource dao="taxon~t_nomenclature"
               method="findByChamp" criteria="endemicite"
               labelproperty="valeur,description"  labelseparator=" "
@@ -83,7 +91,9 @@ Désactivé car redondant et sujet à débat
 
         <listbox multiple="true" ref="invasibilite">
             <label locale="taxon~search.input.invasibilite"/>
+<!--
             <emptyitem locale="taxon~search.input.emptyitem"/>
+-->
             <datasource dao="taxon~t_nomenclature"
               method="findByChamp" criteria="invasibilite"
               labelproperty="valeur"  labelseparator=" - "
@@ -93,7 +103,9 @@ Désactivé car redondant et sujet à débat
 
         <listbox multiple="true" ref="menace">
             <label locale="taxon~search.input.menace"/>
+<!--
             <emptyitem locale="taxon~search.input.emptyitem"/>
+-->
             <datasource dao="taxon~t_nomenclature"
               method="findByChamp" criteria="menace"
               labelproperty="valeur"  labelseparator=" - "
@@ -115,7 +127,9 @@ Masqué pour simplifier
 
         <listbox multiple="true" ref="protection">
             <label locale="taxon~search.input.protection"/>
+<!--
             <emptyitem locale="taxon~search.input.emptyitem"/>
+-->
             <datasource dao="taxon~t_nomenclature"
               method="getProtections" labelproperty="valeur" valueproperty="code"/>
             <hint locale="taxon~search.input.protection.help"/>
@@ -139,7 +153,9 @@ Masqué pour simplifier
 
         <listbox multiple="true" ref="jdd_id">
             <label locale="occtax~search.input.jdd_id"/>
+<!--
             <emptyitem locale="occtax~search.input.emptyitem"/>
+-->
             <datasource dao="occtax~jdd"
               method="getJddList" labelproperty="jdd_libelle"
               valueproperty="jdd_id"/>
@@ -148,7 +164,9 @@ Masqué pour simplifier
 
         <listbox multiple="true" ref="validite_niveau">
                 <label locale="occtax~search.input.validite_niveau"/>
+<!--
             <emptyitem locale="occtax~search.input.emptyitem"/>
+-->
             <datasource dao="occtax~nomenclature"
               method="findByChamp" criteria="validite_niveau"
               labelproperty="valeur"
@@ -194,7 +212,9 @@ Masqué pour simplifier
 
         <listbox multiple="true" ref="type_en">
             <label locale="occtax~search.input.type_en"/>
+<!--
             <emptyitem locale="occtax~search.input.emptyitem"/>
+-->
             <datasource class="occtax~listExistingTypeEn" />
             <hint locale="occtax~search.input.type_en.help"/>
         </listbox>
