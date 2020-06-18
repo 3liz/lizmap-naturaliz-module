@@ -291,7 +291,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
     protected $observation_card_children = array();
 
 
-    public function __construct ($token=Null, $params=Null, $demande=Null) {
+    public function __construct ($token=Null, $params=Null, $demande=Null, $login=Null) {
         // Set fields from  Fields "principal"
         $this->returnFields = $this->getExportedFields( 'principal');
         $this->displayFields = $this->returnFields;
@@ -312,7 +312,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
             $this->nomenclatureFields[] = $nc;
         }
 
-        parent::__construct($token, $params, $demande);
+        parent::__construct($token, $params, $demande, $login);
     }
 
     function setSql() {
@@ -338,7 +338,8 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $sql.= " ) AS foo ON foo.cle_obs = lc.cle_obs";
 
         // Keep only data where diffusion is possible
-        if( !jAcl2::check("visualisation.donnees.brutes") ){
+        $login = $this->login;
+        if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
             $sql.= " AND foo.diffusion ? 'c' ";
             $sql.= " AND foo.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
         }
@@ -362,7 +363,8 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $sql.= " ) AS foo ON foo.cle_obs = ld.cle_obs";
 
         // Keep only data where diffusion is possible
-        if( !jAcl2::check("visualisation.donnees.brutes") ){
+        $login = $this->login;
+        if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
             $sql.= " AND foo.diffusion ? 'd' ";
             $sql.= " AND foo.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
         }
@@ -386,7 +388,8 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $sql.= " ) AS foo ON foo.cle_obs = lm.cle_obs";
 
         // Keep only data where diffusion is possible
-        if( !jAcl2::check("visualisation.donnees.brutes") ){
+        $login = $this->login;
+        if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
             $sql.= " AND foo.diffusion ? 'm10' ";
             $sql.= " AND foo.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
         }
@@ -410,7 +413,8 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $sql.= " ) AS foo ON foo.cle_obs = lm.cle_obs";
 
         // Keep only data where diffusion is possible
-        if( !jAcl2::check("visualisation.donnees.brutes") ){
+        $login = $this->login;
+        if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
             $sql.= " AND ( foo.diffusion ? 'm05' )";
             $sql.= " AND foo.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
         }
@@ -434,7 +438,8 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $sql.= " ) AS foo ON foo.cle_obs = lm.cle_obs";
 
         // Keep only data where diffusion is possible
-        if( !jAcl2::check("visualisation.donnees.brutes") ){
+        $login = $this->login;
+        if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
             $sql.= " AND ( foo.diffusion ? 'm02' )";
             $sql.= " AND foo.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
         }
@@ -458,7 +463,8 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $sql.= " ) AS foo ON foo.cle_obs = lm.cle_obs";
 
         // Keep only data where diffusion is possible
-        if( !jAcl2::check("visualisation.donnees.brutes") ){
+        $login = $this->login;
+        if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
             $sql.= " AND ( foo.diffusion ? 'm01' )";
             $sql.= " AND foo.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
         }
@@ -482,7 +488,8 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $sql.= " ) AS foo ON foo.cle_obs = len.cle_obs";
 
         // Keep only data where diffusion is possible
-        if( !jAcl2::check("visualisation.donnees.brutes") ){
+        $login = $this->login;
+        if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
             $sql.= " AND foo.diffusion ? 'e' ";
             $sql.= " AND foo.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
         }
@@ -506,7 +513,8 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $sql.= " ) AS foo ON foo.cle_obs = lme.cle_obs";
 
         // Keep only data where diffusion is possible
-        if( !jAcl2::check("visualisation.donnees.brutes") ){
+        $login = $this->login;
+        if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
             $sql.= " AND foo.diffusion ? 'e' ";
             $sql.= " AND foo.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
         }
@@ -603,7 +611,8 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         // Principal topic : we should remove sensitive data
         if( $topic == 'principal' ){
 
-            if(!jAcl2::check("visualisation.donnees.brutes")){
+            $login = $this->login;
+            if(!jAcl2::checkByUser($login, "visualisation.donnees.brutes")){
                 // Get fields from exportdFields which are listed in unsensitive
                 foreach($this->exportedFields['principal'] as $field=>$type){
                     if(in_array($field, $this->observation_exported_fields_unsensitive)){

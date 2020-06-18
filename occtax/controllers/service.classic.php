@@ -85,12 +85,18 @@ class serviceCtrl extends jController {
             return $rep;
         }
 
+        // Get user login
+        $login = Null;
+        $user = jAuth::getUserSession();
+        if ($user) {
+            $login = $user->login;
+        }
 
         // Get occtaxSearch instance
         jClasses::inc('occtax~occtaxSearchObservation');
         $params = $form->getAllData();
 
-        $occtaxSearch = new occtaxSearchObservation( null, $params );
+        $occtaxSearch = new occtaxSearchObservation( null, $params, null, $login );
         jForms::destroy('occtax~search');
 
         // Get search description
@@ -167,7 +173,15 @@ class serviceCtrl extends jController {
 
         jClasses::inc('occtax~'.$searchClassName);
 
-        $occtaxSearch = new $searchClassName( $token, null );
+        // Get user login
+        $login = Null;
+        $user = jAuth::getUserSession();
+        if ($user) {
+            $login = $user->login;
+        }
+
+        // Get instance
+        $occtaxSearch = new $searchClassName( $token, null, null, $login );
 
         // Get data
         $limit = $this->intParam( 'limit' );
@@ -206,8 +220,6 @@ class serviceCtrl extends jController {
           return $this->__search( 'occtaxSearchObservationMaille' );
         else if ( $groupBy == 't' )
           return $this->__search( 'occtaxSearchObservationTaxon' );
-        //else if ( $groupBy == 'e' )
-          //return $this->__search( 'occtaxExportObservation' );
         else
           return $this->__search( 'occtaxSearchObservation' );
     }
@@ -270,8 +282,15 @@ class serviceCtrl extends jController {
         $token = $this->param('token');
         jClasses::inc('occtax~occtaxExportObservation');
 
+        // Get user login
+        $login = Null;
+        $user = jAuth::getUserSession();
+        if ($user) {
+            $login = $user->login;
+        }
+
         $projection = $this->param('projection', '4326');
-        $occtaxSearch = new occtaxExportObservation( $token, null, null, $projection );
+        $occtaxSearch = new occtaxExportObservation( $token, null, null, $projection, $login );
         if( !$occtaxSearch ){
             $return['status'] = 0;
             $return['msg'][] = jLocale::get( 'occtax~search.invalid.token' );
@@ -304,7 +323,7 @@ class serviceCtrl extends jController {
         // Zip files
         $zpath = jApp::tempPath('output_' . time() . session_id() . '.zip');
         jFile::createDir($temp_folder);
-        jFile::createDir($temp_folder . '/' . $subdir);
+
         $zipit = $this->zipFiles($created_files, $temp_folder, $zpath);
         if (!$zipit) {
             $return['status'] = 0;
@@ -335,19 +354,21 @@ class serviceCtrl extends jController {
         $return = array();
         $attributes = array();
 
-        // Create ZIP archive
-        // Tried PHP builtin zipArchive class
-        // NASTY BUG WITH TOO MUCH DATA !
-        // Infinite Loop when calling zip->close()
-        // We will use the bash zip tool with exec
-
         $zpath = '/tmp/output_' . time() . session_id() . '.zip';
 
         // Get occtaxSearch from token
         $token = $this->param('token');
         $projection = $this->param('projection', '4326');
         jClasses::inc('occtax~occtaxExportObservation');
-        $occtaxSearch = new occtaxExportObservation( $token, null, null, $projection );
+
+        // Get user login
+        $login = Null;
+        $user = jAuth::getUserSession();
+        if ($user) {
+            $login = $user->login;
+        }
+
+        $occtaxSearch = new occtaxExportObservation( $token, null, null, $projection, $login );
         if( !$occtaxSearch ){
             $return['status'] = 0;
             $return['msg'][] = jLocale::get( 'occtax~search.invalid.token' );
@@ -356,105 +377,12 @@ class serviceCtrl extends jController {
             return $rep;
         }
 
-        // Get main observation data
-        $limit = $this->intParam( 'limit' );
-        $offset = $this->intParam( 'offset' );
-        $delimiter = ',';
-        $order = $this->param( 'order', '' );
-        $principal = array();
-        $geometryTypes = array(
-            'point', 'linestring', 'polygon', 'nogeom'
-        );
-        $principal = array();
-        try {
-            $topic = 'principal';
-            list ($csvs, $counter) = $occtaxSearch->writeCsv( $topic, $limit, $offset, $delimiter );
-            foreach($geometryTypes as $geometryType){
-                if($counter[$geometryType] == 0){
-                    continue;
-                }
-                $csv = $csvs[$geometryType];
-                $csvt = $occtaxSearch->writeCsvT( $topic, $delimiter, $geometryType );
-                $principal[$geometryType] = array( $csv, $csvt );
-            }
-        }
-        catch( Exception $e ) {
-            $rep = $this->getResponse('json');
-            $return['status'] = 0;
-            $return['msg'][] = jLocale::get( 'occtax~search.form.error.query' );
-            $rep->data = $return;
-            return $rep;
-        }
 
-        // Get list of created files
-        $created_files = array();
-
-        // Add principal
-        foreach($geometryTypes as $geometryType){
-            if(!array_key_exists($geometryType, $principal)){
-                continue;
-            }
-            if(file_exists($principal[$geometryType][0]) ){
-                $created_files[$principal[$geometryType][0]] = 'st_' . 'principal' . '_' . $this->geometryTypeTranslation[$geometryType] . '.csv';
-            }
-            if(file_exists($principal[$geometryType][1]) ){
-                $created_files[$principal[$geometryType][1]] = 'st_' . 'principal' . '_' . $this->geometryTypeTranslation[$geometryType] . '.csvt';
-            }
-        }
-        // Get other files
-        $topics = array(
-            'commune',
-            'departement',
-            'maille_10',
-            'espace_naturel',
-            'masse_eau',
-            'habitat',
-            'attribut_additionnel'
-        );
-
-        // Mailles
-
-        // Remove sensitive data if not enough rights
-        if( jAcl2::check("visualisation.donnees.maille_01") and in_array('maille_01', $this->mailles_a_utiliser) ) {
-            $topics[] = 'maille_01';
-        }
-        if( jAcl2::check("visualisation.donnees.maille_02") and in_array('maille_02', $this->mailles_a_utiliser) ) {
-            $topics[] = 'maille_02';
-        }
-        if( !jAcl2::check("visualisation.donnees.brutes") ) {
-            $blackTopics = array(
-                'attribut_additionnel',
-                'espace_naturel'
-            );
-            $topics = array_diff(
-                $topics,
-                $blackTopics
-            );
-        }
-
-        foreach( $topics as $topic ) {
-            // Write data to CSV and get csv file path
-            list ($csv, $counter) = $occtaxSearch->writeCsv($topic );
-            $csvt = $occtaxSearch->writeCsvT( $topic );
-            if($csv and $counter > 0){
-                $data[$topic] = array( $csv, $csvt );
-            }
-        }
-
-        // Add other csv files to ZIP
-        $subdir = 'rattachements';
-        foreach( $data as $topic=>$files ) {
-            if(file_exists($files[0]) ){
-                $created_files[$files[0]] = $subdir . '/' . 'st_' . $topic . '.csv';
-            }
-            if(file_exists($files[1]) ){
-                $created_files[$files[1]] = $subdir . '/' . 'st_' . $topic . '.csvt';
-            }
-        }
 
         // Temp output folder
         $temp_folder_name = 'output_' . time() . session_id();
         $temp_folder = jApp::tempPath($temp_folder_name);
+        $subdir = 'rattachements';
 
         // LISEZ-MOI.txt : Add readme file + search description to ZIP
         $lpath = $temp_folder . '/' . 'LISEZ-MOI_' . time() . session_id() . '.txt';

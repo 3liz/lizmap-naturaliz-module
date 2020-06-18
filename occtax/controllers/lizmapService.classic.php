@@ -129,6 +129,13 @@ class lizmapServiceCtrl extends serviceCtrl {
     $recordsTotal = $this->intParam('recordsTotal');
     $datatype = $this->params['datatype']; // m01 = maille 1, m02 = maille 2 , m05 = maille 5, m10 = maille 10, b = données brutes
 
+    // Get user login
+    $login = Null;
+    $user = jAuth::getUserSession();
+    if ($user) {
+        $login = $user->login;
+    }
+
     $dynamic = Null;
     if( $token and $datatype ) {
 
@@ -159,7 +166,7 @@ class lizmapServiceCtrl extends serviceCtrl {
         if ($datatype == 'm01' or $datatype == 'm02' or $datatype == 'm05' or $datatype == 'm10') {
             if( $datatype == 'm10' ){
                 jClasses::inc('occtax~occtaxSearchObservationMaille10');
-                $occtaxSearch = new occtaxSearchObservationMaille10( $token, null );
+                $occtaxSearch = new occtaxSearchObservationMaille10( $token, null, null, $login );
             }
             //elseif( $datatype == 'm05' ){
                 //jClasses::inc('occtax~occtaxSearchObservationMaille05');
@@ -167,11 +174,11 @@ class lizmapServiceCtrl extends serviceCtrl {
             //}
             elseif( $datatype == 'm02' ){
                 jClasses::inc('occtax~occtaxSearchObservationMaille02');
-                $occtaxSearch = new occtaxSearchObservationMaille02( $token, null );
+                $occtaxSearch = new occtaxSearchObservationMaille02( $token, null, null, $login );
             }
             else{
                 jClasses::inc('occtax~occtaxSearchObservationMaille');
-                $occtaxSearch = new occtaxSearchObservationMaille( $token, null );
+                $occtaxSearch = new occtaxSearchObservationMaille( $token, null, null, $login );
             }
 
             if ($recordsTotal and $recordsTotal > 0) {
@@ -233,7 +240,7 @@ class lizmapServiceCtrl extends serviceCtrl {
 
             // Get target SQL
             jClasses::inc('occtax~occtaxSearchObservation');
-            $occtaxSearch = new occtaxSearchObservation( $token, null );
+            $occtaxSearch = new occtaxSearchObservation( $token, null, null, $login );
 
             if ($recordsTotal and $recordsTotal > 0) {
                 $target = $occtaxSearch->getSql();

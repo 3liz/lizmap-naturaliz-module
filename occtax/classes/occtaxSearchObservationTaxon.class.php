@@ -53,7 +53,7 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
         //'filter' => array( 'type' => 'string', 'sortable' => 0, 'className' => 'dt-center')
     );
 
-    public function __construct ($token=Null, $params=Null, $demande=Null) {
+    public function __construct ($token=Null, $params=Null, $demande=Null, $login=Null) {
 
         $this->querySelectors = array(
 
@@ -75,7 +75,7 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
             )
         );
 
-        parent::__construct($token, $params, $demande);
+        parent::__construct($token, $params, $demande, $login);
 
         // Override parent (ie observations) recordsTotal
         // Problems : this re-run the taxon query to count the result

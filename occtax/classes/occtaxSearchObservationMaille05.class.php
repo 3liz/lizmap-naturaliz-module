@@ -14,8 +14,8 @@ class occtaxSearchObservationMaille05 extends occtaxSearchObservationMaille {
 
     protected $maille = 'maille_05';
 
-    public function __construct ($token=Null, $params=Null, $demande=Null) {
-        parent::__construct($token, $params, $demande);
+    public function __construct ($token=Null, $params=Null, $demande=Null, $login=Null) {
+        parent::__construct($token, $params, $demande, $login);
     }
 
 }

@@ -288,11 +288,11 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
 
     );
 
-    public function __construct ($token=Null, $params=Null, $demande=Null, $projection='4326') {
+    public function __construct ($token=Null, $params=Null, $demande=Null, $projection='4326', $login=Null) {
 
         // Limit fields to export (ie to export in this class)
         $children = 'observation_exported_children';
-        if( !jAcl2::check("visualisation.donnees.brutes") ){
+        if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
             $children = 'observation_exported_children_unsensitive';
         }
         $this->limitFields(
@@ -316,9 +316,9 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             $transform = "ST_Transform(o.geom, 4326)";
         }
 
-        if (!jAcl2::check("visualisation.donnees.brutes") ) {
+        if (!jAcl2::checkByUser($login, "visualisation.donnees.brutes") ) {
             // On ne peut pas voir toutes les données brutes = GRAND PUBLIC
-            if (jAcl2::check("export.geometries.brutes.selon.diffusion")) {
+            if (jAcl2::checkByUser($login, "export.geometries.brutes.selon.diffusion")) {
                 // on peut voir les géométries si la diffusion est 'g'
                 $ckey = "CASE WHEN diffusion ? 'g' THEN (ST_AsText( ".$transform." )) ELSE NULL END AS wkt";
                 $gkey = " CASE WHEN diffusion ? 'g' ";
@@ -349,7 +349,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
         // For WFS export, add geometry only in 4326
         $this->querySelectors['vm_observation']['returnFields']["ST_Transform(o.geom, 4326) AS geom"] = Null;
 
-        parent::__construct($token, $params, $demande);
+        parent::__construct($token, $params, $demande, $login);
     }
 
     function setSql() {

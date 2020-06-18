@@ -40,11 +40,14 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
 
     protected $orderClause = ' ORDER BY id_maille';
 
-    public function __construct ($token=Null, $params=Null, $demande=Null) {
+    public function __construct ($token=Null, $params=Null, $demande=Null, $login=Null) {
         // Set maille depending on rights
         // do it first because parent::__construct do setSql
-        if ( $this->maille == 'maille_01' and !jAcl2::check("visualisation.donnees.maille_01") )
+        if ( $this->maille == 'maille_01' and
+            !jAcl2::checkByUser($login, "visualisation.donnees.maille_01")
+        ){
             $this->maille = 'maille_02';
+        }
 
         // Reset querySelectors to group result by maille
         $this->querySelectors = array(
@@ -77,7 +80,7 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
 
         // Get maille type (1 or 2)
         $m = 2;
-        if(jAcl2::check("visualisation.donnees.maille_01") and $this->maille == 'maille_01')
+        if(jAcl2::checkByUser($login, "visualisation.donnees.maille_01") and $this->maille == 'maille_01')
             $m = 1;
         if($this->maille == 'maille_02')
             $m = 2;
@@ -123,7 +126,7 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
             END AS color
         ";
         $this->querySelectors[$this->maille]['returnFields'][$sqlc] = array();
-        parent::__construct($token, $params, $demande);
+        parent::__construct($token, $params, $demande, $login);
 
     }
 
@@ -131,9 +134,10 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
         $sql = parent::setWhereClause();
 
         // Filter geometry for users depending on sensibiliy
-        if( !jAcl2::check("visualisation.donnees.brutes") ){
+        $login = $this->login;
+        if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
             $question = "AND ( o.diffusion ? 'g' ";
-            if($this->maille == 'maille_01' and jAcl2::check("visualisation.donnees.maille_01")){
+            if($this->maille == 'maille_01' and jAcl2::checkByUser($login, "visualisation.donnees.maille_01")){
                 $question.= " OR o.diffusion ? 'm01' ";
             }
             if($this->maille == 'maille_02'){

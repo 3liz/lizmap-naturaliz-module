@@ -36,15 +36,22 @@ class observationCtrl extends jController {
         if( $id )
             $form->setData('cle_obs', $id);
 
+        // Get user login
+        $login = Null;
+        $user = jAuth::getUserSession();
+        if ($user) {
+            $login = $user->login;
+        }
+
         // Get occtaxSearch instance and token
         jClasses::inc('occtax~occtaxSearchObservation');
-        $occtaxSearch = new occtaxSearchObservation( null, $form->getAllData() );
+        $occtaxSearch = new occtaxSearchObservation( null, $form->getAllData(), Null, $login );
         jForms::destroy('occtax~search');
         $token = $occtaxSearch->getToken();
 
         // Get specific occtax search for single obs, using the token
         jClasses::inc('occtax~occtaxSearchSingleObservation');
-        $occtaxSearchSingleObservation = new occtaxSearchSingleObservation( $token, null );
+        $occtaxSearchSingleObservation = new occtaxSearchSingleObservation( $token, null, Null, $login );
 
         // Get data
         $limit = 1;

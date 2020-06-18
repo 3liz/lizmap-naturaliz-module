@@ -10,6 +10,10 @@
 
 class occtaxSearch {
 
+    protected $login = Null;
+
+    protected $isConnected = False;
+
     protected $token = Null;
 
     protected $params = array();
@@ -72,7 +76,8 @@ class occtaxSearch {
 
     protected $nomenclatureFields = array();
 
-    public function __construct ($token=Null, $params=Null, $demande=Null) {
+    public function __construct ($token=Null, $params=Null, $demande=Null, $login=Null) {
+        $this->login = $login;
 
         // Set demande to avoid inifite loop while fetching sql for demande
         $this->demande = $demande;
@@ -93,9 +98,11 @@ class occtaxSearch {
         }else{
             $this->token = time().session_id();
             // Remove useless params
-            foreach ($params as $k=>$v) {
-                if (is_array($v) and $v == array('')) {
-                    $params[$k] = "";
+            if (is_array($params)) {
+                foreach ($params as $k=>$v) {
+                    if (is_array($v) and $v == array('')) {
+                        $params[$k] = "";
+                    }
                 }
             }
             $this->params = $params;
@@ -532,8 +539,9 @@ class occtaxSearch {
         }
 
         // Add restriction coming from demande table
-        if( jAuth::isConnected() and !$this->demande ){
-            $filters = jEvent::notify('getOcctaxFilters')->getResponse();
+        if( $this->login and !$this->demande ){
+            $eventParams = array('login' => $this->login);
+            $filters = jEvent::notify('getOcctaxFilters', $eventParams)->getResponse();
             foreach($filters as $filter){
                 $sql.= $filter;
             }
@@ -635,19 +643,36 @@ class occtaxSearch {
     * Store information to cache
     */
     public function writeToCache(){
-        $_SESSION['occtaxSearch' . $this->token] = array(
+        if (empty($this->token)) {
+            return Null;
+        }
+        $data = array(
             'token' => $this->token,
             'params' => $this->params,
             'recordsTotal' => $this->recordsTotal
         );
+        $_SESSION['occtaxSearch' . $this->token] = $data;
+
+        // Also write to file cache
+        jCache::set($this->token, serialize($data), 0, 'naturaliz');
     }
 
     /**
     * Retrieve information from cache
     */
     public function getFromCache($token){
+        if (empty($token)) {
+            return Null;
+        }
         if( !empty($token) and isset( $_SESSION['occtaxSearch' . $token] ) ){
             $cache = $_SESSION['occtaxSearch' . $token];
+            return $cache;
+        }
+        // Also get from file cache
+        // For command line
+        $cache = jCache::get($token, 'naturaliz');
+        if ($cache) {
+            $cache = unserialize($cache);
             return $cache;
         }
         return Null;

@@ -267,9 +267,9 @@ class occtaxSearchObservation extends occtaxSearch {
     /**
      * construct - Change geometry value depending on logged user
     */
-    public function __construct ($token=Null, $params=Null, $demande=Null) {
+    public function __construct ($token=Null, $params=Null, $demande=Null, $login=Null) {
 
-        parent::__construct($token, $params, $demande);
+        parent::__construct($token, $params, $demande, $login);
     }
 
 
@@ -302,7 +302,8 @@ class occtaxSearchObservation extends occtaxSearch {
 
         // Dot not query sensitive data if user has queried via spatial tools
         // to avoid guessing position of sensitive data
-        if( !jAcl2::check("visualisation.donnees.brutes") ){
+        $login = $this->login;
+        if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
             $qf = $this->queryFilters;
             $blackQueryParams = array('code_maille', 'code_masse_eau', 'code_commune');
             $qMatch = array(
@@ -329,7 +330,7 @@ class occtaxSearchObservation extends occtaxSearch {
         }
 
         // Show only validated data for unlogged users
-        if( !jAcl2::check("visualisation.donnees.brutes") ){
+        if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
             $sql.= " AND o.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
         }
 

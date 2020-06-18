@@ -1674,8 +1674,8 @@ OccTax.events.on({
         $('#occtax-highlight-message').remove();
 
         // Deactivate (CSS) main div
-        //$('#occtax').addClass('not_enabled');
-        //lizMap.addMessage( 'Recherche en cours...', 'info', true ).attr('id','occtax-message');
+        $('#occtax').addClass('not_enabled');
+        lizMap.addMessage( 'Recherche en cours...', 'info', true ).attr('id','occtax-message');
 
         // Remove taxon input values depending on active tab
         if( $('#occtax_taxon_tab_div > div.tab-content > div.active').length == 1 ) {
@@ -2071,6 +2071,9 @@ OccTax.events.on({
       // Masquer le metadata
       $('#mapmenu li.metadata').hide();
 
+      // Masquer le permalien, car repris automatiquemen
+      $('#mapmenu li.permaLink').hide();
+
       // Déplacement des icônes Lizmap de la barre de menu de gauche
       moveLizmapMenuLi(occtaxClientConfig.menuOrder);
 
@@ -2080,7 +2083,7 @@ OccTax.events.on({
       // Ajout de sumoselect pour les listes déroulantes multiples
       $('select.jforms-ctrl-listbox').SumoSelect(
         {
-            placeholder: 'Choisir dans la liste',
+            placeholder: 'Saisir/Choisir dans la liste',
             captionFormat: '{0} sélectionnés',
             captionFormatAllSelected: '{0} tout est sélectionné !',
             okCancelInMulti: false,

@@ -20,11 +20,11 @@ class occtaxSearchSingleObservation extends occtaxSearchObservationBrutes {
 
     protected $observation_exported_children_unsensitive = array();
 
-    public function __construct ($token=Null, $params=Null, $demande=Null) {
+    public function __construct ($token=Null, $params=Null, $demande=Null, $login=Null) {
 
         // Limit fields to export (ie to "display in the card" in this class)
         $children = 'observation_exported_children';
-        if( !jAcl2::check("visualisation.donnees.brutes") ){
+        if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
             $children = 'observation_exported_children_unsensitive';
         }
         $this->limitFields(
@@ -33,7 +33,7 @@ class occtaxSearchSingleObservation extends occtaxSearchObservationBrutes {
             $children
         );
 
-        parent::__construct($token, $params, $demande);
+        parent::__construct($token, $params, $demande, $login);
 
     }
 

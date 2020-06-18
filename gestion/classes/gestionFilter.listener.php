@@ -2,18 +2,21 @@
 class gestionFilterListener extends jEventListener{
 
     function ongetOcctaxFilters ($event) {
-        $filter = $this->getWhereClauseDemande();
+        // Get user info
+        $login = $event->getParam('login');
+
+        $filter = $this->getWhereClauseDemande($login);
         $event->add( $filter );
     }
 
-    private function getWhereClauseDemande(){
+    private function getWhereClauseDemande($login){
+        if (!$login) {
+            return '';
+        }
+
         $filter = '';
         $table_demandes = array();
         $cnx = jDb::getConnection();
-
-        // Get user info
-        $user = jAuth::getUserSession();
-        $login = $user->login;
 
         // Get demande for user
         $dao_demande = jDao::get('gestion~demande');
@@ -35,7 +38,7 @@ class gestionFilterListener extends jEventListener{
                 $dparams['group2_inpn'] = explode( ',', trim(str_replace('"', '', $demande->group2_inpn), '{}') );
             }
             jClasses::inc('occtax~occtaxSearchObservation');
-            $dsearch = new occtaxSearchObservation( null, $dparams, 1 );
+            $dsearch = new occtaxSearchObservation( null, $dparams, 1, $login );
             $dtwhere = $dsearch->getWhereClause();
             if( !empty($dtwhere) ){
                 $sql_demande[] = preg_replace(
@@ -87,7 +90,7 @@ class gestionFilterListener extends jEventListener{
             $filter = ' AND ( ' . $filter . ' ) ';
         }else{
             // Remove all rights to see any observation if the user has no line in demande table, and is not admin
-            if( !jAcl2::check("visualisation.donnees.non.filtrees") ){
+            if( !jAcl2::checkByUser($login, "visualisation.donnees.non.filtrees") ){
                 $filter = ' AND False ';
             }
         }

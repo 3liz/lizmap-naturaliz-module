@@ -131,7 +131,15 @@ class wfsCtrl extends jController {
         }
       }
     }
-    $occtaxSearch = new occtaxExportObservation( null, $params );
+
+    // Get user login
+    $login = Null;
+    $user = jAuth::getUserSession();
+    if ($user) {
+        $login = $user->login;
+    }
+
+    $occtaxSearch = new occtaxExportObservation( null, $params, null, $login );
     $this->search = $occtaxSearch;
 
     // Define class private properties
