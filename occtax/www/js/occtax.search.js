@@ -2008,12 +2008,15 @@ OccTax.events.on({
         // CSV or GeoJSON
         else{
           exportUrl+= $('#'+tokenFormId).attr('action');
-          if( eFormat == 'DEE' )
-            exportUrl = exportUrl.replace('initSearch', 'exportDee');
-          else if( eFormat == 'GeoJSON' )
-            exportUrl = exportUrl.replace('initSearch', 'exportGeoJSON');
-          else
-            exportUrl = exportUrl.replace('initSearch', 'exportCsv');
+          if( eFormat == 'DEE' ) {
+            exportUrl = exportUrl.replace('service', 'export').replace('initSearch', 'init');
+          }
+          else if( eFormat == 'GeoJSON' ) {
+            exportUrl = exportUrl.replace('service', 'export').replace('initSearch', 'init');
+          }
+          else {
+            exportUrl = exportUrl.replace('service', 'export').replace('initSearch', 'init');
+          }
           exportUrl+= '?token=' + $('#occtax_service_search_stats_form input[name="token"]').val();
           exportUrl+= '&format=' + eFormat;
 
