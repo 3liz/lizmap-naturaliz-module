@@ -75,10 +75,36 @@ class defaultCtrl extends lizMapCtrl {
             }
             $rep->addJSCode("var t_nomenclature = " . json_encode($nomenclature) . ';');
 
+            // Add locales
+            $locales = $this->getLocales();
+            $rep->addJSCode("var naturalizLocales = " . json_encode($locales) . ';');
+
             $rep->addHeadContent( '<style>' . $ini->getValue('projectCss', 'naturaliz') . '</style>');
         }
 
         return $rep;
+    }
+
+    private function getLocales ($lang=Null) {
+
+        if (!$lang) {
+            $lang = jLocale::getCurrentLang().'_'.jLocale::getCurrentCountry();
+        }
+
+        $data = array();
+        $path = jApp::getModulePath('occtax').'locales/'.$lang.'/search.UTF-8.properties';
+        if (file_exists($path)) {
+            $lines = file($path);
+            foreach ($lines as $lineNumber => $lineContent) {
+                if (!empty($lineContent) and $lineContent != '\n') {
+                    $exp = explode('=', trim($lineContent));
+                    if (!empty($exp[0])) {
+                        $data[$exp[0]] = jLocale::get('occtax~search.'.$exp[0], null, $lang);
+                    }
+                }
+            }
+        }
+        return $data;
     }
 }
 

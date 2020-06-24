@@ -12,25 +12,26 @@ function checkExport() {
       clearInterval(tid);
       window.location = data.url;
       html+= '<p style="background:lightgreen; padding:5px">';
-      html+= data.message;
+      html+= data.message.title;
       html+= '</p>';
-      html+= '<p>Vous pouvez fermer cette fenêtre une fois le fichier téléchargé.</p>';
+      html+= '<p>' + data.message.description + '</p>';
       $('#waitExport').html(html);
     }
     else if(data.status == 'error'){
       html+= '<p style="background:orange; padding:5px">';
-      html+= data.message;
+      html+= data.message.title;
       html+= '</p>';
-      html+= '<p>Vous pouvez fermer cette fenêtre.</p>';
+      html+= '<p>' + naturalizLocales['export.success.close.window'] + '</p>';
       $('#waitExport').html(html);
       clearInterval(tid);
     }
     else if(data.status == 'wait'){
       t+=1;
       html+= '<p style="background:lightblue; padding:5px">';
-      html+= data.message;
+      html+= data.message.title;
       html+= ' (' + t + ' secondes)';
       html+= '</p>';
+      html+= '<p>' + data.message.description + '</p>';
       $('#waitExport').html(html);
     }
   });

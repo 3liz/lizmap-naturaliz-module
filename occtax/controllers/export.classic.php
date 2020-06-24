@@ -105,12 +105,6 @@ class exportCtrl extends jController {
         $format = $this->param('format', 'CSV');
         $projection = $this->param('projection', 'locale');
 
-        // checks
-        //if( False ){
-            //$rep->data = array('status'=>'error', 'message'=>'A problem occured while loading project with Lizmap');
-            //return $rep;
-        //}
-
         $rep = $this->getResponse('html');
         $rep->title = 'Export';
         $rep->body->assign('repositoryLabel', 'Export');
@@ -129,8 +123,13 @@ class exportCtrl extends jController {
             array('targetmodule'=>'occtax', 'file'=>'js/occtax.export.js')
         );
         $rep->addJSLink($jslink);
+
+        // Locales
+        $locales = $this->getLocales();
+        $rep->addJSCode("var naturalizLocales = " . json_encode($locales) . ';');
+
         $tpl = new jTpl();
-        $rep->body->assign('MAIN', '<div id="waitExport" ><p style="background:lightblue; padding:5px">L\'export est en cours...</p></div>');
+        $rep->body->assign('MAIN', '<div id="waitExport" ><p style="background:lightblue; padding:5px">'.jLocale::get( 'occtax~search.export.pending.title'). '</p><p>' . jLocale::get( 'occtax~search.export.pending.description') . '</p></div>');
 
         return $rep;
     }
@@ -148,7 +147,10 @@ class exportCtrl extends jController {
         if(!array_key_exists('occtax_export_'.$token, $_SESSION) ){
             $data = array(
                 'status'=> 'error',
-                'message' => 'La requête est périmée.'
+                'message' => array(
+                    'title'=>jLocale::get( 'occtax~search.export.expired.request'),
+                    'description'=>''
+                )
             );
         }else{
             $ses = $_SESSION['occtax_export_'.$token];
@@ -159,12 +161,18 @@ class exportCtrl extends jController {
                         'occtax~export:download',
                         $this->params()
                     ),
-                    'message'=> 'Le fichier a bien été créé'
+                    'message' => array(
+                        'title'=>jLocale::get( 'occtax~search.export.file.created'),
+                        'description'=>jLocale::get( 'occtax~search.export.success.download.file')
+                    )
                 );
             }else{
                 $data = array(
                     'status'=> 'wait',
-                    'message'=> 'L\'export est en cours...'
+                    'message' => array(
+                        'title'=>jLocale::get( 'occtax~search.export.pending.title'),
+                        'description'=>jLocale::get( 'occtax~search.export.pending.description')
+                    )
                 );
             }
         }
@@ -184,7 +192,10 @@ class exportCtrl extends jController {
         if (!array_key_exists('occtax_export_'.$token, $_SESSION)) {
             $data = array(
                 'status'=> 'error',
-                'message' => 'La requête est périmée.'
+                'message' => array(
+                    'title'=>jLocale::get( 'occtax~search.export.expired.request'),
+                    'description'=>''
+                )
             );
             $rep->data = $data;
             return $rep;
@@ -196,7 +207,13 @@ class exportCtrl extends jController {
         if (!empty($logcontent)) {
             if (preg_match('#^ERROR#', $logcontent)) {
                 $message = str_replace('ERROR: ', '', $logcontent);
-                $rep->data = array('status'=>'error', 'message'=>$message);
+                $rep->data = array(
+                    'status'=>'error',
+                    'message' => array(
+                        'title'=>$message,
+                        'description'=>''
+                    )
+                );
                 return $rep;
             } elseif (preg_match('#^SUCCESS#', $logcontent)) {
                 $outputfile = trim(str_replace('SUCCESS: ', '', $logcontent));
@@ -213,19 +230,58 @@ class exportCtrl extends jController {
                     unset($_SESSION['occtax_export_'.$token]);
                     return $rep;
                 } else {
-                    $rep->data = array('status'=>'error', 'message'=>"Fichier ZIP non trouvé");
+                    $rep->data = array(
+                        'status'=>'error',
+                        'message' => array(
+                            'title'=>jLocale::get( 'occtax~search.export.zip.not.found'),
+                            'description'=>''
+                        )
+                    );
                     return $rep;
                 }
             } else {
-                $rep->data = array('status'=>'error', 'message'=>"Le contenu du log est incorrect");
+                $rep->data = array(
+                    'status'=>'error',
+                    'message' => array(
+                        'title'=>jLocale::get( 'occtax~search.export.log.wrong.content'),
+                        'description'=>''
+                    )
+                );
                 return $rep;
             }
 
         }else {
-            $rep->data = array('status'=>'error', 'message'=>"Le log est vide");
+            $rep->data = array(
+                'status'=>'error',
+                'message' => array(
+                    'title'=>jLocale::get( 'occtax~search.export.log.empty'),
+                    'description'=>''
+                )
+            );
             return $rep;
         }
     }
 
+    private function getLocales ($lang=Null) {
+
+        if (!$lang) {
+            $lang = jLocale::getCurrentLang().'_'.jLocale::getCurrentCountry();
+        }
+
+        $data = array();
+        $path = jApp::getModulePath('occtax').'locales/'.$lang.'/search.UTF-8.properties';
+        if (file_exists($path)) {
+            $lines = file($path);
+            foreach ($lines as $lineNumber => $lineContent) {
+                if (!empty($lineContent) and $lineContent != '\n') {
+                    $exp = explode('=', trim($lineContent));
+                    if (!empty($exp[0])) {
+                        $data[$exp[0]] = jLocale::get('occtax~search.'.$exp[0], null, $lang);
+                    }
+                }
+            }
+        }
+        return $data;
+    }
 }
 
