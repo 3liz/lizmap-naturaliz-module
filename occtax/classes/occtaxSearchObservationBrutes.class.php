@@ -292,6 +292,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
 
 
     public function __construct ($token=Null, $params=Null, $demande=Null, $login=Null) {
+        $this->login = $login;
         // Set fields from  Fields "principal"
         $this->returnFields = $this->getExportedFields( 'principal');
         $this->displayFields = $this->returnFields;

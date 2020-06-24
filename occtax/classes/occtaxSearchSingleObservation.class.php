@@ -21,6 +21,7 @@ class occtaxSearchSingleObservation extends occtaxSearchObservationBrutes {
     protected $observation_exported_children_unsensitive = array();
 
     public function __construct ($token=Null, $params=Null, $demande=Null, $login=Null) {
+        $this->login = $login;
 
         // Limit fields to export (ie to "display in the card" in this class)
         $children = 'observation_exported_children';

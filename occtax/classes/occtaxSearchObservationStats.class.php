@@ -45,6 +45,8 @@ class occtaxSearchObservationStats extends occtaxSearchObservation {
     );
 
     public function __construct ($token=Null, $params=Null, $demande=Null, $login=Null) {
+        $this->login = $login;
+
         // Set maille depending on rights
         // do it first because parent::__construct do setSql
         if ( jAcl2::checkByUser($login, "visualisation.donnees.maille_01") )

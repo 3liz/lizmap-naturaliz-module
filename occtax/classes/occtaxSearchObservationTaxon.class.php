@@ -54,6 +54,7 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
     );
 
     public function __construct ($token=Null, $params=Null, $demande=Null, $login=Null) {
+        $this->login = $login;
 
         $this->querySelectors = array(
 

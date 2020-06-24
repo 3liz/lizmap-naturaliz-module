@@ -289,6 +289,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
     );
 
     public function __construct ($token=Null, $params=Null, $demande=Null, $projection='4326', $login=Null) {
+        $this->login = $login;
 
         // Limit fields to export (ie to export in this class)
         $children = 'observation_exported_children';
