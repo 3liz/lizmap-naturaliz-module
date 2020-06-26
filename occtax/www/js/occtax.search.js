@@ -998,7 +998,20 @@ OccTax.events.on({
         var obs = OccTax.layers.resultLayer.getFeatureByFid(obsId);
         if (!obs)
             return;
-        OccTax.map.zoomToExtent( obs.geometry.bounds );
+
+        var target_extent = obs.geometry.bounds;
+        var target_zoom = lizMap.map.getZoomForExtent(target_extent)
+        var target_resolution = lizMap.map.getResolutionForZoom(target_zoom);
+        var target_scale = OpenLayers.Util.getScaleFromResolution(target_resolution, lizMap.map.getUnits())
+
+        var max_scale = occtaxClientConfig.maximum_observation_scale
+        if( target_scale < max_scale)
+            target_scale = max_scale;
+        var targetCenter = target_extent.getCenterLonLat();
+
+        lizMap.map.zoomToScale( target_scale );
+        lizMap.map.setCenter( targetCenter );
+
     }
 
     function getObservationDetail( id ) {

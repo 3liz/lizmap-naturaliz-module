@@ -111,6 +111,10 @@
    <label locale="occtax_admin~admin.form.maxAreaQuery.label" />
   </input>
 
+  <input ref="maximum_observation_scale" type="integer" defaultvalue="10000">
+   <label locale="occtax_admin~admin.form.maximum_observation_scale.label" />
+  </input>
+
   <input ref="strokeColor" type="string" defaultvalue="#FFFFFF80">
    <label locale="occtax_admin~admin.form.strokeColor.label" />
   </input>

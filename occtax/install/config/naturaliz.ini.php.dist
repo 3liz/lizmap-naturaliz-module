@@ -88,6 +88,8 @@ dbuser_readonly=naturaliz
 ; utilisateur PostgreSQL avec propriété sur les objets
 dbuser_owner=lizmap
 
+; Echelle maximum où zoomer avec le bouton de zoom par observation
+maximum_observation_scale=24000
 
 
 [mascarine]

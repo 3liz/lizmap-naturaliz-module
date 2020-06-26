@@ -164,6 +164,15 @@ observation_exported_children_unsensitive="commune, departement, maille_02, mail
 ; ordre des items de menu Lizmap (barre de menu de gauche)
 menuOrder=home, occtax-presentation, switcher, occtax, dataviz, print, measure, permaLink, occtax-legal, taxon, metadata
 
+; utilisateur PostgreSQL avec accès en lecture seule
+dbuser_readonly=naturaliz
+
+; utilisateur PostgreSQL avec propriété sur les objets
+dbuser_owner=lizmap
+
+; Echelle maximum où zoomer avec le bouton de zoom par observation
+maximum_observation_scale=25000
+
 ```
 
 #### Configuration des accès à PostgreSQL

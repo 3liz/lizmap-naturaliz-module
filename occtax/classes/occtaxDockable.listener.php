@@ -61,6 +61,7 @@
                 $menuOrder = $ini->getValue('menuOrder', 'naturaliz');
                 $srid = $ini->getValue('srid', 'naturaliz');
                 $libelle_srid = $ini->getValue('libelle_srid', 'naturaliz');
+                $maximum_observation_scale = $ini->getValue('maximum_observation_scale', 'naturaliz');
                 if( empty($maxAreaQuery) )
                     $maxAreaQuery = 32000000;
                 if( empty($menuOrder) )
@@ -69,6 +70,8 @@
                     $srid = '2154';
                 if( empty($libelle_srid) )
                     $libelle_srid = 'Projection locale';
+                if( empty($maximum_observation_scale) )
+                    $maximum_observation_scale = 25000;
 
                 $menuOrder = array_map('trim', explode(',', $menuOrder));
                 $mi = 0; $mo = array();
@@ -84,7 +87,8 @@
                     'maxAreaQuery'=> (integer)$maxAreaQuery,
                     'strokeColor' => $strokeColor,
                     'menuOrder' => $mo,
-                    'is_connected' => jAuth::isConnected()
+                    'is_connected' => jAuth::isConnected(),
+                    'maximum_observation_scale'=> (integer)$maximum_observation_scale
                 );
 
                 $mailles_a_utiliser = $ini->getValue('mailles_a_utiliser', 'naturaliz');
