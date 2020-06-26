@@ -1022,12 +1022,15 @@ OccTax.events.on({
         }
         if(!id)
             return;
+
+        // Zoom to observation
+        zoomToObservation(id);
+
+        // Get observation data
         var tokenFormId = $('#div_form_occtax_search_token form').attr('id');
         var obsUrl = $('#'+tokenFormId).attr('action').replace('initSearch', 'getObservation');
         obsUrl = obsUrl.replace('service', 'observation');
-
         $('occtax_search_observation_card').addClass('not_enabled');
-
         $.get(
             obsUrl,
             {'id': id},
