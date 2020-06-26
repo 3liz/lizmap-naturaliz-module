@@ -145,7 +145,7 @@ RESUME DE LA RECHERCHE ET DES RESULTATS
         <div id="occtax_search_description_content"></div>
         <input id="occtax_observation_records_total" type="hidden" value="0">
         <button id="occtax-search-modify" type="button" class="btn btn-primary" name="mod" value="modify" style="">{@occtax~search.button.modify.search@}</button>
-        <button id="occtax-search-replay" type="button" class="btn" name="mod" value="replay" style="display:none;">{@occtax~search.button.replay.search@}</button>
+        <button id="occtax-search-replay" type="button" class="btn btn-primary" name="mod" value="replay" style="display:none;">{@occtax~search.button.replay.search@}</button>
 
             <span class="pull-right" id="occtax_result_button_bar" style="display:none;">
 

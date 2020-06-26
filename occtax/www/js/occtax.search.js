@@ -361,7 +361,7 @@ OccTax.events.on({
     function displayTaxonDetail(cd_nom){
         getTaxonDataFromApi(cd_nom, function(data){
             var html = buildTaxonFicheHtml(data);
-            html+=  '<button id="hide-sub-dock" class="btn btn-primary pull-right" style="margin-top:5px;" name="close" title="'+lizDict['generic.btn.close.title']+'">'+lizDict['generic.btn.close.title']+'</button>';
+            html+=  '<button id="hide-sub-dock" class="btn pull-right" style="margin-top:5px;" name="close" title="'+lizDict['generic.btn.close.title']+'">'+lizDict['generic.btn.close.title']+'</button>';
             $('#sub-dock').html(html);
             if( !lizMap.checkMobile() ){
                 var leftPos = lizMap.getDockRightPosition();
