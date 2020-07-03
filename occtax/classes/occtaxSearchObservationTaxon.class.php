@@ -30,7 +30,7 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
 
         ',
 
-        'groupe' => '<img src="{$j_basepath}css/images/taxon/{$line->categorie}.png" width="20px" title="{$line->categorie}"/>',
+        'groupe' => '<img src="{$j_basepath}taxon/css/images/groupes/{$line->categorie}.png" width="20px" title="{$line->categorie}"/>',
 
         //'filter' => '<a class="filterByTaxon" href="#" title="{@occtax~search.output.filter.taxon.title@}"><i class="icon-filter"></i></a>',
 
