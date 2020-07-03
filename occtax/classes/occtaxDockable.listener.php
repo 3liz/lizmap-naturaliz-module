@@ -24,7 +24,7 @@
                     jLocale::get("taxon~search.dock.title"),
                     $content,
                     9,
-                    $bp.'css/taxon.search.css'
+                    jUrl::get('jelix~www:getfile', array('targetmodule'=>'taxon', 'file'=>'css/taxon.search.css'))
                 );
                 $event->add($dock);
 
@@ -112,7 +112,8 @@
                     jLocale::get("occtax~search.dock.title"),
                     $content,
                     10,
-                    $bp.'css/occtax.search.css',
+                    jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'css/occtax.search.css')),
+
                     Null // JS loaded in occtax default controller
                 );
                 $event->add($dock);
@@ -199,7 +200,7 @@
                         $tpl->fetch('view~map_print'),
                         3,
                         Null,
-                        $bp.'js/occtax.print.js'
+                        jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/occtax.print.js'))
                     );
                     $event->add($dock);
                 }
