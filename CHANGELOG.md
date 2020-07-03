@@ -1,6 +1,11 @@
 # CHANGELOG
 
-### 2.6.0 - 03/07/2020
+### 2.6.1 - 03/07/2020
+
+* Taxon - déplacement des images de catégories dans install/www/
+* Revert "CSS/JS - Move files to install/www and use upgrade to copy them"
+
+### 2.6.0 - 02/07/2020
 
 * CSS/JS - Move files to install/www and use upgrade to copy them
 * Interface - homogénéisation des couleurs
