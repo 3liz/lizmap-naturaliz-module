@@ -61,11 +61,11 @@ class defaultCtrl extends lizMapCtrl {
             $rep->addJsLink( $bp.'js/fileUpload/jquery.iframe-transport.js' );
             $rep->addJsLink( $bp.'js/fileUpload/jquery.fileupload.js' );
             // sumoselect
-            $rep->addJsLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/sumoselect/jquery.sumoselect.min.js')));
-            $rep->addCSSLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'css/sumoselect/sumoselect.css')));
+            $rep->addJsLink( $bp.'js/sumoselect/jquery.sumoselect.min.js' );
+            $rep->addCSSLink( $bp.'css/sumoselect/sumoselect.css');
             // occtax
-            $rep->addJsLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/occtax.js')));
-            $rep->addJsLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/occtax.search.js')));
+            $rep->addJsLink($bp.'js/occtax.js');
+            $rep->addJsLink($bp.'js/occtax.search.js');
 
             // Add nomenclature
             $nomenclature = array();
