@@ -20,6 +20,8 @@ class exportCtrl extends jController {
         'other'=>'autre'
     );
 
+    protected $tempFolder = Null;
+
     function __construct( $request ){
 
         // Get SRID
@@ -34,6 +36,12 @@ class exportCtrl extends jController {
             $mailles_a_utiliser = 'maille_02,maille_10';
         }
         $this->mailles_a_utiliser = array_map('trim', explode(',', $mailles_a_utiliser));
+
+        // Temp folder
+        $this->tempFolder = jApp::tempPath();
+        if (!is_dir($this->tempFolder) or !is_writable($this->tempFolder)) {
+            $this->tempFolder = '/tmp/';
+        }
 
         parent::__construct( $request );
 
@@ -60,7 +68,7 @@ class exportCtrl extends jController {
         $_SESSION['occtax_export_'.$export_token] = 'wait';
 
         // Create file path
-        $logfile = jApp::tempPath($export_token . '.log');
+        $logfile = rtrim($this->tempFolder, '/ ') . '/' . $export_token . '.log';
 
         // Get user login
         $login = 'null';
@@ -76,15 +84,17 @@ class exportCtrl extends jController {
         $locale = jApp::config()->locale;
 
         // Execute long export task
-        $path = jApp::scriptsPath();
-        $cmd = ' php ' . $path . 'script.php';
+        // We use varPath for 3liz specific infra-v2 lizmap folder management
+        $path = jApp::varPath('../');
+        $cmd = '';
+        $cmd.= ' cd ' . $path . ' &&';
+        $cmd.= ' php scripts/script.php';
         $cmd.= ' occtax~export:' . strtolower($format);
         $cmd.= ' -login ' . $login;
         $cmd.= ' -locale ' . $locale;
         $cmd.= ' -token ' . $token;
         $cmd.= ' -projection ' . $projection;
         $cmd.= ' -output_directory ' . 'export_observation_' . date("Y-m-d_H-i-s");
-//jLog::log($cmd);
         exec($cmd . " > " . $logfile . " &");
 
         // Redirect to display page
@@ -142,7 +152,7 @@ class exportCtrl extends jController {
         $token = $this->param('token');
 
         // Get log path
-        $log = jApp::tempPath($token . '.log');
+        $log = rtrim($this->tempFolder, '/ ') . '/' . $token . '.log';
         $logcontent = jFile::read($log);
         if(!array_key_exists('occtax_export_'.$token, $_SESSION) ){
             $data = array(
@@ -202,7 +212,7 @@ class exportCtrl extends jController {
         }
 
         // Get log path
-        $logfile = jApp::tempPath($token . '.log');
+        $logfile = rtrim($this->tempFolder, '/ ') . '/' . $token . '.log';
         $logcontent = jFile::read($logfile);
         if (!empty($logcontent)) {
             if (preg_match('#^ERROR#', $logcontent)) {
@@ -247,6 +257,7 @@ class exportCtrl extends jController {
                         'description'=>''
                     )
                 );
+
                 return $rep;
             }
 

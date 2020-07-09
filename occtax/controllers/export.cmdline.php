@@ -28,6 +28,8 @@ class exportCtrl extends jControllerCmdLine {
         'other'=>'autre'
     );
 
+    protected $tempFolder = Null;
+
     /**
      * Options for the command line
     *  'method_name' => array('-option_name' => true/false)
@@ -86,6 +88,12 @@ class exportCtrl extends jControllerCmdLine {
             $mailles_a_utiliser = 'maille_02,maille_10';
         }
         $this->mailles_a_utiliser = array_map('trim', explode(',', $mailles_a_utiliser));
+
+        // Temp folder
+        $this->tempFolder = jApp::tempPath();
+        if (!is_dir($this->tempFolder) or !is_writable($this->tempFolder)) {
+            $this->tempFolder = '/tmp/';
+        }
 
         parent::__construct( $request );
 
@@ -368,7 +376,7 @@ class exportCtrl extends jControllerCmdLine {
         }
 
         // Temp output folder
-        $temp_folder = jApp::tempPath($temp_folder_name);
+        $temp_folder = rtrim($this->tempFolder, '/ ') . $temp_folder_name;
         jFile::createDir($temp_folder);
         jFile::createDir($temp_folder . '/' . $subdir);
 
