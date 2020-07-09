@@ -981,7 +981,7 @@ OccTax.events.on({
       // Add image to the proposed items
       $('#'+formId+'_autocomplete').autocomplete( "instance" )._renderItem = function( ul, item ) {
         return $( "<li>" )
-        .append( $("<a>").html(  $("<a>").html( '<img src="'+ jFormsJQ.config.basePath + 'css/images/taxon/' + item.groupe + '.png" width="15" height="15"/>&nbsp;' + item.label )  ) )
+        .append( $("<a>").html(  $("<a>").html( '<img src="'+ jFormsJQ.config.basePath + 'taxon/css/images/groupes/' + item.groupe + '.png" width="15" height="15"/>&nbsp;' + item.label )  ) )
         .appendTo( ul );
       };
 
