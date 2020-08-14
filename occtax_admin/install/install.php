@@ -12,6 +12,20 @@
 class occtax_adminModuleInstaller extends jInstallerModule {
 
     function install() {
+
+        if ($this->entryPoint->getEpId() == 'admin') {
+            $localConfigIni = $this->entryPoint->localConfigIni->getMaster();
+
+            $adminControllers = $localConfigIni->getValue('admin', 'simple_urlengine_entrypoints');
+            $mbCtrl = 'occtax_admin~*@classic';
+            if (strpos($adminControllers, $mbCtrl) === false) {
+                // let's register occtax_admin controllers
+                $adminControllers .= ', '.$mbCtrl;
+                $localConfigIni->setValue('admin', $adminControllers, 'simple_urlengine_entrypoints');
+            }
+        }
+
+
         //if ($this->firstDbExec())
         //    $this->execSQLScript('sql/install');
 

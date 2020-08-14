@@ -376,7 +376,8 @@ CREATE TABLE t_complement
   rarete character varying(10),
   endemicite character varying(5),
   invasibilite character varying(5),
-  menace character varying(5),
+  menace_nationale character varying(5),
+  menace_regionale character varying(5),
   menace_monde character varying(6),
   protection character varying(5),
   det_znieff character varying(15),
@@ -393,7 +394,8 @@ COMMENT ON COLUMN t_complement.statut IS 'Statut local';
 COMMENT ON COLUMN t_complement.rarete IS 'Rareté locale du taxon';
 COMMENT ON COLUMN t_complement.endemicite IS 'Endémicité locale du taxon';
 COMMENT ON COLUMN t_complement.invasibilite IS 'Invasibilité locale du taxon';
-COMMENT ON COLUMN t_complement.menace IS 'Menace locale sur le taxon';
+COMMENT ON COLUMN t_complement.menace_nationale IS 'Menace nationale sur le taxon';
+COMMENT ON COLUMN t_complement.menace_regionale IS 'Menace régionale sur le taxon';
 COMMENT ON COLUMN t_complement.menace_monde IS 'Menace mondiale sur le taxon';
 COMMENT ON COLUMN t_complement.protection IS 'Statut de protection local';
 COMMENT ON COLUMN t_complement.det_znieff IS 'Déterminant ZNIEFF';
@@ -402,7 +404,8 @@ CREATE INDEX ON t_complement (cd_nom_fk);
 CREATE INDEX ON t_complement (det_znieff);
 CREATE INDEX ON t_complement (endemicite);
 CREATE INDEX ON t_complement (invasibilite);
-CREATE INDEX ON t_complement (menace);
+CREATE INDEX ON t_complement (menace_nationale);
+CREATE INDEX ON t_complement (menace_regionale);
 CREATE INDEX ON t_complement (protection);
 CREATE INDEX ON t_complement (rarete);
 CREATE INDEX ON t_complement (statut);
@@ -474,9 +477,9 @@ SELECT
 t.*, c.*
 FROM (
         SELECT regne, phylum, classe, ordre, famille, sous_famille, tribu, group1_inpn, group2_inpn, cd_nom, cd_taxsup, cd_ref, rang, lb_nom, lb_auteur, nom_complet, nom_complet_html, nom_valide, nom_vern, nom_vern_eng, habitat, fr, gf, mar, gua, sm, sb, spm, may, epa, reu, sa, ta, taaf, pf, nc, wf, cli, url
-        FROM taxref_valide
+        FROM taxon.taxref_valide
 ) AS t
-LEFT JOIN t_complement AS c ON c.cd_nom_fk = t.cd_nom
+LEFT JOIN taxon.t_complement AS c ON c.cd_nom_fk = t.cd_nom
 ;
 
 COMMENT ON MATERIALIZED VIEW taxon.taxref_consolide IS '
@@ -488,50 +491,11 @@ Elle est principalement utilisée pour récupérer les cd_ref des sous-ensembles
 
 C''est une vue matérialisée, c''est-à-dire une vue qui se comporte comme une table, et qu''on doit mettre à jour suite à un import de taxons (dans taxref ou taxref_local), ou suite à la mise à jour de taxref_valide, via `REFRESH MATERIALIZED VIEW taxref_consolide;`
 ';
-CREATE INDEX ON taxref_consolide (group1_inpn);
-CREATE INDEX ON taxref_consolide (group2_inpn);
-CREATE INDEX ON taxref_consolide (cd_ref);
-CREATE INDEX ON taxref_consolide (cd_nom);
-CREATE INDEX ON taxref_consolide (famille);
-
-
--- statuts de protection
-CREATE TABLE protections (
-    cd_nom text,
-    cd_protection text,
-    nom_cite text,
-    syn_cite text,
-    nom_francais_cite text,
-    precisions text,
-    cd_nom_cite text
-)
-;
-COMMENT ON TABLE protections IS 'Statuts de protection des espèces. Source: fichier du TAXREF listant les protections, par exemple : PROTECTION_ESPECES_10.csv. L''import ne conserve que les données pour les codes d''arrêtés spécifiés dans la configuration de l''application';
-CREATE INDEX ON protections (cd_nom);
-
--- MENACES = TAXON DES LISTES ROUGES
-CREATE TABLE menaces (
-    cd_nom integer NOT NULL, -- Identifiant unique du nom scientifique
-    cd_ref integer, -- Identifiant (CD_NOM) du taxon de référence (nom retenu)
-    nom_scientifique text,
-    auteur text,
-    nom_commun text,
-    rang text,
-    famille text,
-    endemisme text,
-    population text,
-    commentaire text,
-    categorie_france text,
-    criteres_france text,
-    tendance text,
-    liste_rouge_source text,
-    annee_publi text,
-    categorie_lr_europe text,
-    categorie_lr_monde text
-)
-;
-COMMENT ON TABLE menaces IS 'Données sur les menaces, issues des listes rouges';
-CREATE INDEX ON menaces (cd_nom);
+CREATE INDEX ON taxon.taxref_consolide (group1_inpn);
+CREATE INDEX ON taxon.taxref_consolide (group2_inpn);
+CREATE INDEX ON taxon.taxref_consolide (cd_ref);
+CREATE INDEX ON taxon.taxref_consolide (cd_nom);
+CREATE INDEX ON taxon.taxref_consolide (famille);
 
 
 -- Vue qui rassemble tous les taxons de TAXREF et de taxref local:
@@ -548,7 +512,7 @@ taxref_mnhn_et_local AS (
 cd_nom, cd_taxsup, cd_ref, rang, lb_nom, lb_auteur, nom_complet,
 nom_complet_html, nom_valide, nom_vern, nom_vern_eng, habitat,
 fr, gf, mar, gua, sm, sb, spm, may, epa, reu, sa, ta, taaf, pf, nc, wf, cli, url
-  FROM taxref
+  FROM taxon.taxref
   WHERE True
   UNION ALL
   SELECT
@@ -556,13 +520,13 @@ fr, gf, mar, gua, sm, sb, spm, may, epa, reu, sa, ta, taaf, pf, nc, wf, cli, url
 cd_nom, cd_taxsup, cd_ref, rang, lb_nom, lb_auteur, nom_complet,
 nom_complet_html, nom_valide, nom_vern, nom_vern_eng, habitat,
 fr, gf, mar, gua, sm, sb, spm, may, epa, reu, sa, ta, taaf, pf, nc, wf, cli, url
-  FROM taxref_local
+  FROM taxon.taxref_local
   WHERE True
   AND cd_nom_valide IS NULL
 )
 SELECT tml.*, c.*
 FROM taxref_mnhn_et_local AS tml
-LEFT JOIN t_complement AS c ON c.cd_nom_fk = tml.cd_nom
+LEFT JOIN taxon.t_complement AS c ON c.cd_nom_fk = tml.cd_nom
 ;
 
 CREATE INDEX ON taxon.taxref_consolide_non_filtre (cd_ref);
@@ -574,7 +538,8 @@ CREATE INDEX ON taxon.taxref_consolide_non_filtre (protection);
 CREATE INDEX ON taxon.taxref_consolide_non_filtre (det_znieff);
 CREATE INDEX ON taxon.taxref_consolide_non_filtre (endemicite);
 CREATE INDEX ON taxon.taxref_consolide_non_filtre (invasibilite);
-CREATE INDEX ON taxon.taxref_consolide_non_filtre (menace);
+CREATE INDEX ON taxon.taxref_consolide_non_filtre (menace_nationale);
+CREATE INDEX ON taxon.taxref_consolide_non_filtre (menace_regionale);
 CREATE INDEX ON taxon.taxref_consolide_non_filtre (protection);
 CREATE INDEX ON taxon.taxref_consolide_non_filtre (rarete);
 CREATE INDEX ON taxon.taxref_consolide_non_filtre (statut);

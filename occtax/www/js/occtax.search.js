@@ -620,8 +620,14 @@ OccTax.events.on({
               return false;
           });
           // Replace taxon nomenclature key by values
-          $('#'+tableId+' span.redlist').each(function(){
-            replaceKeyByLabelFromNomenclature($(this), 'menace');
+          $('#'+tableId+' span.redlist_regionale').each(function(){
+            replaceKeyByLabelFromNomenclature($(this), 'menace_regionale');
+          });
+          $('#'+tableId+' span.redlist_nationale').each(function(){
+            replaceKeyByLabelFromNomenclature($(this), 'menace_nationale');
+          });
+          $('#'+tableId+' span.redlist_monde').each(function(){
+            replaceKeyByLabelFromNomenclature($(this), 'menace_monde');
           });
           $('#'+tableId+' span.protectionlist').each(function(){
             replaceKeyByLabelFromNomenclature($(this), 'protection');
@@ -915,8 +921,14 @@ OccTax.events.on({
               return false;
           });
           // Replace taxon nomenclature key by values
-          $('#'+tableId+' span.redlist').each(function(){
-            replaceKeyByLabelFromNomenclature($(this), 'menace');
+          $('#'+tableId+' span.redlist_regionale').each(function(){
+            replaceKeyByLabelFromNomenclature($(this), 'menace_regionale');
+          });
+          $('#'+tableId+' span.redlist_nationale').each(function(){
+            replaceKeyByLabelFromNomenclature($(this), 'menace_nationale');
+          });
+          $('#'+tableId+' span.redlist_monde').each(function(){
+            replaceKeyByLabelFromNomenclature($(this), 'menace_monde');
           });
           $('#'+tableId+' span.protectionlist').each(function(){
             replaceKeyByLabelFromNomenclature($(this), 'protection');
@@ -1163,7 +1175,9 @@ OccTax.events.on({
         var white_params = [
             'taxons_bdd',
             'group', 'habitat', 'statut', 'endemicite',
-            'invasibilite', 'menace', 'protection',
+            'invasibilite',
+            'menace_regionale', 'menace_nationale', 'menace_monde',
+            'protection',
             'cd_nom', 'cd_ref',
             'code_commune', 'code_masse_eau',
             'code_maille', 'type_maille',
@@ -1230,7 +1244,7 @@ OccTax.events.on({
                     }
                     input_item.val(input_value);
                     // sumoselect too
-                    if (ismulti && input_item) {
+                    if (ismulti && input_item && input_item[0]) {
                         input_item[0].sumo.unSelectAll();
                         for (var i in input_value) {
                             input_item[0].sumo.selectItem(input_value[i]);
@@ -1242,7 +1256,9 @@ OccTax.events.on({
                 // Bascule sur l'onglet de recherche par attribut
                 var attributes_items = [
                     'group', 'habitat', 'statut', 'endemicite',
-                    'invasibilite', 'menace', 'protection'
+                    'invasibilite',
+                    'menace_regionale', 'menace_nationale', 'menace_monde',
+                    'protection'
                 ]
                 if ($.inArray(input_name, attributes_items) != -1 && input_value != '') {
                     $('li a[href="#recherche_taxon_attributs"]').click();

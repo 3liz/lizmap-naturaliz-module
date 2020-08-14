@@ -20,20 +20,6 @@ class occtaxSearch {
 
     protected $taxon_params = array();
 
-    protected $taxon_params_list = array(
-        "cd_ref",
-        "filter",
-        "group",
-        "group1_inpn",
-        "group2_inpn",
-        "habitat",
-        "statut",
-        "endemicite",
-        "invasibilite",
-        "menace",
-        "protection"
-    );
-
     protected $recordsTotal = Null;
 
     protected $returnFields = array();

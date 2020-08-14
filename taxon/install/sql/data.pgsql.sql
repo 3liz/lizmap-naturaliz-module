@@ -52,9 +52,9 @@ INSERT INTO t_nomenclature (champ, code, valeur, description, ordre) VALUES ('me
 
 -- protection
 INSERT INTO t_nomenclature (champ, code, valeur, description, ordre) VALUES ('protection', 'EPN', 'Protection nationale', NULL, 1);
-INSERT INTO t_nomenclature (champ, code, valeur, description, ordre) VALUES ('protection', 'EPC', 'Protection communautaire (UE)', NULL, 2);
-INSERT INTO t_nomenclature (champ, code, valeur, description, ordre) VALUES ('protection', 'EPI', 'Protection internationale', NULL, 3);
-INSERT INTO t_nomenclature (champ, code, valeur, description, ordre) VALUES ('protection', 'EPA', 'Autre statut', 'Autre statut d''espèce (espèce invasive de lutte obligatoire, etc.)', 4);
+-- INSERT INTO t_nomenclature (champ, code, valeur, description, ordre) VALUES ('protection', 'EPC', 'Protection communautaire (UE)', NULL, 2);
+-- INSERT INTO t_nomenclature (champ, code, valeur, description, ordre) VALUES ('protection', 'EPI', 'Protection internationale', NULL, 3);
+-- INSERT INTO t_nomenclature (champ, code, valeur, description, ordre) VALUES ('protection', 'EPA', 'Autre statut', 'Autre statut d''espèce (espèce invasive de lutte obligatoire, etc.)', 4);
 
 
 -- déterminantn ZNIEFF

@@ -46,7 +46,8 @@
         <property name="rarete" fieldname="rarete" datatype="varchar" maxlength="10"/>
         <property name="endemicite" fieldname="endemicite" datatype="varchar" maxlength="5"/>
         <property name="invasibilite" fieldname="invasibilite" datatype="varchar" maxlength="5"/>
-        <property name="menace" fieldname="menace" datatype="varchar" maxlength="5"/>
+        <property name="menace_nationale" fieldname="menace_nationale" datatype="varchar" maxlength="5"/>
+        <property name="menace_regionale" fieldname="menace_regionale" datatype="varchar" maxlength="5"/>
         <property name="menace_monde" fieldname="menace_monde" datatype="varchar" maxlength="6"/>
         <property name="protection" fieldname="protection" datatype="varchar" maxlength="5"/>
         <property name="det_znieff" fieldname="det_znieff" datatype="varchar" maxlength="15"/>

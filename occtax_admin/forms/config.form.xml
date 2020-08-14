@@ -64,22 +64,17 @@
    <label locale="occtax_admin~admin.form.endemicite_description_subendemique.label" />
   </input>
 
-  <textarea ref="code_arrete_protection_simple">
-   <label locale="occtax_admin~admin.form.code_arrete_protection_simple.label" />
+  <textarea ref="taxon_table_menace_fields"  defaultvalue="menace_regionale, menace_monde">
+   <label locale="occtax_admin~admin.form.taxon_table_menace_fields.label" />
   </textarea>
 
-  <textarea ref="code_arrete_protection_internationale">
-   <label locale="occtax_admin~admin.form.code_arrete_protection_internationale.label" />
-  </textarea>
+  <input type="string" ref="taxon_detail_nom_menace"  defaultvalue="menace_regionale">
+   <label locale="occtax_admin~admin.form.taxon_detail_nom_menace.label" />
+  </input>
 
-  <textarea ref="code_arrete_protection_communautaire">
-   <label locale="occtax_admin~admin.form.code_arrete_protection_communautaire.label" />
+  <textarea ref="search_form_menace_fields"  defaultvalue="menace_regionale, menace_monde">
+   <label locale="occtax_admin~admin.form.search_form_menace_fields.label" />
   </textarea>
-
-  <textarea ref="code_arrete_protection_nationale">
-   <label locale="occtax_admin~admin.form.code_arrete_protection_nationale.label" />
-  </textarea>
-
 
 </group>
 

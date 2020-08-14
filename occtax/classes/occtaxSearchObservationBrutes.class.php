@@ -36,7 +36,9 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
             'group2_inpn' => "String",
             'loc' => "String",
             'famille' => "String",
-            'menace' => "String",
+            'menace_regionale' => "String",
+            'menace_nationale' => "String",
+            'menace_monde' => "String",
             'protection' => "String",
 
             // effectif
@@ -199,7 +201,9 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
                 'o.famille' => Null,
                 'o.group2_inpn' => Null,
                 //'o.statut_biogeographique' => Null,
-                'o.menace' => Null,
+                'o.menace_regionale' => Null,
+                'o.menace_nationale' => Null,
+                'o.menace_monde' => Null,
                 'o.protection' => Null,
                 'o.loc' => Null,
 

@@ -101,29 +101,35 @@ Désactivé car redondant et sujet à débat
             <hint locale="taxon~search.input.invasibilite.help"/>
         </listbox>
 
-        <listbox multiple="true" ref="menace">
-            <label locale="taxon~search.input.menace"/>
 <!--
-            <emptyitem locale="taxon~search.input.emptyitem"/>
+Menaces
 -->
+        <listbox multiple="true" ref="menace_regionale">
+            <label locale="taxon~search.input.menace_regionale"/>
             <datasource dao="taxon~t_nomenclature"
               method="findByChamp" criteria="menace"
               labelproperty="valeur"  labelseparator=" - "
               valueproperty="code"/>
-            <hint locale="taxon~search.input.menace.help"/>
+            <hint locale="taxon~search.input.menace_regionale.help"/>
         </listbox>
 
-<!--
-Masqué pour simplifier
-        <listbox multiple="true" ref="menace_monde">
-            <label locale="taxon~search.input.menace_monde"/>
-            <emptyitem locale="taxon~search.input.emptyitem"/>
+        <listbox multiple="true" ref="menace_nationale">
+            <label locale="taxon~search.input.menace_nationale"/>
             <datasource dao="taxon~t_nomenclature"
               method="findByChamp" criteria="menace"
               labelproperty="valeur"  labelseparator=" - "
               valueproperty="code"/>
+            <hint locale="taxon~search.input.menace_nationale.help"/>
         </listbox>
--->
+
+        <listbox multiple="true" ref="menace_monde">
+            <label locale="taxon~search.input.menace_monde"/>
+            <datasource dao="taxon~t_nomenclature"
+              method="findByChamp" criteria="menace"
+              labelproperty="valeur"  labelseparator=" - "
+              valueproperty="code"/>
+            <hint locale="taxon~search.input.menace_monde.help"/>
+        </listbox>
 
         <listbox multiple="true" ref="protection">
             <label locale="taxon~search.input.protection"/>

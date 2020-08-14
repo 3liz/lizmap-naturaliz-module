@@ -36,7 +36,9 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             'famille' => "String",
             'loc' => "String",
             //'statut_biogeographique' => "String",
-            'menace' => "String",
+            'menace_regionale' => "String",
+            'menace_nationale' => "String",
+            'menace_monde' => "String",
             'protection' => "String",
 
             // effectif
@@ -215,7 +217,9 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 'o.group2_inpn' => Null,
                 'o.famille' => Null,
                 'o.loc' => Null,
-                'o.menace' => Null,
+                'o.menace_regionale' => Null,
+                'o.menace_nationale' => Null,
+                'o.menace_monde' => Null,
                 'o.protection' => Null,
 
                 // effectif

@@ -59,7 +59,7 @@ Les modules Naturaliz lisent dans le fichier **lizmap/var/config/naturaliz.ini.p
 * Les **rayons min et max pour les cercles représentant les mailles** : **legend_min_radius** et **legend_max_radius**. L'application calcule automatiquement le rayon pour une classe à partir de ces 2 valeurs et du nombre de classes. Les valeurs doivent être indiquées pour que le cercle tienne dans un carré de 1000m de côté. L'application calcule le rayon en fonction de la maille ( X2 pour les mailles 2km, X10 pour les mailles de 10km, etc.. Par exemple 100 et 410 m respectivement.
 * La **liste des champs à afficher ou à exporter** dans la fiche d'observation (détail) et l'export en CSV ou WFS: **observation_card_fields**, **observation_card_fields_unsensitive**, **observation_card_children**, **observation_exported_fields** **observation_exported_fields_unsensitive**, **observation_exported_children**
 * L'ordre d'affichage des items dans la barre de menu de gauche: **menuOrder**. Par exemple `menuOrder=home, occtax-presentation, switcher, occtax, dataviz, print, measure, permaLink, occtax-legal, taxon, metadata`
-
+* liste des menaces à afficher respectivement dans le formulaire de recherche, l'icône menace à côté du nom de taxon, et dans le tableau des statistiques des taxons `search_form_menace_fields`, `taxon_detail_menace` et `taxon_table_menace_fields`
 
 Pour le module mascarine:
 
@@ -139,7 +139,7 @@ legend_min_radius=100
 legend_max_radius=410
 
 ; liste blanche des champs à afficher dans la fiche d'observation
-observation_card_fields=cle_obs,statut_observation, nom_cite, denombrement_min, denombrement_max, objet_denombrement, commentaire, date_debut, date_fin, date_determination, ds_publique, jdd_metadonnee_dee_id, organisme_gestionnaire_donnees, statut_source, sensi_niveau, observateur, determinateur, validateur, descriptif_sujet, obs_methode, occ_denombrement_min, occ_denombrement_max, occ_type_denombrement, occ_objet_denombrement, occ_etat_biologique, occ_naturalite, occ_sexe, occ_stade_de_vie, occ_statut_biologique, obs_contexte, obs_description, occ_methode_determination, validite_niveau, validite_date_validation, precision_geometrie
+observation_card_fields="cle_obs, dee_date_derniere_modification, identifiant_permanent, statut_observation, nom_cite, lb_nom_valide, nom_vern, cd_nom, group2_inpn, famille, loc, menace_regionale, protection, denombrement_min, denombrement_max, objet_denombrement, commentaire, date_debut, date_fin, date_determination, ds_publique, jdd_metadonnee_dee_id, organisme_gestionnaire_donnees, statut_source, sensi_niveau, observateur, determinateur, validateur, descriptif_sujet, obs_methode, occ_denombrement_min, occ_denombrement_max, occ_type_denombrement, occ_objet_denombrement, occ_etat_biologique, occ_naturalite, occ_sexe, occ_stade_de_vie, occ_statut_biologique, obs_contexte, obs_description, occ_methode_determination, validite_niveau, validite_date_validation, precision_geometrie"
 
 ; liste blanche des champs à afficher pour le grand public dans la fiche
 observation_card_fields_unsensitive=cle_obs, identifiant_permanent, statut_source, nom_cite, date_debut, date_fin, organisme_gestionnaire_donnees, source_objet, code_commune, code_departement, code_maille_10
@@ -149,7 +149,7 @@ observation_card_fields_unsensitive=cle_obs, identifiant_permanent, statut_sourc
 observation_card_children=commune, departement, maille_01, maille_02, maille_10, espace_naturel, masse_eau, habitat
 
 ; liste blanche des champs à exporter
-observation_exported_fields=cle_obs, identifiant_permanent, identifiant_origine, statut_observation, cd_nom, cd_ref, version_taxref, nom_cite, nom_valide, nom_vern, group1_inpn, group2_inpn, denombrement_min, denombrement_max, type_denombrement, objet_denombrement, commentaire, date_debut, heure_debut, date_fin, heure_fin, altitude_moy, profondeur_moy, date_determination, ds_publique, jdd_metadonnee_dee_id, dee_date_derniere_modification, jdd_code, reference_biblio, organisme_gestionnaire_donnees, statut_source, sensi_niveau, observateur, determinateur, validateur, descriptif_sujet, validite_niveau, validite_date_validation, precision_geometrie, nature_objet_geo, wkt
+observation_exported_fields="cle_obs, identifiant_permanent, identifiant_origine, statut_observation, cd_nom, cd_ref, version_taxref, nom_cite, lb_nom_valide, nom_valide, nom_vern, group1_inpn, group2_inpn, famille, loc, menace_regionale, protection, denombrement_min, denombrement_max, type_denombrement, objet_denombrement, commentaire, date_debut, heure_debut, date_fin, heure_fin, altitude_moy, profondeur_moy, date_determination, ds_publique, jdd_metadonnee_dee_id, dee_date_derniere_modification, jdd_code, reference_biblio, organisme_gestionnaire_donnees, statut_source, sensi_niveau, observateur, determinateur, validateur, descriptif_sujet, validite_niveau, validite_date_validation, precision_geometrie, nature_objet_geo, wkt"
 
 ; liste blanche des champs à exporter pour le grand public
 observation_exported_fields_unsensitive=cle_obs, identifiant_permanent, statut_source, nom_cite, date_debut, date_fin, organisme_gestionnaire_donnees, source_objet, code_commune, code_departement, code_maille_10, wkt
@@ -160,6 +160,15 @@ observation_exported_children=commune, departement, maille_01, maille_02, maille
 
 ; liste blanche des données filles à exporter pour le grand public
 observation_exported_children_unsensitive="commune, departement, maille_02, maille_10"
+
+; liste des menaces à afficher dans le tableau des stats sur les taxons
+taxon_table_menace_fields=menace_nationale, menace_monde
+
+; menace à afficher à côté du nom du taxon dans les tableaux de détail (taxon et observations)
+taxon_detail_nom_menace=menace_nationale
+
+; liste des champs menaces à afficher dans le formulaire de recherche
+search_form_menace_fields=menace_nationale, menace_monde
 
 ; ordre des items de menu Lizmap (barre de menu de gauche)
 menuOrder=home, occtax-presentation, switcher, occtax, dataviz, print, measure, permaLink, occtax-legal, taxon, metadata
@@ -437,9 +446,11 @@ Les fichiers concernant TAXREF, les menaces (listes rouges) et les protections s
 
 #### Taxref
 
-Le fichier officiel du taxref, par exemple *TAXREFv11.txt*
+L'import du taxref se fait à la main, en se connectant à la base de données PostgreSQL via un client comme PgAdmin. Un fichier d'exemple est fourni: [fichier exemple d'import](doc/taxref/import_taxref.sql)
 
-* Source: https://inpn.mnhn.fr/telechargement/referentielEspece/taxref/11.0/menu
+Le fichier officiel du taxref, par exemple *TAXREFv13.txt*
+
+* Source: https://inpn.mnhn.fr/
 
 #### Menaces (listes rouges)
 

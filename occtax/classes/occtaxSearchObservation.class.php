@@ -27,7 +27,7 @@ class occtaxSearchObservation extends occtaxSearch {
     protected $tplFields = array(
         'lien_nom_valide' => '
             <a class="getTaxonDetail cd_nom_{$line->cd_ref}" href="#" title="{@taxon~search.output.inpn.title@}">{$line->lb_nom_valide}</a>
-            {if !empty($line->menace)}&nbsp;<span class="redlist {$line->menace}" title="{@taxon~search.output.redlist.title@} : {$line->menace}">{$line->menace}</span>{/if}{if !empty($line->protection)}&nbsp;<span class="protectionlist {$line->protection}" title="{@taxon~search.output.protection.title@} : {$line->protection}">{$line->protection}</span>{/if}',
+            {if !empty($line->menace_regionale)}&nbsp;<span class="redlist {$line->menace_regionale}" title="{@occtax~search.output.redlist_regionale.title@} : {$line->menace_regionale}">{$line->menace_regionale}</span>{/if}{if !empty($line->protection)}&nbsp;<span class="protectionlist {$line->protection}" title="{@occtax~search.output.protection.title@} : {$line->protection}">{$line->protection}</span>{/if}',
         'observateur' => '
             <span class="identite_observateur" title="{$line->identite_observateur|eschtml}">
                 {$line->identite_observateur|truncate:40}
@@ -63,7 +63,9 @@ class occtaxSearchObservation extends occtaxSearch {
                 'o.geom' => Null,
                 "o.diffusion" => Null,
                 "identite_observateur" => Null,
-                "o.menace" => Null,
+                "o.menace_regionale" => Null,
+                "o.menace_nationale" => Null,
+                "o.menace_monde" => Null,
                 "o.protection" => Null,
             )
         )
@@ -231,9 +233,31 @@ class occtaxSearchObservation extends occtaxSearch {
             )
         ),
 
-        'menace' => array (
+        'menace_regionale' => array (
             'table' => 'vm_observation',
-            'clause' => ' AND o.menace IN ( @ )',
+            'clause' => ' AND o.menace_regionale IN ( @ )',
+            'type' => 'string',
+            'label'=> array(
+                'dao'=>'taxon~t_nomenclature',
+                'method'=>'getLabel',
+                'champ'=>'menace',
+                'column'=>'valeur'
+            )
+        ),
+        'menace_nationale' => array (
+            'table' => 'vm_observation',
+            'clause' => ' AND o.menace_nationale IN ( @ )',
+            'type' => 'string',
+            'label'=> array(
+                'dao'=>'taxon~t_nomenclature',
+                'method'=>'getLabel',
+                'champ'=>'menace',
+                'column'=>'valeur'
+            )
+        ),
+        'menace_monde' => array (
+            'table' => 'vm_observation',
+            'clause' => ' AND o.menace_monde IN ( @ )',
             'type' => 'string',
             'label'=> array(
                 'dao'=>'taxon~t_nomenclature',
@@ -269,6 +293,30 @@ class occtaxSearchObservation extends occtaxSearch {
     */
     public function __construct ($token=Null, $params=Null, $demande=Null, $login=Null) {
         $this->login = $login;
+
+        if (array_key_exists('lien_nom_valide', $this->tplFields)) {
+            // Get local configuration (application name, projects name, list of fields, etc.)
+            $localConfig = jApp::configPath('naturaliz.ini.php');
+            $ini = new jIniFileModifier($localConfig);
+
+            // Choose menace field depending on configuration
+            // Displayed on Observations table
+            $taxon_detail_nom_menace = $ini->getValue('taxon_detail_nom_menace', 'naturaliz');
+            $all_menace = array('menace_regionale', 'menace_nationale', 'menace_monde');
+            if (!in_array(trim($taxon_detail_nom_menace), $all_menace)) {
+                $taxon_detail_nom_menace = 'menace_regionale';
+            }
+            $menace = str_replace('menace_', '', trim($taxon_detail_nom_menace));
+            $old_template =  $this->tplFields['lien_nom_valide'];
+            $new_template = str_replace(
+                'regionale',
+                $menace,
+                $old_template
+            );
+
+            $this->tplFields['lien_nom_valide'] = $new_template;
+
+        }
 
         parent::__construct($token, $params, $demande, $login);
     }

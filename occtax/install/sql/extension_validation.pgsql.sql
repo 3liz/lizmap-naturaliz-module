@@ -691,9 +691,9 @@ FROM vm_observation o
 LEFT JOIN (
     SELECT vv.*,
     identite || concat(' - ' || mail, ' (' || o.nom_organisme || ')' ) AS val_validateur
-    FROM validation_observation vv
-    LEFT JOIN personne p ON vv.validateur = p.id_personne
-    LEFT JOIN organisme o ON p.id_organisme = o.id_organisme
+    FROM occtax.validation_observation vv
+    LEFT JOIN occtax.personne p ON vv.validateur = p.id_personne
+    LEFT JOIN occtax.organisme o ON p.id_organisme = o.id_organisme
     WHERE ech_val = '2' -- uniquement validation de niveau régional
 ) v USING (identifiant_permanent)
 -- jointure pour avoir les informations relatives à la validation producteur
@@ -701,9 +701,9 @@ LEFT JOIN (
     SELECT vv.*,
     n.valeur,
     identite || concat(' - ' || mail, ' (' || o.nom_organisme || ')' ) AS val_validateur
-    FROM validation_observation vv
-    LEFT JOIN personne p ON vv.validateur = p.id_personne
-    LEFT JOIN organisme o ON p.id_organisme = o.id_organisme
+    FROM occtax.validation_observation vv
+    LEFT JOIN occtax.personne p ON vv.validateur = p.id_personne
+    LEFT JOIN occtax.organisme o ON p.id_organisme = o.id_organisme
     LEFT JOIN occtax.nomenclature n ON n.champ='niv_val_mancom' AND n.code=vv.niv_val
     WHERE vv.ech_val = '1' -- uniquement validation producteur
 ) vprod USING (identifiant_permanent)

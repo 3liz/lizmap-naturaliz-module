@@ -10,6 +10,10 @@
                 $configOptions = $lproj->getOptions();
                 $bp = jApp::config()->urlengine['basePath'];
 
+                // Get local configuration (application name, projects name, list of fields, etc.)
+                $localConfig = jApp::configPath('naturaliz.ini.php');
+                $ini = new jIniFileModifier($localConfig);
+
                 // TAXON dock
                 // Create search form
                 //$searchForm = jForms::create("taxon~search");
@@ -43,35 +47,49 @@
                 $formUpload = jForms::create("occtax~upload_geojson");
 
                 // Remove some fields via rights
-                if( !jAcl2::check("requete.jdd.observation") ){
+                if (!jAcl2::check("requete.jdd.observation")) {
                     $form->deactivate( 'jdd_id' );
                 }
-                if( !jAcl2::check("requete.observateur.observation") ){
+                if (!jAcl2::check("requete.observateur.observation")) {
                     $form->deactivate( 'observateur' );
                 }
-                if( !jAcl2::check("visualisation.donnees.brutes") ){
+                if (!jAcl2::check("visualisation.donnees.brutes")) {
                     $form->deactivate( 'validite_niveau' );
+                }
+
+                // Remove form fields by config
+                $search_form_menace_fields = $ini->getValue('search_form_menace_fields', 'naturaliz');
+                if (empty($search_form_menace_fields)) {
+                    $search_form_menace_fields = 'menace_nationale, menace_monde';
+                }
+                $menace_fields = array_map('trim', explode(',', $search_form_menace_fields));
+                $all_menace = array('menace_regionale', 'menace_nationale', 'menace_monde');
+                foreach ($all_menace as $menace) {
+                    if (!in_array($menace, $menace_fields)) {
+                        $form->deactivate($menace);
+                    }
                 }
 
                 // Get configuration for some client side occtax parameters
                 // Get local configuration (application name, projects name, etc.)
-                $localConfig = jApp::configPath('naturaliz.ini.php');
-                $ini = new jIniFileModifier($localConfig);
+
                 $maxAreaQuery = $ini->getValue('maxAreaQuery', 'naturaliz');
                 $menuOrder = $ini->getValue('menuOrder', 'naturaliz');
                 $srid = $ini->getValue('srid', 'naturaliz');
                 $libelle_srid = $ini->getValue('libelle_srid', 'naturaliz');
                 $maximum_observation_scale = $ini->getValue('maximum_observation_scale', 'naturaliz');
-                if( empty($maxAreaQuery) )
+                if (empty($maxAreaQuery) )
                     $maxAreaQuery = 32000000;
-                if( empty($menuOrder) )
+                if (empty($menuOrder) )
                     $menuOrder = 'home, taxon, metadata, switcher, occtax, dataviz, print, measure, permaLink';
-                if( empty($srid) )
+                if (empty($srid) )
                     $srid = '2154';
-                if( empty($libelle_srid) )
+                if (empty($libelle_srid) )
                     $libelle_srid = 'Projection locale';
-                if( empty($maximum_observation_scale) )
+                if (empty($maximum_observation_scale) )
                     $maximum_observation_scale = 25000;
+
+                // Menaces
 
                 $menuOrder = array_map('trim', explode(',', $menuOrder));
                 $mi = 0; $mo = array();
@@ -81,7 +99,7 @@
                 }
 
                 $strokeColor = $ini->getValue('strokeColor', 'naturaliz');
-                if( empty($strokeColor) )
+                if (empty($strokeColor) )
                     $strokeColor = 'white';
                 $occtaxClientConfig = array(
                     'maxAreaQuery'=> (integer)$maxAreaQuery,
@@ -92,7 +110,7 @@
                 );
 
                 $mailles_a_utiliser = $ini->getValue('mailles_a_utiliser', 'naturaliz');
-                if( !$mailles_a_utiliser or empty(trim($mailles_a_utiliser)) ){
+                if (!$mailles_a_utiliser or empty(trim($mailles_a_utiliser))) {
                     $mailles_a_utiliser = 'maille_02,maille_10';
                 }
                 $mailles_a_utiliser = array_map('trim', explode(',', $mailles_a_utiliser));
@@ -119,16 +137,11 @@
                 $event->add($dock);
 
 
-
-                // Get local configuration (application name, projects name, etc.)
-                $localConfig = jApp::configPath('naturaliz.ini.php');
-                $ini = new jIniFileModifier($localConfig);
-
                 // PRESENTATION
                 $presentationTpl = new jTpl();
                 $presentation = '';
                 $projectDescriptionConfig = $ini->getValue('projectDescription', 'naturaliz');
-                if( !empty($projectDescriptionConfig) ){
+                if (!empty($projectDescriptionConfig)) {
                     $presentation = html_entity_decode( $projectDescriptionConfig );
                 }
 
@@ -140,7 +153,7 @@
                     'presentation' => $presentationSource
                 );
                 $dtpl->assign($dassign);
-                if( $presentationSource ){
+                if ($presentationSource) {
                     $presentation = $dtpl->fetch('presentation');
                 }
 
@@ -164,7 +177,7 @@
                     'legal' => $legalSource
                 );
                 $dtpl->assign($dassign);
-                if( $legalSource ){
+                if ($legalSource) {
                     $legal = $dtpl->fetch('mentions_legales');
                 }
                 if(!empty($legal)){
