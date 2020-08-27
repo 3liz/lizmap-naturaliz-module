@@ -80,7 +80,9 @@ class occtaxSearchObservation extends occtaxSearch {
         ),
         'cd_nom' => array (
             'table' => 'vm_observation',
-            'clause' => ' AND (o.cd_ref IN (@) OR o.cd_ref IN (
+            // space before o.cd_ref are VERY important as used in regex to search/replace prefix
+            // for demands and use in subqueries
+            'clause' => ' AND ( o.cd_ref IN (@) OR o.cd_ref IN (
                 WITH RECURSIVE parcours_taxref(cd_ref, cd_sup) AS (
                     SELECT cd_ref, cd_sup
                     FROM taxon.taxref

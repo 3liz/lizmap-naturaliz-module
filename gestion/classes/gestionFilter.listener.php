@@ -20,36 +20,57 @@ class gestionFilterListener extends jEventListener{
 
         // Get demande for user
         $dao_demande = jDao::get('gestion~demande');
-        $demandes = $dao_demande->findByLogin($login);
+        //$demandes = $dao_demande->findByLogin($login);
         $actives_demandes = $dao_demande->findActiveDemandesByLogin($login);
 
-        foreach($demandes as $demande){
+        $filter_method = 'b'; // b est le plus performant
+        $observation_column_prefix = 'o';
+        if ($filter_method == 'b' or $filter_method == 'c') {
+            $observation_column_prefix = 'vo';
+        }
+        //foreach($demandes as $demande){
+        foreach($actives_demandes as $demande){
             $sql_demande = array();
 
             // First build occtax search with demande params
             $dparams = array();
-            if($demande->cd_ref){
+            if ($demande->cd_ref) {
                 $dparams['cd_nom'] = explode( ',', trim($demande->cd_ref, '{}') );
             }
-            if($demande->group1_inpn){
+            if ($demande->group1_inpn) {
                 $dparams['group1_inpn'] = explode( ',', trim(str_replace('"', '', $demande->group1_inpn), '{}') );
             }
-            if($demande->group2_inpn){
+            if ($demande->group2_inpn) {
                 $dparams['group2_inpn'] = explode( ',', trim(str_replace('"', '', $demande->group2_inpn), '{}') );
             }
             jClasses::inc('occtax~occtaxSearchObservation');
             $dsearch = new occtaxSearchObservation( null, $dparams, 1, $login );
             $dtwhere = $dsearch->getWhereClause();
-            if( !empty($dtwhere) ){
-                $sql_demande[] = preg_replace(
-                    '/WHERE +True( +AND +)?/i',
-                    '',
-                    $dtwhere
+            if (!empty($dtwhere)) {
+                $dtwhere_demande = trim(
+                    // Since we use the dtwhere inside the already defined WHERE clause for demands
+                    // we need to remove the "WHERE True"
+                    preg_replace(
+                        '/WHERE +True( +AND +)?/i',
+                        '',
+                        $dtwhere
+                    )
                 );
+                // Depending on method chosen
+                // filter is done on subquery (use subtable vo.) or directly on query (use main table o.)
+                $dtwhere_demande = preg_replace(
+                    '/o.cd_ref/',
+                    " $observation_column_prefix.cd_ref",
+                    $dtwhere_demande
+                );
+                // Add demand filter only if there is some content
+                if (!empty($dtwhere_demande)) {
+                    $sql_demande[] = $dtwhere_demande;
+                }
             }
 
             // Add geometry filter if set
-            if($demande->geom){
+            if ($demande->geom) {
                 // Get SRID
                 $localConfig = jApp::configPath('naturaliz.ini.php');
                 $ini = new jIniFileModifier($localConfig);
@@ -57,37 +78,133 @@ class gestionFilterListener extends jEventListener{
                 if( !$srid )
                     $srid = 4326;
                 $cnx = jDb::getConnection();
-                $sql_geom = ' ST_Intersects(o.geom, ST_GeomFromText(' . $cnx->quote($demande->geom) . ', '. $srid .')) ' ;
-                $sql_demande[] = $sql_geom;
+                // method a or b: use ST_GeomFromText, which si faster
+                if ($filter_method == 'a' or $filter_method == 'b') {
+                    $sql_geom = 'ST_Intersects(
+                        '.$observation_column_prefix.'.geom,
+                        ST_GeomFromText(' . $cnx->quote($demande->geom) . ', '. $srid .')
+                    )' ;
+                }
+                // d test: use subquery on gestion.demand: very slow for queries with aggregation (count, etc.)
+                if ($filter_method == 'd') {
+                    $sql_geom = 'ST_Intersects(
+                        ' . $observation_column_prefix . '.geom,
+                        (SELECT geom FROM gestion.demande WHERE id =' . $demande->id . ' LIMIT 1)
+                    )' ;
+                }
+                // c test: use a JOIN inside subquery with ST_Intersects(o.geom, d.geom) AND d.id = X)
+                // no need to add the intersects filter in the WHERE clause since it is done in JOIN
+                if ($filter_method != 'c') {
+                    $sql_demande[] = $sql_geom;
+                }
+
             }
 
             // Add validite filter
-            if($demande->validite_niveau){
-                $sql_demande[] = ' validite_niveau = ANY (' . $cnx->quote($demande->validite_niveau) .'::text[] )';
+            if ($demande->validite_niveau) {
+                $sql_demande[] = $observation_column_prefix . '.validite_niveau = ANY (' . $cnx->quote($demande->validite_niveau) .'::text[] )';
             }
 
             // Add validity dates
-            if($demande->date_validite_min){
-                $sql_demande[] = ' ' . $cnx->quote($demande->date_validite_min) . '::date <= now()::date' ;
+            if ($demande->date_validite_min) {
+                $sql_demande[] = $cnx->quote($demande->date_validite_min) . '::date <= now()::date' ;
             }
-            if($demande->date_validite_max){
-                $sql_demande[] = ' now()::date <= ' . $cnx->quote($demande->date_validite_max) . '::date ' ;
+            if ($demande->date_validite_max) {
+                $sql_demande[] = 'now()::date <= ' . $cnx->quote($demande->date_validite_max) . '::date' ;
             }
 
             // Add critere_additionnel
-            if(!empty($demande->critere_additionnel)){
-                $sql_demande[] = ' ( ' . $demande->critere_additionnel . ' ) ';
+            if (!empty(trim($demande->critere_additionnel))) {
+                $sql_demande[] = '( ' . $demande->critere_additionnel . ' )';
             }
 
             // Build full sql for this demand
-            if(count($sql_demande) > 0){
-                $table_demandes[] = ' ( ' . implode( ' AND ', $sql_demande) . ' ) ';
-            }
+            // Join all criterias with AND
+            if (count($sql_demande) > 0) {
 
+                // Build SQL depending of chosen method
+                if ($filter_method == 'a') {
+                    // a: where clause are directly used on main observation table o.
+                    $sql_demand_text = '
+                    ( ' . implode(
+                        '
+                        AND
+                        ',
+                        $sql_demande
+                    ) . '
+                    )
+                    ';
+                } elseif ($filter_method == 'b') {
+                    // b: use a subquery. it has proven better perd than a
+                    $sql_demand_text = '
+                    o.cle_obs IN (
+                    SELECT cle_obs
+                    FROM occtax.vm_observation vo
+                    WHERE True AND
+                    ' . implode(
+                        '
+                        AND
+                        ',
+                        $sql_demande
+                    ) . '
+                    )
+                    ';
+                } elseif ($filter_method == 'c') {
+                    $sql_demand_text = '
+                    o.cle_obs IN (
+                    SELECT vo.cle_obs
+                    FROM occtax.vm_observation vo';
+                    if ($demande->geom) {
+                        $sql_demand_text .= '
+                        JOIN gestion.demande d
+                        ON d.id = ' . $demande->id . '
+                        AND ST_Intersects(vo.geom, d.geom)
+                        ';
+                    }
+                    $sql_demand_text.= '
+                    WHERE True AND
+                    ' . implode(
+                        '
+                        AND
+                        ',
+                        $sql_demande
+                    ) . '
+                    )
+                    ';
+                } elseif ($filter_method == 'd') {
+                    $sql_demand_text = '
+                    ( ' . implode(
+                        '
+                        AND
+                        ',
+                        $sql_demande
+                    ) . '
+                    )
+                    ';
+                } else {
+                    // unknown method: no filter applied
+                    $sql_demand_text = Null;
+                }
+                if (!empty($sql_demand_text)) {
+                    $table_demandes[] = $sql_demand_text;
+                }
+            }
         }
-        if( count($table_demandes)>0 ){
-            $filter = implode( ' OR ', $table_demandes);
-            $filter = ' AND ( ' . $filter . ' ) ';
+
+        // Gather SQL of all demands WITH OR
+        if( count($table_demandes) > 0 ){
+            // Join sql of each demand with OR
+            $sub_filter = implode(
+                '
+                OR
+                ',
+                $table_demandes
+            );
+            // Final filter is an AND to the demands sub_filter
+            $filter = '
+            AND (
+            ' . $sub_filter . '
+            ) ';
         }else{
             // Remove all rights to see any observation if the user has no line in demande table, and is not admin
             if( !jAcl2::checkByUser($login, "visualisation.donnees.non.filtrees") ){
@@ -95,11 +212,8 @@ class gestionFilterListener extends jEventListener{
             }
         }
 //jLog::log($filter);
-
-
         return $filter;
     }
-
 
 }
 ?>
