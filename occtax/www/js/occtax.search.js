@@ -1641,6 +1641,7 @@ OccTax.events.on({
         $('#occtax-highlight-message').remove();
         $('#occtax-message').remove();
         $('#occtax_search_input').show();
+        $('#occtax_search_observation_card').hide();
         $('#occtax_search_description').hide();
         $('#occtax_search_result').hide();
         $('#occtax-search-replay').toggle();
@@ -1649,6 +1650,7 @@ OccTax.events.on({
       });
       $('#occtax-search-replay').click(function(){
         $('#occtax_search_input').hide();
+        $('#occtax_search_observation_card').hide();
         $('#occtax_search_description').show();
         $('#occtax_search_result').show();
         $('#occtax-search-modify').toggle();
@@ -1750,6 +1752,7 @@ OccTax.events.on({
                     $('#occtax_search_description').prev('h3.occtax_search').show();
                     $('#occtax-search-modify').show();
                     $('#occtax-search-replay').hide();
+                    $('#occtax_search_observation_card').hide();
 
                     // Move legend to map
                     $('#map-content div.occtax-legend-container').remove();
@@ -2076,14 +2079,25 @@ OccTax.events.on({
         // Toggle next div visibility
         var ndiv = $(this).next('div:first');
         ndiv.toggle();
+
+        // Reopen results & description
+        // when observation car is hidden
         if(
           ndiv.attr('id') == 'occtax_search_observation_card'
-          && ! ndiv.is(':visible')
+          && !(ndiv.is(':visible'))
         ){
-          // Reopen results div id needed
           $('#occtax_search_result').show();
           $('#occtax_search_description').show();
         }
+
+        // Hide observation card when other div is displayed
+        if(
+          ndiv.attr('id') != 'occtax_search_observation_card'
+          && (ndiv.is(':visible'))
+        ){
+          $('#occtax_search_observation_card').hide();
+        }
+
         var tid = $('#occtax_search_result div.tab-pane.active').attr('id');
 
         // Refresh size of datatable table (for scrolling)
