@@ -620,6 +620,7 @@ DROP VIEW IF EXISTS occtax.v_observation_validation CASCADE;
 CREATE VIEW occtax.v_observation_validation AS (
 SELECT o.cle_obs,
 o.identifiant_permanent,
+o.identifiant_origine,
 o.statut_observation,
 o.cd_nom,
 o.cd_ref,

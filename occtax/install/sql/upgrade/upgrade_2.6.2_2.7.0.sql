@@ -608,6 +608,7 @@ COMMENT ON MATERIALIZED VIEW stats.nombre_obs_par_statut_biogeographique IS 'nom
 CREATE OR REPLACE VIEW occtax.v_observation_validation AS (
 SELECT o.cle_obs,
 o.identifiant_permanent,
+o.identifiant_origine,
 o.statut_observation,
 o.cd_nom,
 o.cd_ref,
