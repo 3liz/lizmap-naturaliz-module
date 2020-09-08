@@ -50,14 +50,15 @@ class occtaxModuleInstaller extends jInstallerModule {
                 $tpl->assign('SRID', $srid);
                 $sql = $tpl->fetchFromString($sqlTpl, 'text');
 
+                $db->exec($sql);
+
                 // Add materialized views
                 $sqlPath = $this->path . 'install/sql/materialized_views.pgsql.sql';
                 $sqlTpl = jFile::read( $sqlPath );
                 $tpl = new jTpl();
                 $colonne_locale = $ini->getValue('colonne_locale', 'naturaliz');
                 $tpl->assign('colonne_locale', $colonne_locale);
-                $sql.= $tpl->fetchFromString($sqlTpl, 'text');
-
+                $sql = $tpl->fetchFromString($sqlTpl, 'text');
                 $db->exec($sql);
 
                 // Add extension validation
@@ -242,11 +243,6 @@ class occtaxModuleInstaller extends jInstallerModule {
         }catch (Exception $e){
             jLog::log($e->getMessage());
         }
-
-        // Modifiy localconfig to add responses
-        $this->config->setValue('csv', 'occtax~jResponseCsv', 'responses');
-        $this->config->setValue('geojson', 'occtax~jResponseGeoJson', 'responses');
-
 
     }
 }
