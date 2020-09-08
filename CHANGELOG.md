@@ -4,6 +4,14 @@
 
 * Occtax - Improve install script
 
+### 2.7.4 - 08/09/2020
+
+* Occtax - Try/catch pour ajout des droits & fichier SQL de remplacement
+
+### 2.7.3 - 08/09/2020
+
+* Occtax - Improve install script
+
 ### 2.7.2 - 08/09/2020
 
 * Gestion - Improve install script
