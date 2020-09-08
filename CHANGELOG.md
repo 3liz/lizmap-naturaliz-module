@@ -1,5 +1,15 @@
 # CHANGELOG
 
+### 2.7.0 - 08/09/2020
+
+* Occtax/Gestion - Refonte de l'installation
+* Occtax - remove useless old code
+* Validation - Ajout champ identifiant_origine dans v_observation_validation
+* Carte - Zoom sur observation. Ne pas aller à l'échelle maximum_observation_scale si on est à + grande échelle
+* Interface - fiche observation masquée si autre onglet ouvert
+* Demandes - Tentative d'amélioration de performance: sous-requête & demandes actives
+* Taxref - ajout menace régionale, variables de configuration, nettoyage
+
 ### 2.6.1 - 03/07/2020
 
 * Taxon - déplacement des images de catégories dans install/www/
