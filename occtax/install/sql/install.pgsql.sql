@@ -1,4 +1,3 @@
-BEGIN;
 
 CREATE EXTENSION IF NOT EXISTS "postgis";
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -694,32 +693,6 @@ INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = '
 INNER JOIN organisme o ON o.id_organisme = p.id_organisme
 ;
 
-CREATE OR REPLACE VIEW v_validateur AS
-SELECT CASE WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE p.identite END AS identite,
-CASE WHEN p.anonymiser IS TRUE THEN '' ELSE p.mail END AS mail,
-CASE WHEN p.anonymiser IS TRUE OR lower(p.identite) = lower(nom_organisme) THEN NULL ELSE Coalesce(nom_organisme, 'INCONNU') END AS organisme,
-p.id_personne, vv.identifiant_permanent, p.prenom, p.nom, p.anonymiser,
-p.identite AS identite_non_floutee,
-p.mail AS mail_non_floute,
-Coalesce(nom_organisme, 'INCONNU') AS organisme_non_floute
-FROM validation_observation vv
-LEFT JOIN personne p ON vv.validateur = p.id_personne
-LEFT JOIN organisme o ON p.id_organisme = o.id_organisme
-WHERE ech_val = '2' -- uniquement validation de niveau régional
-;
-
-CREATE OR REPLACE VIEW v_determinateur AS
-SELECT CASE WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE p.identite END AS identite,
-CASE WHEN p.anonymiser IS TRUE THEN '' ELSE p.mail END AS mail,
-CASE WHEN p.anonymiser IS TRUE OR lower(p.identite) = lower(nom_organisme) THEN NULL ELSE Coalesce(nom_organisme, 'INCONNU') END AS organisme,
-op.id_personne, op.cle_obs, p.prenom, p.nom, p.anonymiser,
-p.identite AS identite_non_floutee,
-p.mail AS mail_non_floute,
-Coalesce(nom_organisme, 'INCONNU') AS organisme_non_floute
-FROM observation_personne op
-INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = 'Det'
-INNER JOIN organisme o ON o.id_organisme = p.id_organisme
-;
 
 
 CREATE INDEX IF NOT EXISTS personne_id_organisme_idx ON personne (id_organisme);
@@ -1330,7 +1303,3 @@ $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 
-
-
-
-COMMIT;

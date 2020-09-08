@@ -29,10 +29,14 @@ Vous pouvez le faire via l'outil git, en se connectant avec vos identifiants de 
 Dans l'exemple suivant, nous utilisons la plateforme Github de 3liz, avec accès https: https://github.com/3liz/lizmap-naturaliz-module/
 
 ```bash
-cd /root/
+mkdir -p ~/naturaliz_modules
+cd ~/naturaliz_modules
+
+# Avec Git
 git clone https://projects.3liz.org/clients/naturaliz-reunion.git naturaliz
+cp -R ~/naturaliz_modules/naturaliz/* /srv/lizmap_web_client/lizmap/lizmap-modules/
+
 # copier les modules dans le répertoire lizmap-modules de lizmap
-cp -R /root/naturaliz/* /srv/lizmap_web_client/lizmap/lizmap-modules/
 ls -lh /srv/lizmap_web_client/lizmap/lizmap-modules/
 ```
 
@@ -68,8 +72,13 @@ Pour le module mascarine:
 Voir l'exemple naturaliz.ini.php.dist à la racine de ce dépôt.
 
 ```bash
+# aller à la racine de Lizmap Web Client
 cd /srv/lizmap_web_client/
-cp lizmap/lizmap-modules/naturaliz.ini.php.dist lizmap/var/config/naturaliz.ini.php
+
+# copie le fichier de configuration naturaliz
+cp lizmap/lizmap-modules/occtax/install/config/naturaliz.ini.php.dist lizmap/var/config/naturaliz.ini.php
+
+# editer le fichier
 nano lizmap/var/config/naturaliz.ini.php # Faire les modifications nécessaires
 ```
 
@@ -227,9 +236,8 @@ lizmap.installparam=demo
 
 taxon.access=2
 occtax.access=2
+gestion.access=2
 occtax_admin.access=2
-;mascarine.access=0
-;mascarine_admin.access=0
 
 ```
 

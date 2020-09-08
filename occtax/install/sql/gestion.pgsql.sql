@@ -3,7 +3,7 @@ CREATE SCHEMA IF NOT EXISTS gestion;
 SET search_path TO gestion,occtax,public,pg_catalog;
 
 -- Nomenclature
-CREATE TABLE g_nomenclature (
+CREATE TABLE gestion.g_nomenclature (
     champ text,
     code text,
     valeur text,
@@ -11,20 +11,20 @@ CREATE TABLE g_nomenclature (
     g_order integer
 );
 
-ALTER TABLE g_nomenclature ADD PRIMARY KEY (champ, code);
+ALTER TABLE gestion.g_nomenclature ADD PRIMARY KEY (champ, code);
 
-COMMENT ON TABLE g_nomenclature IS 'Stockage de la t_nomenclature pour les champs des tables qui ont des listes de valeurs prédéfinies.';
-COMMENT ON COLUMN g_nomenclature.champ IS 'Description de la valeur';
-COMMENT ON COLUMN g_nomenclature.code IS 'Code associé à une valeur';
-COMMENT ON COLUMN g_nomenclature.valeur IS 'Libellé court. Joue le rôle de valeur';
-COMMENT ON COLUMN g_nomenclature.description IS 'Libellé court. Joue le rôle de valeur';
-COMMENT ON COLUMN g_nomenclature.g_order IS 'Ordre (optionnel)';
+COMMENT ON TABLE gestion.g_nomenclature IS 'Stockage de la t_nomenclature pour les champs des tables qui ont des listes de valeurs prédéfinies.';
+COMMENT ON COLUMN gestion.g_nomenclature.champ IS 'Description de la valeur';
+COMMENT ON COLUMN gestion.g_nomenclature.code IS 'Code associé à une valeur';
+COMMENT ON COLUMN gestion.g_nomenclature.valeur IS 'Libellé court. Joue le rôle de valeur';
+COMMENT ON COLUMN gestion.g_nomenclature.description IS 'Libellé court. Joue le rôle de valeur';
+COMMENT ON COLUMN gestion.g_nomenclature.g_order IS 'Ordre (optionnel)';
 
-CREATE INDEX ON g_nomenclature (champ, code);
+CREATE INDEX ON gestion.g_nomenclature (champ, code);
 
 
 -- Table demande
-CREATE TABLE demande (
+CREATE TABLE gestion.demande (
     id serial PRIMARY KEY,
     usr_login character varying(50),
     id_acteur integer NOT NULL,

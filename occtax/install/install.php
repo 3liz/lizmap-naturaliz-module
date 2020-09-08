@@ -11,6 +11,22 @@
 
 class occtaxModuleInstaller extends jInstallerModule {
 
+    function addSchemaToSearchPath($schema_name) {
+
+        // Add gestion to search_path
+        $profileConfig = jApp::configPath('profiles.ini.php');
+        $ini = new jIniFileModifier($profileConfig);
+        $defaultProfile = $ini->getValue('default', 'jdb');
+        $search_path = $ini->getValue('search_path', 'jdb:' . $defaultProfile);
+        if (empty($search_path )) {
+            $search_path = 'public';
+        }
+        if (!preg_match( '#'.$schema_name.'#', $search_path )) {
+            $ini->setValue('search_path', $search_path . ',' . $schema_name, 'jdb:' . $defaultProfile);
+        }
+        $ini->save();
+    }
+
     function install() {
 
         // Copy export readme files
@@ -32,7 +48,7 @@ class occtaxModuleInstaller extends jInstallerModule {
         // Install occtax schema into database if needed
         if ($this->firstDbExec()) {
 
-            try {
+            //try {
                 $db = $this->dbConnection();
 
                 // Get SRID
@@ -49,16 +65,15 @@ class occtaxModuleInstaller extends jInstallerModule {
                 $tpl = new jTpl();
                 $tpl->assign('SRID', $srid);
                 $sql = $tpl->fetchFromString($sqlTpl, 'text');
-
                 $db->exec($sql);
 
-                // Add materialized views
-                $sqlPath = $this->path . 'install/sql/materialized_views.pgsql.sql';
+                // Add gestion
+                $sqlPath = $this->path . 'install/sql/gestion.pgsql.sql';
                 $sqlTpl = jFile::read( $sqlPath );
                 $tpl = new jTpl();
-                $colonne_locale = $ini->getValue('colonne_locale', 'naturaliz');
-                $tpl->assign('colonne_locale', $colonne_locale);
+                $tpl->assign('SRID', $srid);
                 $sql = $tpl->fetchFromString($sqlTpl, 'text');
+                $sql.= jFile::read( $this->path . 'install/sql/gestion.data.pgsql.sql' );
                 $db->exec($sql);
 
                 // Add extension validation
@@ -71,33 +86,31 @@ class occtaxModuleInstaller extends jInstallerModule {
                 $sql = jFile::read( $sqlPath );
                 $db->exec($sql);
 
+                // Add materialized views
+                $sqlPath = $this->path . 'install/sql/materialized_views.pgsql.sql';
+                $sqlTpl = jFile::read( $sqlPath );
+                $tpl = new jTpl();
+                $colonne_locale = $ini->getValue('colonne_locale', 'naturaliz');
+                $tpl->assign('colonne_locale', $colonne_locale);
+                $sql = $tpl->fetchFromString($sqlTpl, 'text');
+                $db->exec($sql);
+
                 // Add data for lists
                 $this->execSQLScript('sql/data');
 
                 // Add occtax to search_path
-                $profileConfig = jApp::configPath('profiles.ini.php');
-                $ini = new jIniFileModifier($profileConfig);
-                $defaultProfile = $ini->getValue('default', 'jdb');
-                $search_path = $ini->getValue('search_path', 'jdb:' . $defaultProfile);
-                if( empty( $search_path ) )
-                    $search_path = 'public';
-                if( !preg_match( '#sig#', $search_path ) ){
-                    $search_path = $search_path . ',sig';
-                    $ini->setValue('search_path', $search_path, 'jdb:' . $defaultProfile);
-                }
-                if( !preg_match( '#occtax#', $search_path ) ){
-                    $search_path = $search_path . ',occtax';
-                    $ini->setValue('search_path', $search_path, 'jdb:' . $defaultProfile);
-                }
-                $ini->save();
-            } catch (Exception $e){
-                jLog::log("Cannot install PostgreSQL database structure");
-                jLog::log($e->getMessage());
-            }
+                $this->addSchemaToSearchPath('occtax');
+                $this->addSchemaToSearchPath('sig');
+                $this->addSchemaToSearchPath('gestion');
+
+            //} catch (Exception $e){
+                //jLog::log("Cannot install PostgreSQL database structure");
+                //jLog::log($e->getMessage());
+            //}
 
         }
 
-        try{
+        //try{
         if ($this->firstExec('acl2') ) {
             $this->useDbProfile('auth');
 
@@ -240,9 +253,9 @@ class occtaxModuleInstaller extends jInstallerModule {
 
         }
 
-        }catch (Exception $e){
-            jLog::log($e->getMessage());
-        }
+        //}catch (Exception $e){
+            //jLog::log($e->getMessage());
+        //}
 
     }
 }

@@ -74,6 +74,35 @@ COMMENT ON COLUMN validation_observation.comm_val IS 'Commentaire sur la validat
 COMMENT ON COLUMN occtax.validation_observation.nom_retenu IS 'Nom scientifique du taxon attribué par le validateur, dans le cas où ce taxon est différent du taxon cité initialement par l''observateur (sinon le champ reste NULL). Cela peut arriver en cas d''identification erronnée par l''observateur, ou bien lorsque le validateur valide l''observation au niveau d''un parent taxonomique. Le champ n''a toutefois pas vocation à stocker un nom qui serait synonyme de celui cité par l''observateur, Taxref permettant déjà de traiter les cas de synonymie.' ;
 
 
+CREATE OR REPLACE VIEW occtax.v_validateur AS
+SELECT CASE WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE p.identite END AS identite,
+CASE WHEN p.anonymiser IS TRUE THEN '' ELSE p.mail END AS mail,
+CASE WHEN p.anonymiser IS TRUE OR lower(p.identite) = lower(nom_organisme) THEN NULL ELSE Coalesce(nom_organisme, 'INCONNU') END AS organisme,
+p.id_personne, vv.identifiant_permanent, p.prenom, p.nom, p.anonymiser,
+p.identite AS identite_non_floutee,
+p.mail AS mail_non_floute,
+Coalesce(nom_organisme, 'INCONNU') AS organisme_non_floute
+FROM validation_observation vv
+LEFT JOIN personne p ON vv.validateur = p.id_personne
+LEFT JOIN organisme o ON p.id_organisme = o.id_organisme
+WHERE ech_val = '2' -- uniquement validation de niveau régional
+;
+
+CREATE OR REPLACE VIEW occtax.v_determinateur AS
+SELECT CASE WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE p.identite END AS identite,
+CASE WHEN p.anonymiser IS TRUE THEN '' ELSE p.mail END AS mail,
+CASE WHEN p.anonymiser IS TRUE OR lower(p.identite) = lower(nom_organisme) THEN NULL ELSE Coalesce(nom_organisme, 'INCONNU') END AS organisme,
+op.id_personne, op.cle_obs, p.prenom, p.nom, p.anonymiser,
+p.identite AS identite_non_floutee,
+p.mail AS mail_non_floute,
+Coalesce(nom_organisme, 'INCONNU') AS organisme_non_floute
+FROM observation_personne op
+INNER JOIN personne p ON p.id_personne = op.id_personne AND op.role_personne = 'Det'
+INNER JOIN organisme o ON o.id_organisme = p.id_organisme
+;
+
+
+
 -- Tables et fonctions de gestion de validation et sensibilite automatique
 --
 
@@ -613,104 +642,6 @@ DELETE FROM nomenclature WHERE champ = 'ech_val';
 INSERT INTO nomenclature VALUES ('ech_val', '1', 'Validation producteur', 'Validation scientifique des données par le producteur', 1);
 INSERT INTO nomenclature VALUES ('ech_val', '2', 'Validation régionale', 'Validation scientifique effectuée par la plateforme régionale', 2);
 INSERT INTO nomenclature VALUES ('ech_val', '3', 'Validation nationale', 'Validation scientifique effectuée par la plateforme nationale', 3);
-
-
--- VALIDATION : vue et triggers pour validation par les validateurs agréés
-DROP VIEW IF EXISTS occtax.v_observation_validation CASCADE;
-CREATE VIEW occtax.v_observation_validation AS (
-SELECT o.cle_obs,
-o.identifiant_permanent,
-o.identifiant_origine,
-o.statut_observation,
-o.cd_nom,
-o.cd_ref,
-o.nom_cite,
-o.nom_valide,
-o.loc,
-o.nom_vern,
-o.group2_inpn,
-o.ordre,
-o.famille,
-o.lb_nom_valide,
-o.nom_vern_valide,
-o.denombrement_min,
-o.denombrement_max,
-o.objet_denombrement,
-o.type_denombrement,
-o.descriptif_sujet,
--- Preuve existante: on cherche dans descriptif_sujet. Si au moins une preuve n'est pas oui, on met Non
-CASE
-    WHEN descriptif_sujet IS NULL OR descriptif_sujet::text ~* '"preuve_existante": ((")?(0|2|3)(")?|null)'
-        THEN 'Non'
-    ELSE 'Oui'
-END AS preuve_existante,
-o.date_determination,
-o.date_debut,
-o.date_fin,
-o.heure_debut,
-o.heure_fin,
-o.geom,
-o.altitude_moy,
-o.precision_geometrie,
-o.nature_objet_geo,
-o.identite_observateur_non_floute,
-o.determinateur_non_floute,
-o.organisme_gestionnaire_donnees,
-o.commentaire,
-o.code_idcnp_dispositif,
-o.dee_date_transformation,
-o.dee_date_derniere_modification,
-o.jdd_code,
-o.jdd_id,
-o.jdd_metadonnee_dee_id,
-o.statut_source,
-o.reference_biblio,
-o.ds_publique,
-o.diffusion_niveau_precision,
-o.sensi_niveau,
-v.id_validation,
-v.date_ctrl,
-v.niv_val,
-v.typ_val,
-v.ech_val,
-v.peri_val,
-v.val_validateur AS validateur,
-v.proc_vers,
-v.producteur,
-v.date_contact,
-v.procedure,
-v.proc_ref,
-v.comm_val,
--- on doit stocker les informations relatives à la validation producteur :
-CASE
-    WHEN vprod.id_validation IS NOT NULL
-        THEN concat('Niveau de validité attribué le ', vprod.date_ctrl::TEXT, ' par ', vprod.val_validateur ,  ' : ', vprod.valeur, '.', vprod.comm_val)
-    ELSE NULL
-END AS validation_producteur,
-v.nom_retenu
-FROM vm_observation o
-LEFT JOIN (
-    SELECT vv.*,
-    identite || concat(' - ' || mail, ' (' || o.nom_organisme || ')' ) AS val_validateur
-    FROM occtax.validation_observation vv
-    LEFT JOIN occtax.personne p ON vv.validateur = p.id_personne
-    LEFT JOIN occtax.organisme o ON p.id_organisme = o.id_organisme
-    WHERE ech_val = '2' -- uniquement validation de niveau régional
-) v USING (identifiant_permanent)
--- jointure pour avoir les informations relatives à la validation producteur
-LEFT JOIN (
-    SELECT vv.*,
-    n.valeur,
-    identite || concat(' - ' || mail, ' (' || o.nom_organisme || ')' ) AS val_validateur
-    FROM occtax.validation_observation vv
-    LEFT JOIN occtax.personne p ON vv.validateur = p.id_personne
-    LEFT JOIN occtax.organisme o ON p.id_organisme = o.id_organisme
-    LEFT JOIN occtax.nomenclature n ON n.champ='niv_val_mancom' AND n.code=vv.niv_val
-    WHERE vv.ech_val = '1' -- uniquement validation producteur
-) vprod USING (identifiant_permanent)
-)
-;
-
 
 
 

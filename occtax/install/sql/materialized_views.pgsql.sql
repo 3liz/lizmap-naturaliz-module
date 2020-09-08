@@ -499,7 +499,7 @@ SELECT
 row_number() over () AS id,
 c.nom_commune,
 Count(o.cle_obs) AS nbobs
-FROM   occtax.observation  AS o
+FROM occtax.observation  AS o
 INNER JOIN occtax.localisation_commune lc ON lc.cle_obs = o.cle_obs
 INNER JOIN sig.commune c ON c.code_commune = lc.code_commune
 WHERE True
@@ -516,11 +516,11 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS stats.avancement_imports AS
             count(DISTINCT o.jdd_id) AS nb_jdd,
             count(DISTINCT o.cle_obs) AS nb_obs
            FROM (SELECT generate_series(
-               (SELECT date_trunc('month'::text, min(vm_observation.dee_date_transformation)) AS min FROM vm_observation),
+               (SELECT date_trunc('month'::text, min(vm_observation.dee_date_transformation)) AS min FROM occtax.vm_observation),
                date_trunc('month'::text, now()),
                '1 mon'::interval
         ) AS date) serie
-           LEFT JOIN vm_observation o ON date_trunc('month'::text, serie.date) = date_trunc('month'::text, o.dee_date_transformation)
+           LEFT JOIN occtax.vm_observation o ON date_trunc('month'::text, serie.date) = date_trunc('month'::text, o.dee_date_transformation)
           GROUP BY LEFT(serie.date::TEXT, 7)
           ORDER BY LEFT(serie.date::TEXT, 7)
         )
@@ -657,12 +657,12 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS stats.chiffres_cles AS
   SELECT 1 AS ordre,
     'Nombre total de données' AS libelle,
     count(vm_observation.cle_obs) AS valeur
-   FROM vm_observation
+   FROM occtax.vm_observation
 UNION
  SELECT 2 AS ordre,
     'Nombre total de jeux de données' AS libelle,
     count(DISTINCT vm_observation.jdd_code) AS valeur
-   FROM vm_observation
+   FROM occtax.vm_observation
 UNION
  SELECT 3 AS ordre,
     'Nombre de producteurs ayant transmis des jeux de données' AS libelle,
@@ -670,7 +670,7 @@ UNION
    FROM ( SELECT jdd.jdd_id,
             (jsonb_array_elements(jdd.ayants_droit) ->> 'id_organisme'::text)::integer AS id_organisme,
             jsonb_array_elements(jdd.ayants_droit) ->> 'role'::text AS role
-           FROM jdd) r
+           FROM occtax.jdd) r
 UNION
  SELECT 4 AS ordre,
     'Nombre d''observateurs cités' AS libelle,
@@ -685,15 +685,15 @@ UNION
 UNION
  SELECT 6 AS ordre,
     'Nombre d''adhérents à la charte régionale SINP' AS libelle,
-    count(adherent.id_adherent) AS valeur
-   FROM adherent
-  WHERE adherent.statut = 'Adhérent'
+    count(ga.id_adherent) AS valeur
+   FROM gestion.adherent ga
+  WHERE ga.statut = 'Adhérent'
 UNION
  SELECT 7 AS ordre,
     'Nombre de demandes d''accès aux données ouvertes' AS libelle,
-    count(demande.id) AS valeur
-   FROM demande
-  WHERE demande.statut ~~* 'acceptée'
+    count(gd.id) AS valeur
+   FROM gestion.demande gd
+  WHERE gd.statut ~~* 'acceptée'
 ORDER BY ordre
 ;
 COMMENT ON MATERIALIZED VIEW stats.chiffres_cles IS 'Divers chiffres clés traduisant l''activité du SINP';
@@ -795,7 +795,7 @@ WITH groupes AS (
     milieux AS(
     SELECT jdd_id, COALESCE(n.valeur, 'Habitat non connu') AS habitat, count(cle_obs) AS nb_obs
     FROM occtax.observation
-    LEFT JOIN taxref_valide t USING (cd_ref)
+    LEFT JOIN taxon.taxref_valide t USING (cd_ref)
     LEFT JOIN taxon.t_nomenclature n ON n.code=t.habitat::TEXT
     WHERE n.champ='habitat'
     GROUP BY jdd_id, n.valeur
@@ -948,6 +948,106 @@ GROUP BY o.cd_ref, t.lb_nom, t.nom_vern, t.group2_inpn, t.{$colonne_locale}, t.r
 ORDER BY count(o.cle_obs) DESC ;
 
 COMMENT ON MATERIALIZED VIEW stats.liste_taxons_observes IS 'Liste des taxons faisant l''objet d''au moins une observation dans Borbonica et statuts associés' ;
+
+
+-- VALIDATION : vue et triggers pour validation par les validateurs agréés
+DROP VIEW IF EXISTS occtax.v_observation_validation CASCADE;
+CREATE VIEW occtax.v_observation_validation AS (
+SELECT o.cle_obs,
+o.identifiant_permanent,
+o.identifiant_origine,
+o.statut_observation,
+o.cd_nom,
+o.cd_ref,
+o.nom_cite,
+o.nom_valide,
+o.loc,
+o.nom_vern,
+o.group2_inpn,
+o.ordre,
+o.famille,
+o.lb_nom_valide,
+o.nom_vern_valide,
+o.denombrement_min,
+o.denombrement_max,
+o.objet_denombrement,
+o.type_denombrement,
+o.descriptif_sujet,
+-- Preuve existante: on cherche dans descriptif_sujet. Si au moins une preuve n'est pas oui, on met Non
+CASE
+    WHEN descriptif_sujet IS NULL OR descriptif_sujet::text ~* '"preuve_existante": ((")?(0|2|3)(")?|null)'
+        THEN 'Non'
+    ELSE 'Oui'
+END AS preuve_existante,
+o.date_determination,
+o.date_debut,
+o.date_fin,
+o.heure_debut,
+o.heure_fin,
+o.geom,
+o.altitude_moy,
+o.precision_geometrie,
+o.nature_objet_geo,
+o.identite_observateur_non_floute,
+o.determinateur_non_floute,
+o.organisme_gestionnaire_donnees,
+o.commentaire,
+o.code_idcnp_dispositif,
+o.dee_date_transformation,
+o.dee_date_derniere_modification,
+o.jdd_code,
+o.jdd_id,
+o.jdd_metadonnee_dee_id,
+o.statut_source,
+o.reference_biblio,
+o.ds_publique,
+o.diffusion_niveau_precision,
+o.sensi_niveau,
+v.id_validation,
+v.date_ctrl,
+v.niv_val,
+v.typ_val,
+v.ech_val,
+v.peri_val,
+v.val_validateur AS validateur,
+v.proc_vers,
+v.producteur,
+v.date_contact,
+v.procedure,
+v.proc_ref,
+v.comm_val,
+-- on doit stocker les informations relatives à la validation producteur :
+CASE
+    WHEN vprod.id_validation IS NOT NULL
+        THEN concat('Niveau de validité attribué le ', vprod.date_ctrl::TEXT, ' par ', vprod.val_validateur ,  ' : ', vprod.valeur, '.', vprod.comm_val)
+    ELSE NULL
+END AS validation_producteur,
+v.nom_retenu
+FROM occtax.vm_observation o
+LEFT JOIN (
+    SELECT vv.*,
+    identite || concat(' - ' || mail, ' (' || o.nom_organisme || ')' ) AS val_validateur
+    FROM occtax.validation_observation vv
+    LEFT JOIN occtax.personne p ON vv.validateur = p.id_personne
+    LEFT JOIN occtax.organisme o ON p.id_organisme = o.id_organisme
+    WHERE ech_val = '2' -- uniquement validation de niveau régional
+) v USING (identifiant_permanent)
+-- jointure pour avoir les informations relatives à la validation producteur
+LEFT JOIN (
+    SELECT vv.*,
+    n.valeur,
+    identite || concat(' - ' || mail, ' (' || o.nom_organisme || ')' ) AS val_validateur
+    FROM occtax.validation_observation vv
+    LEFT JOIN occtax.personne p ON vv.validateur = p.id_personne
+    LEFT JOIN occtax.organisme o ON p.id_organisme = o.id_organisme
+    LEFT JOIN occtax.nomenclature n ON n.champ='niv_val_mancom' AND n.code=vv.niv_val
+    WHERE vv.ech_val = '1' -- uniquement validation producteur
+) vprod USING (identifiant_permanent)
+)
+;
+
+
+
 
 -- Ajout des lignes dans occtax.materialized_object_list
 
