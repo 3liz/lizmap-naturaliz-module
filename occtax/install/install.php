@@ -125,7 +125,6 @@ class occtaxModuleInstaller extends jInstallerModule {
 
         //try{
         if ($this->firstExec('acl2') ) {
-            $this->useDbProfile('auth');
 
             // Create subjects
             jAcl2DbManager::addSubjectGroup ('naturaliz.subject.group', 'occtax~jacl2.naturaliz.subject.group.name');
