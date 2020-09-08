@@ -3,15 +3,14 @@ CREATE SCHEMA IF NOT EXISTS gestion;
 SET search_path TO gestion,occtax,public,pg_catalog;
 
 -- Nomenclature
-CREATE TABLE gestion.g_nomenclature (
+CREATE TABLE IF NOT EXISTS gestion.g_nomenclature (
     champ text,
     code text,
     valeur text,
     description text,
-    g_order integer
+    g_order integer,
+    PRIMARY KEY (champ, code)
 );
-
-ALTER TABLE gestion.g_nomenclature ADD PRIMARY KEY (champ, code);
 
 COMMENT ON TABLE gestion.g_nomenclature IS 'Stockage de la t_nomenclature pour les champs des tables qui ont des listes de valeurs prédéfinies.';
 COMMENT ON COLUMN gestion.g_nomenclature.champ IS 'Description de la valeur';
@@ -20,11 +19,9 @@ COMMENT ON COLUMN gestion.g_nomenclature.valeur IS 'Libellé court. Joue le rôl
 COMMENT ON COLUMN gestion.g_nomenclature.description IS 'Libellé court. Joue le rôle de valeur';
 COMMENT ON COLUMN gestion.g_nomenclature.g_order IS 'Ordre (optionnel)';
 
-CREATE INDEX ON gestion.g_nomenclature (champ, code);
-
 
 -- Table demande
-CREATE TABLE gestion.demande (
+CREATE TABLE IF NOT EXISTS gestion.demande (
     id serial PRIMARY KEY,
     usr_login character varying(50),
     id_acteur integer NOT NULL,
@@ -44,18 +41,22 @@ CREATE TABLE gestion.demande (
     date_creation date DEFAULT now(),
     libelle_geom text,
     validite_niveau text[] NOT NULL DEFAULT ARRAY['1', '2', '3', '4', '5']::text[],
-    critere_additionnel text
+    critere_additionnel text,
+    geom geometry(MULTIPOLYGON, {$SRID})
 
 );
-SELECT AddGeometryColumn('demande', 'geom', {$SRID}, 'MULTIPOLYGON', 2);
 
+ALTER TABLE demande DROP CONSTRAINT IF EXISTS demande_id_organisme_fk;
 ALTER TABLE demande ADD CONSTRAINT demande_id_organisme_fk
 FOREIGN KEY (id_organisme) REFERENCES occtax."organisme" (id_organisme)
 ON DELETE RESTRICT;
 
+
+ALTER TABLE gestion.demande DROP CONSTRAINT IF EXISTS demande_type_demande_valide;
 ALTER TABLE gestion.demande ADD CONSTRAINT demande_type_demande_valide
 CHECK ( type_demande IN ('EI','MR','GM','SC','PS','AP','AT','CO','AU') );
 
+ALTER TABLE gestion.demande DROP CONSTRAINT IF EXISTS demande_statut_valide;
 ALTER TABLE gestion.demande ADD CONSTRAINT demande_statut_valide
 CHECK ( statut IN ('A traiter', 'Acceptée', 'Refusée') );
 
@@ -84,7 +85,7 @@ COMMENT ON COLUMN gestion.demande.detail_decision IS 'Détail de la décision po
 COMMENT ON COLUMN gestion.demande.critere_additionnel IS 'Critère additionnel de filtrage pour la demande, au format SQL.';
 
 -- table acteur
-CREATE TABLE acteur(
+CREATE TABLE IF NOT EXISTS acteur(
     id_acteur serial PRIMARY KEY,
     nom text NOT NULL,
     prenom text NOT NULL,
@@ -98,8 +99,11 @@ CREATE TABLE acteur(
     bulletin_information boolean default TRUE,
     reunion_sinp boolean default FALSE,
     service TEXT,
-    date_maj timestamp without time zone DEFAULT (now())::timestamp without time zone
+    date_maj timestamp without time zone DEFAULT (now())::timestamp without time zone,
+    UNIQUE (nom, prenom, id_organisme)
 );
+
+ALTER TABLE acteur DROP CONSTRAINT IF EXISTS acteur_id_organisme_fkey;
 ALTER TABLE acteur ADD CONSTRAINT acteur_id_organisme_fkey
 FOREIGN KEY (id_organisme)
 REFERENCES occtax.organisme(id_organisme) MATCH SIMPLE
@@ -107,11 +111,10 @@ ON UPDATE RESTRICT
 ON DELETE RESTRICT
 ;
 
+ALTER TABLE demande DROP CONSTRAINT IF EXISTS demande_id_acteur_fk;
 ALTER TABLE demande ADD CONSTRAINT demande_id_acteur_fk
 FOREIGN KEY (id_acteur) REFERENCES "acteur" (id_acteur)
 ON DELETE RESTRICT;
-
-ALTER TABLE acteur ADD UNIQUE (nom, prenom, id_organisme);
 
 COMMENT ON TABLE acteur IS 'Liste les acteurs liés à l''application. Cette table sert à stocker les personnes ressource: responsables des imports de données, référents des jeux de données, etc.';
 COMMENT ON COLUMN acteur.id_acteur IS 'Identifiant de l''acteur (entier auto-incrémenté)';
@@ -129,6 +132,7 @@ COMMENT ON COLUMN acteur.reunion_sinp IS 'Indique si l''acteur participe aux ré
 COMMENT ON COLUMN acteur.service IS 'Service ou direction de rattachement au sein de l''organisme';
 COMMENT ON COLUMN acteur.date_maj IS 'Date à laquelle l''enregistrement a été modifié pour la dernière fois (automatiquement renseigné)' ;
 
+DROP TRIGGER IF EXISTS tr_date_maj ON gestion.acteur;
 CREATE TRIGGER tr_date_maj
   BEFORE UPDATE
   ON gestion.acteur
@@ -144,6 +148,7 @@ ALTER TABLE occtax.jdd_import
 ADD COLUMN IF NOT EXISTS acteur_importateur integer not null;
 COMMENT ON COLUMN jdd_import.acteur_importateur IS 'Acteur qui a réalisé l''import des données dans la base. En lien avec la table acteur.';
 
+ALTER TABLE occtax.jdd_import DROP CONSTRAINT IF EXISTS jdd_import_acteur_referent_fkey;
 ALTER TABLE occtax.jdd_import ADD CONSTRAINT jdd_import_acteur_referent_fkey
 FOREIGN KEY (acteur_referent)
 REFERENCES gestion.acteur(id_acteur) MATCH SIMPLE
@@ -151,6 +156,7 @@ ON UPDATE CASCADE
 ON DELETE RESTRICT
 ;
 
+ALTER TABLE occtax.jdd_import DROP CONSTRAINT IF EXISTS jdd_import_acteur_importateur_fkey;
 ALTER TABLE occtax.jdd_import ADD CONSTRAINT jdd_import_acteur_importateur_fkey
 FOREIGN KEY (acteur_importateur)
 REFERENCES gestion.acteur(id_acteur) MATCH SIMPLE
@@ -160,7 +166,7 @@ ON DELETE RESTRICT
 
 
 -- gestion des adhérents
-CREATE TABLE gestion.adherent
+CREATE TABLE IF NOT EXISTS gestion.adherent
 (
   id_adherent serial NOT NULL PRIMARY KEY, -- Identifiant autogénéré de l'adhérent
   id_organisme integer, -- Identifiant de la structure de l'adhérent
@@ -203,7 +209,7 @@ COMMENT ON COLUMN gestion.adherent.remarque IS 'Remarque sur l''avancement de l'
 
 
 -- echange_inpn
-CREATE TABLE gestion.echange_inpn
+CREATE TABLE IF NOT EXISTS gestion.echange_inpn
 (
     id_echange serial NOT NULL PRIMARY KEY,
     date date,
@@ -227,13 +233,17 @@ COMMENT ON COLUMN gestion.echange_inpn.nb_donnees IS 'Nombre de données (observ
 COMMENT ON COLUMN gestion.echange_inpn.commentaire IS 'Commentaire libre sur l''échange';
 COMMENT ON COLUMN gestion.echange_inpn.liste_identifiant_permanent IS 'Liste des identifiants permanents des observations transmises lors de l''échange de données. Ce champ est destiné à faciliter la traçabilité des données, afin notamment de ne pas exporter deux fois les mêmes données et de pouvoir transmettre à nouveau des observations qui auraient été modifiées (notamment validées) depuis le dernier échange.';
 
+ALTER TABLE gestion.echange_inpn DROP CONSTRAINT IF EXISTS echange_inpn_type;
 ALTER TABLE gestion.echange_inpn ADD CONSTRAINT echange_inpn_type
 CHECK ( type IN ('Import', 'Export') );
 
 
 -- INDEXES
+DROP INDEX IF EXISTS demande.demande_usr_login_idx;
 CREATE INDEX ON demande (usr_login);
+DROP INDEX IF EXISTS demande.demande_id_acteur_idx;
 CREATE INDEX ON demande (id_acteur);
+DROP INDEX IF EXISTS demande.demande_geom_idx;
 CREATE INDEX ON demande USING GIST (geom);
 
 
