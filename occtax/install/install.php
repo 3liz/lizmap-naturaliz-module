@@ -123,7 +123,9 @@ class occtaxModuleInstaller extends jInstallerModule {
 
         }
 
-        //try{
+        try{
+            // Ce code ne fonctionne pas sur lizcloud, pour raison de mauvais search_path surchargé lors de l'installation
+            // voir pour remplacement occtax/install/sql/droits_jacl_occtax.pgsql.sql
         if ($this->firstExec('acl2') ) {
 
             // Create subjects
@@ -263,11 +265,20 @@ class occtaxModuleInstaller extends jInstallerModule {
             jAcl2DbManager::addRight('admins', 'visualisation.donnees.non.filtrees');
             jAcl2DbManager::addRight('admins', 'export.geometries.brutes.selon.diffusion');
 
+            // Droits : Pouvoir voir toutes les données non filtrées même si pas de demande
+            jAcl2DbManager::addSubject( 'visualisation.donnees.non.filtrees', 'occtax~jacl2.visualisation.donnees.non.filtrees', 'naturaliz.subject.group');
+            jAcl2DbManager::setRightsOnGroup(
+                'admins',
+                array(
+                    'visualisation.donnees.non.filtrees'=>true
+                )
+            );
+
         }
 
-        //}catch (Exception $e){
-            //jLog::log($e->getMessage());
-        //}
+        }catch (Exception $e){
+            jLog::log($e->getMessage());
+        }
 
     }
 }
