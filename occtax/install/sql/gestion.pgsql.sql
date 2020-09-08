@@ -49,10 +49,6 @@ CREATE TABLE gestion.demande (
 );
 SELECT AddGeometryColumn('demande', 'geom', {$SRID}, 'MULTIPOLYGON', 2);
 
-ALTER TABLE demande ADD CONSTRAINT demande_user_login_fk
-FOREIGN KEY (usr_login) REFERENCES jlx_user (usr_login)
-ON DELETE RESTRICT;
-
 ALTER TABLE demande ADD CONSTRAINT demande_id_organisme_fk
 FOREIGN KEY (id_organisme) REFERENCES occtax."organisme" (id_organisme)
 ON DELETE RESTRICT;

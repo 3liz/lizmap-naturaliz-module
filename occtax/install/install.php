@@ -76,6 +76,19 @@ class occtaxModuleInstaller extends jInstallerModule {
                 $sql.= jFile::read( $this->path . 'install/sql/gestion.data.pgsql.sql' );
                 $db->exec($sql);
 
+                // try to add a foreign key for gestion.demande / jlx_user
+                try {
+                    $sql = '
+                    ALTER TABLE gestion.demande ADD CONSTRAINT demande_user_login_fk
+                    FOREIGN KEY (usr_login) REFERENCES jlx_user (usr_login)
+                    ON DELETE RESTRICT;
+                    ';
+                    $db->exec($sql);
+                } catch (Exception $e){
+                    jLog::log("Naturaliz gestion - Cannot add foreign key demande_user_login_fk");
+                    jLog::log($e->getMessage());
+                }
+
                 // Add extension validation
                 // DO NOT USE TEMPLATE : no need (no srid) AND bug with some PostgreSQL regexp inside
                 $sqlPath = $this->path . 'install/sql/extension_validation.pgsql.sql';
