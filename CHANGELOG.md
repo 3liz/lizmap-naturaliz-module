@@ -1,5 +1,13 @@
 # CHANGELOG
 
+### 2.7.2 - 08/09/2020
+
+* Gestion - Improve install script
+
+### 2.7.1 - 08/09/2020
+
+* Gestion - Remove foreign key demande_user_login_fk
+
 ### 2.7.0 - 08/09/2020
 
 * Occtax/Gestion - Refonte de l'installation
