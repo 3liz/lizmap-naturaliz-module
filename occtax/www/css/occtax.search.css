@@ -424,7 +424,7 @@ Boutons de changement de l'affichage carte: maille 1, 2, 10 ou  observations bru
   bottom: 0;
   margin-left: calc(50% - 100px);
   position: absolute;
-  z-index: 1050;
+  z-index: 1000;
 }
 #content.mobile #map-content #occtax_toggle_map_display {
   left: 40px;
