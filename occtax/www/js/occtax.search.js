@@ -303,37 +303,59 @@ OccTax.events.on({
         if('_links' in tdata){
           rdata['inpnWebpage'] = tdata._links.inpnWebpage.href;
         }
-        rdata['media'] = null;
+        rdata['media_url'] = null;
+        rdata['status_url'] = null;
 
+        // media
         if(
           '_links' in tdata
           && 'media' in tdata._links
         ){
           var murl = tdata._links.media.href;
-          $.getJSON(murl, null, function( mdata ) {
-            if(
-              '_embedded' in mdata
-              && 'media' in mdata._embedded
-              && mdata._embedded.media.length > 0
-            ){
-              var media = mdata._embedded.media[0]._links.thumbnailFile.href;
-              rdata['media'] = media;
-            }
-            aCallback(rdata);
-          });
-        }else{
-          aCallback(rdata);
+          rdata['media_url'] = murl;
         }
+        // status
+        if(
+          '_links' in tdata
+          && 'status' in tdata._links
+        ){
+          var surl = tdata._links.status.href;
+          rdata['status_url'] = surl;
+        }
+        aCallback(rdata);
+      });
+    }
+
+    function detailTaxonLoad(url) {
+      return new Promise(function(resolve, reject) {
+        var request = new XMLHttpRequest();
+        request.open('GET', url);
+        request.responseType = 'json';
+        // When the request loads, check whether it was successful
+        request.onload = function() {
+          if (request.status === 200) {
+          // If successful, resolve the promise by passing back the request response
+            resolve(request.response);
+          } else {
+          // If it fails, reject the promise with a error message
+            reject(Error('URL did not load successfully; error code:' + request.statusText));
+          }
+        };
+        request.onerror = function() {
+            reject(Error('There was a network error.'));
+        };
+        // Send the request
+        request.send();
       });
     }
 
     function buildTaxonFicheHtml(data){
         var html = '';
         html+= '<h3><span class="title"><span class="text">Information</span></span></h3>';
-        html+= '<div class="menu-content" style="padding:5px;">';
-        html+= '<h4>';
+        html+= '<div id="taxon-detail-container" class="menu-content">';
+        html+= '<h4><b>';
         html+= data.scientificName;
-        html+= ' ';
+        html+= '</b> ';
         html+= data.authority;
         html+= '</h4>';
         if (data.frenchVernacularName !== null) {
@@ -341,11 +363,12 @@ OccTax.events.on({
             html+= data.frenchVernacularName;
             html+= '</p>';
         }
-        if (data.media !== null) {
-            html+= '<p>';
-            html+= '<img src="';
-            html+= data.media;
-            html+= '" width="100%">';
+        if (data.status_url !== null) {
+            html+= '<p id="taxon-detail-status">';
+            html+= '</p>';
+        }
+        if (data.media_url !== null) {
+            html+= '<p id="taxon-detail-media">';
             html+= '</p>';
         }
         html+= '<p>';
@@ -358,11 +381,67 @@ OccTax.events.on({
         return html;
     };
 
+    function getTaxonMedia(media_url) {
+      detailTaxonLoad(media_url).then(function(mdata) {
+        if(
+          '_embedded' in mdata
+          && 'media' in mdata._embedded
+          && mdata._embedded.media.length > 0
+        ){
+          var media_href = mdata._embedded.media[0]._links.thumbnailFile.href;
+          var html = '';
+          html+= '<img src="';
+          html+= media_href;
+          html+= '" width="100%">';
+          $('#taxon-detail-media').append(html);
+        }
+      }, function(Error) {
+        console.log(Error);
+      });
+    }
+
+    function getTaxonStatus(status_url) {
+      detailTaxonLoad(status_url).then(function(mdata) {
+        if(
+          '_embedded' in mdata
+          && 'status' in mdata._embedded
+          && mdata._embedded.status.length > 0
+        ){
+          let colonne_locale_labels = {
+            'gua': 'Guadeloupe',
+            'fra': 'France métropolitaine',
+            'may': 'Mayotte',
+            'reu': 'Réunion',
+          };
+          let colonne_locale_label = colonne_locale_labels[occtaxClientConfig.colonne_locale];
+          console.log(occtaxClientConfig.colonne_locale);
+          console.log(colonne_locale_label);
+          var html = '<ul>';
+          for (var s in mdata._embedded.status) {
+            var status = mdata._embedded.status[s];
+            if (status.locationName != colonne_locale_label) {
+              continue;
+            }
+            html+= '<li title="'+status.source+'">';
+            html+= '<b>'+status.statusTypeGroup + '</b>: '+status.statusName;
+            html+= '<i> (' + status.locationName +')</i>';
+            html+= '</li>';
+            html+= '';
+          }
+          html+= '</ul>';
+          $('#taxon-detail-status').append(html);
+        }
+      }, function(Error) {
+        console.log(Error);
+      });
+    }
+
     function displayTaxonDetail(cd_nom){
         getTaxonDataFromApi(cd_nom, function(data){
             var html = buildTaxonFicheHtml(data);
             html+=  '<button id="hide-sub-dock" class="btn pull-right" style="margin-top:5px;" name="close" title="'+lizDict['generic.btn.close.title']+'">'+lizDict['generic.btn.close.title']+'</button>';
-            $('#sub-dock').html(html);
+            $('#sub-dock').html(html)
+            .css('bottom', '0px');
             if( !lizMap.checkMobile() ){
                 var leftPos = lizMap.getDockRightPosition();
                 $('#sub-dock').css('left', leftPos).css('width', leftPos);
@@ -370,6 +449,18 @@ OccTax.events.on({
             $('#hide-sub-dock').click(function(){
                 $('#sub-dock').hide().html('');
             });
+
+            // Load status
+            if (data.status_url) {
+              getTaxonStatus(data.status_url);
+            }
+
+            // Load media
+            if (data.media_url) {
+              getTaxonMedia(data.media_url);
+            }
+
+
             $('#sub-dock').show();
 
         })

@@ -101,7 +101,11 @@
                 $strokeColor = $ini->getValue('strokeColor', 'naturaliz');
                 if (empty($strokeColor) )
                     $strokeColor = 'white';
+                $colonne_locale = $ini->getValue('colonne_locale', 'naturaliz');
+                if (empty($colonne_locale) )
+                    $colonne_locale = 'fra';
                 $occtaxClientConfig = array(
+                    'colonne_locale'=> $colonne_locale,
                     'maxAreaQuery'=> (integer)$maxAreaQuery,
                     'strokeColor' => $strokeColor,
                     'menuOrder' => $mo,
