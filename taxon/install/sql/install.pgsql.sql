@@ -387,7 +387,8 @@ WITH (
   OIDS=FALSE
 );
 
-COMMENT ON TABLE t_complement IS 'Stockage des données complémentaires sur les taxons, non présents dans TAXREF : données locales (endémicité, invasibilité, etc.), déterminants ZNIEFF';
+COMMENT ON TABLE t_complement IS 'Stockage des données complémentaires sur les taxons, non présentes dans TAXREF : données locales (endémicité, invasibilité, etc.), déterminants ZNIEFF, menaces... La table contient tous les taxons, y compris les synonymes.';
+
 
 COMMENT ON COLUMN t_complement.cd_nom_fk IS 'Identifiant du taxon, lien avec taxref.cd_nom';
 COMMENT ON COLUMN t_complement.statut IS 'Statut local';

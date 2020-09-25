@@ -708,7 +708,7 @@ INSERT INTO taxon.t_nomenclature (champ, code, valeur, description, ordre) VALUE
 ('statut', 'ND', 'Non documenté', 'Taxon non documenté, cad pour lequels reu =C ou NULL', 3)
 ;
 -- protection
-DELETE FROM t_nomenclature WHERE champ = 'protection' AND code IN ('EPC', 'EPI', 'EPA') ; -- on ne garde que la protection nationale, qui intéresse plus les utilisateurs
+DELETE FROM taxon.t_nomenclature WHERE champ = 'protection' AND code IN ('EPC', 'EPI', 'EPA') ; -- on ne garde que la protection nationale, qui intéresse plus les utilisateurs
 
 DROP TABLE IF EXISTS taxon.menaces CASCADE;
 DROP TABLE IF EXISTS taxon.protections CASCADE;
