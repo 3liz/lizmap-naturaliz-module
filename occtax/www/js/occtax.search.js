@@ -351,7 +351,12 @@ OccTax.events.on({
 
     function buildTaxonFicheHtml(data){
         var html = '';
-        html+= '<h3><span class="title"><span class="text">Information</span></span></h3>';
+        html+= '<h3><span class="title"><span class="text">Information</span>';
+        html+= '<a href="';
+        html+= data.inpnWebpage;
+        html+= '" class="btn btn-primary btn-mini pull-right" target="_blank">Voir la fiche complète</a>';
+        html+= '</span>';
+        html+= '</h3>';
         html+= '<div id="taxon-detail-container" class="menu-content">';
         html+= '<h4><b>';
         html+= data.scientificName;
@@ -371,11 +376,6 @@ OccTax.events.on({
             html+= '<p id="taxon-detail-media">';
             html+= '</p>';
         }
-        html+= '<p>';
-        html+= '<a href="';
-        html+= data.inpnWebpage;
-        html+= '" class="btn btn-primary" target="_blank">Voir la fiche complète</a>';
-        html+= '</p>';
         html+= '</div>';
 
         return html;
