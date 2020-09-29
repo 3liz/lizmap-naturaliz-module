@@ -100,6 +100,7 @@ CREATE TABLE IF NOT EXISTS acteur(
     reunion_sinp boolean default FALSE,
     service TEXT,
     date_maj timestamp without time zone DEFAULT (now())::timestamp without time zone,
+    en_poste boolean DEFAULT True,
     UNIQUE (nom, prenom, id_organisme)
 );
 
@@ -131,6 +132,7 @@ COMMENT ON COLUMN acteur.bulletin_information IS 'Indique si l''acteur souhaite 
 COMMENT ON COLUMN acteur.reunion_sinp IS 'Indique si l''acteur participe aux réunion du SINP local.';
 COMMENT ON COLUMN acteur.service IS 'Service ou direction de rattachement au sein de l''organisme';
 COMMENT ON COLUMN acteur.date_maj IS 'Date à laquelle l''enregistrement a été modifié pour la dernière fois (automatiquement renseigné)' ;
+COMMENT ON COLUMN gestion.acteur.en_poste IS 'Indique si la personne est actuellement en poste sur l''organisme qui lui est associé dans l''enregistrement. Ce champ est particulièrement utile pour des personnes ayant occupé différents postes à La Réunion. Il permet de garder en mémoire les lignes le concernant mais de ne pas les prendre en compte pour la communication SINP.';
 
 DROP TRIGGER IF EXISTS tr_date_maj ON gestion.acteur;
 CREATE TRIGGER tr_date_maj
