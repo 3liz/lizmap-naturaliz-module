@@ -23,7 +23,7 @@ class gestionFilterListener extends jEventListener{
         //$demandes = $dao_demande->findByLogin($login);
         $actives_demandes = $dao_demande->findActiveDemandesByLogin($login);
 
-        $filter_method = 'b'; // b est le plus performant
+        $filter_method = 'a';
         $observation_column_prefix = 'o';
         if ($filter_method == 'b' or $filter_method == 'c') {
             $observation_column_prefix = 'vo';

@@ -320,6 +320,23 @@ class occtaxSearchObservation extends occtaxSearch {
 
         }
 
+        // For demand, do not get all taxon child recursively
+        // as it is a performance killer
+        if ($demande) {
+            $this->queryFilters['cd_nom'] = array (
+                'table' => 'vm_observation',
+                // space before o.cd_ref are VERY important as used in regex to search/replace prefix
+                // for demands and use in subqueries
+                'clause' => ' AND o.cd_ref IN (@)',
+                'type'=> 'integer',
+                'label'=> array(
+                    'dao'=>'taxon~taxref',
+                    'method'=>'get',
+                    'column'=>'nom_valide'
+                )
+            );
+        }
+
         parent::__construct($token, $params, $demande, $login);
     }
 
