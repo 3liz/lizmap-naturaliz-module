@@ -26,7 +26,7 @@ class occtaxSearchObservationStats extends occtaxSearchObservation {
     );
 
     protected $tplFields = array(
-        'categorie_image' => '<img src="{$j_basepath}taxon/css/images/groupes/{$categories[$line->categorie]}.png" width="20px" title="{$line->categorie} hop"/>',
+        'categorie_image' => '<img src="{$j_basepath}taxon/css/images/groupes/{$categories[$line->categorie]}.png" width="20px" title="{$line->categorie}"/>',
 
         'categorie_nom' => '<b>{$line->categorie}</b>'
     );

@@ -133,8 +133,8 @@
             <th>{@occtax~observation.output.menace_regionale@}</th>
             <td>
                 {assign $a = 'menace_regionale'}
-                {if array_key_exists($a . '|' . $data[$a], $nomenclature) }
-                {assign $k = $a . '|' . $data[$a]}
+                {if array_key_exists('menace' . '|' . $data[$a], $nomenclature) }
+                {assign $k = 'menace' . '|' . $data[$a]}
                 {$nomenclature[$k]}
                 {else}
                 {$data[$a]}
@@ -148,8 +148,8 @@
             <th>{@occtax~observation.output.menace_nationale@}</th>
             <td>
                 {assign $a = 'menace_nationale'}
-                {if array_key_exists($a . '|' . $data[$a], $nomenclature) }
-                {assign $k = $a . '|' . $data[$a]}
+                {if array_key_exists('menace' . '|' . $data[$a], $nomenclature) }
+                {assign $k = 'menace' . '|' . $data[$a]}
                 {$nomenclature[$k]}
                 {else}
                 {$data[$a]}
@@ -163,8 +163,8 @@
             <th>{@occtax~observation.output.menace_monde@}</th>
             <td>
                 {assign $a = 'menace_monde'}
-                {if array_key_exists($a . '|' . $data[$a], $nomenclature) }
-                {assign $k = $a . '|' . $data[$a]}
+                {if array_key_exists('menace' . '|' . $data[$a], $nomenclature) }
+                {assign $k = 'menace' . '|' . $data[$a]}
                 {$nomenclature[$k]}
                 {else}
                 {$data[$a]}

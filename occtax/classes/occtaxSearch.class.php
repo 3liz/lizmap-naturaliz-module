@@ -270,6 +270,7 @@ class occtaxSearch {
         foreach ($get_cats as $cat) {
             $categorie_normalized[$cat->libelle_court] = $this->normalize_string($cat->libelle_court);
         }
+        $categorie_normalized['Autres'] = 'autres';
         $categorie_normalized = var_export($categorie_normalized, True);
         $tpl_categories = '{assign $categories =' . $categorie_normalized . "}";
         return $tpl_categories;

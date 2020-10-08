@@ -473,11 +473,15 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
 
             foreach($attributes as $att){
                 $val = $line->$att;
+                $attribut = $att;
+                if (substr( $att, 0, 6 ) === "menace") {
+                    $attribut = 'menace';
+                }
                 // on transforme les champs en nomenclature
-                if(in_array($att, $this->nomenclatureFields)
-                    and array_key_exists($att . '_' . $val, $codenom)
+                if(in_array($attribut, $this->nomenclatureFields)
+                    and array_key_exists($attribut . '_' . $val, $codenom)
                 ){
-                    $val = $codenom[$att . '_' . $val];
+                    $val = $codenom[$attribut . '_' . $val];
                 }
                 // On le fait aussi pour descriptif sujet
                 if($att == 'descriptif_sujet'){
@@ -617,6 +621,10 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
         $attributes =  array_map(
             function($el){
                 $champ = $el;
+                // menace : menace_monde, menace_regionale, menace_nationale
+                if (substr( $el, 0, 6 ) === "menace") {
+                    $champ = "dict->>(concat('menace', '_', ".$el."))";
+                }
                 if(in_array($el, $this->nomenclatureFields)){
                     $champ = "dict->>(concat('".$el."', '_', ".$el."))";
                 }
@@ -835,6 +843,10 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
         $attributes =  array_map(
             function($el){
                 $champ = $el;
+                // menace : menace_monde, menace_regionale, menace_nationale
+                if (substr( $el, 0, 6 ) === "menace") {
+                    $champ = "dict->>(concat('menace', '_', ".$el."))";
+                }
                 if(in_array($el, $this->nomenclatureFields)){
                     $champ = "dict->>(concat('".$el."', '_', ".$el."))";
                 }
