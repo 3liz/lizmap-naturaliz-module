@@ -19,6 +19,9 @@ class taxonModuleInstaller extends jInstallerModule {
             $this->copyFile('config/taxon.ini.php', $taxonConfFile);
         }
 
+        // Copy CSS and JS assets
+        $this->copyDirectoryContent('www', jApp::wwwPath());
+
         // Install taxon structure into database if needed
         if ($this->firstDbExec()) {
 

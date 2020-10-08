@@ -16,7 +16,7 @@ class autocomplete {
     protected function getSql($taxons_locaux='true', $taxons_bdd='true') {
         $sql = "
             SELECT foo.cd_nom AS value, foo.nom_valide, ts_headline(foo.val, query) AS label, foo.cd_ref, CASE
-                WHEN cat.cat_nom IS NOT NULL THEN (regexp_split_to_array(cat.cat_nom, ' '))[1]
+                WHEN cat.cat_nom IS NOT NULL THEN lower(unaccent((regexp_split_to_array(cat.cat_nom, ' '))[1]))
                 ELSE 'no_image'
             END AS groupe
             FROM

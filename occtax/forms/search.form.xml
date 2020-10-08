@@ -37,7 +37,7 @@
 -->
             <datasource dao="taxon~t_group_categorie"
               method="getDistinctCategorie"
-              labelproperty="cat_nom" valueproperty="cat_nom"/>
+              labelproperty="libelle_court" valueproperty="libelle_court"/>
             <hint locale="taxon~search.input.group.help"/>
         </listbox>
 

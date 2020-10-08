@@ -257,6 +257,24 @@ class occtaxSearch {
         return $content;
     }
 
+
+    protected function normalize_string($string) {
+        return strtolower(iconv('UTF-8', 'ASCII//TRANSLIT', $string));
+    }
+
+
+    protected function getGroupNormalizedCategories() {
+        $dao = jDao::get('taxon~t_group_categorie');
+        $get_cats = $dao->getDistinctCategorie();
+        $categorie_normalized = array();
+        foreach ($get_cats as $cat) {
+            $categorie_normalized[$cat->libelle_court] = $this->normalize_string($cat->libelle_court);
+        }
+        $categorie_normalized = var_export($categorie_normalized, True);
+        $tpl_categories = '{assign $categories =' . $categorie_normalized . "}";
+        return $tpl_categories;
+    }
+
     private function getValueLabel( $k, $v ){
         $qf = $this->queryFilters;
 

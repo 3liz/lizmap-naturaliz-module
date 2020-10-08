@@ -8,6 +8,7 @@
         <property name="groupe_nom" fieldname="groupe_nom" datatype="text" required="true"/>
         <property name="groupe_type" fieldname="groupe_type" datatype="text"/>
         <property name="regne" fieldname="regne" datatype="text"/>
+        <property name="libelle_court" fieldname="libelle_court" datatype="text" required="true"/>
         <!--<property name="" fieldname="" datatype="string/int/float/date"
         required="yes" maxlength="" minlength="" regexp="" sequence=""
         updatepattern="" insertpattern="" selectpattern=""/>-->
@@ -15,7 +16,7 @@
     <factory>
         <method name="getDistinctCategorie" type="select" distinct="true">
             <order>
-                <orderitem property="cat_nom" way="asc"/>
+                <orderitem property="libelle_court" way="asc"/>
             </order>
         </method>
         <method name="getDistinctCategorieByRegne" type="select" distinct="true">

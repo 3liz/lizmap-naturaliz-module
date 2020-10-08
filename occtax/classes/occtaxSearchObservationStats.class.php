@@ -26,7 +26,7 @@ class occtaxSearchObservationStats extends occtaxSearchObservation {
     );
 
     protected $tplFields = array(
-        'categorie_image' => '<img src="{$j_basepath}taxon/css/images/groupes/{$line->categorie}.png" width="20px" title="{$line->categorie}"/>',
+        'categorie_image' => '<img src="{$j_basepath}taxon/css/images/groupes/{$categories[$line->categorie]}.png" width="20px" title="{$line->categorie} hop"/>',
 
         'categorie_nom' => '<b>{$line->categorie}</b>'
     );
@@ -68,6 +68,11 @@ class occtaxSearchObservationStats extends occtaxSearchObservation {
         );
         // Remove ORDER BY
         $this->orderClause = '';
+
+        // Get t_group_categorie lowered and unaccentuated names
+        $tpl_categories = $this->getGroupNormalizedCategories();
+        $this->tplFields['categorie_image'] = $tpl_categories . $this->tplFields['categorie_image'];
+
 
         parent::__construct($token, $params, $demande, $login);
     }

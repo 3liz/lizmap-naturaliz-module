@@ -32,7 +32,8 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
 
         ',
 
-        'groupe' => '<img src="{$j_basepath}taxon/css/images/groupes/{$line->categorie}.png" width="20px" title="{$line->categorie}"/>',
+        'groupe' => '<img src="{$j_basepath}taxon/css/images/groupes/{$categories[$line->categorie]}.png" width="20px" title="{$line->categorie}"/>
+        ',
 
         //'filter' => '<a class="filterByTaxon" href="#" title="{@occtax~search.output.filter.taxon.title@}"><i class="icon-filter"></i></a>',
 
@@ -108,6 +109,11 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
             }
         }
 
+
+        // Get t_group_categorie lowered and unaccentuated names
+        $tpl_categories = $this->getGroupNormalizedCategories();
+        $this->tplFields['groupe'] = $tpl_categories . $this->tplFields['groupe'];
+
         parent::__construct($token, $params, $demande, $login);
 
         // Override parent (ie observations) recordsTotal
@@ -115,6 +121,8 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
         $this->setRecordsTotal();
 
     }
+
+
 
 
 }
