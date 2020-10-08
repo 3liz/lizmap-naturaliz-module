@@ -352,6 +352,7 @@ OccTax.events.on({
     function buildTaxonFicheHtml(data){
         var html = '';
         html+= '<h3><span class="title"><span class="text">Information</span>';
+        html+= '<button id="taxon-detail-close" class="btn btn-primary btn-mini pull-right" style="margin-left:10px;">Fermer</button>';
         html+= '<a href="';
         html+= data.inpnWebpage;
         html+= '" class="btn btn-primary btn-mini pull-right" target="_blank">Voir la fiche complète</a>';
@@ -393,7 +394,7 @@ OccTax.events.on({
           html+= '<img src="';
           html+= media_href;
           html+= '" width="100%">';
-          $('#taxon-detail-media').append(html);
+          $('#taxon-detail-media').html(html);
         }
       }, function(Error) {
         console.log(Error);
@@ -414,22 +415,26 @@ OccTax.events.on({
             'reu': 'Réunion',
           };
           let colonne_locale_label = colonne_locale_labels[occtaxClientConfig.colonne_locale];
-          console.log(occtaxClientConfig.colonne_locale);
-          console.log(colonne_locale_label);
           var html = '<ul>';
           for (var s in mdata._embedded.status) {
             var status = mdata._embedded.status[s];
             if (status.locationName != colonne_locale_label) {
               continue;
             }
-            html+= '<li title="'+status.source+'">';
-            html+= '<b>'+status.statusTypeGroup + '</b>: '+status.statusName;
-            html+= '<i> (' + status.locationName +')</i>';
+            var st_title = ''; var st_cursor = ''
+            if (status.source) {
+              st_title = ' title="' + status.source + '"';
+              st_cursor = ' style="cursor:help;"';
+            }
+            html+= '<li>';
+            html+= '<b>'+status.statusTypeGroup + '</b>: ';
+            html+= '<span ' + st_title + st_cursor + '>' + status.statusName + '</span>';
+            //html+= '<i> (' + status.locationName +')</i>';
             html+= '</li>';
             html+= '';
           }
           html+= '</ul>';
-          $('#taxon-detail-status').append(html);
+          $('#taxon-detail-status').html(html);
         }
       }, function(Error) {
         console.log(Error);
@@ -460,6 +465,8 @@ OccTax.events.on({
               getTaxonMedia(data.media_url);
             }
 
+            // close windows
+            $('#taxon-detail-close').click(function(){$('#hide-sub-dock').click();})
 
             $('#sub-dock').show();
 
