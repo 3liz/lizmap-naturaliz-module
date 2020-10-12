@@ -1,5 +1,20 @@
 # CHANGELOG
 
+### 2.7.5 - 12/10/2020
+
+* Gestion - Simplification des requêtes de demande: ajout direct des filtres sans passer par occtaxSearchObservation
+* Export/Fiche - Menaces: affichage du libellé au lieu du code
+* Fiche taxon - ajout bouton fermer & correction des ajouts multiples si plusieurs clics
+* Taxon - Ajout d'un libelle_court à t_group_category et utilisation version normalisée pour image
+* Gestion - Demandes: requête directe sur les cd_nom sans requête récursive
+* Install - SQL: ajout occtax.cadre et gestion.acteur.en_poste
+* Fiche taxon - déplacement du bouton de lien en haut
+* Fiche taxon - Ajout des informations sur les statuts
+* Taxon - Modification sur script d'ajout des droits pour occtax
+* Taxon - correction mineures sur les scripts install & upgrade
+* Taxon - Nouvelle version du script complet d'import TAXREF
+* Interface - Basculer les boutons de carte sous la fiche taxon
+
 ### 2.7.3 - 08/09/2020
 
 * Occtax - Improve install script
