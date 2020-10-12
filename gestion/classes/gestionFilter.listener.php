@@ -35,39 +35,22 @@ class gestionFilterListener extends jEventListener{
             // First build occtax search with demande params
             $dparams = array();
             if ($demande->cd_ref) {
-                $dparams['cd_nom'] = explode( ',', trim($demande->cd_ref, '{}') );
+                $items = implode(', ', explode(',', trim($demande->cd_ref, '{}')));
+                $sql_demande[] = "o.cd_ref IN (" . $items . ")";
             }
+
             if ($demande->group1_inpn) {
-                $dparams['group1_inpn'] = explode( ',', trim(str_replace('"', '', $demande->group1_inpn), '{}') );
+                $items = explode(',', trim(str_replace('"', '', $demande->group1_inpn), '{}') );
+                $items = "'" . implode("', '", $items) . "'";
+                $sql_demande[] = "o.group1_inpn IN (" . $items . ")";
             }
+
             if ($demande->group2_inpn) {
-                $dparams['group2_inpn'] = explode( ',', trim(str_replace('"', '', $demande->group2_inpn), '{}') );
+                $items = explode(',', trim(str_replace('"', '', $demande->group2_inpn), '{}') );
+                $items = "'" . implode("', '", $items) . "'";
+                $sql_demande[] = "o.group2_inpn IN (" . $items . ")";
             }
-            jClasses::inc('occtax~occtaxSearchObservation');
-            $dsearch = new occtaxSearchObservation( null, $dparams, 1, $login );
-            $dtwhere = $dsearch->getWhereClause();
-            if (!empty($dtwhere)) {
-                $dtwhere_demande = trim(
-                    // Since we use the dtwhere inside the already defined WHERE clause for demands
-                    // we need to remove the "WHERE True"
-                    preg_replace(
-                        '/WHERE +True( +AND +)?/i',
-                        '',
-                        $dtwhere
-                    )
-                );
-                // Depending on method chosen
-                // filter is done on subquery (use subtable vo.) or directly on query (use main table o.)
-                $dtwhere_demande = preg_replace(
-                    '/o.cd_ref/',
-                    " $observation_column_prefix.cd_ref",
-                    $dtwhere_demande
-                );
-                // Add demand filter only if there is some content
-                if (!empty($dtwhere_demande)) {
-                    $sql_demande[] = $dtwhere_demande;
-                }
-            }
+
 
             // Add geometry filter if set
             if ($demande->geom) {
