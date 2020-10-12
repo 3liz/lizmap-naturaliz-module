@@ -444,6 +444,7 @@ CREATE TABLE t_group_categorie (
     groupe_nom text,
     groupe_type text,
     regne text,
+    libelle_court text,
     CONSTRAINT t_group_categorie_regne_valide CHECK ( regne IN ( 'Plantae', 'Animalia', 'Fungi', 'Chromista', 'Bacteria', 'Protozoa' ) )
 );
 ALTER TABLE t_group_categorie ADD PRIMARY KEY (cat_nom, groupe_nom);
@@ -453,7 +454,7 @@ COMMENT ON COLUMN t_group_categorie.cat_nom IS 'Libellé à afficher pour le gro
 COMMENT ON COLUMN t_group_categorie.groupe_nom IS 'Nom du groupe INPN correspondant';
 COMMENT ON COLUMN t_group_categorie.groupe_type IS 'Type de groupe INPN : group1_inpn ou group2_inpn';
 COMMENT ON COLUMN t_group_categorie.regne IS 'Le règne du groupe INPN';
-
+COMMENT ON COLUMN t_group_categorie.libelle_court IS 'Libellé court à afficher dans les tableaux de résultat';
 
 
 -- Table de stockage des taxons sensibles

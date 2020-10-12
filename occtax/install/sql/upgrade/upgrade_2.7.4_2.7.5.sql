@@ -1,6 +1,3 @@
-COMMENT ON COLUMN gestion.acteur.en_poste IS 'Indique si la personne est actuellement en poste sur l''organisme qui lui est associé dans l''enregistrement. Ce champ est particulièrement utile pour des personnes ayant occupé différents postes à La Réunion. Il permet de garder en mémoire les lignes le concernant mais de ne pas les prendre en compte pour la communication SINP.';
-
-
 CREATE TABLE IF NOT EXISTS occtax.cadre (
     cadre_id text NOT NULL PRIMARY KEY,
     cadre_uuid text NOT NULL,
