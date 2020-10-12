@@ -1,4 +1,3 @@
-ALTER TABLE gestion.acteur ADD COLUMN IF NOT EXISTS en_poste boolean DEFAULT True;
 COMMENT ON COLUMN gestion.acteur.en_poste IS 'Indique si la personne est actuellement en poste sur l''organisme qui lui est associé dans l''enregistrement. Ce champ est particulièrement utile pour des personnes ayant occupé différents postes à La Réunion. Il permet de garder en mémoire les lignes le concernant mais de ne pas les prendre en compte pour la communication SINP.';
 
 
@@ -58,7 +57,7 @@ WHERE cat_nom IN ('Algues', 'Mollusques', 'Lichens', 'Mousses') AND groupe_type 
 REFRESH MATERIALIZED VIEW occtax.vm_observation;
 
 -- Ajout de champs
-ALTER TABLE taxon.t_group_categorie ADD COLUMN IF NOT EXISTS libelle_court text;
+ALTER TABLE taxon.t_group_categorie ADD COLUMN libelle_court text;
 COMMENT ON COLUMN taxon.t_group_categorie.libelle_court IS 'Libellé court à afficher dans les tableaux de résultat';
 
 UPDATE taxon.t_group_categorie SET libelle_court = (regexp_split_to_array( cat_nom, ' '))[1] WHERE libelle_court IS NULL;
