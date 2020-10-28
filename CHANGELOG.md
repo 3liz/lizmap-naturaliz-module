@@ -1,5 +1,12 @@
 # CHANGELOG
 
+### 2.7.6 - 28/10/2020
+
+* Gestion - demande: suppression des champs cd_ref, group1_inpn et 2, validite_niveau
+* Export - retourne seulement les JDD des observations exportées
+* Zoom sur observation - correction bug de mauvaise échelle / max_scale
+* Occtax - Correction souci des icônes taxon avec accent
+
 ### 2.7.5 - 12/10/2020
 
 * Gestion - Simplification des requêtes de demande: ajout direct des filtres sans passer par occtaxSearchObservation
