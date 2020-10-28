@@ -224,36 +224,44 @@ class occtaxSearch {
             $content = jFile::read( $readme );
             $content = str_replace("\n", "\r\n", $content);
             $content.= "\r\n\r\n";
-
-            // Add search description
-            $content.= "Filtres de recherche utilisés :\r\n";
-            $getSearchDescription = $this->getSearchDescription($format);
-            $getSearchDescription = str_replace('\n', "\r\n", $getSearchDescription);
-            $getSearchDescription = str_replace('linebreak', "\r\n", $getSearchDescription);
-            $content.= strip_tags( $getSearchDescription );
-
-            // Add jdd list
-            $osParams = $this->getParams();
-            $dao_jdd = jDao::get('occtax~jdd');
-            $content.= "\r\n\r\n";
-            $content.= "Jeux de données :\r\n";
-
-            if( array_key_exists( 'jdd_id', $osParams ) and $osParams['jdd_id'] ){
-                $jdd_id = $osParams['jdd_id'];
-                $jdd = $dao_jdd->get( $jdd_id );
-                if( $jdd ){
-                    $content.= '  * ' . $jdd->jdd_libelle . ' ( ' . $jdd->jdd_description . " )\r\n";
-                }
-            }else{
-                $jdds = $dao_jdd->getJddList();
-                foreach( $jdds as $jdd ){
-                    $content.= '  * ' . $jdd->jdd_libelle . ' ( ' . $jdd->jdd_description . " )\r\n";
-                }
-                $content.= "\r\n\r\n";
-                $content.= 'NB: La liste des jeux de données (JDD) ci-dessus montre l\'ensemble des JDD disponibles dans la plate-forme. Elle n\'est pas filtrée en fonction des résultats.';
-            }
-
         }
+
+        // Add search description
+        $content.= "Filtres de recherche utilisés :\r\n";
+        $getSearchDescription = $this->getSearchDescription($format);
+        $getSearchDescription = str_replace('\n', "\r\n", $getSearchDescription);
+        $getSearchDescription = str_replace('linebreak', "\r\n", $getSearchDescription);
+        $content.= strip_tags( $getSearchDescription );
+
+        // Add jdd list
+        $osParams = $this->getParams();
+        $dao_jdd = jDao::get('occtax~jdd');
+        $content.= "\r\n\r\n";
+        $content.= "Jeux de données :\r\n";
+
+        if (array_key_exists( 'jdd_id', $osParams ) and $osParams['jdd_id']) {
+            $jdd_id = $osParams['jdd_id'];
+            $jdd = $dao_jdd->get( $jdd_id );
+            if( $jdd ){
+                $content.= '  * ' . $jdd->jdd_libelle . ' ( ' . $jdd->jdd_description . " )\r\n";
+            }
+        } else {
+
+            // Get only jdd for given result
+            $sql = " SELECT jdd_libelle, jdd_description FROM occtax.jdd WHERE jdd_id IN (";
+            $sql.= " SELECT DISTINCT jdd_id FROM (";
+            $sql.= $this->sql;
+            $sql.= ") AS foo_jdd";
+            $sql.= ") ";
+            $cnx = jDb::getConnection();
+            $result = $cnx->query( $sql );
+            foreach( $result->fetchAll() as $jdd ) {
+                $content.= '  * ' . $jdd->jdd_libelle . ' ( ' . $jdd->jdd_description . " )\r\n";
+            }
+            $content.= "\r\n\r\n";
+            //$content.= 'NB: La liste des jeux de données (JDD) ci-dessus montre l\'ensemble des JDD disponibles dans la plate-forme. Elle n\'est pas filtrée en fonction des résultats.';
+        }
+
         return $content;
     }
 
