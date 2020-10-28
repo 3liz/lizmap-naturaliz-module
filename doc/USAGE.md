@@ -201,8 +201,48 @@ Un champ poids permet de prioriser la recherche dans cet ordre, avec les poids r
 
 Cette vue doit être rafraîchie dès qu'on modifie les données dans les tables taxref et/ou taxref_local: `REFRESH MATERIALIZED VIEW taxon.taxref_fts`
 
+### Création des catégories
+
+La table de correspondance `taxon.t_group_categorie` permet d'attribuer un nom de groupe de taxon grand public à un taxon à partir des informations issues de Taxref (champs group2_inpn et group1_inpn). Ce nom grand public est ensuite utilisé dans Naturaliz dans le formulaire de recherche par groupe, ou encore pour l'affichage du pictogramme dans le résultat des recherches, en se basant sur le champ "libelle_court" de la vue vm_observation.
+
+Certains pictogrammes sont fournis par défaut dans l'application, et copiés lors de la première installation vers le répertoire `lizmap/www/taxon/css/images/groupes/` (relatif à la racine de l'application Lizmap Web Client).
+
+Les **noms des fichiers des pictogrammes** correspondent à la version en **minuscule** et **sans accent** du champ `libelle_court`. Par exemple pour les mammifères, le `libelle_court` vaut "Mammifères", et le fichier correspondant est `lizmap/www/taxon/css/images/groupes/mammiferes.png`.
+
+Les pictogrammes proposés doivent avoir une taille idéale de 100x100 pixels. Quelques sources possibles:
+
+* Algues brunes : http://commons.wikimedia.org/wiki/File:Algae_Pengo.svg
+* Algues routes : http://commons.wikimedia.org/wiki/File:Algae_Pengo.svg
+* Algues vertes : https://openclipart.org/detail/7020/seaweed-by-johnny_automatic-7020
+* Amphibien : https://openclipart.org/detail/188718/oak-tree-by-iggyoblomov-188718 https://openclipart.org/detail/7273/frog-silhouette-by-wipp https://openclipart.org/detail/172425/frog-01-by-solvera-172425
+* Angiosperm https://openclipart.org/detail/49339/blue-flower-motif-by-sheikh_tuhin https://openclipart.org/detail/192841/black-flower-by-k4r573n-192841
+* Annelides https://openclipart.org/detail/184727/worm-by-arking-184727 https://openclipart.org/detail/184727/worm-by-arking-184727
+* Arachnides https://openclipart.org/detail/179190/spider-by-liftarn-179190 https://openclipart.org/detail/20842/spider-by-yves_guillou  https://openclipart.org/detail/73135/spider-by-redccshirt
+* Ascidies = éponges https://openclipart.org/detail/124009/sponge-by-papapishu
+* Bivalves https://openclipart.org/detail/169356/mussel--mejill%C3%83%C2%B3n-by-ainara14 https://openclipart.org/detail/174565/shell-by-gosc-174565
+* Céphalopodes https://openclipart.org/detail/122101/inky-by-dear_theophilus
+* Crustacés
+* Entognathes = Insectes
+* Fougères
+* Gastéropodes
+* Gymnospermes https://openclipart.org/detail/175675/evergreen-by-warszawianka-175675
+* Hépatiques et Anthocérotes = lichen/mousses
+* Hydrozoaires = bactéries
+* Insectes https://openclipart.org/detail/69/ant-icon-by-rejon https://openclipart.org/detail/32947/wasp-bw-by-j_alves
+* Mammifères https://openclipart.org/detail/116629/rabbit-silhouette-by-kuba https://openclipart.org/detail/14496/kangaroo-contour-by-nicubunu https://openclipart.org/detail/1198/cat-silhouette-by-liftarn https://openclipart.org/detail/855/elephant-silhouet-by-molumen
+* Myriapodes = mille pattes
+* Octocoralliaires = gorgone
+* Oiseaux https://openclipart.org/detail/34927/uccello_profilo_01_archi_01-by-francesco_rollandin https://openclipart.org/detail/4416/kiwi-(bird)-by-flomar
+* Poissons https://openclipart.org/detail/27770/fishblack-by-moreno https://openclipart.org/detail/20224/hammerhead-shark-by-wsnaccad-20224
+* Reptiles https://openclipart.org/detail/84985/lizards-by-voyeg3r
+* Scléractioniaires = coraux
 
 
+**NB**: Une fois les données de la table `taxon.t_group_categorie` modifiées, il faut raffraîchir la vue matérialisée via
+
+```sql
+REFRESH MATERIALIZED VIEW occtax.vm_observation ;
+```
 
 ## Module Occtax
 
