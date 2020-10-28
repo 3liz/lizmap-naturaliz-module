@@ -259,6 +259,7 @@ class occtaxSearch {
 
 
     protected function normalize_string($string) {
+        setlocale(LC_CTYPE, 'fr_FR.utf8');
         return strtolower(iconv('UTF-8', 'ASCII//TRANSLIT', $string));
     }
 
