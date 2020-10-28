@@ -1110,21 +1110,27 @@ OccTax.events.on({
             return;
 
         var target_extent = obs.geometry.bounds;
-        var target_zoom = lizMap.map.getZoomForExtent(target_extent)
+        var target_zoom = lizMap.map.getZoomForExtent(target_extent);
         var target_resolution = lizMap.map.getResolutionForZoom(target_zoom);
         var target_scale = OpenLayers.Util.getScaleFromResolution(target_resolution, lizMap.map.getUnits())
 
         var max_scale = occtaxClientConfig.maximum_observation_scale
         var current_scale = lizMap.map.getScale();
-        if( target_scale < max_scale && current_scale > max_scale){
+        if (current_scale >= max_scale && target_scale < max_scale) {
             target_scale = max_scale;
         }
-        var targetCenter = target_extent.getCenterLonLat();
+        if (current_scale < max_scale && target_scale < current_scale) {
+            target_scale = current_scale;
+        }
 
-        lizMap.map.zoomToScale( target_scale );
+        // Bug: lizMap.map.zoomToScale( target_scale ) -> we use zoom
+        var zoom = lizMap.map.scales.indexOf(target_scale);
+        lizMap.map.zoomTo(zoom);
+        var targetCenter = target_extent.getCenterLonLat();
         lizMap.map.setCenter( targetCenter );
 
     }
+
 
     function getObservationDetail( id ) {
         // Check user is still connected if he was
