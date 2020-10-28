@@ -32,26 +32,6 @@ class gestionFilterListener extends jEventListener{
         foreach($actives_demandes as $demande){
             $sql_demande = array();
 
-            // First build occtax search with demande params
-            $dparams = array();
-            if ($demande->cd_ref) {
-                $items = implode(', ', explode(',', trim($demande->cd_ref, '{}')));
-                $sql_demande[] = "o.cd_ref IN (" . $items . ")";
-            }
-
-            if ($demande->group1_inpn) {
-                $items = explode(',', trim(str_replace('"', '', $demande->group1_inpn), '{}') );
-                $items = "'" . implode("', '", $items) . "'";
-                $sql_demande[] = "o.group1_inpn IN (" . $items . ")";
-            }
-
-            if ($demande->group2_inpn) {
-                $items = explode(',', trim(str_replace('"', '', $demande->group2_inpn), '{}') );
-                $items = "'" . implode("', '", $items) . "'";
-                $sql_demande[] = "o.group2_inpn IN (" . $items . ")";
-            }
-
-
             // Add geometry filter if set
             if ($demande->geom) {
                 // Get SRID
@@ -81,11 +61,6 @@ class gestionFilterListener extends jEventListener{
                     $sql_demande[] = $sql_geom;
                 }
 
-            }
-
-            // Add validite filter
-            if ($demande->validite_niveau) {
-                $sql_demande[] = $observation_column_prefix . '.validite_niveau = ANY (' . $cnx->quote($demande->validite_niveau) .'::text[] )';
             }
 
             // Add validity dates

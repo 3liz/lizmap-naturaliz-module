@@ -13,12 +13,8 @@
         <property name="commentaire" fieldname="commentaire" datatype="text"/>
         <property name="date_validite_min" fieldname="date_validite_min" datatype="date" required="true"/>
         <property name="date_validite_max" fieldname="date_validite_max" datatype="date" required="true"/>
-        <property name="cd_ref" fieldname="cd_ref" datatype="_int"/>
-        <property name="group1_inpn" fieldname="group1_inpn" datatype="_text"/>
-        <property name="group2_inpn" fieldname="group2_inpn" datatype="_text"/>
         <property name="date_creation" fieldname="date_creation" datatype="date" default="now()"/>
         <property name="libelle_geom" fieldname="libelle_geom" datatype="text" required="true"/>
-        <property name="validite_niveau" fieldname="validite_niveau" datatype="_text" required="true"/>
         <property name="critere_additionnel" fieldname="critere_additionnel" datatype="text"/>
         <property name="geom" fieldname="geom" datatype="geometry" selectpattern="ST_AsText(geom)" required="true"/>
         <!--<property name="" fieldname="" datatype="string/int/float/date"

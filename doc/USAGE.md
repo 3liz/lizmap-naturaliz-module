@@ -226,7 +226,7 @@ Les droits d'accès du groupe *acteurs* peuvent être gérés finement avec la t
 
 - des champs de **description générale* : identité de l'acteur (=personne) et de l'organisme à l'origine de la demande, description littérale et date de la demande,etc.
 - des champs définissant la **période de validité de l'accès** : l'accès n'est ouvert qu'entre les dates définies par date_validite_min et date_validite_max
-- des **champs de filtre**, utilisés pour restreindre l'accès de l'acteur aux données : groupe taxonomique, géométrie de zone d'étude, niveau de validation... Un champ générique intitulé critere_additionnel a été ajouté afin de pouvoir affiner de manière très poussée le filtre sans créer un nouveau champ à chaque fois. Les critères doivent être écrits en langage SQL au format TEXT (ie entre ' ', en pensant donc bien à doublers les ' si besoin, par exemple : critere_additionnel='jdd_code=''geir_201805'''). L'ensemble des filtres sont cumulatifs : l'application opère des filtres AND et pas OR.
+- des **champs de filtre**, utilisés pour restreindre l'accès de l'acteur aux données : géométrie de zone d'étude... Un champ générique intitulé critere_additionnel a été ajouté afin de pouvoir affiner de manière très poussée le filtre sans créer un nouveau champ à chaque fois. Les critères doivent être écrits en langage SQL au format TEXT (ie entre ' ', en pensant donc bien à doublers les ' si besoin, par exemple : critere_additionnel='jdd_code=''geir_201805'''). L'ensemble des filtres sont cumulatifs : l'application opère des filtres AND et pas OR.
 
 
 Un acteur peut avoir plusieurs demandes en cours : les droits d'accès sont alors cumulatifs, l'accès lui étant ouvert à l'ensemble des données couvertes par les demandes en cours.
