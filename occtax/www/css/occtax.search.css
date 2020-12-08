@@ -475,19 +475,29 @@ Fiche détail d'un taxon*/
   top: 40px;
   position: absolute;
   overflow: auto;
+/*
   height: 90%;
+*/
   right: 5px;
   left: 5px;
+
+  display: flex !important;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
 }
 
 #taxon-detail-status {
-  max-height: 30%;
+  flex-grow: 1;
   overflow: auto;
 }
 #taxon-detail-media {
+/*
   width: 100%;
+*/
   padding: 5px;
-  max-height: 40%;
+  max-height: 70%;
+  text-align: center;
 }
 #taxon-detail-media img{
   height: auto;

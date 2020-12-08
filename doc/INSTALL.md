@@ -64,6 +64,10 @@ Les modules Naturaliz lisent dans le fichier **lizmap/var/config/naturaliz.ini.p
 * La **liste des champs à afficher ou à exporter** dans la fiche d'observation (détail) et l'export en CSV ou WFS: **observation_card_fields**, **observation_card_fields_unsensitive**, **observation_card_children**, **observation_exported_fields** **observation_exported_fields_unsensitive**, **observation_exported_children**
 * L'ordre d'affichage des items dans la barre de menu de gauche: **menuOrder**. Par exemple `menuOrder=home, occtax-presentation, switcher, occtax, dataviz, print, measure, permaLink, occtax-legal, taxon, metadata`
 * liste des menaces à afficher respectivement dans le formulaire de recherche, l'icône menace à côté du nom de taxon, et dans le tableau des statistiques des taxons `search_form_menace_fields`, `taxon_detail_menace` et `taxon_table_menace_fields`
+* utilisateur PostgreSQL avec accès en lecture seule: **dbuser_readonly**. Par exemple `dbuser_readonly=naturaliz`
+* utilisateur PostgreSQL avec propriété sur les objets: **dbuser_owner**. Par exemple `dbuser_owner=lizmap`
+* Échelle maximum où zoomer avec le bouton de zoom par observation: **maximum_observation_scale**. Par exemple `maximum_observation_scale=24000`
+* Liste de localisations pour récupérer les statuts des taxons dans la fiche: **statut_localisations**. Par exemple `statut_localisations=fra,reu`
 
 Pour le module mascarine:
 
@@ -190,6 +194,9 @@ dbuser_owner=lizmap
 
 ; Echelle maximum où zoomer avec le bouton de zoom par observation
 maximum_observation_scale=25000
+
+; Liste de localisations pour récupérer les statuts des taxons dans la fiche
+statut_localisations=fra,reu
 
 ```
 

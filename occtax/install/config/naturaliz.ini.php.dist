@@ -87,6 +87,7 @@ taxon_detail_nom_menace=menace_nationale
 
 ; liste des champs menaces à afficher dans le formulaire de recherche
 search_form_menace_fields=menace_nationale, menace_monde
+
 ; ordre des items de menu Lizmap (barre de menu de gauche)
 menuOrder=home, occtax-presentation, switcher, occtax, dataviz, print, measure, permaLink, occtax-legal, taxon, metadata
 
@@ -98,6 +99,9 @@ dbuser_owner=lizmap
 
 ; Echelle maximum où zoomer avec le bouton de zoom par observation
 maximum_observation_scale=24000
+
+; Liste de localisations pour récupérer les statuts des taxons dans la fiche
+statut_localisations=fra,reu
 
 
 [mascarine]

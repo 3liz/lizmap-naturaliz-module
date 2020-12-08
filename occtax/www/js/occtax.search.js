@@ -364,18 +364,26 @@ OccTax.events.on({
         html+= '</b> ';
         html+= data.authority;
         html+= '</h4>';
+        var wait_html = '';
+        wait_html+= '  <div class="dataviz-waiter progress progress-striped active" style="margin:5px 5px;">';
+        wait_html+= '    <div class="bar" style="width: 100%;"></div>';
+        wait_html+= '  </div>';
         if (data.frenchVernacularName !== null) {
             html+= '<p>';
             html+= data.frenchVernacularName;
             html+= '</p>';
         }
-        if (data.status_url !== null) {
-            html+= '<p id="taxon-detail-status">';
-            html+= '</p>';
-        }
+        // Image
         if (data.media_url !== null) {
-            html+= '<p id="taxon-detail-media">';
-            html+= '</p>';
+            html+= '<div id="taxon-detail-media">';
+            html+= wait_html;
+            html+= '</div>';
+        }
+        // Statuts de protection
+        if (data.status_url !== null) {
+            html+= '<div id="taxon-detail-status">';
+            html+= wait_html;
+            html+= '</div>';
         }
         html+= '</div>';
 
@@ -384,7 +392,7 @@ OccTax.events.on({
 
     function getTaxonMedia(media_url) {
       detailTaxonLoad(media_url).then(function(mdata) {
-        if(
+        if (
           '_embedded' in mdata
           && 'media' in mdata._embedded
           && mdata._embedded.media.length > 0
@@ -394,10 +402,14 @@ OccTax.events.on({
           html+= '<img src="';
           html+= media_href;
           html+= '" width="100%">';
+          $('#taxon-detail-media div.dataviz-waiter').hide();
           $('#taxon-detail-media').html(html);
+        } else {
+          $('#taxon-detail-media div.dataviz-waiter').hide();
         }
       }, function(Error) {
         console.log(Error);
+        $('#taxon-detail-media div.dataviz-waiter').hide();
       });
     }
 
@@ -409,35 +421,44 @@ OccTax.events.on({
           && mdata._embedded.status.length > 0
         ){
           let colonne_locale_labels = {
-            'gua': 'Guadeloupe',
-            'fra': 'France métropolitaine',
-            'may': 'Mayotte',
-            'reu': 'Réunion',
+            'gua': ['Guadeloupe'],
+            'fra': ['France métropolitaine','France'],
+            'may': ['Mayotte'],
+            'reu': ['Réunion'],
+            'mar': ['Martinique']
           };
-          let colonne_locale_label = colonne_locale_labels[occtaxClientConfig.colonne_locale];
+          statut_localisations = occtaxClientConfig.statut_localisations;
           var html = '<ul>';
           for (var s in mdata._embedded.status) {
             var status = mdata._embedded.status[s];
-            if (status.locationName != colonne_locale_label) {
-              continue;
+            // Do not display if localisation is not in statut_localisations
+            for (var sl in statut_localisations) {
+              var names = colonne_locale_labels[statut_localisations[sl]];
+              if ((names.indexOf(status.locationName) > -1)) {
+                var st_title = ''; var st_cursor = ''
+                if (status.source) {
+                  st_title = ' title="' + status.source + '"';
+                  st_cursor = ' style="cursor:help;"';
+                }
+                html+= '<li>';
+                html+= '<b>'+status.statusTypeGroup + '</b>: ';
+                html+= '<span ' + st_title + st_cursor + '>' + status.statusName + '</span>';
+                html+= '<i> (' + status.locationName +')</i>';
+                html+= '</li>';
+                html+= '';
+              }
             }
-            var st_title = ''; var st_cursor = ''
-            if (status.source) {
-              st_title = ' title="' + status.source + '"';
-              st_cursor = ' style="cursor:help;"';
-            }
-            html+= '<li>';
-            html+= '<b>'+status.statusTypeGroup + '</b>: ';
-            html+= '<span ' + st_title + st_cursor + '>' + status.statusName + '</span>';
-            //html+= '<i> (' + status.locationName +')</i>';
-            html+= '</li>';
-            html+= '';
           }
           html+= '</ul>';
+          $('#taxon-detail-status div.dataviz-waiter').hide();
           $('#taxon-detail-status').html(html);
+
+        } else {
+          $('#taxon-detail-status div.dataviz-waiter').hide();
         }
       }, function(Error) {
         console.log(Error);
+        $('#taxon-detail-status div.dataviz-waiter').hide();
       });
     }
 
@@ -451,6 +472,7 @@ OccTax.events.on({
                 var leftPos = lizMap.getDockRightPosition();
                 $('#sub-dock').css('left', leftPos).css('width', leftPos);
             }
+            // Hide lizmap close button (replaced further)
             $('#hide-sub-dock').click(function(){
                 $('#sub-dock').hide().html('');
             });
@@ -458,11 +480,15 @@ OccTax.events.on({
             // Load status
             if (data.status_url) {
               getTaxonStatus(data.status_url);
+            } else {
+              $('#taxon-detail-status div.dataviz-waiter').hide();
             }
 
             // Load media
             if (data.media_url) {
               getTaxonMedia(data.media_url);
+            } else {
+              $('#taxon-detail-media div.dataviz-waiter').hide();
             }
 
             // close windows

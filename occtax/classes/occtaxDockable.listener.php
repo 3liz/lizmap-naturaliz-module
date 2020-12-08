@@ -104,13 +104,18 @@
                 $colonne_locale = $ini->getValue('colonne_locale', 'naturaliz');
                 if (empty($colonne_locale) )
                     $colonne_locale = 'fra';
+                $statut_localisations = $ini->getValue('statut_localisations', 'naturaliz');
+                if (empty($statut_localisations) )
+                    $statut_localisations = $colonne_locale;
+                $statut_localisations = array_map('trim', explode(',', $statut_localisations));
                 $occtaxClientConfig = array(
                     'colonne_locale'=> $colonne_locale,
                     'maxAreaQuery'=> (integer)$maxAreaQuery,
                     'strokeColor' => $strokeColor,
                     'menuOrder' => $mo,
                     'is_connected' => jAuth::isConnected(),
-                    'maximum_observation_scale'=> (integer)$maximum_observation_scale
+                    'maximum_observation_scale'=> (integer)$maximum_observation_scale,
+                    'statut_localisations'=> $statut_localisations,
                 );
 
                 $mailles_a_utiliser = $ini->getValue('mailles_a_utiliser', 'naturaliz');
