@@ -76,6 +76,10 @@
    <label locale="occtax_admin~admin.form.search_form_menace_fields.label" />
   </textarea>
 
+  <input type="string" ref="statut_localisations"  defaultvalue="fr,reu">
+   <label locale="occtax_admin~admin.form.statut_localisations.label" />
+  </input>
+
 </group>
 
 <group ref="occtax">

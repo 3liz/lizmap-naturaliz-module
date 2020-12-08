@@ -12,13 +12,25 @@ class occtaxModuleUpgrader_276_277 extends jInstallerModule {
             $localConfig = jApp::configPath('naturaliz.ini.php');
             $ini = new jIniFileModifier($localConfig);
 
+            $colonne_locale = $ini->getValue('colonne_locale', 'naturaliz');
+            if(empty($dbuser_readonly)){
+                $colonne_locale = 'reu';
+            }
+            $dbuser_readonly = $ini->getValue('dbuser_readonly', 'naturaliz');
+            $dbuser_owner = $ini->getValue('dbuser_owner', 'naturaliz');
+
+            // Add new entry in configuration file
+            $statut_localisations = $ini->getValue('statut_localisations', 'naturaliz');
+            if (empty($statut_localisations)) {
+                  $ini->setValue('statut_localisations', 'fra,'.$colonne_locale, 'naturaliz');
+            }
+
             // modify jlx_user columns
             $this->useDbProfile('jauth_super');
             $db = $this->dbConnection(); // A PLACER TOUJOUR DERRIERE $this->useDbProfile('jauth_super');
             $sqlPath = $this->path . 'install/sql/upgrade/upgrade_2.7.6_2.7.7.sql';
             $sqlTpl = jFile::read( $sqlPath );
             $tpl = new jTpl();
-            $colonne_locale = $ini->getValue('colonne_locale', 'naturaliz');
             $tpl->assign('colonne_locale', $colonne_locale);
             $sql = $tpl->fetchFromString($sqlTpl, 'text');
             $db->exec($sql);
@@ -29,9 +41,6 @@ class occtaxModuleUpgrader_276_277 extends jInstallerModule {
             $tpl = new jTpl();
             $prof = jProfiles::get('jdb', $this->dbProfile, true);
             $tpl->assign('DBNAME', $prof['database'] );
-
-            $dbuser_readonly = $ini->getValue('dbuser_readonly', 'naturaliz');
-            $dbuser_owner = $ini->getValue('dbuser_owner', 'naturaliz');
             if(empty($dbuser_readonly)){
                 $dbuser_readonly = 'naturaliz';
                 $ini->setValue('dbuser_readonly', 'naturaliz', 'naturaliz');
