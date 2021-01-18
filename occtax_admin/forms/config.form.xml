@@ -80,6 +80,16 @@
    <label locale="occtax_admin~admin.form.statut_localisations.label" />
   </input>
 
+  <menulist ref="taxon_detail_source_type" required="true">
+   <label locale="occtax_admin~admin.form.taxon_detail_source_type.label" />
+   <item value="api">API</item>
+   <item value="url">URL</item>
+  </menulist>
+
+  <input type="string" ref="taxon_detail_source_url"  defaultvalue="">
+   <label locale="occtax_admin~admin.form.taxon_detail_source_url.label" />
+  </input>
+
 </group>
 
 <group ref="occtax">

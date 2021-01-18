@@ -463,40 +463,50 @@ OccTax.events.on({
     }
 
     function displayTaxonDetail(cd_nom){
-        getTaxonDataFromApi(cd_nom, function(data){
-            var html = buildTaxonFicheHtml(data);
-            html+=  '<button id="hide-sub-dock" class="btn pull-right" style="margin-top:5px;" name="close" title="'+lizDict['generic.btn.close.title']+'">'+lizDict['generic.btn.close.title']+'</button>';
-            $('#sub-dock').html(html)
-            .css('bottom', '0px');
-            if( !lizMap.checkMobile() ){
-                var leftPos = lizMap.getDockRightPosition();
-                $('#sub-dock').css('left', leftPos).css('width', leftPos);
-            }
-            // Hide lizmap close button (replaced further)
-            $('#hide-sub-dock').click(function(){
-                $('#sub-dock').hide().html('');
-            });
+        // Depending on the source, we must
+        // API: "api" -> get data from MNHN API and display in subdock
+        // URL: "https://some_url/cd_nom" -> open in a new tab after having replace cd_nom
+        var dtype = occtaxClientConfig.taxon_detail_source_type;
+        var durl = occtaxClientConfig.taxon_detail_source_url;
+        if (dtype == 'api' || durl == '') {
+          getTaxonDataFromApi(cd_nom, function(data){
+              var html = buildTaxonFicheHtml(data);
+              html+=  '<button id="hide-sub-dock" class="btn pull-right" style="margin-top:5px;" name="close" title="'+lizDict['generic.btn.close.title']+'">'+lizDict['generic.btn.close.title']+'</button>';
+              $('#sub-dock').html(html)
+              .css('bottom', '0px');
+              if( !lizMap.checkMobile() ){
+                  var leftPos = lizMap.getDockRightPosition();
+                  $('#sub-dock').css('left', leftPos).css('width', leftPos);
+              }
+              // Hide lizmap close button (replaced further)
+              $('#hide-sub-dock').click(function(){
+                  $('#sub-dock').hide().html('');
+              });
 
-            // Load status
-            if (data.status_url) {
-              getTaxonStatus(data.status_url);
-            } else {
-              $('#taxon-detail-status div.dataviz-waiter').hide();
-            }
+              // Load status
+              if (data.status_url) {
+                getTaxonStatus(data.status_url);
+              } else {
+                $('#taxon-detail-status div.dataviz-waiter').hide();
+              }
 
-            // Load media
-            if (data.media_url) {
-              getTaxonMedia(data.media_url);
-            } else {
-              $('#taxon-detail-media div.dataviz-waiter').hide();
-            }
+              // Load media
+              if (data.media_url) {
+                getTaxonMedia(data.media_url);
+              } else {
+                $('#taxon-detail-media div.dataviz-waiter').hide();
+              }
 
-            // close windows
-            $('#taxon-detail-close').click(function(){$('#hide-sub-dock').click();})
+              // close windows
+              $('#taxon-detail-close').click(function(){$('#hide-sub-dock').click();})
 
-            $('#sub-dock').show();
+              $('#sub-dock').show();
 
-        })
+          })
+        } else {
+          var url = durl.replace('CD_NOM', cd_nom);
+          window.open(url, '_blank');
+        }
     }
 
     function deleteTaxonToSearch( cd_nom ) {
@@ -1140,7 +1150,7 @@ OccTax.events.on({
         var target_resolution = lizMap.map.getResolutionForZoom(target_zoom);
         var target_scale = OpenLayers.Util.getScaleFromResolution(target_resolution, lizMap.map.getUnits())
 
-        var max_scale = occtaxClientConfig.maximum_observation_scale
+        var max_scale = occtaxClientConfig.maximum_observation_scale;
         var current_scale = lizMap.map.getScale();
         if (current_scale >= max_scale && target_scale < max_scale) {
             target_scale = max_scale;

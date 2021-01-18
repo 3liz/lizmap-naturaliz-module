@@ -108,6 +108,12 @@
                 if (empty($statut_localisations) )
                     $statut_localisations = $colonne_locale;
                 $statut_localisations = array_map('trim', explode(',', $statut_localisations));
+                $taxon_detail_source_type = $ini->getValue('taxon_detail_source_type', 'naturaliz');
+                if (!in_array($taxon_detail_source_type, array('api', 'url')))
+                    $taxon_detail_source_type = 'api';
+                $taxon_detail_source_url = $ini->getValue('taxon_detail_source_url', 'naturaliz');
+                if (empty($taxon_detail_source_url) or $taxon_detail_source_type == 'api')
+                    $taxon_detail_source_url = '';
                 $occtaxClientConfig = array(
                     'colonne_locale'=> $colonne_locale,
                     'maxAreaQuery'=> (integer)$maxAreaQuery,
@@ -116,6 +122,8 @@
                     'is_connected' => jAuth::isConnected(),
                     'maximum_observation_scale'=> (integer)$maximum_observation_scale,
                     'statut_localisations'=> $statut_localisations,
+                    'taxon_detail_source_type'=> $taxon_detail_source_type,
+                    'taxon_detail_source_url'=> $taxon_detail_source_url,
                 );
 
                 $mailles_a_utiliser = $ini->getValue('mailles_a_utiliser', 'naturaliz');

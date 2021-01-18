@@ -103,6 +103,13 @@ maximum_observation_scale=24000
 ; Liste de localisations pour récupérer les statuts des taxons dans la fiche
 statut_localisations=fra,reu
 
+; Type du lien pour récupérer les détails d'un taxon: api ou url
+taxon_detail_source_type=api
+; URL si le type est url.
+; on met CD_NOM qui sera remplacé par le bon cd_nom
+; Par exemple: https://inpn.mnhn.fr/espece/cd_nom/CD_NOM
+taxon_detail_source_url=
+
 
 [mascarine]
 defaultRepository=

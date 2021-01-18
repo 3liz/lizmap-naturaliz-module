@@ -19,10 +19,18 @@ class occtaxModuleUpgrader_276_277 extends jInstallerModule {
             $dbuser_readonly = $ini->getValue('dbuser_readonly', 'naturaliz');
             $dbuser_owner = $ini->getValue('dbuser_owner', 'naturaliz');
 
-            // Add new entry in configuration file
+            // Add new entries in configuration file
             $statut_localisations = $ini->getValue('statut_localisations', 'naturaliz');
             if (empty($statut_localisations)) {
                   $ini->setValue('statut_localisations', 'fra,'.$colonne_locale, 'naturaliz');
+            }
+            $taxon_detail_source_type = $ini->getValue('taxon_detail_source_type', 'naturaliz');
+            if (empty($taxon_detail_source_type)) {
+                  $ini->setValue('taxon_detail_source_type', 'api', 'naturaliz');
+            }
+            $taxon_detail_source_url = $ini->getValue('taxon_detail_source_url', 'naturaliz');
+            if (empty($taxon_detail_source_url)) {
+                  $ini->setValue('taxon_detail_source_url', '', 'naturaliz');
             }
 
             // modify jlx_user columns
