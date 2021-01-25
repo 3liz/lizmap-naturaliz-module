@@ -68,8 +68,8 @@ Les modules Naturaliz lisent dans le fichier **lizmap/var/config/naturaliz.ini.p
 * utilisateur PostgreSQL avec propriété sur les objets: **dbuser_owner**. Par exemple `dbuser_owner=lizmap`
 * Échelle maximum où zoomer avec le bouton de zoom par observation: **maximum_observation_scale**. Par exemple `maximum_observation_scale=24000`
 * Liste de localisations pour récupérer les statuts des taxons dans la fiche: **statut_localisations**. Par exemple `statut_localisations=fra,reu`
-* Type du lien pour récupérer les détails d'un taxon: **taxon_detail_source_type**: api ou url.
-* URL à utiliser, si le type est url: **taxon_detail_source_url**. On met CD_NOM qui sera remplacé par le bon cd_nom. Par exemple: `https://inpn.mnhn.fr/espece/cd_nom/CD_NOM`
+* Type du lien pour récupérer les détails d'un taxon: **taxon_detail_source_type**: `api` pour afficher un panneau avec des informations issues de l'API du MNHN, ou `url` pour ouvrir une page externe à l'application, contenant le détail du taxon.
+* URL à utiliser pour voir la fiche détaillée: **taxon_detail_source_url**. Si le type du lien est API, cette URL est utilisée pour le bouton "Voir la fiche complète" situé en haut du panneau de détail d'un taxon. Si le type est URL, cliquer sur un nom de taxon ouvre simplement l'URL. On utilise dans cette URL le texte `CD_NOM` qui sera remplacé par le bon cd_nom. Par exemple: `https://inpn.mnhn.fr/espece/cd_nom/CD_NOM`
 
 
 Pour le module mascarine:

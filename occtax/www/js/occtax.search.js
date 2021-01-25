@@ -295,7 +295,7 @@ OccTax.events.on({
       turl+= cd_nom;
 
       $.getJSON(turl, null, function( tdata ) {
-        var keys = ['scientificName', 'authority', 'frenchVernacularName'];
+        var keys = ['id', 'referenceId', 'scientificName', 'authority', 'frenchVernacularName'];
         var rdata = {};
         for(var k in keys){
           rdata[keys[k]] = tdata[keys[k]];
@@ -352,9 +352,18 @@ OccTax.events.on({
     function buildTaxonFicheHtml(data){
         var html = '';
         html+= '<h3><span class="title"><span class="text">Information</span>';
+
+        // Close button
         html+= '<button id="taxon-detail-close" class="btn btn-primary btn-mini pull-right" style="margin-left:10px;">Fermer</button>';
+
+        // Taxon detail URL button
+        var detail_url = data.inpnWebpage;
+        var config_url = occtaxClientConfig.taxon_detail_source_url;
+        if (config_url && config_url.trim() != '') {
+            detail_url = config_url.replace('CD_NOM', data.referenceId);
+        }
         html+= '<a href="';
-        html+= data.inpnWebpage;
+        html+= detail_url;
         html+= '" class="btn btn-primary btn-mini pull-right" target="_blank">Voir la fiche complète</a>';
         html+= '</span>';
         html+= '</h3>';
@@ -468,7 +477,8 @@ OccTax.events.on({
         // URL: "https://some_url/cd_nom" -> open in a new tab after having replace cd_nom
         var dtype = occtaxClientConfig.taxon_detail_source_type;
         var durl = occtaxClientConfig.taxon_detail_source_url;
-        if (dtype == 'api' || durl == '') {
+        if (dtype == 'api') {
+          // Use the MNHN API to create and display a fact sheet about this taxon
           getTaxonDataFromApi(cd_nom, function(data){
               var html = buildTaxonFicheHtml(data);
               html+=  '<button id="hide-sub-dock" class="btn pull-right" style="margin-top:5px;" name="close" title="'+lizDict['generic.btn.close.title']+'">'+lizDict['generic.btn.close.title']+'</button>';
@@ -504,6 +514,7 @@ OccTax.events.on({
 
           })
         } else {
+          // Directly open external URL in a new tab/window
           var url = durl.replace('CD_NOM', cd_nom);
           window.open(url, '_blank');
         }

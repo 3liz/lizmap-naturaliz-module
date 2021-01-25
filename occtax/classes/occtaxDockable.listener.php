@@ -112,7 +112,7 @@
                 if (!in_array($taxon_detail_source_type, array('api', 'url')))
                     $taxon_detail_source_type = 'api';
                 $taxon_detail_source_url = $ini->getValue('taxon_detail_source_url', 'naturaliz');
-                if (empty($taxon_detail_source_url) or $taxon_detail_source_type == 'api')
+                if (empty($taxon_detail_source_url))
                     $taxon_detail_source_url = '';
                 $occtaxClientConfig = array(
                     'colonne_locale'=> $colonne_locale,
