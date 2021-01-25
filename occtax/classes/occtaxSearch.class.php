@@ -240,10 +240,18 @@ class occtaxSearch {
         $content.= "Jeux de données :\r\n";
 
         if (array_key_exists( 'jdd_id', $osParams ) and $osParams['jdd_id']) {
-            $jdd_id = $osParams['jdd_id'];
-            $jdd = $dao_jdd->get( $jdd_id );
-            if( $jdd ){
-                $content.= '  * ' . $jdd->jdd_libelle . ' ( ' . $jdd->jdd_description . " )\r\n";
+            $jdd_ids = $osParams['jdd_id'];
+            if (!is_array($jdd_ids)) {
+                $jdd_ids = array($jdd_ids);
+            }
+            foreach($jdd_ids as $jdd_id) {
+                if (!ctype_digit($jdd_id)) {
+                    continue;
+                }
+                $jdd = $dao_jdd->get($jdd_id);
+                if ($jdd) {
+                    $content.= '  * ' . $jdd->jdd_libelle . ' ( ' . $jdd->jdd_description . " )\r\n";
+                }
             }
         } else {
 

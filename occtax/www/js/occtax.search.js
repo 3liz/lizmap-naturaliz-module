@@ -477,7 +477,7 @@ OccTax.events.on({
         // URL: "https://some_url/cd_nom" -> open in a new tab after having replace cd_nom
         var dtype = occtaxClientConfig.taxon_detail_source_type;
         var durl = occtaxClientConfig.taxon_detail_source_url;
-        if (dtype == 'api') {
+        if (dtype == 'api' || durl.trim() == '') {
           // Use the MNHN API to create and display a fact sheet about this taxon
           getTaxonDataFromApi(cd_nom, function(data){
               var html = buildTaxonFicheHtml(data);
