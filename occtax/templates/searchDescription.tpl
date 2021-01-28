@@ -13,10 +13,11 @@
     <span style="display:none">nb_taxon {@occtax~search.description.total.number.taxon@}{$s}</span>
 </p>
 
+{ifnotacl2 "visualisation.donnees.brutes"}
 <p>
     <i>{@occtax~search.description.sensitive.data.not.shown@}</i>
 </p>
-
+{/ifnotacl2}
 
 
 {assign $nb = count($legend_classes)}
