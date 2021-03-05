@@ -260,6 +260,38 @@
                     );
                     $event->add($dock);
                 }
+
+                // Basket dock
+                // Create search form
+                if (jAuth::isConnected() && jAcl2::check("visualisation.donnees.brutes")) {
+                    $tpl = new jTpl();
+
+                    jClasses::inc('occtax~occtaxValidation');
+                    $validation = new occtaxValidation();
+                    $data = $validation->getValidationBasket();
+                    $counter = 0;
+                    if ($data) {
+                        $counter = count($data);
+                    }
+                    $assign = array(
+                        'counter' => $counter,
+                        'data' => $data,
+                    );
+                    $tpl->assign($assign);
+                    $content = $tpl->fetch('validation');
+
+                    // Create dock
+                    $dock = new lizmapMapDockItem(
+                        'validation',
+                        jLocale::get("occtax~validation.dock.title"),
+                        $content,
+                        15,
+                        Null,
+                        jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/occtax.validation.js'))
+                    );
+                    $event->add($dock);
+                }
+
             }
 
         }
