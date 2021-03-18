@@ -16,8 +16,6 @@ class occtaxModuleUpgrader_276_277 extends jInstallerModule {
             if(empty($dbuser_readonly)){
                 $colonne_locale = 'reu';
             }
-            $dbuser_readonly = $ini->getValue('dbuser_readonly', 'naturaliz');
-            $dbuser_owner = $ini->getValue('dbuser_owner', 'naturaliz');
 
             // Add new entries in configuration file
             $statut_localisations = $ini->getValue('statut_localisations', 'naturaliz');
@@ -49,13 +47,13 @@ class occtaxModuleUpgrader_276_277 extends jInstallerModule {
             $tpl = new jTpl();
             $prof = jProfiles::get('jdb', $this->dbProfile, true);
             $tpl->assign('DBNAME', $prof['database'] );
+            $dbuser_readonly = $ini->getValue('dbuser_readonly', 'naturaliz');
+            $dbuser_owner = $ini->getValue('dbuser_owner', 'naturaliz');
             if(empty($dbuser_readonly)){
                 $dbuser_readonly = 'naturaliz';
-                $ini->setValue('dbuser_readonly', 'naturaliz', 'naturaliz');
             }
             if(empty($dbuser_owner)){
                 $dbuser_owner = 'lizmap';
-                $ini->setValue('dbuser_owner', 'lizmap', 'naturaliz');
             }
             $ini->save();
 
