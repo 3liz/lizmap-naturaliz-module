@@ -93,19 +93,11 @@ statut_localisations=fra,reu
 
 ; Type du lien pour récupérer les détails d'un taxon: api ou url
 taxon_detail_source_type=api
-; URL si le type est url.
+; URL
 ; on met CD_NOM qui sera remplacé par le bon cd_nom
 ; Par exemple: https://inpn.mnhn.fr/espece/cd_nom/CD_NOM
-taxon_detail_source_url=
+taxon_detail_source_url="https://inpn.mnhn.fr/espece/cd_nom/CD_NOM"
 
-
-[mascarine]
-defaultRepository=
-defaultProject=
-projectName=Saisie Flore
-projectDescription=Cette application permet de consulter et de créer des observation floristiques.
-projectCss=""
-habitats=GUAEAR
 
 ; chmod for files created by Lizmap and Jelix
 ;chmodFile=0664

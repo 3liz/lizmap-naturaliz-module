@@ -51,7 +51,7 @@ Les modules Naturaliz lisent dans le fichier **lizmap/var/config/naturaliz.ini.p
 * la **colonne locale des données TAXREF** correspondant au lieu principal de l'installation (par exemple "gua" pour la Guadeloupe) : variable **colonne_locale** de la section [taxon]
 * un **intitulé** pour les zones correspondant à l'endémicité (endémique et subendémique): variables **endemicite_description_endemique** (ex: Réunion) et **endemicite_description_subendemique** (Ex: Mascareignes)
 * la **liste des rangs** de taxons pour initialiser (seulement lors de l'installation ou de l'import d'une nouvelle version de taxref) la vue matérialisée de recherche plein texte. Variable **liste_rangs**. Par exemple `FM, GN, AGES, ES, SSES, NAT, VAR, SVAR, FO, SSFO, RACE, CAR, AB, KD, PH, CL, OR, SBFM, TR, SBOR, IFOR, SBCL`
-* la **liste des codes d'arrêtés de protection** pour la zone concernée: variables **code_arrete_protection_simple**, **code_arrete_protection_internationale**, **code_arrete_protection_nationale**, **code_arrete_protection_communautaire** de la section  [taxon]
+
 * le **code SRID** du système de coordonnées de références des données spatiales du projet : variable **srid** de la section [naturaliz].
 * le **libellé de la projection locale**: variable **libelle_srid**
 * le **mot de passe de l'utilisateur admin**: variable **adminPassword** de la section [naturaliz].
@@ -116,23 +116,9 @@ colonne_locale=reu
 endemicite_description_endemique=Réunion
 endemicite_description_subendemique=Mascareignes
 
-; liste des codes des arr  t  s de protection qui concernent la zone de travail
-code_arrete_protection_simple="agri1,agri2,Bubul1,Bulbul2,Bulbul3,Bulbul4,Bulbul5,Bulbul6,Bulbul9,corbasi1,phelsuma1,phelsuma2,phelsuma3,phelsuma4,phelsuma5,PV97,REUEEA,REUEEI,REUP"
-code_arrete_protection_internationale="AIBA2,AIBA3,CCA,CCB,CCC,CCD,IAAP,IAO2,IAO3,IAO4,IBE1,IBE2,IBE3,IBOAE,IBO1,IBO2,IOS5"
-code_arrete_protection_communautaire="CDH2,CDH4,CDH5,CDO1,CDO21,CDO22,CDO31,CDO32"
-code_arrete_protection_nationale="VP974,NM,NMAMmar2,NM2,NO3,NO4,NO6,NTAA1,NTM1,NTM8,OC3,REUEA2,REUEA3,REUEA4,REUI2"
-
-
-
-
 ; liste séparée par virgule de mailles à utiliser. Par ex: maille_01,maille_10
 mailles_a_utiliser=maille_02,maille_10
 
-; typename WFS pour les imports
-znieff1_terre=Znieff1
-znieff1_mer=Znieff1_mer
-znieff2_terre=Znieff2
-znieff2_mer=Znieff2_mer
 
 ; liste de niveaux de validite à restreindre pour le grand public
 validite_niveaux_grand_public=1,2
@@ -501,53 +487,6 @@ categorie_lr_europe text,
 categorie_lr_monde text
 ```
 
-#### Protections
-
-On doit spécifier dans le fichier `lizmap/var/config/naturaliz.ini.php` la liste des codes des arrêtés sur les protections des espèces, par exemple:
-* Guadeloupe
-
-```ini
-code_arrete_protection_simple=""
-code_arrete_protection_communautaire="CDH2,CDH4,CDH5,CDO1,CDO21,CDO22,CDO31,CDO32"
-code_arrete_protection_internationale="CCA,CCB,CCC,CCD,IAAP"
-code_arrete_protection_nationale="DV971,GUAI2,GUAM1,GUAO1,GUARA1,IBE1,IBE2,IBE3,IBOAC,IBOAE,IBOAS,IBOAW,IBOC,IBOEU,IBO1,IBO2,ISPAW1,ISPAW2,ISPAW3,NMAMmar2,NMAMmar3,NMAMmar5,NO3,NO4,NO6,NP1,NTM1,NTM8,OC2,OC3,OC4,OC5"
-```
-
-* Réunion
-
-```ini
-; liste des codes des arr  t  s de protection qui concernent la zone de travail
-code_arrete_protection_simple="agri1,agri2,Bubul1,Bulbul2,Bulbul3,Bulbul4,Bulbul5,Bulbul6,Bulbul9,corbasi1,phelsuma1,phelsuma2,phelsuma3,phelsuma4,phelsuma5,PV97,REUEEA,REUEEI,REUP"
-code_arrete_protection_internationale="AIBA2,AIBA3,CCA,CCB,CCC,CCD,IAAP,IAO2,IAO3,IAO4,IBE1,IBE2,IBE3,IBOAE,IBO1,IBO2,IOS5"
-code_arrete_protection_communautaire="CDH2,CDH4,CDH5,CDO1,CDO21,CDO22,CDO31,CDO32"
-code_arrete_protection_nationale="VP974,NM,NMAMmar2,NM2,NO3,NO4,NO6,NTAA1,NTM1,NTM8,OC3,REUEA2,REUEA3,REUEA4,REUI2"
-```
-
-* Source: https://inpn.mnhn.fr/telechargement/referentielEspece/reglementation
-
-Télécharger le fichier ZIP `Espèces réglementées : Gargominy, O. & Régnier, C. 2017`
-
-Exemple : `PROTECTION_ESPECES_11.csv`
-
-
-Attention, on doit convertir le fichier Excel ( ex: PROTECTION_ESPECES_11.xls ) au format CSV (ex: PROTECTION_ESPECES_11.csv ). Pour cela, utiliser LibreOffice pour ouvrir le fichier Excel, et "Enregistrer sous" avec les options suivantes:
-* format Texte CSV (.csv)
-* Jeu de caractères: Unicode ( UTF-8 )
-* Séparateur de champ: virgule ','
-* Séparateur de texte: guillemet double '"'
-* Conserver la première ligne avec le nom des champs
-
-* Colonnes (dans le CSV, les noms des colonnes sont en majuscules, ce n'est pas grave):
-
-```sql
-cd_nom text,
-cd_protection text,
-nom_cite text,
-syn_cite text,
-nom_francais_cite text,
-precisions text,
-cd_nom_cite text
-```
 
 #### Noms vernaculaires
 
@@ -587,6 +526,8 @@ php lizmap/scripts/script.php help taxon~import:taxref
 **Note** Une fois l'import finalisé, il peut être intéressant de vérifier que les données de protection et de menaces font bien référence à des taxons présents dans le TAXREF (CD_NOM).
 
 
+
+
 ### Import Occurences de taxon : données de références
 
 Certaines données spatiales de références sont nécessaires au fonctionnement de l'application :
@@ -596,7 +537,8 @@ Certaines données spatiales de références sont nécessaires au fonctionnement
 * les espaces naturels (Parc, réserves de biotope, ZNIEFF 1 et 2, etc.)
 * les masses d'eau
 
-Ces données peuvent être récupérées sur le site du MNHN : http://inpn.mnhn.fr/telechargement/cartes-et-information-geographique
+Ces données peuvent être récupérées sur le site du MNHN : https://inpn.mnhn.fr/telechargement/cartes-et-information-geographique/ref/referentiels
+
 Nous conseillons de récupérer au maximum les données au format WFS (Web Feature Service), pour être sûr d'avoir les données les plus à jour.
 Certaines données doivent être récupérées ailleurs, comme par exemple les communes et les mailles 1x1km et 2x2km.
 
@@ -606,7 +548,8 @@ Les habitats doivent aussi être récupérés et importés.
 * Liste des habitats marins, par exemple TYPO_ANT_MER ( Liste des habitats marins des Antilles (Martinique, Guadeloupe) )
 * Liste des habitats terrestres, par exemple ceux de la Carte Écologique d'Alain Rousteau
 
-Il faut créer la couche Mailles 2x2 à partir de la couche 1x1, dans QGIS
+Il faut créer la couche Mailles 2x2 à partir de la couche 1x1, dans QGIS, via la procédure suivante:
+
 * Menu Vecteur / Outils de recherche / Grille vecteur
 * Etendue de la grille : choisir la couche de mailles 1x1km
 * Cliquer sur le bouton "Mettre à jour l'emprise depuis la couche"
@@ -615,68 +558,26 @@ Il faut créer la couche Mailles 2x2 à partir de la couche 1x1, dans QGIS
 * Choisir un fichier de sortie ( le mettre au même endroit que le fichier des mailles 1x1km
 * Lancer le traitement via le bouton OK
 
+Pour pouvoir importer ces données dans la base, il faut le faire manuellement. Nous conseillons fortement d'utiliser l'outil en ligne de commande **ogr2ogr** qui permet de bien contrôler les options d'import: encodage, renommage de champs, filtres, etc.
 
-Deux scripts permettent d'importer ces données dans la base, un pour les données WFS, et un autre pour les données Shapefile, Excel et CSV:
+Un script exemple est disponible dans le code source de naturaliz:
 
-* Shapefile : les communes, les mailles 1 et 2, les réserves naturelles nationales, et les habitats
-* WFS : les différents espaces naturels disponibles via le serveur, les mailles 10, les masses d'eau
+* [Import pour Mayotte](sig/import_referentiels_sig_mayotte.sh)
+* [Import pour la Martinique](sig/import_referentiels_sig_martinique.sh)
 
-Pour que l'import des données via les serveurs WFS fonctionne, il faut absolument préciser dans le fichier **lizmap/var/config/naturaliz.ini.php** les paramètres suivants dans la partie **[naturaliz]**
+Ces scripts contiennent une liste de commandes à lancer manuellement une à une.
 
-```ini
-; typename WFS pour les imports
-znieff1_terre=reu_znieff1
-znieff1_mer=reu_znieff1_mer
-znieff2_terre=reu_znieff2
-znieff2_mer=reu_znieff2_mer
+Pour pouvoir lancer ces commandes ogr2ogr d'import, il faut d'abord installer Gdal:
 
-```
+* Sous Linux, il faut installer Gdal, avec la commande `apt install gdal-bin`
+* Sous Windows, il faut avoir préalablement installé QGIS, puis lancer l'invite de commande **Osgeo4W Shell**
 
-Lancer l'import des données via les commandes suivantes:
+Il faut aussi avoir configuré un **service PostgreSQL** pour pouvoir accéder à la base de données sur laquelle l'application Naturaliz est installée.
 
-```bash
-cd /srv/lizmap_web_client/
-# Installation de gdal-bin pour disposer de l'outil ogr2ogr utilisé par le script d'import
-apt install gdal-bin
+Dans les scripts, certaines commandes commentées permettent de supprimer les données SIG, par exemple suite à une erreur d'import, pour repartir de zéro. Par exemple:
 
-# Import des données depuis les Shapefile pour les communes, mailles 1 et 2.
-# Import optionnel des réserves naturelles nationales et des habitats
-# Vous devez spécifier le chemin complet vers les fichiers : communes, mailles 1x1km, mailles 2x2km et optionnellement les réserves et les habitats
-
-# Exemple 1/ Guadeloupe
-php lizmap/scripts/script.php occtax~import:shapefile -commune "/tmp/referentiels/sig/COMMUNE.SHP" -maille_01 "/tmp/referentiels/sig/GLP_UTM20N1X1.shp" -maille_02 "/tmp/referentiels/sig/grille_2000m_gwada_dep_ama_poly.shp" -maille_05 "/tmp/referentiels/sig/GLP_UTM20N5X5.shp" -maille_10 "/tmp/referentiels/sig/GLP_UTM20N10X10.shp" -reserves_naturelles_nationales "/tmp/referentiels/sig/glp_rnn2012.shp" -habref "/tmp/referentiels/csv/HABREF_20/HABREF_20.csv" -habitat_mer "/tmp/referentiels/csv/habitats/TYPO_ANT_MER_09-01-2011.xls" -habitat_terre "/tmp/referentiels/csv/habitats/EAR_Guadeloupe.csv" -commune_annee_ref "2013" -departement_annee_ref "2013" -maille_01_version_ref "2015" -maille_01_nom_ref "Grille nationale (1km x 1km) Réunion" -maille_02_version_ref "2015" -maille_02_nom_ref "Grille nationale (2km x 2km) Réunion" -maille_05_version_ref "2015" -maille_05_nom_ref "Grille nationale (5km x 5km) Réunion" -maille_10_version_ref "2012" -maille_10_nom_ref "Grille nationale (10km x 10km) Réunion" -rnn_version_en "2010"
-
-
-# Exemple 2/ La Réunion
-php lizmap/scripts/script.php occtax~import:shapefile -commune "/tmp/referentiels/sig/COMMUNE.SHP" -maille_01 "/tmp/referentiels/sig/REU_UTM40S1X1.shp" -maille_02 "/tmp/referentiels/sig/REU_UTM40S2X2.shp" -maille_05 "/tmp/referentiels/sig/REU_UTM40S5X5.shp" -maille_10 "/tmp/referentiels/sig/REU_UTM40S10X10.shp" -reserves_naturelles_nationales "/tmp/referentiels/sig/RN.shp" -habref "/tmp/referentiels/habitats/HABREF_20/HABREF_20.csv" -commune_annee_ref "2013" -departement_annee_ref "2013" -maille_01_version_ref "2015" -maille_01_nom_ref "Grille nationale (1km x 1km) Réunion" -maille_02_version_ref "2015" -maille_02_nom_ref "Grille nationale (2km x 2km) Réunion" -maille_05_version_ref "2015" -maille_05_nom_ref "Grille nationale (5km x 5km) Réunion" -maille_10_version_ref "2012" -maille_10_nom_ref "Grille nationale (10km x 10km) Réunion" -rnn_version_en "2010"
-
-# Import des données depuis les serveurs WFS officiels
-# Vous devez préciser l'URL des serveurs WFS pour les données INPN et pour les données Sandre (masses d'eau)
-
-# Exemple 1/ La Guadeloupe
-php lizmap/scripts/script.php occtax~import:wfs -wfs_url http://ws.carmencarto.fr/WFS/119/glp_inpn -wfs_url_sandre http://services.sandre.eaufrance.fr/geo/mdo_GLP -wfs_url_grille "http://ws.carmencarto.fr/WFS/119/glp_grille" -znieff1_terre_version_en "2015-02" -znieff1_mer_version_en "2016-05" -znieff2_terre_version_en "2015-02" -znieff2_mer_version_en "2016-05" -ramsar_version_en "" -cpn_version_en "2015-10" -aapn_version_en "2015-10" -scl_version_en "2016-03" -mab_version_en "" -rb_version_en "2010" -apb_version_en "2012" -cotieres_version_me 2 -cotieres_date_me "2016-11-01" -souterraines_version_me 2 -souterraines_date_me "2016-11-01"
-
-
-# Exemple 2/ La Réunion
-php lizmap/scripts/script.php occtax~import:wfs -wfs_url "http://ws.carmencarto.fr/WFS/119/reu_inpn" -wfs_url_sandre "http://services.sandre.eaufrance.fr/geo/mdo_REU" -wfs_url_grille "http://ws.carmencarto.fr/WFS/119/reu_grille" -znieff1_terre_version_en "2015-02" -znieff1_mer_version_en "2016-05" -znieff2_terre_version_en "2015-02" -znieff2_mer_version_en "2016-05" -ramsar_version_en "" -cpn_version_en "2015-10" -aapn_version_en "2015-10" -scl_version_en "2016-03" -mab_version_en "" -rb_version_en "2010" -apb_version_en "2012" -cotieres_version_me 2 -cotieres_date_me "2016-11-01" -souterraines_version_me 2 -souterraines_date_me "2016-11-01"
-
-# Pour le module MASCARINE seulement
-# Import des données de relief (Modèle numérique de terrain = MNT ) et des lieu-dits en shapefiles
-# ATTENTION: seulement nécessaire si le module mascarine (saisie flore) est utilisé.
-# Vous devez spécifier les chemins complet vers les fichiers dans cet ordre: MNT, lieux-dits habités, lieux-dits non-habités, oronymes et toponymes divers ( Source IGN )
-php lizmap/scripts/script.php mascarine~import:gdalogr "/tmp/referentiels/sig/DEPT971.asc" "/tmp/referentiels/sig/LIEU_DIT_HABITE.SHP" "/tmp/referentiels/sig/LIEU_DIT_NON_HABITE.SHP" "/tmp/referentiels/sig/ORONYME.SHP" "/tmp/referentiels/sig/TOPONYME_DIVERS.SHP"
-
-```
-
-Suppression des référentiels géographiques
-
-```bash
-# On peut supprimer tout ou partie des données (avant réimport par exemple), via la commande purge, en passant une liste des tables séparées par virgule
-php lizmap/scripts/script.php occtax~import:purge -sig "commune,departement,maille_01,maille_02,maille_05,maille_10,espace_naturel,masse_eau" -occtax "habitat"
-# ou pour une table par exemple
-php lizmap/scripts/script.php occtax~import:purge -sig "espace_naturel"
-```
-
+* Suppression des communes: `psql service=naturaliz_pnrmartinique_dev -c "TRUNCATE sig.commune RESTART IDENTITY"`
+* Suppression des RNN dans la table des espaces naturels: `psql service=naturaliz_pnrmartinique_dev -c "DELETE FROM sig.espace_naturel WHERE type_en = 'RNN'"`
 
 NB: Pour les mailles 02, la donnée ne provient pas des sites du MNHN. Il faut appliquer une requête sur les données pour pouvoir modifier le code et qu'il ait la même structure que les données
 
