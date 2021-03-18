@@ -21,20 +21,8 @@ endemicite_description_subendemique=Mascareignes
 ; liste des rangs taxonomiques à intégrer dans les recherches
 liste_rangs="FM, GN, AGES, ES, SSES, NAT, VAR, SVAR, FO, SSFO, RACE, CAR, AB"
 
-; liste des codes des arr  t  s de protection qui concernent la zone de travail
-code_arrete_protection_simple="agri1,agri2,Bubul1,Bulbul2,Bulbul3,Bulbul4,Bulbul5,Bulbul6,Bulbul9,corbasi1,phelsuma1,phelsuma2,phelsuma3,phelsuma4,phelsuma5,PV97,REUEEA,REUEEI,REUP"
-code_arrete_protection_internationale="AIBA2,AIBA3,CCA,CCB,CCC,CCD,IAAP,IAO2,IAO3,IAO4,IBE1,IBE2,IBE3,IBOAE,IBO1,IBO2,IOS5"
-code_arrete_protection_communautaire="CDH2,CDH4,CDH5,CDO1,CDO21,CDO22,CDO31,CDO32"
-code_arrete_protection_nationale="VP974,NM,NMAMmar2,NM2,NO3,NO4,NO6,NTAA1,NTM1,NTM8,OC3,REUEA2,REUEA3,REUEA4,REUI2"
-
 ; liste séparée par virgule de mailles à utiliser. Par ex: maille_01,maille_10
 mailles_a_utiliser=maille_02,maille_10
-
-; typename WFS pour les imports
-znieff1_terre=reu_znieff1
-znieff1_mer=reu_znieff1_mer
-znieff2_terre=reu_znieff2
-znieff2_mer=reu_znieff2_mer
 
 ; liste de niveaux de validite à restreindre pour le grand public
 validite_niveaux_grand_public=1,2
