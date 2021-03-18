@@ -1,5 +1,10 @@
 # CHANGELOG
 
+### 2.7.8 - 18/03/2020
+
+* Fix bug dans le SQL des vues matérialisées
+* Doc & script - suppression des scripts d'import de données SIG
+
 ### 2.7.6 - 28/10/2020
 
 * Gestion - demande: suppression des champs cd_ref, group1_inpn et 2, validite_niveau
