@@ -123,9 +123,6 @@ class occtaxModuleInstaller extends jInstallerModule {
 
         }
 
-        try{
-            // Ce code ne fonctionne pas sur lizcloud, pour raison de mauvais search_path surchargé lors de l'installation
-            // voir pour remplacement occtax/install/sql/droits_jacl_occtax.pgsql.sql
         if ($this->firstExec('acl2') ) {
 
             // Create subjects
@@ -274,10 +271,6 @@ class occtaxModuleInstaller extends jInstallerModule {
                 )
             );
 
-        }
-
-        }catch (Exception $e){
-            jLog::log($e->getMessage());
         }
 
     }
