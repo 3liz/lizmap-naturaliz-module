@@ -719,43 +719,7 @@ FROM synthese_protection_priorisee s
 WHERE s.cd_nom = t.cd_nom_fk ; -- 2226 lignes MAJ
 
 
-/* Idem, on ne lance pas ce qui suit car on ne fait pas la distinction car tout est déjà intégré dans t_complement
--- UPDATE tous les taxons qui ont une protection
-WITH ss AS (
-    SELECT DISTINCT t.cd_nom,
-    CASE
-        WHEN p.cd_protection IN ('REUEA2', 'REUEA3', 'REUEA4', 'REUI2', 'VP974', 'NFM1', 'NMAMmar2', 'NMAMmar3', 'NMAMmar5', 'NTM1', 'NTAA1', 'IAO3', 'ISPAW1', 'ISPAW2', 'ISPAW3', 'NTM8') THEN 'EPN'
-        -- WHEN p.cd_protection IN ({$code_arrete_protection_communautaire}) THEN 'EPC' -- non applicable à La Réunion
-        WHEN p.cd_protection IN ('IBO1', 'IBO2', 'IBOAC', 'IBOAE', 'IBOAS', 'IBOAW', 'IBOC', 'IBOEU', 'REUEA2', 'REUEA3', 'REUEA4', 'REUI2', 'VP974', 'NFM1', 'NMAMmar2', 'NMAMmar3', 'NMAMmar5', 'NTM1', 'NTAA1', 'IAO3') THEN 'EPI'
-        WHEN p.cd_protection IN ('REUP', 'Bubul1', 'Bulbul2', 'Bulbul3', 'Bulbul4', 'Bulbul5', 'Bulbul6', 'Bulbul9', 'corbasi1', 'phelsuma1', 'phelsuma2', 'phelsuma3', 'phelsuma4', 'phelsuma5', 'REUEEA', 'REUEEI', 'REUnoEEEA2', 'agri1', 'agri2', 'PV97', 'REUnoEEEA', 'REUnoEEEV') THEN 'EPA'
-        ELSE NULL
-    END AS protection,
-    CASE
-        WHEN p.cd_protection IN ('REUEA2', 'REUEA3', 'REUEA4', 'REUI2', 'VP974', 'NFM1', 'NMAMmar2', 'NMAMmar3', 'NMAMmar5', 'NTM1', 'NTAA1', 'IAO3', 'ISPAW1', 'ISPAW2', 'ISPAW3', 'NTM8') THEN 0 -- EPN
-        WHEN p.cd_protection IN ({$code_arrete_protection_communautaire}) THEN 1
-        WHEN p.cd_protection IN ('IBO1', 'IBO2', 'IBOAC', 'IBOAE', 'IBOAS', 'IBOAW', 'IBOC', 'IBOEU', 'REUEA2', 'REUEA3', 'REUEA4', 'REUI2', 'VP974', 'NFM1', 'NMAMmar2', 'NMAMmar3', 'NMAMmar5', 'NTM1', 'NTAA1', 'IAO3') THEN 2 -- EPI
-        WHEN p.cd_protection IN ('REUP', 'Bubul1', 'Bulbul2', 'Bulbul3', 'Bulbul4', 'Bulbul5', 'Bulbul6', 'Bulbul9', 'corbasi1', 'phelsuma1', 'phelsuma2', 'phelsuma3', 'phelsuma4', 'phelsuma5', 'REUEEA', 'REUEEI', 'REUnoEEEA2', 'agri1', 'agri2', 'PV97', 'REUnoEEEA', 'REUnoEEEV') THEN 3 -- EPA
-        ELSE NULL
-    END AS note
-    FROM taxon.taxref_11 t
-    INNER JOIN taxon.protections p ON p.cd_nom::integer = t.cd_nom OR p.cd_nom::integer = t.cd_ref
-    WHERE TRUE
-    AND p.cd_protection IN (
-        {$code_arrete_protection_simple},
-        {$code_arrete_protection_nationale},
-        {$code_arrete_protection_internationale},
-        {$code_arrete_protection_communautaire}
-    )
-),
-s AS (
- SELECT DISTINCT cd_nom, FIRST_VALUE(protection) OVER (PARTITION BY cd_nom ORDER BY note) AS protection
- FROM ss
-)
-UPDATE t_complement c
-SET protection = s.protection
-FROM s
-WHERE c.cd_nom_fk = s.cd_nom AND (c.protection != s.protection OR c.protection IS NULL)
-;*/
+
 
 -- 4.8 Mise à jour du champ det_znieff
 -----------------------------
