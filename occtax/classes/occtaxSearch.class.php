@@ -596,6 +596,23 @@ class occtaxSearch {
             //jLog::log(json_encode($filters));
         }
 
+        // Add validation basket filter
+        if ($this->login && $this->params && array_key_exists('panier_validation', $this->params)) {
+            // Do not add validation basket filter if not right to do so
+            if (!jAcl2::check( 'occtax.admin.config.gerer' )) {
+                return $sql;
+            }
+            if ($this->params['panier_validation'] == '0' or !$this->params['panier_validation']) {
+                return $sql;
+            }
+
+            // Add filter
+            $sql.= " AND o.identifiant_permanent IN (
+                SELECT identifiant_permanent FROM occtax.validation_panier WHERE usr_login = ".$cnx->quote($this->login)."
+            )";
+
+        }
+
         return $sql;
     }
 

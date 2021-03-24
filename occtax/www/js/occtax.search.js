@@ -1510,7 +1510,8 @@ OccTax.events.on({
             'geom',
             'jdd_id', 'validite_niveau', 'observateur',
             'type_en',
-            'date_min', 'date_max'
+            'date_min', 'date_max',
+            'panier_validation',
         ];
         return white_params;
     }

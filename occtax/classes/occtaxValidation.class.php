@@ -72,6 +72,7 @@ class occtaxValidation {
     }
 
     public function addObservationToBasket($id) {
+        // TODO: Check the observation can be seen by the authenticated user !
         // Add observation to the basket
         $cnx = jDb::getConnection();
         $sql = " INSERT INTO occtax.validation_panier (usr_login, identifiant_permanent)";

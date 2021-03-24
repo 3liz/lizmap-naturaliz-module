@@ -154,6 +154,23 @@ class observationCtrl extends jController {
         $tpl->assign('observation_card_fields', $observation_card_fields);
         $tpl->assign('nomenclature', $nomenclature);
 
+        // Get validation status
+        if ($login && jAcl2::check( 'occtax.admin.config.gerer' )) {
+            $sql = " SELECT identifiant_permanent FROM occtax.validation_panier";
+            $sql.= " WHERE True";
+            $sql.= " AND usr_login = ";
+            $sql.= $cnx->quote($login);
+            $sql.= " AND identifiant_permanent = ";
+            $sql.= $cnx->quote($data['identifiant_permanent']);
+            $req = $cnx->query($sql);
+            $in_basket = false;
+            foreach($req as $item){
+                $in_basket = true;
+                break;
+            }
+            $tpl->assign('in_basket', $in_basket);
+        }
+
         // Get content
         $content = $tpl->fetch('occtax~observation');
         $rep->addContent( $content );

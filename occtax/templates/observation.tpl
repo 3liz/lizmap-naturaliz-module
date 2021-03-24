@@ -6,7 +6,13 @@
         <span style="font-weight: bold;" id="occtax_fiche_position" class=""></span>
         <button class="btn btn-primary" id="occtax_fiche_next">Suivant</button>
         <button class="btn btn-primary pull-right" id="occtax_fiche_zoom">Zoom</button>
+        {if $in_basket}
+        <button value="remove@{$data['identifiant_permanent']}" class="occtax_validation_button btn pull-right" tooltip="{@validation.button.validation_basket.remove.help@}">{@validation.button.validation_basket.remove.title@}</button>
+        {else}
+        <button value="add@{$data['identifiant_permanent']}" class="occtax_validation_button btn pull-right" tooltip="{@validation.button.validation_basket.add.help@}">{@validation.button.validation_basket.add.title@}</button>
+        {/if}
         <span style="display:none;">{if array_key_exists('geojson', $data)}{$data['geojson']}{/if}</span>
+
     </center>
 </div>
 

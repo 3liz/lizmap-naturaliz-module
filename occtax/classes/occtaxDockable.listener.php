@@ -14,8 +14,10 @@
                 $localConfig = jApp::configPath('naturaliz.ini.php');
                 $ini = new jIniFileModifier($localConfig);
 
-                // TAXON dock
+                // Add empty taxon dock
+                // Todo check why it is still needed
                 $content = '';
+
                 $dock = new lizmapMapDockItem(
                     'taxon',
                     jLocale::get("taxon~search.dock.title"),
@@ -76,6 +78,10 @@
                 }
                 if (!jAcl2::check("visualisation.donnees.brutes")) {
                     $form->deactivate( 'validite_niveau' );
+                }
+                // Remove validation basket field
+                if (!jAcl2::check("occtax.admin.config.gerer")) {
+                    $form->deactivate( 'panier_validation' );
                 }
 
                 // Remove form fields by config
@@ -263,7 +269,7 @@
 
                 // Basket dock
                 // Create search form
-                if (jAuth::isConnected() && jAcl2::check("visualisation.donnees.brutes")) {
+                if (jAuth::isConnected() && jAcl2::check("occtax.admin.config.gerer")) {
                     $tpl = new jTpl();
 
                     jClasses::inc('occtax~occtaxValidation');

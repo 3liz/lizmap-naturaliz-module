@@ -111,14 +111,25 @@ class defaultCtrl extends lizMapCtrl {
         }
 
         $data = array();
-        $path = jApp::getModulePath('occtax').'locales/'.$lang.'/search.UTF-8.properties';
-        if (file_exists($path)) {
-            $lines = file($path);
-            foreach ($lines as $lineNumber => $lineContent) {
-                if (!empty($lineContent) and $lineContent != '\n') {
-                    $exp = explode('=', trim($lineContent));
-                    if (!empty($exp[0])) {
-                        $data[$exp[0]] = jLocale::get('occtax~search.'.$exp[0], null, $lang);
+        $sources = array(
+            'occtax'=> array(
+                'search',
+                'validation',
+            ),
+        );
+
+        foreach ($sources as $module=>$files) {
+            foreach ($files as $lang_file) {
+                $path = jApp::getModulePath($module).'locales/'.$lang.'/'.$lang_file.'.UTF-8.properties';
+                if (file_exists($path)) {
+                    $lines = file($path);
+                    foreach ($lines as $lineNumber => $lineContent) {
+                        if (!empty($lineContent) and $lineContent != '\n') {
+                            $exp = explode('=', trim($lineContent));
+                            if (!empty($exp[0])) {
+                                $data[$exp[0]] = jLocale::get($module.'~'.$lang_file.'.'.$exp[0], null, $lang);
+                            }
+                        }
                     }
                 }
             }

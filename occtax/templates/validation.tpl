@@ -5,14 +5,11 @@
         <table>
             <tr>
                 <th>Nombre d'observations</th>
-                <td>{$counter}</td>
+                <td><span class="validation_basket_counter">{$counter}</span></td>
             </tr>
         </table>
         <form id="validation_form" method="post" action="{jurl 'occtax~validation:index'}">
-            <button value="get" class="occtax_validation_button btn btn-mini" tooltip="{@validation.button.empty_validation_basket.tooltip@}">Get</button>
-            <button value="add" class="occtax_validation_button btn btn-mini" tooltip="{@validation.button.empty_validation_basket.tooltip@}">Add</button>
-            <button value="remove" class="occtax_validation_button btn btn-mini" tooltip="{@validation.button.empty_validation_basket.tooltip@}">Del</button>
-            <button value="empty" class="occtax_validation_button btn btn-mini" tooltip="{@validation.button.empty_validation_basket.tooltip@}">{@validation.button.empty_validation_basket.title@}</button>
+            <button value="empty" class="occtax_validation_button btn btn-mini" title="{@validation.button.validation_basket.empty.help@}">{@validation.button.validation_basket.empty.title@}</button>
         </form>
 
     </div>

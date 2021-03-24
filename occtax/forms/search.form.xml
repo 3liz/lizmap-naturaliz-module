@@ -252,6 +252,16 @@ Menaces
 
     </group>
 
+    <group ref="validation">
+        <label locale="occtax~search.group.validation"/>
+
+        <checkbox ref="panier_validation" defaultvalue="0">
+            <label locale="occtax~search.input.panier_validation"/>
+            <hint locale="occtax~search.input.panier_validation.help"/>
+        </checkbox>
+
+    </group>
+
   <reset ref="reinit">
     <label locale="occtax~search.input.reinit"/>
     <hint locale="occtax~search.input.reinit.help"/>
