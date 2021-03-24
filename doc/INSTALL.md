@@ -1,30 +1,52 @@
 # Installation des modules Naturaliz pour Lizmap
 
-Pour pouvoir installer l'application Naturaliz, vous devez au préalable avoir installé un serveur cartographique basé sur Lizmap. Vous pouvez cela utiliser les script de déploiement automatique **lizmap-box** pour cela. Nous considérons dans la suite de ce document que Lizmap Web Client a été installé et est fonctionnel.
+Pour pouvoir installer l'application Naturaliz, vous devez au préalable avoir 
+installé un serveur cartographique basé sur Lizmap. Vous pouvez cela utiliser 
+les script de déploiement automatique **lizmap-box** pour cela. Nous considérons 
+dans la suite de ce document que Lizmap Web Client a été installé et est fonctionnel.
 
-> Attention: Pour que la recherche plein texte dans taxons fonctionne correctement, il est important de vérifier que la variable locale $LANG est bien spécifiée à fr_FR.UTF-8 avant l'installation de PostgreSQL. On peut par exemple ajouter cette ligne dans le fichier /etc/profile ```: ${LANG:=fr_FR.UTF-8}; export LANG``` et se déconnecter puis reconnecter, ou on peut exporter manuellement la variable.
+> Attention: Pour que la recherche plein texte dans taxons fonctionne correctement, 
+> il est important de vérifier que la variable locale `$LANG` est bien spécifiée 
+> à `fr_FR.UTF-8` avant l'installation de PostgreSQL. On peut par exemple ajouter 
+> cette ligne dans le fichier `/etc/profile`:
+> ```${LANG:=fr_FR.UTF-8}; export LANG;``` 
+> et se déconnecter puis reconnecter, ou on peut exporter manuellement la variable.
 
-Naturaliz s'appuie sur PostgreSQL pour stocker les données d'observations, mais aussi pour stocker les données liés aux utilisateurs (logins et mot de passe). Il faut donc préciser lors de l'installation via **lizmap-box** qu'on souhaite installer ces données des utilisateurs dans la base de données. Par exemple via les variable **lizmap_jauth_driver** passées dans la ligne de commande.
+Naturaliz s'appuie sur PostgreSQL pour stocker les données d'observations, mais 
+aussi pour stocker les données liés aux utilisateurs (logins et mot de passe). 
+Il faut donc préciser lors de l'installation via **lizmap-box** qu'on souhaite 
+installer ces données des utilisateurs dans la base de données. Par exemple via 
+les variable `lizmap_jauth_driver` passées dans la ligne de commande.
 
 
 ## Pré-requis PostGreSQL
 
 ### Base de données et utilisateurs
 
-Avant l'installation des modules Naturaliz, vous devez vous assurer d'avoir créé au préalable une base de donnée PostGreSQL, ou d'en avoir déjà une existante. Si vous avez utilisé les scripts **lizmap-box**, une base de données **lizmap** a été créée.
+Avant l'installation des modules Naturaliz, vous devez vous assurer d'avoir créé 
+au préalable une base de donnée PostGreSQL, ou d'en avoir déjà une existante. 
+Si vous avez utilisé les scripts **lizmap-box**, une base de données **lizmap** 
+a été créée.
 
-Pendant le processus d'installation de l'application, l'utilisateur PostGreSQL spécifié doit avoir les droits super-utilisateur, afin de pouvoir créer la structure (des droits hauts sont requis notamment pour les extensions). Vous pouvez utiliser l'utilisateur **postgres** pendant la phase d'installation.
+Pendant le processus d'installation de l'application, l'utilisateur PostGreSQL 
+spécifié doit avoir les droits super-utilisateur, afin de pouvoir créer la 
+structure (des droits hauts sont requis notamment pour les extensions). Vous 
+pouvez utiliser l'utilisateur **postgres** pendant la phase d'installation.
 
 
 ## Installer les modules Naturaliz sur une application Lizmap
 
 ### Utilisation du compte root
 
-Il est fortement conseillé d'utiliser le compte root et non avec un simple sudo. Par exemple `sudo -E -s`
+Il est fortement conseillé d'utiliser le compte root et non avec un simple 
+sudo. Par exemple `sudo -E -s`.
 
 ### Récupérer les modules
 
-Vous pouvez le faire via l'outil git, en se connectant avec vos identifiants de la plateforme git (Gitlab ou Github). Ou bien vous rendre sur la plateforme, et télécharger au format ZIP, puis coller le ZIP dans le répertoire /root/ et dézipper.
+Vous pouvez le faire via l'outil git, en se connectant avec vos identifiants de 
+la plateforme git (Gitlab ou Github). Ou bien vous rendre sur la plateforme, et 
+télécharger au format ZIP, puis coller le ZIP dans le répertoire /root/ et 
+dézipper.
 
 Dans l'exemple suivant, nous utilisons la plateforme Github de 3liz, avec accès https: https://github.com/3liz/lizmap-naturaliz-module/
 
@@ -42,39 +64,85 @@ ls -lh /srv/lizmap_web_client/lizmap/lizmap-modules/
 
 ### Adapter les fichiers de configuration pour Lizmap
 
-L'installateur lit certains fichiers de configuration, que vous devez donc créer et adapter à votre environnement avant de lancer l'installation. Des fichiers exemples sont fournis, que vous pouvez copier avant de les modifier.
+L'installateur lit certains fichiers de configuration, que vous devez donc créer 
+et adapter à votre environnement avant de lancer l'installation. Des fichiers 
+exemples sont fournis, que vous pouvez copier avant de les modifier.
+
 
 #### Configuration locale
 
-Les modules Naturaliz lisent dans le fichier **lizmap/var/config/naturaliz.ini.php** des informations relatives à l'adaptation au contexte local: projection, codes spécifiques, etc. Vous pouvez copier le contenu du fichier **lizmap/lizmap-modules/naturaliz.ini.php.dist** et le poser dans le fichier correspondant dans lizmap. Ce fichier doit contenir:
+Les modules Naturaliz lisent dans le fichier `lizmap/var/config/naturaliz.ini.php` 
+des informations relatives à l'adaptation au contexte local: projection, codes
+spécifiques, etc. Vous pouvez copier le contenu du fichier
+`lizmap/lizmap-modules/naturaliz.ini.php.dist` et le poser dans le fichier
+correspondant dans lizmap. Ce fichier doit contenir:
 
-* la **colonne locale des données TAXREF** correspondant au lieu principal de l'installation (par exemple "gua" pour la Guadeloupe) : variable **colonne_locale** de la section [taxon]
-* un **intitulé** pour les zones correspondant à l'endémicité (endémique et subendémique): variables **endemicite_description_endemique** (ex: Réunion) et **endemicite_description_subendemique** (Ex: Mascareignes)
-* la **liste des rangs** de taxons pour initialiser (seulement lors de l'installation ou de l'import d'une nouvelle version de taxref) la vue matérialisée de recherche plein texte. Variable **liste_rangs**. Par exemple `FM, GN, AGES, ES, SSES, NAT, VAR, SVAR, FO, SSFO, RACE, CAR, AB, KD, PH, CL, OR, SBFM, TR, SBOR, IFOR, SBCL`
+* la **colonne locale des données TAXREF** correspondant au lieu principal de
+  l'installation (par exemple "gua" pour la Guadeloupe) : variable
+  `colonne_locale` de la section `[taxon]`
+* un **intitulé** pour les zones correspondant à l'endémicité (endémique et subendémique): 
+  variables `endemicite_description_endemique` (ex: Réunion) et `endemicite_description_subendemique` (Ex: Mascareignes)
+* la **liste des rangs** de taxons pour initialiser (seulement lors de 
+  l'installation ou de l'import d'une nouvelle version de taxref) la vue 
+  matérialisée de recherche plein texte. Variable `liste_rangs`. 
+  Par exemple `FM, GN, AGES, ES, SSES, NAT, VAR, SVAR, FO, SSFO, RACE, CAR, AB, KD, PH, CL, OR, SBFM, TR, SBOR, IFOR, SBCL`.
 
-* le **code SRID** du système de coordonnées de références des données spatiales du projet : variable **srid** de la section [naturaliz].
-* le **libellé de la projection locale**: variable **libelle_srid**
-* le **mot de passe de l'utilisateur admin**: variable **adminPassword** de la section [naturaliz].
-* la **liste des types de mailles à utiliser** de la section [naturaliz]. Par exemple: `mailles_a_utiliser=maille_02,maille_10`
-* la **liste des niveaux de validité**, séparés par virgule, pour filtrer les observations pour le grand public, c'est-à-dire que seules les observations qui ont un niveau de validité correspondant à un des éléments de la liste pourront être visibles pour le grand public. Variable **validite_niveaux_grand_public** de la section [naturaliz]. Par exemple validite_niveaux_grand_public=1,2
-* la **taille maximale du polygone ou cercle de requête** que l'utilisateur peut dessiner sur la carte: **maxAreaQuery** . On met une valeur en m2, ou -1 pour désactiver le contrôle
-* la **couleur de bordure** des observations affichées (mailles et ronds): **strokeColor** Par défault à "#FFFFFF80". On peut gérer la transparence, par exemple via #fff0 pour une transparence totale
-* la **configuration des classes de légende** pour les affichages par maille: **legend_class**. On peut utiliser autant de legend_class[] que nécessaire, et on doit les écrire avec les informations suivantes séparées par point-virgule: intitulé de la classe; borne inférieure; borne supérieure; couleur. Ex: legend_class[]="De 1 à 10 observations; 1; 10; #FFFBC3"
-* Les **rayons min et max pour les cercles représentant les mailles** : **legend_min_radius** et **legend_max_radius**. L'application calcule automatiquement le rayon pour une classe à partir de ces 2 valeurs et du nombre de classes. Les valeurs doivent être indiquées pour que le cercle tienne dans un carré de 1000m de côté. L'application calcule le rayon en fonction de la maille ( X2 pour les mailles 2km, X10 pour les mailles de 10km, etc.. Par exemple 100 et 410 m respectivement.
-* La **liste des champs à afficher ou à exporter** dans la fiche d'observation (détail) et l'export en CSV ou WFS: **observation_card_fields**, **observation_card_fields_unsensitive**, **observation_card_children**, **observation_exported_fields** **observation_exported_fields_unsensitive**, **observation_exported_children**
-* L'ordre d'affichage des items dans la barre de menu de gauche: **menuOrder**. Par exemple `menuOrder=home, occtax-presentation, switcher, occtax, dataviz, print, measure, permaLink, occtax-legal, taxon, metadata`
-* liste des menaces à afficher respectivement dans le formulaire de recherche, l'icône menace à côté du nom de taxon, et dans le tableau des statistiques des taxons `search_form_menace_fields`, `taxon_detail_menace` et `taxon_table_menace_fields`
-* utilisateur PostgreSQL avec accès en lecture seule: **dbuser_readonly**. Par exemple `dbuser_readonly=naturaliz`
-* utilisateur PostgreSQL avec propriété sur les objets: **dbuser_owner**. Par exemple `dbuser_owner=lizmap`
-* Échelle maximum où zoomer avec le bouton de zoom par observation: **maximum_observation_scale**. Par exemple `maximum_observation_scale=24000`
-* Liste de localisations pour récupérer les statuts des taxons dans la fiche: **statut_localisations**. Par exemple `statut_localisations=fra,reu`
-* Type du lien pour récupérer les détails d'un taxon: **taxon_detail_source_type**: `api` pour afficher un panneau avec des informations issues de l'API du MNHN, ou `url` pour ouvrir une page externe à l'application, contenant le détail du taxon.
-* URL à utiliser pour voir la fiche détaillée: **taxon_detail_source_url**. Si le type du lien est API, cette URL est utilisée pour le bouton "Voir la fiche complète" situé en haut du panneau de détail d'un taxon. Si le type est URL, cliquer sur un nom de taxon ouvre simplement l'URL. On utilise dans cette URL le texte `CD_NOM` qui sera remplacé par le bon cd_nom. Par exemple: `https://inpn.mnhn.fr/espece/cd_nom/CD_NOM`
+* le **code SRID** du système de coordonnées de références des données spatiales du projet : variable `srid` de la section `[naturaliz]`.
+* le **libellé de la projection locale**: variable `libelle_srid`
+* le **mot de passe de l'utilisateur admin**: variable `adminPassword` de la section `[naturaliz]`.
+* la **liste des types de mailles à utiliser** de la section `[naturaliz]`. 
+  Par exemple: `mailles_a_utiliser=maille_02,maille_10`
+* la **liste des niveaux de validité**, séparés par virgule, pour filtrer les 
+  observations pour le grand public, c'est-à-dire que seules les observations 
+  qui ont un niveau de validité correspondant à un des éléments de la liste 
+  pourront être visibles pour le grand public. Variable `validite_niveaux_grand_public` 
+  de la section [naturaliz]. Par exemple `validite_niveaux_grand_public=1,2`
+* la **taille maximale du polygone ou cercle de requête** que l'utilisateur peut 
+  dessiner sur la carte: `maxAreaQuery`. On met une valeur en m2, ou -1 pour 
+  désactiver le contrôle
+* la **couleur de bordure** des observations affichées (mailles et ronds): 
+  `strokeColor` Par défault à `"#FFFFFF80"`. On peut gérer la transparence, 
+  par exemple via `#fff0` pour une transparence totale
+* la **configuration des classes de légende** pour les affichages par maille: 
+  `legend_class`. On peut utiliser autant de `legend_class[]` que nécessaire, et 
+  on doit les écrire avec les informations suivantes séparées par point-virgule: 
+  `intitulé de la classe; borne inférieure; borne supérieure; couleur`. Ex: `legend_class[]="De 1 à 10 observations; 1; 10; #FFFBC3"`
+* Les **rayons min et max pour les cercles représentant les mailles** : 
+  `legend_min_radius` et `legend_max_radius`. L'application calcule 
+  automatiquement le rayon pour une classe à partir de ces 2 valeurs et du 
+  nombre de classes. Les valeurs doivent être indiquées pour que le cercle 
+  tienne dans un carré de 1000m de côté. L'application calcule le rayon en 
+  fonction de la maille ( X2 pour les mailles 2km, X10 pour les mailles de 
+  10km, etc.. Par exemple 100 et 410 m respectivement.
+* La **liste des champs à afficher ou à exporter** dans la fiche d'observation 
+  (détail) et l'export en CSV ou WFS: `observation_card_fields`, 
+  `observation_card_fields_unsensitive`, `observation_card_children`, 
+  `observation_exported_fields` `observation_exported_fields_unsensitive`, 
+  `observation_exported_children`
+* L'ordre d'affichage des items dans la barre de menu de gauche: `menuOrder`. 
+  Par exemple `menuOrder=home, occtax-presentation, switcher, occtax, dataviz, print, measure, permaLink, occtax-legal, taxon, metadata`
+* liste des menaces à afficher respectivement dans le formulaire de recherche, 
+  l'icône menace à côté du nom de taxon, et dans le tableau des statistiques des 
+  taxons `search_form_menace_fields`, `taxon_detail_menace` et `taxon_table_menace_fields`
+* utilisateur PostgreSQL avec accès en lecture seule: `dbuser_readonly`. Par exemple `dbuser_readonly=naturaliz`
+* utilisateur PostgreSQL avec propriété sur les objets: `dbuser_owner`. Par exemple `dbuser_owner=lizmap`
+* Échelle maximum où zoomer avec le bouton de zoom par observation: 
+  `maximum_observation_scale`. Par exemple `maximum_observation_scale=24000`
+* Liste de localisations pour récupérer les statuts des taxons dans la fiche: 
+  `statut_localisations`. Par exemple `statut_localisations=fra,reu`
+* Type du lien pour récupérer les détails d'un taxon: `taxon_detail_source_type`: 
+  `api` pour afficher un panneau avec des informations issues de l'API du MNHN, 
+  ou `url` pour ouvrir une page externe à l'application, contenant le détail du taxon.
+* URL à utiliser pour voir la fiche détaillée: `taxon_detail_source_url`. Si 
+  le type du lien est API, cette URL est utilisée pour le bouton 
+  "Voir la fiche complète" situé en haut du panneau de détail d'un taxon. 
+  Si le type est URL, cliquer sur un nom de taxon ouvre simplement l'URL. 
+  On utilise dans cette URL le texte `CD_NOM` qui sera remplacé par le bon `cd_nom`. Par exemple: `https://inpn.mnhn.fr/espece/cd_nom/CD_NOM`
 
 
 Pour le module mascarine:
 
-* le code officiel (cf standard "Occurence de taxon", champ ) des habitats de la zone d'étude (par exemple GUAEAR )
+* le code officiel (cf standard `"Occurence de taxon"`, champ ) des habitats de la zone d'étude (par exemple `GUAEAR` )
 
 Voir l'exemple naturaliz.ini.php.dist à la racine de ce dépôt.
 
@@ -191,11 +259,18 @@ statut_localisations=fra,reu
 
 #### Configuration des accès à PostgreSQL
 
-Vous devez vérifier dans le fichier **lizmap/var/config/profiles.ini.php** les informations de connexion à la base de données PostGreSQL : l'utilisateur doit **avoir des droits élevé pour l'installation**. Vous pouvez par exemple utiliser l'utilisateur *postgres*
+Vous devez vérifier dans le fichier `lizmap/var/config/profiles.ini.php` 
+les informations de connexion à la base de données PostGreSQL : l'utilisateur 
+doit **avoir des droits élevé pour l'installation**. Vous pouvez par exemple 
+utiliser l'utilisateur *postgres*.
 
-Dans la section [jdb:jauth], modifier les variables "user" et "password" pour utiliser par exemple l'utilisateur "postgres". Vous pouvez aussi modifier l'hôte de connexion, le port et le nom de la base de données si besoin.
+Dans la section [jdb:jauth], modifier les variables "user" et "password" 
+pour utiliser par exemple l'utilisateur "postgres". Vous pouvez aussi modifier 
+l'hôte de connexion, le port et le nom de la base de données si besoin.
 
-Si vous avez installé Lizmap via **lizmap-box**, vous devez remplacer l'utilisateur *lizmap* par *postgres* et remplacer le mot de passe par celui entré pour postgres.
+Si vous avez installé Lizmap via **lizmap-box**, vous devez remplacer 
+l'utilisateur *lizmap* par *postgres* et remplacer le mot de passe par 
+celui entré pour postgres.
 
 
 ```bash
@@ -217,7 +292,8 @@ persistent=off
 search_path=""
 ```
 
-Vous devez aussi déclarer dans le fichier `localconfig.ini.php` quels modules vous souhaitez installer:
+Vous devez aussi déclarer dans le fichier `localconfig.ini.php` quels modules 
+vous souhaitez installer:
 
 ```bash
 cd /srv/lizmap_web_client/
@@ -239,7 +315,8 @@ occtax_admin.access=2
 
 ### Lancer l'installation des modules Naturaliz
 
-Modifiez les droits pour que l'application puisse écrire dans les répertoires temporaires, puis lancer l'installateur de l'application
+Modifiez les droits pour que l'application puisse écrire dans les répertoires 
+temporaires, puis lancer l'installateur de l'application.
 
 ```bash
 cd /srv/lizmap_web_client/
@@ -247,7 +324,9 @@ lizmap/install/set_rights.sh
 php lizmap/install/installer.php
 ```
 
-Si l'installation s'est bien passée, vous ne devez pas voir d'erreurs affichées dans le log. Si ce n'est pas le cas, vérifier les fichiers de configuration, notamment l'accès à la base de données.
+Si l'installation s'est bien passée, vous ne devez pas voir d'erreurs affichées 
+dans le log. Si ce n'est pas le cas, vérifier les fichiers de configuration, 
+notamment l'accès à la base de données.
 
 Exemple de retour convenable:
 
@@ -275,14 +354,17 @@ Installation ended.
 
 ```
 
-Une fois cette installation réussie, vous avez maintenant une base de donnée qui contient l'ensemble des schémas nécessaires à l'application, avec les tables et fonctions.
+Une fois cette installation réussie, vous avez maintenant une base de donnée qui 
+contient l'ensemble des schémas nécessaires à l'application, avec les tables et fonctions.
 
-Il faut maintenant créer un utilisateur aux droits limités, qui sera utilisé par l'application Web pour lancer les requêtes:
+Il faut maintenant créer un utilisateur aux droits limités, qui sera utilisé par 
+l'application Web pour lancer les requêtes:
 
-* créer un utilisateur **naturaliz** dans PostgreSQL
+* créer un utilisateur `naturaliz` dans PostgreSQL
 * donner les **droits** d'accès à la base de données, aux tables et aux fonctions.
 
-Vous pouvez créer l'utilisateur naturaliz via les commandes suivantes (ou via votre client PostgreSQL, par exemple PgAdmin)
+Vous pouvez créer l'utilisateur naturaliz via les commandes suivantes (ou via 
+votre client PostgreSQL, par exemple PgAdmin)
 
 
 ```bash
@@ -327,7 +409,8 @@ exit
 ```
 
 
-On peut aussi faire cela plus directement ainsi. ATTENTION: remplacer le nom de la base naturaliz par votre nom (ex: naturaliz_reunion)
+On peut aussi faire cela plus directement ainsi. ATTENTION: remplacer le nom de 
+la base naturaliz par votre nom (ex: naturaliz_reunion)
 
 ```sql
 -- Ajout des droits sur les objets de la base pour naturaliz
@@ -356,7 +439,8 @@ ALTER ROLE naturaliz SET search_path TO taxon,occtax,gestion,mascarine,sig,publi
 ```
 
 
-Pour l'utilisateur lizmap qui n'est pas superuser mais a les droits sur la base de données Lizmap (création, suppression de tables, schéma, etc.)
+Pour l'utilisateur lizmap qui n'est pas superuser mais a les droits sur la base 
+de données Lizmap (création, suppression de tables, schéma, etc.)
 
 ```sql
 -- Ajout des droits sur les objets de la base pour lizmap
@@ -376,7 +460,13 @@ ALTER ROLE lizmap SET search_path TO taxon,occtax,gestion,sig,public;
 ```
 
 
-Une fois cet utlisateur créé et les droits appliqués, vous devez modifier le fichier de configuration des profils `lizmap/var/config/profiles.ini.php` pour remplacer l'utilisateur "postgres" par l'utilisateur avec droits limités "naturaliz" dans la section `[jdb:jauth]`. Il faut ensuite copier/coller les informations de cette section, et créer une nouvelle section [jdb:jauth_super] qui aura les mêmes informations, mais avec des droits superuser (elle sera utilisée pour les mises à jours notamment).
+Une fois cet utlisateur créé et les droits appliqués, vous devez modifier 
+le fichier de configuration des profils `lizmap/var/config/profiles.ini.php` pour 
+remplacer l'utilisateur "postgres" par l'utilisateur avec droits limités "naturaliz" 
+dans la section `[jdb:jauth]`. Il faut ensuite copier/coller les informations 
+de cette section, et créer une nouvelle section `[jdb:jauth_super]` qui aura les 
+mêmes informations, mais avec des droits superuser (elle sera utilisée pour les 
+mises à jours notamment).
 
 ```bash
 cd /srv/lizmap_web_client/
@@ -389,7 +479,9 @@ lizmap/install/set_rights.sh www-data www-data
 ```
 
 
-Dans le fichier `lizmap/var/config/profiles.ini.php`, vous aurez donc les 2 sections `[jdb:jauth]` et `[jdb:jauth_super]` suivantes (adapter les mots de passe, et nom de la bdd si besoin):
+Dans le fichier `lizmap/var/config/profiles.ini.php`, vous aurez donc les 2 
+sections `[jdb:jauth]` et `[jdb:jauth_super]` suivantes (adapter les mots de 
+passe, et nom de la bdd si besoin):
 
 ```ini
 [jdb:jauth]
@@ -415,7 +507,9 @@ search_path="public,taxon,sig,occtax,gestion"
 ```
 
 
-**IMPORTANT** L'application utilise un service PostgreSQL pour certaines fonctionnalités, comme l'export PDF des cartes. Vous devez donc configurer ce service sur le serveur.
+**IMPORTANT** L'application utilise un service PostgreSQL pour certaines 
+fonctionnalités, comme l'export PDF des cartes. Vous devez donc configurer 
+ce service sur le serveur.
 
 ```bash
 nano /etc/postgresql-common/pg_service.conf
@@ -440,17 +534,25 @@ psql service=naturaliz
 
 ## Importer les données de référence
 
-L'installateur a créé la structure dans la base de données PostGreSQL (schéma, tables, vues, etc.), mais aucune donnée n'a encore été importée, à part les listes liées à la nomenclature du standard TAXREF et du schéma Occurence de taxons. Les imports peuvent être réalisés via des scripts de l'application. Pour cela, il faut bien avoir configuré le fichier `lizmap/var/config/profiles.ini.php` comme décrit précédemment.
+L'installateur a créé la structure dans la base de données PostGreSQL (schéma, 
+tables, vues, etc.), mais aucune donnée n'a encore été importée, à part les 
+listes liées à la nomenclature du standard TAXREF et du schéma Occurence de 
+taxons. Les imports peuvent être réalisés via des scripts de l'application. 
+Pour cela, il faut bien avoir configuré le fichier `lizmap/var/config/profiles.ini.php` 
+comme décrit précédemment.
 
 ### Import TAXREF : données officielles des taxons
 
-Pour pouvoir effectuer des recherche via le module taxon, vous devez au préalable récupérer les données officielles du TAXREF, puis les importer.
+Pour pouvoir effectuer des recherche via le module taxon, vous devez au 
+préalable récupérer les données officielles du TAXREF, puis les importer.
 
-Les fichiers concernant TAXREF, les menaces (listes rouges) et les protections sont téléchargés directement depuis la plateforme SINP (site du MNHN)
+Les fichiers concernant TAXREF, les menaces (listes rouges) et les protections 
+sont téléchargés directement depuis la plateforme SINP (site du MNHN)
 
 #### Taxref
 
-L'import du taxref se fait à la main, en se connectant à la base de données PostgreSQL via un client comme PgAdmin. Un fichier d'exemple est fourni: [fichier exemple d'import](doc/taxref/import_taxref.sql)
+L'import du taxref se fait à la main, en se connectant à la base de données 
+PostgreSQL via un client comme PgAdmin. Un fichier d'exemple est fourni: [fichier exemple d'import](doc/taxref/import_taxref.sql)
 
 Le fichier officiel du taxref, par exemple *TAXREFv13.txt*
 
@@ -458,9 +560,13 @@ Le fichier officiel du taxref, par exemple *TAXREFv13.txt*
 
 #### Menaces (listes rouges)
 
-Le fichier des listes rouges, par exemple `LR_Resultats_Guadeloupe_complet_export.csv`.  On utilise pour remplir la colonne menace de la table `t_complement` le champ `CATEGORIE_FR` et non `CATEGORIE_MONDE`.
+Le fichier des listes rouges, par exemple `LR_Resultats_Guadeloupe_complet_export.csv`.
+On utilise pour remplir la colonne menace de la table `t_complement` le 
+champ `CATEGORIE_FR` et non `CATEGORIE_MONDE`.
 
-* Source: https://inpn.mnhn.fr/telechargement/acces-par-thematique/listes-rouges# Aller dans *Liste rouge Réunion* puis cliquer sur *Publication et résultats* puis sur *Réunion: consulter tous les résultats* Puis *Exporter les données: CSV*
+* Source: https://inpn.mnhn.fr/telechargement/acces-par-thematique/listes-rouges# 
+  Aller dans *Liste rouge Réunion* puis cliquer sur *Publication et résultats* 
+  puis sur *Réunion: consulter tous les résultats* Puis *Exporter les données: CSV*
 * Lien (exemple, peut changer):
   * https://inpn.mnhn.fr/telechargement/acces-par-thematique/listes-rouges/FR/territoire/REU?6578706f7274=1&d-7649687-e=1 pour la Réunion
   * https://inpn.mnhn.fr/telechargement/acces-par-thematique/listes-rouges/FR/territoire/GLP?6578706f7274=1&d-7649687-e=1 pour la Guadeloupe
@@ -490,11 +596,14 @@ categorie_lr_monde text
 
 #### Noms vernaculaires
 
-Depuis la version 11 du TAXREF, il existe un fichier qui contient les noms vernaculaires pour les taxons. Pour pouvoir importer ce fichier, il faut préciser via l'option `-taxvern` le chemin du fichier, et préciser le code `iso639_3`. Par exemple `rcf`
+Depuis la version 11 du TAXREF, il existe un fichier qui contient les noms 
+vernaculaires pour les taxons. Pour pouvoir importer ce fichier, il faut 
+préciser via l'option `-taxvern` le chemin du fichier, et préciser 
+le code `iso639_3`. Par exemple `rcf`
 
 #### Lancer l'import des données TAXREF dans l'application
 
-Une fois les données récupérées, vous pouvez l'import de données via la commande suivante:
+Une fois les données récupérées, vous pouvez l'import de données via la commande suivante :
 
 ```bash
 # Vérifier les codes d'arrêtés de protection dans la configuration locale
@@ -508,12 +617,20 @@ php lizmap/scripts/script.php taxon~import:taxref -source /tmp/referentiels/taxr
 ```
 
 * Le premier paramètre passé est le chemin complet vers le fichier CSV contenant les données.
-* Le 2ème paramètre est le chemin vers le fichier TAXVERN. Si non existant, mettre: non
-* Le 3ème est le code ISO de la langue du TAXVERN à considérer, (champs "iso639_3") par exemple `rcf` pour la Réunion. Si inaplicable mettre: `fra`
-* Le 4ème est le chemin vers le fichier des menaces (taxons sur listes rouges, filtré pour la région concernée).Le 3ème est le fichier contenant les taxon protégés. Vous pouvez pointer vers d'autres chemins de fichiers, et le script se chargera de copier les données dans le répertoire temporaire puis lancera l'import.
+* Le 2ème paramètre est le chemin vers le fichier TAXVERN. Si non existant, mettre: `non`
+* Le 3ème est le code ISO de la langue du TAXVERN à considérer, (champs "iso639_3") 
+  par exemple `rcf` pour la Réunion. Si inapplicable mettre : `fra`
+* Le 4ème est le chemin vers le fichier des menaces (taxons sur listes rouges, 
+  filtré pour la région concernée). Le 3ème est le fichier contenant les taxons 
+  protégés. Vous pouvez pointer vers d'autres chemins de fichiers, et le script 
+  se chargera de copier les données dans le répertoire temporaire puis lancera l'import.
 * Le dernier paramètre est la version du fichier TAXREF (7, 8, 9, 10, 11 sont possibles).
 
-Parfois, il peut être utile de modifier certaines données du TAXREF (par exemple pour compléter les noms vernaculaires locaux). Pour cela, vous pouvez utiliser 2 options -correctionsql et -correctioncsv qui permettent de fournir un fichier SQL et un fichier CSV source (utilisé dans le fichier SQL). Voir l'exemple dans le répertoire taxon/install/sql/correction
+Parfois, il peut être utile de modifier certaines données du TAXREF (par exemple 
+pour compléter les noms vernaculaires locaux). Pour cela, vous pouvez utiliser 
+2 options `-correctionsql` et `-correctioncsv` qui permettent de fournir un 
+fichier SQL et un fichier CSV source (utilisé dans le fichier SQL). Voir 
+l'exemple dans le répertoire `taxon/install/sql/correction`.
 
 Vous pouvez voir l'aide de la commande via:
 
@@ -521,9 +638,12 @@ Vous pouvez voir l'aide de la commande via:
 php lizmap/scripts/script.php help taxon~import:taxref
 ```
 
-**NB** Les fichiers concernant les menaces (listes rouges) et les protections sont téléchargés directement depuis la plateforme SINP:
+**NB** Les fichiers concernant les menaces (listes rouges) et les protections 
+sont téléchargés directement depuis la plateforme SINP:
 
-**Note** Une fois l'import finalisé, il peut être intéressant de vérifier que les données de protection et de menaces font bien référence à des taxons présents dans le TAXREF (CD_NOM).
+**Note** Une fois l'import finalisé, il peut être intéressant de vérifier que 
+les données de protection et de menaces font bien référence à des taxons 
+présents dans le TAXREF (CD_NOM).
 
 
 
@@ -539,8 +659,10 @@ Certaines données spatiales de références sont nécessaires au fonctionnement
 
 Ces données peuvent être récupérées sur le site du MNHN : https://inpn.mnhn.fr/telechargement/cartes-et-information-geographique/ref/referentiels
 
-Nous conseillons de récupérer au maximum les données au format WFS (Web Feature Service), pour être sûr d'avoir les données les plus à jour.
-Certaines données doivent être récupérées ailleurs, comme par exemple les communes et les mailles 1x1km et 2x2km.
+Nous conseillons de récupérer au maximum les données au format WFS 
+(Web Feature Service), pour être sûr d'avoir les données les plus à jour.
+Certaines données doivent être récupérées ailleurs, comme par exemple les 
+communes et les mailles 1x1km et 2x2km.
 
 Les habitats doivent aussi être récupérés et importés.
 
@@ -548,17 +670,19 @@ Les habitats doivent aussi être récupérés et importés.
 * Liste des habitats marins, par exemple TYPO_ANT_MER ( Liste des habitats marins des Antilles (Martinique, Guadeloupe) )
 * Liste des habitats terrestres, par exemple ceux de la Carte Écologique d'Alain Rousteau
 
-Il faut créer la couche Mailles 2x2 à partir de la couche 1x1, dans QGIS, via la procédure suivante:
+Il faut créer la couche Mailles 2x2 à partir de la couche 1x1, dans QGIS, via la procédure suivante :
 
 * Menu Vecteur / Outils de recherche / Grille vecteur
 * Etendue de la grille : choisir la couche de mailles 1x1km
 * Cliquer sur le bouton "Mettre à jour l'emprise depuis la couche"
-* Paramètres : mettre 2000 dans la case X
+* Paramètres : mettre `2000` dans la case `X`
 * Cocher "Grille en sortie en tant que polygone"
 * Choisir un fichier de sortie ( le mettre au même endroit que le fichier des mailles 1x1km
 * Lancer le traitement via le bouton OK
 
-Pour pouvoir importer ces données dans la base, il faut le faire manuellement. Nous conseillons fortement d'utiliser l'outil en ligne de commande **ogr2ogr** qui permet de bien contrôler les options d'import: encodage, renommage de champs, filtres, etc.
+Pour pouvoir importer ces données dans la base, il faut le faire manuellement. 
+Nous conseillons fortement d'utiliser l'outil en ligne de commande `ogr2ogr` 
+qui permet de bien contrôler les options d'import: encodage, renommage de champs, filtres, etc.
 
 Un script exemple est disponible dans le code source de naturaliz:
 
@@ -570,16 +694,21 @@ Ces scripts contiennent une liste de commandes à lancer manuellement une à une
 Pour pouvoir lancer ces commandes ogr2ogr d'import, il faut d'abord installer Gdal:
 
 * Sous Linux, il faut installer Gdal, avec la commande `apt install gdal-bin`
-* Sous Windows, il faut avoir préalablement installé QGIS, puis lancer l'invite de commande **Osgeo4W Shell**
+* Sous Windows, il faut avoir préalablement installé QGIS, puis lancer l'invite de commande `Osgeo4W Shell`
 
-Il faut aussi avoir configuré un **service PostgreSQL** pour pouvoir accéder à la base de données sur laquelle l'application Naturaliz est installée.
+Il faut aussi avoir configuré un **service PostgreSQL** pour pouvoir accéder à 
+la base de données sur laquelle l'application Naturaliz est installée.
 
-Dans les scripts, certaines commandes commentées permettent de supprimer les données SIG, par exemple suite à une erreur d'import, pour repartir de zéro. Par exemple:
+Dans les scripts, certaines commandes commentées permettent de supprimer les 
+données SIG, par exemple suite à une erreur d'import, pour repartir de zéro. 
+Par exemple:
 
 * Suppression des communes: `psql service=naturaliz_pnrmartinique_dev -c "TRUNCATE sig.commune RESTART IDENTITY"`
 * Suppression des RNN dans la table des espaces naturels: `psql service=naturaliz_pnrmartinique_dev -c "DELETE FROM sig.espace_naturel WHERE type_en = 'RNN'"`
 
-NB: Pour les mailles 02, la donnée ne provient pas des sites du MNHN. Il faut appliquer une requête sur les données pour pouvoir modifier le code et qu'il ait la même structure que les données
+NB: Pour les mailles 02, la donnée ne provient pas des sites du MNHN. Il faut 
+appliquer une requête sur les données pour pouvoir modifier le code et qu'il ait 
+la même structure que les données
 
 ```sql
 WITH a AS (
@@ -633,7 +762,10 @@ FROM sig.zone_economique_exclusive;
 
 ## Activer les modules dans l'interface d'administration
 
-Les modules **occtax_admin** et **mascarine_admin** doivent être déclarés dans la configuration de Lizmap, pour permettre leur visualisation dans l'interface graphique. Pour cela, il faut modifier le fichier **lizmap/var/config/localconfig.ini.php** et ajouter la configuration suivante au début du fichier
+Les modules `occtax_admin` et `mascarine_admin` doivent être déclarés dans la 
+configuration de Lizmap, pour permettre leur visualisation dans l'interface 
+graphique. Pour cela, il faut modifier le fichier `lizmap/var/config/localconfig.ini.php` 
+et ajouter la configuration suivante au début du fichier
 
 ```bash
 cd /srv/lizmap_web_client/
@@ -656,16 +788,16 @@ Pour cela, il y a un module spécifique ldapdao. Il est activé, mais
 pas l'authentification ldap.
 
 Pour se faire, après l'installation, il faut modifier les fichiers
-lizmap/var/config/admin/config.ini.php et lizmap/var/config/index/config.ini.php,
+`lizmap/var/config/admin/config.ini.php` et `lizmap/var/config/index/config.ini.php`,
 en modifiant le nom du fichier pour le plugin auth.
 
-dans lizmap/var/config/admin/config.ini.php :
+dans `lizmap/var/config/admin/config.ini.php` :
 
 ```ini
 [coordplugins]
 auth="admin/authldap.coord.ini.php"
 ```
-et dans lizmap/var/config/index/config.ini.php
+et dans `lizmap/var/config/index/config.ini.php`
 
 ```ini
 [coordplugins]
@@ -673,7 +805,7 @@ auth="index/authldap.coord.ini.php"
 ```
 
 Il faut parfois aussi installer le certificat racine SSL du serveur ldap, sur le serveur
-apache/php, sinon la connexion au ldap ne pourra se faire. En tant que root:
+apache/php, sinon la connexion au ldap ne pourra se faire. En tant que root :
 
 ```bash
 cp lizmap/install/png_ldap.crt /usr/local/share/ca-certificates
@@ -684,17 +816,17 @@ service nginx restart
 
 ## Configuration diverses
 
-On peut augmenter le temps de session PHP pour éviter des déconnexion suites à une inactivité.
+On peut augmenter le temps de session PHP pour éviter des déconnexions suite à une inactivité.
 Par exemple
 
 ```bash
-nano /etc/php5/fpm/php.ini
+nano /etc/php/7.4/fpm/php.ini
 
 # modifier la variable session.gc_maxlifetime. Par exemple ici à 7H
 session.gc_maxlifetime = 25200
 
 # Enregistrer et recharger
-service php5-fpm reload
+service php7.4-fpm reload
 ```
 
 
