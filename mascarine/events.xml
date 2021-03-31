@@ -1,8 +1,0 @@
-<events xmlns="http://jelix.org/ns/events/1.0">
-    <listener name="mascarineView">
-       <event name="mainviewGetMaps" />
-   </listener>
-    <listener name="mascarineDockable">
-        <event name="mapDockable" />
-    </listener>
-</events>
