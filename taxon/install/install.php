@@ -25,35 +25,29 @@ class taxonModuleInstaller extends jInstallerModule {
         // Install taxon structure into database if needed
         if ($this->firstDbExec()) {
 
-            try {
-                // Add taxon schema and tables
-                $sqlPath = $this->path . 'install/sql/install.pgsql.sql';
-                $localConfig = jApp::configPath('naturaliz.ini.php');
-                $ini = new jIniFileModifier($localConfig);
-                $sqlTpl = jFile::read( $sqlPath );
-                $tpl = new jTpl();
-                $colonne_locale = $ini->getValue('colonne_locale', 'naturaliz');
-                $tpl->assign('colonne_locale', $colonne_locale);
-                $liste_rangs = $ini->getValue('liste_rangs', 'naturaliz');
-                if(empty($liste_rangs)){
-                    $liste_rangs = "FM, GN, AGES, ES, SSES, NAT, VAR, SVAR, FO, SSFO, RACE, CAR, AB";
-                }
-                $liste_rangs = "'" . implode(
-                      "', '",
-                      array_map( 'trim', explode(',', $liste_rangs) )
-                ) . "'";
-                $tpl->assign('liste_rangs', $liste_rangs);
-                $sql = $tpl->fetchFromString($sqlTpl, 'text');
-                $db = $this->dbConnection();
-                $db->exec($sql);
-
-                // Add data for lists
-                $this->execSQLScript('sql/data');
-
-            } catch (Exception $e){
-                jLog::log("Cannot install PostgreSQL database structure");
-                jLog::log($e->getMessage());
+            // Add taxon schema and tables
+            $sqlPath = $this->path . 'install/sql/install.pgsql.sql';
+            $localConfig = jApp::configPath('naturaliz.ini.php');
+            $ini = new jIniFileModifier($localConfig);
+            $sqlTpl = jFile::read( $sqlPath );
+            $tpl = new jTpl();
+            $colonne_locale = $ini->getValue('colonne_locale', 'naturaliz');
+            $tpl->assign('colonne_locale', $colonne_locale);
+            $liste_rangs = $ini->getValue('liste_rangs', 'naturaliz');
+            if(empty($liste_rangs)){
+                $liste_rangs = "FM, GN, AGES, ES, SSES, NAT, VAR, SVAR, FO, SSFO, RACE, CAR, AB";
             }
+            $liste_rangs = "'" . implode(
+                  "', '",
+                  array_map( 'trim', explode(',', $liste_rangs) )
+            ) . "'";
+            $tpl->assign('liste_rangs', $liste_rangs);
+            $sql = $tpl->fetchFromString($sqlTpl, 'text');
+            $db = $this->dbConnection();
+            $db->exec($sql);
+
+            // Add data for lists
+            $this->execSQLScript('sql/data');
 
         }
 
