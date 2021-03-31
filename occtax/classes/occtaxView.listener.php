@@ -23,18 +23,46 @@ class occtaxViewListener extends jEventListener{
                 if ( $lproj ) {
                     jClasses::inc('lizmapMainViewItem');
                     $mrep = new lizmapMainViewItem('app_naturaliz', $applicationName);
-                    $mrep->childItems[] = new lizmapMainViewItem(
-                        'occtax_'.$lproj->getData('id'),
-                        $projectName,
-                        $projectName .'&nbsp;: <br/>'.$projectDescription,
-                        $lproj->getData('proj'),
-                        $lproj->getData('bbox'),
-                        jUrl::get('occtax~default:index'),
-                        jUrl::get('view~media:illustration', array("repository"=>$lproj->getData('repository'),"project"=>$lproj->getData('id'))),
-                        2,
-                        'naturaliz',
-                        'map'
-                    );
+
+                    // Get Lizmap version
+                    $xmlPath = jApp::appPath('project.xml');
+                    $xmlLoad = simplexml_load_file($xmlPath);
+                    $version = (string) $xmlLoad->info->version;
+                    $exp_version = explode('.', $version);
+                    $major = (integer) $exp_version[0];
+                    $minor = (integer) $exp_version[1];
+
+                    // Return different array depending on Lizmap version
+                    if ($major < 3 || ($major = 3 && $minor <= 3)) {
+                        $mrep->childItems[] = new lizmapMainViewItem(
+                            'occtax_'.$lproj->getData('id'),
+                            $projectName,
+                            $projectName .'&nbsp;: <br/>'.$projectDescription,
+                            $lproj->getData('proj'),
+                            $lproj->getData('bbox'),
+                            jUrl::get('occtax~default:index'),
+                            jUrl::get('view~media:illustration', array("repository"=>$lproj->getData('repository'),"project"=>$lproj->getData('id'))),
+                            2,
+                            'naturaliz',
+                            'map'
+                        );
+                    } else {
+                        $mrep->childItems[] = new lizmapMainViewItem(
+                            'occtax_'.$lproj->getData('id'),
+                            $projectName,
+                            $projectName .'&nbsp;: <br/>'.$projectDescription,
+                            '', // keywords added here in LWC 3.4
+                            $lproj->getData('proj'),
+                            $lproj->getData('bbox'),
+                            jUrl::get('occtax~default:index'),
+                            jUrl::get('view~media:illustration', array("repository"=>$lproj->getData('repository'),"project"=>$lproj->getData('id'))),
+                            2,
+                            'naturaliz',
+                            'map'
+                        );
+                    }
+
+                    // Add response
                     $event->add( $mrep );
                 }
             }
