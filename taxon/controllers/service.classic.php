@@ -61,7 +61,7 @@ class serviceCtrl extends jController {
         }
 
         // Add field depending on given "group" value
-        $dao_group = jDao::get('taxon~t_group_categorie');
+        $dao_group = jDao::get('taxon~t_group_categorie', 'naturaliz_virtual_profile');
         $fgroup = $form->getData( 'group' );
         if(is_array($fgroup)){
             $groups = $dao_group->getGroupsInpnFromTable( $fgroup );

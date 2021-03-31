@@ -18,14 +18,14 @@ FROM (
   o.nom_cite,
   o.cd_nom,
   to_char(date_debut, 'YYYY-MM-DD') AS date_debut
-  FROM   observation  AS o
+  FROM   occtax.observation  AS o
   WHERE True
   -- AND o.validite_niveau IN ( '1', '2' )
 )
  AS f
- LEFT JOIN taxref_consolide AS t ON t.cd_nom = f.cd_nom
- LEFT JOIN t_group_categorie tgc1 ON tgc1.groupe_nom = t.group1_inpn AND tgc1.groupe_type = 'group1_inpn'
- LEFT JOIN t_group_categorie tgc2 ON tgc2.groupe_nom = t.group2_inpn AND tgc2.groupe_type = 'group2_inpn'
+ LEFT JOIN taxon.taxref_consolide AS t ON t.cd_nom = f.cd_nom
+ LEFT JOIN taxon.t_group_categorie tgc1 ON tgc1.groupe_nom = t.group1_inpn AND tgc1.groupe_type = 'group1_inpn'
+ LEFT JOIN taxon.t_group_categorie tgc2 ON tgc2.groupe_nom = t.group2_inpn AND tgc2.groupe_type = 'group2_inpn'
  GROUP BY tgc1.cat_nom, tgc2.cat_nom
  ORDER BY categorie) AS _subq_1_
 )" sql=</datasource>

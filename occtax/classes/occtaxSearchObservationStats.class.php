@@ -53,7 +53,7 @@ class occtaxSearchObservationStats extends occtaxSearchObservation {
 
         $this->querySelectors = array(
 
-            'vm_observation' => array(
+            'occtax.vm_observation' => array(
                 'alias' => 'o',
                 'required' => True,
                 'join' => '',
@@ -80,7 +80,7 @@ class occtaxSearchObservationStats extends occtaxSearchObservation {
     // Override getResult to get all data (no limit nor offset)
     protected function getResult( $limit=50, $offset=0, $order="" ) {
 //jLog::log($this->sql);
-        $cnx = jDb::getConnection();
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
         return $cnx->query( $this->sql );
     }
 }

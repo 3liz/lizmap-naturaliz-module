@@ -371,22 +371,22 @@ xmlelement(
 ) AS "xml"
 
 
-FROM occtax.observation o
-INNER JOIN v_observateur pobs ON pobs.cle_obs = o.cle_obs
-LEFT JOIN v_validateur pval ON pval.cle_obs = o.cle_obs
-LEFT JOIN v_determinateur pdet ON pdet.cle_obs = o.cle_obs
-LEFT JOIN localisation_departement ldep ON ldep.cle_obs = o.cle_obs
-LEFT JOIN departement dep ON dep.code_departement = ldep.code_departement
-LEFT JOIN localisation_commune lc ON lc.cle_obs = o.cle_obs
-LEFT JOIN commune com ON com.code_commune = lc.code_commune
-LEFT JOIN localisation_masse_eau lme ON lme.cle_obs = o.cle_obs
-LEFT JOIN masse_eau me ON me.code_me = lme.code_me
-LEFT JOIN localisation_maille_10 lm10 ON lm10.cle_obs = o.cle_obs
-LEFT JOIN maille_10 m10 ON m10.code_maille = lm10.code_maille
-LEFT JOIN v_localisation_espace_naturel len ON len.cle_obs = o.cle_obs
-LEFT JOIN localisation_habitat lhab ON lhab.cle_obs = o.cle_obs
-LEFT JOIN habitat hab ON hab.code_habitat = lhab.code_habitat AND lhab.ref_habitat = hab.ref_habitat
-LEFT JOIN attribut_additionnel aa ON aa.cle_obs = o.cle_obs
+FROM       occtax.observation o
+INNER JOIN occtax.v_observateur pobs ON pobs.cle_obs = o.cle_obs
+LEFT JOIN  occtax.v_validateur pval ON pval.cle_obs = o.cle_obs
+LEFT JOIN  occtax.v_determinateur pdet ON pdet.cle_obs = o.cle_obs
+LEFT JOIN  occtax.localisation_departement ldep ON ldep.cle_obs = o.cle_obs
+LEFT JOIN  sig.departement dep ON dep.code_departement = ldep.code_departement
+LEFT JOIN  occtax.localisation_commune lc ON lc.cle_obs = o.cle_obs
+LEFT JOIN  sig.commune com ON com.code_commune = lc.code_commune
+LEFT JOIN  occtax.localisation_masse_eau lme ON lme.cle_obs = o.cle_obs
+LEFT JOIN  sig.masse_eau me ON me.code_me = lme.code_me
+LEFT JOIN  occtax.localisation_maille_10 lm10 ON lm10.cle_obs = o.cle_obs
+LEFT JOIN  sig.maille_10 m10 ON m10.code_maille = lm10.code_maille
+LEFT JOIN  occtax.v_localisation_espace_naturel len ON len.cle_obs = o.cle_obs
+LEFT JOIN  occtax.localisation_habitat lhab ON lhab.cle_obs = o.cle_obs
+LEFT JOIN  occtax.habitat hab ON hab.code_habitat = lhab.code_habitat AND lhab.ref_habitat = hab.ref_habitat
+LEFT JOIN  occtax.attribut_additionnel aa ON aa.cle_obs = o.cle_obs
 LEFT JOIN LATERAL jsonb_array_elements(o.descriptif_sujet) AS ds(dsi) ON TRUE
 {$geoFilter}
 

@@ -235,7 +235,7 @@ class occtaxSearch {
 
         // Add jdd list
         $osParams = $this->getParams();
-        $dao_jdd = jDao::get('occtax~jdd');
+        $dao_jdd = jDao::get('occtax~jdd', 'naturaliz_virtual_profile');
         $content.= "\r\n\r\n";
         $content.= "Jeux de données :\r\n";
 
@@ -248,7 +248,7 @@ class occtaxSearch {
                 if (!ctype_digit($jdd_id)) {
                     continue;
                 }
-                $jdd = $dao_jdd->get($jdd_id);
+                $jdd = $dao_jdd->get($jdd_id, 'naturaliz_virtual_profile');
                 if ($jdd) {
                     $content.= '  * ' . $jdd->jdd_libelle . ' ( ' . $jdd->jdd_description . " )\r\n";
                 }
@@ -261,7 +261,7 @@ class occtaxSearch {
             $sql.= $this->sql;
             $sql.= ") AS foo_jdd";
             $sql.= ") ";
-            $cnx = jDb::getConnection();
+            $cnx = jDb::getConnection('naturaliz_virtual_profile');
             $result = $cnx->query( $sql );
             foreach( $result->fetchAll() as $jdd ) {
                 $content.= '  * ' . $jdd->jdd_libelle . ' ( ' . $jdd->jdd_description . " )\r\n";
@@ -281,10 +281,11 @@ class occtaxSearch {
 
 
     protected function getGroupNormalizedCategories() {
-        $dao = jDao::get('taxon~t_group_categorie');
-        $get_cats = $dao->getDistinctCategorie();
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
+        $sql = "SELECT DISTINCT libelle_court FROM taxon.t_group_categorie ORDER BY libelle_court";
+        $result = $cnx->query( $sql );
         $categorie_normalized = array();
-        foreach ($get_cats as $cat) {
+        foreach( $result->fetchAll() as $cat ) {
             $categorie_normalized[$cat->libelle_court] = $this->normalize_string($cat->libelle_court);
         }
         $categorie_normalized['Autres'] = 'autres';
@@ -306,7 +307,7 @@ class occtaxSearch {
         }
 
         $qfl = $qf[$k]['label'];
-        $dao = jDao::get( $qfl['dao']);
+        $dao = jDao::get( $qfl['dao'], 'naturaliz_virtual_profile');
         $method = $qfl['method'];
         $champ = null;
         if( array_key_exists( 'champ', $qfl ) ){
@@ -372,7 +373,7 @@ class occtaxSearch {
     */
     function setRecordsTotal() {
         if( $this->sql ) {
-            $cnx = jDb::getConnection();
+            $cnx = jDb::getConnection('naturaliz_virtual_profile');
             $sql = "SELECT count(*) AS nb FROM (";
             $sql.= $this->sql;
             $sql.= ") AS foo;";
@@ -470,7 +471,7 @@ class occtaxSearch {
                     if( substr(trim($table), 0, 1) == '(' )
                         $sql.= $table;
                     else
-                        $sql.= ' "' . $table . '" ';
+                        $sql.= ' '.$table.' ';
                     $sql.= ' AS ' . $d['alias'] . ' ';
                     $sql.= $d['joinClause'] . ' ';
                     $sql.= '
@@ -487,7 +488,7 @@ class occtaxSearch {
                     if( array_key_exists( 'table', $q)  and !in_array( $q['table'], $t ) ){
                         $d = $this->querySelectors[$q['table']];
                         $sql.= ' ' . $d['join'];
-                        $sql.= ' "' . $q['table'] . '" ';
+                        $sql.= ' ' . $q['table'] . ' ';
                         $sql.= ' AS ' . $d['alias'] . ' ';
                         $sql.= $d['joinClause'] . ' ';
                     $sql.= '
@@ -503,7 +504,7 @@ class occtaxSearch {
 
 
     protected function myquote($term){
-        $cnx = jDb::getConnection();
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
         return $cnx->quote(trim($term));
     }
 
@@ -513,7 +514,7 @@ class occtaxSearch {
 
     protected function setWhereClause(){
         $sql = " WHERE True ";
-        $cnx = jDb::getConnection();
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
 
         if( $this->params ){
             foreach( $this->params as $k=>$v ){
@@ -543,7 +544,7 @@ class occtaxSearch {
 
                     // Valeurs simples
                     else{
-                        $cnx = jDb::getConnection();
+                        $cnx = jDb::getConnection('naturaliz_virtual_profile');
                         // Cas des recherche standard
                         if( in_array( $q['type'], array( 'string', 'timestamp', 'geom' ) ) )
                             $v = $cnx->quote( $v );
@@ -612,7 +613,7 @@ class occtaxSearch {
     * @return The query result
     */
     protected function getResult( $limit=50, $offset=0, $order="" ) {
-        $cnx = jDb::getConnection();
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
         $orderClause = $this->setOrderClause( $order );
         $sql = $this->sql . " " . $orderClause;
         return $cnx->limitQuery( $sql, $offset, $limit );

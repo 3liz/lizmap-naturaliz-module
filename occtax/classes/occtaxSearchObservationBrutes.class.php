@@ -181,7 +181,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
 
 
     protected $querySelectors = array(
-        'vm_observation' => array(
+        'occtax.vm_observation' => array(
             'alias' => 'o',
             'required' => True,
             'join' => '',
@@ -302,7 +302,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $this->displayFields = $this->returnFields;
 
         // Fields with nomenclature
-        $cnx = jDb::getConnection();
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
         $sql = "
             SELECT DISTINCT champ FROM occtax.nomenclature
             UNION
@@ -327,17 +327,17 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
 
     // Override getResult to get all data (no limit nor offset)
     protected function getResult( $limit=50, $offset=0, $order="" ) {
-        $cnx = jDb::getConnection();
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
         return $cnx->query( $this->sql );
     }
 
 
     protected function getCommune($response='result') {
 
-        $cnx = jDb::getConnection();
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
         $sql = " SELECT DISTINCT lc.cle_obs, lc.code_commune, c.nom_commune, c.annee_ref, lc.type_info_geo";
-        $sql.= " FROM localisation_commune AS lc";
-        $sql.= " INNER JOIN commune c ON c.code_commune = lc.code_commune";
+        $sql.= " FROM occtax.localisation_commune AS lc";
+        $sql.= " INNER JOIN sig.commune c ON c.code_commune = lc.code_commune";
         $sql.= " INNER JOIN ( ";
         $sql.= $this->sql;
         $sql.= " ) AS foo ON foo.cle_obs = lc.cle_obs";
@@ -359,10 +359,10 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
 
     protected function getDepartement($response='result') {
 
-        $cnx = jDb::getConnection();
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
         $sql = " SELECT DISTINCT ld.cle_obs, ld.code_departement, d.nom_departement, d.annee_ref, ld.type_info_geo";
-        $sql.= " FROM localisation_departement AS ld";
-        $sql.= " INNER JOIN departement d ON d.code_departement = ld.code_departement";
+        $sql.= " FROM occtax.localisation_departement AS ld";
+        $sql.= " INNER JOIN sig.departement d ON d.code_departement = ld.code_departement";
         $sql.= " INNER JOIN ( ";
         $sql.= $this->sql;
         $sql.= " ) AS foo ON foo.cle_obs = ld.cle_obs";
@@ -383,11 +383,11 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
 
     protected function getMaille10($response='result') {
 
-        $cnx = jDb::getConnection();
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
         $sql = " SELECT DISTINCT lm.cle_obs, lm.code_maille,";
         $sql.= " m.version_ref, m.nom_ref, lm.type_info_geo";
-        $sql.= " FROM localisation_maille_10 AS lm";
-        $sql.= " INNER JOIN maille_10 m ON lm.code_maille = m.code_maille";
+        $sql.= " FROM occtax.localisation_maille_10 AS lm";
+        $sql.= " INNER JOIN sig.maille_10 m ON lm.code_maille = m.code_maille";
         $sql.= " INNER JOIN ( ";
         $sql.= $this->sql;
         $sql.= " ) AS foo ON foo.cle_obs = lm.cle_obs";
@@ -408,11 +408,11 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
 
     protected function getMaille05($response='result') {
 
-        $cnx = jDb::getConnection();
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
         $sql = " SELECT DISTINCT lm.cle_obs, lm.code_maille,";
         $sql.= " m.version_ref, m.nom_ref, lm.type_info_geo";
-        $sql.= " FROM localisation_maille_05 AS lm";
-        $sql.= " INNER JOIN maille_05 m ON lm.code_maille = m.code_maille";
+        $sql.= " FROM occtax.localisation_maille_05 AS lm";
+        $sql.= " INNER JOIN sig.maille_05 m ON lm.code_maille = m.code_maille";
         $sql.= " INNER JOIN ( ";
         $sql.= $this->sql;
         $sql.= " ) AS foo ON foo.cle_obs = lm.cle_obs";
@@ -433,11 +433,11 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
 
     protected function getMaille02($response='result') {
 
-        $cnx = jDb::getConnection();
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
         $sql = " SELECT DISTINCT lm.cle_obs, lm.code_maille,";
         $sql.= " m.version_ref, m.nom_ref, lm.type_info_geo";
-        $sql.= " FROM localisation_maille_02 AS lm";
-        $sql.= " INNER JOIN maille_02 m ON lm.code_maille = m.code_maille";
+        $sql.= " FROM occtax.localisation_maille_02 AS lm";
+        $sql.= " INNER JOIN sig.maille_02 m ON lm.code_maille = m.code_maille";
         $sql.= " INNER JOIN ( ";
         $sql.= $this->sql;
         $sql.= " ) AS foo ON foo.cle_obs = lm.cle_obs";
@@ -458,11 +458,11 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
 
     protected function getMaille01($response='result') {
 
-        $cnx = jDb::getConnection();
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
         $sql = " SELECT DISTINCT lm.cle_obs, lm.code_maille,";
         $sql.= " m.version_ref, m.nom_ref, lm.type_info_geo";
-        $sql.= " FROM localisation_maille_01 AS lm";
-        $sql.= " INNER JOIN maille_01 m ON lm.code_maille = m.code_maille";
+        $sql.= " FROM occtax.localisation_maille_01 AS lm";
+        $sql.= " INNER JOIN sig.maille_01 m ON lm.code_maille = m.code_maille";
         $sql.= " INNER JOIN ( ";
         $sql.= $this->sql;
         $sql.= " ) AS foo ON foo.cle_obs = lm.cle_obs";
@@ -483,11 +483,11 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
 
     protected function getEspaceNaturel($response='result') {
 
-        $cnx = jDb::getConnection();
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
         $sql = " SELECT DISTINCT len.cle_obs, en.type_en, len.code_en,";
         $sql.= " en.nom_en, en.version_en, len.type_info_geo";
-        $sql.= " FROM localisation_espace_naturel AS len";
-        $sql.= " INNER JOIN espace_naturel en ON en.code_en = len.code_en";
+        $sql.= " FROM occtax.localisation_espace_naturel AS len";
+        $sql.= " INNER JOIN sig.espace_naturel en ON en.code_en = len.code_en";
         $sql.= " INNER JOIN ( ";
         $sql.= $this->sql;
         $sql.= " ) AS foo ON foo.cle_obs = len.cle_obs";
@@ -508,11 +508,11 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
 
     protected function getMasseEau($response='result') {
 
-        $cnx = jDb::getConnection();
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
         $sql = " SELECT DISTINCT lme.cle_obs, lme.code_me,";
         $sql.= " me.version_me, me.date_me, lme.type_info_geo";
-        $sql.= " FROM localisation_masse_eau AS lme";
-        $sql.= " INNER JOIN masse_eau me ON me.code_me = lme.code_me";
+        $sql.= " FROM occtax.localisation_masse_eau AS lme";
+        $sql.= " INNER JOIN sig.masse_eau me ON me.code_me = lme.code_me";
         $sql.= " INNER JOIN ( ";
         $sql.= $this->sql;
         $sql.= " ) AS foo ON foo.cle_obs = lme.cle_obs";
@@ -533,10 +533,10 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
 
     protected function getHabitat($response='result') {
 
-        $cnx = jDb::getConnection();
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
         $sql = " SELECT DISTINCT lh.cle_obs, lh.code_habitat, h.ref_habitat";
-        $sql.= " FROM localisation_habitat AS lh";
-        $sql.= " INNER JOIN habitat h ON h.code_habitat = lh.code_habitat AND h.ref_habitat = lh.ref_habitat";
+        $sql.= " FROM occtax.localisation_habitat AS lh";
+        $sql.= " INNER JOIN occtax.habitat h ON h.code_habitat = lh.code_habitat AND h.ref_habitat = lh.ref_habitat";
         $sql.= " INNER JOIN ( ";
         $sql.= $this->sql;
         $sql.= " ) AS foo ON foo.cle_obs = lh.cle_obs";
@@ -549,10 +549,10 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
 
     protected function getAttributAdditionnel($response='result') {
 
-        $cnx = jDb::getConnection();
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
         $sql = " SELECT DISTINCT aa.cle_obs, aa.nom, aa.definition,";
         $sql.= " aa.valeur, aa.unite, aa.thematique, aa.type";
-        $sql.= " FROM attribut_additionnel AS aa";
+        $sql.= " FROM occtax.attribut_additionnel AS aa";
         $sql.= " INNER JOIN ( ";
         $sql.= $this->sql;
         $sql.= " ) AS foo ON foo.cle_obs = aa.cle_obs";
@@ -709,7 +709,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         chmod($path, 0666);
 
         // Build SQL
-        $cnx = jDb::getConnection();
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
         $tpl = new jTpl();
 
         // Add subtable if geom query via intersection

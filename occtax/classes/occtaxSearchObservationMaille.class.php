@@ -53,7 +53,7 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
 
         // Reset querySelectors to group result by maille
         $this->querySelectors = array(
-            $this->maille => array(
+            'sig.'.$this->maille => array(
                 'alias' => 'm',
                 'required' => True,
                 'join' => '',
@@ -67,7 +67,7 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
                 )
             ),
 
-            'vm_observation' => array(
+            'occtax.vm_observation' => array(
                 'alias' => 'o',
                 'required' => True,
                 'multi' => True,
@@ -111,7 +111,7 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
         $sqlr.= "
                 ELSE " . $this->legend_max_radius . "
             END * $m AS rayon";
-        $this->querySelectors[$this->maille]['returnFields'][$sqlr] = array();
+        $this->querySelectors['sig.'.$this->maille]['returnFields'][$sqlr] = array();
 
         // Color
         $sqlc = "
@@ -127,7 +127,7 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
                 ELSE 'black'::text
             END AS color
         ";
-        $this->querySelectors[$this->maille]['returnFields'][$sqlc] = array();
+        $this->querySelectors['sig.'.$this->maille]['returnFields'][$sqlc] = array();
         parent::__construct($token, $params, $demande, $login);
 
     }
@@ -158,7 +158,7 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
     // Override getResult to get all data (no limit nor offset)
     protected function getResult( $limit=50, $offset=0, $order="" ) {
 //jLog::log($this->sql);
-        $cnx = jDb::getConnection();
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
         return $cnx->query( $this->sql );
     }
 

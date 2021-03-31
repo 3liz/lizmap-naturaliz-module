@@ -11,22 +11,6 @@
 
 class occtaxModuleInstaller extends jInstallerModule {
 
-    function addSchemaToSearchPath($schema_name) {
-
-        // Add gestion to search_path
-        $profileConfig = jApp::configPath('profiles.ini.php');
-        $ini = new jIniFileModifier($profileConfig);
-        $defaultProfile = $ini->getValue('default', 'jdb');
-        $search_path = $ini->getValue('search_path', 'jdb:' . $defaultProfile);
-        if (empty($search_path )) {
-            $search_path = 'public';
-        }
-        if (!preg_match( '#'.$schema_name.'#', $search_path )) {
-            $ini->setValue('search_path', $search_path . ',' . $schema_name, 'jdb:' . $defaultProfile);
-        }
-        $ini->save();
-    }
-
     function install() {
 
         // Copy export readme files
@@ -110,11 +94,6 @@ class occtaxModuleInstaller extends jInstallerModule {
 
                 // Add data for lists
                 $this->execSQLScript('sql/data');
-
-                // Add occtax to search_path
-                $this->addSchemaToSearchPath('occtax');
-                $this->addSchemaToSearchPath('sig');
-                $this->addSchemaToSearchPath('gestion');
 
             //} catch (Exception $e){
                 //jLog::log("Cannot install PostgreSQL database structure");

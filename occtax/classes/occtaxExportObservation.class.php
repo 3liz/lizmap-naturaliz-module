@@ -196,7 +196,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
     protected $observation_exported_children_unsensitive = array();
 
     protected $querySelectors = array(
-        'vm_observation' => array(
+        'occtax.vm_observation' => array(
             'alias' => 'o',
             'required' => True,
             'join' => '',
@@ -344,15 +344,15 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             $gkey = "(ST_AsGeoJSON( ".$transform.", 6 ))::jsonb AS geometry";
         }
         if($ckey){
-            $this->querySelectors['vm_observation']['returnFields'][$ckey] = Null;
+            $this->querySelectors['occtax.vm_observation']['returnFields'][$ckey] = Null;
         }
         if($gkey){
-            $this->querySelectors['vm_observation']['returnFields'][$gkey] = Null;
+            $this->querySelectors['occtax.vm_observation']['returnFields'][$gkey] = Null;
             // On doit ajouter un champ geojson car ajouté dans group by de la requête
-            $this->querySelectors['vm_observation']['returnFields']["NULL::text AS geojson"] = Null;
+            $this->querySelectors['occtax.vm_observation']['returnFields']["NULL::text AS geojson"] = Null;
         }
         // For WFS export, add geometry only in 4326
-        $this->querySelectors['vm_observation']['returnFields']["ST_Transform(o.geom, 4326) AS geom"] = Null;
+        $this->querySelectors['occtax.vm_observation']['returnFields']["ST_Transform(o.geom, 4326) AS geom"] = Null;
 
         parent::__construct($token, $params, $demande, $login);
     }
@@ -362,7 +362,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
     }
 
     protected function getResult( $limit=50, $offset=0, $order="" ) {
-        $cnx = jDb::getConnection();
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
         return $cnx->query( $this->sql );
     }
 
@@ -372,7 +372,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             return Null;
         }
 
-        $cnx = jDb::getConnection();
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
 
         if($topic == 'principal'){
             $geometryTypes = array(
@@ -752,7 +752,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
         fwrite($fd, $g_head);
 
         // Write features
-        $cnx = jDb::getConnection();
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
         $query = $cnx->query( $sql );
         $v = '';
         foreach( $query as $feature){
@@ -973,7 +973,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
         fwrite($fd, $boundedBy);
 
         // Write features
-        $cnx = jDb::getConnection();
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
         $query = $cnx->query( $sql );
         foreach( $query as $feature){
             fwrite($fd, $feature->gml);

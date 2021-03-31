@@ -275,7 +275,7 @@ class serviceCtrl extends jController {
             return $rep;
         }
 
-        $cnx = jDb::getConnection();
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
         $sql = ' SELECT cd_nom, nom_valide';
         $sql.= ' FROM taxon.taxref_consolide';
         $sql.= ' WHERE cd_ref = ' . $cd_nom;

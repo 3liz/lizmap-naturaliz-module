@@ -17,11 +17,11 @@ class listExistingTypeEn implements jIFormsDatasource
   function __construct($id)
   {
     $this->formId = $id;
-    $cnx = jDb::getConnection();
+    $cnx = jDb::getConnection('naturaliz_virtual_profile');
     $sql = "
         SELECT DISTINCT n.code, n.valeur
-        FROM nomenclature n
-        LEFT JOIN espace_naturel en ON en.type_en = n.code
+        FROM occtax.nomenclature n
+        LEFT JOIN sig.espace_naturel en ON en.type_en = n.code
         WHERE TRUE
         AND en.code_en IS NOT NULL
         ORDER BY n.valeur

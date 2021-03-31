@@ -69,7 +69,7 @@ class defaultCtrl extends lizMapCtrl {
 
             // Add nomenclature
             $nomenclature = array();
-            $daot = jDao::get('taxon~t_nomenclature');
+            $daot = jDao::get('taxon~t_nomenclature', 'naturaliz_virtual_profile');
             foreach($daot->findAll() as $nom){
                 $nomenclature[$nom->champ . '|' . $nom->code] = $nom->valeur;
             }

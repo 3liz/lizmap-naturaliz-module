@@ -47,7 +47,7 @@ class autocomplete {
         // Get only taxon in data
         if($taxons_bdd == 'true'){
             $sql.= "
-            AND f.cd_ref IN (SELECT DISTINCT o.cd_ref FROM vm_observation o)
+            AND f.cd_ref IN (SELECT DISTINCT o.cd_ref FROM occtax.vm_observation o)
             ";
         }
         $sql.= "

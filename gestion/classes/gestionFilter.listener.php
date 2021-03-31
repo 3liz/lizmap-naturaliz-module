@@ -14,12 +14,39 @@ class gestionFilterListener extends jEventListener{
             return '';
         }
 
+        // Create virtual profile
+        $defaultProfile = jProfiles::get('jdb', 'default');
+        $search_path = '';
+        if (array_key_exists('search_path', $defaultProfile)) {
+            $search_path = $defaultProfile['search_path'];
+        }
+        if (empty(trim($search_path))) {
+            $search_path = 'public';
+        }
+        foreach (array('taxon','sig','occtax','gestion') as $schema) {
+            if (!preg_match( '#'.$schema.'#', $search_path )) {
+                $search_path.= ','.$schema;
+            }
+        }
+        $jdbParams = array(
+            'driver' => 'pgsql',
+            'host' => $defaultProfile['host'],
+            'port' => (int) $defaultProfile['port'],
+            'database' => $defaultProfile['database'],
+            'user' => $defaultProfile['user'],
+            'password' => $defaultProfile['password'],
+            'search_path' => $search_path,
+            'timeout'=> '120',
+        );
+        $profile = 'naturaliz_virtual_profile';
+        jProfiles::createVirtualProfile('jdb', $profile, $jdbParams);
+
         $filter = '';
         $table_demandes = array();
-        $cnx = jDb::getConnection();
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
 
         // Get demande for user
-        $dao_demande = jDao::get('gestion~demande');
+        $dao_demande = jDao::get('gestion~demande', 'naturaliz_virtual_profile');
         //$demandes = $dao_demande->findByLogin($login);
         $actives_demandes = $dao_demande->findActiveDemandesByLogin($login);
 
@@ -40,7 +67,7 @@ class gestionFilterListener extends jEventListener{
                 $srid = $ini->getValue('srid', 'naturaliz');
                 if( !$srid )
                     $srid = 4326;
-                $cnx = jDb::getConnection();
+                $cnx = jDb::getConnection('naturaliz_virtual_profile');
                 // method a or b: use ST_GeomFromText, which si faster
                 if ($filter_method == 'a' or $filter_method == 'b') {
                     $sql_geom = 'ST_Intersects(

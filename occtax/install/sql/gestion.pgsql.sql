@@ -1,7 +1,5 @@
 CREATE SCHEMA IF NOT EXISTS gestion;
 
-SET search_path TO gestion,occtax,public,pg_catalog;
-
 -- Nomenclature
 CREATE TABLE IF NOT EXISTS gestion.g_nomenclature (
     champ text,
@@ -46,8 +44,8 @@ CREATE TABLE IF NOT EXISTS gestion.demande (
 
 );
 
-ALTER TABLE demande DROP CONSTRAINT IF EXISTS demande_id_organisme_fk;
-ALTER TABLE demande ADD CONSTRAINT demande_id_organisme_fk
+ALTER TABLE gestion.demande DROP CONSTRAINT IF EXISTS demande_id_organisme_fk;
+ALTER TABLE gestion.demande ADD CONSTRAINT demande_id_organisme_fk
 FOREIGN KEY (id_organisme) REFERENCES occtax."organisme" (id_organisme)
 ON DELETE RESTRICT;
 
@@ -60,32 +58,32 @@ ALTER TABLE gestion.demande DROP CONSTRAINT IF EXISTS demande_statut_valide;
 ALTER TABLE gestion.demande ADD CONSTRAINT demande_statut_valide
 CHECK ( statut IN ('A traiter', 'Acceptée', 'Refusée') );
 
-COMMENT ON TABLE demande IS 'Liste des demandes d''acccès à l''application. Cette table permet de restreindre les accès aux données, par date, taxon, etc.';
-COMMENT ON COLUMN demande.id IS 'Identifiant auto de la demande (clé primaire)';
-COMMENT ON COLUMN demande.usr_login IS 'Login de l''utilisateur qui fait la demande, pour lequel activer une restriction. On peut avoir plusieurs lignes qui référencent le usr_login. Ce champ peut être vide quand on a pas encore validé la demande (et si on ne la valide jamais). Clé étrangère vers publi.jlx_user';
-COMMENT ON COLUMN demande.id_organisme IS 'Identifiant de l''organisme ayant émis la demande. Clé étrangère vers table organisme';
-COMMENT ON COLUMN demande.id_acteur IS 'Identifiant de l''acteur ayant émis la demande. Clé étrangère vers table acteur';
-COMMENT ON COLUMN demande.motif IS 'Motif de la demande d''accès aux données fourni par le demandeur';
-COMMENT ON COLUMN demande.motif_anonyme IS 'Indique si le motif de la demande doit être anonymisé temporairement. Pour les études d''impact, la charte régionale du SINP peut permettre au demandeur de solliciter une anonymisation du motif de sa demande dans la diffusion grand public. L''anonymisation est levée au plus tard au moment de l''ouverture de la procédure de participation du public.';
-COMMENT ON COLUMN demande.type_demande IS 'Type de demande selon la typologie de la charte du SINP (exemple : mission régalienne, publication scientifique, etc.)';
-COMMENT ON COLUMN demande.date_demande IS 'Date d''émission de la demande (découplée de la date de création, qui est elle renseignée automatiquement';
+COMMENT ON TABLE gestion.demande IS 'Liste des demandes d''acccès à l''application. Cette table permet de restreindre les accès aux données, par date, taxon, etc.';
+COMMENT ON COLUMN gestion.demande.id IS 'Identifiant auto de la demande (clé primaire)';
+COMMENT ON COLUMN gestion.demande.usr_login IS 'Login de l''utilisateur qui fait la demande, pour lequel activer une restriction. On peut avoir plusieurs lignes qui référencent le usr_login. Ce champ peut être vide quand on a pas encore validé la demande (et si on ne la valide jamais). Clé étrangère vers publi.jlx_user';
+COMMENT ON COLUMN gestion.demande.id_organisme IS 'Identifiant de l''organisme ayant émis la demande. Clé étrangère vers table organisme';
+COMMENT ON COLUMN gestion.demande.id_acteur IS 'Identifiant de l''acteur ayant émis la demande. Clé étrangère vers table acteur';
+COMMENT ON COLUMN gestion.demande.motif IS 'Motif de la demande d''accès aux données fourni par le demandeur';
+COMMENT ON COLUMN gestion.demande.motif_anonyme IS 'Indique si le motif de la demande doit être anonymisé temporairement. Pour les études d''impact, la charte régionale du SINP peut permettre au demandeur de solliciter une anonymisation du motif de sa demande dans la diffusion grand public. L''anonymisation est levée au plus tard au moment de l''ouverture de la procédure de participation du public.';
+COMMENT ON COLUMN gestion.demande.type_demande IS 'Type de demande selon la typologie de la charte du SINP (exemple : mission régalienne, publication scientifique, etc.)';
+COMMENT ON COLUMN gestion.demande.date_demande IS 'Date d''émission de la demande (découplée de la date de création, qui est elle renseignée automatiquement';
 
-COMMENT ON COLUMN demande.commentaire IS 'Remarques générales sur la demande.';
-COMMENT ON COLUMN demande.date_validite_min IS 'Date minimale de validité de la demande. Les accès sont bloqués si le demandeur consulte l''application avant cette date, pour cette demande.';
-COMMENT ON COLUMN demande.date_validite_max IS 'Date maximale de validité de la demande. Les accès sont bloqués si le demandeur consulte l''application après cette date, pour cette demande.';
-COMMENT ON COLUMN demande.cd_ref IS 'Tableau des identifiants cd_ref des taxons pour lesquels restreindre l''accès aux données';
-COMMENT ON COLUMN demande.group1_inpn IS 'Noms des groupes INPN de type 1. Clé étrangère vers table taxon.t_group_categorie.groupe_nom';
-COMMENT ON COLUMN demande.group2_inpn IS 'Noms des groupes INPN de type 2. Clé étrangère vers table taxon.t_group_categorie.groupe_nom';
-COMMENT ON COLUMN demande.date_creation IS 'Date de création de la ligne dans la table (automatique si aucune valeur passée)';
-COMMENT ON COLUMN demande.libelle_geom IS 'Description littérale de la zone géographique sur laquelle porte la demande';
-COMMENT ON COLUMN demande.validite_niveau IS 'Liste de niveaux de validité accessible à la personne, sous la forme d''un tableau.';
-COMMENT ON COLUMN demande.geom IS 'Géométrie dans laquelle restreindre les observations consultables. On fait une intersection entre les observation et cette géométrie.';
+COMMENT ON COLUMN gestion.demande.commentaire IS 'Remarques générales sur la demande.';
+COMMENT ON COLUMN gestion.demande.date_validite_min IS 'Date minimale de validité de la demande. Les accès sont bloqués si le demandeur consulte l''application avant cette date, pour cette demande.';
+COMMENT ON COLUMN gestion.demande.date_validite_max IS 'Date maximale de validité de la demande. Les accès sont bloqués si le demandeur consulte l''application après cette date, pour cette demande.';
+COMMENT ON COLUMN gestion.demande.cd_ref IS 'Tableau des identifiants cd_ref des taxons pour lesquels restreindre l''accès aux données';
+COMMENT ON COLUMN gestion.demande.group1_inpn IS 'Noms des groupes INPN de type 1. Clé étrangère vers table taxon.t_group_categorie.groupe_nom';
+COMMENT ON COLUMN gestion.demande.group2_inpn IS 'Noms des groupes INPN de type 2. Clé étrangère vers table taxon.t_group_categorie.groupe_nom';
+COMMENT ON COLUMN gestion.demande.date_creation IS 'Date de création de la ligne dans la table (automatique si aucune valeur passée)';
+COMMENT ON COLUMN gestion.demande.libelle_geom IS 'Description littérale de la zone géographique sur laquelle porte la demande';
+COMMENT ON COLUMN gestion.demande.validite_niveau IS 'Liste de niveaux de validité accessible à la personne, sous la forme d''un tableau.';
+COMMENT ON COLUMN gestion.demande.geom IS 'Géométrie dans laquelle restreindre les observations consultables. On fait une intersection entre les observation et cette géométrie.';
 COMMENT ON COLUMN gestion.demande.statut IS 'Etat d''avancement de la demande d''accès aux données : A traiter, Acceptée ou Refusée';
 COMMENT ON COLUMN gestion.demande.detail_decision IS 'Détail de la décision pour cette demande';
 COMMENT ON COLUMN gestion.demande.critere_additionnel IS 'Critère additionnel de filtrage pour la demande, au format SQL.';
 
 -- table acteur
-CREATE TABLE IF NOT EXISTS acteur(
+CREATE TABLE IF NOT EXISTS gestion.acteur(
     id_acteur serial PRIMARY KEY,
     nom text NOT NULL,
     prenom text NOT NULL,
@@ -104,34 +102,34 @@ CREATE TABLE IF NOT EXISTS acteur(
     UNIQUE (nom, prenom, id_organisme)
 );
 
-ALTER TABLE acteur DROP CONSTRAINT IF EXISTS acteur_id_organisme_fkey;
-ALTER TABLE acteur ADD CONSTRAINT acteur_id_organisme_fkey
+ALTER TABLE gestion.acteur DROP CONSTRAINT IF EXISTS acteur_id_organisme_fkey;
+ALTER TABLE gestion.acteur ADD CONSTRAINT acteur_id_organisme_fkey
 FOREIGN KEY (id_organisme)
 REFERENCES occtax.organisme(id_organisme) MATCH SIMPLE
 ON UPDATE RESTRICT
 ON DELETE RESTRICT
 ;
 
-ALTER TABLE demande DROP CONSTRAINT IF EXISTS demande_id_acteur_fk;
-ALTER TABLE demande ADD CONSTRAINT demande_id_acteur_fk
-FOREIGN KEY (id_acteur) REFERENCES "acteur" (id_acteur)
+ALTER TABLE gestion.demande DROP CONSTRAINT IF EXISTS demande_id_acteur_fk;
+ALTER TABLE gestion.demande ADD CONSTRAINT demande_id_acteur_fk
+FOREIGN KEY (id_acteur) REFERENCES gestion.acteur (id_acteur)
 ON DELETE RESTRICT;
 
-COMMENT ON TABLE acteur IS 'Liste les acteurs liés à l''application. Cette table sert à stocker les personnes ressource: responsables des imports de données, référents des jeux de données, etc.';
-COMMENT ON COLUMN acteur.id_acteur IS 'Identifiant de l''acteur (entier auto-incrémenté)';
-COMMENT ON COLUMN acteur.nom IS 'Nom de l''acteur';
-COMMENT ON COLUMN acteur.prenom IS 'Prénom de l''acteur';
-COMMENT ON COLUMN acteur.civilite IS 'Civilité de l''acteur';
-COMMENT ON COLUMN acteur.courriel IS 'Courriel de l''acteur';
-COMMENT ON COLUMN acteur.tel_1 IS 'Numéro de téléphone principal de l''acteur';
-COMMENT ON COLUMN acteur.tel_2 IS 'Numéro de téléphone secondaire de l''acteur';
-COMMENT ON COLUMN acteur.fonction IS 'Fonction de l''acteur (champ libre)';
-COMMENT ON COLUMN acteur.id_organisme IS 'Identifiant de l''organisme de l''acteur (clé étrangère vers table organisme)';
-COMMENT ON COLUMN acteur.remarque IS 'Remarque sur l''acteur (texte libre)';
-COMMENT ON COLUMN acteur.bulletin_information IS 'Indique si l''acteur souhaite recevoir le bulletin d''information par courriel.';
-COMMENT ON COLUMN acteur.reunion_sinp IS 'Indique si l''acteur participe aux réunion du SINP local.';
-COMMENT ON COLUMN acteur.service IS 'Service ou direction de rattachement au sein de l''organisme';
-COMMENT ON COLUMN acteur.date_maj IS 'Date à laquelle l''enregistrement a été modifié pour la dernière fois (automatiquement renseigné)' ;
+COMMENT ON TABLE gestion.acteur IS 'Liste les acteurs liés à l''application. Cette table sert à stocker les personnes ressource: responsables des imports de données, référents des jeux de données, etc.';
+COMMENT ON COLUMN gestion.acteur.id_acteur IS 'Identifiant de l''acteur (entier auto-incrémenté)';
+COMMENT ON COLUMN gestion.acteur.nom IS 'Nom de l''acteur';
+COMMENT ON COLUMN gestion.acteur.prenom IS 'Prénom de l''acteur';
+COMMENT ON COLUMN gestion.acteur.civilite IS 'Civilité de l''acteur';
+COMMENT ON COLUMN gestion.acteur.courriel IS 'Courriel de l''acteur';
+COMMENT ON COLUMN gestion.acteur.tel_1 IS 'Numéro de téléphone principal de l''acteur';
+COMMENT ON COLUMN gestion.acteur.tel_2 IS 'Numéro de téléphone secondaire de l''acteur';
+COMMENT ON COLUMN gestion.acteur.fonction IS 'Fonction de l''acteur (champ libre)';
+COMMENT ON COLUMN gestion.acteur.id_organisme IS 'Identifiant de l''organisme de l''acteur (clé étrangère vers table organisme)';
+COMMENT ON COLUMN gestion.acteur.remarque IS 'Remarque sur l''acteur (texte libre)';
+COMMENT ON COLUMN gestion.acteur.bulletin_information IS 'Indique si l''acteur souhaite recevoir le bulletin d''information par courriel.';
+COMMENT ON COLUMN gestion.acteur.reunion_sinp IS 'Indique si l''acteur participe aux réunion du SINP local.';
+COMMENT ON COLUMN gestion.acteur.service IS 'Service ou direction de rattachement au sein de l''organisme';
+COMMENT ON COLUMN gestion.acteur.date_maj IS 'Date à laquelle l''enregistrement a été modifié pour la dernière fois (automatiquement renseigné)' ;
 COMMENT ON COLUMN gestion.acteur.en_poste IS 'Indique si la personne est actuellement en poste sur l''organisme qui lui est associé dans l''enregistrement. Ce champ est particulièrement utile pour des personnes ayant occupé différents postes à La Réunion. Il permet de garder en mémoire les lignes le concernant mais de ne pas les prendre en compte pour la communication SINP.';
 
 DROP TRIGGER IF EXISTS tr_date_maj ON gestion.acteur;
@@ -142,13 +140,11 @@ CREATE TRIGGER tr_date_maj
   EXECUTE PROCEDURE occtax.maj_date();
 
 -- Ajout de champs dans la table occtax.jdd_import
-ALTER TABLE occtax.jdd_import
-ADD COLUMN IF NOT EXISTS acteur_referent integer not null;
-COMMENT ON COLUMN jdd_import.acteur_referent IS 'Acteur référent (celui qui est responsable des données, par exemple dans son pôle thématique). En lien avec la table gestion.acteur';
+ALTER TABLE occtax.jdd_import ADD COLUMN IF NOT EXISTS acteur_referent integer not null;
+COMMENT ON COLUMN occtax.jdd_import.acteur_referent IS 'Acteur référent (celui qui est responsable des données, par exemple dans son pôle thématique). En lien avec la table gestion.acteur';
 
-ALTER TABLE occtax.jdd_import
-ADD COLUMN IF NOT EXISTS acteur_importateur integer not null;
-COMMENT ON COLUMN jdd_import.acteur_importateur IS 'Acteur qui a réalisé l''import des données dans la base. En lien avec la table acteur.';
+ALTER TABLE occtax.jdd_import ADD COLUMN IF NOT EXISTS acteur_importateur integer not null;
+COMMENT ON COLUMN occtax.jdd_import.acteur_importateur IS 'Acteur qui a réalisé l''import des données dans la base. En lien avec la table acteur.';
 
 ALTER TABLE occtax.jdd_import DROP CONSTRAINT IF EXISTS jdd_import_acteur_referent_fkey;
 ALTER TABLE occtax.jdd_import ADD CONSTRAINT jdd_import_acteur_referent_fkey
@@ -242,11 +238,11 @@ CHECK ( type IN ('Import', 'Export') );
 
 -- INDEXES
 DROP INDEX IF EXISTS demande.demande_usr_login_idx;
-CREATE INDEX ON demande (usr_login);
+CREATE INDEX ON gestion.demande (usr_login);
 DROP INDEX IF EXISTS demande.demande_id_acteur_idx;
-CREATE INDEX ON demande (id_acteur);
+CREATE INDEX ON gestion.demande (id_acteur);
 DROP INDEX IF EXISTS demande.demande_geom_idx;
-CREATE INDEX ON demande USING GIST (geom);
+CREATE INDEX ON gestion.demande USING GIST (geom);
 
 
 

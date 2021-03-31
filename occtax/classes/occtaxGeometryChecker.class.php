@@ -62,9 +62,9 @@ class occtaxGeometryChecker {
         if( count($return['msg']) > 0 )
             return $return;
 
-        $cnx = jDb::getConnection();
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
         $sql = 'SELECT c.code_commune, c.nom_commune, ST_AsGeoJSON( ST_Transform(c.geom, 4326), 8 ) AS geojson';
-        $sql.= ' FROM commune c';
+        $sql.= ' FROM sig.commune c';
         if ($this->x) {
             $sql.= ', ( SELECT ST_Transform(ST_SetSRID(ST_MakePoint('.$this->x.', '.$this->y.'),4326), '. $this->srid .') as geom ) as tgeo';
             $sql.= ' WHERE ST_Within( tgeo.geom, c.geom )';
@@ -101,9 +101,9 @@ class occtaxGeometryChecker {
         if( count($return['msg']) > 0 )
             return $return;
 
-        $cnx = jDb::getConnection();
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
         $sql = 'SELECT me.code_me, me.nom_me, ST_AsGeoJSON( ST_Transform(me.geom, 4326), 8 ) AS geojson';
-        $sql.= ' FROM masse_eau me';
+        $sql.= ' FROM sig.masse_eau me';
         if ($this->x) {
             $sql.= ', ( SELECT ST_Transform(ST_SetSRID(ST_MakePoint('.$this->x.', '.$this->y.'),4326), '. $this->srid .') as geom ) as tgeo';
             $sql.= ' WHERE ST_Within( tgeo.geom, me.geom )';
@@ -147,15 +147,15 @@ class occtaxGeometryChecker {
         if( $this->type_maille == 'm10')
             $maille = 'maille_10';
 
-        $cnx = jDb::getConnection();
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
         if($this->moduleName == 'occtax'){
             $sql = 'SELECT m.code_maille, m.nom_maille, ST_AsGeoJSON(ST_Transform( m.geom , 4326)) AS geojson ';
-            $sql.= ' FROM '.$maille.' m';
+            $sql.= ' FROM sig.'.$maille.' m';
             if ($this->x) {
                 $sql.= ', (SELECT ST_Transform(ST_SetSRID(ST_MakePoint('.$this->x.', '.$this->y.'),4326), '. $this->srid .') as geom) as tgeo';
             }
             $sql.= ', observation o';
-            $sql.= ' JOIN observation_diffusion od ON od.cle_obs = o.cle_obs';
+            $sql.= ' JOIN occtax.observation_diffusion od ON od.cle_obs = o.cle_obs';
             $sql.= ' WHERE True';
             if ($this->x) {
                 $sql.= ' AND ST_Within( tgeo.geom, m.geom )';
@@ -168,7 +168,7 @@ class occtaxGeometryChecker {
         }
         if($this->moduleName == 'mascarine'){
             $sql = 'SELECT m.code_maille, m.nom_maille, ST_AsGeoJSON(ST_Transform( m.geom , 4326)) AS geojson ';
-            $sql.= ' FROM '.$maille.' m';
+            $sql.= ' FROM sig.'.$maille.' m';
             if ($this->x) {
                 $sql.= ', (SELECT ST_Transform(ST_SetSRID(ST_MakePoint('.$this->x.', '.$this->y.'),4326), '. $this->srid .') as geom) as tgeo';
                 $sql.= ' WHERE ST_Within( tgeo.geom, m.geom )';

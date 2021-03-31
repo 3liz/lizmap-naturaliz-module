@@ -166,7 +166,7 @@ WITH s AS (
         ' - ' || pdet.mail_non_floute
     ), ', ' ) AS determinateur_non_floute
 
-    FROM occtax."observation"  AS o
+    FROM      occtax."observation"  AS o
     LEFT JOIN occtax."v_observateur"  AS pobs  ON pobs.cle_obs = o.cle_obs
     LEFT JOIN occtax."v_validateur"  AS pval  ON pval.identifiant_permanent = o.identifiant_permanent
     LEFT JOIN occtax."v_determinateur"  AS pdet  ON pdet.cle_obs = o.cle_obs
@@ -675,13 +675,13 @@ UNION
  SELECT 4 AS ordre,
     'Nombre d''observateurs cités' AS libelle,
     count(DISTINCT p.nom || p.prenom) AS valeur
-   FROM observation_personne op
-     LEFT JOIN personne p USING (id_personne)
+   FROM occtax.observation_personne op
+     LEFT JOIN occtax.personne p USING (id_personne)
 UNION
  SELECT 5 AS ordre,
     'Nombre de taxons faisant l''objet d''observations' AS libelle,
     count(DISTINCT vm_observation.cd_ref) AS valeur
-   FROM vm_observation
+   FROM occtax.vm_observation
 UNION
  SELECT 6 AS ordre,
     'Nombre d''adhérents à la charte régionale SINP' AS libelle,

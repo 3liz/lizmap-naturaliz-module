@@ -15,8 +15,6 @@ class observationCtrl extends jController {
         parent::__construct( $request );
     }
 
-
-
     /**
      * Get observation detail
      *
@@ -138,12 +136,12 @@ class observationCtrl extends jController {
         // Nomenclature
         $nomenclature = array();
         $sqlnom = "SELECT * FROM occtax.nomenclature";
-        $cnx = jDb::getConnection();
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
         $reqnom = $cnx->query($sqlnom);
         foreach($reqnom as $nom){
             $nomenclature[$nom->champ . '|' . $nom->code] = $nom->valeur;
         }
-        $daot = jDao::get('taxon~t_nomenclature');
+        $daot = jDao::get('taxon~t_nomenclature', 'naturaliz_virtual_profile');
         foreach($daot->findAll() as $nom){
             $nomenclature[$nom->champ . '|' . $nom->code] = $nom->valeur;
         }

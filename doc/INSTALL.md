@@ -221,7 +221,6 @@ port=5432
 user=postgres
 password="********"
 persistent=off
-search_path=""
 ```
 
 ### Lancer l'installation des modules Naturaliz
@@ -299,21 +298,18 @@ psql -d $DBNAME -p $DBPORT -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA publ
 psql -d $DBNAME -p $DBPORT -c "GRANT INSERT ON ALL TABLES IN SCHEMA occtax TO $DBUSER;"
 psql -d $DBNAME -p $DBPORT -c "GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public,occtax,sig,taxon TO $DBUSER;"
 psql -d $DBNAME -p $DBPORT -c "GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public,occtax,sig,taxon TO $DBUSER;"
-psql -d $DBNAME -p $DBPORT -c "ALTER ROLE $DBUSER SET search_path TO taxon,occtax,sig,public;"
 
 # Pour le module gestion (optionnel)
 psql -d $DBNAME -p $DBPORT -c "GRANT USAGE ON SCHEMA gestion TO $DBUSER";
 psql -d $DBNAME -p $DBPORT -c "GRANT SELECT ON ALL TABLES IN SCHEMA gestion TO $DBUSER;"
 psql -d $DBNAME -p $DBPORT -c "GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA gestion TO $DBUSER;"
 psql -d $DBNAME -p $DBPORT -c "GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA gestion TO $DBUSER;"
-psql -d $DBNAME -p $DBPORT -c "ALTER ROLE $DBUSER SET search_path TO taxon,occtax,gestion,sig,public;"
 
 # Pour le module mascarine (optionnel)
 psql -d $DBNAME -p $DBPORT -c "GRANT USAGE ON SCHEMA mascarine TO $DBUSER";
 psql -d $DBNAME -p $DBPORT -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA mascarine TO $DBUSER;"
 psql -d $DBNAME -p $DBPORT -c "GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA mascarine TO $DBUSER;"
 psql -d $DBNAME -p $DBPORT -c "GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA mascarine TO $DBUSER;"
-psql -d $DBNAME -p $DBPORT -c "ALTER ROLE $DBUSER SET search_path TO taxon,occtax,gestion,mascarine,sig,public;"
 
 exit
 
@@ -332,21 +328,18 @@ GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO naturaliz;
 GRANT INSERT ON ALL TABLES IN SCHEMA occtax TO naturaliz;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public,occtax,sig,taxon TO naturaliz;
 GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public,occtax,sig,taxon TO naturaliz;
-ALTER ROLE naturaliz SET search_path TO taxon,occtax,sig,public;
 
 -- Pour le module gestion (optionnel)
 GRANT USAGE ON SCHEMA gestion TO naturaliz;
 GRANT SELECT ON ALL TABLES IN SCHEMA gestion TO naturaliz;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA gestion TO naturaliz;
 GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA gestion TO naturaliz;
-ALTER ROLE naturaliz SET search_path TO taxon,occtax,gestion,sig,public;
 
 -- Pour le module mascarine (optionnel)
 GRANT USAGE ON SCHEMA mascarine TO naturaliz;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA mascarine TO naturaliz;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA mascarine TO naturaliz;
 GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA mascarine TO naturaliz;
-ALTER ROLE naturaliz SET search_path TO taxon,occtax,gestion,mascarine,sig,public;
 ```
 
 
@@ -360,14 +353,13 @@ GRANT ALL PRIVILEGES ON SCHEMA public,taxon,sig,occtax TO lizmap;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public,taxon,sig,occtax TO lizmap;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public,occtax,sig,taxon TO lizmap;
 GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public,occtax,sig,taxon TO lizmap;
-ALTER ROLE lizmap SET search_path TO taxon,occtax,sig,public;
 
 -- Pour le module gestion (optionnel)
 GRANT ALL PRIVILEGES ON SCHEMA gestion TO lizmap;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA gestion TO lizmap;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA gestion TO lizmap;
 GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA gestion TO lizmap;
-ALTER ROLE lizmap SET search_path TO taxon,occtax,gestion,sig,public;
+
 ```
 
 
@@ -403,7 +395,6 @@ port=5432
 user=naturaliz
 password="********"
 persistent=off
-search_path="public,taxon,sig,occtax,gestion"
 
 [jdb:jauth_super]
 driver=pgsql
@@ -413,7 +404,6 @@ port=5432
 user=postgres
 password="********"
 persistent=off
-search_path="public,taxon,sig,occtax,gestion"
 
 ```
 

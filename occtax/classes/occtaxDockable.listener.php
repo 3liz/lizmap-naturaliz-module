@@ -15,14 +15,7 @@
                 $ini = new jIniFileModifier($localConfig);
 
                 // TAXON dock
-                // Create search form
-                //$searchForm = jForms::create("taxon~search");
-                //$assign = array(
-                    //'form' => $searchForm
-                //);
-                //$content = array( 'taxon~search', $assign );
                 $content = '';
-
                 $dock = new lizmapMapDockItem(
                     'taxon',
                     jLocale::get("taxon~search.dock.title"),
@@ -33,8 +26,36 @@
                 $event->add($dock);
 
                 // OCCTAX dock
+                // Create virtual profile
+                $defaultProfile = jProfiles::get('jdb', 'default');
+                $search_path = '';
+                if (array_key_exists('search_path', $defaultProfile)) {
+                    $search_path = $defaultProfile['search_path'];
+                }
+                if (empty(trim($search_path))) {
+                    $search_path = 'public';
+                }
+                foreach (array('taxon','sig','occtax','gestion') as $schema) {
+                    if (!preg_match( '#'.$schema.'#', $search_path )) {
+                        $search_path.= ','.$schema;
+                    }
+                }
+                $jdbParams = array(
+                    'driver' => 'pgsql',
+                    'host' => $defaultProfile['host'],
+                    'port' => (int) $defaultProfile['port'],
+                    'database' => $defaultProfile['database'],
+                    'user' => $defaultProfile['user'],
+                    'password' => $defaultProfile['password'],
+                    'search_path' => $search_path,
+                    'timeout'=> '120',
+                );
+                $profile = 'naturaliz_virtual_profile';
+                jProfiles::createVirtualProfile('jdb', $profile, $jdbParams);
+
+                // Create form
                 $form = jForms::create("occtax~search");
-                $cnx = jDb::getConnection();
+                $cnx = jDb::getConnection($profile);
                 $sql = "SELECT min(date_debut)::text AS date_min FROM occtax.observation;";
                 $result = $cnx->query( $sql );
                 $date_min = '1600-01-01';
@@ -239,34 +260,10 @@
         }
 
         function onmapRightDockable ( $event ) {
-
         }
 
 
         function onmapBottomDockable ( $event ) {
-            //$coord = jApp::coord();
-            //if ($coord->moduleName == 'occtax') {
-                //$project = $event->getParam( 'project' );
-                //$repository = $event->getParam( 'repository' );
-                //$lproj = lizmap::getProject( $repository . '~' .$project );
-                //$configOptions = $lproj->getOptions();
-                //$bp = jApp::config()->urlengine['basePath'];
-
-                //$assign = array(
-                //);
-                //$content = array( 'occtax~results', $assign );
-
-                //$dock = new lizmapMapDockItem(
-                    //'occtax_tables',
-                    //jLocale::get("occtax~search.dock.title"),
-                    //$content,
-                    //10,
-                    //NULL,
-                    //NULL
-                //);
-                //$event->add($dock);
-            //}
-
         }
 
     }

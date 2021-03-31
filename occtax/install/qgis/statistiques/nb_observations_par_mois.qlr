@@ -12,7 +12,7 @@
       <datasource>dbname='lizmap' host=naturaliz-reunion.3liz.com port=5432 user='lizmap' password='lizmap12345678*' sslmode=disable key='_uid_' estimatedmetadata=true selectatid=false table="(SELECT row_number() over () AS _uid_,* FROM (SELECT
 to_char( date_trunc('month', date_debut) , 'YYYY-MM') AS periode,
 Count(cle_obs) AS nbobs
-FROM   \"observation\"  AS o
+FROM   occtax.\"observation\"  AS o
 WHERE True
 GROUP BY periode
 ORDER BY periode) AS _subq_1_

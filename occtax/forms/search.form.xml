@@ -35,7 +35,7 @@
 <!--
             <emptyitem locale="taxon~search.input.emptyitem"/>
 -->
-            <datasource dao="taxon~t_group_categorie"
+            <datasource dao="taxon~t_group_categorie" profile="naturaliz_virtual_profile"
               method="getDistinctCategorie"
               labelproperty="libelle_court" valueproperty="libelle_court"/>
             <hint locale="taxon~search.input.group.help"/>
@@ -46,7 +46,7 @@
 <!--
             <emptyitem locale="taxon~search.input.emptyitem"/>
 -->
-            <datasource dao="taxon~t_nomenclature"
+            <datasource dao="taxon~t_nomenclature" profile="naturaliz_virtual_profile"
               method="findByChamp" criteria="habitat"
               labelproperty="valeur"
               valueproperty="code"/>
@@ -58,7 +58,7 @@
 <!--
             <emptyitem locale="taxon~search.input.emptyitem"/>
 -->
-            <datasource dao="taxon~t_nomenclature"
+            <datasource dao="taxon~t_nomenclature" profile="naturaliz_virtual_profile"
               method="findByChamp" criteria="statut"
               labelproperty="valeur"  labelseparator=" - "
               valueproperty="code"/>
@@ -70,7 +70,7 @@ Désactivé car redondant et sujet à débat
         <listbox multiple="true" ref="rarete">
             <label locale="taxon~search.input.rarete"/>
             <emptyitem locale="taxon~search.input.emptyitem"/>
-            <datasource dao="taxon~t_nomenclature"
+            <datasource dao="taxon~t_nomenclature" profile="naturaliz_virtual_profile"
               method="findByChamp" criteria="rarete"
               labelproperty="valeur"  labelseparator=" - "
               valueproperty="code"/>
@@ -82,7 +82,7 @@ Désactivé car redondant et sujet à débat
 <!--
             <emptyitem locale="taxon~search.input.emptyitem"/>
 -->
-            <datasource dao="taxon~t_nomenclature"
+            <datasource dao="taxon~t_nomenclature" profile="naturaliz_virtual_profile"
               method="findByChamp" criteria="endemicite"
               labelproperty="valeur,description"  labelseparator=" "
               valueproperty="code"/>
@@ -94,7 +94,7 @@ Désactivé car redondant et sujet à débat
 <!--
             <emptyitem locale="taxon~search.input.emptyitem"/>
 -->
-            <datasource dao="taxon~t_nomenclature"
+            <datasource dao="taxon~t_nomenclature" profile="naturaliz_virtual_profile"
               method="findByChamp" criteria="invasibilite"
               labelproperty="valeur"  labelseparator=" - "
               valueproperty="code"/>
@@ -106,7 +106,7 @@ Menaces
 -->
         <listbox multiple="true" ref="menace_regionale">
             <label locale="taxon~search.input.menace_regionale"/>
-            <datasource dao="taxon~t_nomenclature"
+            <datasource dao="taxon~t_nomenclature" profile="naturaliz_virtual_profile"
               method="findByChamp" criteria="menace"
               labelproperty="valeur"  labelseparator=" - "
               valueproperty="code"/>
@@ -115,7 +115,7 @@ Menaces
 
         <listbox multiple="true" ref="menace_nationale">
             <label locale="taxon~search.input.menace_nationale"/>
-            <datasource dao="taxon~t_nomenclature"
+            <datasource dao="taxon~t_nomenclature" profile="naturaliz_virtual_profile"
               method="findByChamp" criteria="menace"
               labelproperty="valeur"  labelseparator=" - "
               valueproperty="code"/>
@@ -124,7 +124,7 @@ Menaces
 
         <listbox multiple="true" ref="menace_monde">
             <label locale="taxon~search.input.menace_monde"/>
-            <datasource dao="taxon~t_nomenclature"
+            <datasource dao="taxon~t_nomenclature" profile="naturaliz_virtual_profile"
               method="findByChamp" criteria="menace"
               labelproperty="valeur"  labelseparator=" - "
               valueproperty="code"/>
@@ -136,7 +136,7 @@ Menaces
 <!--
             <emptyitem locale="taxon~search.input.emptyitem"/>
 -->
-            <datasource dao="taxon~t_nomenclature"
+            <datasource dao="taxon~t_nomenclature" profile="naturaliz_virtual_profile"
               method="getProtections" labelproperty="valeur" valueproperty="code"/>
             <hint locale="taxon~search.input.protection.help"/>
         </listbox>
@@ -145,7 +145,7 @@ Menaces
         <listbox multiple="true" ref="det_znieff">
             <label locale="taxon~search.input.det_znieff"/>
             <emptyitem locale="taxon~search.input.emptyitem"/>
-            <datasource dao="taxon~t_nomenclature"
+            <datasource dao="taxon~t_nomenclature" profile="naturaliz_virtual_profile"
               method="findByChamp" criteria="det_znieff"
               labelproperty="valeur"  labelseparator=" - "
               valueproperty="code"/>
@@ -162,7 +162,7 @@ Menaces
 <!--
             <emptyitem locale="occtax~search.input.emptyitem"/>
 -->
-            <datasource dao="occtax~jdd"
+            <datasource dao="occtax~jdd" profile="naturaliz_virtual_profile"
               method="getJddList" labelproperty="jdd_libelle"
               valueproperty="jdd_id"/>
             <hint locale="occtax~search.input.jdd_id.help"/>
@@ -173,7 +173,7 @@ Menaces
 <!--
             <emptyitem locale="occtax~search.input.emptyitem"/>
 -->
-            <datasource dao="occtax~nomenclature"
+            <datasource dao="occtax~nomenclature" profile="naturaliz_virtual_profile"
               method="findByChamp" criteria="validite_niveau"
               labelproperty="valeur"
               valueproperty="code"/>

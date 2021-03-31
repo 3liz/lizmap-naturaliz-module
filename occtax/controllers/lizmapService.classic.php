@@ -23,9 +23,9 @@ class lizmapServiceCtrl extends serviceCtrl {
                 'observation_brute_centroid'
             ),
             'originSql' => array(
-                'POINT' => "SELECT * FROM tpl_observation_brute_point",
-                'LINESTRING' => "SELECT * FROM tpl_observation_brute_linestring",
-                'POLYGON' => "SELECT * FROM tpl_observation_brute_polygon"
+                'POINT' => "SELECT * FROM sig.tpl_observation_brute_point",
+                'LINESTRING' => "SELECT * FROM sig.tpl_observation_brute_linestring",
+                'POLYGON' => "SELECT * FROM sig.tpl_observation_brute_polygon"
             ),
             'attributeTable' => array (
                 'source' => 'observation_brute_centroid',
@@ -198,7 +198,7 @@ class lizmapServiceCtrl extends serviceCtrl {
                 $target = str_replace( '<', '&lt;', $target );
                 $target = str_replace( '"', '\"', $target );
                 $pref = 'table="(';
-                $source =  'SELECT * FROM tpl_observation_maille';
+                $source =  'SELECT * FROM sig.tpl_observation_maille';
                 $newProjectContent = str_replace(
                     $pref . $source,
                     $pref . $target,
@@ -292,7 +292,7 @@ class lizmapServiceCtrl extends serviceCtrl {
                     '    ST_Centroid(o.geom) AS geom,',
                     $target
                 );
-                $source = "SELECT * FROM tpl_observation_brute_centroid";
+                $source = "SELECT * FROM sig.tpl_observation_brute_centroid";
                 $pref = 'table="( ';
                 $newProjectContent = str_replace(
                     $pref.$source,
@@ -305,9 +305,9 @@ class lizmapServiceCtrl extends serviceCtrl {
         // No data
         if ($recordsTotal <= 0) {
             // if no data, we need to remove lines from template maille
-            $target = 'SELECT * FROM tpl_observation_maille LIMIT 0';
+            $target = 'SELECT * FROM sig.tpl_observation_maille LIMIT 0';
             $pref = 'table="(';
-            $source =  'SELECT * FROM tpl_observation_maille';
+            $source =  'SELECT * FROM sig.tpl_observation_maille';
             $newProjectContent = str_replace(
                 $pref . $source,
                 $pref . $target,

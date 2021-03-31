@@ -47,7 +47,7 @@ class occtaxSearchObservation extends occtaxSearch {
     );
 
     protected $querySelectors = array(
-        'vm_observation' => array(
+        'occtax.vm_observation' => array(
             'alias' => 'o',
             'required' => True,
             'join' => '',
@@ -74,12 +74,12 @@ class occtaxSearchObservation extends occtaxSearch {
 
     protected $queryFilters = array(
         'cle_obs' => array (
-            'table' => 'vm_observation',
+            'table' => 'occtax.vm_observation',
             'clause' => ' AND o.cle_obs IN (@)',
             'type'=> 'string'
         ),
         'cd_nom' => array (
-            'table' => 'vm_observation',
+            'table' => 'occtax.vm_observation',
             // space before o.cd_ref are VERY important as used in regex to search/replace prefix
             // for demands and use in subqueries
             'clause' => ' AND ( o.cd_ref IN (@) OR o.cd_ref IN (
@@ -106,22 +106,22 @@ class occtaxSearchObservation extends occtaxSearch {
             )
         ),
         'geom' => array (
-            'table' => 'vm_observation',
+            'table' => 'occtax.vm_observation',
             'clause' => ' AND ST_Intersects(o.geom, fg.fgeom ) ',
             'type' => 'geom'
         ),
         'date_min' => array (
-            'table' => 'vm_observation',
+            'table' => 'occtax.vm_observation',
             'clause' => ' AND ( date_debut >= @::timestamp OR date_fin >= @::timestamp ) ',
             'type' => 'timestamp'
         ),
         'date_max' => array (
-            'table' => 'vm_observation',
+            'table' => 'occtax.vm_observation',
             'clause' => ' AND ( date_debut <= @::timestamp OR date_fin <= @::timestamp ) ',
             'type' => 'timestamp'
         ),
         'code_commune' => array (
-            'table' => 'vm_observation',
+            'table' => 'occtax.vm_observation',
             'clause' => ' AND code_commune ?| ARRAY[@]',
             'type' => 'string',
             'label'=> array(
@@ -131,7 +131,7 @@ class occtaxSearchObservation extends occtaxSearch {
             )
         ),
         'code_masse_eau' => array (
-            'table' => 'vm_observation',
+            'table' => 'occtax.vm_observation',
             'clause' => ' AND code_me ?| ARRAY[@]',
             'type' => 'string',
             'label'=> array(
@@ -142,13 +142,13 @@ class occtaxSearchObservation extends occtaxSearch {
         ),
 
         'observateur' => array (
-            'table' => 'vm_observation',
-            'clause' => ' AND o.cle_obs IN (SELECT cle_obs FROM v_observateur vo WHERE vo.identite ILIKE ( @ )  )',
+            'table' => 'occtax.vm_observation',
+            'clause' => ' AND o.cle_obs IN (SELECT cle_obs FROM occtax.v_observateur vo WHERE vo.identite ILIKE ( @ )  )',
             'type' => 'partial'
         ),
 
         'type_en' => array (
-            'table' => 'vm_observation',
+            'table' => 'occtax.vm_observation',
             'clause' => ' AND type_en ?| ARRAY[@]',
             'type' => 'string',
             'label'=> array(
@@ -159,7 +159,7 @@ class occtaxSearchObservation extends occtaxSearch {
         ),
 
         'jdd_id' => array (
-            'table' => 'vm_observation',
+            'table' => 'occtax.vm_observation',
             'clause' => ' AND o.jdd_id IN ( @ )',
             'type' => 'string',
             'label'=> array(
@@ -170,7 +170,7 @@ class occtaxSearchObservation extends occtaxSearch {
         ),
 
         'validite_niveau' => array (
-            'table' => 'vm_observation',
+            'table' => 'occtax.vm_observation',
             'clause' => ' AND o.validite_niveau IN ( @ )',
             'type' => 'string',
             'label'=> array(
@@ -182,13 +182,13 @@ class occtaxSearchObservation extends occtaxSearch {
 
         // TAXONS
         'group' => array (
-            'table' => 'vm_observation',
+            'table' => 'occtax.vm_observation',
             'clause' => ' AND o.categorie IN ( @ )',
             'type' => 'string'
         ),
 
         'habitat' => array (
-            'table' => 'vm_observation',
+            'table' => 'occtax.vm_observation',
             'clause' => ' AND o.habitat IN ( @ )',
             'type' => 'string',
             'label'=> array(
@@ -200,7 +200,7 @@ class occtaxSearchObservation extends occtaxSearch {
         ),
 
         'statut' => array (
-            'table' => 'vm_observation',
+            'table' => 'occtax.vm_observation',
             'clause' => ' AND o.statut IN ( @ )',
             'type' => 'string',
             'label'=> array(
@@ -212,7 +212,7 @@ class occtaxSearchObservation extends occtaxSearch {
         ),
 
         'endemicite' => array (
-            'table' => 'vm_observation',
+            'table' => 'occtax.vm_observation',
             'clause' => ' AND o.endemicite IN ( @ )',
             'type' => 'string',
             'label'=> array(
@@ -224,7 +224,7 @@ class occtaxSearchObservation extends occtaxSearch {
         ),
 
         'invasibilite' => array (
-            'table' => 'vm_observation',
+            'table' => 'occtax.vm_observation',
             'clause' => ' AND o.invasibilite IN ( @ )',
             'type' => 'string',
             'label'=> array(
@@ -236,7 +236,7 @@ class occtaxSearchObservation extends occtaxSearch {
         ),
 
         'menace_regionale' => array (
-            'table' => 'vm_observation',
+            'table' => 'occtax.vm_observation',
             'clause' => ' AND o.menace_regionale IN ( @ )',
             'type' => 'string',
             'label'=> array(
@@ -247,7 +247,7 @@ class occtaxSearchObservation extends occtaxSearch {
             )
         ),
         'menace_nationale' => array (
-            'table' => 'vm_observation',
+            'table' => 'occtax.vm_observation',
             'clause' => ' AND o.menace_nationale IN ( @ )',
             'type' => 'string',
             'label'=> array(
@@ -258,7 +258,7 @@ class occtaxSearchObservation extends occtaxSearch {
             )
         ),
         'menace_monde' => array (
-            'table' => 'vm_observation',
+            'table' => 'occtax.vm_observation',
             'clause' => ' AND o.menace_monde IN ( @ )',
             'type' => 'string',
             'label'=> array(
@@ -270,7 +270,7 @@ class occtaxSearchObservation extends occtaxSearch {
         ),
 
         'protection' => array (
-            'table' => 'vm_observation',
+            'table' => 'occtax.vm_observation',
             'clause' => ' AND o.protection IN ( @ )',
             'type' => 'string',
             'label'=> array(
@@ -283,7 +283,7 @@ class occtaxSearchObservation extends occtaxSearch {
 
 
         //'nom_valide' => array (
-            //'table' => 'vm_observation',
+            //'table' => 'occtax.vm_observation',
             //'clause' => ' AND o.nom_valide ILIKE ( @ )',
             //'type' => 'partial'
         //),
@@ -324,7 +324,7 @@ class occtaxSearchObservation extends occtaxSearch {
         // as it is a performance killer
         if ($demande) {
             $this->queryFilters['cd_nom'] = array (
-                'table' => 'vm_observation',
+                'table' => 'occtax.vm_observation',
                 // space before o.cd_ref are VERY important as used in regex to search/replace prefix
                 // for demands and use in subqueries
                 'clause' => ' AND o.cd_ref IN (@)',

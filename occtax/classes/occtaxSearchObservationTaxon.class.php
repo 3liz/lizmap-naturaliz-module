@@ -69,7 +69,7 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
 
         $this->querySelectors = array(
 
-            'vm_observation' => array(
+            'occtax.vm_observation' => array(
                 'alias' => 'o',
                 'required' => True,
                 'join' => '',
@@ -89,7 +89,6 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
             )
         );
 
-
         // Get local configuration (application name, projects name, list of fields, etc.)
         $localConfig = jApp::configPath('naturaliz.ini.php');
         $ini = new jIniFileModifier($localConfig);
@@ -103,12 +102,11 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
         $all_menace = array('menace_regionale', 'menace_nationale', 'menace_monde');
         foreach ($all_menace as $menace) {
             if (!in_array($menace, $menace_fields)) {
-                unset($this->querySelectors['vm_observation']['returnFields'][$menace]);
+                unset($this->querySelectors['occtax.vm_observation']['returnFields'][$menace]);
                 $red = str_replace('menace_', 'redlist_', $menace);
                 unset($this->displayFields[$red]);
             }
         }
-
 
         // Get t_group_categorie lowered and unaccentuated names
         $tpl_categories = $this->getGroupNormalizedCategories();
@@ -121,9 +119,6 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
         $this->setRecordsTotal();
 
     }
-
-
-
 
 }
 
