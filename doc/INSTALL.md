@@ -34,33 +34,74 @@ structure (des droits hauts sont requis notamment pour les extensions). Vous
 pouvez utiliser l'utilisateur **postgres** pendant la phase d'installation.
 
 
-## Installer les modules Naturaliz sur une application Lizmap
+## Installer et configurer les modules Naturaliz sur une application Lizmap
 
 ### Utilisation du compte root
 
 Il est fortement conseillé d'utiliser le compte root et non avec un simple 
 sudo. Par exemple `sudo -E -s`.
 
-### Récupérer les modules
+### Installer les modules
 
-Vous pouvez le faire via l'outil git, en se connectant avec vos identifiants de 
-la plateforme git (Gitlab ou Github). Ou bien vous rendre sur la plateforme, et 
-télécharger au format ZIP, puis coller le ZIP dans le répertoire /root/ et 
-dézipper.
+Depuis la version 2.7.9 de Naturaliz, il est souhaitable de l'installer avec 
+[Composer](https://getcomposer.org), le système de paquet pour PHP. 
+Si vous ne pouvez pas, ou si vous utilisez lizmap 3.3 ou inférieur, vous
+devez utiliser l'installation manuelle.
 
-Dans l'exemple suivant, nous utilisons la plateforme Github de 3liz, avec accès https: https://github.com/3liz/lizmap-naturaliz-module/
+**Installation automatique avec Composer et lizmap 3.4 ou plus**
+
+* dans `lizmap/my-packages`, créer le fichier `composer.json` s'il n'existe pas
+  déjà, en copiant le fichier `composer.json.dist`, qui s'y trouve, et lancez
+  Composer pour installer les fichiers de Naturaliz.
 
 ```bash
-mkdir -p ~/naturaliz_modules
-cd ~/naturaliz_modules
-
-# Avec Git
-git clone https://projects.3liz.org/clients/naturaliz-reunion.git naturaliz
-cp -R ~/naturaliz_modules/naturaliz/* /srv/lizmap_web_client/lizmap/lizmap-modules/
-
-# copier les modules dans le répertoire lizmap-modules de lizmap
-ls -lh /srv/lizmap_web_client/lizmap/lizmap-modules/
+cp -n lizmap/my-packages/composer.json.dist lizmap/my-packages/composer.json
+composer require --working-dir=lizmap/my-packages "lizmap/lizmap-naturaliz-module"
 ```
+
+Passez à la section "Adapter les fichiers de configuration".
+
+**Installation manuelle dans lizmap 3.3 ou 3.4 sans Composer**
+
+* Téléchargez l'archive zip à partir de la [page release de github](https://github.com/3liz/lizmap-naturaliz-module/releases).
+* Désarchivez le zip et copiez les répertoires `gestion`, `occtax`, `occtax_admin`
+  et `taxon` dans le dossier `lizmap/lizmap-module/`
+* Il faut ensuite activer les modules dans lizmap, en éditant des fichiers
+   de configuration situés dans  `lizmap/var/config`.
+ 
+Dans le fichier `localconfig.ini.php` ajoutez dans la partie `[modules]` :
+
+```ini
+taxon.access=1
+occtax.access=1
+gestion.access=1
+occtax_admin.access=1
+
+; si vous utilisez mascarine, enlever le point virgule sur les lignes suivantes
+;mascarine.access=1
+;mascarine_admin.access=1
+
+```
+
+Dans le fichier `index/config.ini.php` ajoutez dans la partie `[modules]` :
+
+```ini
+taxon.access=2
+occtax.access=2
+gestion.access=2
+; si vous utilisez mascarine, enlever le point virgule sur la ligne suivante
+;mascarine.access=2
+```
+
+Dans le fichier `admin/config.ini.php` ajoutez dans la partie `[modules]` :
+
+```ini
+occtax_admin.access=2
+; si vous utilisez mascarine, enlever le point virgule sur la ligne suivante
+;mascarine_admin.access=2
+```
+
+
 
 ### Adapter les fichiers de configuration pour Lizmap
 
@@ -290,27 +331,6 @@ user=postgres
 password="********"
 persistent=off
 search_path=""
-```
-
-Vous devez aussi déclarer dans le fichier `localconfig.ini.php` quels modules 
-vous souhaitez installer:
-
-```bash
-cd /srv/lizmap_web_client/
-nano lizmap/var/config/localconfig.ini.php
-```
-
-Exemple de contenu à ajouter dans la section [modules]
-
-```ini
-[modules]
-lizmap.installparam=demo
-
-taxon.access=2
-occtax.access=2
-gestion.access=2
-occtax_admin.access=2
-
 ```
 
 ### Lancer l'installation des modules Naturaliz
@@ -759,25 +779,6 @@ FROM sig.zone_economique_exclusive;
 ```
 
 
-
-## Activer les modules dans l'interface d'administration
-
-Les modules `occtax_admin` et `mascarine_admin` doivent être déclarés dans la 
-configuration de Lizmap, pour permettre leur visualisation dans l'interface 
-graphique. Pour cela, il faut modifier le fichier `lizmap/var/config/localconfig.ini.php` 
-et ajouter la configuration suivante au début du fichier
-
-```bash
-cd /srv/lizmap_web_client/
-nano lizmap/var/config/localconfig.ini.php
-
-[simple_urlengine_entrypoints]
-index="@classic"
-admin="jacl2db~*@classic, jacl2db_admin~*@classic, jauthdb_admin~*@classic, master_admin~*@classic, admin~*@classic, jcommunity~*@classic, occtax_admin~*@classic"
-# Si vous avez aussi activé le module mascarine, vous devez aussi l'ajouter, pour avoir
-admin="jacl2db~*@classic, jacl2db_admin~*@classic, jauthdb_admin~*@classic, master_admin~*@classic, admin~*@classic, jcommunity~*@classic, occtax_admin~*@classic, mascarine_admin~*@classic"
-
-```
 
 
 ## Configuration LDAP

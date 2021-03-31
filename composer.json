@@ -29,7 +29,27 @@
                 "occtax/",
                 "occtax_admin/",
                 "gestion/"
-            ]
+            ],
+            "autoconfig-access-16" : {
+                "lizmap@3liz.com" : {
+                    "taxon": {
+                        "__global": 1,
+                        "index" : 2
+                    },
+                    "occtax": {
+                        "__global": 1,
+                        "index" : 2
+                    },
+                    "gestion": {
+                        "__global": 1,
+                        "index" : 2
+                    },
+                    "occtax_admin": {
+                        "__global": 1,
+                        "admin" : 2
+                    }
+                }
+            }
         }
     }
 }
