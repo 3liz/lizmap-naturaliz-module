@@ -237,11 +237,11 @@ CHECK ( type IN ('Import', 'Export') );
 
 
 -- INDEXES
-DROP INDEX IF EXISTS demande.demande_usr_login_idx;
+DROP INDEX IF EXISTS demande_usr_login_idx;
 CREATE INDEX ON gestion.demande (usr_login);
-DROP INDEX IF EXISTS demande.demande_id_acteur_idx;
+DROP INDEX IF EXISTS demande_id_acteur_idx;
 CREATE INDEX ON gestion.demande (id_acteur);
-DROP INDEX IF EXISTS demande.demande_geom_idx;
+DROP INDEX IF EXISTS demande_geom_idx;
 CREATE INDEX ON gestion.demande USING GIST (geom);
 
 

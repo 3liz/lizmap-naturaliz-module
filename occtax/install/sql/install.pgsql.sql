@@ -300,7 +300,7 @@ ALTER TABLE occtax.observation_personne ADD CONSTRAINT observation_personne_cle_
 -- on empêche la suppression de personnes référencées dans observation_personne
 ALTER TABLE occtax.observation_personne ADD CONSTRAINT observation_personne_id_personne_fk FOREIGN KEY (id_personne) REFERENCES occtax.personne (id_personne) ON DELETE RESTRICT;
 
-COMMENT ON TABLE observation_personne IS 'Table pivot entre les observations et les personnes. Le champ role_personne permet de renseigner le type de relation (voir nomenclature)';
+COMMENT ON TABLE occtax.observation_personne IS 'Table pivot entre les observations et les personnes. Le champ role_personne permet de renseigner le type de relation (voir nomenclature)';
 COMMENT ON COLUMN occtax.observation_personne.cle_obs IS 'Indentifiant de l''observation';
 COMMENT ON COLUMN occtax.observation_personne.id_personne IS 'Identifiant de la personne';
 COMMENT ON COLUMN occtax.observation_personne.role_personne IS 'Rôle de la personne. Voir nomenclature.';
@@ -883,7 +883,7 @@ COMMENT ON COLUMN sig.maille_01.nom_ref IS 'Nom de la couche de maille utilisée
 COMMENT ON COLUMN sig.maille_01.geom IS 'Géométrie de la maille.';
 
 -- Table maille_02  = 2km
-CREATE TABLE maille_02 (
+CREATE TABLE sig.maille_02 (
     id_maille serial PRIMARY KEY,
     code_maille text UNIQUE,
     nom_maille text,

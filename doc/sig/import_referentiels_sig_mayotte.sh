@@ -153,3 +153,6 @@ psql service=naturaliz_mayotte_dev -c "SELECT code_me, nom_me, ST_Area(geom) FRO
 # correction des géométries des masses d'eau et des espaces naturels
 psql service=naturaliz_mayotte_dev -c "ALTER TABLE sig.espace_naturel ALTER COLUMN geom SET DATA TYPE geometry(MULTIPOLYGON, 4471) USING ST_Multi(geom)::geometry(MULTIPOLYGON, 4471);"
 psql service=naturaliz_mayotte_dev -c "ALTER TABLE sig.masse_eau ALTER COLUMN geom SET DATA TYPE geometry(MULTIPOLYGON, 4471) USING ST_Multi(geom)::geometry(MULTIPOLYGON, 4471);"
+
+
+# Département : on a importé la ZEE de Mayotte. Mais soucis de polygones

@@ -172,8 +172,8 @@ WITH (
 ALTER TABLE taxon.taxref_local ADD PRIMARY KEY(cd_nom);
 DROP SEQUENCE IF EXISTS taxon.taxref_local_cd_nom_seq;
 CREATE SEQUENCE taxon.taxref_local_cd_nom_seq INCREMENT -1 START -1;
-ALTER TABLE taxon.taxref_local ALTER COLUMN cd_nom SET DEFAULT nextval('taxref_local_cd_nom_seq');
-ALTER TABLE taxon.taxref_local ALTER COLUMN cd_ref SET DEFAULT currval('taxref_local_cd_nom_seq');
+ALTER TABLE taxon.taxref_local ALTER COLUMN cd_nom SET DEFAULT nextval('taxon.taxref_local_cd_nom_seq');
+ALTER TABLE taxon.taxref_local ALTER COLUMN cd_ref SET DEFAULT currval('taxon.taxref_local_cd_nom_seq');
 
 ALTER TABLE taxon.taxref_local ADD CONSTRAINT taxref_local_lb_nom UNIQUE (lb_nom);
 
@@ -240,7 +240,7 @@ COMMENT ON COLUMN taxon.taxref_local.local_identifiant_origine IS 'Identifiant d
 COMMENT ON COLUMN taxon.taxref_local.local_identifiant_origine_ref IS 'Identifiant du taxon de référence (équivalent cd_ref) dans la base de données d''origine.';
 
 ALTER TABLE taxon.taxref_local
-ADD CONSTRAINT taxon.taxref_local_bdd_code FOREIGN KEY (local_bdd_code)
+ADD CONSTRAINT taxref_local_bdd_code FOREIGN KEY (local_bdd_code)
 REFERENCES taxon.taxref_local_source (code) MATCH SIMPLE
 ON UPDATE CASCADE ON DELETE RESTRICT
 ;

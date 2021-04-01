@@ -62,9 +62,20 @@ class occtaxModuleInstaller extends jInstallerModule {
 
                 // try to add a foreign key for gestion.demande / jlx_user
                 try {
+                    $defaultProfile = jProfiles::get('jdb', 'default');
+                    $lizmap_schema = 'public';
+                    if (array_key_exists('search_path', $defaultProfile)) {
+                        $search_path = $defaultProfile['search_path'];
+                        $explode = explode(',', $search_path);
+                        foreach ($explode as $item) {
+                            if (strpos(trim($item), 'lizmap_') === 0){
+                                $lizmap_schema = trim($item);
+                            };
+                        }
+                    }
                     $sql = '
                     ALTER TABLE gestion.demande ADD CONSTRAINT demande_user_login_fk
-                    FOREIGN KEY (usr_login) REFERENCES jlx_user (usr_login)
+                    FOREIGN KEY (usr_login) REFERENCES '.$lizmap_schema.'.jlx_user (usr_login)
                     ON DELETE RESTRICT;
                     ';
                     $db->exec($sql);
@@ -76,10 +87,6 @@ class occtaxModuleInstaller extends jInstallerModule {
                 // Add extension validation
                 // DO NOT USE TEMPLATE : no need (no srid) AND bug with some PostgreSQL regexp inside
                 $sqlPath = $this->path . 'install/sql/extension_validation.pgsql.sql';
-                $sqlTpl = jFile::read( $sqlPath );
-                $tpl = new jTpl();
-                $colonne_locale = $ini->getValue('colonne_locale', 'naturaliz');
-                $tpl->assign('colonne_locale', $colonne_locale);
                 $sql = jFile::read( $sqlPath );
                 $db->exec($sql);
 
