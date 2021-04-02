@@ -23,7 +23,7 @@ CREATE INDEX cadre_cadre_id_idx ON occtax.cadre USING btree (cadre_id);
 CREATE SCHEMA IF NOT EXISTS fdw;
 CREATE SCHEMA IF NOT EXISTS divers;
 
--- Modification de t_groupe_categorie
+-- Modification de t_group_categorie
 
 -- correction des Fougères
 UPDATE taxon.t_group_categorie
