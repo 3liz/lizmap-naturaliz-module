@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form xmlns="http://jelix.org/ns/forms/1.1" allowAnyOrigin="true">
+
+<!--
+    <menulist ref="niv_val" required="true">
+        <label locale="occtax~search.input.validite_niveau"/>
+        <emptyitem locale="occtax~search.input.emptyitem"/>
+        <datasource dao="occtax~nomenclature"
+          method="findByChamp" criteria="validite_niveau"
+          labelproperty="valeur"
+          valueproperty="code"/>
+        <hint locale="occtax~search.input.validite_niveau.help"/>
+    </menulist>
+-->
+
+
+
+    <input ref="niv_val">
+        <label locale="validation.input.niv_val"/>
+        <hint locale="validation.input.niv_val.help"/>
+    </input>
+
+    <input ref="producteur">
+        <label locale="validation.input.producteur"/>
+        <hint locale="validation.input.producteur.help"/>
+    </input>
+
+    <input ref="date_contact">
+        <label locale="validation.input.date_contact"/>
+        <hint locale="validation.input.date_contact.help"/>
+    </input>
+
+    <textarea ref="comm_val">
+        <label locale="validation.input.comm_val"/>
+        <hint locale="validation.input.comm_val.help"/>
+    </textarea>
+
+    <input ref="nom_retenu">
+        <label locale="validation.input.nom_retenu"/>
+        <hint locale="validation.input.nom_retenu.help"/>
+    </input>
+
+    <submit ref="submit">
+        <label locale="validation.input.submit"/>
+        <hint locale="validation.input.submit.help"/>
+     </submit>
+
+</form>

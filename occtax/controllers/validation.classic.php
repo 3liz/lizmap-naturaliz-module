@@ -26,8 +26,8 @@ class validationCtrl extends jController {
         $status = 'success';
         $message = '';
 
+        $id = $this->param('id');
         if (in_array($action, array('add', 'remove'))) {
-            $id = $this->param('id');
             if ($id && !$validation->isValidUuid($id)) {
                 $id = null;
             }
@@ -44,16 +44,26 @@ class validationCtrl extends jController {
                     $message = jLocale::get("validation.remove.observation.from.basket.success");
                 }
             }
-        } else {
-            if ($action == 'empty') {
-                $data = $validation->emptyValidationBasket();
-                $message = jLocale::get("validation.empty.validation.basket.success");
-            } else {
+        } elseif ($action == 'empty') {
+            $data = $validation->emptyValidationBasket();
+            $message = jLocale::get("validation.empty.validation.basket.success");
+        } elseif ($action == 'get') {
                 // Get
                 $data = $validation->getValidationBasket();
                 $message = jLocale::get("validation.get.validation.basket.success");
-            }
+        } elseif ($action == 'observation_validity') {
+            $data = $validation->getObservationValidity($id);
+            $message = 'OK';
+        } elseif ($action == 'validate') {
+            $niv_val = $this->param('niv_val');
+            $params = array(
+
+            );
+            //$data = $validation->validateObservationsFromBasket($params);
+            $data = array('status'=>'success');
+            $message = 'OK';
         }
+
         if (!is_array($data) && empty($data)) {
             $status = 'error';
             $message = 'An error occured. No data has been fetched';

@@ -7,10 +7,15 @@
                 <th>Nombre d'observations</th>
                 <td><span class="validation_basket_counter">{$counter}</span></td>
             </tr>
+            <tr>
+                <td colspan=2>
+                    <button value="empty" class="occtax_validation_button btn btn-mini" title="{@validation.button.validation_basket.empty.help@}">{@validation.button.validation_basket.empty.title@}</button>
+                </td>
+            </tr>
         </table>
-        <form id="validation_form" method="post" action="{jurl 'occtax~validation:index'}">
-            <button value="empty" class="occtax_validation_button btn btn-mini" title="{@validation.button.validation_basket.empty.help@}">{@validation.button.validation_basket.empty.title@}</button>
-        </form>
+        <div id="validation_form">
+            {formfull $form, 'occtax~validation:index', array(), 'htmlbootstrap'}
+        </div>
 
     </div>
 </div>

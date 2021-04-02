@@ -11,6 +11,9 @@
 jClasses::inc('occtax~occtaxSearchObservation');
 
 class occtaxSearchObservationTaxon extends occtaxSearchObservation {
+
+    protected $name = 'stats';
+
     protected $orderClause = '';
 
     protected $returnFields = array(

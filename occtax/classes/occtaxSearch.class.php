@@ -451,7 +451,9 @@ class occtaxSearch {
 
             // Get table alias
             $alias = $tdata['alias'];
+
             // Add fields to select and optionnally groupByFields
+
             foreach( $fields as $field => $group ){
 
                 // Build select clause for this table

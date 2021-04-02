@@ -474,7 +474,6 @@ OccTax.events.on({
       });
     }
 
-
     /**
      * PRIVATE function: getDockRightPosition
      * Calculate the position on the right side of the dock
@@ -916,7 +915,10 @@ OccTax.events.on({
                             $('#occtax_results_draw_maille_m02.btn').click();
                             mclick = true;
                           }
+
                           $('#'+tableId+'').show();
+
+
                     }
                 , 'json');
             }
@@ -934,7 +936,7 @@ OccTax.events.on({
       if(!mytoken) {
         $('#occtax-highlight-message').remove();
         return false;
-      }
+    }
       // Set form values
       searchForm.find('input[name="offset"]').val(0);
       searchForm.find('input[name="group"]').val('');
@@ -1039,7 +1041,6 @@ OccTax.events.on({
       return geom_feat;
     }
 
-
     function addResultsObservationTable() {
       var tableId = 'occtax_results_observation_table';
       // Get fields to display
@@ -1127,7 +1128,6 @@ OccTax.events.on({
                     else
                         lizMap.addMessage( 'Error', 'error', true ).attr('id','occtax-highlight-message');
                   }
-
                   refreshOcctaxDatatableSize('#occtax_results_observation_table_div');
 
                   callback( tData );
@@ -1175,7 +1175,6 @@ OccTax.events.on({
 
           // Add observateur tooltip
           $('#'+tableId+' span.identite_observateur').tooltip();
-
           // Get taxon detail
           $('#'+tableId+' a.getTaxonDetail').click(function(){
               var tr = $($(this).parents('tr')[0]);
@@ -1186,6 +1185,16 @@ OccTax.events.on({
               $('#occtax-highlight-message').remove();
               return false;
           });
+
+          // Get validity detail
+          $('#'+tableId+' span.niv_val').click(function(){
+              var tr = $($(this).parents('tr')[0]);
+              var d = $('#'+tableId+'').DataTable().row( tr ).data();
+              var identifiant_permanent = d['DT_RowId'];
+              showObservationValidation( identifiant_permanent );
+              return false;
+          });
+
           // Replace taxon nomenclature key by values
           $('#'+tableId+' span.redlist_regionale').each(function(){
             replaceKeyByLabelFromNomenclature($(this), 'menace_regionale');
@@ -1448,6 +1457,92 @@ OccTax.events.on({
         );
     }
 
+
+    function showObservationValidation( id ) {
+        // Check user is still connected if he was
+        var ok = checkConnection();
+        if (!ok) {
+            return;
+        }
+        if(!id)
+            return;
+
+        // Get observation data
+        var tokenFormId = $('#validation form').attr('id');
+        var url = $('#'+tokenFormId).attr('action');
+        var params = {
+          'id': id,
+          'validation_action': 'observation_validity'
+        };
+        $.get(
+            url,
+            params,
+            function( content ) {
+              if (!content) {
+                return false;
+              }
+              if(content.status != 'success') {
+                console.log(content.message);
+                return false;
+              }
+              var data = content.data;
+              if (!data) {
+                return false;
+              }
+              var val = data[0];
+
+              var html = '';
+              html+= '<h3><span class="title"><span class="text">Information</span>';
+
+              // Close button
+              html+= '<button id="validation-detail-close" class="btn btn-primary btn-mini pull-right" style="margin-left:10px;">Fermer</button>';
+
+              // Taxon detail URL button
+              var detail_url = data.inpnWebpage;
+              var config_url = occtaxClientConfig.taxon_detail_source_url;
+              if (config_url && config_url.trim() != '') {
+                  detail_url = config_url.replace('CD_NOM', data.referenceId);
+              }
+              html+= '</span>';
+              html+= '</h3>';
+              html+= '<div id="validation-detail-container"  class="menu-content">';
+              html+= '<table class="table table-condensed table-striped">';
+              html+= '<tr><th>ID</th>';
+              html+= '<td>'+val['identifiant_permanent']+'</td></tr>';
+              html+= '<tr><th>'+naturalizLocales['input.niv_val']+'</th>';
+              html+= '<td>'+val['niv_val']+'</td></tr>';
+              html+= '<tr><th>'+naturalizLocales['input.producteur']+'</th>';
+              html+= '<td>'+val['producteur']+'</td></tr>';
+              html+= '<tr><th>'+naturalizLocales['input.date_contact']+'</th>';
+              html+= '<td>'+val['date_contact']+'</td></tr>';
+              html+= '<tr><th>'+naturalizLocales['input.comm_val']+'</th>';
+              html+= '<td>'+val['comm_val']+'</td></tr>';
+              html+= '<tr><th>'+naturalizLocales['input.nom_retenu']+'</th>';
+              html+= '<td>'+val['niv_val']+'</td></tr>';
+              html+= '</table>';
+              html+= '</div>';
+              html+=  '<button id="hide-sub-dock" class="btn pull-right" style="margin-top:5px;" name="close" title="'+lizDict['generic.btn.close.title']+'">'+lizDict['generic.btn.close.title']+'</button>';
+              $('#sub-dock').html(html).css('bottom', '0px');
+              $('#occtax-highlight-message').remove();
+
+              if( !lizMap.checkMobile() ){
+                  var leftPos = lizMap.getDockRightPosition();
+                  $('#sub-dock').css('left', leftPos).css('width', leftPos);
+              }
+              // Hide lizmap close button (replaced further)
+              $('#hide-sub-dock').click(function(){
+                  $('#sub-dock').hide().html('');
+              });
+
+              // close windows
+              $('#validation-detail-close').click(function(){$('#hide-sub-dock').click();})
+
+              $('#sub-dock').show();
+            }
+        );
+    }
+
+
     function clearSpatialSearch(){
         OccTax.emptyDrawqueryLayer('observationLayer', 'mailleLayer');
         OccTax.deactivateAllDrawqueryControl();
@@ -1473,7 +1568,6 @@ OccTax.events.on({
       h = h - 130;
       //dtable.parent('div.dataTables_scrollBody').height(h);
       dtable.parent('div.dataTables_scrollBody').css('height', h+"px");
-
       // Width
       w = dtable.parent('div.dataTables_scrollBody').width();
       //dtable.parent('div.dataTables_scrollBody').width(w - 50);
@@ -1481,7 +1575,6 @@ OccTax.events.on({
 
       dtable.DataTable().scrollY = h;
       dtable.DataTable().tables().columns.adjust();
-
     }
 
     function moveLizmapMenuLi( liorder ){
@@ -1715,7 +1808,6 @@ OccTax.events.on({
             }
         });
 
-
         OccTax.controls['query'] = {};
         /**
           * Ajout de la couche openlayers des requêtes cartographiques
@@ -1930,7 +2022,7 @@ OccTax.events.on({
             clickout: true,
             eventListeners: {
                 featurehighlighted: function(evt) {
-                  $('#occtax-highlight-message').remove();
+                    $('#occtax-highlight-message').remove();
                   var features = evt.feature.cluster;
                   var len = features.length;
 
@@ -1959,7 +2051,7 @@ OccTax.events.on({
                   for (var a in feat_zero.attributes) {
                     if ($.inArray(a, avoided_properties) > -1) {
                         continue;
-                    }
+                  }
                     messages.push('<th>' + naturalizLocales['output.' + a] + '</th>');
                   }
                   messages.push('</tr>');
@@ -1974,7 +2066,7 @@ OccTax.events.on({
                     for (var a in feature.attributes) {
                       if ($.inArray(a, avoided_properties) > -1) {
                           continue;
-                      }
+                }
                       messages.push('<td>' + feature.attributes[a] + '</td>');
                     }
                     messages.push('</tr>');
@@ -2029,7 +2121,7 @@ OccTax.events.on({
                     // Do not display if geometry is point
                     if (feature.geometry.CLASS_NAME != 'OpenLayers.Geometry.Point') {
                       displayObservationGeom(feat_zero.attributes.geojson, true);
-                    }
+            }
                   }
                   //else {
                     //for (var f in features) {
@@ -2041,7 +2133,7 @@ OccTax.events.on({
                 featureunhighlighted: function(evt){
                     $('#occtax-highlight-message').fadeOut('fast', function(){
                         $(this).remove();
-                    });
+        });
                     OccTax.layers['observationTempLayer'].destroyFeatures();
                 }
             }
@@ -2057,7 +2149,6 @@ OccTax.events.on({
         );
         OccTax.map.addLayers([observationTempLayer]);
         OccTax.layers['observationTempLayer'] = observationTempLayer;
-
 
         //activate tabs
         $('#occtax_results_tabs a').tab();
@@ -2156,8 +2247,6 @@ OccTax.events.on({
           }
           clearTaxonFromSearch(removePanier, removeFilters);
         }
-
-
         // Add BBOX filter
         var extent = lizMap.map.getExtent().transform(OccTax.map.projection, 'EPSG:4326');
         var bbox = extent.toBBOX();
@@ -2199,7 +2288,6 @@ OccTax.events.on({
                         .show();
                         $('#occtax_toggle_map_display').show();
                         $('#occtax_observation_records_total').val(tData.recordsTotal);
-
                         // Afficher/masquer la légende
                         $('#occtax-legend-title').click(function(){
                           $('#occtax-legend-classes-container').toggle();
@@ -2341,6 +2429,9 @@ OccTax.events.on({
           return false;
       });
 
+
+
+
       // Add datatable tables
       // This does not get the data, which is done in the submit
       // of the form $('#div_form_occtax_search_token form').attr('id');
@@ -2423,7 +2514,7 @@ OccTax.events.on({
           //var sq_features = Object.assign({}, the_features);
           var sq_features = OccTax.getResultFeatures( self.val());
           if(sq_features){
-            var square = 5000;
+            var square = 2000;
             if(self.val() == 'm10'){
               square = 10000;
             }
@@ -2445,7 +2536,6 @@ OccTax.events.on({
             }
             rLayer.addFeatures( sq_features );
           }
-
         }
 
         // Enable left panel
@@ -2469,8 +2559,8 @@ OccTax.events.on({
             $('#occtax-legend-observation-date').toggle(true);
           }
         }
-
       });
+
 
       // Click on hidden draw buttons when changing displayed tab
       $('#occtax_results_tabs a').on('shown', function (e) {
@@ -2501,7 +2591,6 @@ OccTax.events.on({
           $('#' + drawButton).click();
 
       });
-
       $('#occtax_results_zoom').click(function() {
           var rLayer = OccTax.layers['mailleLayer'];
           if( rLayer.features.length > 0 ){
@@ -2671,7 +2760,6 @@ OccTax.events.on({
                 var new_bbox = lizMap.map.getExtent().toBBOX();
                 params.set('bbox', new_bbox);
                 window.history.replaceState({}, '', `${location.pathname}?${params}`);
-
                 // Refresh observation geometries if displayed
                 if (observation_geometries_displayed) {
                   getObservationMapFeatures();

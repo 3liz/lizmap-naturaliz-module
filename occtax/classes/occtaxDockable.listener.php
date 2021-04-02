@@ -279,9 +279,12 @@
                     if ($data) {
                         $counter = count($data);
                     }
+                    // Form
+                    $form = jForms::create("occtax~validation");
                     $assign = array(
                         'counter' => $counter,
                         'data' => $data,
+                        'form' => $form,
                     );
                     $tpl->assign($assign);
                     $content = $tpl->fetch('validation');

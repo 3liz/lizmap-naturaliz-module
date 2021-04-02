@@ -12,38 +12,83 @@ jClasses::inc('occtax~occtaxSearch');
 
 class occtaxSearchObservation extends occtaxSearch {
 
+    protected $name = 'observation';
+
     protected $orderClause = ' ORDER BY date_debut DESC';
 
     protected $returnFields = array(
         'cle_obs',
         'date_debut',
+        'identifiant_permanent',
+        'date_debut_buttons',
         'lien_nom_valide',
         'geojson',
+        //'source_objet',
         'observateur',
-        'source_objet',
-        'detail',
+        'validite',
     );
 
     protected $tplFields = array(
+        'date_debut_buttons' => '
+            <a class="openObservation" href="#" title="{@occtax~search.output.detail.title@}">
+                {$line->date_debut}
+            </a>
+
+            <a class="zoomToObservation" href="#" title="{@occtax~search.output.zoom.title@}">
+                <i class="icon-search"></i>
+            </a>
+            {if !empty($line->in_panier)}<i class="icon-shopping-cart" title="{@validation.span.validation_basket.inside.title@}"></i>{/if}
+
+        ',
+
         'lien_nom_valide' => '
-            <a class="getTaxonDetail cd_nom_{$line->cd_ref}" href="#" title="{@taxon~search.output.inpn.title@}">{$line->lb_nom_valide}</a>
-            {if !empty($line->menace_regionale)}&nbsp;<span class="redlist {$line->menace_regionale}" title="{@occtax~search.output.redlist_regionale.title@} : {$line->menace_regionale}">{$line->menace_regionale}</span>{/if}{if !empty($line->protection)}&nbsp;<span class="protectionlist {$line->protection}" title="{@occtax~search.output.protection.title@} : {$line->protection}">{$line->protection}</span>{/if}',
+            <a class="getTaxonDetail cd_nom_{$line->cd_ref}" href="#" title="{@taxon~search.output.inpn.title@}">
+                {$line->lb_nom_valide}
+            </a>
+
+            {if !empty($line->menace_regionale)}
+            &nbsp;
+            <span class="redlist {$line->menace_regionale}" title="{@occtax~search.output.redlist_regionale.title@} : {$line->menace_regionale}">
+                {$line->menace_regionale}
+            </span>
+            {/if}
+
+            {if !empty($line->protection)}
+            &nbsp;
+            <span class="protectionlist {$line->protection}" title="{@occtax~search.output.protection.title@} : {$line->protection}">
+                {$line->protection}
+            </span>
+            {/if}',
+
         'observateur' => '
             <span class="identite_observateur" title="{$line->identite_observateur|eschtml}">
                 {$line->identite_observateur|truncate:40}
             </span>
         ',
-        'detail' => '<a class="openObservation" href="#" title="{@occtax~search.output.detail.title@}"><i class="icon-file"></i></a>  <a class="zoomToObservation" href="#" title="{@occtax~search.output.zoom.title@}"><i class="icon-search"></i></a>',
+
+        'validite' => '
+            <span class="niv_val n{$line->niv_val}" title="{@occtax~validation.input.niv_val@}: {$line->niv_val}" >
+                {$line->niv_val}
+            </span><br/>
+            <button value="{if !empty($line->in_panier)}remove{else}add{/if}@{$line->identifiant_permanent}" class="occtax_validation_button btn btn-mini" title="{if !empty($line->in_panier)}{@validation.button.validation_basket.remove.help@}{else}{@validation.button.validation_basket.add.help@}{/if}">
+                {if !empty($line->in_panier)}
+                {@validation.button.validation_basket.remove.title@}
+                {else}
+                {@validation.button.validation_basket.add.title@}
+                {/if}
+            </button>
+        ',
     );
 
     protected $row_id = 'cle_obs';
 
     protected $displayFields = array(
-        'date_debut' => array( 'type' => 'string', 'sortable' => "true", 'className' => 'dt-center'),
+        //'date_debut' => array( 'type' => 'string', 'sortable' => "true", 'className' => 'dt-center'),
+        'date_debut_buttons' => array( 'type' => 'string', 'sortable' => "true", 'className' => 'dt-center', 'sorting_field' => 'date_debut'),
         'lien_nom_valide' => array( 'type' => 'string', 'sortable' => "true", 'sorting_field' => 'lb_nom_valide'),
+        //'source_objet' => array( 'type' => 'string', 'sortable' => "true", 'className' => 'dt-center'),
         'observateur' => array( 'type' => 'string', 'sortable' => "true", 'sorting_field' => 'identite_observateur'),
-        'source_objet' => array( 'type' => 'string', 'sortable' => "true", 'className' => 'dt-center'),
-        'detail' => array( 'type' => 'string', 'sortable' => 0, 'className' => 'dt-center'),
+        'validite' => array( 'type' => 'string', 'sortable' => "true", 'className' => 'dt-center'),
     );
 
     protected $querySelectors = array(
@@ -54,6 +99,7 @@ class occtaxSearchObservation extends occtaxSearch {
             'joinClause' => '',
             'returnFields' => array(
                 'o.cle_obs'=> Null,
+                'o.identifiant_permanent'=> Null,
                 'o.lb_nom_valide' => Null,
                 'o.cd_nom' => Null,
                 'o.cd_ref' => Null,
@@ -67,6 +113,8 @@ class occtaxSearchObservation extends occtaxSearch {
                 "o.menace_nationale" => Null,
                 "o.menace_monde" => Null,
                 "o.protection" => Null,
+                "'no' AS in_panier" => Null,
+                "o.validite_niveau AS niv_val" => Null,
             )
         )
 
@@ -336,6 +384,44 @@ class occtaxSearchObservation extends occtaxSearch {
                 )
             );
         }
+
+        // Validation basket
+        // Do it only for occtaxSearchObservation, not for Maille, Stats & Taxon
+        if ($this->name == 'observation' && $this->login && jAcl2::check( 'occtax.admin.config.gerer' )) {
+            // Remove fake in_panier field
+            unset($this->querySelectors['vm_observation']['returnFields']["'no' AS in_panier"]);
+            // Add new table with join parameter to check if observation is in the basket
+            $this->querySelectors['validation_panier'] = array(
+                'alias' => 'vp',
+                'required' => True,
+                //'multi' => False,
+                'join' => ' LEFT JOIN ',
+                'joinClause' => "
+                    ON vp.identifiant_permanent = o.identifiant_permanent
+                    AND vp.usr_login = '".$this->login."' ",
+                'returnFields' => array(
+                    "vp.identifiant_permanent AS in_panier"=> Null,
+                ),
+            );
+
+            // Add new join with occtax.validation_observation
+            unset($this->querySelectors['vm_observation']['returnFields']["o.validite_niveau AS niv_val"]);
+            $this->querySelectors['validation_observation'] = array(
+                'alias' => 'vo',
+                'required' => True,
+                //'multi' => False,
+                'join' => ' LEFT JOIN ',
+                'joinClause' => "
+                    ON vo.identifiant_permanent = o.identifiant_permanent AND ech_val = '2'",
+                'returnFields' => array(
+                    "vo.niv_val"=> Null,
+                ),
+            );
+
+            // Allow validator to see the full name of observers
+            // Replace identite_observateur by identite_observateur_non_floute AS identite_observateur
+        }
+
 
         parent::__construct($token, $params, $demande, $login);
     }

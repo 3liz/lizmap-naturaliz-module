@@ -30,6 +30,28 @@ lizMap.events.on({
 
         // Disconnect form submit
         $('#validation form').submit(function(){
+            // On demande confirmation avant de lancer la validation
+            // En précisant que la recherche a été lancée pour lui montrer seulement les données du panier
+            // On lance la recherche après réinitialisation du formulaire et case du panier cochée
+            // L'utilisateur peut alors vérifier
+            var confirm_action = confirm(naturalizLocales['button.validation_basket.validate.confirm']);
+            if (!confirm_action) {
+                return false;
+            }
+            var form_params = $(this).serializeArray();
+            var params = {
+                'validation_action': 'validate'
+            };
+            for (var i in form_params){
+                var param = form_params[i];
+                params[param.name] = param.value;
+            }
+            console.log(params);
+
+            runAction(params, function(content) {
+                console.log(content);
+            });
+
             return false;
         });
 
@@ -47,9 +69,17 @@ lizMap.events.on({
                 'validation_action': action,
                 'id': id
             };
+
+            // Ask confirmation for delete
+            if (action == 'remove' || action == 'empty') {
+                var confirm_action = confirm(naturalizLocales['button.validation_basket.'+action+'.confirm']);
+                if (!confirm_action) {
+                    return false;
+                }
+            }
             runAction(params, refreshValidationBasket);
 
-            // Change button
+            // Change button interface
             if (action == 'remove' || action == 'add') {
                 var new_action = 'remove';
                 if (action == 'remove') {

@@ -277,12 +277,6 @@ table.dataTable {
   width: 100% !important;
 }
 
-table.dataTable th, table.dataTable td {
-/*
-  white-space: nowrap;
-*/
-}
-
 ul.pagination {
   text-align: left;
 }
@@ -322,10 +316,11 @@ table.occtax-legend-table {
   border-collapse:collapse;
   border-spacing:0px;
   min-width:50%;
+  line-height: 0px;
 }
 
 table.occtax-legend-table td{
-  padding: 3px;
+  padding: 0px;
 }
 
 #occtax-legend-maille {
@@ -525,6 +520,37 @@ Fiche détail d'un taxon*/
   width: auto;
   max-height: 100%;
   max-width: 95%;
+}
+
+
+/*
+Span de niveau de validité en couleur
+*/
+span.niv_val { cursor:pointer; font-weight:bold; padding:4px 8px;}
+span.niv_val.n1  { background-color:lightgreen; color: rgb(51, 51, 51);}
+span.niv_val.n2  { background-color:yellow; color: rgb(51, 51, 51);}
+span.niv_val.n3  { background-color:orange; color: white; }
+span.niv_val.n4  { background-color:red; color: white;  }
+span.niv_val.n5  { background-color:grey; color: white;  }
+span.niv_val.n6  { background-color:darkgrey; color: white;  }
+
+#validation_form .form-horizontal div.control-group {
+  margin-bottom:5px;
+}
+#validation_form .form-horizontal .control-label {
+  font-size: 12px;
+  width: 90px;
+}
+#validation_form .form-horizontal .controls {
+  margin-left:100px;
+  margin-right:10px;
+}
+#validation_form .form-horizontal .controls input, #validation_form .form-horizontal .controls textarea {
+  width: 95%;
+}
+
+#validation-detail-container {
+    font-size: 12px;
 }
 
 

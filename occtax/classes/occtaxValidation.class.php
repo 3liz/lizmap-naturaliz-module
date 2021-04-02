@@ -60,6 +60,24 @@ class occtaxValidation {
 
     }
 
+    public function getObservationValidity($cle_obs) {
+        // Get data from the basket
+        $sql = "
+            SELECT o.cle_obs, vo.*
+            FROM occtax.observation AS o
+            LEFT JOIN occtax.validation_observation AS vo
+            USING (identifiant_permanent)
+            WHERE cle_obs = $1
+            LIMIT 1
+        ";
+        $params = array(
+            $cle_obs,
+        );
+        $data = $this->query($sql, $params);
+        return $data;
+
+    }
+
     public function emptyValidationBasket() {
         // Empty the basket
         $cnx = jDb::getConnection();
@@ -105,5 +123,28 @@ class occtaxValidation {
     }
 
 
+    public function validateObservationsFromBasket($params) {
+        // Todo
+        // Contrôler les valeurs du formulaire
+        // Akouter un WHERE avec le filtre sur les demandes, pour le champ "validateur" True
+        // Get observation from basket
+        $cnx = jDb::getConnection();
+        $sql = " WITH panier AS (";
+        $sql.= "    SELECT * FROM occtax.validation_panier";
+        $sql.= "    WHERE True";
+        $sql.= "    AND usr_login = $1";
+        $sql.= " )";
+        $sql.= " UPDATE occtax.validation_observation AS vo";
+        $sql.= " SET (niv_val, producteur, date_contact, comm_val, nom_retenu) = ";
+        $sql.= "($2, $3, $4, $5, $6)";
+        $sql.= " FROM panier p";
+        $sql.= " WHERE p.identifiant_permanent = vo.identifiant_permanent";
+        $sql.= " RETURNING vo.identifiant_permanent";
+        $params = array(
+            $this->login,
+        );
+        $data = $this->query($sql, $params);
+        return $data;
+    }
 
 }

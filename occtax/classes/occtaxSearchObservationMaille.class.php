@@ -12,6 +12,8 @@ jClasses::inc('occtax~occtaxSearchObservation');
 
 class occtaxSearchObservationMaille extends occtaxSearchObservation {
 
+    protected $name = 'maille';
+
     protected $maille = 'maille_01';
 
     protected $returnFields = array(

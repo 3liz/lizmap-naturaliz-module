@@ -12,6 +12,8 @@ jClasses::inc('occtax~occtaxSearchObservation');
 
 class occtaxSearchObservationBrutes extends occtaxSearchObservation {
 
+    protected $name = 'brute';
+
     protected $returnFields = array();
 
     protected $tplFields = array();
