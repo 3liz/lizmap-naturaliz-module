@@ -957,7 +957,10 @@ ORDER BY r.cd_nom ; -- 0 ligne --> OK !
 REFRESH MATERIALIZED VIEW taxref_valide;
 REFRESH MATERIALIZED VIEW taxref_consolide;
 REFRESH MATERIALIZED VIEW taxref_consolide_non_filtre;
-SET default_TEXT_search_config TO french_TEXT_search;
+DROP TEXT SEARCH CONFIGURATION IF EXISTS french_text_search;
+CREATE TEXT SEARCH CONFIGURATION french_text_search (COPY = french);
+ALTER TEXT SEARCH CONFIGURATION french_text_search ALTER MAPPING FOR hword, hword_part, word, asciihword, asciiword, hword_asciipart WITH unaccent, french_stem;
+SET default_text_search_config TO french_text_search;
 REFRESH MATERIALIZED VIEW taxref_fts;
 REFRESH MATERIALIZED VIEW occtax.vm_observation ;
 

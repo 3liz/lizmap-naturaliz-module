@@ -66,6 +66,7 @@ COMMENT ON TABLE taxon.statuts_especes_14 IS 'Statuts de taxon basés sur Taxref
 
 SET client_encoding TO 'ISO-8859-15';
 -- \copy doit être sur une seule ligne
+-- \cd BDC-Statuts-v14
 \COPY taxon.statuts_especes_14 (cd_nom ,cd_ref ,cd_sup ,cd_type_statut ,lb_type_statut ,regroupement_type ,code_statut ,label_statut ,rq_statut ,cd_sig ,cd_doc ,lb_nom ,lb_auteur ,nom_complet_html ,nom_valide_html ,regne ,phylum ,classe ,ordre ,famille ,group1_inpn ,group2_inpn ,lb_adm_tr ,niveau_admin ,cd_iso3166_1 ,cd_iso3166_2 ,full_citation ,doc_url ,thematique ,type_value) FROM 'BDC_STATUTS_14.csv' DELIMITER ',' HEADER CSV;
 RESET client_encoding ;
 SHOW client_encoding ;
@@ -78,14 +79,6 @@ SHOW client_encoding ;
 SELECT * FROM taxon.t_nomenclature WHERE champ = 'endemicite' AND code IN  ('E', 'S');
 UPDATE taxon.t_nomenclature SET valeur = 'Endémique de la Martinique' WHERE champ = 'endemicite' AND code = 'E';
 UPDATE taxon.t_nomenclature SET valeur = 'Endémique des Petites Antilles' WHERE champ = 'endemicite' AND code = 'S';
-
--- Statut :
-DELETE FROM taxon.t_nomenclature WHERE champ = 'statut' ;
-INSERT INTO taxon.t_nomenclature (champ, code, valeur, description, ordre) VALUES
-('statut', 'I', 'Indigène', ' Taxons pour lesquels la colonne locale (ex: fra) est (P, S, E, Z, B, W, X)', 1),
-('statut', 'E', 'Exotique', 'Taxons pour lesquels la colonne locale (ex: fra) (I, J, M, Y, D, A, Q)', 2),
-('statut', 'ND', 'Non documenté', 'Taxon non documenté, cad pour lequels la colonne locale (ex: fra) = C ou NULL', 3)
-;
 
 -- Invasibilité : vérifier que c'est OK
 SELECT * FROM taxon.t_nomenclature WHERE champ = 'invasibilite';
@@ -404,10 +397,11 @@ CREATE TABLE taxon.taxvern_14 (
     pays TEXT
 );
 -- ATTENTION: le fichier TAXVERNv14 comporte des soucis qu'il faut corriger à la main (des tabulations en trop)
+-- \cd ..
 \COPY taxon.taxvern_14 FROM 'TAXVERNv14.txt' DELIMITER E'\t' HEADER CSV;
 
 -- Vérification :
-SELECT * FROM taxon.taxvern_14 LIMIT 1;
+SELECT * FROM taxon.taxvern_14 LIMIT 10;
 
 -- Pour éviter d'intégrer des noms en doublon, on va éclater puis agglomérer les noms français issus de Taxvern (langue = français et créole) et de Taxref.
 -- TODO : à adapter pour une autre région, notamment le champ iso639_3 pour le code du créole local
@@ -483,7 +477,12 @@ WHERE t.cd_nom = synthese_taxvern_14.cd_nom
 REFRESH MATERIALIZED VIEW taxon.taxref_valide;
 REFRESH MATERIALIZED VIEW taxon.taxref_consolide;
 REFRESH MATERIALIZED VIEW taxon.taxref_consolide_non_filtre;
-SET default_TEXT_search_config TO french_TEXT_search;
+
+DROP TEXT SEARCH CONFIGURATION IF EXISTS french_text_search;
+CREATE TEXT SEARCH CONFIGURATION french_text_search (COPY = french);
+ALTER TEXT SEARCH CONFIGURATION french_text_search ALTER MAPPING FOR hword, hword_part, word, asciihword, asciiword, hword_asciipart WITH unaccent, french_stem;
+SET default_text_search_config TO french_text_search;
+
 REFRESH MATERIALIZED VIEW taxon.taxref_fts;
 REFRESH MATERIALIZED VIEW occtax.vm_observation ;
 
