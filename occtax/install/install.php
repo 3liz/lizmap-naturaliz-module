@@ -243,19 +243,26 @@ class occtaxModuleInstaller extends jInstallerModule {
             // Add admin to group naturaliz_profil_1
             jAcl2DbUserGroup::addUserToGroup('admin', 'naturaliz_profil_1');
 
-            // Ajout du droit d'accès à l'administration de Naturaliz pour l'admin
+            // Ajout des droits naturaliz pour le groupe admins
+            // On n'utilise surtout pas jAcl2DbManager::setRightsOnGroup car on doit lui passer aussi
+            // tous les sujets Lizmap et Jelix, sinon les droits sont vidés
             jAcl2DbManager::addRight('admins', 'occtax.admin.config.gerer');
+            jAcl2DbManager::addRight('admins', 'requete.spatiale.maille_01');
+            jAcl2DbManager::addRight('admins', 'requete.spatiale.maille_02');
+            jAcl2DbManager::addRight('admins', 'requete.spatiale.cercle');
+            jAcl2DbManager::addRight('admins', 'requete.spatiale.polygone');
+            jAcl2DbManager::addRight('admins', 'requete.spatiale.import');
+            jAcl2DbManager::addRight('admins', 'requete.spatiale.espace.naturel');
+            jAcl2DbManager::addRight('admins', 'requete.jdd.observation');
+            jAcl2DbManager::addRight('admins', 'requete.observateur.observation');
+            jAcl2DbManager::addRight('admins', 'requete.organisme.utilisateur');
+            jAcl2DbManager::addRight('admins', 'requete.utilisateur.observation');
+            jAcl2DbManager::addRight('admins', 'visualisation.donnees.brutes');
+            jAcl2DbManager::addRight('admins', 'visualisation.donnees.maille_01');
+            jAcl2DbManager::addRight('admins', 'visualisation.donnees.maille_02');
+            jAcl2DbManager::addRight('admins', 'visualisation.donnees.sensibles');
             jAcl2DbManager::addRight('admins', 'visualisation.donnees.non.filtrees');
             jAcl2DbManager::addRight('admins', 'export.geometries.brutes.selon.diffusion');
-
-            // Droits : Pouvoir voir toutes les données non filtrées même si pas de demande
-            jAcl2DbManager::addSubject( 'visualisation.donnees.non.filtrees', 'occtax~jacl2.visualisation.donnees.non.filtrees', 'naturaliz.subject.group');
-            jAcl2DbManager::setRightsOnGroup(
-                'admins',
-                array(
-                    'visualisation.donnees.non.filtrees'=>true
-                )
-            );
 
         }
 
