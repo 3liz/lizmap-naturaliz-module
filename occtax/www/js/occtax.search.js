@@ -471,6 +471,21 @@ OccTax.events.on({
       });
     }
 
+
+    /**
+     * PRIVATE function: getDockRightPosition
+     * Calculate the position on the right side of the dock
+     */
+    function getDockRightPosition() {
+      var right = $('#mapmenu').width();
+      if( $('#content').hasClass('embed') )
+          right+= 11;
+      else if( $('#dock').css('display') != 'none' && !lizMap.checkMobile() )
+          right+= $('#dock').width() + 11;
+      return right;
+    }
+
+
     function displayTaxonDetail(cd_nom){
         // Depending on the source, we must
         // API: "api" -> get data from MNHN API and display in subdock
@@ -485,7 +500,7 @@ OccTax.events.on({
               $('#sub-dock').html(html)
               .css('bottom', '0px');
               if( !lizMap.checkMobile() ){
-                  var leftPos = lizMap.getDockRightPosition();
+                  var leftPos = getDockRightPosition();
                   $('#sub-dock').css('left', leftPos).css('width', leftPos);
               }
               // Hide lizmap close button (replaced further)
