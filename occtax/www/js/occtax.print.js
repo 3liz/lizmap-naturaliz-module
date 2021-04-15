@@ -200,7 +200,7 @@ lizMap.events.on({
             var searchForm = $('#occtax_service_search_maille_form_m10');
             var datatype = 'm10';
         }
-        if( $('#occtax_results_draw_observation.active').length > 0 ){
+        if( $('button.occtax_results_draw_observation.active').length > 0 ){
             searchForm = $('#occtax_service_search_form');
             datatype = 'b';
         }

@@ -135,6 +135,10 @@
                 $taxon_detail_source_url = $ini->getValue('taxon_detail_source_url', 'naturaliz');
                 if (empty($taxon_detail_source_url))
                     $taxon_detail_source_url = '';
+                $taxon_detail_nom_menace = $ini->getValue('taxon_detail_nom_menace', 'naturaliz');
+                if (empty($taxon_detail_nom_menace)) {
+                    $taxon_detail_nom_menace = 'menace_regionale';
+                }
                 $occtaxClientConfig = array(
                     'colonne_locale'=> $colonne_locale,
                     'maxAreaQuery'=> (integer)$maxAreaQuery,
@@ -145,6 +149,7 @@
                     'statut_localisations'=> $statut_localisations,
                     'taxon_detail_source_type'=> $taxon_detail_source_type,
                     'taxon_detail_source_url'=> $taxon_detail_source_url,
+                    'taxon_detail_nom_menace'=> $taxon_detail_nom_menace,
                 );
 
                 $mailles_a_utiliser = $ini->getValue('mailles_a_utiliser', 'naturaliz');

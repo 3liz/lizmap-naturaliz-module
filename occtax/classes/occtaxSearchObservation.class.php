@@ -105,11 +105,13 @@ class occtaxSearchObservation extends occtaxSearch {
                 'column'=>'nom_valide'
             )
         ),
+
         'geom' => array (
             'table' => 'occtax.vm_observation',
             'clause' => ' AND ST_Intersects(o.geom, fg.fgeom ) ',
             'type' => 'geom'
         ),
+
         'date_min' => array (
             'table' => 'occtax.vm_observation',
             'clause' => ' AND ( date_debut >= @::timestamp OR date_fin >= @::timestamp ) ',
@@ -281,14 +283,12 @@ class occtaxSearchObservation extends occtaxSearch {
             )
         ),
 
-
         //'nom_valide' => array (
             //'table' => 'occtax.vm_observation',
             //'clause' => ' AND o.nom_valide ILIKE ( @ )',
             //'type' => 'partial'
         //),
     );
-
 
     /**
      * construct - Change geometry value depending on logged user
@@ -379,7 +379,7 @@ class occtaxSearchObservation extends occtaxSearch {
                 'code_commune' => 'c'
             );
             foreach( $this->params as $k=>$v ){
-                if( array_key_exists( $k, $qf ) and $v and $qf[$k]['type'] != 'geom' ){
+                if( array_key_exists( $k, $qf ) and $v and !in_array($qf[$k]['type'], array('geom'))){
                     if( in_array($k, $blackQueryParams) ){
                         $asql = '';
                         // Keep only data with open diffusion
@@ -402,7 +402,6 @@ class occtaxSearchObservation extends occtaxSearch {
             $sql.= " AND o.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
         }
 
-//jLog::log($sql);
         return $sql;
 
     }

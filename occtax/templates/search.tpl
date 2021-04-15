@@ -160,24 +160,26 @@ RESUME DE LA RECHERCHE ET DES RESULTATS
         Barre d'outil pour basculer l'affichage carto entre mailles 1, 2, 10km et observations
 -->
         <div id="occtax_toggle_map_display" class="btn-toolbar">
-          <div id="occtax_results_draw" class="btn-group" data-toggle="buttons-radio" style="">
+          <div id="occtax_results_draw" class="btn-group dropup" data-toggle="buttons-radio" style="">
             {ifacl2 "visualisation.donnees.maille_01"}
             {if in_array('maille_01', $mailles_a_utiliser)}
-            <button title="Basculer sur l'affichage par mailles de 1 km" id="occtax_results_draw_maille_m01" type="button" class="btn active" name="draw" value="m01">Mailles 1x1 km</button>
+            <button title="Afficher les mailles de 1 km" id="occtax_results_draw_maille_m01" type="button" class="btn active" name="draw" value="m01">Mailles 1km</button>
             {/if}
             {/ifacl2}
 
             {ifacl2 "visualisation.donnees.maille_02"}
             {if in_array('maille_02', $mailles_a_utiliser)}
-            <button title="Basculer sur l'affichage par mailles de 2 km"  id="occtax_results_draw_maille_m02" type="button" class="btn active btn-primary" name="draw" value="m02">Mailles 2x2 km</button>
+            <button title="Afficher les mailles de 2 km"  id="occtax_results_draw_maille_m02" type="button" class="btn active btn-primary" name="draw" value="m02">Mailles 2km</button>
             {/if}
             {/ifacl2}
             {if in_array('maille_10', $mailles_a_utiliser)}
-            <button title="Basculer sur l'affichage par mailles de 10 km "  id="occtax_results_draw_maille_m10" type="button" class="btn" name="draw" value="m10">Mailles 10x10 km</button>
+            <button title="Afficher les mailles de 10 km "  id="occtax_results_draw_maille_m10" type="button" class="btn" name="draw" value="m10">Mailles 10km</button>
             {/if}
 
             {ifacl2 "visualisation.donnees.brutes"}
-            <button title="Basculer sur l'affichage des données brutes "  id="occtax_results_draw_observation" type="button" class="btn" name="draw" value="observation">Observations</button>
+            <button title="Afficher les données brutes par menace" type="button" class="occtax_results_draw_observation menace btn" name="draw" value="observation">Menace</button>
+            <button title="Afficher les données brutes par protection" type="button" class="occtax_results_draw_observation protection btn" name="draw" value="observation">Protection</button>
+            <button title="Afficher les données brutes par date" type="button" class="occtax_results_draw_observation date btn" name="draw" value="observation">Date</button>
             {/ifacl2}
           </div>
         </div>
@@ -311,6 +313,9 @@ RESULTATS DE RECHERCHE (TABLEAUX)
             <input type="text" name="offset"></input>
             <input type="text" name="order"></input>
             <input type="text" name="group"></input>
+            <input type="text" name="extent"></input>
+            <input type="text" name="map"></input>
+            <input type="text" name="rowcount"></input>
           </form>
           {zone 'taxon~datatable', array('classId'=>'occtax~occtaxSearchObservation','tableId'=>'occtax_results_observation_table')}
         </div>

@@ -138,6 +138,32 @@ class serviceCtrl extends jController {
 
 
     /**
+     * Classic search
+     *
+     */
+    function search() {
+        $groupBy = $this->param('group');
+        if( $groupBy == 's' ) {
+            return $this->__search( 'occtaxSearchObservationStats' );
+        }
+        else if ( $groupBy == 'm' ) {
+            return $this->__search( 'occtaxSearchObservationMaille' );
+        }
+        else if ( $groupBy == 't' ) {
+            return $this->__search( 'occtaxSearchObservationTaxon' );
+        }
+        else {
+            $map = $this->param('map');
+            if ($map == 'on') {
+                return $this->__search( 'occtaxSearchObservationExtent' );
+            } else {
+                return $this->__search( 'occtaxSearchObservation' );
+            }
+        }
+    }
+
+
+    /**
      * Protected search
      *
      */
@@ -153,7 +179,7 @@ class serviceCtrl extends jController {
         );
 
         // Do not return data if not connected for observations
-        if ($searchClassName == 'occtaxSearchObservation') {
+        if ($searchClassName == 'occtaxSearchObservation' || $searchClassName == 'occtaxSearchObservationExtent') {
             if( !jAcl2::check("visualisation.donnees.brutes") ) {
                 $return['status'] = 0;
                 $return['msg'][] = jLocale::get( 'occtax~search.form.error.right' );
@@ -180,18 +206,33 @@ class serviceCtrl extends jController {
             $login = $user->login;
         }
 
+        // Extent
+        $extent = $this->param('extent');
+
         // Get instance
-        $occtaxSearch = new $searchClassName( $token, null, null, $login );
+        // Add extent only for some contexts: map and observation table
+        if ($searchClassName != 'occtaxSearchObservationExtent') {
+            $occtaxSearch = new $searchClassName( $token, null, null, $login );
+        } else {
+            $occtaxSearch = new $searchClassName( $token, null, null, $login, $extent);
+        }
 
         // Get data
         $limit = $this->intParam( 'limit' );
         $offset = $this->intParam( 'offset' );
         $order = $this->param( 'order', '' );
+
         try {
+            // Get only row count, no data
+            if ($searchClassName == 'occtaxSearchObservationExtent' and $this->intParam('rowcount',0) == 1) {
+                $data = array();
+            } else {
+                $data = $occtaxSearch->getData( $limit, $offset, $order);
+            }
             $return['recordsTotal'] = $occtaxSearch->getRecordsTotal();
-            $return['recordsFiltered'] = $occtaxSearch->getRecordsTotal();
-            $return['data'] = $occtaxSearch->getData( $limit, $offset, $order );
+            $return['data'] = $data;
             $return['status'] = 1;
+            $return['recordsFiltered'] = $return['recordsTotal'];
             $return['fields'] = $occtaxSearch->getFields();
         }
         catch( Exception $e ) {
@@ -205,23 +246,6 @@ class serviceCtrl extends jController {
         $rep->data = $return;
 
         return $rep;
-    }
-
-
-    /**
-     * Classic search
-     *
-     */
-    function search() {
-        $groupBy = $this->param('group');
-        if( $groupBy == 's' )
-          return $this->__search( 'occtaxSearchObservationStats' );
-        else if( $groupBy == 'm' )
-          return $this->__search( 'occtaxSearchObservationMaille' );
-        else if ( $groupBy == 't' )
-          return $this->__search( 'occtaxSearchObservationTaxon' );
-        else
-          return $this->__search( 'occtaxSearchObservation' );
     }
 
     /**

@@ -97,7 +97,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
             // geometrie
             'precision_geometrie' => "Real",
             'nature_objet_geo' => "String",
-            //'geojson' => "String",
+            'geojson' => "String",
             'source_objet' => "String",
 
             // acteurs
@@ -264,6 +264,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
                 'o.precision_geometrie' => Null,
                 'o.nature_objet_geo' => Null,
                 'ST_Transform(o.geom, 4326) AS geom' => Null,
+                'ST_AsGeoJSON( ST_Transform(o.geom, 4326), 6 ) AS geojson' => Null,
                 "o.source_objet" => Null,
 
                 // diffusion
@@ -318,11 +319,6 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         }
 
         parent::__construct($token, $params, $demande, $login);
-    }
-
-    function setSql() {
-        parent::setSql();
-//jLog::log($this->sql);
     }
 
     // Override getResult to get all data (no limit nor offset)

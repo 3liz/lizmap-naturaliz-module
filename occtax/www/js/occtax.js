@@ -4,12 +4,17 @@ var OccTax = function() {
   occTaxMailleResult_m02 = null;
   occTaxMailleResult_m05 = null;
   occTaxMailleResult_m10 = null;
+
   // creating the OccTax object
   var obj = {
     map: null,
     layers: {},
     controls: {},
     config: {},
+    //observation_style: 'menace',
+    observation_style: 'protection',
+
+    annee_dizaine: Math.round(parseInt(new Date().getFullYear()) / 10) * 10,
 
     /**
      *  Initialise TOUTES les couches de dessin
@@ -17,7 +22,7 @@ var OccTax = function() {
     emptyDrawqueryLayer: function( layersNotToEmpty ){
         if ( !$.isArray(layersNotToEmpty) )
           layersNotToEmpty = [layersNotToEmpty];
-        theLayers = ['drawLayer', 'queryLayer', 'resultLayer', 'resultLayer1', 'resultLayer2', 'resultLayer3', 'obstemp'];
+        theLayers = ['drawLayer', 'queryLayer', 'mailleLayer', 'observationLayer', 'observationTempLayer'];
         for(key in theLayers){
           if ( layersNotToEmpty.indexOf( theLayers[key] ) == -1 ){
             var thisLayer = this.layers[ theLayers[key]];
@@ -99,46 +104,28 @@ var OccTax = function() {
         return feature;
     },
 
-    /**
-     * Fournis les résultats sous forme d'un tableau de features
-     */
-/*
-    getMaille: function( rowId ){
-        var results = occTaxMailleResult;
-        var feature = null;
 
-        // Get data
-        var fields = results['fields'];
-        if ( !fields )
-          return feature;
-
-        var rowIdField = fields['row_id'];
-        var rowIdIdx = fields['return'].indexOf( rowIdField );
-        var geoIdx = fields['return'].indexOf( 'geojson' );
-        var format = new OpenLayers.Format.GeoJSON();
-
-        for( var i=0, len=results.data.length; i<len; i++ ) {
-            var d = results.data[i];
-            if ( d[rowIdIdx] != rowId )
-              continue;
-
-            var geom = format.read( d[geoIdx] )[0].geometry;
-            var attributes = {};
-            for( j in fields['return']) {
-                //if( $.inArray( fields['return'][j], fields['display'] ) > -1 )
-                attributes[ fields['return'][j] ] = d[j];
-                if( $.inArray( fields['return'][j], fields['display'] ) > -1 )
-                  messageText.push( displayFieldsHead[fields['return'][j]]+' '+d[j] );
-            }
-
-            geom.transform('EPSG:4326', OccTax.map.projection);
-            feature = new OpenLayers.Feature.Vector( geom, attributes);
-            feature.fid = d[ fields['return'].indexOf( fields['row_id'] ) ];
-            break;
+    // Remplace les features d'une couche par les nouvelles données
+    refreshFeatures: function(type) {
+        // Choose layer
+        var rLayer = OccTax.layers['mailleLayer'];
+        if (type == 'observation') {
+          rLayer = OccTax.layers['observationLayer'];
         }
-        return feature;
+
+        // Destroy previous features
+        rLayer.destroyFeatures();
+
+        // Parse the features comming from the backend into data usable by OpenLayers
+        var the_features = OccTax.getResultFeatures(type);
+
+        // Add raw features
+        rLayer.addFeatures(the_features);
+
+        // Show
+        rLayer.setVisibility(true);
+        //rLayer.refresh();
     },
-*/
 
     /**
      * Fournis les résultats sous forme d'un tableau de features
@@ -166,6 +153,7 @@ var OccTax = function() {
         var fields = results['fields'];
         if ( !fields )
           return features;
+
         var geoIdx = fields['return'].indexOf( 'geojson' );
 
         var th = $('#occtax_results_observation_table th');
@@ -173,8 +161,6 @@ var OccTax = function() {
           th = $('#occtax_results_maille_table_'+type+' th');
         if (type == 'm02')
           th = $('#occtax_results_maille_table_'+type+' th');
-        //if (type == 'm05')
-          //th = $('#occtax_results_maille_table_'+type+' th');
         if (type == 'm10')
           th = $('#occtax_results_maille_table_'+type+' th');
 
@@ -188,22 +174,38 @@ var OccTax = function() {
         for( var i=0, len=results.data.length; i<len; i++ ) {
             var d = results.data[i];
             var geom = null;
-            if( d[geoIdx] )
+            if( d[geoIdx] ) {
                 geom = format.read( d[geoIdx] )[0].geometry;
+            }
+            // messageText is the text representation of the feature
+            // used to display detail in Lizmap message bar
             var messageText = [];
             var attributes = {};
-            for( j in fields['return']) {
+            var avoided_properties = [ 'filter', 'detail'];
+            for (j in fields['return']) {
+
+                // Do not add property text in tooltip for some properties
+                if ($.inArray(fields['return'][j], avoided_properties) > -1) {
+                    continue;
+                }
+
+                // Add field data in attributes
                 attributes[ fields['return'][j] ] = d[j];
 
-                // Do not add text in tooltip for some properties
-                if( fields['return'][j] =='filter' || fields['return'][j] == 'detail' )
-                    continue;
-                if( fields['return'][j] in fields['display']
-                ){
-                  messageText.push( displayFieldsHead[fields['return'][j]]+' '+d[j] );
+                // For mailles, build message_text content
+                // Display property label (same as in table) and value. "Maille XXX - Nb Obs. 34 - Nb taxons 37"
+                // For observation, not done here but only on feature selected
+                // Build message text representation
+                if (type != 'observation') {
+                    if (fields['return'][j] in fields['display']) {
+                        messageText.push( displayFieldsHead[fields['return'][j]]+' : '+d[j] );
+                    }
                 }
             }
-            attributes['message_text'] = messageText.join(', ');
+            if (type != 'observation') {
+                // Add simple message
+                attributes['message_text'] = messageText.join(' - ');
+            }
             if( geom ) {
                 geom.transform('EPSG:4326', OccTax.map.projection);
                 var feat = new OpenLayers.Feature.Vector( geom, attributes);
@@ -274,34 +276,30 @@ lizMap.events.on({
     'uicreated':function(evt){
           //console.log('uicreated');
         OccTax.map = lizMap.map;
+
+
+
+
         // Style des couches
         // ----------------------------------------------------------------------
-        OccTax.resultLayerContext = {
+
+        // mailleLayer
+        OccTax.mailleLayerContext = {
             getPointRadius:function(feat) {
                 var res = OccTax.map.getResolution();
-                var rad = 0;
-                if(feat.attributes.rayon > 0){
-                    //~ return feat.attributes.rayon; //
-                    rad = Math.round(feat.attributes.rayon / res); //pour rayon en mètre
-                }else{
-                    rad = (OccTax.map.getZoom() + 1); // * 1.5
-                }
                 // Draw square underneath maille features
+                // NB: in mailleLayer, mailles are duplicated: one for point with radius, one for square
                 if('square' in feat.attributes){
-                    var square = feat.attributes.square / 2;
-                    rad = Math.round(square / res);
+                    var rad = Math.round((feat.attributes.square / 2) / res);
+                } else {
+                    var rad = Math.round(feat.attributes.rayon / res); //pour rayon en mètre
                 }
-
                 return rad;
-
             },
             getPointColor:function(feat) {
-                if (!feat.attributes.color)
-                  feat.attributes.color = '#'+Math.floor(Math.random()*16777215).toString(16);
                 return feat.attributes.color;
             },
             getStrokeWidth:function(feat) {
-                mySw = (OccTax.map.getZoom() + 1) * 1.5;
                 mySw = (OccTax.map.getZoom() + 1);
                 if(mySw < 3){mySw = 3;}
                 // Draw square underneath maille features
@@ -309,21 +307,6 @@ lizMap.events.on({
                     mySw = 0.5;
                 }
                 return mySw;
-            },
-            getPointRadiusSelect:function(feat) {
-                var res = OccTax.map.getResolution();
-                var rad = 0;
-                if(feat.attributes.rayon > 0){
-                    //~ return feat.attributes.rayon; //
-                    rad = Math.round(feat.attributes.rayon / res) * 1.5; //pour rayon en mètre
-                }else{
-                    rad = (OccTax.map.getZoom() + 1) * 1.5;
-                }
-                // Hide square underneath maille features on select
-                if('square' in feat.attributes){
-                    rad = 0;
-                }
-                return rad;
             },
             getStrokeWidthSelect:function(feat) {
                 mySw = (OccTax.map.getZoom() + 1);
@@ -364,7 +347,7 @@ lizMap.events.on({
             }
         };
 
-        var resultLayerTemplateDefault = {
+        var mailleLayerTemplateDefault = {
             pointRadius: "${getPointRadius}",
             fillColor: "${getPointColor}",
             fillOpacity: "${getFillOpacity}",
@@ -376,11 +359,11 @@ lizMap.events.on({
             graphicName: "${getGraphicName}",
             cursor: "pointer"
         };
-        OccTax.resultLayerStyleDefault = new OpenLayers.Style(
-            resultLayerTemplateDefault, {context: OccTax.resultLayerContext}
+        OccTax.mailleLayerStyleDefault = new OpenLayers.Style(
+            mailleLayerTemplateDefault, {context: OccTax.mailleLayerContext}
         );
 
-        var resultLayerTemplateSelect = {
+        var mailleLayerTemplateSelect = {
             pointRadius: "${getPointRadius}",
             fillColor: "${getPointColor}",
             fillOpacity: "${getFillOpacity}",
@@ -391,14 +374,240 @@ lizMap.events.on({
             graphicName: "${getGraphicName}",
             cursor: "pointer"
         };
-        OccTax.resultLayerStyleSelect = new OpenLayers.Style(
-            resultLayerTemplateSelect, {context: OccTax.resultLayerContext}
+        OccTax.mailleLayerStyleSelect = new OpenLayers.Style(
+            mailleLayerTemplateSelect, {context: OccTax.mailleLayerContext}
         );
 
-        OccTax.resultLayerStyleMap = new OpenLayers.StyleMap({
-            "default": OccTax.resultLayerStyleDefault,
-            "select" : OccTax.resultLayerStyleSelect
+        OccTax.mailleLayerStyleMap = new OpenLayers.StyleMap({
+            "default": OccTax.mailleLayerStyleDefault,
+            "select" : OccTax.mailleLayerStyleSelect
         });
+
+        var redlist_colors = {
+            'CR': '#D3001B',
+            'DD': '#D3D4D5',
+            'EN': '#FBBF00',
+            'EW': '#3D1951',
+            'EX': '#000000',
+            'LC': '#78B74A',
+            'NA': '#919294',
+            'NE': '#E9EAEB',
+            'NT': '#FBF2CA',
+            'RE': '#5A1A63',
+            'VU': '#FFED00'
+        };
+
+        var protection_colors = {
+            'EPN': '#7499ff',
+            'EPC': '#7fa8ff',
+            'EPI': '#a4c1ff',
+            'EPA': '#c4d7ff'
+        };
+
+
+
+        // Function to choose color depending on feature attributes
+        function getPointColorByAttributes(afeat) {
+            var color = '#FFFFFF80';
+            if (afeat.attributes.color) {
+                color = afeat.attributes.color;
+            } else {
+                // Style feature based on property
+                if (OccTax.observation_style == 'menace') {
+                    var menace = OccTax.config.taxon_detail_nom_menace;
+                    color = '#E9EAEB';
+                    if (menace in afeat.attributes && afeat.attributes[menace] in redlist_colors ) {
+                        color = redlist_colors[afeat.attributes[menace]];
+                    }
+                } else if (OccTax.observation_style == 'protection') {
+                    color = '#C7D6FF';
+                    if ('protection' in afeat.attributes && afeat.attributes['protection'] in protection_colors ) {
+                        color = protection_colors[afeat.attributes['protection']];
+                    }
+                } else if (OccTax.observation_style == 'date') {
+                    color = '#FFFFFF80';
+                    if ('date_debut' in afeat.attributes && afeat.attributes['date_debut'] ) {
+                        var obs_annee = parseInt(afeat.attributes['date_debut'].substring(0,4));
+                        if (obs_annee < 1950) {
+                            color = '#fff5eb';
+                        }
+                        else if (obs_annee >= 1950 && obs_annee < 2000) {
+                            color = '#fdd2a5';
+                        }
+                        else if (obs_annee >= 2000 && obs_annee < (OccTax.annee_dizaine - 10)) {
+                            color = '#fd9243';
+                        }
+                        else if (obs_annee >= (OccTax.annee_dizaine - 10) && obs_annee < OccTax.annee_dizaine) {
+                            color = '#df5005';
+                        }
+                        else if (obs_annee >= OccTax.annee_dizaine) {
+                            color = '#7f2704';
+                        }
+                    }
+                } else {
+                    // Random colors
+                    //color = '#'+Math.floor(Math.random()*16777215).toString(16);
+                    color = '#FFFFFF80';
+                }
+            }
+            return color;
+        }
+
+        function getLabelByAttribute(afeat) {
+            var label = '';
+            if (OccTax.observation_style == 'menace') {
+                var menace_label = afeat.attributes[OccTax.config.taxon_detail_nom_menace];
+                if (menace_label) {
+                    return menace_label;
+                }
+            }
+            return label;
+        }
+
+        // ObservationLayer
+        OccTax.observationLayerContext = {
+            getPointRadius:function(feat) {
+                var len = 1;
+                if (feat.cluster) {
+                    len = feat.cluster.length;
+                }
+                var rad = (OccTax.map.getZoom() + 3);
+                if(len > 1) {
+                    rad = Math.max(rad + feat.attributes.count/10, rad + 4);
+                }
+                return rad;
+            },
+            getPointColor:function(feat) {
+                var color = '#FFFFFF80';
+                var len = 1;
+                if (feat.cluster) {
+                    len = feat.cluster.length
+                };
+                if(len > 1) {
+                    // Cluster color
+                    color = '#FFFFFF80';
+                } else {
+                    if(feat.cluster) {
+                        var afeat = feat.cluster[0];
+                    } else {
+                        var afeat = feat;
+                    }
+                    color = getPointColorByAttributes(afeat);
+                }
+                return color;
+            },
+            getStrokeWidth:function(feat) {
+                mySw = (OccTax.map.getZoom() + 1);
+                if(mySw < 3){mySw = 3;}
+                return mySw;
+            },
+            getGraphicName:function(feat) {
+                var graphic = 'square';
+                if (feat.cluster && feat.cluster.length > 1) {
+                    graphic = 'circle';
+                }
+                return graphic;
+            },
+            getFillOpacity:function(feat) {
+                var fo = 1;
+                return fo;
+            },
+            getLabel: function(feat) {
+                var label = '';
+                if (feat.cluster) {
+                    if (feat.cluster.length > 1) {
+                        return feat.cluster.length;
+                    } else {
+                        return getLabelByAttribute(feat.cluster[0])
+                    }
+                }
+                return getLabelByAttribute(feat);
+            },
+            getLabelFontSize: function(feat) {
+                if (feat.cluster) {
+                    if (feat.cluster.length > 1) {
+                        return 15;
+                    } else {
+                        return 10;
+                    }
+                }
+                return 10;
+            }
+            //,
+            //getExternalGraphic: function(feat) {
+                //var tpl = 'http://naturaliz-reunion.localhost/taxon/css/images/groupes/REPLACE.png'
+                //if (feat.cluster) {
+                    //if (feat.cluster.length > 1) {
+                        //return '';
+                    //}
+                    //return tpl.replace('REPLACE', 'reptiles');
+                //}
+                //return '';
+            //}
+        };
+
+        var observationLayerTemplateDefault = {
+            pointRadius: "${getPointRadius}",
+            fillColor: "${getPointColor}",
+            fillOpacity: "${getFillOpacity}",
+            strokeColor: "#040404",
+            strokeOpacity: 1,
+            strokeDashstyle: "solid",
+            strokeWidth:1,
+            //strokeWidth: "${getStrokeWidth}",
+            graphicName: "${getGraphicName}",
+            //externalGraphic: "${getExternalGraphic}",
+            cursor: "pointer",
+            label: "${getLabel}",
+            fontSize: "${getLabelFontSize}",
+            fontColor: '#040404'
+        };
+        OccTax.observationLayerStyleDefault = new OpenLayers.Style(
+            observationLayerTemplateDefault, {context: OccTax.observationLayerContext}
+        );
+
+        var observationLayerTemplateSelect = {
+            pointRadius: "${getPointRadius}",
+            fillColor: "${getPointColor}",
+            fillOpacity: "${getFillOpacity}",
+            strokeColor: "blue",
+            strokeOpacity: 1,
+            strokeDashstyle: "solid",
+            //strokeWidth: "${getStrokeWidth}",
+            strokeWidth: 2,
+            graphicName: "${getGraphicName}",
+            cursor: "pointer"
+        };
+        OccTax.observationLayerStyleSelect = new OpenLayers.Style(
+            observationLayerTemplateSelect, {context: OccTax.observationLayerContext}
+        );
+
+        OccTax.observationLayerStyleMap = new OpenLayers.StyleMap({
+            "default": OccTax.observationLayerStyleDefault,
+            "select" : OccTax.observationLayerStyleSelect
+        });
+
+
+        // Style de la couche temporaire pour afficher une ou deux observations
+        // -------------------------------------------------------------------------
+        OccTax.tempStyle = new OpenLayers.Style({
+            //pointRadius: "${getPointRadius}",
+            pointRadius: 15,
+            fillColor: "lightblue",
+            fillOpacity: 0.3,
+            //strokeColor: "${getPointColor}",
+            strokeColor: "blue",
+            strokeOpacity: 1,
+            strokeWidth: 3,
+            graphicName: 'square'
+        }, {context: OccTax.observationLayerContext});
+
+        OccTax.tempStyleMap = new OpenLayers.StyleMap({
+            "default":   OccTax.tempStyle,
+            "temporary": OccTax.tempStyle,
+            "select" :   OccTax.tempStyle
+        });
+
 
         // Style des outils de dessin et sélection
         // -------------------------------------------------------------------------
@@ -435,8 +644,10 @@ lizMap.events.on({
             "select" :   OccTax.drawStyleSelect
         });
 
+        // Add config
         OccTax.config = occtaxClientConfig;
 
+        // Initialize object
         OccTax.init();
 
         // Hide home button
@@ -473,6 +684,7 @@ lizMap.events.on({
             // Needed because they prevent print drag control from working
             OccTax.controls.select.selectCtrl.deactivate();
             OccTax.controls.select.highlightCtrl.deactivate()
+            OccTax.controls.select.selectObservationCtrl.deactivate()
         }
     },
     dockclosed: function(e) {
@@ -480,6 +692,7 @@ lizMap.events.on({
             // Activate Occtax controls
             OccTax.controls.select.selectCtrl.activate();
             OccTax.controls.select.highlightCtrl.activate()
+            //OccTax.controls.select.selectObservationCtrl.activate();
         }
     }
 

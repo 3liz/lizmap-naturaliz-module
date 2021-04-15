@@ -38,7 +38,7 @@ class occtaxSearch {
 
     private $selectClause = '';
 
-    private $fromClause = '';
+    protected $fromClause = '';
 
     protected $whereClause = '';
 
@@ -86,7 +86,7 @@ class occtaxSearch {
             // Remove useless params
             if (is_array($params)) {
                 foreach ($params as $k=>$v) {
-                    if (is_array($v) and $v == array('')) {
+                    if (is_array($v) && $v == array('')) {
                         $params[$k] = "";
                     }
                 }
@@ -108,7 +108,7 @@ class occtaxSearch {
         $this->setSql();
 //jLog::log($this->sql);
         // Get the number of total records
-        if( !$this->recordsTotal and $this->token and !$this->demande )
+        if( !$this->recordsTotal && $this->token && !$this->demande )
             $this->setRecordsTotal();
 
         // Store to cache
@@ -165,7 +165,7 @@ class occtaxSearch {
         $filters = array();
         $qf = $this->queryFilters;
         foreach( $this->params as $k=>$v ){
-            if( array_key_exists( $k, $qf ) and $v and $qf[$k]['type'] != 'geom' ){
+            if( array_key_exists( $k, $qf ) && $v && !in_array($qf[$k]['type'], array('geom'))){
                 if (is_array($v)) {
                     $labels = array();
                     foreach ($v as $vv) {
@@ -176,10 +176,10 @@ class occtaxSearch {
                     $filters[$k] = $this->getValueLabel($k, $v);
                 }
             }
-            if($k == 'code_maille' and $v){
+            if($k == 'code_maille' && $v){
                 $filters[$k] = $this->getValueLabel($k, $v);
             }
-            if($k == 'geom' and $v and empty($this->params['code_maille'])){
+            if($k == 'geom' && $v && empty($this->params['code_maille'])){
                 $l = preg_replace('#([A-Z]+).+#', '\1', $v);
                 $l = preg_replace('#POLYGON|MULTIPOLYGON#','Polygone', $l);
                 $filters[$k] = $l;
@@ -193,11 +193,27 @@ class occtaxSearch {
         $tpl->assign('s', $s  );
 
         if($format=='html'){
+            // maille legend
             $legend_classes = array();
             if($drawLegend)
                 $legend_classes = $this->drawLegend();
-
             $tpl->assign('legend_classes', $legend_classes );
+
+            // other legends
+            $dao_menace = jDao::get('taxon~t_nomenclature', 'naturaliz_virtual_profile');
+            $menaces = $dao_menace->findByChamp('menace');
+            $menace_legend_classes = array();
+            foreach ($menaces as $menace) {
+                $menace_legend_classes[$menace->code] = $menace->valeur;
+            }
+            $menace_legend_classes = array_reverse($menace_legend_classes);
+            $tpl->assign('menace_legend_classes', $menace_legend_classes);
+            $annee = (integer) date("Y");
+            $annee_dizaine = round($annee, -1);
+            $annee_moins_10 = $annee_dizaine - 10;
+            $tpl->assign('annee', $annee);
+            $tpl->assign('annee_dizaine', $annee_dizaine);
+            $tpl->assign('annee_moins_10', $annee_moins_10);
             $description = $tpl->fetch('occtax~searchDescription');
         }
         else{
@@ -239,7 +255,7 @@ class occtaxSearch {
         $content.= "\r\n\r\n";
         $content.= "Jeux de données :\r\n";
 
-        if (array_key_exists( 'jdd_id', $osParams ) and $osParams['jdd_id']) {
+        if (array_key_exists( 'jdd_id', $osParams ) && $osParams['jdd_id']) {
             $jdd_ids = $osParams['jdd_id'];
             if (!is_array($jdd_ids)) {
                 $jdd_ids = array($jdd_ids);
@@ -438,7 +454,7 @@ class occtaxSearch {
                     $a = '';
 
                 // Add fields to groupByField array
-                if( !$multi and !empty($group)){
+                if( !$multi && !empty($group)){
 
                     if( !is_array( $group ) ){
                         $gField = $a . $group;
@@ -483,9 +499,9 @@ class occtaxSearch {
             // Add tables only if needed by where clause
             $qf = $this->queryFilters;
             foreach( $this->params as $k=>$v ){
-                if( ( array_key_exists( $k, $qf ) and $v ) ){
+                if( ( array_key_exists( $k, $qf ) && $v ) ){
                     $q = $qf[$k];
-                    if( array_key_exists( 'table', $q)  and !in_array( $q['table'], $t ) ){
+                    if( array_key_exists( 'table', $q)  && !in_array( $q['table'], $t ) ){
                         $d = $this->querySelectors[$q['table']];
                         $sql.= ' ' . $d['join'];
                         $sql.= ' ' . $q['table'] . ' ';
@@ -518,7 +534,7 @@ class occtaxSearch {
 
         if( $this->params ){
             foreach( $this->params as $k=>$v ){
-                if( array_key_exists( $k, $this->queryFilters ) and array_key_exists( 'table', $this->queryFilters[$k] ) and $v ){
+                if( array_key_exists( $k, $this->queryFilters ) && array_key_exists( 'table', $this->queryFilters[$k] ) && $v ){
                     $q = $this->queryFilters[$k];
 
                     // Geometrie
@@ -528,7 +544,7 @@ class occtaxSearch {
                             // On vient du WFS. Il faut decoder
                             $wktgeom = urldecode($v);
                         }
-                        $geoFilter= ', (SELECT ST_Transform( ST_GeomFromText(' . $cnx->quote($wktgeom) . ', 4326), '. $this->srid .') AS fgeom';
+                        $geoFilter = ', (SELECT ST_Transform( ST_GeomFromText(' . $cnx->quote($wktgeom) . ', 4326), '. $this->srid .') AS fgeom';
                         $geoFilter.= ' ) AS fg
 ';
                         $this->fromClause.= $geoFilter;
@@ -562,7 +578,7 @@ class occtaxSearch {
         }
 
         // Add restriction coming from demande table
-        if( $this->login and !$this->demande ){
+        if( $this->login && !$this->demande ){
             $eventParams = array('login' => $this->login);
             $filters = jEvent::notify('getOcctaxFilters', $eventParams)->getResponse();
             foreach($filters as $filter){
@@ -582,7 +598,6 @@ class occtaxSearch {
             $groupClause = ' GROUP BY ' . $groupClause;
         return $groupClause;
     }
-
 
     protected function setOrderClause( $order ){
         $orderClause = '';
@@ -627,7 +642,7 @@ class occtaxSearch {
     * @return List of matching data
     */
     function getData( $limit=50, $offset=0, $order="" ) {
-        $result = $this->getResult( $limit, $offset, $order );
+        $result = $this->getResult($limit, $offset, $order);
         $data = $result->fetchAll();
 
         $d = array();
@@ -638,7 +653,7 @@ class occtaxSearch {
                 // If property key is one of the columns returned by the query
                 if( property_exists( $line, $field ) ) {
                     $val = $line->$field;
-                    if( $field == 'geojson' and is_string($val) ){
+                    if( $field == 'geojson' && is_string($val) ){
                         $val = json_decode( $val );
                     }
                     $item[] = $val;
@@ -687,7 +702,7 @@ class occtaxSearch {
         if (empty($token)) {
             return Null;
         }
-        if( !empty($token) and isset( $_SESSION['occtaxSearch' . $token] ) ){
+        if( !empty($token) && isset( $_SESSION['occtaxSearch' . $token] ) ){
             $cache = $_SESSION['occtaxSearch' . $token];
             return $cache;
         }

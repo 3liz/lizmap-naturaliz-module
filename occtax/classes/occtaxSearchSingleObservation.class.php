@@ -38,4 +38,12 @@ class occtaxSearchSingleObservation extends occtaxSearchObservationBrutes {
 
     }
 
+    public function getExportedFields( $topic, $format='name' ) {
+        $exported_fields = parent::getExportedFields($topic, $format);
+        if ($topic == 'principal') {
+            $exported_fields[] = 'geojson';
+        }
+        return $exported_fields;
+    }
+
 }

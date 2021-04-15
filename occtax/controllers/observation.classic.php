@@ -82,6 +82,11 @@ class observationCtrl extends jController {
                 };
             }
         }
+
+        // Decode geojson
+        $geostring = json_encode($data['geojson']);
+        $data['geojson'] = $geostring;
+
         // Read local config
         $localConfig = jApp::configPath('naturaliz.ini.php');
         $ini = new jIniFileModifier($localConfig);

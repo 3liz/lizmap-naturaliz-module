@@ -277,6 +277,12 @@ table.dataTable {
   width: 100% !important;
 }
 
+table.dataTable th, table.dataTable td {
+/*
+  white-space: nowrap;
+*/
+}
+
 ul.pagination {
   text-align: left;
 }
@@ -316,13 +322,15 @@ table.occtax-legend-table {
   border-collapse:collapse;
   border-spacing:0px;
   min-width:50%;
-  line-height: 0px;
 }
 
 table.occtax-legend-table td{
-  padding: 0px;
+  padding: 3px;
 }
 
+#occtax-legend-maille {
+  line-height: 0px;
+}
 
 /*
 Occtax search dock
@@ -441,13 +449,26 @@ Légende des mailles*/
   position: absolute;
   z-index: 1000;
   margin-left: calc(50% - 100px);
-  background:rgba(255,255,255,0.4);
+  background:rgba(255,255,255,0.6);
   padding: 5px;
   border-radius: 5px;
   color: rgb(50,50,50);
 }
-#map-content div.occtax-legend-container b{
+#map-content div.occtax-legend-container span#occtax-legend-title{
   font-size: 14px;
+  cursor: pointer;
+}
+#map-content div.occtax-legend-container h4{
+  margin: 0px;
+  font-size: 13px;
+}
+
+#map-content div#occtax-legend-classes-container {
+  margin: 5px;
+}
+
+#map-content div.occtax-legend-container div.occtax-legend-classes{
+  background:rgba(255,255,255,0.7);
 }
 
 #content.mobile #map-content div.occtax-legend-container {
@@ -504,4 +525,30 @@ Fiche détail d'un taxon*/
   width: auto;
   max-height: 100%;
   max-width: 95%;
+}
+
+
+/*
+Message en haut de la carte*/
+
+#occtax-highlight-message div.occtax-highlight-message-container {
+  font-size: 12px;
+  max-height: 300px;
+  overflow: auto;
+}
+
+#occtax-highlight-message div.occtax-highlight-message-container > div{
+  margin: 0px;
+}
+#occtax-highlight-message div.occtax-highlight-message-container > div div.row {
+  margin-left: 0px;
+}
+
+#occtax-highlight-message div.occtax-highlight-message-container > div table.dataTable tbody tr {
+  background-color: transparent;
+  cursor: pointer;
+}
+
+#occtax-highlight-message div.occtax-highlight-message-container > div table.dataTable tbody td {
+  padding: 3px;
 }

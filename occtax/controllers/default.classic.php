@@ -67,6 +67,10 @@ class defaultCtrl extends lizMapCtrl {
             $rep->addJsLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/occtax.js')));
             $rep->addJsLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/occtax.search.js')));
 
+            // datatable scroller https://datatables.net/extensions/scroller/
+            $rep->addJsLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/dataTables.scroller.min.js')));
+            $rep->addCSSLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/scroller.dataTables.min.css')));
+
             // Add nomenclature
             $nomenclature = array();
             $daot = jDao::get('taxon~t_nomenclature', 'naturaliz_virtual_profile');

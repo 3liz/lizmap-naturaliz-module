@@ -6,6 +6,7 @@
         <span style="font-weight: bold;" id="occtax_fiche_position" class=""></span>
         <button class="btn btn-primary" id="occtax_fiche_next">Suivant</button>
         <button class="btn btn-primary pull-right" id="occtax_fiche_zoom">Zoom</button>
+        <span style="display:none;">{if array_key_exists('geojson', $data)}{$data['geojson']}{/if}</span>
     </center>
 </div>
 
