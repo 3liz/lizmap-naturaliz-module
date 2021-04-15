@@ -1,6 +1,21 @@
 # CHANGELOG
 
-### 2.7.8 - 18/03/2020
+### 2.8.1 - 15/04/2021
+
+* Fix upgrade de la 2.7.8 à la 2.8.0
+
+### 2.8.0 - 02/04/2021
+
+* Amélioration des scripts d'installation
+* Structure PostgreSQL - Suppression des search_path et déclaration obligatoire des schémas
+* Occtax - Ajout du script SQL avec les fonctions du schéma divers
+* Taxon - Ajout de 2 scripts exemple pour l'import TAXREF (plus simple pour Martinique)
+* Occtax - Adaptation du listener pour afficher le projet naturaliz à Limap Web Client >= 3.4
+* Taxon - suppression du script d'import PHP de Taxref
+* Mascarine - Suppression des modules dépréciés
+* Doc - Modification pour l'import du TAXREF (manuel)
+
+### 2.7.8 - 18/03/2021
 
 * Fix bug dans le SQL des vues matérialisées
 * Doc & script - suppression des scripts d'import de données SIG
