@@ -46,7 +46,6 @@ lizMap.events.on({
                 var param = form_params[i];
                 params[param.name] = param.value;
             }
-            console.log(params);
 
             runAction(params, function(content) {
                 console.log(content);

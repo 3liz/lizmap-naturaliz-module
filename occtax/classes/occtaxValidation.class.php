@@ -123,9 +123,8 @@ class occtaxValidation {
     }
 
 
-    public function validateObservationsFromBasket($params) {
+    public function validateObservationsFromBasket($input_params) {
         // Todo
-        // Contrôler les valeurs du formulaire
         // Akouter un WHERE avec le filtre sur les demandes, pour le champ "validateur" True
         // Get observation from basket
         $cnx = jDb::getConnection();
@@ -140,9 +139,14 @@ class occtaxValidation {
         $sql.= " FROM panier p";
         $sql.= " WHERE p.identifiant_permanent = vo.identifiant_permanent";
         $sql.= " RETURNING vo.identifiant_permanent";
+
         $params = array(
-            $this->login,
+            $this->login
         );
+        foreach ($input_params as $param) {
+            $params[] = $param;
+        }
+
         $data = $this->query($sql, $params);
         return $data;
     }

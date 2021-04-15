@@ -55,13 +55,33 @@ class validationCtrl extends jController {
             $data = $validation->getObservationValidity($id);
             $message = 'OK';
         } elseif ($action == 'validate') {
-            $niv_val = $this->param('niv_val');
-            $params = array(
+            $check = true;
+            $niv_val = $this->intParam('niv_val', 0);
+            if ($niv_val <= 0 || $niv_val > 6) {
+                $check = false;
+            }
+            $producteur = strip_tags(trim($this->param('producteur')));
+            $comm_val = strip_tags(trim($this->param('comm_val')));
+            $nom_retenu = strip_tags(trim($this->param('nom_retenu')));
+            $date_contact = trim($this->param('date_contact'));
+            //$date_valide = (bool)preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/",$date_contact);
+            $dt = DateTime::createFromFormat("Y-m-d", $date_contact);
+            $date_valide = $dt !== false && !array_sum($dt::getLastErrors());
+            if (!$date_valide) {
+                $check = False;
+            }
 
-            );
-            //$data = $validation->validateObservationsFromBasket($params);
-            $data = array('status'=>'success');
-            $message = 'OK';
+            if (!$check) {
+                $message = jLocale::get('validation.form.validation.input.error');
+                $data = array();
+                $status = 'error';
+            } else {
+                $input_params = array(
+                    $niv_val, $producteur, $date_contact, $comm_val, $nom_retenu
+                );
+                $data = $validation->validateObservationsFromBasket($input_params);
+                $message = jLocale::get('validation.validate.validation.basket.success');
+            }
         }
 
         if (!is_array($data) && empty($data)) {
