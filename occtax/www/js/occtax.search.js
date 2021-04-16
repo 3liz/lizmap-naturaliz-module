@@ -1174,7 +1174,7 @@ OccTax.events.on({
         var target_extent = obs.geometry.bounds;
         var target_zoom = lizMap.map.getZoomForExtent(target_extent);
         var target_resolution = lizMap.map.getResolutionForZoom(target_zoom);
-        var target_scale = OpenLayers.Util.getScaleFromResolution(target_resolution, lizMap.map.getUnits())
+        var target_scale = OpenLayers.Util.getScaleFromResolution(target_resolution, lizMap.map.getUnits());
 
         var max_scale = occtaxClientConfig.maximum_observation_scale;
         var current_scale = lizMap.map.getScale();
@@ -1185,12 +1185,20 @@ OccTax.events.on({
             target_scale = current_scale;
         }
 
-        // Bug: lizMap.map.zoomToScale( target_scale ) -> we use zoom
-        var zoom = lizMap.map.scales.indexOf(target_scale);
-        lizMap.map.zoomTo(zoom);
+        // NB: lizMap.map.zoomToScale( target_scale ) does not work -> we use zoom calculated from scale or resolution
+        var zoom = null;
+        if (lizMap.map.scales) {
+          zoom = lizMap.map.scales.indexOf(target_scale);
+        }
+        if (lizMap.map.resolutions) {
+          var target_resolution_final = OpenLayers.Util.getResolutionFromScale(target_scale, lizMap.map.getUnits());
+          zoom = lizMap.map.resolutions.indexOf(target_resolution_final);
+        }
+        if (zoom) {
+          lizMap.map.zoomTo(zoom);
+        }
         var targetCenter = target_extent.getCenterLonLat();
         lizMap.map.setCenter( targetCenter );
-
     }
 
 
