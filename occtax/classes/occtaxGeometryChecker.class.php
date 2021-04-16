@@ -154,7 +154,7 @@ class occtaxGeometryChecker {
             if ($this->x) {
                 $sql.= ', (SELECT ST_Transform(ST_SetSRID(ST_MakePoint('.$this->x.', '.$this->y.'),4326), '. $this->srid .') as geom) as tgeo';
             }
-            $sql.= ', observation o';
+            $sql.= ', occtax.observation o';
             $sql.= ' JOIN occtax.observation_diffusion od ON od.cle_obs = o.cle_obs';
             $sql.= ' WHERE True';
             if ($this->x) {
