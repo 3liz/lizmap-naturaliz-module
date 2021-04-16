@@ -38,7 +38,8 @@
                     },
                     "occtax": {
                         "__global": 1,
-                        "index" : 2
+                        "index" : 2,
+                        "script": 2
                     },
                     "gestion": {
                         "__global": 1,

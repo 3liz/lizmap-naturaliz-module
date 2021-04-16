@@ -1,5 +1,9 @@
 # CHANGELOG
 
+### 2.8.3 - 16/04/2021
+
+* Add script entry point in composer.json for occtax autoconfig-access
+
 ### 2.8.2 - 16/04/2021
 
 * Fix - Zoom sur l'observation: utilisation des map.resolutions si map.scales non défini
