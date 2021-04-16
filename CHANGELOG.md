@@ -1,5 +1,11 @@
 # CHANGELOG
 
+### 2.8.2 - 16/04/2021
+
+* Fix - Zoom sur l'observation: utilisation des map.resolutions si map.scales non défini
+* Installation/Upgrade - Ajout d'une vue manquante taxon.taxref_consolide
+* Recherche spatiale - Correction de la recherche par maille
+
 ### 2.8.1 - 15/04/2021
 
 * Fix upgrade de la 2.7.8 à la 2.8.0
