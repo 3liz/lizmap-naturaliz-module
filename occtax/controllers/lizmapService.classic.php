@@ -432,16 +432,7 @@ class lizmapServiceCtrl extends serviceCtrl {
     $querystring = $url . implode('&', $data);
 
     // Get data form server
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_HEADER, 0);
-    curl_setopt($ch, CURLOPT_URL, $querystring);
-    curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    $data = curl_exec($ch);
-    $info = curl_getinfo($ch);
-    $mime = $info['content_type'];
-    curl_close($ch);
+    list($data, $mime, $code) = lizmapProxy::getRemoteData($querystring);
 
     // Delete temp file
     unlink($tempProjectPath);
