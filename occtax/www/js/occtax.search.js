@@ -1492,7 +1492,7 @@ OccTax.events.on({
               var val = data[0];
 
               var html = '';
-              html+= '<h3><span class="title"><span class="text">Information</span>';
+              html+= '<h3><span class="title"><span class="text">'+naturalizLocales['validation.dock.title']+'</span>';
 
               // Close button
               html+= '<button id="validation-detail-close" class="btn btn-primary btn-mini pull-right" style="margin-left:10px;">Fermer</button>';
@@ -1503,6 +1503,8 @@ OccTax.events.on({
               if (config_url && config_url.trim() != '') {
                   detail_url = config_url.replace('CD_NOM', data.referenceId);
               }
+              var in_panier = val['in_panier'] ? true : false;
+              var p_action = in_panier ? 'remove' : 'add';
               html+= '</span>';
               html+= '</h3>';
               html+= '<div id="validation-detail-container"  class="menu-content">';
@@ -1518,10 +1520,24 @@ OccTax.events.on({
               html+= '<tr><th>'+naturalizLocales['input.comm_val']+'</th>';
               html+= '<td>'+val['comm_val']+'</td></tr>';
               html+= '<tr><th>'+naturalizLocales['input.nom_retenu']+'</th>';
-              html+= '<td>'+val['niv_val']+'</td></tr>';
+              html+= '<td>'+val['nom_retenu']+'</td></tr>';
+
+              // todo Ajouter le typ_val et la date de modification
+
+              // Validation basket action button
+              html+= '<tr><th>'+naturalizLocales['validation_basket.actionbar.title']+'</th>';
+              html+= '<td>';
+              //if (in_panier) {
+                //html+= '<i class="icon-shopping-cart" title="'+naturalizLocales['span.validation_basket.inside.title']+'"></i>';
+              //}
+              html+=  '<button id="hide-sub-dock" class="btn pull-right" style="margin-top:5px;" name="close" title="'+lizDict['generic.btn.close.title']+'">'+lizDict['generic.btn.close.title']+'</button>';
+              html+= '<button value="' + p_action + '@' + val['identifiant_permanent'] + '" class="occtax_validation_button btn btn-mini"';
+              html+= ' title="' + naturalizLocales['button.validation_basket.' + p_action + '.help'] + '">';
+              html+= naturalizLocales['button.validation_basket.' + p_action + '.title'] + '</button>';
+              html+= '</td></tr>';
               html+= '</table>';
               html+= '</div>';
-              html+=  '<button id="hide-sub-dock" class="btn pull-right" style="margin-top:5px;" name="close" title="'+lizDict['generic.btn.close.title']+'">'+lizDict['generic.btn.close.title']+'</button>';
+
               $('#sub-dock').html(html).css('bottom', '0px');
               $('#occtax-highlight-message').remove();
 
@@ -1532,7 +1548,7 @@ OccTax.events.on({
               // Hide lizmap close button (replaced further)
               $('#hide-sub-dock').click(function(){
                   $('#sub-dock').hide().html('');
-              });
+              }).hide();
 
               // close windows
               $('#validation-detail-close').click(function(){$('#hide-sub-dock').click();})
@@ -1772,6 +1788,9 @@ OccTax.events.on({
             } else if (name == "cd_nom") {
                 var cd_nom = $('#' + tokenFormId + ' [name="'+name+'[]"]').val();
                 var input_value = cd_nom;
+            } else if (name == "panier_validation") {
+                var input_value = $('#' + tokenFormId + ' [name="'+name+'"]').prop("checked");
+                input_value = input_value ? 1 : 0;
             } else {
                 // Check if simple input can be found
                 var input_selector = '#' + tokenFormId + ' [name="'+name+'"]';
@@ -2565,14 +2584,14 @@ OccTax.events.on({
       // Click on hidden draw buttons when changing displayed tab
       $('#occtax_results_tabs a').on('shown', function (e) {
 
-          var tid = $(e.target).attr('id');
-
           // Refresh datatable display ( set height used with scrollY )
           var container = $(e.target).attr('href');
           refreshOcctaxDatatableSize(container);
 
           // deactivate the link between activated tab and chosen symbology on map
           return false;
+
+          var tid = $(e.target).attr('id');
 
           // Draw geometries corresponding to displayed tab
           var drawButton = 'occtax_results_draw_maille_m02';

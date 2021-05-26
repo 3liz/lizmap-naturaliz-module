@@ -2,16 +2,18 @@
 
 <div class="dock-content" style="padding: 2px;">
     <center>
-        <button class="btn btn-primary" id="occtax_fiche_before">Précédent</button>
-        <span style="font-weight: bold;" id="occtax_fiche_position" class=""></span>
-        <button class="btn btn-primary" id="occtax_fiche_next">Suivant</button>
-        <button class="btn btn-primary pull-right" id="occtax_fiche_zoom">Zoom</button>
+        <span id="occtax_fiche_navigation">
+            <button class="btn btn-mini btn-primary" id="occtax_fiche_before">Précédent</button>
+            <span style="font-weight: bold;" id="occtax_fiche_position" class=""></span>
+            <button class="btn btn-mini btn-primary" id="occtax_fiche_next">Suivant</button>
+            <button class="btn btn-mini btn-primary pull-right" id="occtax_fiche_zoom">Zoom</button>
+            <span style="display:none;">{if array_key_exists('geojson', $data)}{$data['geojson']}{/if}</span>
+        </span>
         {if $in_basket}
-        <button value="remove@{$data['identifiant_permanent']}" class="occtax_validation_button btn pull-right" tooltip="{@validation.button.validation_basket.remove.help@}">{@validation.button.validation_basket.remove.title@}</button>
+        <button value="remove@{$data['identifiant_permanent']}" class="occtax_validation_button btn btn-mini pull-right" tooltip="{@validation.button.validation_basket.remove.help@}">{@validation.button.validation_basket.remove.title@}</button>
         {else}
-        <button value="add@{$data['identifiant_permanent']}" class="occtax_validation_button btn pull-right" tooltip="{@validation.button.validation_basket.add.help@}">{@validation.button.validation_basket.add.title@}</button>
+        <button value="add@{$data['identifiant_permanent']}" class="occtax_validation_button btn btn-mini pull-right" tooltip="{@validation.button.validation_basket.add.help@}">{@validation.button.validation_basket.add.title@}</button>
         {/if}
-        <span style="display:none;">{if array_key_exists('geojson', $data)}{$data['geojson']}{/if}</span>
 
     </center>
 </div>

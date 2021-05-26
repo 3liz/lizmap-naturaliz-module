@@ -30,13 +30,9 @@ class occtaxSearchObservation extends occtaxSearch {
 
     protected $tplFields = array(
         'date_debut_buttons' => '
-            <a class="openObservation" href="#" title="{@occtax~search.output.detail.title@}">
-                {$line->date_debut}
-            </a>
-
-            <a class="zoomToObservation" href="#" title="{@occtax~search.output.zoom.title@}">
-                <i class="icon-search"></i>
-            </a>
+            {$line->date_debut}
+            <br/><a class="openObservation" href="#" title="{@occtax~search.output.detail.title@}"><i class="icon-file"></i></a>
+            <a class="zoomToObservation" href="#" title="{@occtax~search.output.zoom.title@}"><i class="icon-search"></i></a>
             {if !empty($line->in_panier)}<i class="icon-shopping-cart" title="{@validation.span.validation_basket.inside.title@}"></i>{/if}
 
         ',
@@ -47,17 +43,12 @@ class occtaxSearchObservation extends occtaxSearch {
             </a>
 
             {if !empty($line->menace_regionale)}
-            &nbsp;
-            <span class="redlist {$line->menace_regionale}" title="{@occtax~search.output.redlist_regionale.title@} : {$line->menace_regionale}">
-                {$line->menace_regionale}
-            </span>
+            &nbsp;<span class="redlist {$line->menace_regionale}" title="{@occtax~search.output.redlist_regionale.title@} : {$line->menace_regionale}">{$line->menace_regionale}</span>
             {/if}
 
             {if !empty($line->protection)}
             &nbsp;
-            <span class="protectionlist {$line->protection}" title="{@occtax~search.output.protection.title@} : {$line->protection}">
-                {$line->protection}
-            </span>
+            <span class="protectionlist {$line->protection}" title="{@occtax~search.output.protection.title@} : {$line->protection}">{$line->protection}</span>
             {/if}',
 
         'observateur' => '
@@ -70,13 +61,6 @@ class occtaxSearchObservation extends occtaxSearch {
             <span class="niv_val n{$line->niv_val}" title="{@occtax~validation.input.niv_val@}: {$line->niv_val}" >
                 {$line->niv_val}
             </span><br/>
-            <button value="{if !empty($line->in_panier)}remove{else}add{/if}@{$line->identifiant_permanent}" class="occtax_validation_button btn btn-mini" title="{if !empty($line->in_panier)}{@validation.button.validation_basket.remove.help@}{else}{@validation.button.validation_basket.add.help@}{/if}">
-                {if !empty($line->in_panier)}
-                {@validation.button.validation_basket.remove.title@}
-                {else}
-                {@validation.button.validation_basket.add.title@}
-                {/if}
-            </button>
         ',
     );
 
@@ -88,7 +72,7 @@ class occtaxSearchObservation extends occtaxSearch {
         'lien_nom_valide' => array( 'type' => 'string', 'sortable' => "true", 'sorting_field' => 'lb_nom_valide'),
         //'source_objet' => array( 'type' => 'string', 'sortable' => "true", 'className' => 'dt-center'),
         'observateur' => array( 'type' => 'string', 'sortable' => "true", 'sorting_field' => 'identite_observateur'),
-        'validite' => array( 'type' => 'string', 'sortable' => "true", 'className' => 'dt-center'),
+        'validite' => array( 'type' => 'string', 'sortable' => "true", 'className' => 'dt-center', 'sorting_field' => 'vo.niv_val'),
     );
 
     protected $querySelectors = array(
@@ -414,7 +398,7 @@ class occtaxSearchObservation extends occtaxSearch {
                 'joinClause' => "
                     ON vo.identifiant_permanent = o.identifiant_permanent AND ech_val = '2'",
                 'returnFields' => array(
-                    "vo.niv_val"=> Null,
+                    "CASE WHEN vo.niv_val IS NOT NULL THEN vo.niv_val ELSE '6' END AS niv_val"=> Null,
                 ),
             );
 

@@ -292,7 +292,7 @@
                     // Create dock
                     $dock = new lizmapMapDockItem(
                         'validation',
-                        jLocale::get("occtax~validation.dock.title"),
+                        jLocale::get("occtax~validation.validation_basket.dock.title"),
                         $content,
                         15,
                         Null,

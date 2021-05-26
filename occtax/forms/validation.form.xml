@@ -13,7 +13,16 @@
     </menulist>
 -->
 
-
+<!--
+    <listbox multiple="true" ref="validite_niveau">
+            <label locale="occtax~search.input.validite_niveau"/>
+        <datasource dao="occtax~nomenclature" profile="naturaliz_virtual_profile"
+          method="findByChamp" criteria="validite_niveau"
+          labelproperty="valeur"
+          valueproperty="code"/>
+        <hint locale="occtax~search.input.validite_niveau.help"/>
+    </listbox>
+-->
 
     <input ref="niv_val" type="integer" minvalue="1" maxvalue="6">
         <label locale="validation.input.niv_val"/>
@@ -49,5 +58,7 @@
         <label locale="validation.input.submit"/>
         <hint locale="validation.input.submit.help"/>
      </submit>
+
+
 
 </form>

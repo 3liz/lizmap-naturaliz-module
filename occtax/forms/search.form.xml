@@ -35,7 +35,8 @@
 <!--
             <emptyitem locale="taxon~search.input.emptyitem"/>
 -->
-            <datasource dao="taxon~t_group_categorie" profile="naturaliz_virtual_profile"
+            <datasource dao="taxon~t_group_categorie"
+            profile="naturaliz_virtual_profile"
               method="getDistinctCategorie"
               labelproperty="libelle_court" valueproperty="libelle_court"/>
             <hint locale="taxon~search.input.group.help"/>
@@ -168,18 +169,6 @@ Menaces
             <hint locale="occtax~search.input.jdd_id.help"/>
         </listbox>
 
-        <listbox multiple="true" ref="validite_niveau">
-                <label locale="occtax~search.input.validite_niveau"/>
-<!--
-            <emptyitem locale="occtax~search.input.emptyitem"/>
--->
-            <datasource dao="occtax~nomenclature" profile="naturaliz_virtual_profile"
-              method="findByChamp" criteria="validite_niveau"
-              labelproperty="valeur"
-              valueproperty="code"/>
-            <hint locale="occtax~search.input.validite_niveau.help"/>
-        </listbox>
-
 <!--
         <input ref="search_token">
             <label>Token</label>
@@ -254,6 +243,18 @@ Menaces
 
     <group ref="validation">
         <label locale="occtax~search.group.validation"/>
+
+        <listbox multiple="true" ref="validite_niveau">
+                <label locale="occtax~search.input.validite_niveau"/>
+<!--
+            <emptyitem locale="occtax~search.input.emptyitem"/>
+-->
+            <datasource dao="occtax~nomenclature" profile="naturaliz_virtual_profile"
+              method="findByChamp" criteria="validite_niveau"
+              labelproperty="valeur"
+              valueproperty="code"/>
+            <hint locale="occtax~search.input.validite_niveau.help"/>
+        </listbox>
 
         <checkbox ref="panier_validation" defaultvalue="0">
             <label locale="occtax~search.input.panier_validation"/>

@@ -1,5 +1,5 @@
 <div style="height:100%;overflow:auto;">
-    <h3 class="occtax_search"><span class="title"><span class="icon search"></span>&nbsp;<span class="text">{@validation.dock.title@}</span></span></h3>
+    <h3 class="occtax_search"><span class="title"><span class="icon search"></span>&nbsp;<span class="text">{@validation.validation_basket.dock.title@}</span></span></h3>
     <div class="menu-content">
         Contenu du panier
         <table>

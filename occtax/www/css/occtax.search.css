@@ -316,11 +316,10 @@ table.occtax-legend-table {
   border-collapse:collapse;
   border-spacing:0px;
   min-width:50%;
-  line-height: 0px;
 }
 
 table.occtax-legend-table td{
-  padding: 0px;
+  padding: 3px;
 }
 
 #occtax-legend-maille {

@@ -30,6 +30,7 @@ lizMap.events.on({
 
         // Disconnect form submit
         $('#validation form').submit(function(){
+
             // On demande confirmation avant de lancer la validation
             // En précisant que la recherche a été lancée pour lui montrer seulement les données du panier
             // On lance la recherche après réinitialisation du formulaire et case du panier cochée
@@ -48,7 +49,21 @@ lizMap.events.on({
             }
 
             runAction(params, function(content) {
-                console.log(content);
+
+                $('#occtax-message').remove();
+                if (content.status == 'error') {
+                    lizMap.addMessage( content.message, 'error', true ).attr('id','occtax-message');
+                    return false;
+                }
+                lizMap.addMessage( content.message, 'info', true ).attr('id','occtax-message');
+
+                //var tokenFormId = $('#div_form_occtax_search_token form').attr('id');
+                //$('#' + tokenFormId + ' [name="'+name+'"]').prop("checked", true);
+                //$('#'+tokenFormId).submit();
+
+                // Reload observation table
+                $('#occtax_results_observation_table').DataTable().ajax.reload(null, false);
+
             });
 
             return false;
@@ -89,6 +104,12 @@ lizMap.events.on({
                 $(this).attr('tooltip', naturalizLocales['button.validation_basket.'+new_action+'.help']);
                 $(this).attr('title', naturalizLocales['button.validation_basket.'+new_action+'.help']);
                 $(this).html(naturalizLocales['button.validation_basket.'+new_action+'.title']);
+
+                // Close subdock
+                $('#sub-dock').hide().html('');
+
+                // Reload observation table
+                $('#occtax_results_observation_table').DataTable().ajax.reload(null, false);
             }
 
             return false;

@@ -56,23 +56,30 @@ class validationCtrl extends jController {
             $message = 'OK';
         } elseif ($action == 'validate') {
             $check = true;
+            $check_message = array();
+            // niv_val
             $niv_val = $this->intParam('niv_val', 0);
             if ($niv_val <= 0 || $niv_val > 6) {
                 $check = false;
+                $check_message[] = jLocale::get('validation.input.niv_val.error');
             }
             $producteur = strip_tags(trim($this->param('producteur')));
             $comm_val = strip_tags(trim($this->param('comm_val')));
             $nom_retenu = strip_tags(trim($this->param('nom_retenu')));
+
             $date_contact = trim($this->param('date_contact'));
-            //$date_valide = (bool)preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/",$date_contact);
-            $dt = DateTime::createFromFormat("Y-m-d", $date_contact);
-            $date_valide = $dt !== false && !array_sum($dt::getLastErrors());
-            if (!$date_valide) {
-                $check = False;
+            if (!empty($date_contact)) {
+                $dt = DateTime::createFromFormat("Y-m-d", $date_contact);
+                $date_valide = $dt !== false && !array_sum($dt::getLastErrors());
+                if (!$date_valide) {
+                    $check = False;
+                    $check_message[] = jLocale::get('validation.input.date_contact.error');
+                }
             }
 
             if (!$check) {
                 $message = jLocale::get('validation.form.validation.input.error');
+                $message.= '<ul><li>' . implode('</li><li>', $check_message).'</li></ul>';
                 $data = array();
                 $status = 'error';
             } else {
