@@ -404,7 +404,12 @@ lizMap.events.on({
             'EPA': '#c4d7ff'
         };
 
-
+// Todo: essayer de récupérer
+//var elem,
+    //style;
+//elem = document.querySelector('.test');
+//style = getComputedStyle(elem);
+//style.marginTop; //`20px`
 
         // Function to choose color depending on feature attributes
         function getPointColorByAttributes(afeat) {

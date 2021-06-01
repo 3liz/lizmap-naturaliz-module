@@ -67,6 +67,7 @@ psql service=naturaliz_mayotte_dev -c "SELECT * FROM occtax.habitat LIMIT 1"
 psql service=naturaliz_mayotte_dev -c "DELETE FROM sig.espace_naturel WHERE type_en = 'ZNIEFF1'"
 echo "Znieff 1"
 ogr2ogr -append -s_srs "EPSG:32738" -t_srs "EPSG:4471" -f PostgreSQL "PG:service=naturaliz_mayotte_dev active_schema=sig" "depuis INPN/L_ZNIEFF_CONT_06/myt_znieff1/myt_znieff1.shp" -nln espace_naturel -lco GEOMETRY_NAME=geom -lco PG_USE_COPY=YES -gt 100000 -sql "SELECT ID_MNHN AS code_en, 'ZNIEFF1' AS type_en, NOM AS nom_en, concat('http://inpn.mnhn.fr/espace/protege/', ID_MNHN) AS url, '01/2020' AS version_en FROM myt_znieff1"
+
 # on doit utiliser le SHP !
 echo "Znieff 1 mer"
 ogr2ogr -append -s_srs "EPSG:32738" -t_srs "EPSG:4471" -f PostgreSQL "PG:service=naturaliz_mayotte_dev active_schema=sig" "depuis INPN/L_ZNIEFF_MER_S_976/myt_znieff1_mer/myt_znieff1_mer.shp" -nln espace_naturel -lco GEOMETRY_NAME=geom -lco PG_USE_COPY=YES -gt 100000 -sql "SELECT ID_MNHN AS code_en, 'ZNIEFF1' AS type_en, NOM AS nom_en, concat('http://inpn.mnhn.fr/espace/protege/', ID_MNHN) AS url, '01/2020' AS version_en FROM myt_znieff1_mer"
@@ -156,3 +157,9 @@ psql service=naturaliz_mayotte_dev -c "ALTER TABLE sig.masse_eau ALTER COLUMN ge
 
 
 # Département : on a importé la ZEE de Mayotte. Mais soucis de polygones
+# On importe une donnée plus propre: L_ZMMYT_S_976.shp
+cd /qgis/commun/referentiels/DONNEE_GENERIQUE/N_ADMINISTRATIF
+# psql service=naturaliz_mayotte_dev -c "TRUNCATE sig.departement RESTART IDENTITY"
+ogr2ogr -append -s_srs "EPSG:4471" -t_srs "EPSG:4471" -f PostgreSQL "PG:service=naturaliz_mayotte_dev active_schema=sig" "departement.shp" -nln departement -lco GEOMETRY_NAME=geom -gt 100000 -sql "SELECT '976' AS code_departement, 'Mayotte' AS nom_departement, '2021' AS annee_ref FROM departement" -nlt PROMOTE_TO_MULTI --config SHAPE_ENCODING ISO-8859-15
+# test
+psql service=naturaliz_mayotte_dev -c "SELECT code_departement, nom_departement, ST_Area(geom) FROM sig.departement LIMIT 1"

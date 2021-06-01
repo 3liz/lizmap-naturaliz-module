@@ -1374,7 +1374,7 @@ OccTax.events.on({
 
                   // Next and previous observation button
                   $('#occtax_fiche_next, #occtax_fiche_before').click(function(){
-                      // Remove taxon detail
+                      // Remove previous subdock detail
                       $('#sub-dock').hide().html('');
 
                       // Get action based on clicked button
@@ -1423,6 +1423,10 @@ OccTax.events.on({
                 if (with_nav_buttons) {
                   zoomToObservation(geojson);
                 }
+
+                // Show result
+                $('#mapmenu li.occtax:not(.active) a').click();
+
 
             }
         );

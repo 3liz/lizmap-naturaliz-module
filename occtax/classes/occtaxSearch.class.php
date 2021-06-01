@@ -192,28 +192,37 @@ class occtaxSearch {
             $s = 's';
         $tpl->assign('s', $s  );
 
-        if($format=='html'){
-            // maille legend
-            $legend_classes = array();
-            if($drawLegend)
+        if($format=='html' and $drawLegend){
+            // legend
+            $legende = '';
+            if($drawLegend) {
+                $tpl_legende = new jTpl();
                 $legend_classes = $this->drawLegend();
-            $tpl->assign('legend_classes', $legend_classes );
+                $tpl_legende->assign('legend_classes', $legend_classes );
 
-            // other legends
-            $dao_menace = jDao::get('taxon~t_nomenclature', 'naturaliz_virtual_profile');
-            $menaces = $dao_menace->findByChamp('menace');
-            $menace_legend_classes = array();
-            foreach ($menaces as $menace) {
-                $menace_legend_classes[$menace->code] = $menace->valeur;
+                // other legends
+                // menaces
+                $dao_menace = jDao::get('taxon~t_nomenclature', 'naturaliz_virtual_profile');
+                $menaces = $dao_menace->findByChamp('menace');
+                $menace_legend_classes = array();
+                foreach ($menaces as $menace) {
+                    $menace_legend_classes[$menace->code] = $menace->valeur;
+                }
+                $menace_legend_classes = array_reverse($menace_legend_classes);
+                $tpl_legende->assign('menace_legend_classes', $menace_legend_classes);
+
+                // date
+                $annee = (integer) date("Y");
+                $annee_dizaine = round($annee, -1);
+                $annee_moins_10 = $annee_dizaine - 10;
+                $tpl_legende->assign('annee', $annee);
+                $tpl_legende->assign('annee_dizaine', $annee_dizaine);
+                $tpl_legende->assign('annee_moins_10', $annee_moins_10);
+
+                $legende = $tpl_legende->fetch('occtax~legende');
             }
-            $menace_legend_classes = array_reverse($menace_legend_classes);
-            $tpl->assign('menace_legend_classes', $menace_legend_classes);
-            $annee = (integer) date("Y");
-            $annee_dizaine = round($annee, -1);
-            $annee_moins_10 = $annee_dizaine - 10;
-            $tpl->assign('annee', $annee);
-            $tpl->assign('annee_dizaine', $annee_dizaine);
-            $tpl->assign('annee_moins_10', $annee_moins_10);
+            $tpl->assign('legende', $legende);
+
             $description = $tpl->fetch('occtax~searchDescription');
         }
         else{

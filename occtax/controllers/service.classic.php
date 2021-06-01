@@ -306,7 +306,7 @@ class serviceCtrl extends jController {
         $result = $cnx->limitQuery( $sql, 0, 1 );
         $d = $result->fetch();
         if ( $d ) {
-            $d->geojson = json_decode( $d->geojson );
+            //$d->geojson = json_decode( $d->geojson );
             $return['status'] = 1;
             $return['result'] = $d;
         } else {
