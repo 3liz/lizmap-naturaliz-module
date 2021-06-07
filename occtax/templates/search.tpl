@@ -147,14 +147,21 @@ RESUME DE LA RECHERCHE ET DES RESULTATS
         <button id="occtax-search-modify" type="button" class="btn btn-primary" name="mod" value="modify" style="">{@occtax~search.button.modify.search@}</button>
         <button id="occtax-search-replay" type="button" class="btn btn-primary" name="mod" value="replay" style="display:none;">{@occtax~search.button.replay.search@}</button>
 
-            <span class="pull-right" id="occtax_result_button_bar" style="display:none;">
+<!--
+        validation
+-->
+        {ifacl2 "visualisation.donnees.brutes"}
+        <button id="occtax-search-to-basket" type="button" class="btn btn-primary" name="mod" value="basket" title="{@occtax~validation.button.add.search.to.basket.help@}">{@occtax~validation.button.add.search.to.basket@}</button>
+        {/ifacl2}
 
-                <div class="btn-group">
-                    <button id="occtax_results_zoom" type="button" class="btn btn-mini" style="background:#E6E6E6; padding:2px;"  title="{@occtax~search.result.zoom.title@}">
-                        <i class="icon-search"></i>
-                    </button>
-                </div>
-            </span>
+        <span class="pull-right" id="occtax_result_button_bar" style="display:none;">
+
+            <div class="btn-group">
+                <button id="occtax_results_zoom" type="button" class="btn btn-mini" style="background:#E6E6E6; padding:2px;"  title="{@occtax~search.result.zoom.title@}">
+                    <i class="icon-search"></i>
+                </button>
+            </div>
+        </span>
 
 <!--
         Barre d'outil pour basculer l'affichage carto entre mailles 1, 2, 10km et observations

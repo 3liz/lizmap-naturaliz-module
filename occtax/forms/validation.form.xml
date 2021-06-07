@@ -24,39 +24,53 @@
     </listbox>
 -->
 
+    <hidden ref="identifiant_permanent"/>
+
     <input ref="niv_val" type="integer" minvalue="1" maxvalue="6">
         <label locale="validation.input.niv_val"/>
         <hint locale="validation.input.niv_val.help"/>
+<!--
         <help locale="validation.input.niv_val.help"/>
+-->
     </input>
 
     <input ref="producteur">
         <label locale="validation.input.producteur"/>
         <hint locale="validation.input.producteur.help"/>
+<!--
         <help locale="validation.input.producteur.help"/>
+-->
     </input>
 
     <input ref="date_contact">
         <label locale="validation.input.date_contact"/>
         <hint locale="validation.input.date_contact.help"/>
+<!--
         <help locale="validation.input.date_contact.help"/>
+-->
     </input>
 
     <textarea ref="comm_val">
         <label locale="validation.input.comm_val"/>
         <hint locale="validation.input.comm_val.help"/>
+<!--
         <help locale="validation.input.comm_val.help"/>
+-->
     </textarea>
 
     <input ref="nom_retenu">
         <label locale="validation.input.nom_retenu"/>
         <hint locale="validation.input.nom_retenu.help"/>
+<!--
         <help locale="validation.input.nom_retenu.help"/>
+-->
     </input>
 
     <submit ref="submit">
         <label locale="validation.input.submit"/>
+<!--
         <hint locale="validation.input.submit.help"/>
+-->
      </submit>
 
 

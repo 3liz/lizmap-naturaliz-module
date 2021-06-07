@@ -184,6 +184,9 @@ class occtaxSearch {
                 $l = preg_replace('#POLYGON|MULTIPOLYGON#','Polygone', $l);
                 $filters[$k] = $l;
             }
+            if($k == 'panier_validation' && $v == '1') {
+                $filters[$k] = '';
+            }
         }
         $tpl->assign('filters', $filters);
         $tpl->assign('nb', $this->recordsTotal );
@@ -589,14 +592,7 @@ class occtaxSearch {
         }
 
         // Add restriction coming from demande table
-        if( $this->login && !$this->demande ){
-            $eventParams = array('login' => $this->login);
-            $filters = jEvent::notify('getOcctaxFilters', $eventParams)->getResponse();
-            foreach($filters as $filter){
-                $sql.= $filter;
-            }
-            //jLog::log(json_encode($filters));
-        }
+        $sql.= $this->getDemandeFilter();
 
         // Add validation basket filter
         if ($this->login && $this->params && array_key_exists('panier_validation', $this->params)) {
@@ -615,6 +611,19 @@ class occtaxSearch {
 
         }
 
+        return $sql;
+    }
+
+    public function getDemandeFilter() {
+        $sql = '';
+        if( $this->login && !$this->demande ){
+            $eventParams = array('login' => $this->login);
+            $filters = jEvent::notify('getOcctaxFilters', $eventParams)->getResponse();
+            foreach($filters as $filter){
+                $sql.= $filter;
+            }
+            //jLog::log(json_encode($filters));
+        }
         return $sql;
     }
 

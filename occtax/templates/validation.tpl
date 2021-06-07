@@ -7,15 +7,28 @@
                 <th>Nombre d'observations</th>
                 <td><span class="validation_basket_counter">{$counter}</span></td>
             </tr>
-            <tr>
-                <td colspan=2>
-                    <button value="empty" class="occtax_validation_button btn btn-mini" title="{@validation.button.validation_basket.empty.help@}">{@validation.button.validation_basket.empty.title@}</button>
-                </td>
-            </tr>
         </table>
-        <div id="validation_form">
-            {formfull $form, 'occtax~validation:index', array(), 'htmlbootstrap'}
-        </div>
 
+        <button value="empty" class="occtax_validation_button btn btn-mini btn-primary" title="{@validation.button.validation_basket.empty.help@}">{@validation.button.validation_basket.empty.title@}</button>
+        <button value="" class="occtax_validation_open_form_button btn btn-mini btn-primary" title="{@validation.button.validation_basket.open.form.help@}">{@validation.button.validation_basket.open.form.title@}</button>
+        <button value="" class="occtax_validation_filter_button btn btn-mini btn-primary" title="{@validation.button.validation_basket.filter.observations.help@}">{@validation.button.validation_basket.filter.observations.title@}</button>
+
+    </div>
+</div>
+
+<!--
+        Validation form
+-->
+<div id="occtax-validation-form-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-show="false" data-keyboard="false" data-backdrop="static">
+    <div class="modal-header" style="background-color:rgba(0, 0, 0, 0.7);"><a class="close" data-dismiss="modal">X</a>
+        <h3 style="color:white;">{@validation.input.submit@}</h3></div>
+        <div class="modal-body">
+            <div class="occtax_validation_form">
+                {formfull $form, 'occtax~validation:index', array(), 'htmlbootstrap'}
+            </div>
+        </div>
+        <div class="modal-footer" style="background-color:rgba(0, 0, 0, 0.7);">
+            <button type="button" class="btn btn-default" data-dismiss="modal">{@validation.button.validation_basket.close.form.title@}</button>
+        </div>
     </div>
 </div>

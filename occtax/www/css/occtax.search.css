@@ -533,18 +533,18 @@ span.niv_val.n4  { background-color:red; color: white;  }
 span.niv_val.n5  { background-color:grey; color: white;  }
 span.niv_val.n6  { background-color:darkgrey; color: white;  }
 
-#validation_form .form-horizontal div.control-group {
+.occtax_validation_form .form-horizontal div.control-group {
   margin-bottom:5px;
 }
-#validation_form .form-horizontal .control-label {
+.occtax_validation_form .form-horizontal .control-label {
   font-size: 12px;
   width: 90px;
 }
-#validation_form .form-horizontal .controls {
+.occtax_validation_form .form-horizontal .controls {
   margin-left:100px;
   margin-right:10px;
 }
-#validation_form .form-horizontal .controls input, #validation_form .form-horizontal .controls textarea {
+.occtax_validation_form .form-horizontal .controls input, #validation_form .form-horizontal .controls textarea {
   width: 95%;
 }
 

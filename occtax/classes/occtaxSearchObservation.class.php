@@ -60,7 +60,7 @@ class occtaxSearchObservation extends occtaxSearch {
         'validite' => '
             <span class="niv_val n{$line->niv_val}" title="{@occtax~validation.input.niv_val@}: {$line->niv_val}" >
                 {$line->niv_val}
-            </span><br/>
+            </span>
         ',
     );
 

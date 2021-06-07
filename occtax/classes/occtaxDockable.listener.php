@@ -277,7 +277,9 @@
                     $data = $validation->getValidationBasket();
                     $counter = 0;
                     if ($data) {
-                        $counter = count($data);
+                        foreach($data as $line) {
+                            $counter = $line->nb;
+                        }
                     }
                     // Form
                     $form = jForms::create("occtax~validation");

@@ -14,6 +14,19 @@ class validationCtrl extends jController {
 
         $rep = $this->getResponse('json');
 
+        // Check connected user has a login corresponding to a validator
+        $login = Null;
+        $user = jAuth::getUserSession();
+        if ($user) {
+            $login = $user->login;
+        }
+
+        //if ($invalid_login) {
+            //$status = 'error';
+            //$message = 'An error occured. No data has been fetched';
+            //$data = array();
+        //}
+
         // Params
         $action = $this->param('validation_action', 'get');
 
@@ -26,38 +39,67 @@ class validationCtrl extends jController {
         $status = 'success';
         $message = '';
 
-        $id = $this->param('id');
+        $identifiant_permanent = $this->param('identifiant_permanent', '-1');
+        if (!$validation->isValidUuid($identifiant_permanent)) {
+            $identifiant_permanent = null;
+        }
+
+        // Add or remove a single observation in/from the basket
         if (in_array($action, array('add', 'remove'))) {
-            if ($id && !$validation->isValidUuid($id)) {
-                $id = null;
-            }
-            if (empty($id)) {
+            if (empty($identifiant_permanent)) {
                 $status = 'error';
                 $message = jLocale::get("validation.error.wrong.observation.id");
             } else {
 
                 if ($action == 'add') {
-                    $data = $validation->addObservationToBasket($id);
+                    $data = $validation->addObservationToBasket($identifiant_permanent);
                     $message = jLocale::get("validation.add.observation.to.basket.success");
                 } else {
-                    $data = $validation->removeObservationFromBasket($id);
+                    $data = $validation->removeObservationFromBasket($identifiant_permanent);
                     $message = jLocale::get("validation.remove.observation.from.basket.success");
                 }
             }
-        } elseif ($action == 'empty') {
+        }
+        // Empty the validation basket
+        elseif ($action == 'empty') {
             $data = $validation->emptyValidationBasket();
             $message = jLocale::get("validation.empty.validation.basket.success");
-        } elseif ($action == 'get') {
+        }
+
+        // Get the content of the observation basket
+        elseif ($action == 'get') {
                 // Get
                 $data = $validation->getValidationBasket();
                 $message = jLocale::get("validation.get.validation.basket.success");
-        } elseif ($action == 'observation_validity') {
-            $data = $validation->getObservationValidity($id);
-            $message = 'OK';
-        } elseif ($action == 'validate') {
+        }
+
+        // Get validation data for a given observation cle_obs id
+        elseif ($action == 'observation_validity') {
+            $id = $this->intParam('id', -1);
+            if (empty($id)) {
+                $status = 'error';
+                $message = jLocale::get("validation.error.wrong.observation.id");
+            } else {
+                $data = $validation->getObservationValidity($id);
+                $message = 'OK';
+            }
+        }
+
+        // Get the content of the observation basket
+        elseif ($action == 'add_search_to_basket') {
+            // Get search token
+            $token = $this->param('token');
+            $data = $validation->addSearchResultToBasket($token);
+            $message = jLocale::get("validation.get.validation.basket.success");
+        }
+
+        // Validate all the basket or a single observation
+        // We check the given $identifiant_permanent to know which action to run
+        elseif ($action == 'validate') {
             $check = true;
             $check_message = array();
-            // niv_val
+
+            // Validate given parameters
             $niv_val = $this->intParam('niv_val', 0);
             if ($niv_val <= 0 || $niv_val > 6) {
                 $check = false;
@@ -66,7 +108,6 @@ class validationCtrl extends jController {
             $producteur = strip_tags(trim($this->param('producteur')));
             $comm_val = strip_tags(trim($this->param('comm_val')));
             $nom_retenu = strip_tags(trim($this->param('nom_retenu')));
-
             $date_contact = trim($this->param('date_contact'));
             if (!empty($date_contact)) {
                 $dt = DateTime::createFromFormat("Y-m-d", $date_contact);
@@ -77,6 +118,7 @@ class validationCtrl extends jController {
                 }
             }
 
+            // Return error message or run the validation method from class
             if (!$check) {
                 $message = jLocale::get('validation.form.validation.input.error');
                 $message.= '<ul><li>' . implode('</li><li>', $check_message).'</li></ul>';
@@ -84,19 +126,21 @@ class validationCtrl extends jController {
                 $status = 'error';
             } else {
                 $input_params = array(
-                    $niv_val, $producteur, $date_contact, $comm_val, $nom_retenu
+                    $niv_val, $producteur, $date_contact, $comm_val, $nom_retenu, $identifiant_permanent
                 );
-                $data = $validation->validateObservationsFromBasket($input_params);
+                $data = $validation->validateObservations($input_params);
                 $message = jLocale::get('validation.validate.validation.basket.success');
             }
         }
 
+        // Return a error if needed
         if (!is_array($data) && empty($data)) {
             $status = 'error';
             $message = 'An error occured. No data has been fetched';
             $data = array();
         }
 
+        // Return information
         $return = array(
             'status' => $status,
             'message' => $message,

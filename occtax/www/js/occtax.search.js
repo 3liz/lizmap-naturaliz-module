@@ -1190,8 +1190,8 @@ OccTax.events.on({
           $('#'+tableId+' span.niv_val').click(function(){
               var tr = $($(this).parents('tr')[0]);
               var d = $('#'+tableId+'').DataTable().row( tr ).data();
-              var identifiant_permanent = d['DT_RowId'];
-              showObservationValidation( identifiant_permanent );
+              var cle_obs = d['DT_RowId'];
+              showObservationValidation(cle_obs);
               return false;
           });
 
@@ -1458,23 +1458,23 @@ OccTax.events.on({
     }
 
 
-    function showObservationValidation( id ) {
+    function showObservationValidation(cle_obs) {
         // Check user is still connected if he was
         var ok = checkConnection();
         if (!ok) {
-            return;
+            return false;
         }
-        if(!id)
-            return;
+        if(!cle_obs)
+            return false;
 
         // Get observation data
-        var tokenFormId = $('#validation form').attr('id');
+        var tokenFormId = $('#occtax-validation-form-modal form').attr('id');
         var url = $('#'+tokenFormId).attr('action');
         var params = {
-          'id': id,
+          'id': cle_obs,
           'validation_action': 'observation_validity'
         };
-        $.get(
+        $.post(
             url,
             params,
             function( content ) {
@@ -1489,7 +1489,15 @@ OccTax.events.on({
               if (!data) {
                 return false;
               }
-              var val = data[0];
+              var oval = data[0];
+              // Compute display values
+              var typ_val = oval['typ_val'] ? oval['typ_val'] : '-';
+              var date_ctrl = oval['date_ctrl'] ? oval['date_ctrl'] : '-';
+              var niv_val = oval['niv_val'] ? oval['niv_val'] : '-';
+              var producteur = oval['producteur'] ? oval['producteur'] : '-';
+              var date_contact = oval['date_contact'] ? oval['date_contact'] : '-';
+              var comm_val = oval['comm_val'] ? oval['comm_val'] : '-';
+              var nom_retenu = oval['nom_retenu'] ? oval['nom_retenu'] : '-';
 
               var html = '';
               html+= '<h3><span class="title"><span class="text">'+naturalizLocales['validation.dock.title']+'</span>';
@@ -1503,40 +1511,57 @@ OccTax.events.on({
               if (config_url && config_url.trim() != '') {
                   detail_url = config_url.replace('CD_NOM', data.referenceId);
               }
-              var in_panier = val['in_panier'] ? true : false;
+              var in_panier = oval['in_panier'] ? true : false;
               var p_action = in_panier ? 'remove' : 'add';
+
               html+= '</span>';
               html+= '</h3>';
               html+= '<div id="validation-detail-container"  class="menu-content">';
               html+= '<table class="table table-condensed table-striped">';
-              html+= '<tr><th>ID</th>';
-              html+= '<td>'+val['identifiant_permanent']+'</td></tr>';
-              html+= '<tr><th>'+naturalizLocales['input.niv_val']+'</th>';
-              html+= '<td>'+val['niv_val']+'</td></tr>';
-              html+= '<tr><th>'+naturalizLocales['input.producteur']+'</th>';
-              html+= '<td>'+val['producteur']+'</td></tr>';
-              html+= '<tr><th>'+naturalizLocales['input.date_contact']+'</th>';
-              html+= '<td>'+val['date_contact']+'</td></tr>';
-              html+= '<tr><th>'+naturalizLocales['input.comm_val']+'</th>';
-              html+= '<td>'+val['comm_val']+'</td></tr>';
-              html+= '<tr><th>'+naturalizLocales['input.nom_retenu']+'</th>';
-              html+= '<td>'+val['nom_retenu']+'</td></tr>';
-
-              // todo Ajouter le typ_val et la date de modification
+              // ID
+              html+= '<tr><th>Observation</th>';
+              html+= '<td>'+oval['identifiant_permanent']+'</td></tr>';
+              // Type de validation
+              html+= '<tr><th title="'+naturalizLocales['input.typ_val.help']+'">'+naturalizLocales['input.typ_val']+'</th>';
+              html+= '<td>'+ typ_val +'</td></tr>';
+              // Date du controle
+              html+= '<tr><th title="'+naturalizLocales['input.date_ctrl.help']+'">'+naturalizLocales['input.date_ctrl']+'</th>';
+              html+= '<td>'+ date_ctrl +'</td></tr>';
+              // Niveau
+              html+= '<tr><th title="'+naturalizLocales['input.niv_val.help']+'">'+naturalizLocales['input.niv_val']+'</th>';
+              html+= '<td><span class="niv_val n' + niv_val + '">'+ niv_val +'</span></td></tr>';
+              // Producteur
+              html+= '<tr><th title="'+naturalizLocales['input.producteur.help']+'">'+naturalizLocales['input.producteur']+'</th>';
+              html+= '<td>'+ producteur +'</td></tr>';
+              // Date du contact
+              html+= '<tr><th title="'+naturalizLocales['input.date_contact.help']+'">'+naturalizLocales['input.date_contact']+'</th>';
+              html+= '<td>'+ date_contact +'</td></tr>';
+              // Commentaire
+              html+= '<tr><th title="'+naturalizLocales['input.comm_val.help']+'">'+naturalizLocales['input.comm_val']+'</th>';
+              html+= '<td>'+ comm_val +'</td></tr>';
+              // Nom retenu
+              html+= '<tr><th title="'+naturalizLocales['input.nom_retenu.help']+'">'+naturalizLocales['input.nom_retenu']+'</th>';
+              html+= '<td>'+ nom_retenu + '</td></tr>';
 
               // Validation basket action button
               html+= '<tr><th>'+naturalizLocales['validation_basket.actionbar.title']+'</th>';
               html+= '<td>';
-              //if (in_panier) {
-                //html+= '<i class="icon-shopping-cart" title="'+naturalizLocales['span.validation_basket.inside.title']+'"></i>';
-              //}
-              html+=  '<button id="hide-sub-dock" class="btn pull-right" style="margin-top:5px;" name="close" title="'+lizDict['generic.btn.close.title']+'">'+lizDict['generic.btn.close.title']+'</button>';
-              html+= '<button value="' + p_action + '@' + val['identifiant_permanent'] + '" class="occtax_validation_button btn btn-mini"';
+              html+= '<button value="' + p_action + '@' + oval['identifiant_permanent'] + '" class="occtax_validation_button btn btn-primary btn-mini"';
               html+= ' title="' + naturalizLocales['button.validation_basket.' + p_action + '.help'] + '">';
               html+= naturalizLocales['button.validation_basket.' + p_action + '.title'] + '</button>';
               html+= '</td></tr>';
+
+              // Open validation form
+              html+= '<tr><th title="'+naturalizLocales['button.validate.observation.title.help']+'">'+naturalizLocales['button.validate.observation.title']+'</th>';
+              html+= '<td>';
+              html+= '<button value="' + oval['cle_obs'] + '" class="occtax_validation_open_form_button btn btn-primary btn-mini"';
+              html+= ' title="' + naturalizLocales['button.validate.observation.title.help'] + '">';
+              html+= naturalizLocales['button.validation_basket.open.form.title'] + '</button>';
+              html+= '</td></tr>';
+
               html+= '</table>';
               html+= '</div>';
+
 
               $('#sub-dock').html(html).css('bottom', '0px');
               $('#occtax-highlight-message').remove();
@@ -1546,12 +1571,12 @@ OccTax.events.on({
                   $('#sub-dock').css('left', leftPos).css('width', leftPos);
               }
               // Hide lizmap close button (replaced further)
-              $('#hide-sub-dock').click(function(){
-                  $('#sub-dock').hide().html('');
-              }).hide();
+              $('#hide-sub-dock').hide();
 
               // close windows
-              $('#validation-detail-close').click(function(){$('#hide-sub-dock').click();})
+              $('#validation-detail-close').click(function(){
+                $('#sub-dock').hide().html('');
+              })
 
               $('#sub-dock').show();
             }
@@ -1770,7 +1795,6 @@ OccTax.events.on({
         var form_params = '';
         for (var k in white_params) {
             var name = white_params[k];
-
             // Dates
             var input_value = '';
             if (name == "date_min") {
@@ -1810,6 +1834,7 @@ OccTax.events.on({
                     form_params+= name+'='+input_value+'&';
                 }
             }
+
         }
         if (form_params != '') {
             window.history.pushState('', '', '?bbox=' + lizMap.map.getExtent().toBBOX() + '&' + form_params.trim('&'));
@@ -2397,9 +2422,9 @@ OccTax.events.on({
       // On masque les résultats
       $('#'+tokenFormId+'_reinit').click(function(){
           // Reinit taxon
-          var removePanier = true;
+          var removeTaxonPanier = true;
           var removeFilters = true;
-          clearTaxonFromSearch(removePanier, removeFilters);
+          clearTaxonFromSearch(removeTaxonPanier, removeFilters);
 
           // Reinit other fields
           $('#'+tokenFormId).trigger("reset");
@@ -2409,6 +2434,9 @@ OccTax.events.on({
                   $(this)[0].sumo.unSelectAll();
               }
           });
+          // Remove tokens
+          // Needed so that depending buttons are deactivated
+          $('#occtax_service_search_form input[name="token"]').val('');
 
           // Reinit date picker
           $('#'+tokenFormId+' .ui-datepicker-reset').click();
