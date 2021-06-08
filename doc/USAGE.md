@@ -23,6 +23,27 @@ todo: expliquer la notion et les tables utilisées
 
 ### Gestion de la sensibilité des données
 
+Les modalités de diffusion des données sont définies par la charte régionale du SINP.
+Cette dernière prévoit deux niveaux d’accès : experts et professionnels, ou grand public.
+Les experts et professionnels accèdent aux données précisément géolocalisées
+sur la base d’une demande à formuler sur Borbonica.
+Les adhérents à la charte régionale bénéficient d’un accès facilité.
+Le grand public accède aux données à des données moins précises.
+Le niveau de diffusion au grand public résulte de la combinaison de plusieurs paramètres,
+hiérarchisés ci-dessous (du plus important au moins important) :
+
+* **statut de validation** de la donnée (champ `validite_niveau`) : seules les données dont la validité est ‘Certaine’ ou ‘Probable’ sont visibles ;
+* **sensibilité de la donnée** (champ `sensi_niveau`) : les données relatives à des taxons menacés faisant l’objet d’atteintes directes ou indirectes (braconnage, dérangement…) sont floutées. Voir ci-dessous ;
+* **statut public ou privé** de la donnée (champ `ds_publique`) : les données publiques sont diffusées sans floutage ;
+* **souhait de diffusion du producteur**` (champ `diffusion_niveau_precision`) : le producteur peut souhaiter une diffusion avec la précision géographique d’origine ou après floutage à la maille de 2 km.
+
+Le logigramme suivant synthétise les différents cas de figure possibles:
+
+![Logigramme diffusion des données](media/diagramme_diffusion_donnees.png)
+
+
+#### Calcul automatique de sensibilité selon des critères
+
 La sensibilité des observations peut être décidée pendant l'import des données, ou bien après l'import, via une liste de conditions pré-établie.
 La sensibilité des observations dépend en effet de nombreux critères sur les taxons, la position de l'observation, les commentaires, et d'autres conditions spécifiques.
 
@@ -30,22 +51,30 @@ L'application Naturaliz permet de stocker l'ensemble des critères de sensibilit
 
 Pour pouvoir filtrer les observations sur lesquelles calculer la sensibilité, on passe en 1er paramètre un tableau d'entier contenant la liste des jdd_id. Pour pouvoir vérifier le calcul, on passe en 2ème paramètre de la fonction un booléen "simulation". S'il vaut TRUE, alors la fonction remplit les tables `occtax.niveau_par_observation` et `occtax.niveau_par_observation_final`, mais ne modifie pas les observations à partir de ces données.
 
-Pour lancer la fonction sur l'ensemble des observations (tous les jdd_id), on peut par exemple lancer le SQL suivant:
+Pour lancer la fonction sur un sous-ensemble des observations (certains jdd_id), on peut par exemple lancer le SQL suivant:
 
-```
+```sql
+-- Lancement du calcul
 SELECT occtax.critere_sensibilite(
-    (
-        SELECT array_agg(jdd_id)
-        FROM occtax.jdd
-    ),
-    FALSE
+    -- on passe un tableau de jdd_id sur lesquels appliquer le calcul
+    ARRAY[123, 456]::text[],
+    -- si on le souhaite sur toutes les observations, on met NULL à la place
+    -- NULL,
+    -- pas une simulation, on modifie la table occtax.observation
+    False
 );
+
+-- Pour rafraîchir les résultats sur la plateforme, il faut lancer le rafraîchissement des 2 vues
+-- Vue qui calcul la sensibilité des données pour contrôler leur diffusion
+REFRESH MATERIALIZED VIEW occtax.observation_diffusion;
+
+-- Vue qui rassemble à plat dans une seule entité la plupart des informations sur les observations
+REFRESH MATERIALIZED VIEW occtax.vm_observation;
 ```
 
 NB: Si on veut pouvoir comprendre le nombre d'observations impactées par chacun des critères, on peut lire le contenu de la table `occtax.niveau_par_observation_compteur` qui fournit pour chaque critère (id et libelle) le nombre d'observation impactées, dans le champ `compteur`. La table rappelle aussi la `condition`.
 
 Voir [un exemple d'ajout de critères et de calcul de sensibilité automatique](doc/validation/validation_calcul_validation_sensibilite_via_ajout_de_criteres.sql) qui montre comment utiliser les tables de critères, et comment faire une jointure avec table spatiale (par exemple de zonages de sensibilité) pour créer un critère qui teste l'intersection entre les observations et des polygones. Des exemples complexes montrent comment utiliser un filtre sur `descriptif_sujet`
-
 
 ### Gestion de la validité des données
 
