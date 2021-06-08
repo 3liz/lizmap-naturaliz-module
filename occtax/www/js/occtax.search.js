@@ -1338,6 +1338,7 @@ OccTax.events.on({
             obsUrl,
             {'id': id},
             function( data ) {
+                $('#mapmenu li.occtax:not(.active) a').click();
                 $('occtax_search_observation_card').removeClass('not_enabled');
 
                 // Show observation car h3 and div
