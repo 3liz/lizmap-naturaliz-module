@@ -184,9 +184,9 @@ RESUME DE LA RECHERCHE ET DES RESULTATS
             {/if}
 
             {ifacl2 "visualisation.donnees.brutes"}
-            <button title="Afficher les données brutes par menace" type="button" class="occtax_results_draw_observation menace btn" name="draw" value="observation">Menace</button>
-            <button title="Afficher les données brutes par protection" type="button" class="occtax_results_draw_observation protection btn" name="draw" value="observation">Protection</button>
-            <button title="Afficher les données brutes par date" type="button" class="occtax_results_draw_observation date btn" name="draw" value="observation">Date</button>
+            <button title="Afficher les données brutes par menace" type="button" id="occtax_results_draw_observation_menace" class="occtax_results_draw_observation menace btn" name="draw" value="observation">Menace</button>
+            <button title="Afficher les données brutes par protection" type="button" id="occtax_results_draw_observation_protection" class="occtax_results_draw_observation protection btn" name="draw" value="observation">Protection</button>
+            <button title="Afficher les données brutes par date" type="button" id="occtax_results_draw_observation_date" class="occtax_results_draw_observation date btn" name="draw" value="observation">Date</button>
             {/ifacl2}
           </div>
         </div>

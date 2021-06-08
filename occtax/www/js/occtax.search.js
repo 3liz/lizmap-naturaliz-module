@@ -907,12 +907,22 @@ OccTax.events.on({
                           // Refresh maille on map
                           // usefull to refresh map features
                           var mclick = false;
-                          if($('#occtax_results_draw_maille_m01.btn').length){
+                          if($('#occtax_results_draw_maille_m01.btn').length
+                            && $('#occtax_results_draw_maille_m01.btn').hasClass('active')
+                          ){
                             $('#occtax_results_draw_maille_m01.btn').click();
                             mclick = true;
                           }
-                          if(!mclick && $('#occtax_results_draw_maille_m02.btn').length){
+                          if(!mclick && $('#occtax_results_draw_maille_m02.btn').length
+                            && $('#occtax_results_draw_maille_m02.btn').hasClass('active')
+                          ){
                             $('#occtax_results_draw_maille_m02.btn').click();
+                            mclick = true;
+                          }
+                          if(!mclick && $('#occtax_results_draw_maille_m10.btn').length
+                            && $('#occtax_results_draw_maille_m10.btn').hasClass('active')
+                          ){
+                            $('#occtax_results_draw_maille_m10.btn').click();
                             mclick = true;
                           }
 
@@ -1470,10 +1480,12 @@ OccTax.events.on({
         // Get observation data
         var tokenFormId = $('#occtax-validation-form-modal form').attr('id');
         var url = $('#'+tokenFormId).attr('action');
+
         var params = {
           'id': cle_obs,
           'validation_action': 'observation_validity'
         };
+
         $.post(
             url,
             params,
@@ -1513,6 +1525,7 @@ OccTax.events.on({
               }
               var in_panier = oval['in_panier'] ? true : false;
               var p_action = in_panier ? 'remove' : 'add';
+
 
               html+= '</span>';
               html+= '</h3>';
@@ -2323,6 +2336,8 @@ OccTax.events.on({
                     $('#occtax_search_observation_card').hide();
 
                     // Move legend to map
+                    // First get which legend was selected
+                    var selected_legend_button_id = $('#occtax_results_draw button.active').attr('id');
                     $('#map-content div.occtax-legend-container').remove();
                     // Add number of records in
                     // Hide or display legend and map maille toglle button depending on results
@@ -2389,6 +2404,8 @@ OccTax.events.on({
                     var mycontainer = '#occtax_results_stats_table_div';
                     refreshOcctaxDatatableSize(mycontainer);
 
+                    // Click on the previous selected legend button
+                    $('#'+selected_legend_button_id).click();
                 }else{
                   lizMap.addMessage( tData.msg.join('<br/>'), 'error', true ).attr('id','occtax-highlight-message');
                 }
@@ -2434,6 +2451,7 @@ OccTax.events.on({
                   $(this)[0].sumo.unSelectAll();
               }
           });
+
           // Remove tokens
           // Needed so that depending buttons are deactivated
           $('#occtax_service_search_form input[name="token"]').val('');
@@ -2500,16 +2518,6 @@ OccTax.events.on({
         var vv = v.split(' ')[0];
         $(this).val(vv);
       });
-
-      // Toggle taxon checkbox depending on active taxon tab
-      //$('#occtax_taxon_tab_div > ul > li > a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-        //var target = $(e.target).attr("href") // activated tab
-        //var showTaxonInBdd = false;
-        //if(target == '#recherche_taxon_panier'){
-          //showTaxonInBdd = true;
-        //}
-        //$('#jforms_occtax_search_taxons_bdd_label').toggle(showTaxonInBdd);
-      //});
 
       // Hide taxon checkboxes labels
       $('#jforms_occtax_search_taxons_locaux_label').hide();
@@ -2609,35 +2617,17 @@ OccTax.events.on({
       });
 
 
-      // Click on hidden draw buttons when changing displayed tab
+      // Refresh datatable display ( set height used with scrollY )
+      // When one of the result tabs is selected
       $('#occtax_results_tabs a').on('shown', function (e) {
-
           // Refresh datatable display ( set height used with scrollY )
           var container = $(e.target).attr('href');
           refreshOcctaxDatatableSize(container);
 
-          // deactivate the link between activated tab and chosen symbology on map
           return false;
-
-          var tid = $(e.target).attr('id');
-
-          // Draw geometries corresponding to displayed tab
-          var drawButton = 'occtax_results_draw_maille_m02';
-          if(tid == 'occtax_results_maille_table_tab_m01'){
-            drawButton = 'occtax_results_draw_maille_m01';
-          }
-          if(tid == 'occtax_results_maille_table_tab_m02'){
-            drawButton = 'occtax_results_draw_maille_m02';
-          }
-          if(tid == 'occtax_results_maille_table_tab_m10'){
-            drawButton = 'occtax_results_draw_maille_m10';
-          }
-          if(tid == 'occtax_results_observation_table_tab'){
-            drawButton = 'button.occtax_results_draw_observation.menace';
-          }
-          $('#' + drawButton).click();
-
       });
+
+      // Zoom to data
       $('#occtax_results_zoom').click(function() {
           var rLayer = OccTax.layers['mailleLayer'];
           if( rLayer.features.length > 0 ){
@@ -2788,15 +2778,6 @@ OccTax.events.on({
       // Ajout de la classe btn-primary sur les boutons du formulaire
       $('div.jforms-submit-buttons button.jforms-reset').addClass('btn').addClass('btn-primary');
       $('div.jforms-submit-buttons input.jforms-submit').addClass('btn').addClass('btn-primary');
-
-      // Refresh datatable size when bottom dock changes
-      // commented because tables are not in the bottom dock anymore
-        //lizMap.events.on({
-            //bottomdocksizechanged: function(evt) {
-               //var mycontainer = $('#occtax_tables div.bottom-content.active');
-               //refreshOcctaxDatatableSize(mycontainer);
-            //}
-        //});
 
         // Refresh bbox in URL
         lizMap.map.events.on({
