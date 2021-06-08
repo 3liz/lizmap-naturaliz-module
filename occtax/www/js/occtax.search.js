@@ -954,7 +954,7 @@ OccTax.events.on({
       }
 
       // Get data and pass it to layer through event
-      var maximum_geometries = 4000;
+      var maximum_geometries = 15000;
       // First get row count and then get data only if rowcount < some value
       searchForm.find('input[name="rowcount"]').val('1');
       $.post(
@@ -1907,7 +1907,7 @@ OccTax.events.on({
             ]
           }
         );
-        cluster_strategy.distance = 15;
+        cluster_strategy.distance = 30;
         OccTax.map.addLayers([observationLayer]);
         OccTax.layers['observationLayer'] = observationLayer;
         var selectObservationCtrl = new OpenLayers.Control.SelectFeature(observationLayer, {
