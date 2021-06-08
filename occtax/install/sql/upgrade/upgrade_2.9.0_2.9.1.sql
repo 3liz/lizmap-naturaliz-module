@@ -1,3 +1,4 @@
+-- Validation panier
 DROP TABLE IF EXISTS occtax.validation_panier;
 CREATE TABLE occtax.validation_panier (
     id serial NOT NULL PRIMARY KEY,
