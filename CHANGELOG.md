@@ -1,5 +1,14 @@
 # CHANGELOG
 
+### 2.9.0 - 08/06/2021
+
+* Carte - Amélioration du rendu des observations brutes
+  - affichage en mode cluster (déplacement de points), pour mieux gérer la superposition des observations
+  - affichage découplé entre le tableau de résultats et la carte, pour afficher toutes les observations
+  et pas seulement les 100 visibles dans le tableau
+  - plusieurs symbologies: par menace, par protection, par date
+* Légende - possibilité de masquer/afficher la légende
+
 ### 2.8.3 - 16/04/2021
 
 * Add script entry point in composer.json for occtax autoconfig-access
