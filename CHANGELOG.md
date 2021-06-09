@@ -1,6 +1,8 @@
-# CHANGELOG
+# Changelog
 
-### 2.9.0 - 08/06/2021
+## Unreleased
+
+## 2.9.0 - 2021-06-08
 
 * Carte - Amélioration du rendu des observations brutes
   - affichage en mode cluster (déplacement de points), pour mieux gérer la superposition des observations
@@ -9,21 +11,21 @@
   - plusieurs symbologies: par menace, par protection, par date
 * Légende - possibilité de masquer/afficher la légende
 
-### 2.8.3 - 16/04/2021
+## 2.8.3 - 2021-04-16
 
 * Add script entry point in composer.json for occtax autoconfig-access
 
-### 2.8.2 - 16/04/2021
+## 2.8.2 - 2021-04-16
 
 * Fix - Zoom sur l'observation: utilisation des map.resolutions si map.scales non défini
 * Installation/Upgrade - Ajout d'une vue manquante taxon.taxref_consolide
 * Recherche spatiale - Correction de la recherche par maille
 
-### 2.8.1 - 15/04/2021
+## 2.8.1 - 2021-04-15
 
 * Fix upgrade de la 2.7.8 à la 2.8.0
 
-### 2.8.0 - 02/04/2021
+## 2.8.0 - 2021-04-02
 
 * Amélioration des scripts d'installation
 * Structure PostgreSQL - Suppression des search_path et déclaration obligatoire des schémas
@@ -34,19 +36,19 @@
 * Mascarine - Suppression des modules dépréciés
 * Doc - Modification pour l'import du TAXREF (manuel)
 
-### 2.7.8 - 18/03/2021
+## 2.7.8 - 2021-03-18
 
 * Fix bug dans le SQL des vues matérialisées
 * Doc & script - suppression des scripts d'import de données SIG
 
-### 2.7.6 - 28/10/2020
+## 2.7.6 - 2020-10-28
 
 * Gestion - demande: suppression des champs cd_ref, group1_inpn et 2, validite_niveau
 * Export - retourne seulement les JDD des observations exportées
 * Zoom sur observation - correction bug de mauvaise échelle / max_scale
 * Occtax - Correction souci des icônes taxon avec accent
 
-### 2.7.5 - 12/10/2020
+## 2.7.5 - 2020-10-12
 
 * Gestion - Simplification des requêtes de demande: ajout direct des filtres sans passer par occtaxSearchObservation
 * Export/Fiche - Menaces: affichage du libellé au lieu du code
@@ -61,27 +63,27 @@
 * Taxon - Nouvelle version du script complet d'import TAXREF
 * Interface - Basculer les boutons de carte sous la fiche taxon
 
-### 2.7.3 - 08/09/2020
+## 2.7.3 - 2020-09-08
 
 * Occtax - Improve install script
 
-### 2.7.4 - 08/09/2020
+## 2.7.4 - 2020-09-08
 
 * Occtax - Try/catch pour ajout des droits & fichier SQL de remplacement
 
-### 2.7.3 - 08/09/2020
+## 2.7.3 - 2020-09-08
 
 * Occtax - Improve install script
 
-### 2.7.2 - 08/09/2020
+## 2.7.2 - 2020-09-08
 
 * Gestion - Improve install script
 
-### 2.7.1 - 08/09/2020
+## 2.7.1 - 2020-09-08
 
 * Gestion - Remove foreign key demande_user_login_fk
 
-### 2.7.0 - 08/09/2020
+## 2.7.0 - 2020-09-08
 
 * Occtax/Gestion - Refonte de l'installation
 * Occtax - remove useless old code
@@ -91,12 +93,12 @@
 * Demandes - Tentative d'amélioration de performance: sous-requête & demandes actives
 * Taxref - ajout menace régionale, variables de configuration, nettoyage
 
-### 2.6.1 - 03/07/2020
+## 2.6.1 - 2020-07-03
 
 * Taxon - déplacement des images de catégories dans install/www/
 * Revert "CSS/JS - Move files to install/www and use upgrade to copy them"
 
-### 2.6.0 - 02/07/2020
+## 2.6.0 - 2020-07-02
 
 * CSS/JS - Move files to install/www and use upgrade to copy them
 * Interface - homogénéisation des couleurs
@@ -128,5 +130,3 @@
 * Session - message de reconnexion et rechargement si la session a expirée
 * Stats - améliorations des matérialisées
 * Recherche - fix bug réinitialisation & Impression - fix bug quand pas de données
-
-###
