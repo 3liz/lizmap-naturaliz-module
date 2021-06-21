@@ -224,16 +224,20 @@ class serviceCtrl extends jController {
 
         try {
             // Get only row count, no data
+            $recordsTotal = $occtaxSearch->getRecordsTotal();
+            $fields = $occtaxSearch->getFields();
             if ($searchClassName == 'occtaxSearchObservationExtent' and $this->intParam('rowcount',0) == 1) {
-                $data = array();
+                $return['recordsTotal'] = $recordsTotal;
+                $return['status'] = 1;
+                $return['recordsFiltered'] = $recordsTotal;
+                $return['fields'] = $fields;
+                $return['data'] = array();
+                $rep->data = $return;
+                return $rep;
             } else {
-                $data = $occtaxSearch->getData( $limit, $offset, $order);
+                // We can have heavy data: the result will give a file handler and path
+                list ($handler, $path) = $occtaxSearch->getData( $limit, $offset, $order);
             }
-            $return['recordsTotal'] = $occtaxSearch->getRecordsTotal();
-            $return['data'] = $data;
-            $return['status'] = 1;
-            $return['recordsFiltered'] = $return['recordsTotal'];
-            $return['fields'] = $occtaxSearch->getFields();
         }
         catch( Exception $e ) {
             $return['status'] = 0;
@@ -242,8 +246,25 @@ class serviceCtrl extends jController {
             return $rep;
         }
 
+        // Fill up JSON file
+        $metadata = array();
+        $metadata['recordsTotal'] = $recordsTotal;
+        $metadata['status'] = 1;
+        $metadata['recordsFiltered'] = $recordsTotal;
+        $metadata['fields'] = $fields;
+        $metadata = preg_replace('#^\{#', '', json_encode($metadata));
+        //$metadata = json_encode($metadata);
+        // Add metadata at the end of the file
+        fwrite($handler, $metadata);
+        fclose($handler);
+
         // Return data
-        $rep->data = $return;
+        $rep = $this->getResponse('binary');
+        $rep->mimeType = 'text/json; charset=utf-8';
+        $rep->doDownload = false;
+        $rep->outputFileName = 'naturaliz_observation_data';
+        $rep->fileName = $path;
+        $rep->deleteFileAfterSending = true;
 
         return $rep;
     }

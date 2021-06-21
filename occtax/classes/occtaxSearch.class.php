@@ -654,7 +654,11 @@ class occtaxSearch {
         $result = $this->getResult($limit, $offset, $order);
         $data = $result->fetchAll();
 
-        $d = array();
+        // We need to write data on disk to avoid PHP memory limits
+        $path = tempnam(sys_get_temp_dir(), 'naturaliz_'.session_id().'_');
+        $handler = fopen($path, 'w');
+        fwrite($handler, '{"data": [');
+        $virg = '';
         foreach( $data as $line ) {
             $item = array();
             // Get fields from result
@@ -679,11 +683,12 @@ class occtaxSearch {
 
             }
             // Add line
-            $d[] = $item;
+            fwrite($handler, $virg . json_encode($item));
             unset($item);
+            $virg = ',';
         }
-        $data = $d;
-        return $data;
+        fwrite($handler, '], ');
+        return array($handler, $path);
     }
 
     /**

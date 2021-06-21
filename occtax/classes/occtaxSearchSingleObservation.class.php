@@ -46,4 +46,17 @@ class occtaxSearchSingleObservation extends occtaxSearchObservationBrutes {
         return $exported_fields;
     }
 
+    // We need to override the getData
+    // Since this parent function now uses a file to avoid memory issues
+    function getData( $limit=50, $offset=0, $order="" ) {
+        list($handler, $path) = parent::getData($limit, $offset, $order);
+        $json = jFile::read($path);
+        $json = str_replace('{"data": ', '', $json);
+        $json = str_replace(']],', ']]', $json);
+        fclose($handler);
+        unlink($path);
+
+        return json_decode($json);
+    }
+
 }

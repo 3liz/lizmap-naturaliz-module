@@ -1932,7 +1932,10 @@ OccTax.events.on({
                   messages.push('<table class="table table-condensed">');
                   messages.push('<thead>');
 
-                  var avoided_properties = ['labels', OccTax.config.taxon_detail_nom_menace, 'protection'];
+                  var avoided_properties = [
+                    'labels', OccTax.config.taxon_detail_nom_menace, 'protection'
+                    ,'geojson'
+                  ];
 
                   // Add table header with attributes
                   var feat_zero = features[0];
@@ -1989,7 +1992,7 @@ OccTax.events.on({
                       scrollCollapse: true,
                       columnDefs: [
                         {
-                          "targets": [ 0, 5 ], // 0 = id, 4 = geojson
+                          "targets": [ 0 ], // 0 = id
                           "visible": false
                         }
                       ]
@@ -2456,14 +2459,14 @@ OccTax.events.on({
       // Click on hidden draw buttons when changing displayed tab
       $('#occtax_results_tabs a').on('shown', function (e) {
 
-          // deactivate for testing
-          return false;
-
           var tid = $(e.target).attr('id');
 
           // Refresh datatable display ( set height used with scrollY )
           var container = $(e.target).attr('href');
           refreshOcctaxDatatableSize(container);
+
+          // deactivate the link between activated tab and chosen symbology on map
+          return false;
 
           // Draw geometries corresponding to displayed tab
           var drawButton = 'occtax_results_draw_maille_m02';
