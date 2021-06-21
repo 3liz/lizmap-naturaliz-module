@@ -114,6 +114,7 @@ class occtaxValidation {
             LEFT JOIN occtax.validation_panier AS vp
             USING (identifiant_permanent)
             WHERE True AND cle_obs = $1
+            AND vo.ech_val = '2'
         ";
         $sql.= $this->demande_filter;
         $sql.= "
@@ -212,6 +213,7 @@ class occtaxValidation {
             $sql.= "    JOIN occtax.observation AS o USING (identifiant_permanent)";
             $sql.= "    LEFT JOIN occtax.validation_observation AS valo USING (identifiant_permanent)";
             $sql.= "    WHERE True";
+            $sql.= "    AND valo.ech_val = '2'";
             $sql.= "    AND vp.usr_login = $1";
             // Chercher dans les demandes
             $sql.= $this->demande_filter;
