@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 2.9.1 - 2021-06-23
+
+* Backend - getData: écriture des données dans un fichier pour éviter souci RAM
+* CI - Update te CI and the changelog file
+* Carte - Augmentation des observations max de 4000 à 15000
+* Documentation - Ajout d'un chapitre sur la diffusion des données
+
 ## 2.9.0 - 2021-06-08
 
 * Carte - Amélioration du rendu des observations brutes
