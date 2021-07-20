@@ -417,6 +417,7 @@ OccTax.events.on({
           $('#taxon-detail-media').html(html);
         } else {
           $('#taxon-detail-media div.dataviz-waiter').hide();
+          $('#sub-dock').css('min-width', '')
         }
       }, function(Error) {
         console.log(Error);
@@ -499,12 +500,26 @@ OccTax.events.on({
           getTaxonDataFromApi(cd_nom, function(data){
               var html = buildTaxonFicheHtml(data);
               html+=  '<button id="hide-sub-dock" class="btn pull-right" style="margin-top:5px;" name="close" title="'+lizDict['generic.btn.close.title']+'">'+lizDict['generic.btn.close.title']+'</button>';
-              $('#sub-dock').html(html)
-              .css('bottom', '0px');
-              if( !lizMap.checkMobile() ){
-                  var leftPos = getDockRightPosition();
-                  $('#sub-dock').css('left', leftPos).css('width', leftPos);
+
+              // Depending on LWC version, sub-dock uses flex or not
+              $('#sub-dock').html(html);
+              if ($('#docks-wrapper').length) {
+                // LWC >= 3.4.0
+                $('#sub-dock')
+                .css('bottom', '0px')
+                .css('position', 'relative')
+                .css('height', '100%')
+                .css('min-width', '30%')
+                ;
+              } else {
+                // Older versions
+                $('#sub-dock').css('bottom', '0px');
+                if( !lizMap.checkMobile() ){
+                    var leftPos = getDockRightPosition();
+                    $('#sub-dock').css('left', leftPos).css('width', leftPos);
+                }
               }
+
               // Hide lizmap close button (replaced further)
               $('#hide-sub-dock').click(function(){
                   $('#sub-dock').hide().html('');
