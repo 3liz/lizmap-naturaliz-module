@@ -63,6 +63,21 @@ class defaultCtrl extends lizMapCtrl {
             // sumoselect
             $rep->addJsLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/sumoselect/jquery.sumoselect.min.js')));
             $rep->addCSSLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'css/sumoselect/sumoselect.css')));
+
+            // For recent versions of Lizmap Wbe Client, since 3.4.0, we need to add some OpenLayers 2.13.1 JS files
+            // Which have been removed from the OL 2 build
+            // TODO - For future versions of LWC, we should use OL >= 6
+            $xmlPath = jApp::appPath('project.xml');
+            $xmlLoad = simplexml_load_file($xmlPath);
+            $version = (string) $xmlLoad->info->version;
+            $exp_version = explode('.', $version);
+            $major = (integer) $exp_version[0];
+            $minor = (integer) $exp_version[1];
+            if ($major >= 4 || ($major = 3 && $minor >= 4)) {
+                $rep->addJsLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/OpenLayers_2_13_1/Strategy.js')));
+                $rep->addJsLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/OpenLayers_2_13_1/Strategy/Cluster.js')));
+            }
+
             // occtax
             $rep->addJsLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/occtax.js')));
             $rep->addJsLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/occtax.search.js')));

@@ -193,32 +193,4 @@ class occtaxSearchObservationExtent extends occtaxSearchObservation {
         return null;
     }
 
-
-    protected function setSql(){
-        // Get parent sql
-        parent::setSql();
-
-        $sql = "
-        WITH
-        source AS (
-        ".$this->sql."
-        ),
-        kmeans AS (
-            SELECT *,
-            ST_ClusterKMeans(geom, 100) OVER () kmeans_cid
-            FROM source
-        )
-        SELECT
-        kmeans_cid AS id,
-        count(cle_obs) AS nb_obs,
-        ST_AsGeoJSON( ST_Transform(ST_Centroid(st_convexhull(st_collect(geom))), 4326), 6 ) AS geojson
-        FROM kmeans
-        GROUP BY kmeans_cid
-        ORDER BY id
-        ";
-
-        //$this->sql = $sql;
-    }
-
-
 }
