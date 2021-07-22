@@ -2,11 +2,14 @@
 
 ## Unreleased
 
+## 2.10.0
+
+* Validation - Ajout d'un outil de validation en ligne (échelle régionale)
+
 ## 2.9.2 - 2021-07-22
 
 * Fiche taxon - Correction de l'affichage pour Lizmap Web Client >= 3.4
 * Carte - Observations: compatibilité de l'affichage par cluster pour LWC >= 3.4.0
-
 ## 2.9.1 - 2021-06-23
 
 * Backend - getData: écriture des données dans un fichier pour éviter souci RAM

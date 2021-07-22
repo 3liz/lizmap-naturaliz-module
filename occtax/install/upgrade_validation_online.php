@@ -1,10 +1,10 @@
 <?php
-class occtaxModuleUpgrader_290_291 extends jInstallerModule {
+class occtaxModuleUpgrader_validation_online extends jInstallerModule {
 
     public $targetVersions = array(
-        '2.9.1'
+        '2.10.0',
     );
-    public $date = '2021-06-15';
+    public $date = '2021-07-23';
 
     function install() {
         if ($this->firstDbExec()) {
@@ -28,7 +28,7 @@ class occtaxModuleUpgrader_290_291 extends jInstallerModule {
             // SQL upgrade
             $this->useDbProfile('jauth_super');
             $db = $this->dbConnection(); // A PLACER TOUJOUR DERRIERE $this->useDbProfile('jauth_super');
-            $sqlPath = $this->path . 'install/sql/upgrade/upgrade_2.9.0_2.9.1.sql';
+            $sqlPath = $this->path . 'install/sql/upgrade/upgrade_validation_online.sql';
             $sqlTpl = jFile::read( $sqlPath );
             $tpl = new jTpl();
             $tpl->assign('colonne_locale', $colonne_locale);
