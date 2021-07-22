@@ -99,22 +99,38 @@ class validationCtrl extends jController {
             $check = true;
             $check_message = array();
 
-            // Validate given parameters
-            $niv_val = $this->intParam('niv_val', 0);
-            if ($niv_val <= 0 || $niv_val > 6) {
+            $form = jForms::get("occtax~validation");
+            if( !$form )
+              $form = jForms::create("occtax~validation");
+            $form->initFromRequest();
+            if (!$form->check()) {
                 $check = false;
-                $check_message[] = jLocale::get('validation.input.niv_val.error');
-            }
-            $producteur = strip_tags(trim($this->param('producteur')));
-            $comm_val = strip_tags(trim($this->param('comm_val')));
-            $nom_retenu = strip_tags(trim($this->param('nom_retenu')));
-            $date_contact = trim($this->param('date_contact'));
-            if (!empty($date_contact)) {
-                $dt = DateTime::createFromFormat("Y-m-d", $date_contact);
-                $date_valide = $dt !== false && !array_sum($dt::getLastErrors());
-                if (!$date_valide) {
-                    $check = False;
-                    $check_message[] = jLocale::get('validation.input.date_contact.error');
+                $check_message[] = $form->getErrors();
+            } else {
+                // Further validate given parameters
+                $niv_val = $this->intParam('niv_val', 0);
+                if (!is_numeric($niv_val)) {
+                    $check = false;
+                    $check_message[] = jLocale::get('validation.input.niv_val.error');
+                } else {
+                    $niv_val = (integer)$niv_val;
+                    if ($niv_val <= 0 || $niv_val > 6) {
+                        $check = false;
+                        $check_message[] = jLocale::get('validation.input.niv_val.error');
+                    }
+                }
+                $producteur = strip_tags(trim($form->getData('producteur')));
+                $comm_val = strip_tags(trim($form->getData('comm_val')));
+                $nom_retenu = strip_tags(trim($form->getData('nom_retenu')));
+                $date_contact = trim($form->getData('date_contact'));
+
+                if (!empty($date_contact)) {
+                    $dt = DateTime::createFromFormat("Y-m-d", $date_contact);
+                    $date_valide = $dt !== false && !array_sum($dt::getLastErrors());
+                    if (!$date_valide) {
+                        $check = False;
+                        $check_message[] = jLocale::get('validation.input.date_contact.error');
+                    }
                 }
             }
 
@@ -130,6 +146,12 @@ class validationCtrl extends jController {
                 );
                 $data = $validation->validateObservations($input_params);
                 $message = jLocale::get('validation.validate.validation.basket.success');
+                // For single observation, get the data so that the JS has the observation id (cle_obs)
+                if (is_array($data) && !empty($identifiant_permanent) && $validation->isValidUuid($identifiant_permanent)) {
+                    $data = $validation->getObservationValidity($identifiant_permanent, 'identifiant_permanent');
+                    $message = jLocale::get('validation.button.validate.observation.success');
+                }
+
             }
         }
 

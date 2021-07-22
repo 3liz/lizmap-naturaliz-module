@@ -93,6 +93,15 @@ class defaultCtrl extends lizMapCtrl {
                 $nomenclature[$nom->champ . '|' . $nom->code] = $nom->valeur;
             }
             $rep->addJSCode("var t_nomenclature = " . json_encode($nomenclature) . ';');
+            // Occtax nomenclature
+            $nomenclature = array();
+            $sqlnom = "SELECT * FROM occtax.nomenclature";
+            $cnx = jDb::getConnection('naturaliz_virtual_profile');
+            $reqnom = $cnx->query($sqlnom);
+            foreach($reqnom as $nom){
+                $nomenclature[$nom->champ . '|' . $nom->code] = $nom->valeur;
+            }
+            $rep->addJSCode("var occtax_nomenclature = " . json_encode($nomenclature) . ';');
 
             // Add locales
             $locales = $this->getLocales();

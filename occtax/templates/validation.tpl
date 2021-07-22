@@ -1,17 +1,14 @@
 <div style="height:100%;overflow:auto;">
-    <h3 class="occtax_search"><span class="title"><span class="icon search"></span>&nbsp;<span class="text">{@validation.validation_basket.dock.title@}</span></span></h3>
+    <h3 class="occtax_search"><span class="title"><span class="icon search"></span>&nbsp;<span class="text">{@validation.validation.dock.title@}</span></span></h3>
     <div class="menu-content">
-        Contenu du panier
-        <table>
-            <tr>
-                <th>Nombre d'observations</th>
-                <td><span class="validation_basket_counter">{$counter}</span></td>
-            </tr>
-        </table>
+        {@validation.validation.dock.subtitle@} :</br>
+        <b><span id="validation_basket_counter">{$counter}</span></b> observation{if $counter > 1}s{/if}
 
-        <button value="empty" class="occtax_validation_button btn btn-mini btn-primary" title="{@validation.button.validation_basket.empty.help@}">{@validation.button.validation_basket.empty.title@}</button>
-        <button value="" class="occtax_validation_open_form_button btn btn-mini btn-primary" title="{@validation.button.validation_basket.open.form.help@}">{@validation.button.validation_basket.open.form.title@}</button>
-        <button value="" class="occtax_validation_filter_button btn btn-mini btn-primary" title="{@validation.button.validation_basket.filter.observations.help@}">{@validation.button.validation_basket.filter.observations.title@}</button>
+        <div>
+            <button value="empty" class="occtax_validation_button btn btn-mini btn-primary" title="{@validation.button.validation_basket.empty.help@}">{@validation.button.validation_basket.empty.title@}</button>
+            <button value="" class="occtax_validation_open_form_button btn btn-mini btn-primary" title="{@validation.button.validation_basket.open.form.help@}">{@validation.button.validation_basket.open.form.title@}</button>
+            <button value="" class="occtax_validation_filter_button btn btn-mini btn-primary" title="{@validation.button.validation_basket.filter.observations.help@}">{@validation.button.validation_basket.filter.observations.title@}</button>
+        </div>
 
     </div>
 </div>

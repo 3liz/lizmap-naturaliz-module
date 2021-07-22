@@ -1156,8 +1156,10 @@ OccTax.events.on({
           $('#'+tableId+' tbody tr').hover(function(){
               var tr = $(this);
               setTimeoutConst = setTimeout(function() {
-              var d = $('#'+tableId+'').DataTable().row( tr ).data();
-              displayObservationGeom(d['geojson'], true);
+                var d = $('#'+tableId+'').DataTable().row( tr ).data();
+                if (d) {
+                  displayObservationGeom(d['geojson'], true);
+                }
               }, delay);
           },function(){
               var tr = $(this);
@@ -1169,9 +1171,11 @@ OccTax.events.on({
           $('#'+tableId+' a.openObservation').click(function(){
               var tr = $($(this).parents('tr')[0]);
               var d = $('#'+tableId+'').DataTable().row( tr ).data();
-              var cle_obs = d['DT_RowId'];
-              var with_nav_buttons = true;
-              getObservationDetail(cle_obs, with_nav_buttons);
+              if (d) {
+                var cle_obs = d['DT_RowId'];
+                var with_nav_buttons = true;
+                getObservationDetail(cle_obs, with_nav_buttons);
+              }
               return false;
           });
 
@@ -1179,7 +1183,9 @@ OccTax.events.on({
           $('#'+tableId+' a.zoomToObservation').click(function(){
               var tr = $($(this).parents('tr')[0]);
               var d = $('#'+tableId+'').DataTable().row( tr ).data();
-              zoomToObservation(d['geojson']);
+              if (d) {
+                zoomToObservation(d['geojson']);
+              }
               return false;
           });
 
@@ -1189,10 +1195,12 @@ OccTax.events.on({
           $('#'+tableId+' a.getTaxonDetail').click(function(){
               var tr = $($(this).parents('tr')[0]);
               var d = $('#'+tableId+'').DataTable().row( tr ).data();
-              var classes = $(d.lien_nom_valide).attr('class');
-              var cd_nom = classes.split(' ')[1].replace('cd_nom_', '');
-              displayTaxonDetail(cd_nom);
-              $('#occtax-highlight-message').remove();
+              if (d) {
+                var classes = $(d.lien_nom_valide).attr('class');
+                var cd_nom = classes.split(' ')[1].replace('cd_nom_', '');
+                displayTaxonDetail(cd_nom);
+                $('#occtax-highlight-message').remove();
+              }
               return false;
           });
 
@@ -1200,8 +1208,10 @@ OccTax.events.on({
           $('#'+tableId+' span.niv_val').click(function(){
               var tr = $($(this).parents('tr')[0]);
               var d = $('#'+tableId+'').DataTable().row( tr ).data();
-              var cle_obs = d['DT_RowId'];
-              showObservationValidation(cle_obs);
+              if (d) {
+                var cle_obs = d['DT_RowId'];
+                showObservationValidation(cle_obs);
+              }
               return false;
           });
 
@@ -1498,10 +1508,11 @@ OccTax.events.on({
                 return false;
               }
               var data = content.data;
-              if (!data) {
+              if (!data || !data.length) {
                 return false;
               }
               var oval = data[0];
+
               // Compute display values
               var typ_val = oval['typ_val'] ? oval['typ_val'] : '-';
               var date_ctrl = oval['date_ctrl'] ? oval['date_ctrl'] : '-';
@@ -1510,9 +1521,11 @@ OccTax.events.on({
               var date_contact = oval['date_contact'] ? oval['date_contact'] : '-';
               var comm_val = oval['comm_val'] ? oval['comm_val'] : '-';
               var nom_retenu = oval['nom_retenu'] ? oval['nom_retenu'] : '-';
+              var validation_producteur = oval['validation_producteur'] ? oval['validation_producteur'] : '-';
+              var validation_nationale = oval['validation_nationale'] ? oval['validation_nationale'] : '-';
 
               var html = '';
-              html+= '<h3><span class="title"><span class="text">'+naturalizLocales['validation.dock.title']+'</span>';
+              html+= '<h3><span class="title"><span class="text">'+naturalizLocales['subdock.observation.validation.title']+'</span>';
 
               // Close button
               html+= '<button id="validation-detail-close" class="btn btn-primary btn-mini pull-right" style="margin-left:10px;">Fermer</button>';
@@ -1532,17 +1545,17 @@ OccTax.events.on({
               html+= '<div id="validation-detail-container"  class="menu-content">';
               html+= '<table class="table table-condensed table-striped">';
               // ID
-              html+= '<tr><th>Observation</th>';
+              html+= '<tr><th>' + naturalizLocales['input.identifiant_permanent'] +'</th>';
               html+= '<td>'+oval['identifiant_permanent']+'</td></tr>';
               // Type de validation
               html+= '<tr><th title="'+naturalizLocales['input.typ_val.help']+'">'+naturalizLocales['input.typ_val']+'</th>';
-              html+= '<td>'+ typ_val +'</td></tr>';
+              html+= '<td>'+ (typ_val != '-' ? occtax_nomenclature['typ_val|'+typ_val] : '-') +'</td></tr>';
               // Date du controle
               html+= '<tr><th title="'+naturalizLocales['input.date_ctrl.help']+'">'+naturalizLocales['input.date_ctrl']+'</th>';
               html+= '<td>'+ date_ctrl +'</td></tr>';
               // Niveau
               html+= '<tr><th title="'+naturalizLocales['input.niv_val.help']+'">'+naturalizLocales['input.niv_val']+'</th>';
-              html+= '<td><span class="niv_val n' + niv_val + '">'+ niv_val +'</span></td></tr>';
+              html+= '<td><span style="cursor:auto;" class="niv_val n' + niv_val + '">'+ (niv_val != '-' ? occtax_nomenclature['validite_niveau|'+niv_val] : '-') +'</span></td></tr>';
               // Producteur
               html+= '<tr><th title="'+naturalizLocales['input.producteur.help']+'">'+naturalizLocales['input.producteur']+'</th>';
               html+= '<td>'+ producteur +'</td></tr>';
@@ -1555,6 +1568,32 @@ OccTax.events.on({
               // Nom retenu
               html+= '<tr><th title="'+naturalizLocales['input.nom_retenu.help']+'">'+naturalizLocales['input.nom_retenu']+'</th>';
               html+= '<td>'+ nom_retenu + '</td></tr>';
+
+              // Validation producteur et nationale
+              // Producteur
+              var niv_producteur = validation_producteur.match(/@(\d{1})@/);
+              if (niv_producteur) {
+                validation_producteur = validation_producteur.replace(
+                  niv_producteur[0],
+                  occtax_nomenclature['validite_niveau|' + niv_producteur[1]].trim().toLowerCase()
+                );
+              } else {
+                validation_producteur = '-';
+              }
+              html+= '<tr><th title="'+naturalizLocales['input.validation_producteur.help']+'">'+naturalizLocales['input.validation_producteur']+'</th>';
+              html+= '<td>'+ validation_producteur + '</td></tr>';
+              // Nationale
+              var niv_national = validation_nationale.match(/@(\d{1})@/);
+              if (niv_national) {
+                validation_nationale = validation_nationale.replace(
+                  niv_national[0],
+                  occtax_nomenclature['validite_niveau|' + niv_national[1]].trim().toLowerCase()
+                );
+              } else {
+                validation_nationale = '-';
+              }
+              html+= '<tr><th title="'+naturalizLocales['input.validation_nationale.help']+'">'+naturalizLocales['input.validation_nationale']+'</th>';
+              html+= '<td>'+ validation_nationale + '</td></tr>';
 
               // Validation basket action button
               html+= '<tr><th>'+naturalizLocales['validation_basket.actionbar.title']+'</th>';
@@ -1579,10 +1618,23 @@ OccTax.events.on({
               $('#sub-dock').html(html).css('bottom', '0px');
               $('#occtax-highlight-message').remove();
 
-              if( !lizMap.checkMobile() ){
-                  var leftPos = lizMap.getDockRightPosition();
-                  $('#sub-dock').css('left', leftPos).css('width', leftPos);
+              if ($('#docks-wrapper').length) {
+                // LWC >= 3.4.0
+                $('#sub-dock')
+                .css('bottom', '0px')
+                .css('position', 'relative')
+                .css('height', '100%')
+                .css('min-width', '30%')
+                ;
+              } else {
+                // Older versions
+                $('#sub-dock').css('bottom', '0px');
+                if( !lizMap.checkMobile() ){
+                    var leftPos = getDockRightPosition();
+                    $('#sub-dock').css('left', leftPos).css('width', leftPos);
+                }
               }
+
               // Hide lizmap close button (replaced further)
               $('#hide-sub-dock').hide();
 
@@ -1594,6 +1646,10 @@ OccTax.events.on({
               $('#sub-dock').show();
             }
         );
+    }
+
+    OccTax.showObservationValidation = function(cle_obs) {
+      return showObservationValidation(cle_obs);
     }
 
 
@@ -2523,6 +2579,9 @@ OccTax.events.on({
       $('#jforms_occtax_search_taxons_locaux_label').hide();
       $('#jforms_occtax_search_taxons_bdd_label').hide();
 
+      // Hide validation checkbox label
+      $('#jforms_occtax_search_panier_validation_label').hide();
+
       // Boutons de changement de données affichées sur la carte
       $('#occtax_results_draw .btn').click(function() {
         var self = $(this);
@@ -2742,7 +2801,7 @@ OccTax.events.on({
       $('#search-query').attr('placeholder', 'Rechercher un lieu');
 
       // Ajout de sumoselect pour les listes déroulantes multiples
-      $('select.jforms-ctrl-listbox').SumoSelect(
+      $('#occtax select.jforms-ctrl-listbox').SumoSelect(
         {
             placeholder: 'Saisir/Choisir dans la liste',
             captionFormat: '{0} sélectionnés',

@@ -32,8 +32,11 @@ class occtaxSearchObservation extends occtaxSearch {
         'date_debut_buttons' => '
             {$line->date_debut}
             <br/><a class="openObservation" href="#" title="{@occtax~search.output.detail.title@}"><i class="icon-file"></i></a>
+
             <a class="zoomToObservation" href="#" title="{@occtax~search.output.zoom.title@}"><i class="icon-search"></i></a>
-            {if !empty($line->in_panier)}<i class="icon-shopping-cart" title="{@validation.span.validation_basket.inside.title@}"></i>{/if}
+
+            {if !empty($line->in_panier)}{assign $action="remove"}{else}{assign $action="add"}{/if}
+            <a class="occtax_validation_button datatable" href="#{$action}@{$line->identifiant_permanent}" title="{@occtax~validation.button.validation_basket.$action.help@}"><i class="icon-star{if empty($line->in_panier)}-empty{/if}"></i></a>
 
         ',
 
@@ -59,7 +62,7 @@ class occtaxSearchObservation extends occtaxSearch {
 
         'validite' => '
             <span class="niv_val n{$line->niv_val}" title="{@occtax~validation.input.niv_val@}: {$line->niv_val}" >
-                {$line->niv_val}
+                {$line->niv_val_text}
             </span>
         ',
     );
@@ -398,7 +401,18 @@ class occtaxSearchObservation extends occtaxSearch {
                 'joinClause' => "
                     ON vo.identifiant_permanent = o.identifiant_permanent AND ech_val = '2'",
                 'returnFields' => array(
-                    "CASE WHEN vo.niv_val IS NOT NULL THEN vo.niv_val ELSE '6' END AS niv_val"=> Null,
+                    "CASE
+                        WHEN vo.niv_val IS NOT NULL THEN vo.niv_val
+                        ELSE '6'
+                    END AS niv_val"=> Null,
+                    "(SELECT dict->>concat(
+                        'validite_niveau_',
+                        CASE WHEN vo.niv_val IS NOT NULL
+                            THEN vo.niv_val
+                            ELSE '6'
+                        END
+                        )
+                    FROM occtax.v_nomenclature_plat) AS niv_val_text"=> Null,
                 ),
             );
 

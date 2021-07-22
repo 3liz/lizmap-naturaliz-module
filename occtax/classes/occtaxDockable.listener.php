@@ -117,7 +117,6 @@
                     $maximum_observation_scale = 25000;
 
                 // Menaces
-
                 $menuOrder = array_map('trim', explode(',', $menuOrder));
                 $mi = 0; $mo = array();
                 foreach($menuOrder as $menu){
@@ -294,7 +293,7 @@
                     // Create dock
                     $dock = new lizmapMapDockItem(
                         'validation',
-                        jLocale::get("occtax~validation.validation_basket.dock.title"),
+                        jLocale::get("occtax~validation.validation.dock.title"),
                         $content,
                         15,
                         Null,
