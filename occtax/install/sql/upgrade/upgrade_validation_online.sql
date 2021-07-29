@@ -10,6 +10,10 @@ ALTER TABLE occtax.validation_panier ADD CONSTRAINT validation_panier_usr_login_
 
 COMMENT ON TABLE occtax.validation_panier IS 'Panier d''observations retenues pour appliquer des actions en masse. Par exemple pour la validation scientifique manuelle.';
 
+-- Ajout d'un champ dans la table gestion.demande
+ALTER TABLE gestion.demande ADD COLUMN IF NOT EXISTS contexte_validation BOOLEAN DEFAULT False;
+
+
 -- Fonction trigger qui lance la modification des champs validite_niveau et validite_date_validation
 -- lorsque l'utilisateur modifie la table occtax.validation_observation
 -- Cela crée un lien entre l'extension validation et les champs de la table observation

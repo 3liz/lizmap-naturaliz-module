@@ -16,4 +16,8 @@ GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public,taxon,sig,occtax,gestion TO 
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public,occtax,sig,taxon,gestion TO "{$DBUSER_OWNER}";
 GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public,occtax,sig,taxon,gestion TO "{$DBUSER_OWNER}";
 
+-- Ajout des droits de création et modification pour la validation en ligne
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE occtax.validation_panier TO "{$DBUSER_READONLY}";
+GRANT SELECT, INSERT, UPDATE ON TABLE occtax.validation_observation TO "{$DBUSER_READONLY}";
+
 COMMIT;

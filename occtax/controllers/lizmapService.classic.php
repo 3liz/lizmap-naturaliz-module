@@ -455,16 +455,7 @@ class lizmapServiceCtrl extends serviceCtrl {
     $rep->outputFileName  =  $appName . ' - impression des résultats' . '.' . $this->params['format'];
 
     // Log
-    $logContent ='
-     <a href="'.jUrl::get('lizmap~service:index',jApp::coord()->request->params).'" target="_blank">'.$this->params['template'].'<a>
-     ';
-    $eventParams = array(
-        'key' => 'print',
-        'content' => $logContent,
-        'repository' => $this->repository->getKey(),
-        'project' => $this->project->getKey()
-    );
-    jEvent::notify('LizLogItem', $eventParams);
+    // Deactivé pour naturaliz
 
     return $rep;
     }

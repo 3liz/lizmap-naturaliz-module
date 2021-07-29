@@ -84,9 +84,13 @@ lizMap.events.on({
                         var tokenFormId = $('#occtax-validation-form-modal form').attr('id');
 
                         // main fields
+                        // On ne met pas comm_val dans le champ pour conserver les anciennes données
+                        // et concaténer la nouvelle fournie par l'utilisateur dans champ vide
                         for (var v in vparams) {
                             var key = vparams[v];
-                            $('#' + tokenFormId + ' [name="'+key+'"]').val(obs[key]);
+                            if (key != 'comm_val') {
+                                $('#' + tokenFormId + ' [name="'+key+'"]').val(obs[key]);
+                            }
                         }
 
                         // Datepicker

@@ -4,7 +4,7 @@ class occtaxModuleUpgrader_validation_online extends jInstallerModule {
     public $targetVersions = array(
         '2.10.0',
     );
-    public $date = '2021-07-23';
+    public $date = '2021-07-29';
 
     function install() {
         if ($this->firstDbExec()) {
@@ -53,6 +53,7 @@ class occtaxModuleUpgrader_validation_online extends jInstallerModule {
             $tpl->assign('DBUSER_READONLY', $dbuser_readonly );
             $tpl->assign('DBUSER_OWNER', $dbuser_owner );
             $sql = $tpl->fetchFromString($sqlTpl, 'text');
+
             // Try to reapply some rights on possibly newly created tables
             // If it fails, no worries as it can be done manually after upgrade
             try {
@@ -60,6 +61,21 @@ class occtaxModuleUpgrader_validation_online extends jInstallerModule {
             }
             catch (Exception $e){
                 jLog::log("Upgrade - Rights where not reapplied on database objects");
+                jLog::log($e->getMessage());
+            }
+
+            // Ajout d'un nouveau droit de validation en ligne
+            try{
+                // Ajouter le droit export.geometries.brutes.selon.diffusion
+                jAcl2DbManager::addSubject( 'validation.online.access', 'occtax~jacl2.validation.online.access', 'naturaliz.subject.group');
+                jAcl2DbUserGroup::createGroup(
+                    'naturaliz_validateurs',
+                    'naturaliz_validateurs'
+                );
+                jAcl2DbManager::addRight('admins', 'validation.online.access');
+                jAcl2DbManager::addRight('naturaliz_validateurs', 'validation.online.access');
+            } catch (Exception $e){
+                jLog::log("Erreur lors de l'ajout du droit de validation en ligne: validation.online.access");
                 jLog::log($e->getMessage());
             }
 

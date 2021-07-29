@@ -27,6 +27,18 @@ class validationCtrl extends jController {
             //$data = array();
         //}
 
+        // Check the authenticated user can use validation
+        if (!$login || !jAcl2::checkByUser($login, "validation.online.access")) {
+            // Return error
+            $return = array(
+                'status' => 'error',
+                'message' => 'Droit insuffisant pour le module de validation en ligne',
+                'data' => array(),
+            );
+            $rep->data = $return;
+            return $rep;
+        }
+
         // Params
         $action = $this->param('validation_action', 'get');
 

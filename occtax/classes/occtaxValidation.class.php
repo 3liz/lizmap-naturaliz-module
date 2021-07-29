@@ -57,9 +57,10 @@ class occtaxValidation {
     protected function getDemandeFilter() {
         $sql = '';
         if( $this->login  ){
-            $eventParams = array('login' => $this->login);
+            $eventParams = array('login' => $this->login, 'contexte' => 'validation');
             $filters = jEvent::notify('getOcctaxFilters', $eventParams)->getResponse();
             foreach($filters as $filter){
+                // On récupère le filtre
                 $sql.= $filter;
             }
         }
@@ -69,6 +70,7 @@ class occtaxValidation {
 
     protected function query($sql, $params) {
         $cnx = jDb::getConnection();
+//jLog::log($sql);
         try {
             $stmt = $cnx->prepare($sql);
             $stmt->execute($params);
@@ -293,11 +295,11 @@ class occtaxValidation {
         $sql.= "    '1',";
 
         // Données du formulaire
-        $sql.= "    $3,";
-        $sql.= "    nullif(trim($4), ''),";
-        $sql.= "    nullif(trim($5), '')::date,";
-        $sql.= "    nullif(trim($6), ''),";
-        $sql.= "    nullif(trim($7), ''),";
+        $sql.= "    $3,"; // niv_val
+        $sql.= "    nullif(trim($4), ''),"; // producteur
+        $sql.= "    nullif(trim($5), '')::date,"; // date_contact
+        $sql.= "    'Validation du ' || now()::date || ' : ' || nullif(trim($6), ''),"; // comm_val
+        $sql.= "    nullif(trim($7), ''),"; // nom_retenu
 
         // on va chercher le id_personne du validateur
         $sql.= "    (";
@@ -355,10 +357,22 @@ class occtaxValidation {
         $sql.= "    EXCLUDED.niv_val,";
         $sql.= "    EXCLUDED.producteur,";
         $sql.= "    EXCLUDED.date_contact,";
-        $sql.= "    trim(regexp_replace(
-                        concat(replace(vo.comm_val, EXCLUDED.comm_val, '') || ' - ', EXCLUDED.comm_val),
-                        '( - )+', ' - '
-                    ), ' - '),";
+        // Pour comm_val, on a affiché dans le formulaire un champ vide
+        // Pour ne pas risquer de supprimer les commentaires précédents
+        // On préfère toujours concaténer le commentaire ajouté au précédent
+        // On essaye néanmoins de ne pas avoir de texte en double à cause de la concaténation
+        $sql.= "    trim(trim(
+                        concat(
+                                replace(
+                                    vo.comm_val,
+                                    EXCLUDED.comm_val,
+                                    ''
+                                ) || ' - ',
+                                EXCLUDED.comm_val
+                        ),
+                        '-'
+                    )),
+        ";
         $sql.= "    EXCLUDED.nom_retenu,";
         $sql.= "    EXCLUDED.validateur,";
         $sql.= "    EXCLUDED.\"procedure\",";

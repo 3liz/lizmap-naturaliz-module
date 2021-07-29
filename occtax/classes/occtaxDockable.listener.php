@@ -80,7 +80,7 @@
                     $form->deactivate( 'validite_niveau' );
                 }
                 // Remove validation basket field
-                if (!jAcl2::check("occtax.admin.config.gerer")) {
+                if (!jAcl2::check("validation.online.access")) {
                     $form->deactivate( 'panier_validation' );
                 }
 
@@ -268,7 +268,7 @@
 
                 // Basket dock
                 // Create search form
-                if (jAuth::isConnected() && jAcl2::check("occtax.admin.config.gerer")) {
+                if (jAuth::isConnected() && jAcl2::check("validation.online.access")) {
                     $tpl = new jTpl();
 
                     jClasses::inc('occtax~occtaxValidation');

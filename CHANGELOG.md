@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-## 2.10.0
+## 2.10.0 - 2021-07-29
 
 * Validation - Ajout d'un outil de validation en ligne (échelle régionale)
 

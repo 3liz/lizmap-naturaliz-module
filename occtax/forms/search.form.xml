@@ -244,6 +244,11 @@ Menaces
     <group ref="validation">
         <label locale="occtax~search.group.validation"/>
 
+        <checkbox ref="panier_validation" defaultvalue="0">
+            <label locale="occtax~search.input.panier_validation"/>
+            <hint locale="occtax~search.input.panier_validation.help"/>
+        </checkbox>
+
         <listbox multiple="true" ref="validite_niveau">
                 <label locale="occtax~search.input.validite_niveau"/>
 <!--
@@ -255,11 +260,6 @@ Menaces
               valueproperty="code"/>
             <hint locale="occtax~search.input.validite_niveau.help"/>
         </listbox>
-
-        <checkbox ref="panier_validation" defaultvalue="0">
-            <label locale="occtax~search.input.panier_validation"/>
-            <hint locale="occtax~search.input.panier_validation.help"/>
-        </checkbox>
 
     </group>
 

@@ -374,7 +374,7 @@ class occtaxSearchObservation extends occtaxSearch {
 
         // Validation basket
         // Do it only for occtaxSearchObservation, not for Maille, Stats & Taxon
-        if ($this->name == 'observation' && $this->login && jAcl2::check( 'occtax.admin.config.gerer' )) {
+        if ($this->name == 'observation' && $this->login && jAcl2::check( 'validation.online.access' )) {
             // Remove fake in_panier field
             unset($this->querySelectors['vm_observation']['returnFields']["'no' AS in_panier"]);
             // Add new table with join parameter to check if observation is in the basket
