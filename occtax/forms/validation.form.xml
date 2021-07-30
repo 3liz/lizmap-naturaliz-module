@@ -3,12 +3,13 @@
 
     <hidden ref="identifiant_permanent"/>
 
+<!--
     <input ref="niv_val" type="integer" minvalue="1" maxvalue="6">
         <label locale="validation.input.niv_val"/>
         <hint locale="validation.input.niv_val.help"/>
     </input>
+-->
 
-<!--
     <menulist ref="niv_val" required="true">
         <label locale="occtax~search.input.validite_niveau"/>
         <emptyitem locale="occtax~search.input.emptyitem"/>
@@ -18,7 +19,6 @@
           valueproperty="code"/>
         <hint locale="occtax~search.input.validite_niveau.help"/>
     </menulist>
--->
 
     <input ref="producteur">
         <label locale="validation.input.producteur"/>
