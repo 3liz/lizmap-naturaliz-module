@@ -26,9 +26,8 @@ lizMap.events.on({
                     if (action == 'add' || action == 'remove') {
                         var msg = data.message;
                         var msg_type = 'info';
-                        if (data.status == 'error') msg_type = 'error';
-                        $('#occtax-message').remove();
-                        lizMap.addMessage( msg, msg_type, true ).attr('id','occtax-message');
+                        if (data.status == 'error') {msg_type = 'error'};
+                        OccTax.addTimedMessage('occtax-message', msg, msg_type, 3000, true);
                     }
                 }
             );
@@ -76,7 +75,7 @@ lizMap.events.on({
                 runAction(params, function(content) {
                     $('#occtax-message').remove();
                     if (content.status == 'error') {
-                        lizMap.addMessage( content.message, 'error', true ).attr('id','occtax-message');
+                        OccTax.addTimedMessage('occtax-message', content.message, 'error', 3000, true);
                         return false;
                     }
                     if (content && 'data' in content && Array.isArray(content.data)) {
@@ -199,12 +198,11 @@ lizMap.events.on({
             // Run the Ajax query to validate the given observation of the observations in basket
             runAction(params, function(content) {
 
-                $('#occtax-message').remove();
                 if (content.status == 'error') {
-                    lizMap.addMessage( content.message, 'error', true ).attr('id','occtax-message');
+                    OccTax.addTimedMessage('occtax-message', content.message, 'error', 3000, true);
                     return false;
                 }
-                lizMap.addMessage( content.message, 'info', true ).attr('id','occtax-message');
+                OccTax.addTimedMessage('occtax-message', content.message, 'info', 3000, true);
 
                 // Reload observation table
                 $('#occtax_results_observation_table').DataTable().ajax.reload(null, false);
@@ -338,7 +336,7 @@ lizMap.events.on({
             var search_token = $('#occtax_service_search_form input[name="token"]').val();
             if (!search_token) {
                 var msg = naturalizLocales['button.add.search.to.basket.error.token'];
-                lizMap.addMessage( msg, 'error', true ).attr('id','occtax-message');
+                OccTax.addTimedMessage('occtax-message', msg, 'error', 3000, true);
                 return false;
             }
             var params = {
@@ -362,7 +360,7 @@ lizMap.events.on({
                         localized_msg+= '.singulier';
                     }
                     var msg = count + ' ' + naturalizLocales[localized_msg]
-                    lizMap.addMessage( msg, 'info', true ).attr('id','occtax-message');
+                    OccTax.addTimedMessage('occtax-message', msg, 'info', 3000, true);
 
                     // Refresh validation basket counter
                     refreshValidationBasket(true);

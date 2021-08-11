@@ -58,6 +58,29 @@ OccTax.events.on({
         return true;
     }
 
+
+    // Close a Lizmap message by container id
+    function closeMessage(container_id) {
+        $('#'+container_id).remove();
+    }
+
+    // Display a lizMap message which will be hidden automatically after a delay in ms
+    function addTimedMessage(container_id, message, type, delay, remove_previous) {
+        if (remove_previous) {
+            closeMessage(container_id);
+        }
+        lizMap.addMessage(message, type, true).attr('id', container_id);
+
+        // Autoremove after delay
+        setTimeout(function() {
+            closeMessage(container_id);
+        }, delay);
+    }
+    // Make this function public to be called outside via OccTax.addTimedMessage
+    OccTax.addTimedMessage = function(container_id, message, type, delay, remove_previous) {
+      return addTimedMessage(container_id, message, type, delay, remove_previous);
+    }
+
     function getDatatableColumns( tableId ){
       var DT_Columns = $('#'+tableId+' thead tr th').map(
         function(){
