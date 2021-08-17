@@ -23,10 +23,12 @@ lizMap.events.on({
 
                     // Add message if everything is ok
                     var action = params['validation_action'];
-                    if (action == 'add' || action == 'remove') {
+                    if (action == 'add' || action == 'remove' || action == 'empty') {
                         var msg = data.message;
                         var msg_type = 'info';
-                        if (data.status == 'error') {msg_type = 'error'};
+                        if (data.status == 'error') {
+                            msg_type = 'error';
+                        }
                         OccTax.addTimedMessage('occtax-message', msg, msg_type, 3000, true);
                     }
                 }

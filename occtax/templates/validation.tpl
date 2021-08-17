@@ -4,7 +4,7 @@
         {@validation.validation.dock.subtitle@} :</br>
         <b><span id="validation_basket_counter">{$counter}</span></b> observation{if $counter > 1}s{/if}
 
-        <div>
+        <div id="validation_basket_button_bar">
             <button value="empty" class="occtax_validation_button btn btn-mini btn-primary" title="{@validation.button.validation_basket.empty.help@}">{@validation.button.validation_basket.empty.title@}</button>
             <button value="" class="occtax_validation_open_form_button btn btn-mini btn-primary" title="{@validation.button.validation_basket.open.form.help@}">{@validation.button.validation_basket.open.form.title@}</button>
             <button value="" class="occtax_validation_filter_button btn btn-mini btn-primary" title="{@validation.button.validation_basket.filter.observations.help@}">{@validation.button.validation_basket.filter.observations.title@}</button>
