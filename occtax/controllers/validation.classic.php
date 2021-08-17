@@ -39,18 +39,31 @@ class validationCtrl extends jController {
             return $rep;
         }
 
-        // Params
-        $action = $this->param('validation_action', 'get');
-
-        // Class
-        jClasses::inc('occtax~occtaxValidation');
-        $validation = new occtaxValidation();
-
-        // Add or remove
+        // Default returned values
         $data = array();
         $status = 'success';
         $message = '';
 
+        // Params
+        $action = $this->param('validation_action', 'get');
+
+        // Class pour gérer la validation
+        jClasses::inc('occtax~occtaxValidation');
+        $validation = new occtaxValidation();
+
+        // Check if the authenticated user has a corresponding item in the occtax.personne table
+        $ok = $validation->authenticatedUserIsInPersonTable();
+        if (!$ok) {
+            $return = array(
+                'status' => 'error',
+                'message' => jLocale::get("validation.error.no.personne.for.login"),
+                'data' => array(),
+            );
+            $rep->data = $return;
+            return $rep;
+        }
+
+        // Get identifiant permanent
         $identifiant_permanent = $this->param('identifiant_permanent', '-1');
         if (!$validation->isValidUuid($identifiant_permanent)) {
             $identifiant_permanent = null;
@@ -150,14 +163,23 @@ class validationCtrl extends jController {
             if (!$check) {
                 $message = jLocale::get('validation.form.validation.input.error');
                 $message.= '<ul><li>' . implode('</li><li>', $check_message).'</li></ul>';
-                $data = array();
+                $data = null;
                 $status = 'error';
             } else {
                 $input_params = array(
                     $niv_val, $producteur, $date_contact, $comm_val, $nom_retenu, $identifiant_permanent
                 );
                 $data = $validation->validateObservations($input_params);
-                $message = jLocale::get('validation.validate.validation.basket.success');
+                // Attention, dans le cas d'un UPDATE (car une ligne existait déjà pour ces observations)
+                // dans la table validation_observation pour cet ech_val
+                // la méthode validateObservations peut ne rien renvoyer
+                if (is_null($data)) {
+                    $message = jLocale::get('validation.form.validation.output.error');
+                    $data = null;
+                    $status = 'error';
+                } else {
+                    $message = jLocale::get('validation.validate.validation.basket.success');
+                }
                 // For single observation, get the data so that the JS has the observation id (cle_obs)
                 if (is_array($data) && !empty($identifiant_permanent) && $validation->isValidUuid($identifiant_permanent)) {
                     $data = $validation->getObservationValidity($identifiant_permanent, 'identifiant_permanent');
@@ -168,9 +190,11 @@ class validationCtrl extends jController {
         }
 
         // Return a error if needed
-        if (!is_array($data) && empty($data)) {
+        if (is_null($data)) {
             $status = 'error';
-            $message = 'An error occured. No data has been fetched';
+            if (empty(trim($message))) {
+                $message = 'An unknown error occured. No data has been fetched';
+            }
             $data = array();
         }
 

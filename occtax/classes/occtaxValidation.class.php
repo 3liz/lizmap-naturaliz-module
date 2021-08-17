@@ -19,12 +19,12 @@ class occtaxValidation {
     protected $demande_filter = '';
 
     public function __construct ($login=Null) {
+        $user_jelix = jAuth::getUserSession();
+        $this->user_jelix = $user_jelix;
         if (!$login) {
-            $user_jelix = jAuth::getUserSession();
             if ($user_jelix) {
                 $login = $user_jelix->login;
             }
-            $this->user_jelix = $user_jelix;
         }
         $this->login = $login;
 
@@ -48,6 +48,33 @@ class occtaxValidation {
         return true;
     }
 
+
+    /**
+     * Check if the authenticated user has a line corresponding
+     * in the occtax.personne table
+     * We check the emails equality
+     *
+     * @param string $uuid The string to check
+     *
+     * @return bool
+     */
+    public function authenticatedUserIsInPersonTable() {
+        $params = array(
+            $this->user_jelix->email
+        );
+
+        $sql = "";
+        $sql.= " SELECT id_personne";
+        $sql.= " FROM occtax.personne";
+        $sql.= " WHERE mail = $1";
+
+        $data = $this->query($sql, $params);
+        if ($data && is_array($data) && count($data) == 1) {
+            return True;
+        }
+        return False;
+
+    }
 
     /**
      * Get the filter from demande
@@ -306,6 +333,7 @@ class occtaxValidation {
         $sql.= "        SELECT id_personne";
         $sql.= "        FROM occtax.personne";
         $sql.= "        WHERE mail = $2";
+        $sql.= "        LIMIT 1";
         $sql.= "    ),";
 
         // On utilise les valeurs de la table procedure
