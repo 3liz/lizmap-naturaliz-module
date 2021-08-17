@@ -561,6 +561,10 @@ span.niv_val.n4  { background-color:red; color: white;  }
 span.niv_val.n5  { background-color:grey; color: white;  }
 span.niv_val.n6  { background-color:darkgrey; color: white;  }
 
+span.niv_val.active {
+  border: 2px solid #333333;
+}
+
 /*
  Formulaire de validation
 */

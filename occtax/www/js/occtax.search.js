@@ -1230,7 +1230,11 @@ OccTax.events.on({
           // Get validity detail
           $('#'+tableId+' span.niv_val').click(function(){
               var tr = $($(this).parents('tr')[0]);
-              var d = $('#'+tableId+'').DataTable().row( tr ).data();
+              var t = $('#'+tableId+'').DataTable();
+              var r = t.row( tr );
+              var d = r.data();
+              $('span.niv_val').removeClass('active');
+              $(this).addClass('active');
               if (d) {
                 var cle_obs = d['DT_RowId'];
                 showObservationValidation(cle_obs);
