@@ -1492,10 +1492,14 @@ OccTax.events.on({
                   zoomToObservation(geojson);
                 }
 
+                // Get validity detail
+                $('#occtax_search_observation_card span.niv_val').click(function(){
+                    showObservationValidation(id);
+                    return false;
+                });
+
                 // Show result
                 $('#mapmenu li.occtax:not(.active) a').click();
-
-
             }
         );
     }

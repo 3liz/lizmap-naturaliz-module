@@ -728,9 +728,9 @@ Pas d'individu décrit
             <td>
                 {if array_key_exists('validite_niveau' . '|' . $data['validite_niveau'], $nomenclature) }
                 {assign $k = 'validite_niveau' . '|' . $data['validite_niveau']}
-                {$nomenclature[$k]}
+                <span class="niv_val n{$data['validite_niveau']}">{$nomenclature[$k]}</span>
                 {else}
-                {$data['validite_niveau']}
+                <span class="niv_val n{$data['validite_niveau']}">{$data['validite_niveau']}</span>
                 {/if}
             </td>
         </tr>
