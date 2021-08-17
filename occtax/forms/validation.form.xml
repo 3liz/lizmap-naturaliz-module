@@ -12,7 +12,7 @@
 
     <menulist ref="niv_val" required="true">
         <label locale="occtax~search.input.validite_niveau"/>
-        <emptyitem locale="occtax~search.input.emptyitem"/>
+        <emptyitem>-</emptyitem>
         <datasource dao="occtax~nomenclature" profile="naturaliz_virtual_profile"
           method="findByChamp" criteria="validite_niveau"
           labelproperty="valeur"
