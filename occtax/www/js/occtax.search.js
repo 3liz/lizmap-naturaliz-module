@@ -1233,7 +1233,7 @@ OccTax.events.on({
               var t = $('#'+tableId+'').DataTable();
               var r = t.row( tr );
               var d = r.data();
-              $('span.niv_val').removeClass('active');
+              $('span.niv_val.active').removeClass('active');
               $(this).addClass('active');
               if (d) {
                 var cle_obs = d['DT_RowId'];
@@ -1515,8 +1515,9 @@ OccTax.events.on({
         if (!ok) {
             return false;
         }
-        if(!cle_obs)
+        if (!cle_obs) {
             return false;
+        }
 
         // Get observation data
         var tokenFormId = $('#occtax-validation-form-modal form').attr('id');
@@ -1532,10 +1533,12 @@ OccTax.events.on({
             params,
             function( content ) {
               if (!content) {
+                $('span.niv_val.active').removeClass('active');
                 return false;
               }
               if(content.status != 'success') {
-                console.log(content.message);
+                $('span.niv_val.active').removeClass('active');
+                OccTax.addTimedMessage('occtax-message', content.message, 'error', 3000, true);
                 return false;
               }
               var data = content.data;
@@ -1543,6 +1546,10 @@ OccTax.events.on({
                 return false;
               }
               var oval = data[0];
+
+              // Add the active class to the button corresponding to the obs
+              // Could be needed
+              $('#occtax_results_observation_table tr#' + oval['cle_obs'] + ' span.niv_val').addClass('active');
 
               // Compute display values
               var typ_val = oval['typ_val'] ? oval['typ_val'] : '-';
@@ -1672,6 +1679,7 @@ OccTax.events.on({
               // close windows
               $('#validation-detail-close').click(function(){
                 $('#sub-dock').hide().html('');
+                $('span.niv_val.active').removeClass('active');
               })
 
               $('#sub-dock').show();

@@ -4,6 +4,12 @@ lizMap.events.on({
         // Move form into body so that modal behaves correctly
         $('#occtax-validation-form-modal').appendTo('body');
 
+        // Display the mini-dock if the basket is not empty
+        var nb_basket = $('span#validation_basket_counter').html();
+        if (nb_basket > 0) {
+            $('#mapmenu li.validation:not(.active) a').click();
+        }
+
         // Use Validation API entrypoint to send data
         // And get response
         function runAction(params, a_callback) {
@@ -218,6 +224,7 @@ lizMap.events.on({
                     OccTax.showObservationValidation(content.data[0]['cle_obs']);
                 } else {
                     // Close subdock
+                    $('span.niv_val.active').removeClass('active');
                     $('#sub-dock').hide().html('');
                 }
 
