@@ -12,6 +12,8 @@ jClasses::inc('occtax~occtaxSearchObservationBrutes');
 
 class occtaxExportObservation extends occtaxSearchObservationBrutes {
 
+    protected $name = 'export';
+
     protected $returnFields = array();
 
     protected $tplFields = array();
@@ -231,11 +233,11 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 'o.commentaire' => Null,
 
                 // dates
-                "date_debut" => Null,
-                "to_char( heure_debut::time, 'HH24:MI') AS heure_debut" => Null,
-                "date_fin" => Null,
-                "to_char( heure_fin::time, 'HH24:MI') AS heure_fin" => Null,
-                "date_determination" => Null,
+                "o.date_debut" => Null,
+                "to_char( o.heure_debut::time, 'HH24:MI') AS heure_debut" => Null,
+                "o.date_fin" => Null,
+                "to_char( o.heure_fin::time, 'HH24:MI') AS heure_fin" => Null,
+                "o.date_determination" => Null,
 
                 // localisation
                 'o.altitude_min' => Null,
@@ -272,8 +274,8 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 'o.descriptif_sujet::json AS descriptif_sujet' => Null,
 
                 // validite
-                'o.validite_niveau' => Null,
-                'o.validite_date_validation' => Null,
+                //'o.validite_niveau' => Null,
+                //'o.validite_date_validation' => Null,
 
                 // geometrie
                 'o.precision_geometrie' => Null,
@@ -288,7 +290,22 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 "o.determinateur" => Null
 
             )
-        )
+        ),
+
+        // Need to join the v_observation_champs_validation view to get updated validation
+        // we do not use validation_observation because the trigger should update observation accordingly
+        // for ech_val = '2'
+        'occtax.v_observation_champs_validation' => array(
+            'alias' => 'oo',
+            'required' => True,
+            'join' => ' JOIN ',
+            'joinClause' => "
+                ON oo.identifiant_permanent = o.identifiant_permanent ",
+            'returnFields' => array(
+                "oo.validite_niveau"=> Null,
+                'oo.validite_date_validation' => Null,
+            ),
+        ),
 
     );
 

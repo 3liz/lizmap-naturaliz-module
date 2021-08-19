@@ -16,7 +16,7 @@
         <property name="date_creation" fieldname="date_creation" datatype="date" default="now()"/>
         <property name="libelle_geom" fieldname="libelle_geom" datatype="text" required="true"/>
         <property name="critere_additionnel" fieldname="critere_additionnel" datatype="text"/>
-        <property name="contexte_validation" fieldname="contexte_validation" datatype="boolean"/>
+        <property name="id_validateur" fieldname="id_validateur" datatype="integer"/>
         <property name="geom" fieldname="geom" datatype="geometry" selectpattern="ST_AsText(geom)" required="true"/>
         <!--<property name="" fieldname="" datatype="string/int/float/date"
         required="yes" maxlength="" minlength="" regexp="" sequence=""

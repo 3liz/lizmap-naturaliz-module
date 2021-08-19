@@ -21,15 +21,30 @@ class validationCtrl extends jController {
             $login = $user->login;
         }
 
-        //if ($invalid_login) {
-            //$status = 'error';
-            //$message = 'An error occured. No data has been fetched';
-            //$data = array();
-        //}
+        // Default returned values
+        $data = array();
+        $status = 'success';
+        $message = '';
+        $return = array('status'=>$status, 'message'=>$message, 'data'=>$data);
+
+        // Params
+        $action = $this->param('validation_action', 'get');
+        // action can be
+        // add: add one observation to the basket
+        // remove: remove one observation from the basket
+        // empty: remove all observation from the basket
+        // get: get the content of the basket
+        // observation_validity: get the validation detail of one observation
+        // add_search_to_basket: add all observations in search result to the basket
+        // validate: modify validation data with a form for one or several observations
+
+        // Class pour gérer la validation
+        jClasses::inc('occtax~occtaxValidation');
+        $validation = new occtaxValidation();
 
         // Check the authenticated user can use validation
-        if (!$login || !jAcl2::checkByUser($login, "validation.online.access")) {
-            // Return error
+        $has_validation_right = jAcl2::checkByUser($login, "validation.online.access");
+        if (!$has_validation_right and $action != 'observation_validity') {
             $return = array(
                 'status' => 'error',
                 'message' => 'Droit insuffisant pour le module de validation en ligne',
@@ -39,21 +54,9 @@ class validationCtrl extends jController {
             return $rep;
         }
 
-        // Default returned values
-        $data = array();
-        $status = 'success';
-        $message = '';
-
-        // Params
-        $action = $this->param('validation_action', 'get');
-
-        // Class pour gérer la validation
-        jClasses::inc('occtax~occtaxValidation');
-        $validation = new occtaxValidation();
-
         // Check if the authenticated user has a corresponding item in the occtax.personne table
-        $ok = $validation->authenticatedUserIsInPersonTable();
-        if (!$ok) {
+        $is_validator = $validation->authenticatedUserIsInPersonTable();
+        if (!$is_validator and $action != 'observation_validity') {
             $return = array(
                 'status' => 'error',
                 'message' => jLocale::get("validation.error.no.personne.for.login"),
@@ -62,6 +65,7 @@ class validationCtrl extends jController {
             $rep->data = $return;
             return $rep;
         }
+
 
         // Get identifiant permanent
         $identifiant_permanent = $this->param('identifiant_permanent', '-1');

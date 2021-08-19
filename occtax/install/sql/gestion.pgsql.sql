@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS gestion.demande (
     libelle_geom text,
     validite_niveau text[] NOT NULL DEFAULT ARRAY['1', '2', '3', '4', '5']::text[],
     critere_additionnel text,
+    id_validateur integer,
     geom geometry(MULTIPOLYGON, {$SRID})
 
 );
@@ -49,14 +50,18 @@ ALTER TABLE gestion.demande ADD CONSTRAINT demande_id_organisme_fk
 FOREIGN KEY (id_organisme) REFERENCES occtax."organisme" (id_organisme)
 ON DELETE RESTRICT;
 
+COMMENT ON COLUMN gestion.demande.id_validateur IS 'Identifiant de la personne de la table occtax.personne à laquelle correspond la personne de cette demande. Utilisé pour remplir le champ occtax.validation_observation.validateur avec l''outil de validation en ligne. Doit être remplir uniquement si type_demande est VA';
 
 ALTER TABLE gestion.demande DROP CONSTRAINT IF EXISTS demande_type_demande_valide;
 ALTER TABLE gestion.demande ADD CONSTRAINT demande_type_demande_valide
-CHECK ( type_demande IN ('EI','MR','GM','SC','PS','AP','AT','CO','AU') );
+CHECK ( type_demande IN ('EI','MR','GM','SC','PS','AP','AT','CO','AU', 'VA') );
 
 ALTER TABLE gestion.demande DROP CONSTRAINT IF EXISTS demande_statut_valide;
 ALTER TABLE gestion.demande ADD CONSTRAINT demande_statut_valide
 CHECK ( statut IN ('A traiter', 'Acceptée', 'Refusée') );
+
+ALTER TABLE gestion.demande ADD CONSTRAINT demande_id_validateur_ok
+CHECK ( (type_demande != 'VA') OR (id_validateur IS NOT NULL AND type_demande = 'VA') );
 
 COMMENT ON TABLE gestion.demande IS 'Liste des demandes d''acccès à l''application. Cette table permet de restreindre les accès aux données, par date, taxon, etc.';
 COMMENT ON COLUMN gestion.demande.id IS 'Identifiant auto de la demande (clé primaire)';
@@ -65,7 +70,9 @@ COMMENT ON COLUMN gestion.demande.id_organisme IS 'Identifiant de l''organisme a
 COMMENT ON COLUMN gestion.demande.id_acteur IS 'Identifiant de l''acteur ayant émis la demande. Clé étrangère vers table acteur';
 COMMENT ON COLUMN gestion.demande.motif IS 'Motif de la demande d''accès aux données fourni par le demandeur';
 COMMENT ON COLUMN gestion.demande.motif_anonyme IS 'Indique si le motif de la demande doit être anonymisé temporairement. Pour les études d''impact, la charte régionale du SINP peut permettre au demandeur de solliciter une anonymisation du motif de sa demande dans la diffusion grand public. L''anonymisation est levée au plus tard au moment de l''ouverture de la procédure de participation du public.';
-COMMENT ON COLUMN gestion.demande.type_demande IS 'Type de demande selon la typologie de la charte du SINP (exemple : mission régalienne, publication scientifique, etc.)';
+COMMENT ON COLUMN gestion.demande.type_demande
+IS 'Type de demande selon la typologie de la charte du SINP (EI = Etude d''impact,  MR = mission régalienne, GM = Gestion des milieux naturels, SC = Sensibilisation et communication, PS = publication scientifique, AP = Accès producteur, AT = Accès tête de réseau, CO = Conservation, AU = Autre, VA = Accès validateur)'
+;
 COMMENT ON COLUMN gestion.demande.date_demande IS 'Date d''émission de la demande (découplée de la date de création, qui est elle renseignée automatiquement';
 
 COMMENT ON COLUMN gestion.demande.commentaire IS 'Remarques générales sur la demande.';

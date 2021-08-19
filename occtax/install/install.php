@@ -264,6 +264,19 @@ class occtaxModuleInstaller extends jInstallerModule {
             jAcl2DbManager::addRight('admins', 'visualisation.donnees.non.filtrees');
             jAcl2DbManager::addRight('admins', 'export.geometries.brutes.selon.diffusion');
 
+            // Ajouter le droit d'utiliser l'outil de validation en ligne
+            jAcl2DbManager::addSubject(
+                'validation.online.access',
+                'occtax~jacl2.validation.online.access',
+                'naturaliz.subject.group'
+            );
+            jAcl2DbUserGroup::createGroup(
+                'naturaliz_validateurs',
+                'naturaliz_validateurs'
+            );
+            jAcl2DbManager::addRight('admins', 'validation.online.access');
+            jAcl2DbManager::addRight('naturaliz_validateurs', 'validation.online.access');
+
         }
 
     }

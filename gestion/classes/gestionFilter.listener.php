@@ -4,18 +4,12 @@ class gestionFilterListener extends jEventListener{
     function ongetOcctaxFilters ($event) {
         // Get user info
         $login = $event->getParam('login');
-        $contexte = $event->getParam('contexte');
-        // Contexte peut prendre: normal et validation
-        // validation permet de n'ajouter que les demandes de type validation
-        if (empty($contexte)) {
-            $contexte = 'normal';
-        }
 
-        $filter = $this->getWhereClauseDemande($login, $contexte);
+        $filter = $this->getWhereClauseDemande($login);
         $event->add( $filter );
     }
 
-    private function getWhereClauseDemande($login, $contexte = 'normal'){
+    private function getWhereClauseDemande($login){
         if (!$login) {
             return '';
         }
@@ -64,13 +58,6 @@ class gestionFilterListener extends jEventListener{
         //foreach($demandes as $demande){
         foreach($actives_demandes as $demande){
             $sql_demande = array();
-
-            // In a validation contexte, only add filter with contexte_validation = True
-            if (property_exists('contexte_validation', $demande) && $demande->contexte_validation) {
-                jLog::log('CONTEXTE VALIDATION');
-                jLog::log($demande->contexte_validation);
-                continue;
-            }
 
             // Add geometry filter if set
             if ($demande->geom) {

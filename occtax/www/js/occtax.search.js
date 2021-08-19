@@ -1521,7 +1521,12 @@ OccTax.events.on({
 
         // Get observation data
         var tokenFormId = $('#occtax-validation-form-modal form').attr('id');
+        var has_validation_right = true;
         var url = $('#'+tokenFormId).attr('action');
+        if (!url) {
+          has_validation_right = false;
+          url = naturalizValidationProperties['url'];
+        }
 
         var params = {
           'id': cle_obs,
@@ -1633,21 +1638,23 @@ OccTax.events.on({
               html+= '<tr><th title="'+naturalizLocales['input.validation_nationale.help']+'">'+naturalizLocales['input.validation_nationale']+'</th>';
               html+= '<td>'+ validation_nationale + '</td></tr>';
 
-              // Validation basket action button
-              html+= '<tr><th>'+naturalizLocales['validation_basket.actionbar.title']+'</th>';
-              html+= '<td>';
-              html+= '<button value="' + p_action + '@' + oval['identifiant_permanent'] + '" class="occtax_validation_button btn btn-primary btn-mini"';
-              html+= ' title="' + naturalizLocales['button.validation_basket.' + p_action + '.help'] + '">';
-              html+= naturalizLocales['button.validation_basket.' + p_action + '.title'] + '</button>';
-              html+= '</td></tr>';
+              if (has_validation_right) {
+                // Validation basket action button
+                html+= '<tr><th>'+naturalizLocales['validation_basket.actionbar.title']+'</th>';
+                html+= '<td>';
+                html+= '<button value="' + p_action + '@' + oval['identifiant_permanent'] + '" class="occtax_validation_button btn btn-primary btn-mini"';
+                html+= ' title="' + naturalizLocales['button.validation_basket.' + p_action + '.help'] + '">';
+                html+= naturalizLocales['button.validation_basket.' + p_action + '.title'] + '</button>';
+                html+= '</td></tr>';
 
-              // Open validation form
-              html+= '<tr><th title="'+naturalizLocales['button.validate.observation.title.help']+'">'+naturalizLocales['button.validate.observation.title']+'</th>';
-              html+= '<td>';
-              html+= '<button value="' + oval['cle_obs'] + '" class="occtax_validation_open_form_button btn btn-primary btn-mini"';
-              html+= ' title="' + naturalizLocales['button.validate.observation.title.help'] + '">';
-              html+= naturalizLocales['button.validation_basket.open.form.title'] + '</button>';
-              html+= '</td></tr>';
+                // Open validation form
+                html+= '<tr><th title="'+naturalizLocales['button.validate.observation.title.help']+'">'+naturalizLocales['button.validate.observation.title']+'</th>';
+                html+= '<td>';
+                html+= '<button value="' + oval['cle_obs'] + '" class="occtax_validation_open_form_button btn btn-primary btn-mini"';
+                html+= ' title="' + naturalizLocales['button.validate.observation.title.help'] + '">';
+                html+= naturalizLocales['button.validation_basket.open.form.title'] + '</button>';
+                html+= '</td></tr>';
+              }
 
               html+= '</table>';
               html+= '</div>';

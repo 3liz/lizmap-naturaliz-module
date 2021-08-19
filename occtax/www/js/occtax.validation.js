@@ -71,7 +71,9 @@ lizMap.events.on({
 
             // Reset previous form content
             var tokenFormId = $('#occtax-validation-form-modal form').attr('id');
-            reinitValidationForm();
+            if (tokenFormId) {
+                reinitValidationForm();
+            }
 
             // If ID is given, we need to open the form and fill it with the chosen observation data
             if (id) {

@@ -12,6 +12,8 @@ jClasses::inc('occtax~occtaxSearchObservationBrutes');
 
 class occtaxSearchSingleObservation extends occtaxSearchObservationBrutes {
 
+    protected $name = 'single';
+
     protected $observation_card_fields = array();
 
     protected $observation_card_fields_unsensitive = array();

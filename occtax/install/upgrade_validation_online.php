@@ -66,7 +66,7 @@ class occtaxModuleUpgrader_validation_online extends jInstallerModule {
 
             // Ajout d'un nouveau droit de validation en ligne
             try{
-                // Ajouter le droit export.geometries.brutes.selon.diffusion
+                // Ajouter le droit d'utiliser l'outil de validation en ligne
                 jAcl2DbManager::addSubject( 'validation.online.access', 'occtax~jacl2.validation.online.access', 'naturaliz.subject.group');
                 jAcl2DbUserGroup::createGroup(
                     'naturaliz_validateurs',

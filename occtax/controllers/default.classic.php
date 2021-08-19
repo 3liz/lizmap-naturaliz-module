@@ -107,6 +107,12 @@ class defaultCtrl extends lizMapCtrl {
             $locales = $this->getLocales();
             $rep->addJSCode("var naturalizLocales = " . json_encode($locales) . ';');
 
+            // Add validation API URL
+            $validationProperties = array(
+                'url' => jUrl::getFull('occtax~validation:index')
+            );
+            $rep->addJSCode("var naturalizValidationProperties = " . json_encode($validationProperties) . ';');
+
             $rep->addHeadContent( '<style>' . $ini->getValue('projectCss', 'naturaliz') . '</style>');
         }
 

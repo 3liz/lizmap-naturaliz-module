@@ -816,4 +816,30 @@ AFTER INSERT OR UPDATE OR DELETE ON occtax.validation_observation
 FOR EACH ROW EXECUTE PROCEDURE occtax.update_observation_set_validation_fields();
 
 
+-- panier de validation
+CREATE TABLE occtax.validation_panier (
+    id serial NOT NULL PRIMARY KEY,
+    usr_login character varying NOT NULL,
+    identifiant_permanent text NOT NULL
+);
+
+ALTER TABLE occtax.validation_panier ADD CONSTRAINT validation_panier_usr_login_identifiant_permanent_key UNIQUE (usr_login, identifiant_permanent);
+
+COMMENT ON TABLE occtax.validation_panier IS 'Panier d''observations retenues pour appliquer des actions en masse. Par exemple pour la validation scientifique manuelle.';
+COMMENT ON COLUMN occtax.validation_panier.id IS 'Identifiant auto-incrémenté unique, clé primaire.';
+COMMENT ON COLUMN occtax.validation_panier.usr_login IS 'Login de l''utilisateur qui fait la validation en ligne.';
+COMMENT ON COLUMN occtax.validation_panier.identifiant_permanent IS 'Identifiant permanent de l''observation mise dans le panier.';
+
+-- On crée une vue très simple pour récupérer seulement les 2 champs de validation de la table observation
+-- cela permet de faire une jointure avec cette vue, sans besoin de tout prefixer en o. (vm_observation)
+-- dans l'ensemble du code et surtout dans critere_additionnel de gestion.demande
+-- car alors les autres champs de observation (date_debut, etc.) ne seront pas présents
+CREATE OR REPLACE VIEW occtax.v_observation_champs_validation AS
+SELECT identifiant_permanent,
+Coalesce(validite_niveau, '6') AS validite_niveau, validite_date_validation
+FROM occtax.observation
+;
+COMMENT ON VIEW occtax.v_observation_champs_validation
+IS 'Une vue très simple pour récupérer seulement les 2 champs de validation de la table observation. cCla permet de faire une jointure avec cette vue, sans besoin de tout prefixer en o. (vm_observation) dans l''ensemble du code et surtout dans critere_additionnel de gestion.demande. Car alors les autres champs de observation (date_debut, etc.) ne seront pas ramenés par la jointure sur cette vue mais le seraient sur la table observation';
+
 COMMIT;

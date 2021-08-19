@@ -75,12 +75,12 @@ class occtaxSearchObservationExtent extends occtaxSearchObservation {
                 'o.cle_obs'=> Null,
                 'o.lb_nom_valide' => Null,
                 'o.cd_ref' => Null,
-                "date_debut" => Null,
+                "o.date_debut" => Null,
                 'ST_AsGeoJSON( ST_Transform(o.geom, 4326), 6 ) AS geojson' => Null,
-                "identite_observateur" => Null,
-                "menace_regionale" => Null,
-                "menace_nationale" => Null,
-                "menace_monde" => Null,
+                "o.identite_observateur" => Null,
+                "o.menace_regionale" => Null,
+                "o.menace_nationale" => Null,
+                "o.menace_monde" => Null,
                 "o.protection" => Null,
             )
         )

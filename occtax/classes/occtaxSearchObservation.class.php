@@ -32,12 +32,7 @@ class occtaxSearchObservation extends occtaxSearch {
         'date_debut_buttons' => '
             {$line->date_debut}
             <br/><a class="openObservation" href="#" title="{@occtax~search.output.detail.title@}"><i class="icon-file"></i></a>
-
             <a class="zoomToObservation" href="#" title="{@occtax~search.output.zoom.title@}"><i class="icon-search"></i></a>
-
-            {if !empty($line->in_panier)}{assign $action="remove"}{else}{assign $action="add"}{/if}
-            <a class="occtax_validation_button datatable" href="#{$action}@{$line->identifiant_permanent}" title="{@occtax~validation.button.validation_basket.$action.help@}"><i class="icon-star{if empty($line->in_panier)}-empty{/if}"></i></a>
-
         ',
 
         'lien_nom_valide' => '
@@ -61,7 +56,7 @@ class occtaxSearchObservation extends occtaxSearch {
         ',
 
         'validite' => '
-            <span class="niv_val n{$line->niv_val}" title="{@occtax~validation.input.niv_val@}: {$line->niv_val}" >
+            <span class="niv_val n{$line->validite_niveau}" title="{@occtax~validation.input.niv_val@}: {$line->validite_niveau}" >
                 {$line->niv_val_text}
             </span>
         ',
@@ -90,20 +85,36 @@ class occtaxSearchObservation extends occtaxSearch {
                 'o.lb_nom_valide' => Null,
                 'o.cd_nom' => Null,
                 'o.cd_ref' => Null,
-                "date_debut" => Null,
-                "source_objet" => Null,
+                "o.date_debut" => Null,
+                "o.source_objet" => Null,
                 'ST_AsGeoJSON( ST_Transform(o.geom, 4326), 6 ) AS geojson' => Null,
                 'o.geom' => Null,
                 "o.diffusion" => Null,
-                "identite_observateur" => Null,
+                "o.identite_observateur" => Null,
                 "o.menace_regionale" => Null,
                 "o.menace_nationale" => Null,
                 "o.menace_monde" => Null,
                 "o.protection" => Null,
                 "'no' AS in_panier" => Null,
-                "o.validite_niveau AS niv_val" => Null,
             )
-        )
+        ),
+
+        // Need to join the v_observation_champs_validation view to get updated validation
+        // we do not use validation_observation because the trigger should update observation accordingly
+        // for ech_val = '2'
+        'occtax.v_observation_champs_validation' => array(
+            'alias' => 'oo',
+            'required' => True,
+            //'multi' => False,
+            'join' => ' JOIN ',
+            'joinClause' => "
+                ON oo.identifiant_permanent = o.identifiant_permanent ",
+            'returnFields' => array(
+                "oo.validite_niveau"=> Null,
+                "(SELECT dict->>concat('validite_niveau_', Coalesce(oo.validite_niveau, '6'))
+                FROM occtax.v_nomenclature_plat) AS niv_val_text"=> Null,
+            ),
+        ),
 
     );
 
@@ -149,17 +160,17 @@ class occtaxSearchObservation extends occtaxSearch {
 
         'date_min' => array (
             'table' => 'occtax.vm_observation',
-            'clause' => ' AND ( date_debut >= @::timestamp OR date_fin >= @::timestamp ) ',
+            'clause' => ' AND ( o.date_debut >= @::timestamp OR o.date_fin >= @::timestamp ) ',
             'type' => 'timestamp'
         ),
         'date_max' => array (
             'table' => 'occtax.vm_observation',
-            'clause' => ' AND ( date_debut <= @::timestamp OR date_fin <= @::timestamp ) ',
+            'clause' => ' AND ( o.date_debut <= @::timestamp OR o.date_fin <= @::timestamp ) ',
             'type' => 'timestamp'
         ),
         'code_commune' => array (
             'table' => 'occtax.vm_observation',
-            'clause' => ' AND code_commune ?| ARRAY[@]',
+            'clause' => ' AND o.code_commune ?| ARRAY[@]',
             'type' => 'string',
             'label'=> array(
                 'dao'=>'occtax~commune',
@@ -169,7 +180,7 @@ class occtaxSearchObservation extends occtaxSearch {
         ),
         'code_masse_eau' => array (
             'table' => 'occtax.vm_observation',
-            'clause' => ' AND code_me ?| ARRAY[@]',
+            'clause' => ' AND o.code_me ?| ARRAY[@]',
             'type' => 'string',
             'label'=> array(
                 'dao'=>'occtax~masse_eau',
@@ -186,7 +197,7 @@ class occtaxSearchObservation extends occtaxSearch {
 
         'type_en' => array (
             'table' => 'occtax.vm_observation',
-            'clause' => ' AND type_en ?| ARRAY[@]',
+            'clause' => ' AND o.type_en ?| ARRAY[@]',
             'type' => 'string',
             'label'=> array(
                 'dao'=>'occtax~nomenclature',
@@ -207,8 +218,8 @@ class occtaxSearchObservation extends occtaxSearch {
         ),
 
         'validite_niveau' => array (
-            'table' => 'occtax.vm_observation',
-            'clause' => ' AND o.validite_niveau IN ( @ )',
+            'table' => 'occtax.v_observation_champs_validation',
+            'clause' => ' AND oo.validite_niveau IN ( @ )',
             'type' => 'string',
             'label'=> array(
                 'dao'=>'occtax~nomenclature',
@@ -372,52 +383,39 @@ class occtaxSearchObservation extends occtaxSearch {
             );
         }
 
-        // Validation basket
-        // Do it only for occtaxSearchObservation, not for Maille, Stats & Taxon
-        if ($this->name == 'observation' && $this->login && jAcl2::check( 'validation.online.access' )) {
-            // Remove fake in_panier field
-            unset($this->querySelectors['vm_observation']['returnFields']["'no' AS in_panier"]);
-            // Add new table with join parameter to check if observation is in the basket
-            $this->querySelectors['validation_panier'] = array(
-                'alias' => 'vp',
-                'required' => True,
-                //'multi' => False,
-                'join' => ' LEFT JOIN ',
-                'joinClause' => "
-                    ON vp.identifiant_permanent = o.identifiant_permanent
-                    AND vp.usr_login = '".$this->login."' ",
-                'returnFields' => array(
-                    "vp.identifiant_permanent AS in_panier"=> Null,
-                ),
-            );
+        // Validation basket status, added only for people with right
+        // Only needed in the observation table result, code 'observation'
+        if (in_array($this->name, array('observation', 'brute')) && $this->login) {
 
-            // Add new join with occtax.validation_observation
-            unset($this->querySelectors['vm_observation']['returnFields']["o.validite_niveau AS niv_val"]);
-            $this->querySelectors['validation_observation'] = array(
-                'alias' => 'vo',
-                'required' => True,
-                //'multi' => False,
-                'join' => ' LEFT JOIN ',
-                'joinClause' => "
-                    ON vo.identifiant_permanent = o.identifiant_permanent AND ech_val = '2'",
-                'returnFields' => array(
-                    "CASE
-                        WHEN vo.niv_val IS NOT NULL THEN vo.niv_val
-                        ELSE '6'
-                    END AS niv_val"=> Null,
-                    "(SELECT dict->>concat(
-                        'validite_niveau_',
-                        CASE WHEN vo.niv_val IS NOT NULL
-                            THEN vo.niv_val
-                            ELSE '6'
-                        END
-                        )
-                    FROM occtax.v_nomenclature_plat) AS niv_val_text"=> Null,
-                ),
-            );
+            // If the user can use the validation too, fetch the correct data for in_panier
+            if (jAcl2::checkByUser($login, 'validation.online.access' )) {
+                // Remove fake in_panier field
+                unset($this->querySelectors['vm_observation']['returnFields']["'no' AS in_panier"]);
+
+                // Add new table with join parameter to check if observation is in the basket
+                $this->querySelectors['validation_panier'] = array(
+                    'alias' => 'vp',
+                    'required' => True,
+                    //'multi' => False,
+                    'join' => ' LEFT JOIN ',
+                    'joinClause' => "
+                        ON vp.identifiant_permanent = o.identifiant_permanent
+                        AND vp.usr_login = '".$this->login."' ",
+                    'returnFields' => array(
+                        "vp.identifiant_permanent AS in_panier"=> Null,
+                    ),
+                );
+
+                // Change the first column to add the panier button (star)
+                $this->tplFields['date_debut_buttons'] .= '
+            {if !empty($line->in_panier)}{assign $action="remove"}{else}{assign $action="add"}{/if}
+            <a class="occtax_validation_button datatable" href="#{$action}@{$line->identifiant_permanent}" title="{@occtax~validation.button.validation_basket.$action.help@}"><i class="icon-star{if empty($line->in_panier)}-empty{/if}"></i></a>
+                ';
+            }
 
             // Allow validator to see the full name of observers
             // Replace identite_observateur by identite_observateur_non_floute AS identite_observateur
+            // todo
         }
 
 
@@ -467,10 +465,10 @@ class occtaxSearchObservation extends occtaxSearch {
                     if( in_array($k, $blackQueryParams) ){
                         $asql = '';
                         // Keep only data with open diffusion
-                        $asql.= " AND ( diffusion ? 'g' ";
+                        $asql.= " AND ( o.diffusion ? 'g' ";
                         // Keep also some more data based on query type
                         if( array_key_exists($k, $qMatch) ){
-                            $asql.= " OR diffusion ? '".$qMatch[$k]."' ";
+                            $asql.= " OR o.diffusion ? '".$qMatch[$k]."' ";
                         }
                         $asql.= ' ) ';
 //jLog::log($asql);

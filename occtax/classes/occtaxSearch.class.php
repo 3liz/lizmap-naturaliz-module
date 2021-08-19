@@ -597,18 +597,17 @@ class occtaxSearch {
         // Add validation basket filter
         if ($this->login && $this->params && array_key_exists('panier_validation', $this->params)) {
             // Do not add validation basket filter if not right to do so
-            if (!jAcl2::check('validation.online.access')) {
+            if (!jAcl2::checkByUser($this->login, 'validation.online.access')) {
+
                 return $sql;
             }
             if ($this->params['panier_validation'] == '0' or !$this->params['panier_validation']) {
                 return $sql;
             }
-
             // Add filter
             $sql.= " AND o.identifiant_permanent IN (
                 SELECT identifiant_permanent FROM occtax.validation_panier WHERE usr_login = ".$cnx->quote($this->login)."
             )";
-
         }
 
         return $sql;
@@ -617,7 +616,7 @@ class occtaxSearch {
     public function getDemandeFilter() {
         $sql = '';
         if( $this->login && !$this->demande ){
-            $eventParams = array('login' => $this->login, 'contexte' => 'normal');
+            $eventParams = array('login' => $this->login);
             $filters = jEvent::notify('getOcctaxFilters', $eventParams)->getResponse();
             foreach($filters as $filter){
                 $sql.= $filter;

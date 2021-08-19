@@ -60,13 +60,16 @@ class occtaxValidation {
      */
     public function authenticatedUserIsInPersonTable() {
         $params = array(
-            $this->user_jelix->email
+            $this->login
         );
 
         $sql = "";
-        $sql.= " SELECT id_personne";
-        $sql.= " FROM occtax.personne";
-        $sql.= " WHERE mail = $1";
+        $sql.= " SELECT p.id_personne";
+        $sql.= " FROM occtax.personne AS p";
+        $sql.= " JOIN gestion.demande AS d ON p.id_personne = d.id_validateur";
+        $sql.= " WHERE d.usr_login = $1::text";
+        $sql.= " AND d.type_demande = 'VA'";
+        $sql.= " ";
 
         $data = $this->query($sql, $params);
         if ($data && is_array($data) && count($data) == 1) {
@@ -84,7 +87,7 @@ class occtaxValidation {
     protected function getDemandeFilter() {
         $sql = '';
         if( $this->login  ){
-            $eventParams = array('login' => $this->login, 'contexte' => 'validation');
+            $eventParams = array('login' => $this->login);
             $filters = jEvent::notify('getOcctaxFilters', $eventParams)->getResponse();
             foreach($filters as $filter){
                 // On récupère le filtre
@@ -251,8 +254,7 @@ class occtaxValidation {
         // Ajouter un WHERE avec le filtre sur les demandes, pour le champ "validateur" True
         // Get observation from basket
         $user_params = array(
-            $this->login,
-            $this->user_jelix->email
+            $this->login
         );
 
         // Check if identifiant_permanent is given
@@ -272,7 +274,7 @@ class occtaxValidation {
             $sql.= "    SELECT o.cle_obs, o.identifiant_permanent, $1::text";
             $sql.= "    FROM occtax.observation AS o";
             $sql.= "    WHERE True";
-            $sql.= "    AND o.identifiant_permanent = $8";
+            $sql.= "    AND o.identifiant_permanent = $7";
             // Chercher dans les demandes
             $sql.= $this->demande_filter;
             $sql.= " ) ";
@@ -322,17 +324,18 @@ class occtaxValidation {
         $sql.= "    '1',";
 
         // Données du formulaire
-        $sql.= "    $3,"; // niv_val
-        $sql.= "    nullif(trim($4), ''),"; // producteur
-        $sql.= "    nullif(trim($5), '')::date,"; // date_contact
-        $sql.= "    'Validation du ' || now()::date || ' : ' || nullif(trim($6), ''),"; // comm_val
-        $sql.= "    nullif(trim($7), ''),"; // nom_retenu
+        $sql.= "    $2,"; // niv_val
+        $sql.= "    nullif(trim($3), ''),"; // producteur
+        $sql.= "    nullif(trim($4), '')::date,"; // date_contact
+        $sql.= "    'Validation du ' || now()::date || ' : ' || nullif(trim($5), ''),"; // comm_val
+        $sql.= "    nullif(trim($6), ''),"; // nom_retenu
 
-        // on va chercher le id_personne du validateur
+        // on va chercher le id_personne du validateur: c'est le id_validateur de gestion.demande
         $sql.= "    (";
-        $sql.= "        SELECT id_personne";
-        $sql.= "        FROM occtax.personne";
-        $sql.= "        WHERE mail = $2";
+        $sql.= "        SELECT id_validateur";
+        $sql.= "        FROM gestion.demande";
+        $sql.= "        WHERE usr_login = $1::text";
+        $sql.= "        AND type_demande = 'VA'";
         $sql.= "        LIMIT 1";
         $sql.= "    ),";
 
