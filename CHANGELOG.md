@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 2.10.1 - 2021-08-22
+
+* Validation - Correction d'un bug sur la rechercher lorsque le filtre par niveau de validité est appliqué
+* Admin - Ajout de la version dans la page de visualisation de la configuration du module Occtax
+
 ## 2.10.0 - 2021-07-29
 
 * Validation - Ajout d'un outil de validation en ligne (échelle régionale)

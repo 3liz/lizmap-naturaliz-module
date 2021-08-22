@@ -50,8 +50,14 @@ class configCtrl extends jController {
             }
         }
 
+        // Get the module version from the XML file
+        $xmlFile = jApp::getModulePath('occtax').'module.xml';
+        $xmlLoad = simplexml_load_file($xmlFile);
+        $version = (string) $xmlLoad->info->version;
+
         $tpl = new jTpl();
         $tpl->assign( 'form', $form );
+        $tpl->assign( 'version', $version );
         $rep->body->assign('MAIN', $tpl->fetch('config_view'));
         $rep->body->assign('selectedMenuItem','occtax_config');
 

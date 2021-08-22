@@ -2,6 +2,10 @@
 
 <h1>Configuration Occtax</h1>
 
+<p>
+    <b>Version:</b>&nbsp;{$version}
+</p>
+
 {formdatafull $form}
 
 <!-- Modify -->
