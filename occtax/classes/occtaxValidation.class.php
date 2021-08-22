@@ -327,7 +327,9 @@ class occtaxValidation {
         $sql.= "    $2,"; // niv_val
         $sql.= "    nullif(trim($3), ''),"; // producteur
         $sql.= "    nullif(trim($4), '')::date,"; // date_contact
+        // Validation du 21/08/2021 (Jean DUPONT) : commentaire ajouté
         $sql.= "    'Validation du ' || now()::date || ' : ' || nullif(trim($5), ''),"; // comm_val
+
         $sql.= "    nullif(trim($6), ''),"; // nom_retenu
 
         // on va chercher le id_personne du validateur: c'est le id_validateur de gestion.demande

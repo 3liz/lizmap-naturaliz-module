@@ -66,7 +66,20 @@ class occtaxSearchObservationStats extends occtaxSearchObservation {
                     'count(DISTINCT o.cd_ref) AS nb_taxon_present' => Null,
                     "count(DISTINCT o.cd_ref) FILTER (WHERE o.protection IN ('EP', 'EPN', 'EPI', 'EPC')) AS nb_taxon_protege" => Null
                 )
-            )
+            ),
+
+            // Need to join the v_observation_champs_validation view to get updated validation
+            // we do not use validation_observation because the trigger should update observation accordingly
+            // for ech_val = '2'
+            'occtax.v_observation_champs_validation' => array(
+                'alias' => 'oo',
+                'required' => False,
+                'join' => ' JOIN ',
+                'joinClause' => "
+                    ON oo.identifiant_permanent = o.identifiant_permanent ",
+                'returnFields' => array(),
+            ),
+
         );
         // Remove ORDER BY
         $this->orderClause = '';

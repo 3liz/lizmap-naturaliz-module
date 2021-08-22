@@ -249,11 +249,15 @@ Menaces
             <hint locale="occtax~search.input.panier_validation.help"/>
         </checkbox>
 
-        <listbox multiple="true" ref="validite_niveau">
-                <label locale="occtax~search.input.validite_niveau"/>
 <!--
-            <emptyitem locale="occtax~search.input.emptyitem"/>
+    <input ref="validite_niveau" type="integer" minvalue="1" maxvalue="6">
+        <label locale="validation.input.niv_val"/>
+        <hint locale="validation.input.niv_val.help"/>
+    </input>
 -->
+
+        <listbox multiple="true" ref="validite_niveau">
+            <label locale="occtax~search.input.validite_niveau"/>
             <datasource dao="occtax~nomenclature" profile="naturaliz_virtual_profile"
               method="findByChamp" criteria="validite_niveau"
               labelproperty="valeur"
