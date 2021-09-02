@@ -250,22 +250,6 @@
                 $configOptions = $lproj->getOptions();
                 $bp = jApp::config()->urlengine['basePath'];
 
-                // Override lizmap default print dock
-                if ( property_exists($configOptions,'print')
-                    && $configOptions->print == 'True') {
-
-                    $tpl = new jTpl();
-                    $dock = new lizmapMapDockItem(
-                        'print',
-                        jLocale::get('view~map.print.navbar.title'),
-                        $tpl->fetch('view~map_print'),
-                        3,
-                        Null,
-                        jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/occtax.print.js'))
-                    );
-                    $event->add($dock);
-                }
-
                 // Basket dock
                 // Create search form
                 if (jAuth::isConnected() && jAcl2::check("validation.online.access")) {

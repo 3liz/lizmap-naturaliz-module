@@ -64,7 +64,7 @@ class wfsCtrl extends jController {
     * whatever its case
     * and returns its value.
     * @param $param request parameter.
-    * @return Request parameter value.
+    * @return String Request parameter value.
     */
     private function iParam($param){
 
