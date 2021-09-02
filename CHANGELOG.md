@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2.10.2 - 2021-09-02
+
+* Export WFS - Correction du filtrage des données par demande
+
 ## 2.10.1 - 2021-08-22
 
 * Validation - Correction d'un bug sur la rechercher lorsque le filtre par niveau de validité est appliqué

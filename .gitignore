@@ -15,3 +15,6 @@ lizmap/var/config/installer.ini.php
 lizmap/var/db/*.db
 temp/lizmap/*
 !temp/lizmap/.empty
+gdalwmscache/*
+hidden/*
+*.code-workspace

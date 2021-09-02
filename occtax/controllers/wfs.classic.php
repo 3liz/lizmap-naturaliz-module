@@ -139,7 +139,7 @@ class wfsCtrl extends jController {
         $login = $user->login;
     }
 
-    $occtaxSearch = new occtaxExportObservation( null, $params, null, $login );
+    $occtaxSearch = new occtaxExportObservation( null, $params, null, '4326', $login );
     $this->search = $occtaxSearch;
 
     // Define class private properties
