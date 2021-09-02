@@ -5,6 +5,7 @@
 ## 2.10.2 - 2021-09-02
 
 * Export WFS - Correction du filtrage des données par demande
+* Impression - désactivation de l'impression des résultats sur la carte (observations et mailles) : incompatible avec le nouveau rendu par cluster
 
 ## 2.10.1 - 2021-08-22
 
