@@ -1,5 +1,5 @@
 lizMap.events.on({
-    'uicreated':function(evt){
+    'uicreated': function (evt) {
 
         // Move form into body so that modal behaves correctly
         $('#occtax-validation-form-modal').appendTo('body');
@@ -13,13 +13,13 @@ lizMap.events.on({
         // Use Validation API entrypoint to send data
         // And get response
         function runAction(params, a_callback) {
-            a_callback = typeof a_callback !== 'undefined' ?  a_callback : null;
+            a_callback = typeof a_callback !== 'undefined' ? a_callback : null;
             var tokenFormId = $('#occtax-validation-form-modal form').attr('id');
-            var url = $('#'+tokenFormId).attr('action');
+            var url = $('#' + tokenFormId).attr('action');
             $.getJSON(
                 url,
                 params,
-                function(data){
+                function (data) {
                     if (a_callback) {
                         a_callback(data);
                     }
@@ -46,7 +46,7 @@ lizMap.events.on({
             var params = {
                 'validation_action': 'get'
             };
-            runAction(params, function(content) {
+            runAction(params, function (content) {
                 if (content && 'data' in content && Array.isArray(content.data)) {
                     var nb = content.data[0]['nb'];
                     var counter_text = ' observation';
@@ -62,7 +62,7 @@ lizMap.events.on({
         }
 
         // Activate open form button
-        $(document).on('click', 'button.occtax_validation_open_form_button', function(){
+        $(document).on('click', 'button.occtax_validation_open_form_button', function () {
             var id = $(this).val();
             var vparams = [
                 'niv_val', 'producteur', 'date_contact', 'comm_val', 'nom_retenu',
@@ -82,7 +82,7 @@ lizMap.events.on({
                     'id': id
                 };
                 // Get the data from the database
-                runAction(params, function(content) {
+                runAction(params, function (content) {
                     $('#occtax-message').remove();
                     if (content.status == 'error') {
                         OccTax.addTimedMessage('occtax-message', content.message, 'error', 3000, true);
@@ -98,7 +98,7 @@ lizMap.events.on({
                         for (var v in vparams) {
                             var key = vparams[v];
                             if (key != 'comm_val') {
-                                $('#' + tokenFormId + ' [name="'+key+'"]').val(obs[key]);
+                                $('#' + tokenFormId + ' [name="' + key + '"]').val(obs[key]);
                             }
                         }
 
@@ -106,10 +106,10 @@ lizMap.events.on({
                         var date_ctrl = 'date_contact';
                         var date_value = obs[date_ctrl]
                         if (date_value) {
-                            $('#' + tokenFormId + ' [name="'+date_ctrl+'[year]"]').val(date_value.split('-')[0]);
-                            $('#' + tokenFormId + ' [name="'+date_ctrl+'[month]"]').val(date_value.split('-')[1]);
-                            $('#' + tokenFormId + ' [name="'+date_ctrl+'[day]"]').val(date_value.split('-')[2]);
-                            $('#' + tokenFormId + ' [name="'+date_ctrl+'_hidden"]').val(date_value);
+                            $('#' + tokenFormId + ' [name="' + date_ctrl + '[year]"]').val(date_value.split('-')[0]);
+                            $('#' + tokenFormId + ' [name="' + date_ctrl + '[month]"]').val(date_value.split('-')[1]);
+                            $('#' + tokenFormId + ' [name="' + date_ctrl + '[day]"]').val(date_value.split('-')[2]);
+                            $('#' + tokenFormId + ' [name="' + date_ctrl + '_hidden"]').val(date_value);
                         }
 
                         // Rename modal and submit button
@@ -150,10 +150,10 @@ lizMap.events.on({
             var tokenFormId = $('#occtax-validation-form-modal form').attr('id');
 
             // Reinit main fields
-            $('#'+tokenFormId).trigger("reset");
+            $('#' + tokenFormId).trigger("reset");
 
             // Reinit date picker
-            $('#'+tokenFormId+' .ui-datepicker-reset').click();
+            $('#' + tokenFormId + ' .ui-datepicker-reset').click();
 
 
             var vparams = [
@@ -162,13 +162,13 @@ lizMap.events.on({
             ];
             for (var v in vparams) {
                 var key = vparams[v];
-                $('#' + tokenFormId + ' [name="'+key+'"]').val('');
+                $('#' + tokenFormId + ' [name="' + key + '"]').val('');
             }
 
         };
 
         // Handle form submit
-        $('#occtax-validation-form-modal form').submit(function(){
+        $('#occtax-validation-form-modal form').submit(function () {
 
             // On vérifie si pas d'erreur jForms côté client
             var error_div = $('#jforms_occtax_validation_errors');
@@ -182,7 +182,7 @@ lizMap.events.on({
             var params = {
                 'validation_action': 'validate'
             };
-            for (var i in form_params){
+            for (var i in form_params) {
                 var param = form_params[i];
                 params[param.name] = param.value;
             }
@@ -206,7 +206,7 @@ lizMap.events.on({
             }
 
             // Run the Ajax query to validate the given observation of the observations in basket
-            runAction(params, function(content) {
+            runAction(params, function (content) {
 
                 if (content.status == 'error') {
                     OccTax.addTimedMessage('occtax-message', content.message, 'error', 3000, true);
@@ -242,7 +242,7 @@ lizMap.events.on({
         });
 
         // Activate API validation buttons
-        $(document).on('click', '.occtax_validation_button', function(){
+        $(document).on('click', '.occtax_validation_button', function () {
             var action_val = $(this).val();
             var is_button = true;
             var in_observation_table = $(this).hasClass('datatable')
@@ -275,8 +275,8 @@ lizMap.events.on({
             // Ask confirmation for delete or empty
             if (action == 'remove' || action == 'empty') {
                 var nl = "\r\n";
-                var confirm_msg = naturalizLocales['button.validation_basket.'+action+'.confirm.title'].toUpperCase();
-                confirm_msg += nl + nl + naturalizLocales['button.validation_basket.'+action+'.confirm'];
+                var confirm_msg = naturalizLocales['button.validation_basket.' + action + '.confirm.title'].toUpperCase();
+                confirm_msg += nl + nl + naturalizLocales['button.validation_basket.' + action + '.confirm'];
                 var confirm_action = confirm(confirm_msg);
                 if (!confirm_action) {
                     return false;
@@ -295,14 +295,14 @@ lizMap.events.on({
                 var new_val = action_val.replace(action, new_action);
                 if (is_button) {
                     $(this).attr('value', new_val);
-                    $(this).html(naturalizLocales['button.validation_basket.'+new_action+'.title']);
+                    $(this).html(naturalizLocales['button.validation_basket.' + new_action + '.title']);
                 } else {
                     $(this).attr('href', '#' + new_val)
                     $(this).find('i').attr('class', star_class);
                     $(this).parent().focus()
                 }
-                $(this).attr('tooltip', naturalizLocales['button.validation_basket.'+new_action+'.help']);
-                $(this).attr('title', naturalizLocales['button.validation_basket.'+new_action+'.help']);
+                $(this).attr('tooltip', naturalizLocales['button.validation_basket.' + new_action + '.help']);
+                $(this).attr('title', naturalizLocales['button.validation_basket.' + new_action + '.help']);
 
                 // Close subdock
                 $('#sub-dock').hide().html('');
@@ -313,11 +313,11 @@ lizMap.events.on({
             if (in_observation_table) {
                 // If the clicked item is a a inside the observation table
                 // Do not refresh the datatable table
-                runAction(params, function(){
+                runAction(params, function () {
                     refreshValidationBasket(false);
                 });
             } else {
-                runAction(params, function(){
+                runAction(params, function () {
                     refreshValidationBasket(true);
                 });
             }
@@ -327,22 +327,22 @@ lizMap.events.on({
         });
 
         // Show only observation from the basket
-        $('#validation button.occtax_validation_filter_button').click(function() {
+        $('#validation button.occtax_validation_filter_button').click(function () {
             // Run reinit
             var tokenFormId = $('#div_form_occtax_search_token form').attr('id');
-            $('#'+tokenFormId+'_reinit').click();
+            $('#' + tokenFormId + '_reinit').click();
 
             // Check the adequate form checkbox
             $('#' + tokenFormId + ' [name="panier_validation"]').prop("checked", true);
 
             // Re submit form
-            $('#'+tokenFormId).submit();
+            $('#' + tokenFormId).submit();
 
         });
 
 
         // Add search result to basket
-        $('#occtax-search-to-basket').click(function() {
+        $('#occtax-search-to-basket').click(function () {
             $('#occtax-message').remove();
             var search_token = $('#occtax_service_search_form input[name="token"]').val();
             if (!search_token) {
@@ -362,13 +362,13 @@ lizMap.events.on({
             if (!confirm_action) {
                 return false;
             }
-            runAction(params, function(content) {
+            runAction(params, function (content) {
                 if (content && 'data' in content && Array.isArray(content.data)) {
                     var data = content.data;
                     var count = data[0]['count'];
                     var localized_msg = 'button.add.search.to.basket.result.count';
                     if (count == 1) {
-                        localized_msg+= '.singulier';
+                        localized_msg += '.singulier';
                     }
                     var msg = count + ' ' + naturalizLocales[localized_msg]
                     OccTax.addTimedMessage('occtax-message', msg, 'info', 3000, true);
@@ -381,4 +381,3 @@ lizMap.events.on({
 
     } // uicreated
 });
-
