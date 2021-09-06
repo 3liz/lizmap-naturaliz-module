@@ -30,7 +30,7 @@ OccTax.events.on({
     'uicreated':function(evt){
 
     function checkConnection(){
-        // If the user was not connected, no souci
+        // If the user was not connected, nothing to do
         if (!(occtaxClientConfig.is_connected)) {
             return true;
         }
@@ -969,7 +969,7 @@ OccTax.events.on({
       if(!mytoken) {
         $('#occtax-highlight-message').remove();
         return false;
-    }
+      }
       // Set form values
       searchForm.find('input[name="offset"]').val(0);
       searchForm.find('input[name="group"]').val('');
@@ -1771,6 +1771,7 @@ OccTax.events.on({
         // detect parameters
         var queryString = window.location.search;
         if (queryString && queryString != '') {
+            console.log(queryString);
             var params = new URLSearchParams(queryString);
             var targets = {};
             params.forEach(function(value, key) {
@@ -2508,11 +2509,14 @@ OccTax.events.on({
                     // Click on the previous selected legend button
                     $('#'+selected_legend_button_id).click();
                 }else{
+                  $('#occtax-highlight-message').remove();
+                  $('#occtax-message').remove();
                   lizMap.addMessage( tData.msg.join('<br/>'), 'error', true ).attr('id','occtax-highlight-message');
                 }
 
                 // Enable back the left panel
                 $('#occtax').removeClass('not_enabled');
+                $("#div_form_occtax_search_token form input[type=submit]").prop('disabled', false);
 
             }
         ,'json');
