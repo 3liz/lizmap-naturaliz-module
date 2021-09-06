@@ -2411,14 +2411,13 @@ OccTax.events.on({
         var bbox = extent.toBBOX();
         self.find('input[name="extent"]').val(bbox);
 
-        // Add parameters in URL
-        updateUrlFromFormInput();
-
         // Send request and get token
         $.post(self.attr('action'), self.serialize(),
             function(tData) {
                 blocme = false;
                 if (tData.status == 1) {
+                    // Add parameters in URL
+                    updateUrlFromFormInput();
 
                     // Display description div
                     var dHtml = tData.description;
@@ -2511,6 +2510,9 @@ OccTax.events.on({
                 }else{
                   lizMap.addMessage( tData.msg.join('<br/>'), 'error', true ).attr('id','occtax-highlight-message');
                 }
+
+                // Enable back the left panel
+                $('#occtax').removeClass('not_enabled');
 
             }
         ,'json');
