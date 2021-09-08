@@ -10,8 +10,6 @@ class occtaxDockableListener extends jEventListener{
                 $project = $event->getParam( 'project' );
                 $repository = $event->getParam( 'repository' );
                 $lproj = lizmap::getProject( $repository . '~' .$project );
-                $configOptions = $lproj->getOptions();
-                $bp = jApp::config()->urlengine['basePath'];
 
                 // Get local configuration (application name, projects name, list of fields, etc.)
                 $localConfig = jApp::configPath('naturaliz.ini.php');
@@ -250,8 +248,10 @@ class occtaxDockableListener extends jEventListener{
                 $project = $event->getParam( 'project' );
                 $repository = $event->getParam( 'repository' );
                 $lproj = lizmap::getProject( $repository . '~' .$project );
+
+                // UPGRADE: replace by  $lproj->getOption('print') when
+                // the module will be compatible only with Lizmap 3.5+
                 $configOptions = $lproj->getOptions();
-                $bp = jApp::config()->urlengine['basePath'];
 
                 // Search History dock
                 $tpl = new jTpl();

@@ -15,9 +15,11 @@ class listOcctaxProjectDatasource extends listProjectDatasource
         $rep = lizmap::getRepository( $criteria );
         $projects = $rep->getProjects();
         foreach ($projects as $p) {
-              $pOptions = $p->getOptions();
-              // We do not want to avoid hidden project, because the project base for naturaliz is hidden
-              //if (property_exists($pOptions,'hideProject') && $pOptions->hideProject == 'True')
+            // We do not want to avoid hidden project, because the project base for naturaliz is hidden.
+            // if it is planed to restore this code, and if the module will be
+            // compatible only with Lizmap 3.5+, use $p->getBooleanOption('hideProject')
+            //$pOptions = $p->getOptions();
+            //if (property_exists($pOptions,'hideProject') && $pOptions->hideProject == 'True')
                 //continue;
             $pdata[ $p->getData('id') ] = (string)  $p->getData('title');
         }
