@@ -299,24 +299,6 @@ lizMap.events.on({
             getPointColor: function (feat) {
                 return feat.attributes.color;
             },
-            getStrokeWidth: function (feat) {
-                mySw = (OccTax.map.getZoom() + 1);
-                if (mySw < 3) { mySw = 3; }
-                // Draw square underneath maille features
-                if ('square' in feat.attributes) {
-                    mySw = 0.5;
-                }
-                return mySw;
-            },
-            getStrokeWidthSelect: function (feat) {
-                mySw = (OccTax.map.getZoom() + 1);
-                if (mySw < 3) { mySw = 3; }
-                // Hide square underneath maille features on select
-                if ('square' in feat.attributes) {
-                    mySw = 0;
-                }
-                return mySw;
-            },
             getGraphicName: function (feat) {
                 var graphic = 'circle';
                 if (
@@ -355,7 +337,6 @@ lizMap.events.on({
             strokeOpacity: 1,
             strokeDashstyle: "solid",
             strokeWidth: 1,
-            //            strokeWidth: "${getStrokeWidth}",
             graphicName: "${getGraphicName}",
             cursor: "pointer"
         };
@@ -370,7 +351,7 @@ lizMap.events.on({
             strokeColor: "blue",
             strokeOpacity: 1,
             strokeDashstyle: "solid",
-            strokeWidth: "${getStrokeWidthSelect}",
+            strokeWidth: 2,
             graphicName: "${getGraphicName}",
             cursor: "pointer"
         };
@@ -501,11 +482,6 @@ lizMap.events.on({
                 }
                 return color;
             },
-            getStrokeWidth: function (feat) {
-                mySw = (OccTax.map.getZoom() + 1);
-                if (mySw < 3) { mySw = 3; }
-                return mySw;
-            },
             getGraphicName: function (feat) {
                 var graphic = 'square';
                 if (feat.cluster && feat.cluster.length > 1) {
@@ -559,7 +535,6 @@ lizMap.events.on({
             strokeOpacity: 1,
             strokeDashstyle: "solid",
             strokeWidth: 1,
-            //strokeWidth: "${getStrokeWidth}",
             graphicName: "${getGraphicName}",
             //externalGraphic: "${getExternalGraphic}",
             cursor: "pointer",
@@ -578,7 +553,6 @@ lizMap.events.on({
             strokeColor: "blue",
             strokeOpacity: 1,
             strokeDashstyle: "solid",
-            //strokeWidth: "${getStrokeWidth}",
             strokeWidth: 2,
             graphicName: "${getGraphicName}",
             cursor: "pointer"
