@@ -7,6 +7,8 @@
 * Ajout d'un nouveau panneau "Mes recherches" avec l'historique des recherches
 * Corrections diverses sur la recherche
 * Correction de l'affichage "gros trait bleu" sur les mailles au survol
+* Correction de l'affichage de la fiche de validité d'une observation
+  lorsque la demande utilise des champs de vm_observation (ex: group2_inpn)
 
 ## 2.10.2 - 2021-09-02
 
