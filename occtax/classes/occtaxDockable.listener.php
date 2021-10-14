@@ -1,5 +1,8 @@
 <?php
-    class occtaxDockableListener extends jEventListener{
+
+use phpDocumentor\Reflection\Types\Null_;
+
+class occtaxDockableListener extends jEventListener{
 
         function onmapDockable ($event) {
             $coord = jApp::coord();
@@ -249,6 +252,22 @@
                 $lproj = lizmap::getProject( $repository . '~' .$project );
                 $configOptions = $lproj->getOptions();
                 $bp = jApp::config()->urlengine['basePath'];
+
+                // Search History dock
+                $tpl = new jTpl();
+                $assign = array();
+                $tpl->assign($assign);
+                $content = $tpl->fetch('history');
+                $dock = new lizmapMapDockItem(
+                    'history',
+                    jLocale::get("occtax~search.historique.dock.title"),
+                    $content,
+                    15,
+                    Null,
+                    Null
+                );
+                $event->add($dock);
+
 
                 // Basket dock
                 // Create search form

@@ -4,6 +4,8 @@ var error_connection = false;
 var previous_search_token = null;
 var observation_geometries_displayed = false;
 var observation_geometries_extent = null;
+var search_history_max_unstared = 10;
+var search_history_max_stared = 20;
 
 function unblockSearchForm() {
     uiprete = true;
@@ -71,7 +73,7 @@ OccTax.events.on({
             }
             lizMap.addMessage(message, type, true).attr('id', container_id);
 
-            // Autoremove after delay
+            // Auto-remove after delay
             setTimeout(function () {
                 closeMessage(container_id);
             }, delay);
@@ -151,7 +153,6 @@ OccTax.events.on({
                 // query geom
                 if (feature.geometry.CLASS_NAME === 'OpenLayers.Geometry.Point') {
                     var myPoint = feature.geometry.clone().transform(OccTax.map.projection, 'EPSG:4326');
-                    //console.log( myPoint.x, myPoint.y );
                     if (activeButton.hasClass('maille')) {
                         var form = $('#form_occtax_service_maille');
                         var type_maille = 'm02';
@@ -186,7 +187,6 @@ OccTax.events.on({
                                         lizMap.addMessage(data.msg.join('<br/>'), 'error', true).attr('id', 'occtax-highlight-message');
                                     else
                                         lizMap.addMessage('Error', 'error', true).attr('id', 'occtax-highlight-message');
-                                    //~ console.log(data);
                                 }
                             });
                     } else if (activeButton.hasClass('commune')) {
@@ -213,7 +213,6 @@ OccTax.events.on({
                                         lizMap.addMessage(data.msg.join('<br/>'), 'error', true).attr('id', 'occtax-highlight-message');
                                     else
                                         lizMap.addMessage('Error', 'error', true).attr('id', 'occtax-highlight-message');
-                                    //~ console.log(data);
                                 }
                             });
                     } else if (activeButton.hasClass('masse_eau')) {
@@ -240,7 +239,6 @@ OccTax.events.on({
                                         lizMap.addMessage(data.msg.join('<br/>'), 'error', true).attr('id', 'occtax-highlight-message');
                                     else
                                         lizMap.addMessage('Error', 'error', true).attr('id', 'occtax-highlight-message');
-                                    //~ console.log(data);
                                 }
                             });
                     }
@@ -796,7 +794,6 @@ OccTax.events.on({
                     var tr = $($(this).parents('tr')[0]);
                     var d = $('#' + tableId + '').DataTable().row(tr).data();
                     var cd_nom = tr.attr('id');
-                    //console.log( cd_nom );
                     var row_label = $('#' + tableId + ' thead tr th.row-label').attr('data-value');
                     row_label = row_label.split(',')[0];
 
@@ -804,7 +801,6 @@ OccTax.events.on({
                     var removePanier = true;
                     var removeFilters = true;
                     clearTaxonFromSearch(removePanier, removeFilters);
-                    // console.log( cd_nom, d[row_label] );
 
                     // Add new taxon to search
                     addTaxonToSearch(cd_nom, d[row_label]);
@@ -1115,7 +1111,6 @@ OccTax.events.on({
                         return false;
                     }
                     var searchForm = $('#occtax_service_search_form');
-                    //console.log( param );
                     searchForm.find('input[name="limit"]').val(param.length);
                     searchForm.find('input[name="offset"]').val(param.start);
                     searchForm.find('input[name="group"]').val('');
@@ -1132,7 +1127,6 @@ OccTax.events.on({
                         return false;
                     $.post(searchForm.attr('action'), searchForm.serialize(),
                         function (results) {
-                            //console.log( results );
                             var tData = {
                                 "recordsTotal": 0,
                                 "recordsFiltered": 0,
@@ -1459,7 +1453,7 @@ OccTax.events.on({
                             // find brother
                             var tableId = 'occtax_results_observation_table';
                             var current_tr = $('#' + tableId).find('tr#' + id);
-                            //console.log(current_tr);
+
                             if (action == 'next') {
                                 var brother_id = current_tr.next('tr').attr('id');
                                 var m = 'à la fin';
@@ -1701,9 +1695,11 @@ OccTax.events.on({
         }
 
 
-        function clearSpatialSearch() {
-            OccTax.emptyDrawqueryLayer('observationLayer', 'mailleLayer');
-            OccTax.deactivateAllDrawqueryControl();
+        function clearSpatialSearch(empty_layer) {
+            if (empty_layer) {
+                OccTax.emptyDrawqueryLayer('observationLayer', 'mailleLayer');
+                OccTax.deactivateAllDrawqueryControl();
+            }
             $('#jforms_occtax_search_geom').val('');
             $('#jforms_occtax_search_code_commune').val('');
             $('#jforms_occtax_search_code_masse_eau').val('');
@@ -1767,148 +1763,169 @@ OccTax.events.on({
             return white_params;
         }
 
-        function updateFormInputsFromUrl() {
+        // Take a query string, decompose the corresponding parameters, set the form fields values
+        // And launch the search if needed
+        function updateFormInputsFromUrl(query_string) {
             // Example URL
             // ?cd_nom%5B0%5D=79700&cd_nom%5B1%5D=447404&observateur=durand&date_min=2000-05-01&date_max=2019-01-01
             // detect parameters
-            var queryString = window.location.search;
-            if (queryString && queryString != '') {
-                var params = new URLSearchParams(queryString);
-                var targets = {};
-                params.forEach(function (value, key) {
-                    // Crop name to remove array part
-                    // cd_nom[0] -> cd_nom
-                    var skey = key.split('[')[0];
-                    if (!(skey in targets)) {
-                        targets[skey] = [];
+            if (!query_string) {
+                return false;
+            }
+
+            // Parse given query string
+            var params = new URLSearchParams(query_string);
+            var targets = {};
+            params.forEach(function (value, key) {
+                // Crop name to remove array part
+                // cd_nom[0] -> cd_nom
+                var skey = key.split('[')[0];
+                if (!(skey in targets)) {
+                    targets[skey] = [];
+                }
+                targets[skey].push(value)
+            });
+
+            // Get search form properties
+            var tokenFormId = $('#div_form_occtax_search_token form').attr('id');
+            var trigger_submit = false;
+            var white_params = getWhiteParams('url');
+            var geometry_already_added = false;
+            var cd_nom_list = [];
+
+            // Reinit form and interface
+            reinitSearchForm();
+            clearSpatialSearch(false);
+
+            // Assign values to the inputs based on the parameters found in the query string
+            for (var name in targets) {
+                if ($.inArray(name, white_params) == -1) {
+                    continue;
+                }
+                trigger_submit = true;
+                var input_name = name;
+                var input_value = targets[name];
+                //var input_value = decodeURIComponent(entry[1]);
+
+                if ((input_name == 'date_min' || input_name == 'date_max') && input_value[0] != '') {
+                    // Dates: traitement particulier
+                    $('#' + tokenFormId + ' [name="' + input_name + '[year]"]').val(input_value[0].split('-')[0]);
+                    $('#' + tokenFormId + ' [name="' + input_name + '[month]"]').val(input_value[0].split('-')[1]);
+                    $('#' + tokenFormId + ' [name="' + input_name + '[day]"]').val(input_value[0].split('-')[2]);
+                    $('#' + tokenFormId + ' [name="' + input_name + '_hidden"]').val(input_value[0]);
+                } else if (input_name == 'cd_nom' && Array.isArray(input_value) && input_value.length > 0) {
+                    // cd_nom: recherche par liste de taxons
+                    cd_nom_list = input_value;
+                    for (var i in input_value) {
+                        addTaxonToSearch(input_value[i], 'cd_nom = ' + input_value[i]);
                     }
-                    targets[skey].push(value)
-                });
+                } else {
+                    // Autres champs
+                    var input_item = $('#' + tokenFormId + ' [name="' + input_name + '"]');
+                    var ismulti = false;
+                    if (input_item.length == 0) {
+                        input_item = $('#' + tokenFormId + ' [name="' + input_name + '[]"]');
+                        ismulti = true;
+                    }
+                    input_item.val(input_value);
+                    // sumoselect too
+                    if (ismulti && input_item && input_item[0]) {
+                        input_item[0].sumo.unSelectAll();
+                        for (var i in input_value) {
+                            input_item[0].sumo.selectItem(input_value[i]);
+                        }
+                    }
 
-                var tokenFormId = $('#div_form_occtax_search_token form').attr('id');
-                var trigger_submit = false;
-                var white_params = getWhiteParams('url');
-                var geometry_already_added = false;
-                var cd_nom_list = [];
+                }
 
-                for (var name in targets) {
-                    if ($.inArray(name, white_params) == -1) {
+                // Bascule sur l'onglet de recherche par attribut
+                var attributes_items = [
+                    'group', 'habitat', 'statut', 'endemicite',
+                    'invasibilite',
+                    'menace_regionale', 'menace_nationale', 'menace_monde',
+                    'protection'
+                ]
+                if ($.inArray(input_name, attributes_items) != -1 && input_value != '') {
+                    $('li a[href="#recherche_taxon_attributs"]').click();
+                }
+
+                // Récupère la géométrie dessinée et l'affiche sur la carte
+                if (input_name == 'geom' && input_value && input_value[0] != '') {
+                    var wkt = input_value[0].trim();
+                    var wkt_format = new OpenLayers.Format.WKT();
+                    var geom = wkt_format.read(wkt).geometry;
+                    var theLayer = OccTax.layers['queryLayer'];
+
+                    geom.transform('EPSG:4326', OccTax.map.projection);
+                    theLayer.addFeatures([new OpenLayers.Feature.Vector(geom)]);
+                }
+
+                // Récupère la géométrie d'un objet spatial
+                var attributes_items = [
+                    'code_commune', 'code_masse_eau',
+                    'code_maille'
+                ]
+                if ($.inArray(input_name, attributes_items) != -1 && input_value != '') {
+                    if (geometry_already_added) {
                         continue;
                     }
-                    trigger_submit = true;
-                    var input_name = name;
-                    var input_value = targets[name];
-                    //var input_value = decodeURIComponent(entry[1]);
-
-                    if ((input_name == 'date_min' || input_name == 'date_max') && input_value[0] != '') {
-                        $('#' + tokenFormId + ' [name="' + input_name + '[year]"]').val(input_value[0].split('-')[0]);
-                        $('#' + tokenFormId + ' [name="' + input_name + '[month]"]').val(input_value[0].split('-')[1]);
-                        $('#' + tokenFormId + ' [name="' + input_name + '[day]"]').val(input_value[0].split('-')[2]);
-                        $('#' + tokenFormId + ' [name="' + input_name + '_hidden"]').val(input_value[0]);
-                    } else if (input_name == 'cd_nom' && Array.isArray(input_value) && input_value.length > 0) {
-                        cd_nom_list = input_value;
-                        for (var i in input_value) {
-                            //console.log("Récupère le nom des taxon et les mets dans le panier");
-                            addTaxonToSearch(input_value[i], 'cd_nom = ' + input_value[i]);
-                        }
-                    } else {
-                        var input_item = $('#' + tokenFormId + ' [name="' + input_name + '"]');
-                        var ismulti = false;
-                        if (input_item.length == 0) {
-                            input_item = $('#' + tokenFormId + ' [name="' + input_name + '[]"]');
-                            ismulti = true;
-                        }
-                        input_item.val(input_value);
-                        // sumoselect too
-                        if (ismulti && input_item && input_item[0]) {
-                            input_item[0].sumo.unSelectAll();
-                            for (var i in input_value) {
-                                input_item[0].sumo.selectItem(input_value[i]);
+                    var geomform_getter = '#form_occtax_service_' + input_name.replace('code_', '');
+                    var type_maille = '';
+                    if (input_name == 'code_maille') {
+                        type_maille = targets['type_maille'];
+                    }
+                    $.post(
+                        $(geomform_getter).attr('action')
+                        , { x: '', y: '', type_maille: type_maille, code: input_value[0] }
+                        , function (data) {
+                            if (data.status == 1) {
+                                var format = new OpenLayers.Format.GeoJSON();
+                                var geom = format.read(data.result.geojson)[0].geometry;
+                                var theLayer = OccTax.layers['queryLayer'];
+                                theLayer.destroyFeatures();
+                                geom.transform('EPSG:4326', OccTax.map.projection);
+                                theLayer.addFeatures([new OpenLayers.Feature.Vector(geom)]);
                             }
-                        }
+                        }, 'json'
+                    );
+                    geometry_already_added = true;
+                }
 
-                    }
+            };
 
-                    // Bascule sur l'onglet de recherche par attribut
-                    var attributes_items = [
-                        'group', 'habitat', 'statut', 'endemicite',
-                        'invasibilite',
-                        'menace_regionale', 'menace_nationale', 'menace_monde',
-                        'protection'
-                    ]
-                    if ($.inArray(input_name, attributes_items) != -1 && input_value != '') {
-                        $('li a[href="#recherche_taxon_attributs"]').click();
-                    }
-
-                    // Récupère la géométrie dessinée et l'affiche sur la carte
-                    if (input_name == 'geom' && input_value && input_value[0] != '') {
-                        var wkt = input_value[0].trim();
-                        var format = new OpenLayers.Format.WKT();
-                        var geom = format.read(wkt).geometry;
-                        var theLayer = OccTax.layers['queryLayer'];
-                        theLayer.destroyFeatures();
-                        geom.transform('EPSG:4326', OccTax.map.projection);
-                        theLayer.addFeatures([new OpenLayers.Feature.Vector(geom)]);
-                    }
-
-                    // Récupère la géométrie d'un objet spatial
-                    var attributes_items = [
-                        'code_commune', 'code_masse_eau',
-                        'code_maille'
-                    ]
-                    if ($.inArray(input_name, attributes_items) != -1 && input_value != '') {
-                        if (geometry_already_added) {
-                            continue;
-                        }
-                        var geomform_getter = '#form_occtax_service_' + input_name.replace('code_', '');
-                        var type_maille = '';
-                        if (input_name == 'code_maille') {
-                            type_maille = targets['type_maille'];
-                        }
+            // Submit form
+            if (trigger_submit) {
+                $('#' + tokenFormId).submit();
+                if (cd_nom_list.length > 0) {
+                    // Change name of chosen cd_nom in bucket
+                    for (var i in cd_nom_list) {
+                        var form_getter = '#form_occtax_service_commune';
                         $.post(
-                            $(geomform_getter).attr('action')
-                            , { x: '', y: '', type_maille: type_maille, code: input_value[0] }
+                            $(form_getter).attr('action').replace('getCommune', 'getTaxon')
+                            , { cd_nom: cd_nom_list[i] }
                             , function (data) {
                                 if (data.status == 1) {
-                                    var format = new OpenLayers.Format.GeoJSON();
-                                    var geom = format.read(data.result.geojson)[0].geometry;
-                                    var theLayer = OccTax.layers['queryLayer'];
-                                    theLayer.destroyFeatures();
-                                    geom.transform('EPSG:4326', OccTax.map.projection);
-                                    theLayer.addFeatures([new OpenLayers.Feature.Vector(geom)]);
+                                    deleteTaxonToSearch(data.result.cd_nom);
+                                    addTaxonToSearch(data.result.cd_nom, data.result.nom_valide);
                                 }
                             }, 'json'
                         );
-                        geometry_already_added = true;
-                    }
-
-                };
-
-                // Submit form
-                if (trigger_submit) {
-                    $('#' + tokenFormId).submit();
-                    if (cd_nom_list.length > 0) {
-                        // Change name of chosen cd_nom in bucket
-                        for (var i in cd_nom_list) {
-                            var form_getter = '#form_occtax_service_commune';
-                            $.post(
-                                $(form_getter).attr('action').replace('getCommune', 'getTaxon')
-                                , { cd_nom: cd_nom_list[i] }
-                                , function (data) {
-                                    if (data.status == 1) {
-                                        deleteTaxonToSearch(data.result.cd_nom);
-                                        addTaxonToSearch(data.result.cd_nom, data.result.nom_valide);
-                                    }
-                                }, 'json'
-                            );
-                        }
                     }
                 }
             }
         }
 
+        /**
+         * Read the search form input values and create the corresponding query string.
+         * For example:
+         * ?cd_nom%5B0%5D=79700&cd_nom%5B1%5D=447404&observateur=durand&date_min=2000-05-01&date_max=2019-01-01
+         *
+         * It also dynamically modifies the browser URL
+         * and returns the built query string
+         *
+         * @return {string} The generated query string
+         */
         function updateUrlFromFormInput() {
-            var queryString = window.location.search;
             var tokenFormId = $('#div_form_occtax_search_token form').attr('id');
             var white_params = getWhiteParams('form');
             var form_params = '';
@@ -1956,13 +1973,503 @@ OccTax.events.on({
 
             }
             if (form_params != '') {
-                window.history.pushState('', '', '?bbox=' + lizMap.map.getExtent().toBBOX() + '&' + form_params.trim('&'));
+                var to_push = '?';
+                to_push +=  form_params.trim('&');
+                window.history.pushState('', '', to_push);
             }
+
+            // Return the built query string
+            var query_string = window.location.search;
+
+            return query_string;
         }
+
+
+        // MANAGE THE HISTORY OF URLS
+
+        /**
+         * Return a valid UUID.
+         *
+         * @return {string} The generated UUID.
+         */
+        function uuidv4() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        /**
+         * Remove bbox from query string.
+         *
+         * Useful when comparing query strings.
+         *
+         * @return {string} The cleaned query string.
+         */
+        function cleanQueryString(query_string) {
+            return query_string.split('bbox')[0].replace(/&+$/gm, '');
+        }
+
+        /**
+         * Get the stored search items from localStorage and returns an array of items.
+         *
+         * @return {array} The array of search history items.
+         */
+        function getSearchHistory() {
+
+            // Get current storage (json representation of an array of objects)
+            var current_storage_json = localStorage.getItem('naturaliz_search_history');
+            var current_storage = [];
+            if (current_storage_json) {
+                current_storage = JSON.parse(current_storage_json);
+            }
+
+            return current_storage;
+        }
+
+        /**
+         * Transform the stored search items to keep only a given maximum of stared and unstared items.
+         *
+         * It also save the transformed array and override the previous one.
+         *
+         * @param {integer} max_stared - The maximum number of stared items to keep.
+         * @param {integer} max_unstared - The maximum number of unstared items to keep.
+         * @return {array} The array of search history items
+         */
+        function cleanSearchHistory(max_stared, max_unstared) {
+            var current_storage = getSearchHistory();
+
+            // Filter the item based on the stared status
+            var filtered_storage = [];
+            var stared = 0;
+            var unstared = 0;
+            for (var s in current_storage) {
+                // Get the item
+                var item = current_storage[s];
+
+                // increment the number of items
+                if (item.stared) {
+                    stared ++;
+                } else {
+                    unstared ++;
+                }
+
+                // Add to the filtered array only if under max items required
+                if (item.stared && stared <= max_stared) {
+                    filtered_storage.push(item);
+                }
+                if (!item.stared && unstared <= max_unstared) {
+                    filtered_storage.push(item);
+                }
+            }
+
+            // Refresh the select
+            refreshHistorySelector(null);
+
+            localStorage.setItem('naturaliz_search_history', JSON.stringify(filtered_storage));
+
+            return filtered_storage;
+        }
+
+        /**
+         * Find a search history item by query string.
+         *
+         * @param {string} query_string - The query string to search
+         * @return {array} The found search index and history item.
+         */
+         function findSearchItemByQueryString(query_string) {
+            var current_storage = getSearchHistory();
+            var item = null;
+            for (var i in current_storage) {
+                let stored_query_string = cleanQueryString(current_storage[i].value);
+                if(stored_query_string == query_string) {
+                    item = [i, current_storage[i]];
+                    break;
+                }
+            }
+
+            return item;
+        }
+
+
+        /**
+         * Get a search item by its uid
+         *
+         * @param {string} uid - The UUID of the item
+         * @return {object} The found search item.
+         */
+         function findSearchItemByUid(uid) {
+            var current_storage = getSearchHistory();
+            var found_item = null;
+
+            // Rename current item in naturaliz_search_history
+            for (var i in current_storage) {
+                if(current_storage[i].uid == uid) {
+                    found_item = current_storage[i];
+                    break;
+                }
+            }
+
+            return found_item;
+         }
+
+        /**
+         * Store the current search item in the local storage.
+         *
+         * The item label is auto-generated. The stared status is set to false.
+         *
+         * @return {object} The stored search item.
+         */
+        function storeCurrentSearch() {
+            var query_string = window.location.search;
+            if (!query_string) {
+                return false;
+            }
+            // Remove bbox
+            query_string = cleanQueryString(query_string);
+
+            // Get all the stored items
+            var current_storage = getSearchHistory();
+
+            // Check if this query_string does not already exists
+            var check_item = findSearchItemByQueryString(query_string);
+            if (check_item) {
+                // Get index and item content
+                let existing_index = check_item[0];
+                var existing_item = check_item[1];
+
+                // Move item at the top
+                current_storage.sort((x,y) => x['uid'] === existing_item.uid ? -1 : y['uid'] === existing_item.uid);
+
+                // Replace label if name is not automatic
+                if (existing_item.label.substring(0, 9) == "Recherche") {
+                    const current_date = new Date().toLocaleString('fr-FR').replace(', ', ' à ');
+                    current_storage[0]['label'] = 'Recherche du ' + current_date;
+                }
+
+                // Save it back to the storage
+                localStorage.setItem('naturaliz_search_history', JSON.stringify(current_storage));
+
+                refreshHistorySelector(existing_item.uid);
+                return false;
+            }
+
+            // Initialize a new item with a default label
+            const current_date = new Date().toLocaleString('fr-FR').replace(', ', ' à ');
+            let query_description = $('#occtax_search_description_content').text().split('Résultat')[0].trim();
+            var item = {
+                'uid': uuidv4(),
+                'label': 'Recherche du ' + current_date,
+                'description': query_description,
+                'value': query_string,
+                'stared': false
+            };
+
+            // Prepend this new item at the beginning of the array of items
+            current_storage.unshift(item);
+
+            // Save it back to the storage
+            localStorage.setItem('naturaliz_search_history', JSON.stringify(current_storage));
+
+            // Keep only the 10 last items which are not stared
+            cleanSearchHistory(search_history_max_stared, search_history_max_unstared);
+
+            // Refresh the select
+            refreshHistorySelector(item.uid);
+
+            return item;
+        }
+
+
+        /**
+         * Star or unstar the given search history item.
+         *
+         * @param {string} uid - The UUID of the item
+         * @return {object} The modified search item.
+         */
+        function starSearchItem(uid) {
+            var current_storage = getSearchHistory();
+            var new_item = null;
+            var star_it = $('#occtax-search-history-select option[value="'+uid+'"]').hasClass('unstared');
+
+            // Rename current item in naturaliz_search_history
+            for (var i in current_storage) {
+                if(current_storage[i].uid == uid) {
+                    // check actual star status
+                    new_item = {
+                        'uid': current_storage[i].uid,
+                        'label': current_storage[i].label,
+                        'description': current_storage[i].description,
+                        'value': current_storage[i].value,
+                        'stared': star_it
+                    };
+
+                    current_storage.splice(i, 1, new_item);
+                    break;
+                }
+            }
+            localStorage.setItem('naturaliz_search_history', JSON.stringify(current_storage));
+
+            // Refresh the select
+            refreshHistorySelector(uid);
+
+            return new_item;
+        }
+
+
+        /**
+         * Rename the given search history item.
+         *
+         * @param {string} uid - The UUID of the item
+         * @param {string} label - The label to give
+         * @return {object} The modified search item.
+         */
+         function renameSearchItem(uid, label) {
+            var current_storage = getSearchHistory();
+            var new_item = null;
+
+            // Rename current item in naturaliz_search_history
+            for (var i in current_storage) {
+                if(current_storage[i].uid == uid) {
+                    // check actual star status
+                    new_item = {
+                        'uid': current_storage[i].uid,
+                        'label': current_storage[i].label,
+                        'description': current_storage[i].description,
+                        'value': current_storage[i].value,
+                        'stared': current_storage[i].stared
+                    };
+                    new_item.label = label.trim();
+
+                    current_storage.splice(i, 1, new_item);
+                    break;
+                }
+            }
+            localStorage.setItem('naturaliz_search_history', JSON.stringify(current_storage));
+
+            // Refresh the select
+            refreshHistorySelector(uid);
+
+            return new_item;
+        }
+
+        /**
+         * Delete a search history item by UUID.
+         *
+         * @param {string} uid - The UUID of the item
+         * @return {object} The deleted search item.
+         */
+        function deleteSearchItem(uid) {
+            var current_storage = getSearchHistory();
+            var deleted = null;
+
+            for (var i in current_storage) {
+                if(current_storage[i].uid == uid) {
+                    var confirm_msg = 'Êtes-vous sûr de vouloir supprimer cette recherche ?'
+                    var confirm_action = confirm(confirm_msg);
+                    if (!confirm_action) {
+                        return false;
+                    }
+                    deleted = current_storage.splice(i, 1);
+                    break;
+                }
+            }
+            localStorage.setItem('naturaliz_search_history', JSON.stringify(current_storage));
+
+            // Refresh the select
+            if (deleted) {
+                refreshHistorySelector(null);
+            }
+
+            return deleted;
+        }
+
+        /**
+         * Lauch the search for a given stored item.
+         *
+         * @param {string} uid - The UUID of the item
+         * @return {string} The query string which has been launched
+         */
+        function runSearchItem(uid) {
+            var current_storage = getSearchHistory();
+            var query_string = null;
+
+            for (var i in current_storage) {
+                if(current_storage[i].uid == uid) {
+                    var query_string = cleanQueryString(current_storage[i].value);
+
+                    // Reinit browser query string
+                    window.history.pushState('', '', '?bbox=' + lizMap.map.getExtent().toBBOX());
+
+                    // Réinit form
+                    reinitSearchForm();
+
+                    // Run search
+                    updateFormInputsFromUrl(query_string);
+                    break;
+                }
+            }
+
+            return query_string;
+        }
+
+        /**
+         * Empty the search history.
+         *
+         * You can choose which one to empty with the stared_status parameter.
+         *
+         * @param {string} stared_status - The status of the items to delete: all, stared, unstared.
+         * @return {boolean} - True on success, false if canceled.
+         */
+        function emptySearchHistory(stared_status) {
+            var confirm_msg = 'Êtes-vous sûr de vouloir vider votre historique de recherches ?'
+            var confirm_action = confirm(confirm_msg);
+            if (!confirm_action) {
+                return false;
+            }
+
+            if (stared_status == 'unstared') {
+                cleanSearchHistory(20, 0);
+            } else if (stared_status == 'stared') {
+                cleanSearchHistory(0, 10);
+            } else {
+                cleanSearchHistory(0, 0);
+            }
+
+                // Refresh the select
+            refreshHistorySelector(null);
+            return true;
+        }
+
+        /**
+         * Refresh the html select occtax-search-history-select with the current search history items
+         *
+         * @param {string} uid_to_select - UUID to select in the list (optional)
+         */
+        function refreshHistorySelector(uid_to_select) {
+            var html = '';
+            var count_unstared = 0;
+            var count_stared = 0;
+            // Add options from the items
+            var current_storage = getSearchHistory();
+            for (var i in current_storage) {
+                var item = current_storage[i];
+                var is_stared = (item.stared ? 'stared' : 'unstared');
+                html += ' <option class="'+is_stared+'"';
+                html += ' value="' + item.uid + '"';
+                html += ' title="' + item.label + '\n' + item.description + '"';
+                html += '>';
+                var icon = (item.stared ? '⭐' : '🧭');
+                html += icon + '&nbsp;' + item.label;
+                html += '</option>';
+                if (item.stared) {
+                    count_stared += 1;
+                } else {
+                    count_unstared += 1;
+                }
+            }
+
+            // Update HTML
+            $('#occtax-search-history-select').html(html);
+            if (uid_to_select) {
+                $('#occtax-search-history-select').val(uid_to_select);
+            }
+
+            // Update description
+            var description = [];
+            if (count_stared > 0) {
+                description.push('⭐ ' + count_stared + '/' + search_history_max_stared);
+            }
+            if (count_unstared > 0) {
+                description.push('🧭 ' + count_unstared + '/' + search_history_max_unstared);
+            }
+            var history_title = description.join('&nbsp;&nbsp;&nbsp;')
+            $('#occtax-search-history-title-counter').html(history_title);
+
+        }
+
+
+        /**
+         * Change some UI elements based on the selected option
+         *
+         * @param {string} uid - The UUID of the item
+         */
+         function adaptHistoryUiForSelectedOption(uid) {
+            // Get item
+            var item = findSearchItemByUid(uid);
+            if (!item) {
+                return false;
+            }
+
+            // Change the star button
+            var star_button_icon = (item.stared) ? 'icon-star-empty': 'icon-star';
+            var star_button_label = (item.stared) ? 'Retirer des favoris': 'Ajouter aux favoris';
+            $('#occtax-search-history-star i').attr('class', star_button_icon);
+            $('#occtax-search-history-star').attr('title', star_button_label);
+         }
+
+        // Adapt UI when an option is selected
+        $('#occtax-search-history-select').change(function() {
+            var uid = $(this).val();
+            if (uid) {
+                adaptHistoryUiForSelectedOption(uid);
+            }
+        });
+
+        // Trigger the search when the select option is selected
+        $('#occtax-search-history-play').click(function() {
+            var uid = $('#occtax-search-history-select').val();
+            if (uid) {
+                runSearchItem(uid);
+            }
+        });
+
+        // Trigger the star/unstar
+        $('#occtax-search-history-star').click(function() {
+            var uid = $('#occtax-search-history-select').val();
+            if (uid) {
+                starSearchItem(uid);
+                adaptHistoryUiForSelectedOption(uid);
+            }
+        });
+
+        // Trigger the rename
+        $('#occtax-search-history-rename').click(function() {
+            var uid = $('#occtax-search-history-select').val();
+            if (uid) {
+                var prompt_msg = 'Choisissez le texte pour renommer cette recherche';
+                var label = prompt(prompt_msg);
+                if (!label || label.trim() == '') {
+                    return false;
+                }
+                renameSearchItem(uid, label.trim());
+            }
+        });
+
+        // Trigger the deletion
+        $('#occtax-search-history-delete').click(function() {
+            var uid = $('#occtax-search-history-select').val();
+            if (uid) {
+                deleteSearchItem(uid);
+            }
+
+        });
+
+        // Tests
+        OccTax.getSearchHistory = function () {return getSearchHistory()};
+        OccTax.cleanSearchHistory = function (max_stared, max_unstared) {return cleanSearchHistory(max_stared, max_unstared)};
+        OccTax.storeCurrentSearch = function () {return storeCurrentSearch()};
+        OccTax.starSearchItem = function (uid) {return starSearchItem(uid)};
+        OccTax.deleteSearchItem = function (uid) {return deleteSearchItem(uid)};
+        OccTax.runSearchItem = function (uid) {return runSearchItem(uid)};
+        OccTax.emptySearchHistory = function (stared_status) {return emptySearchHistory(stared_status)};
+        OccTax.refreshHistorySelector = function (uid) {return refreshHistorySelector(uid)};
+
 
         //console.log('OccTax uicreated');
         $('#occtax-message').remove();
         $('#occtax-highlight-message').remove();
+
         // Hide empty groups
         $('.jforms-table-group').each(function () {
             var tbContent = $(this).html().replace(/(\r\n|\n|\r)/gm, "");
@@ -2095,7 +2602,7 @@ OccTax.events.on({
             }
 
             if (dataValue == 'deleteGeom') {
-                clearSpatialSearch();
+                clearSpatialSearch(true);
                 return false;
             }
             if (dataValue == 'importPolygon') {
@@ -2421,11 +2928,22 @@ OccTax.events.on({
                     blocme = false;
                     if (tData.status == 1) {
                         // Add parameters in URL
-                        updateUrlFromFormInput();
+                        var query_string = updateUrlFromFormInput();
+
+                        // Add bbox in the URL (not done before to not store it in the search history)
+                        if (query_string) {
+                            var bbox_param = 'bbox=' + lizMap.map.getExtent().toBBOX();
+                            window.history.pushState('', '', query_string.trim('&') + '&' + bbox_param);
+                        }
 
                         // Display description div
                         var dHtml = tData.description;
                         $('#occtax_search_description_content').html(dHtml);
+
+                        // Store the search in the history
+                        // Done after the occtax_search_description_content change
+                        // because this text description is stored in the history item
+                        storeCurrentSearch();
 
                         // Show or hide depending on dock height
                         var dockHeight = $('#dock').height();
@@ -2511,6 +3029,7 @@ OccTax.events.on({
 
                         // Click on the previous selected legend button
                         $('#' + selected_legend_button_id).click();
+
                     } else {
                         $('#occtax-highlight-message').remove();
                         $('#occtax-message').remove();
@@ -2546,15 +3065,14 @@ OccTax.events.on({
         //$('#'+tokenFormId+'_main .jforms-table-group .control-group:nth-last-child(-n+2)').hide();
 
         // Réinitialisation du formulaire
-        // On supprime les géométries de recherche
-        // On masque les résultats
-        $('#' + tokenFormId + '_reinit').click(function () {
+        function reinitSearchForm() {
             // Reinit taxon
             var removeTaxonPanier = true;
             var removeFilters = true;
             clearTaxonFromSearch(removeTaxonPanier, removeFilters);
 
             // Reinit other fields
+            var tokenFormId = $('#div_form_occtax_search_token form').attr('id');
             $('#' + tokenFormId).trigger("reset");
             // sumoselect
             $('select.jforms-ctrl-listbox').each(function () {
@@ -2569,9 +3087,17 @@ OccTax.events.on({
 
             // Reinit date picker
             $('#' + tokenFormId + ' .ui-datepicker-reset').click();
+        }
+
+
+        // On supprime les géométries de recherche
+        // On masque les résultats
+        $('#' + tokenFormId + '_reinit').click(function () {
+            // Reinit form input values
+            reinitSearchForm();
 
             // Reinit spatial button
-            clearSpatialSearch();
+            clearSpatialSearch(true);
             OccTax.emptyDrawqueryLayer('queryLayer');
 
             // Reinit count
@@ -2709,6 +3235,7 @@ OccTax.events.on({
 
             // Enable left panel
             $('#occtax').removeClass('not_enabled');
+            $("#div_form_occtax_search_token form input[type=submit]").prop('disabled', false);
             $('#occtax-message').remove();
 
             // Toggle the legend depending on the clicked button
@@ -2897,8 +3424,8 @@ OccTax.events.on({
         lizMap.map.events.on({
             moveend: function (evt) {
                 // Refresh URL
-                var queryString = window.location.search;
-                var params = new URLSearchParams(queryString);
+                var query_string = window.location.search;
+                var params = new URLSearchParams(query_string);
                 var new_bbox = lizMap.map.getExtent().toBBOX();
                 params.set('bbox', new_bbox);
                 window.history.replaceState({}, '', `${location.pathname}?${params}`);
@@ -2910,8 +3437,10 @@ OccTax.events.on({
         });
 
         // Get URL parameters, set form inputs and submit search form
-        updateFormInputsFromUrl();
-
+        var query_string = window.location.search;
+        if (query_string && query_string != '') {
+            updateFormInputsFromUrl(query_string);
+        }
 
     }
 });

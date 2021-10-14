@@ -613,3 +613,27 @@ Message en haut de la carte*/
 #occtax-highlight-message div.occtax-highlight-message-container > div table.dataTable tbody td {
   padding: 3px;
 }
+
+
+
+/* Historique de recherche */
+#mapmenu .nav-list > li.history .icon {
+  background-position: -625px 0px;;
+}
+#mapmenu .nav-list > li.history.active .icon,
+#mapmenu .nav-list > li.history a:hover .icon {
+  background-position: -600px 0px;
+}
+#history h3 .icon {
+  background-position: -625px 0px;
+}
+#history div.menu-content {
+  font-size: 12px;
+}
+#occtax-search-history-select {
+  width: 100%;
+}
+#occtax-search-history-select option{
+  text-overflow: ellipsis;
+  overflow: hidden;
+}

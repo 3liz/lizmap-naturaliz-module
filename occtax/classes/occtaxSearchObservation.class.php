@@ -407,10 +407,12 @@ class occtaxSearchObservation extends occtaxSearch {
                 );
 
                 // Change the first column to add the panier button (star)
-                $this->tplFields['date_debut_buttons'] .= '
-            {if !empty($line->in_panier)}{assign $action="remove"}{else}{assign $action="add"}{/if}
-            <a class="occtax_validation_button datatable" href="#{$action}@{$line->identifiant_permanent}" title="{@occtax~validation.button.validation_basket.$action.help@}"><i class="icon-star{if empty($line->in_panier)}-empty{/if}"></i></a>
-                ';
+                if (array_key_exists('date_debut_buttons', $this->tplFields)) {
+                    $this->tplFields['date_debut_buttons'] .= '
+                        {if !empty($line->in_panier)}{assign $action="remove"}{else}{assign $action="add"}{/if}
+                        <a class="occtax_validation_button datatable" href="#{$action}@{$line->identifiant_permanent}" title="{@occtax~validation.button.validation_basket.$action.help@}"><i class="icon-star{if empty($line->in_panier)}-empty{/if}"></i></a>
+                    ';
+                }
             }
 
             // Allow validator to see the full name of observers
@@ -490,4 +492,3 @@ class occtaxSearchObservation extends occtaxSearch {
 
 
 }
-
