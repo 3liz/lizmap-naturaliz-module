@@ -177,7 +177,7 @@ class occtaxValidation {
                 AND von.ech_val = '3'
                 LIMIT 1
             ) AS validation_nationale
-            FROM occtax.observation AS o
+            FROM occtax.vm_observation AS o
             LEFT JOIN occtax.validation_observation AS vo
                 ON o.identifiant_permanent = vo.identifiant_permanent
                 AND vo.ech_val = '2'
@@ -272,7 +272,7 @@ class occtaxValidation {
         if (!empty($identifiant_permanent) && $this->isValidUuid($identifiant_permanent)) {
             $sql = " WITH panier AS (";
             $sql.= "    SELECT o.cle_obs, o.identifiant_permanent, $1::text";
-            $sql.= "    FROM occtax.observation AS o";
+            $sql.= "    FROM occtax.vm_observation AS o";
             $sql.= "    WHERE True";
             $sql.= "    AND o.identifiant_permanent = $7";
             // Chercher dans les demandes
@@ -284,7 +284,7 @@ class occtaxValidation {
             $sql = " WITH panier AS (";
             $sql.= "    SELECT vp.*, valo.typ_val, valo.comm_val";
             $sql.= "    FROM occtax.validation_panier AS vp";
-            $sql.= "    JOIN occtax.observation AS o USING (identifiant_permanent)";
+            $sql.= "    JOIN occtax.vm_observation AS o USING (identifiant_permanent)";
             $sql.= "    LEFT JOIN occtax.validation_observation AS valo USING (identifiant_permanent)";
             $sql.= "    WHERE True";
             $sql.= "    AND valo.ech_val = '2'";
