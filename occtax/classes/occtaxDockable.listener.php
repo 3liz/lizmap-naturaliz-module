@@ -249,10 +249,6 @@ class occtaxDockableListener extends jEventListener{
                 $repository = $event->getParam( 'repository' );
                 $lproj = lizmap::getProject( $repository . '~' .$project );
 
-                // UPGRADE: replace by  $lproj->getOption('print') when
-                // the module will be compatible only with Lizmap 3.5+
-                $configOptions = $lproj->getOptions();
-
                 // Search History dock
                 $tpl = new jTpl();
                 $assign = array();
