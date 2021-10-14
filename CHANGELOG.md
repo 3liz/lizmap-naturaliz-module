@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 2.10.3 - 2021-10-14
+
+* Ajout d'un nouveau panneau "Mes recherches" avec l'historique des recherches
+* Corrections diverses sur la recherche
+* Correction de l'affichage "gros trait bleu" sur les mailles au survol
+
 ## 2.10.2 - 2021-09-02
 
 * Export WFS - Correction du filtrage des données par demande
