@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 2.10.4 - 2021-10-28
+
+* Historique de recherche :
+  - support de la sélection multiple des items de recherche (utile par exemple pour supprimer plusieurs items en une fois)
+  - correction d'un bug sur le mauvais affichage des géométries de recherche
+
 ## 2.10.3 - 2021-10-14
 
 * Ajout d'un nouveau panneau "Mes recherches" avec l'historique des recherches

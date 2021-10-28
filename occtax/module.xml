@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module xmlns="http://jelix.org/ns/module/1.0">
     <info id="occtax3liz.com" name="occtax" createdate="2014-10-08">
-        <version date="2021-10-14">2.10.3</version>
+        <version date="2021-10-28">2.10.4</version>
         <label lang="en_US">occtax</label>
         <description lang="en_US" />
         <license URL="http://www.mozilla.org/MPL/">Mozilla Public License</license>
