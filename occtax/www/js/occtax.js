@@ -120,10 +120,14 @@ var OccTax = function () {
             var the_features = OccTax.getResultFeatures(type);
 
             // Add raw features
-            rLayer.addFeatures(the_features);
+            if (the_features) {
+                rLayer.addFeatures(the_features);
+                // Show
+                rLayer.setVisibility(true);
+            } else {
+                rLayer.setVisibility(false);
+            }
 
-            // Show
-            rLayer.setVisibility(true);
             //rLayer.refresh();
         },
 

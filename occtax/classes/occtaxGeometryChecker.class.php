@@ -1,7 +1,7 @@
 <?php
 /**
 * @package   lizmap
-* @subpackage mascarine
+* @subpackage occtax
 * @author    Michaël Douchin
 * @copyright 2014 3liz
 * @link      http://3liz.com
@@ -166,19 +166,8 @@ class occtaxGeometryChecker {
             $sql.= ' AND ST_Intersects( o.geom, m.geom )';
             $sql.= " AND ( od.diffusion ? 'g' OR od.diffusion ? '" . $this->type_maille . "' )";
         }
-        if($this->moduleName == 'mascarine'){
-            $sql = 'SELECT m.code_maille, m.nom_maille, ST_AsGeoJSON(ST_Transform( m.geom , 4326)) AS geojson ';
-            $sql.= ' FROM sig.'.$maille.' m';
-            if ($this->x) {
-                $sql.= ', (SELECT ST_Transform(ST_SetSRID(ST_MakePoint('.$this->x.', '.$this->y.'),4326), '. $this->srid .') as geom) as tgeo';
-                $sql.= ' WHERE ST_Within( tgeo.geom, m.geom )';
-            }
-            if ($this->code) {
-                $sql.= ' WHERE m.code_maille = ' . $cnx->quote($this->code);
-            }
-        }
 
-//jLog::log($sql);
+// jLog::log($sql, 'error');
         $result = $cnx->limitQuery( $sql, 0, 1 );
         $d = $result->fetch();
 

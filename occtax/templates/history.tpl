@@ -10,7 +10,7 @@
         <!-- <p id="occtax-search-history-description" style="max-width: 300px;"></p> -->
         <!-- Search history -->
         <div>
-            <select id="occtax-search-history-select" size="5">
+            <select id="occtax-search-history-select" size="10" multiple="multiple">
             </select>
         </div>
 

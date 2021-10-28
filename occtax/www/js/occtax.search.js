@@ -1878,13 +1878,21 @@ OccTax.events.on({
                         $(geomform_getter).attr('action')
                         , { x: '', y: '', type_maille: type_maille, code: input_value[0] }
                         , function (data) {
-                            if (data.status == 1) {
+                            if (data.status == 1 && data.result.geojson) {
                                 var format = new OpenLayers.Format.GeoJSON();
                                 var geom = format.read(data.result.geojson)[0].geometry;
                                 var theLayer = OccTax.layers['queryLayer'];
                                 theLayer.destroyFeatures();
                                 geom.transform('EPSG:4326', OccTax.map.projection);
-                                theLayer.addFeatures([new OpenLayers.Feature.Vector(geom)]);
+                                var highlight_feature = new OpenLayers.Feature.Vector(geom);
+                                if (highlight_feature) {
+                                    theLayer.addFeatures([highlight_feature]);
+                                    theLayer.setVisibility(true);
+                                } else {
+                                    console.log('Géometrie de recherche vide !');
+                                }
+                            } else {
+                                console.log('Bad geometry format returned');
                             }
                         }, 'json'
                     );
@@ -2150,7 +2158,7 @@ OccTax.events.on({
                 // Save it back to the storage
                 localStorage.setItem('naturaliz_search_history', JSON.stringify(current_storage));
 
-                refreshHistorySelector(existing_item.uid);
+                refreshHistorySelector([existing_item.uid]);
                 return false;
             }
 
@@ -2175,7 +2183,7 @@ OccTax.events.on({
             cleanSearchHistory(search_history_max_stared, search_history_max_unstared);
 
             // Refresh the select
-            refreshHistorySelector(item.uid);
+            refreshHistorySelector([item.uid]);
 
             return item;
         }
@@ -2184,36 +2192,41 @@ OccTax.events.on({
         /**
          * Star or unstar the given search history item.
          *
-         * @param {string} uid - The UUID of the item
-         * @return {object} The modified search item.
+         * @param {array} uids - An array of UUID to star/unstar
+         * @return {object} The modified storage
          */
-        function starSearchItem(uid) {
+        function starSearchItems(uids) {
             var current_storage = getSearchHistory();
-            var new_item = null;
-            var star_it = $('#occtax-search-history-select option[value="'+uid+'"]').hasClass('unstared');
+            for (var u in uids) {
+                var uid = uids[u];
+                var new_item = null;
+                var star_it = $('#occtax-search-history-select option[value="'+uid+'"]').hasClass('unstared');
 
-            // Rename current item in naturaliz_search_history
-            for (var i in current_storage) {
-                if(current_storage[i].uid == uid) {
-                    // check actual star status
-                    new_item = {
-                        'uid': current_storage[i].uid,
-                        'label': current_storage[i].label,
-                        'description': current_storage[i].description,
-                        'value': current_storage[i].value,
-                        'stared': star_it
-                    };
+                // Rename current item in naturaliz_search_history
+                for (var i in current_storage) {
+                    if(current_storage[i].uid == uid) {
+                        // check actual star status
+                        new_item = {
+                            'uid': current_storage[i].uid,
+                            'label': current_storage[i].label,
+                            'description': current_storage[i].description,
+                            'value': current_storage[i].value,
+                            'stared': star_it
+                        };
 
-                    current_storage.splice(i, 1, new_item);
-                    break;
+                        current_storage.splice(i, 1, new_item);
+                        break;
+                    }
                 }
             }
+
+            // Set the storage
             localStorage.setItem('naturaliz_search_history', JSON.stringify(current_storage));
 
             // Refresh the select
-            refreshHistorySelector(uid);
+            refreshHistorySelector(uids);
 
-            return new_item;
+            return current_storage;
         }
 
 
@@ -2221,16 +2234,23 @@ OccTax.events.on({
          * Rename the given search history item.
          *
          * @param {string} uid - The UUID of the item
-         * @param {string} label - The label to give
          * @return {object} The modified search item.
          */
-         function renameSearchItem(uid, label) {
+         function renameSearchItem(uid) {
             var current_storage = getSearchHistory();
             var new_item = null;
 
             // Rename current item in naturaliz_search_history
             for (var i in current_storage) {
                 if(current_storage[i].uid == uid) {
+                    // Get new label
+                    var prompt_msg = 'Choisissez le texte pour renommer cette recherche';
+                    var prompt_value = current_storage[i].label;
+                    var label = prompt(prompt_msg, prompt_value);
+                    if (!label || label.trim() == '') {
+                        return false;
+                    }
+
                     // check actual star status
                     new_item = {
                         'uid': current_storage[i].uid,
@@ -2248,7 +2268,7 @@ OccTax.events.on({
             localStorage.setItem('naturaliz_search_history', JSON.stringify(current_storage));
 
             // Refresh the select
-            refreshHistorySelector(uid);
+            refreshHistorySelector([uid]);
 
             return new_item;
         }
@@ -2256,32 +2276,40 @@ OccTax.events.on({
         /**
          * Delete a search history item by UUID.
          *
-         * @param {string} uid - The UUID of the item
-         * @return {object} The deleted search item.
+         * @param {array} uids - The array of UUID items to delete
+         * @return {object} The updated storage.
          */
-        function deleteSearchItem(uid) {
+        function deleteSearchItems(uids) {
             var current_storage = getSearchHistory();
-            var deleted = null;
+            var deleted = [];
 
-            for (var i in current_storage) {
-                if(current_storage[i].uid == uid) {
-                    var confirm_msg = 'Êtes-vous sûr de vouloir supprimer cette recherche ?'
-                    var confirm_action = confirm(confirm_msg);
-                    if (!confirm_action) {
-                        return false;
-                    }
-                    deleted = current_storage.splice(i, 1);
-                    break;
+            // Get confirmation only if there is more than 1 item
+            if (uids.length > 1) {
+                var confirm_msg = 'Êtes-vous sûr de vouloir supprimer ces recherches ?'
+                var confirm_action = confirm(confirm_msg);
+                if (!confirm_action) {
+                    return false;
                 }
             }
+
+            // Delete the passed items
+            for (var u in uids) {
+                var uid = uids[u];
+                for (var i in current_storage) {
+                    if(current_storage[i].uid == uid) {
+                        deleted.push(current_storage.splice(i, 1));
+                    }
+                }
+            }
+
             localStorage.setItem('naturaliz_search_history', JSON.stringify(current_storage));
 
             // Refresh the select
-            if (deleted) {
+            if (deleted.length > 0) {
                 refreshHistorySelector(null);
             }
 
-            return deleted;
+            return current_storage;
         }
 
         /**
@@ -2296,6 +2324,9 @@ OccTax.events.on({
 
             for (var i in current_storage) {
                 if(current_storage[i].uid == uid) {
+                    // Reset previous geometry and search fields
+                    // $('#' + tokenFormId).trigger("reset");
+
                     var query_string = cleanQueryString(current_storage[i].value);
 
                     // Reinit browser query string
@@ -2344,16 +2375,20 @@ OccTax.events.on({
         /**
          * Refresh the html select occtax-search-history-select with the current search history items
          *
-         * @param {string} uid_to_select - UUID to select in the list (optional)
+         * @param {array} uids_to_select - Array of UUID to select in the list (optional)
          */
-        function refreshHistorySelector(uid_to_select) {
+        function refreshHistorySelector(uids_to_select) {
             var html = '';
             var count_unstared = 0;
             var count_stared = 0;
             // Add options from the items
             var current_storage = getSearchHistory();
+            var first_uid = null;
             for (var i in current_storage) {
                 var item = current_storage[i];
+                if (!first_uid) {
+                    first_uid = item.uid;
+                }
                 var is_stared = (item.stared ? 'stared' : 'unstared');
                 html += ' <option class="'+is_stared+'"';
                 html += ' value="' + item.uid + '"';
@@ -2371,8 +2406,12 @@ OccTax.events.on({
 
             // Update HTML
             $('#occtax-search-history-select').html(html);
-            if (uid_to_select) {
-                $('#occtax-search-history-select').val(uid_to_select);
+            if (uids_to_select) {
+                $('#occtax-search-history-select').val(uids_to_select);
+            } else {
+                if (first_uid) {
+                    $('#occtax-search-history-select').val([first_uid]);
+                }
             }
 
             // Update description
@@ -2392,79 +2431,75 @@ OccTax.events.on({
         /**
          * Change some UI elements based on the selected option
          *
-         * @param {string} uid - The UUID of the item
+         * @param {array} uid - The array of UUID of the selected items
          */
-         function adaptHistoryUiForSelectedOption(uid) {
-            // Get item
-            var item = findSearchItemByUid(uid);
-            if (!item) {
-                return false;
+        function adaptHistoryUiForSelectedOption(uids) {
+            for (var u in uids) {
+                var uid = uids[u];
+
+                // Get item
+                var item = findSearchItemByUid(uid);
+                if (!item) {
+                    continue;
+                }
+
+                // Change the star button
+                // var star_button_icon = (item.stared) ? 'icon-star-empty': 'icon-star';
+                // var star_button_label = (item.stared) ? 'Retirer des favoris': 'Ajouter aux favoris';
+                // $('#occtax-search-history-star i').attr('class', star_button_icon);
+                // $('#occtax-search-history-star').attr('title', star_button_label);
             }
 
-            // Change the star button
-            var star_button_icon = (item.stared) ? 'icon-star-empty': 'icon-star';
-            var star_button_label = (item.stared) ? 'Retirer des favoris': 'Ajouter aux favoris';
-            $('#occtax-search-history-star i').attr('class', star_button_icon);
-            $('#occtax-search-history-star').attr('title', star_button_label);
-         }
+            // Deactivate some buttons based on the number of items selected
+            // if 0 or more than 1, we cannot trigger the search nor rename it
+            if (uids.length == 1) {
+                $('#occtax-search-history-play').removeAttr('disabled');
+                $('#occtax-search-history-rename').removeAttr('disabled');
+            } else {
+                $('#occtax-search-history-play').attr('disabled', 'disabled');
+                $('#occtax-search-history-rename').attr('disabled', 'disabled');
+            }
+        }
 
         // Adapt UI when an option is selected
         $('#occtax-search-history-select').change(function() {
-            var uid = $(this).val();
-            if (uid) {
-                adaptHistoryUiForSelectedOption(uid);
-            }
+            var uids = $(this).val();
+            adaptHistoryUiForSelectedOption(uids);
         });
 
         // Trigger the search when the select option is selected
         $('#occtax-search-history-play').click(function() {
-            var uid = $('#occtax-search-history-select').val();
-            if (uid) {
-                runSearchItem(uid);
+            var uids = $('#occtax-search-history-select').val();
+            if (uids.length == 1) {
+                runSearchItem(uids[0]);
             }
         });
 
         // Trigger the star/unstar
         $('#occtax-search-history-star').click(function() {
-            var uid = $('#occtax-search-history-select').val();
-            if (uid) {
-                starSearchItem(uid);
-                adaptHistoryUiForSelectedOption(uid);
+            var uids = $('#occtax-search-history-select').val();
+            if (uids.length > 0) {
+                starSearchItems(uids);
             }
+            adaptHistoryUiForSelectedOption(uids);
         });
 
         // Trigger the rename
         $('#occtax-search-history-rename').click(function() {
-            var uid = $('#occtax-search-history-select').val();
-            if (uid) {
-                var prompt_msg = 'Choisissez le texte pour renommer cette recherche';
-                var label = prompt(prompt_msg);
-                if (!label || label.trim() == '') {
-                    return false;
-                }
-                renameSearchItem(uid, label.trim());
+            var uids = $('#occtax-search-history-select').val();
+            if (uids.length == 1) {
+                renameSearchItem(uids[0]);
             }
         });
 
         // Trigger the deletion
         $('#occtax-search-history-delete').click(function() {
-            var uid = $('#occtax-search-history-select').val();
-            if (uid) {
-                deleteSearchItem(uid);
+            var uids = $('#occtax-search-history-select').val();
+            if (uids.length > 0) {
+                deleteSearchItems(uids);
             }
 
         });
-
-        // Tests
-        OccTax.getSearchHistory = function () {return getSearchHistory()};
-        OccTax.cleanSearchHistory = function (max_stared, max_unstared) {return cleanSearchHistory(max_stared, max_unstared)};
-        OccTax.storeCurrentSearch = function () {return storeCurrentSearch()};
-        OccTax.starSearchItem = function (uid) {return starSearchItem(uid)};
-        OccTax.deleteSearchItem = function (uid) {return deleteSearchItem(uid)};
-        OccTax.runSearchItem = function (uid) {return runSearchItem(uid)};
-        OccTax.emptySearchHistory = function (stared_status) {return emptySearchHistory(stared_status)};
-        OccTax.refreshHistorySelector = function (uid) {return refreshHistorySelector(uid)};
-
 
         //console.log('OccTax uicreated');
         $('#occtax-message').remove();
@@ -3441,6 +3476,8 @@ OccTax.events.on({
         if (query_string && query_string != '') {
             updateFormInputsFromUrl(query_string);
         }
+        // Fill the search history
+        refreshHistorySelector();
 
     }
 });

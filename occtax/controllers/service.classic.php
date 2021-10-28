@@ -383,6 +383,9 @@ class serviceCtrl extends jController {
         $x = $this->floatParam('x');
         $y = $this->floatParam('y');
         $type_maille = $this->param('type_maille');
+        if (is_array($type_maille) && count($type_maille) > 0) {
+            $type_maille = $type_maille[0];
+        }
         $code = trim($this->param('code'));
 
         jClasses::inc('occtax~occtaxGeometryChecker');
@@ -454,4 +457,3 @@ class serviceCtrl extends jController {
 
 
 }
-
