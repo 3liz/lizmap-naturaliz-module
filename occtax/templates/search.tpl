@@ -179,7 +179,7 @@ RESUME DE LA RECHERCHE ET DES RESULTATS
         <!-- zoom -->
         <span class="pull-right" id="occtax_result_button_bar" style="display:none;">
             <div class="btn-group">
-                <button id="occtax_results_forward" type="button" class="btn btn-mini"
+                <button id="occtax_results_zoom" type="button" class="btn btn-mini"
                     style="background: #E6E6E6; padding:2px;" title="{@occtax~search.result.zoom.title@}">
                     <i class="icon-search"></i>
                 </button>

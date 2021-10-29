@@ -130,7 +130,7 @@ OccTax.events.on({
             }
 
             /**
-             * Activation du bouton pour le controle de navigation
+             * Activation du bouton pour le contrôle de navigation
              */
             if (activeValue == 'queryPolygon' || activeValue == 'importPolygon')
                 $('#obs-spatial-query-modify').show();
@@ -1849,17 +1849,20 @@ OccTax.events.on({
                     $('li a[href="#recherche_taxon_attributs"]').click();
                 }
 
+                // Gestion des géométries de recherche précédentes
+                var theLayer = OccTax.layers['queryLayer'];
+                theLayer.destroyFeatures();
+                theLayer.setVisibility(true);
+
                 // Récupère la géométrie dessinée et l'affiche sur la carte
                 if (input_name == 'geom' && input_value && input_value[0] != '') {
                     var wkt = input_value[0].trim();
                     var wkt_format = new OpenLayers.Format.WKT();
                     var geom = wkt_format.read(wkt).geometry;
-                    var theLayer = OccTax.layers['queryLayer'];
-
                     geom.transform('EPSG:4326', OccTax.map.projection);
                     theLayer.addFeatures([new OpenLayers.Feature.Vector(geom)]);
+                    theLayer.setVisibility(true);
                 }
-
                 // Récupère la géométrie d'un objet spatial
                 var attributes_items = [
                     'code_commune', 'code_masse_eau',
