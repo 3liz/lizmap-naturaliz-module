@@ -265,7 +265,6 @@ class occtaxDockableListener extends jEventListener{
                 );
                 $event->add($dock);
 
-
                 // Basket dock
                 // Create search form
                 if (jAuth::isConnected() && jAcl2::check("validation.online.access")) {
@@ -311,8 +310,34 @@ class occtaxDockableListener extends jEventListener{
 
 
         function onmapBottomDockable ( $event ) {
+            $coord = jApp::coord();
+            if ($coord->moduleName == 'occtax') {
+                // Import tool
+                // Create import form
+                if (jAuth::isConnected()
+                    // && jAcl2::check("import.online.access")
+                ) {
+                    // Add import form and tools
+                    $form = jForms::create("occtax~import");
+                    $assign = array(
+                        'form' => $form,
+                    );
+                    $tpl = new jTpl();
+                    $tpl->assign($assign);
+                    $content = $tpl->fetch('import');
+
+                    // Create dock
+                    $dock = new lizmapMapDockItem(
+                        'import',
+                        jLocale::get("occtax~import.dock.title"),
+                        $content,
+                        40,
+                        null,
+                        jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/occtax.import.js'))
+                    );
+                    $event->add($dock);
+                }
+            }
         }
 
     }
-
-?>

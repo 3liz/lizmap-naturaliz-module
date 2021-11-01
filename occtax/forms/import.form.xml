@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form xmlns="http://jelix.org/ns/forms/1.1" allowAnyOrigin="true">
+
+    <input ref="jdd_id" required="true" type="integer">
+        <label locale="occtax~import.input.jdd_id"/>
+        <hint locale="occtax~import.input.jdd_id.help"/>
+        <help locale="occtax~import.input.jdd_id.help"/>
+    </input>
+
+    <upload ref="observation" required="true" maxsize="200000" mimetype="text/csv" accept=".csv, application/csv, text/comma-separated-values">
+        <label locale="occtax~import.input.observations"/>
+        <hint locale="occtax~import.input.observations.help"/>
+        <help locale="occtax~import.input.observations.help"/>
+    </upload>
+
+    <submit ref="check">
+        <label locale="occtax~import.input.check"/>
+        <hint locale="occtax~import.input.check.help"/>
+    </submit>
+
+    <submit ref="import">
+        <label locale="occtax~import.input.import"/>
+        <hint locale="occtax~import.input.import.help"/>
+    </submit>
+</form>

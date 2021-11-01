@@ -485,10 +485,10 @@ Tweak sumoselect*/
 .SumoSelect > .optWrapper > .options li label {
   white-space: break-spaces !important;
 }
-/* Ensure SumoSelect CSS is not overriden by Bootstrap CSS */
-select.SumoUnder[multiple], select.SumoUnder[size] {
-  height: 100% !important;
+select[multiple], select[size] {
+    height: 100%;
 }
+
 
 /*
 Fiche détail d'un taxon*/
@@ -653,4 +653,11 @@ Message en haut de la carte*/
 /* Métadonnées des JDD et cadres */
 #metadata-jdd-container, #metadata-cadre-container {
   font-size: 12px;
+}
+
+
+/* Module d'import des données */
+#import div.menu-content {
+  background-color: #F0F0F0;
+  padding:5px;
 }
