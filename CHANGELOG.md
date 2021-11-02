@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+## 2.10.6 - 2021-11-02
+
+* Historique de recherche:
+
+    - suppression de la géométrie précédente
+      lors de l'activation d'une nouvelle recherche
+    - enregistrement pérenne de l'historique pour les utilisateurs connectés
+
+* Correction d'un dysfonctionnement sur l'outil de zoom sur les observation
+
 ## 2.10.4 - 2021-10-28
 
 * Historique de recherche :
