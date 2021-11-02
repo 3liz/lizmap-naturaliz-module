@@ -29,5 +29,10 @@
             </button>
         </div>
 
+        <!-- Invisible form to get and send history items -->
+        <form style="display:none;" id="form_occtax_history_getter" method="post" action="{jurl 'occtax~history:getSearchHistory'}">
+            <input type="text" name="content" value=''></input>
+        </form>
+
     </div>
 </div>

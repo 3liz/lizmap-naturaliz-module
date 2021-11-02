@@ -624,6 +624,11 @@ Message en haut de la carte*/
 #mapmenu .nav-list > li.history a:hover .icon {
   background-position: -600px 0px;
 }
+
+#history.not_enabled {
+  pointer-events: none;
+  opacity: 0.4;
+}
 #history h3 .icon {
   background-position: -625px 0px;
 }

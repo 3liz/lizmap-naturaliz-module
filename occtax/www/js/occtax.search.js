@@ -1985,7 +1985,7 @@ OccTax.events.on({
             }
             if (form_params != '') {
                 var to_push = '?';
-                to_push +=  form_params.trim('&');
+                to_push += form_params.trim('&');
                 window.history.pushState('', '', to_push);
             }
 
@@ -2004,7 +2004,7 @@ OccTax.events.on({
          * @return {string} The generated UUID.
          */
         function uuidv4() {
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
                 var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
                 return v.toString(16);
             });
@@ -2022,20 +2022,71 @@ OccTax.events.on({
         }
 
         /**
-         * Get the stored search items from localStorage and returns an array of items.
+         * Get the stored search items from localStorage
+         * or from the backend cache for authenticated users
+         * and returns an array of items.
+         *
+         * @param {callback} aCallback The function calling this method.
+         */
+        function getSearchHistoryFromBackend(aCallback) {
+            if ($('#info-user-login').text() != '') {
+                // Get the history data from the server
+                // only for authenticated users
+                var form_id = $('#form_occtax_history_getter').attr('id');
+                var url = $('#' + form_id).attr('action');
+                $.get(
+                    url, {},
+                    function (data) {
+                        aCallback(data);
+                    }, 'json'
+                );
+            }
+        }
+
+
+        /**
+         * Get the stored search items from the local Storage
+         * and returns an array of items.
          *
          * @return {array} The array of search history items.
          */
-        function getSearchHistory() {
-
-            // Get current storage (json representation of an array of objects)
+        function getSearchHistoryFromLocalStorage() {
             var current_storage_json = localStorage.getItem('naturaliz_search_history');
+
             var current_storage = [];
             if (current_storage_json) {
                 current_storage = JSON.parse(current_storage_json);
             }
 
             return current_storage;
+        }
+
+        /**
+         * Set the stored search items to the browser localStorage (always)
+         * When the user is authenticated, also lazilly stores to the backend cache
+         *
+         * @param {array} storage - The object to store
+         * @param {boolean} send - If true, we should save to the backend
+         */
+        function saveSearchHistory(storage, send) {
+
+            // Save the history in the browser local storage for unauthenticated users
+            localStorage.setItem('naturaliz_search_history', JSON.stringify(storage));
+
+            if (send && $('#info-user-login').text() != '') {
+                // Send the history data to the server
+                // so that the backend can save it in the user cache
+                var form_id = $('#form_occtax_history_getter').attr('id');
+                var url = $('#' + form_id).attr('action').replace('getSearchHistory', 'saveSearchHistory');
+                $.post(
+                    url, { content: JSON.stringify(storage) },
+                    function (data) {
+                        if ('status' in data && data.status == 'error') {
+                            console.log('Une erreur est survenue pendant la sauvegarde des recherches enregistrées');
+                        }
+                    }, 'json'
+                );
+            }
         }
 
         /**
@@ -2048,7 +2099,7 @@ OccTax.events.on({
          * @return {array} The array of search history items
          */
         function cleanSearchHistory(max_stared, max_unstared) {
-            var current_storage = getSearchHistory();
+            var current_storage = getSearchHistoryFromLocalStorage();
 
             // Filter the item based on the stared status
             var filtered_storage = [];
@@ -2060,9 +2111,9 @@ OccTax.events.on({
 
                 // increment the number of items
                 if (item.stared) {
-                    stared ++;
+                    stared++;
                 } else {
-                    unstared ++;
+                    unstared++;
                 }
 
                 // Add to the filtered array only if under max items required
@@ -2074,10 +2125,7 @@ OccTax.events.on({
                 }
             }
 
-            // Refresh the select
-            refreshHistorySelector(null);
-
-            localStorage.setItem('naturaliz_search_history', JSON.stringify(filtered_storage));
+            saveSearchHistory(filtered_storage, true);
 
             return filtered_storage;
         }
@@ -2088,12 +2136,12 @@ OccTax.events.on({
          * @param {string} query_string - The query string to search
          * @return {array} The found search index and history item.
          */
-         function findSearchItemByQueryString(query_string) {
-            var current_storage = getSearchHistory();
+        function findSearchItemByQueryString(query_string) {
+            var current_storage = getSearchHistoryFromLocalStorage();
             var item = null;
             for (var i in current_storage) {
                 let stored_query_string = cleanQueryString(current_storage[i].value);
-                if(stored_query_string == query_string) {
+                if (stored_query_string == query_string) {
                     item = [i, current_storage[i]];
                     break;
                 }
@@ -2109,20 +2157,20 @@ OccTax.events.on({
          * @param {string} uid - The UUID of the item
          * @return {object} The found search item.
          */
-         function findSearchItemByUid(uid) {
-            var current_storage = getSearchHistory();
+        function findSearchItemByUid(uid) {
+            var current_storage = getSearchHistoryFromLocalStorage();
             var found_item = null;
 
             // Rename current item in naturaliz_search_history
             for (var i in current_storage) {
-                if(current_storage[i].uid == uid) {
+                if (current_storage[i].uid == uid) {
                     found_item = current_storage[i];
                     break;
                 }
             }
 
             return found_item;
-         }
+        }
 
         /**
          * Store the current search item in the local storage.
@@ -2140,28 +2188,39 @@ OccTax.events.on({
             query_string = cleanQueryString(query_string);
 
             // Get all the stored items
-            var current_storage = getSearchHistory();
+            var current_storage = getSearchHistoryFromLocalStorage();
+            if (!current_storage) {
+                return false;
+            }
 
-            // Check if this query_string does not already exists
+            // Check if this query_string already exists
             var check_item = findSearchItemByQueryString(query_string);
             if (check_item) {
                 // Get index and item content
                 let existing_index = check_item[0];
                 var existing_item = check_item[1];
+                var has_changed = false;
 
                 // Move item at the top
-                current_storage.sort((x,y) => x['uid'] === existing_item.uid ? -1 : y['uid'] === existing_item.uid);
+                if (existing_index > 0) {
+                    current_storage.sort((x, y) => x['uid'] === existing_item.uid ? -1 : y['uid'] === existing_item.uid);
+                    has_changed = true;
+                }
 
                 // Replace label if name is not automatic
-                if (existing_item.label.substring(0, 9) == "Recherche") {
+                if (existing_item.label.substring(0, 12) == "Recherche du") {
                     const current_date = new Date().toLocaleString('fr-FR').replace(', ', ' à ');
                     current_storage[0]['label'] = 'Recherche du ' + current_date;
+                    has_changed = true;
                 }
 
                 // Save it back to the storage
-                localStorage.setItem('naturaliz_search_history', JSON.stringify(current_storage));
+                if (has_changed) {
+                    saveSearchHistory(current_storage, true);
+                }
 
                 refreshHistorySelector([existing_item.uid]);
+
                 return false;
             }
 
@@ -2179,10 +2238,13 @@ OccTax.events.on({
             // Prepend this new item at the beginning of the array of items
             current_storage.unshift(item);
 
-            // Save it back to the storage
-            localStorage.setItem('naturaliz_search_history', JSON.stringify(current_storage));
+            // Save it back to the storage (but do not send it to the backend)
+            // the next cleanSearchHistory will do the sending
+            saveSearchHistory(current_storage, false);
 
             // Keep only the 10 last items which are not stared
+            // It also stores the history content to the localstorage
+            // and send it back to the backend if the user is authenticated
             cleanSearchHistory(search_history_max_stared, search_history_max_unstared);
 
             // Refresh the select
@@ -2199,15 +2261,15 @@ OccTax.events.on({
          * @return {object} The modified storage
          */
         function starSearchItems(uids) {
-            var current_storage = getSearchHistory();
+            var current_storage = getSearchHistoryFromLocalStorage();
             for (var u in uids) {
                 var uid = uids[u];
                 var new_item = null;
-                var star_it = $('#occtax-search-history-select option[value="'+uid+'"]').hasClass('unstared');
+                var star_it = $('#occtax-search-history-select option[value="' + uid + '"]').hasClass('unstared');
 
                 // Rename current item in naturaliz_search_history
                 for (var i in current_storage) {
-                    if(current_storage[i].uid == uid) {
+                    if (current_storage[i].uid == uid) {
                         // check actual star status
                         new_item = {
                             'uid': current_storage[i].uid,
@@ -2224,7 +2286,7 @@ OccTax.events.on({
             }
 
             // Set the storage
-            localStorage.setItem('naturaliz_search_history', JSON.stringify(current_storage));
+            saveSearchHistory(current_storage, true);
 
             // Refresh the select
             refreshHistorySelector(uids);
@@ -2239,13 +2301,13 @@ OccTax.events.on({
          * @param {string} uid - The UUID of the item
          * @return {object} The modified search item.
          */
-         function renameSearchItem(uid) {
-            var current_storage = getSearchHistory();
+        function renameSearchItem(uid) {
+            var current_storage = getSearchHistoryFromLocalStorage();
             var new_item = null;
 
             // Rename current item in naturaliz_search_history
             for (var i in current_storage) {
-                if(current_storage[i].uid == uid) {
+                if (current_storage[i].uid == uid) {
                     // Get new label
                     var prompt_msg = 'Choisissez le texte pour renommer cette recherche';
                     var prompt_value = current_storage[i].label;
@@ -2268,7 +2330,7 @@ OccTax.events.on({
                     break;
                 }
             }
-            localStorage.setItem('naturaliz_search_history', JSON.stringify(current_storage));
+            saveSearchHistory(current_storage, true);
 
             // Refresh the select
             refreshHistorySelector([uid]);
@@ -2283,7 +2345,7 @@ OccTax.events.on({
          * @return {object} The updated storage.
          */
         function deleteSearchItems(uids) {
-            var current_storage = getSearchHistory();
+            var current_storage = getSearchHistoryFromLocalStorage();
             var deleted = [];
 
             // Get confirmation only if there is more than 1 item
@@ -2299,13 +2361,13 @@ OccTax.events.on({
             for (var u in uids) {
                 var uid = uids[u];
                 for (var i in current_storage) {
-                    if(current_storage[i].uid == uid) {
+                    if (current_storage[i].uid == uid) {
                         deleted.push(current_storage.splice(i, 1));
                     }
                 }
             }
 
-            localStorage.setItem('naturaliz_search_history', JSON.stringify(current_storage));
+            saveSearchHistory(current_storage, true);
 
             // Refresh the select
             if (deleted.length > 0) {
@@ -2322,11 +2384,11 @@ OccTax.events.on({
          * @return {string} The query string which has been launched
          */
         function runSearchItem(uid) {
-            var current_storage = getSearchHistory();
+            var current_storage = getSearchHistoryFromLocalStorage();
             var query_string = null;
 
             for (var i in current_storage) {
-                if(current_storage[i].uid == uid) {
+                if (current_storage[i].uid == uid) {
                     // Reset previous geometry and search fields
                     // $('#' + tokenFormId).trigger("reset");
 
@@ -2370,7 +2432,7 @@ OccTax.events.on({
                 cleanSearchHistory(0, 0);
             }
 
-                // Refresh the select
+            // Refresh the select
             refreshHistorySelector(null);
             return true;
         }
@@ -2385,7 +2447,7 @@ OccTax.events.on({
             var count_unstared = 0;
             var count_stared = 0;
             // Add options from the items
-            var current_storage = getSearchHistory();
+            var current_storage = getSearchHistoryFromLocalStorage();
             var first_uid = null;
             for (var i in current_storage) {
                 var item = current_storage[i];
@@ -2393,7 +2455,7 @@ OccTax.events.on({
                     first_uid = item.uid;
                 }
                 var is_stared = (item.stared ? 'stared' : 'unstared');
-                html += ' <option class="'+is_stared+'"';
+                html += ' <option class="' + is_stared + '"';
                 html += ' value="' + item.uid + '"';
                 html += ' title="' + item.label + '\n' + item.description + '"';
                 html += '>';
@@ -2465,13 +2527,13 @@ OccTax.events.on({
         }
 
         // Adapt UI when an option is selected
-        $('#occtax-search-history-select').change(function() {
+        $('#occtax-search-history-select').change(function () {
             var uids = $(this).val();
             adaptHistoryUiForSelectedOption(uids);
         });
 
         // Trigger the search when the select option is selected
-        $('#occtax-search-history-play').click(function() {
+        $('#occtax-search-history-play').click(function () {
             var uids = $('#occtax-search-history-select').val();
             if (uids.length == 1) {
                 runSearchItem(uids[0]);
@@ -2479,7 +2541,7 @@ OccTax.events.on({
         });
 
         // Trigger the star/unstar
-        $('#occtax-search-history-star').click(function() {
+        $('#occtax-search-history-star').click(function () {
             var uids = $('#occtax-search-history-select').val();
             if (uids.length > 0) {
                 starSearchItems(uids);
@@ -2488,7 +2550,7 @@ OccTax.events.on({
         });
 
         // Trigger the rename
-        $('#occtax-search-history-rename').click(function() {
+        $('#occtax-search-history-rename').click(function () {
             var uids = $('#occtax-search-history-select').val();
             if (uids.length == 1) {
                 renameSearchItem(uids[0]);
@@ -2496,7 +2558,7 @@ OccTax.events.on({
         });
 
         // Trigger the deletion
-        $('#occtax-search-history-delete').click(function() {
+        $('#occtax-search-history-delete').click(function () {
             var uids = $('#occtax-search-history-select').val();
             if (uids.length > 0) {
                 deleteSearchItems(uids);
@@ -3479,8 +3541,34 @@ OccTax.events.on({
         if (query_string && query_string != '') {
             updateFormInputsFromUrl(query_string);
         }
-        // Fill the search history
-        refreshHistorySelector();
+
+        // Search history
+        // If the user is authenticated, we need to get the history
+        // from the backend and wait for the response
+        if ($('#info-user-login').text() != '') {
+            // First we block the interface
+            $('#history').addClass('not_enabled');
+            $('#history button').prop('disabled', true);
+
+            // Then we get the search history content from the backend
+            getSearchHistoryFromBackend(
+                function (history_storage) {
+
+                    // Override the localstorage content
+                    saveSearchHistory(history_storage, false);
+
+                    // Refresh the content and enable the UI
+                    refreshHistorySelector();
+                    $('#history').removeClass('not_enabled');
+                    $('#history button').prop('disabled', false);
+                }
+            );
+
+        } else {
+            // Refresh the content
+            refreshHistorySelector();
+        }
+
 
     }
 });
