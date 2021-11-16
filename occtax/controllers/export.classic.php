@@ -97,6 +97,8 @@ class exportCtrl extends jController {
         $cmd.= ' -output_directory ' . 'export_observation_' . date("Y-m-d_H-i-s");
         exec($cmd . " > " . $logfile . " &");
 
+        // jLog::log($cmd, 'error');
+
         // Redirect to display page
         $rep = $this->getResponse('redirect');
         $rep->action = 'occtax~export:wait';
@@ -295,4 +297,3 @@ class exportCtrl extends jController {
         return $data;
     }
 }
-

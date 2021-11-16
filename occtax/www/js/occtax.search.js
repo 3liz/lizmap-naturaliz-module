@@ -508,6 +508,28 @@ OccTax.events.on({
             return right;
         }
 
+        /**
+         * Adapt the sub dock position
+         *
+         */
+        function adaptSubDockPosition() {
+            if ($('#docks-wrapper').length) {
+                // LWC >= 3.4.0
+                $('#sub-dock')
+                    .css('bottom', '0px')
+                    .css('position', 'relative')
+                    .css('height', '100%')
+                    .css('min-width', '30%')
+                    ;
+            } else {
+                // Older versions
+                $('#sub-dock').css('bottom', '0px');
+                if (!lizMap.checkMobile()) {
+                    var leftPos = getDockRightPosition();
+                    $('#sub-dock').css('left', leftPos).css('width', leftPos);
+                }
+            }
+        }
 
         function displayTaxonDetail(cd_nom) {
             // Depending on the source, we must
@@ -523,22 +545,7 @@ OccTax.events.on({
 
                     // Depending on LWC version, sub-dock uses flex or not
                     $('#sub-dock').html(html);
-                    if ($('#docks-wrapper').length) {
-                        // LWC >= 3.4.0
-                        $('#sub-dock')
-                            .css('bottom', '0px')
-                            .css('position', 'relative')
-                            .css('height', '100%')
-                            .css('min-width', '30%')
-                            ;
-                    } else {
-                        // Older versions
-                        $('#sub-dock').css('bottom', '0px');
-                        if (!lizMap.checkMobile()) {
-                            var leftPos = getDockRightPosition();
-                            $('#sub-dock').css('left', leftPos).css('width', leftPos);
-                        }
-                    }
+                    adaptSubDockPosition();
 
                     // Hide lizmap close button (replaced further)
                     $('#hide-sub-dock').click(function () {
@@ -807,13 +814,7 @@ OccTax.events.on({
                     $('#div_form_occtax_search_token form').submit();
                     return false;
                 });
-                $('#' + tableId + ' a.getTaxonDetail').click(function () {
-                    var tr = $($(this).parents('tr')[0]);
-                    var d = $('#' + tableId + '').DataTable().row(tr).data();
-                    var cd_nom = tr.attr('id');
-                    displayTaxonDetail(cd_nom);
-                    return false;
-                });
+
                 // Replace taxon nomenclature key by values
                 $('#' + tableId + ' span.redlist_regionale').each(function () {
                     replaceKeyByLabelFromNomenclature($(this), 'menace_regionale');
@@ -1209,18 +1210,6 @@ OccTax.events.on({
 
                 // Add observateur tooltip
                 $('#' + tableId + ' span.identite_observateur').tooltip();
-                // Get taxon detail
-                $('#' + tableId + ' a.getTaxonDetail').click(function () {
-                    var tr = $($(this).parents('tr')[0]);
-                    var d = $('#' + tableId + '').DataTable().row(tr).data();
-                    if (d) {
-                        var classes = $(d.lien_nom_valide).attr('class');
-                        var cd_nom = classes.split(' ')[1].replace('cd_nom_', '');
-                        displayTaxonDetail(cd_nom);
-                        $('#occtax-highlight-message').remove();
-                    }
-                    return false;
-                });
 
                 // Get validity detail
                 $('#' + tableId + ' span.niv_val').click(function () {
@@ -1416,14 +1405,6 @@ OccTax.events.on({
                     $('#occtax_search_input').hide();
                     $('#occtax_search_result').hide();
                     $('#occtax_search_description').hide();
-
-                    // Taxon detail URL - Add event on click
-                    $('#occtax_search_observation_card a.getTaxonDetail').click(function () {
-                        var classes = $(this).attr('class');
-                        var cd_nom = classes.split(' ')[1].replace('cd_nom_', '');
-                        displayTaxonDetail(cd_nom);
-                        return false;
-                    });
 
                     if (!with_nav_buttons) {
                         $('#occtax_search_observation_card div.dock-content:first').hide();
@@ -1659,22 +1640,7 @@ OccTax.events.on({
                     $('#sub-dock').html(html).css('bottom', '0px');
                     $('#occtax-highlight-message').remove();
 
-                    if ($('#docks-wrapper').length) {
-                        // LWC >= 3.4.0
-                        $('#sub-dock')
-                            .css('bottom', '0px')
-                            .css('position', 'relative')
-                            .css('height', '100%')
-                            .css('min-width', '30%')
-                            ;
-                    } else {
-                        // Older versions
-                        $('#sub-dock').css('bottom', '0px');
-                        if (!lizMap.checkMobile()) {
-                            var leftPos = getDockRightPosition();
-                            $('#sub-dock').css('left', leftPos).css('width', leftPos);
-                        }
-                    }
+                    adaptSubDockPosition();
 
                     // Hide lizmap close button (replaced further)
                     $('#hide-sub-dock').hide();
@@ -1712,19 +1678,31 @@ OccTax.events.on({
 
         function refreshOcctaxDatatableSize(container) {
             var dtable = $(container).find('table.dataTable');
+            // Adjust columns
             dtable.DataTable().tables().columns.adjust();
-            //$('#bottom-dock').addClass('visible');
-            var h = $("#occtax").height()
+
+            // Get height of elements above the datatable container
+            var h = $("#occtax").height();
             h = h - $('#occtax h3.occtax_search').height() * 3;
             h = h - $("#occtax_search_description:visible").height();
             h = h - $("#occtax_results_tabs").height();
-            h = h - $("#occtax_results_observation_table_paginate:visible").height();
+
+            // Add pagination div height if needed
+            var pagination_div = container.replace('_div', '_paginate');
+            var pagination_height = 0;
+            if ($(pagination_div).height() > 0) {
+                pagination_height = $(pagination_div).height();
+            }
+            h = h - pagination_height;
+
+            // Add a safety height of 130
             h = h - 130;
-            //dtable.parent('div.dataTables_scrollBody').height(h);
+
+            // Apply the calculated height to databable scrollBody
             dtable.parent('div.dataTables_scrollBody').css('height', h + "px");
-            // Width
+
+            // Also adapt the width of the table
             w = dtable.parent('div.dataTables_scrollBody').width();
-            //dtable.parent('div.dataTables_scrollBody').width(w - 50);
             dtable.parent('div.dataTables_scrollBody').css('width', w - 50 + "px");
 
             dtable.DataTable().scrollY = h;
@@ -2566,7 +2544,50 @@ OccTax.events.on({
 
         });
 
-        //console.log('OccTax uicreated');
+
+        /** Get the JDD metadata and display it in the subdock panel
+         *
+         * @param integer md_type The metadata object type: jdd or cadre.
+         * @param integer md_id The metadata object identifier.
+         *
+         * @return null Displays the requested metadata in the subdock.
+         */
+        function showMetadata(md_type, md_id) {
+            // Get metadata
+            var tokenFormId = $('#div_form_occtax_search_token form').attr('id');
+            var url = $('#' + tokenFormId).attr('action').replace('initSearch', 'index');
+            url = url.replace('service', 'metadata');
+            var params = {
+                'type': md_type,
+                'id': md_id
+            };
+            $.get(
+                url,
+                params,
+                function (content) {
+                    var html = content;
+
+                    $('#sub-dock').html(html).css('bottom', '0px');
+                    $('#occtax-highlight-message').remove();
+                    adaptSubDockPosition();
+
+                    // Hide lizmap close button (replaced further)
+                    $('#hide-sub-dock').hide();
+                    // close windows
+                    $('#metadata-close').click(function () {
+                        $('#sub-dock').hide().html('');
+                    })
+                    $('#sub-dock').show();
+                }
+            );
+        }
+
+        OccTax.showMetadata = function (md_type, md_id) {
+            return showMetadata(md_type, md_id);
+        }
+
+
+        // Remove previous messages
         $('#occtax-message').remove();
         $('#occtax-highlight-message').remove();
 
@@ -3464,6 +3485,26 @@ OccTax.events.on({
             var removePanier = true;
             var removeFilters = false;
             clearTaxonFromSearch(removePanier, removeFilters);
+            return false;
+        });
+
+        // Show the taxon subpanel
+        $('#occtax').on('click', 'a.getTaxonDetail', function () {
+            var classes = $(this).attr('class');
+            var cd_nom = classes.split(' ')[1].replace('cd_nom_', '');
+            displayTaxonDetail(cd_nom);
+
+            return false;
+        });
+
+        // Show the taxon subpanel
+        $('#occtax').on('click', 'a.getMetadata', function () {
+            var classes = $(this).attr('class');
+            var get_type = classes.split(' ')[1];
+            var md_type = get_type.split('_')[0];
+            var md_code = get_type.split('_')[2];;
+            showMetadata(md_type, md_code);
+
             return false;
         });
 

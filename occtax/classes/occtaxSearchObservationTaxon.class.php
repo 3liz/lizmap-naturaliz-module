@@ -31,7 +31,7 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
 
     protected $tplFields = array(
 
-        'nom_valide' => '{if !(empty($line->url))}<a class="getTaxonDetail" href="#" title="{@taxon~search.output.inpn.title@}">{$line->lb_nom_valide}</a>{else}{$line->lb_nom_valide}{/if}&nbsp;<a class="filterByTaxon" href="#" title="{@occtax~search.output.filter.taxon.title@}"><i class="icon-filter"></i></a>
+        'nom_valide' => '{if !(empty($line->url))}<a class="getTaxonDetail cd_nom_{$line->cd_ref}" href="#" title="{@taxon~search.output.inpn.title@}">{$line->lb_nom_valide}</a>{else}{$line->lb_nom_valide}{/if}&nbsp;<a class="filterByTaxon" href="#" title="{@occtax~search.output.filter.taxon.title@}"><i class="icon-filter"></i></a>
 
         ',
 
@@ -136,4 +136,3 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
     }
 
 }
-

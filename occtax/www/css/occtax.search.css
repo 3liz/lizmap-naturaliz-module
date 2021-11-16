@@ -479,10 +479,10 @@ Tweak sumoselect*/
 .SumoSelect > .optWrapper > .options li label {
   white-space: break-spaces !important;
 }
-select[multiple], select[size] {
-    height: 100%;
+/* Ensure SumoSelect CSS is not overriden by Bootstrap CSS */
+select.SumoUnder[multiple], select.SumoUnder[size] {
+  height: 100% !important;
 }
-
 
 /*
 Fiche détail d'un taxon*/
@@ -641,4 +641,10 @@ Message en haut de la carte*/
 #occtax-search-history-select option{
   text-overflow: ellipsis;
   overflow: hidden;
+}
+
+
+/* Métadonnées des JDD et cadres */
+#metadata-jdd-container, #metadata-cadre-container {
+  font-size: 12px;
 }

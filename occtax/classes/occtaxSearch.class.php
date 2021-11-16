@@ -158,7 +158,15 @@ class occtaxSearch {
 
 
     /**
-     * Get search description
+     * Get search description. It displays the filters used in the search:
+     * Field1: value(s)
+     * Field2: value(s)
+     *
+     * and optionally the HTML legend to show in the map.
+     *
+     * @param string $format Format à exporter: html ou text
+     * @param boolean $drawLegend If the legend must be drawn. Only active for the html format.
+     * @return string The computed description
     */
     public function getSearchDescription($format='html', $drawLegend=true){
         $tpl = new jTpl();
@@ -197,51 +205,62 @@ class occtaxSearch {
 
         if($format=='html' and $drawLegend){
             // legend
-            $legende = '';
+            $legend = '';
             if($drawLegend) {
-                $tpl_legende = new jTpl();
-                $legend_classes = $this->drawLegend();
-                $tpl_legende->assign('legend_classes', $legend_classes );
-
-                // other legends
-                // menaces
-                $dao_menace = jDao::get('taxon~t_nomenclature', 'naturaliz_virtual_profile');
-                $menaces = $dao_menace->findByChamp('menace');
-                $menace_legend_classes = array();
-                foreach ($menaces as $menace) {
-                    $menace_legend_classes[$menace->code] = $menace->valeur;
-                }
-                $menace_legend_classes = array_reverse($menace_legend_classes);
-                $tpl_legende->assign('menace_legend_classes', $menace_legend_classes);
-
-                // date
-                $annee = (integer) date("Y");
-                $annee_dizaine = round($annee, -1);
-                $annee_moins_10 = $annee_dizaine - 10;
-                $tpl_legende->assign('annee', $annee);
-                $tpl_legende->assign('annee_dizaine', $annee_dizaine);
-                $tpl_legende->assign('annee_moins_10', $annee_moins_10);
-
-                $legende = $tpl_legende->fetch('occtax~legende');
+                $legend = $this->drawLegend();
             }
-            $tpl->assign('legende', $legende);
-
+            $tpl->assign('legende', $legend);
             $description = $tpl->fetch('occtax~searchDescription');
         }
         else{
             $description = $tpl->fetch('occtax~searchDescription_text');
         }
+
         return $description;
     }
 
+    /**
+     * Compute the HTML legend to add to the map
+     * based on the classes set in the configuration.
+     * It also add legends for menace, date, etc.
+     *
+     * @return string The legend in HTML format
+     */
     private function drawLegend(){
-        // Add legend classes
+        $legend = '';
+
+        // Get legend classes from the INI configuration file
         $this->setLegendClasses();
+
         $legend_classes = array();
         foreach($this->legend_classes as $class){
             $legend_classes[] = array_map( 'trim', explode(';', $class) );
         }
-        return $legend_classes;
+        $tpl_legende = new jTpl();
+        $tpl_legende->assign('legend_classes', $legend_classes );
+
+        // other legends
+        // menaces
+        $dao_menace = jDao::get('taxon~t_nomenclature', 'naturaliz_virtual_profile');
+        $menaces = $dao_menace->findByChamp('menace');
+        $menace_legend_classes = array();
+        foreach ($menaces as $menace) {
+            $menace_legend_classes[$menace->code] = $menace->valeur;
+        }
+        $menace_legend_classes = array_reverse($menace_legend_classes);
+        $tpl_legende->assign('menace_legend_classes', $menace_legend_classes);
+
+        // date
+        $annee = (integer) date("Y");
+        $annee_dizaine = round($annee, -1);
+        $annee_moins_10 = $annee_dizaine - 10;
+        $tpl_legende->assign('annee', $annee);
+        $tpl_legende->assign('annee_dizaine', $annee_dizaine);
+        $tpl_legende->assign('annee_moins_10', $annee_moins_10);
+
+        $legend = $tpl_legende->fetch('occtax~legende');
+
+        return $legend;
     }
 
     public function getReadme($format='html', $type='csv'){
@@ -276,7 +295,7 @@ class occtaxSearch {
                 if (!ctype_digit($jdd_id)) {
                     continue;
                 }
-                $jdd = $dao_jdd->get($jdd_id, 'naturaliz_virtual_profile');
+                $jdd = $dao_jdd->get($jdd_id);
                 if ($jdd) {
                     $content.= '  * ' . $jdd->jdd_libelle . ' ( ' . $jdd->jdd_description . " )\r\n";
                 }
@@ -322,7 +341,18 @@ class occtaxSearch {
         return $tpl_categories;
     }
 
-    private function getValueLabel( $k, $v ){
+    /**
+     * Get the label corresponding of a value (code).
+     * For example get 'Les Trois-Bassins' (nom_commune) instead of '97423' (code_commune)
+     *
+     * For some fields, an HTML representation can be given
+     *
+     * @param string $k The field name. Ex: code_commune.
+     * @param string $v The given value to fetch the label from. Ex: 97423.
+     * It can be an array of values.
+     * @return string The label corresponding to the given value. Ex: 'Les Trois-Bassins'.
+     */
+    private function getValueLabel($k, $v){
         $qf = $this->queryFilters;
 
         // Return value if $k not in queryFilters e.g: mailles
@@ -343,6 +373,7 @@ class occtaxSearch {
         }
         $label = '';
         if( is_array($v) ){
+            // There is more than one given value
             $sep = '';
             foreach( $v as $i ){
                 if(!empty($champ)){
@@ -352,7 +383,12 @@ class occtaxSearch {
                 }
                 if( $item ){
                     $col = (string)$qfl['column'];
-                    $label.= $sep . $item->$col;
+                    $html = (string)$qfl['html'];
+                    if (!empty($html)) {
+                        $label.= $sep . $this->renderHtmlFromTemplate($item, $html);
+                    } else {
+                        $label.= $sep . $item->$col;
+                    }
                     $sep = ', ';
                 }else{
                     $label.= $v;
@@ -366,13 +402,36 @@ class occtaxSearch {
             }
             if($item){
                 $col = (string)$qfl['column'];
-                $label = $item->$col;
+                $html = '';
+                if (array_key_exists('html', $qfl)) {
+                    $html = (string)$qfl['html'];
+                }
+                if (!empty($html)) {
+                    $label = $this->renderHtmlFromTemplate($item, $html);
+                } else {
+                    $label = $item->$col;
+                }
             }
             else
                 $label = $v;
         }
 
         return $label;
+    }
+
+    /** Render a given HTML template from a jDao response item.
+     *
+     * @param object $item Object containing the fields values from a jDao get.
+     * @param string $template The HTML template in Jelix format.
+     *
+     * @return string The computed HTML
+     */
+    private function renderHtmlFromTemplate($item, $template) {
+        $tpl = new jTpl();
+        $tpl->assign('item', $item);
+        $html = $tpl->fetchFromString($template, 'html' );
+
+        return $html;
     }
 
     /**
@@ -759,4 +818,3 @@ class occtaxSearch {
 
 
 }
-

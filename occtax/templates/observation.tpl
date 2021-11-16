@@ -144,9 +144,10 @@
                 {assign $a = 'menace_regionale'}
                 {if array_key_exists('menace' . '|' . $data[$a], $nomenclature) }
                 {assign $k = 'menace' . '|' . $data[$a]}
-                {$nomenclature[$k]}
+                <span class="redlist {$data[$a]}">{$nomenclature[$k]}</span>
                 {else}
                 {$data[$a]}
+                <span class="redlist {$data[$a]}">{$data[$a]}</span>
                 {/if}
             </td>
         </tr>
@@ -159,9 +160,10 @@
                 {assign $a = 'menace_nationale'}
                 {if array_key_exists('menace' . '|' . $data[$a], $nomenclature) }
                 {assign $k = 'menace' . '|' . $data[$a]}
-                {$nomenclature[$k]}
+                <span class="redlist {$data[$a]}">{$nomenclature[$k]}</span>
                 {else}
                 {$data[$a]}
+                <span class="redlist {$data[$a]}">{$data[$a]}</span>
                 {/if}
             </td>
         </tr>
@@ -174,9 +176,10 @@
                 {assign $a = 'menace_monde'}
                 {if array_key_exists('menace' . '|' . $data[$a], $nomenclature) }
                 {assign $k = 'menace' . '|' . $data[$a]}
-                {$nomenclature[$k]}
+                <span class="redlist {$data[$a]}">{$nomenclature[$k]}</span>
                 {else}
                 {$data[$a]}
+                <span class="redlist {$data[$a]}">{$data[$a]}</span>
                 {/if}
             </td>
         </tr>
@@ -189,9 +192,9 @@
                 {assign $a = 'protection'}
                 {if array_key_exists($a . '|' . $data[$a], $nomenclature) }
                 {assign $k = $a . '|' . $data[$a]}
-                {$nomenclature[$k]}
+                <span class="protectionlist {$data[$a]}">{$nomenclature[$k]}</span>
                 {else}
-                {$data[$a]}
+                <span class="protectionlist {$data[$a]}">{$data[$a]}</span>
                 {/if}
             </td>
         </tr>
@@ -607,20 +610,29 @@ Pas d'individu décrit
         <tr>
             <th>{@occtax~observation.output.jdd_code@}</th>
             <td>{$data['jdd_code']}</td>
+            {if array_key_exists('jdd_id', $data)}
+            <td><a href="#" class="getMetadata jdd_id_{$data['jdd_id']}">{$data['jdd_code']}</a></td>
+            {else}
+            <td>{$data['jdd_code']}</td>
+            {/if}
         </tr>
         {/if}
 
         {if array_key_exists('jdd_id', $data)}
         <tr>
             <th>{@occtax~observation.output.jdd_id@}</th>
-            <td>{$data['jdd_id']}</td>
+            <td><a href="#" class="getMetadata jdd_id_{$data['jdd_id']}">{$data['jdd_id']}</a></td>
         </tr>
         {/if}
 
         {if array_key_exists('jdd_metadonnee_dee_id', $data)}
         <tr>
             <th>{@occtax~observation.output.jdd_metadonnee_dee_id@}</th>
+            {if array_key_exists('jdd_id', $data)}
+            <td><a href="#" class="getMetadata jdd_id_{$data['jdd_id']}">{$data['jdd_metadonnee_dee_id']}</a></td>
+            {else}
             <td>{$data['jdd_metadonnee_dee_id']}</td>
+            {/if}
         </tr>
         {/if}
 
@@ -628,6 +640,17 @@ Pas d'individu décrit
         <tr>
             <th>{@occtax~observation.output.jdd_source_id@}</th>
             <td>{$data['jdd_source_id']}</td>
+        </tr>
+        {/if}
+
+        {if array_key_exists('jdd_cadre', $data)}
+        <tr>
+            <th>{@occtax~observation.output.jdd_cadre@}</th>
+            {if array_key_exists('jdd_id', $data)}
+            <td><a href="#" class="getMetadata cadre_id_{$data['jdd_cadre']}">{$data['jdd_cadre']}</a></td>
+            {else}
+            <td>{$data['jdd_metadonnee_dee_id']}</td>
+            {/if}
         </tr>
         {/if}
 

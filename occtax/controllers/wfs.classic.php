@@ -110,9 +110,12 @@ class wfsCtrl extends jController {
 
     // Get and normalize the passed parameters
     $pParams = jApp::coord()->request->params;
-    $lizmapCache = jClasses::getService('lizmap~lizmapCache');
-    $params = $lizmapCache->normalizeParams($pParams);
-
+    try {
+        $lizmapProxy = jClasses::getService('lizmap~lizmapProxy');
+        $params = $lizmapProxy->normalizeParams($pParams);
+    } catch(Exception $e) {
+        $params = \Lizmap\Request\Proxy::normalizeParams($pParams);
+    }
 
     // Build search based on parameters
     jClasses::inc('occtax~occtaxExportObservation');

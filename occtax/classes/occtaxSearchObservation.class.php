@@ -148,7 +148,8 @@ class occtaxSearchObservation extends occtaxSearch {
             'label'=> array(
                 'dao'=>'taxon~taxref',
                 'method'=>'get',
-                'column'=>'nom_valide'
+                'column'=>'nom_valide',
+                'html'=>'<a href="#" class="getTaxonDetail cd_nom_{$item->cd_nom}">{$item->nom_valide}</a>'
             )
         ),
 
@@ -213,7 +214,8 @@ class occtaxSearchObservation extends occtaxSearch {
             'label'=> array(
                 'dao'=>'occtax~jdd',
                 'method'=>'get',
-                'column'=>'jdd_code'
+                'column'=>'jdd_code',
+                'html'=>'<a href="#" class="getMetadata jdd_id_{$item->jdd_id}">{$item->jdd_libelle}</a>'
             )
         ),
 
@@ -224,7 +226,8 @@ class occtaxSearchObservation extends occtaxSearch {
             'label'=> array(
                 'dao'=>'occtax~nomenclature',
                 'method'=>'getValiditeNiveau',
-                'column'=>'valeur'
+                'column'=>'valeur',
+                'html'=>'<span class="niv_val n{$item->code}">{$item->valeur}</span>'
             )
         ),
 
@@ -291,7 +294,8 @@ class occtaxSearchObservation extends occtaxSearch {
                 'dao'=>'taxon~t_nomenclature',
                 'method'=>'getLabel',
                 'champ'=>'menace',
-                'column'=>'valeur'
+                'column'=>'valeur',
+                'html'=>'<span class="redlist {$item->code}">{$item->valeur}</span>'
             )
         ),
         'menace_nationale' => array (
@@ -302,7 +306,8 @@ class occtaxSearchObservation extends occtaxSearch {
                 'dao'=>'taxon~t_nomenclature',
                 'method'=>'getLabel',
                 'champ'=>'menace',
-                'column'=>'valeur'
+                'column'=>'valeur',
+                'html'=>'<span class="redlist {$item->code}">{$item->valeur}</span>',
             )
         ),
         'menace_monde' => array (
@@ -313,7 +318,8 @@ class occtaxSearchObservation extends occtaxSearch {
                 'dao'=>'taxon~t_nomenclature',
                 'method'=>'getLabel',
                 'champ'=>'menace',
-                'column'=>'valeur'
+                'column'=>'valeur',
+                'html'=>'<span class="redlist {$item->code}">{$item->valeur}</span>'
             )
         ),
 
@@ -325,7 +331,8 @@ class occtaxSearchObservation extends occtaxSearch {
                 'dao'=>'taxon~t_nomenclature',
                 'method'=>'getLabel',
                 'champ'=>'protection',
-                'column'=>'valeur'
+                'column'=>'valeur',
+                'html'=>'<span class="protectionlist {$item->code}">{$item->valeur}</span>'
             )
         ),
 
