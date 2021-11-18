@@ -158,15 +158,24 @@ Menaces
     <group ref="what">
         <label locale="occtax~search.group.what"/>
 
-        <listbox multiple="true" ref="jdd_id">
+        <!-- <listbox multiple="true" ref="jdd_id">
             <label locale="occtax~search.input.jdd_id"/>
-<!--
-            <emptyitem locale="occtax~search.input.emptyitem"/>
--->
             <datasource dao="occtax~jdd" profile="naturaliz_virtual_profile"
               method="getJddList" labelproperty="jdd_libelle"
               valueproperty="jdd_id"/>
             <hint locale="occtax~search.input.jdd_id.help"/>
+        </listbox> -->
+
+        <!-- JDD autocomplete -->
+        <input ref="jdd_autocomplete">
+            <label locale="occtax~search.input.jdd_id"/>
+            <hint locale="occtax~search.input.jdd_id.help"/>
+        </input>
+        <!-- <input ref="jdd_hidden">
+            <label locale="occtax~search.input.jdd_id"/>
+        </input> -->
+        <listbox ref="jdd_id" multiple="true" readonly="false" size="3">
+            <label locale="occtax~search.input.jdd_id"/>
         </listbox>
 
 <!--

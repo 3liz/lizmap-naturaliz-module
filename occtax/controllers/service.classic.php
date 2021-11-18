@@ -1,26 +1,29 @@
 <?php
-/**
-* @package   lizmap
-* @subpackage occtax
-* @author    Michaël Douchin
-* @copyright 2014 3liz
-* @link      http://3liz.com
-* @license    All rights reserved
-*/
 
-class serviceCtrl extends jController {
+/**
+ * @package   lizmap
+ * @subpackage occtax
+ * @author    Michaël Douchin
+ * @copyright 2014 3liz
+ * @link      http://3liz.com
+ * @license    All rights reserved
+ */
+
+class serviceCtrl extends jController
+{
 
     protected $srid = '4326';
 
     protected $mailles_a_utiliser = 'maille_02,maille_10';
 
     protected $geometryTypeTranslation = array(
-        'point'=>'point', 'linestring'=>'ligne',
-        'polygon'=>'polygone', 'nogeom'=> 'sans_geometrie',
-        'other'=>'autre'
+        'point' => 'point', 'linestring' => 'ligne',
+        'polygon' => 'polygone', 'nogeom' => 'sans_geometrie',
+        'other' => 'autre'
     );
 
-    function __construct( $request ){
+    function __construct($request)
+    {
 
         // Get SRID
         $localConfig = jApp::configPath('naturaliz.ini.php');
@@ -30,16 +33,16 @@ class serviceCtrl extends jController {
 
         // Mailles
         $mailles_a_utiliser = $ini->getValue('mailles_a_utiliser', 'naturaliz');
-        if( !$mailles_a_utiliser or empty(trim($mailles_a_utiliser)) ){
+        if (!$mailles_a_utiliser or empty(trim($mailles_a_utiliser))) {
             $mailles_a_utiliser = 'maille_02,maille_10';
         }
         $this->mailles_a_utiliser = array_map('trim', explode(',', $mailles_a_utiliser));
 
-        parent::__construct( $request );
-
+        parent::__construct($request);
     }
 
-    function isConnected() {
+    function isConnected()
+    {
         $rep = $this->getResponse('json');
         $return = array();
         $return['is_connected'] = jAuth::isConnected();
@@ -47,7 +50,8 @@ class serviceCtrl extends jController {
         return $rep;
     }
 
-    function initSearch() {
+    function initSearch()
+    {
 
         $rep = $this->getResponse('json');
 
@@ -56,28 +60,28 @@ class serviceCtrl extends jController {
 
         // Init form from request
         $cd_nom = $this->param('cd_nom');
-        if( is_array( $cd_nom ) and count( $cd_nom ) > 0 )
+        if (is_array($cd_nom) and count($cd_nom) > 0)
             $form->setData('cd_nom', $cd_nom);
         $form->initFromRequest();
 
         // Check form
         $fok = True;
         $fmsg = array();
-        if ( !$form->check() ) {
+        if (!$form->check()) {
             $fok = False;
-            $fmsg[] = jLocale::get( 'occtax~search.form.error.check' );
+            $fmsg[] = jLocale::get('occtax~search.form.error.check');
         }
 
         // Check the dates are OK
         $dmin = $form->getData('date_min');
         $dmax = $form->getData('date_max');
-        if( !empty($dmax) and !empty($dmin) and (strtotime($dmax) - strtotime($dmin) < 0) ){
+        if (!empty($dmax) and !empty($dmin) and (strtotime($dmax) - strtotime($dmin) < 0)) {
             $form->setErrorOn('date_min', jLocale::get('occtax~search.form.error.date'));
             $fmsg[] = jLocale::get('occtax~search.form.error.date');
             $fok = False;
         }
 
-        if(!$fok){
+        if (!$fok) {
             $return = array();
             $return['status'] = 0;
             $return['msg'] = $fmsg;
@@ -96,7 +100,7 @@ class serviceCtrl extends jController {
         jClasses::inc('occtax~occtaxSearchObservation');
         $params = $form->getAllData();
 
-        $occtaxSearch = new occtaxSearchObservation( null, $params, null, $login );
+        $occtaxSearch = new occtaxSearchObservation(null, $params, null, $login);
         jForms::destroy('occtax~search');
 
         // Get search description
@@ -106,8 +110,8 @@ class serviceCtrl extends jController {
         $wfsParams = array_merge(
             $occtaxSearch->getParams(),
             array(
-                'service'=> 'WFS',
-                'request'=> 'GetCapabilities',
+                'service' => 'WFS',
+                'request' => 'GetCapabilities',
                 'version' => '1.0.0'
             )
         );
@@ -115,14 +119,14 @@ class serviceCtrl extends jController {
             'reinit',
             'submit'
         );
-        foreach($blackWfsParams as $b){
+        foreach ($blackWfsParams as $b) {
             unset($wfsParams[$b]);
         }
-        foreach($wfsParams as $k=>$v){
-            if(empty($v))
+        foreach ($wfsParams as $k => $v) {
+            if (empty($v))
                 unset($wfsParams[$k]);
         }
-        $wfsUrl = jUrl::getFull('occtax~wfs:index', $wfsParams );
+        $wfsUrl = jUrl::getFull('occtax~wfs:index', $wfsParams);
 
         $rep->data = array(
             'status' => 1,
@@ -133,7 +137,6 @@ class serviceCtrl extends jController {
         );
 
         return $rep;
-
     }
 
 
@@ -141,23 +144,21 @@ class serviceCtrl extends jController {
      * Classic search
      *
      */
-    function search() {
+    function search()
+    {
         $groupBy = $this->param('group');
-        if( $groupBy == 's' ) {
-            return $this->__search( 'occtaxSearchObservationStats' );
-        }
-        else if ( $groupBy == 'm' ) {
-            return $this->__search( 'occtaxSearchObservationMaille' );
-        }
-        else if ( $groupBy == 't' ) {
-            return $this->__search( 'occtaxSearchObservationTaxon' );
-        }
-        else {
+        if ($groupBy == 's') {
+            return $this->__search('occtaxSearchObservationStats');
+        } else if ($groupBy == 'm') {
+            return $this->__search('occtaxSearchObservationMaille');
+        } else if ($groupBy == 't') {
+            return $this->__search('occtaxSearchObservationTaxon');
+        } else {
             $map = $this->param('map');
             if ($map == 'on') {
-                return $this->__search( 'occtaxSearchObservationExtent' );
+                return $this->__search('occtaxSearchObservationExtent');
             } else {
-                return $this->__search( 'occtaxSearchObservation' );
+                return $this->__search('occtaxSearchObservation');
             }
         }
     }
@@ -167,7 +168,8 @@ class serviceCtrl extends jController {
      * Protected search
      *
      */
-    protected function __search( $searchClassName ) {
+    protected function __search($searchClassName)
+    {
         $rep = $this->getResponse('json');
 
         // Define object to return
@@ -180,9 +182,9 @@ class serviceCtrl extends jController {
 
         // Do not return data if not connected for observations
         if ($searchClassName == 'occtaxSearchObservation' || $searchClassName == 'occtaxSearchObservationExtent') {
-            if( !jAcl2::check("visualisation.donnees.brutes") ) {
+            if (!jAcl2::check("visualisation.donnees.brutes")) {
                 $return['status'] = 0;
-                $return['msg'][] = jLocale::get( 'occtax~search.form.error.right' );
+                $return['msg'][] = jLocale::get('occtax~search.form.error.right');
                 $rep->data = $return;
                 return $rep;
             }
@@ -190,14 +192,14 @@ class serviceCtrl extends jController {
 
         // Get occtaxSearch from token
         $token = $this->param('token');
-        if( !$token || $token=='' || !isset( $_SESSION['occtaxSearch' . $token] ) ){
+        if (!$token || $token == '' || !isset($_SESSION['occtaxSearch' . $token])) {
             $return['status'] = 0;
-            $return['msg'][] = jLocale::get( 'occtax~search.invalid.token' );
+            $return['msg'][] = jLocale::get('occtax~search.invalid.token');
             $rep->data = $return;
             return $rep;
         }
 
-        jClasses::inc('occtax~'.$searchClassName);
+        jClasses::inc('occtax~' . $searchClassName);
 
         // Get user login
         $login = Null;
@@ -212,21 +214,21 @@ class serviceCtrl extends jController {
         // Get instance
         // Add extent only for some contexts: map and observation table
         if ($searchClassName != 'occtaxSearchObservationExtent') {
-            $occtaxSearch = new $searchClassName( $token, null, null, $login );
+            $occtaxSearch = new $searchClassName($token, null, null, $login);
         } else {
-            $occtaxSearch = new $searchClassName( $token, null, null, $login, $extent);
+            $occtaxSearch = new $searchClassName($token, null, null, $login, $extent);
         }
 
         // Get data
-        $limit = $this->intParam( 'limit' );
-        $offset = $this->intParam( 'offset' );
-        $order = $this->param( 'order', '' );
+        $limit = $this->intParam('limit');
+        $offset = $this->intParam('offset');
+        $order = $this->param('order', '');
 
         try {
             // Get only row count, no data
             $recordsTotal = $occtaxSearch->getRecordsTotal();
             $fields = $occtaxSearch->getFields();
-            if ($searchClassName == 'occtaxSearchObservationExtent' and $this->intParam('rowcount',0) == 1) {
+            if ($searchClassName == 'occtaxSearchObservationExtent' and $this->intParam('rowcount', 0) == 1) {
                 $return['recordsTotal'] = $recordsTotal;
                 $return['status'] = 1;
                 $return['recordsFiltered'] = $recordsTotal;
@@ -236,12 +238,11 @@ class serviceCtrl extends jController {
                 return $rep;
             } else {
                 // We can have heavy data: the result will give a file handler and path
-                list ($handler, $path) = $occtaxSearch->getData( $limit, $offset, $order);
+                list($handler, $path) = $occtaxSearch->getData($limit, $offset, $order);
             }
-        }
-        catch( Exception $e ) {
+        } catch (Exception $e) {
             $return['status'] = 0;
-            $return['msg'][] = jLocale::get( 'occtax~search.form.error.query' );
+            $return['msg'][] = jLocale::get('occtax~search.form.error.query');
             $rep->data = $return;
             return $rep;
         }
@@ -273,39 +274,48 @@ class serviceCtrl extends jController {
      * Search stats
      *
      */
-    function searchStats() {
-        return $this->__search( 'occtaxSearchObservationStats' );
+    function searchStats()
+    {
+        return $this->__search('occtaxSearchObservationStats');
     }
 
     /**
      * Search group by maille
      *
      */
-    function searchGroupByMaille() {
+    function searchGroupByMaille()
+    {
         $class = 'occtaxSearchObservationMaille';
         $m = $this->param('type_maille', 'm02');
-        if($m == 'm02' or (!jAcl2::check("visualisation.donnees.maille_01") and $m == 'm01')){
+        if ($m == 'm02' or (!jAcl2::check("visualisation.donnees.maille_01") and $m == 'm01')) {
             $class = 'occtaxSearchObservationMaille02';
         }
         //if($m == 'm05'){
-            //$class = 'occtaxSearchObservationMaille05';
+        //$class = 'occtaxSearchObservationMaille05';
         //}
-        if($m == 'm10'){
+        if ($m == 'm10') {
             $class = 'occtaxSearchObservationMaille10';
         }
-        return $this->__search( $class );
+        return $this->__search($class);
     }
 
     /**
      * Search group by taxon
      *
      */
-    function searchGroupByTaxon() {
-        return $this->__search( 'occtaxSearchObservationTaxon' );
+    function searchGroupByTaxon()
+    {
+        return $this->__search('occtaxSearchObservationTaxon');
     }
 
 
-    function getTaxon() {
+    /**
+     * Get the complete data of a given taxon
+     *
+     * @httpparam string $cd_nom Taxon Idenfifier
+     */
+    function getTaxon()
+    {
         $rep = $this->getResponse('json');
 
         // Get x and y params
@@ -322,16 +332,16 @@ class serviceCtrl extends jController {
 
         $cnx = jDb::getConnection('naturaliz_virtual_profile');
         $sql = ' SELECT cd_nom, nom_valide';
-        $sql.= ' FROM taxon.taxref_consolide';
-        $sql.= ' WHERE cd_ref = ' . $cd_nom;
-        $result = $cnx->limitQuery( $sql, 0, 1 );
+        $sql .= ' FROM taxon.taxref_consolide';
+        $sql .= ' WHERE cd_ref = ' . $cd_nom;
+        $result = $cnx->limitQuery($sql, 0, 1);
         $d = $result->fetch();
-        if ( $d ) {
+        if ($d) {
             //$d->geojson = json_decode( $d->geojson );
             $return['status'] = 1;
             $return['result'] = $d;
         } else {
-            $return['msg'][] = jLocale::get( $this->moduleName . '~search.getCommune.error' );
+            $return['msg'][] = jLocale::get($this->moduleName . '~search.getCommune.error');
         }
         // Return data
         $rep->data = $return;
@@ -339,7 +349,8 @@ class serviceCtrl extends jController {
         return $rep;
     }
 
-    function getCommune() {
+    function getCommune()
+    {
         $rep = $this->getResponse('json');
 
         // Get x and y params
@@ -358,7 +369,8 @@ class serviceCtrl extends jController {
     }
 
 
-    function getMasseEau() {
+    function getMasseEau()
+    {
         $rep = $this->getResponse('json');
 
         // Get x and y params
@@ -376,7 +388,8 @@ class serviceCtrl extends jController {
         return $rep;
     }
 
-    function getMaille() {
+    function getMaille()
+    {
         $rep = $this->getResponse('json');
 
         // Get x and y params
@@ -399,7 +412,8 @@ class serviceCtrl extends jController {
     }
 
 
-    function uploadGeoJSON() {
+    function uploadGeoJSON()
+    {
         $rep = $this->getResponse('json');
 
         // Define object to return
@@ -408,40 +422,41 @@ class serviceCtrl extends jController {
             'msg' => array()
         );
 
-
-        if( !jAcl2::check("requete.spatiale.import") ) {
+        if (!jAcl2::check("requete.spatiale.import")) {
             $return['status'] = 0;
-            $return['msg'][] = jLocale::get( 'occtax~search.form.error.right' );
+            $return['msg'][] = jLocale::get('occtax~search.form.error.right');
             $rep->data = $return;
             return $rep;
         }
 
         $form = jForms::get("occtax~upload_geojson");
-        if( !$form )
-          $form = jForms::create("occtax~upload_geojson");
+        if (!$form)
+            $form = jForms::create("occtax~upload_geojson");
         $form->initFromRequest();
-        if ( !$form->check() ) {
+        if (!$form->check()) {
             //$return['msg'] = $form->getErrors();
             $return['msg'][] = 'Fichier invalide';
             $rep->data = $return;
             return $rep;
         }
 
-        $ext = strtolower( pathinfo($_FILES['geojson']['name'], PATHINFO_EXTENSION) );
-        if ( $ext != 'json' && $ext != 'geojson' ) {
+        $ext = strtolower(pathinfo($_FILES['geojson']['name'], PATHINFO_EXTENSION));
+        if ($ext != 'json' && $ext != 'geojson') {
             $return['msg'][] = 'Fichier json requis';
             $rep->data = $return;
             return $rep;
         }
 
         $time = time();
-        $form->saveFile( 'geojson', jApp::varPath('uploads'), $time .'_'. $_FILES['geojson']['name'] );
-        $json = jFile::read( jApp::varPath('uploads/'. $time .'_'. $_FILES['geojson']['name'] ) );
-        $json = json_decode( $json );
+        $form->saveFile('geojson', jApp::varPath('uploads'), $time . '_' . $_FILES['geojson']['name']);
+        $json = jFile::read(jApp::varPath('uploads/' . $time . '_' . $_FILES['geojson']['name']));
+        $json = json_decode($json);
         $return['result'] = $json;
-        if ( $json && property_exists( $json, 'type' )
-          && $json->type == 'FeatureCollection'
-          && property_exists( $json, 'features' ) ) {
+        if (
+            $json && property_exists($json, 'type')
+            && $json->type == 'FeatureCollection'
+            && property_exists($json, 'features')
+        ) {
             $return['msg'][] = 'Fichier valide';
             $return['status'] = 1;
             $return['result'] = $json;
@@ -456,4 +471,67 @@ class serviceCtrl extends jController {
     }
 
 
+    /**
+     * Autocompletion search for the form input
+     * At present only for the jdd field
+     *
+     */
+    function autocomplete()
+    {
+
+        $rep = $this->getResponse('json');
+
+        $term = $this->param('field', 'jdd');
+        $term = $this->param('term');
+        $limit = $this->intParam('limit', 10);
+
+        $autocomplete = jClasses::getService('occtax~autocomplete');
+        $result = $autocomplete->getData($term, $limit);
+
+        $rep->data = $result;
+
+        return $rep;
+    }
+
+
+    /**
+     * Get the complete data of a given JDD
+     *
+     * @httpparam string $jdd_id Dataset identifier
+     */
+    function getJdd()
+    {
+        $rep = $this->getResponse('json');
+
+        // Get x and y params
+        $jdd_id = trim($this->intParam('jdd_id', -1));
+        $return = array(
+            'status' => 0,
+            'msg' => array()
+        );
+        if (empty($jdd_id)) {
+            $msg[] = 'jdd_id invalide';
+            $rep->data = $return;
+            return $rep;
+        }
+
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
+        $sql = ' SELECT jdd_id, jdd_code, jdd_libelle, jdd_description';
+        $sql .= ' FROM occtax.jdd';
+        $sql .= ' WHERE jdd_id = ' . $jdd_id . '::text';
+        $result = $cnx->limitQuery($sql, 0, 1);
+        $d = $result->fetch();
+        if ($d) {
+            //$d->geojson = json_decode( $d->geojson );
+            $return['status'] = 1;
+            $return['result'] = $d;
+        } else {
+            $return['msg'][] = jLocale::get($this->moduleName . '~search.getCommune.error');
+        }
+
+        // Return data
+        $rep->data = $return;
+
+        return $rep;
+    }
 }

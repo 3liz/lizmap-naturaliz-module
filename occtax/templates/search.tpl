@@ -38,6 +38,10 @@ et dans dans lequel on déplace les champs liés au taxon
         </ul>
         <button id="clearTaxonSearch" class="btn btn-mini">x</button>
     </div>
+    <div id="occtax_jdd_select_div" class="control-group">
+        <ul id="occtax_jdd_select_list" style="display:none;">
+        </ul>
+    </div>
 
     <!--
 Bloc qui contient les boutons de recherche spatiale
@@ -137,6 +141,12 @@ Déplacé par JS dans le formulaire WHERE
         <input type="text" name="term"></input>
         <input type="text" name="taxons_locaux"></input>
         <input type="text" name="taxons_bdd"></input>
+    </form>
+
+    <form id="form_jdd_service_autocomplete" method="post" action="{jurl 'occtax~service:autocomplete'}">
+        <input type="text" name="field" value="jdd"></input>
+        <input type="text" name="limit" value="50"></input>
+        <input type="text" name="term"></input>
     </form>
 
     <!--

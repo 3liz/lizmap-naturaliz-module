@@ -260,10 +260,14 @@ OccTax.events.on({
             }
         }
 
-        function addTaxonToSearch(cd_nom, nom_cite) {
-            // todo supprimer commentaires
-            // Vider le search_token
-            //$('#div_form_occtax_search_token form [name="search_token"]').val('');
+
+        /**
+         * Add the given taxon to the search basket
+         *
+         * @param {integer} cd_nom The ID of the taxon.
+         * @param {string} label The label to use for display.
+         */
+        function addTaxonToSearch(cd_nom, label) {
 
             // On vérifie que l'onglet actif est bien celui du panier
             // Important car le submit vérifie l'onglet actif pour supprimer les paramètres de l'autre onglet
@@ -283,17 +287,17 @@ OccTax.events.on({
             // Ajout d'un item au panier
             if (selectVals.indexOf(cd_nom) == -1) {
                 // Add cd_nom in hidden form input
-                ctrl_cd_nom.append('<option selected value="' + cd_nom + '">' + nom_cite + '</option>');
+                ctrl_cd_nom.append('<option selected value="' + cd_nom + '">' + label + '</option>');
 
                 // Add card in the interface
                 var licontent = '<li data-value="';
                 licontent += cd_nom;
                 licontent += '" style="height:20px; margin-left:2px;">';
-                licontent += '<span title="Cliquer pour visualiser la fiche taxon">';
-                licontent += nom_cite;
+                licontent += '<button type="button" class="pull-left close" value="' + cd_nom + '" aria-hidden="true" title="Supprimer de la sélection">&times;</button>';
+                licontent += '&nbsp;&nbsp;<span title="Cliquer pour visualiser la fiche taxon">';
+                licontent += label;
                 licontent += '</span>';
                 licontent += '<button type="button" class="detail" value="' + cd_nom + '" style="display:none;" >détail</button>';
-                licontent += '<button type="button" class="close" value="' + cd_nom + '" aria-hidden="true" title="Supprimer de la sélection">&times;</button>';
                 licontent += '</li>';
                 var li = $(licontent);
 
@@ -307,11 +311,62 @@ OccTax.events.on({
                     displayTaxonDetail(cd_nom);
                     //return false;
                 });
-
             }
-
         }
 
+        /**
+         * Add the given JDD to the search basket
+         *
+         * @param {integer} jdd_id The id of the dataset.
+         * @param {string} label The label to use for display.
+         */
+        function addJddToSearch(jdd_id, label) {
+
+            // Afficher la liste
+            $('#occtax_jdd_select_list').show();
+
+            // Ajout des données au champ caché jdd_id
+            var ctrl = $('#div_form_occtax_search_token form [name="jdd_id[]"]');
+            var selectVals = ctrl.val();
+            if (selectVals == null)
+                selectVals = [];
+
+            // Ajout d'un item au panier
+            if (selectVals.indexOf(jdd_id) == -1) {
+                // Add jdd_id in hidden form input
+                ctrl.append('<option selected value="' + jdd_id + '">' + label + '</option>');
+
+                // Add card in the interface
+                var licontent = '<li data-value="';
+                licontent += jdd_id;
+                licontent += '" style="height:20px; margin-left:2px;">';
+                licontent += '<span title="Cliquer pour visualiser la fiche de métadonnées">';
+                licontent += '<button type="button" class="pull-left close" value="' + jdd_id + '" aria-hidden="true" title="Supprimer de la sélection">&times;</button>';
+                licontent += '&nbsp;&nbsp;' + label;
+                licontent += '</span>';
+                licontent += '<button type="button" class="detail" value="' + jdd_id + '" style="display:none;" >détail</button>';
+                licontent += '</li>';
+                var li = $(licontent);
+
+                $('#occtax_jdd_select_list').append(li);
+                li.find('.close').click(function () {
+                    deleteJddToSearch($(this).attr('value'));
+                    //return false;
+                });
+                li.find('span').click(function () {
+                    var jdd_id = $(this).parent().find('button.detail').attr('value');
+                    showMetadata('jdd', jdd_id);
+                    //return false;
+                });
+            }
+        }
+
+        /**
+         * Get the taxon data from the MNHN public API
+         *
+         * @param {integer} cd_nom The taxon identifier.
+         * @param {callback} aCallback The callback function run with the data.
+         */
         function getTaxonDataFromApi(cd_nom, aCallback) {
 
             var turl = 'https://taxref.mnhn.fr/api/taxa/';
@@ -614,6 +669,36 @@ OccTax.events.on({
                 });
             }
 
+        }
+
+
+        /**
+         * Remove the JDD item in the search basket.
+         *
+         * @param {integer} jdd_id The dataset identifier.
+         */
+        function deleteJddToSearch(jdd_id) {
+            $('#div_form_occtax_search_token form [name="jdd_id[]"] option[value="' + jdd_id + '"]').remove();
+            var li = $('#occtax_jdd_select_list li[data-value="' + jdd_id + '"]');
+            li.find('.close').unbind('click');
+            li.remove();
+            if ($('#occtax_jdd_select_list li').length == 0) {
+                $('#occtax_jdd_select_list').hide();
+            }
+        }
+
+        /**
+         * Completely erase the content of the JDD search basket
+         *
+         */
+        function clearJddFromSearch() {
+            var formId = 'jforms_occtax_search';
+            // Remove content from JDD panier
+            $('#div_form_occtax_search_token form [name="jdd_id[]"]').html('');
+            // Remove content from taxon panier
+            $('#occtax_jdd_select_list .close').unbind('click');
+            $('#occtax_jdd_select_list').html('');
+            $('#' + formId + ' input[name="jdd_autocomplete"]').val('');
         }
 
         function addResultsStatsTable() {
@@ -1244,6 +1329,10 @@ OccTax.events.on({
         }
 
 
+        /**
+         * Activate the autocompletion for the taxon search input
+         *
+         */
         function initTaxonAutocomplete() {
             var formId = $('#div_form_occtax_search_token form').attr('id');
             $('#' + formId + '_autocomplete').autocomplete({
@@ -1255,7 +1344,7 @@ OccTax.events.on({
                     request.taxons_bdd = $('#jforms_occtax_search_taxons_bdd').prop("checked");
                     $.post($('#form_taxon_service_autocomplete').attr('action'),
                         request, function (data, status, xhr) {
-                            //rearange data if necessary
+                            //rearrange data if necessary
                             response(data);
                         }, 'json'
                     );
@@ -1297,6 +1386,7 @@ OccTax.events.on({
                 }
             }).autocomplete("widget").css("z-index", "1050");
 
+            // Render filtered items in HTML
             // Add image to the proposed items
             $('#' + formId + '_autocomplete').autocomplete("instance")._renderItem = function (ul, item) {
                 return $("<li>")
@@ -1306,6 +1396,62 @@ OccTax.events.on({
 
         }
 
+
+
+        /**
+         * Activate the autocompletion for the JDD search input
+         *
+         */
+         function initJddAutocomplete() {
+            var formId = $('#div_form_occtax_search_token form').attr('id');
+            $('#' + formId + '_jdd_autocomplete').autocomplete({
+                minLength: 2,
+                autoFocus: true,
+                source: function (request, response) {
+                    request.limit = $('#form_jdd_service_autocomplete input[name="limit"]').val();
+                    $.post($('#form_jdd_service_autocomplete').attr('action'),
+                        request, function (data, status, xhr) {
+                            //rearrange data if necessary
+                            response(data);
+                        }, 'json'
+                    );
+                },
+                open: function (e, ui) {
+                },
+                focus: function (e, ui) {
+                    return false;
+                },
+                close: function (e, ui) {
+                },
+                change: function (e, ui) {
+                    if ($(this).val().length < $(this).autocomplete('option', 'minLength'))
+                        $('#' + formId + '_jdd_hidden').val('');
+                },
+                search: function (e, ui) {
+                    $('#' + formId + '_jdd_hidden').val('');
+                },
+                select: function (e, ui) {
+
+                    // Ajout du jdd_idd dans le champ masqué jdd_chosen
+                    $('#' + formId + '_jdd_hidden').val(ui.item.jdd_id);
+
+                    // Suppression du contenu et perte du focus
+                    $(this).val('').blur();
+
+                    // Ajout du taxon au panier
+                    addJddToSearch(ui.item.jdd_id, ui.item.jdd_libelle);
+
+                    return false;
+                }
+            }).autocomplete("widget").css("z-index", "1050");
+
+            // Add image to the proposed items
+            $('#' + formId + '_jdd_autocomplete').autocomplete("instance")._renderItem = function (ul, item) {
+                return $("<li>")
+                    .append($("<a>").html($('<a title="'+item.jdd_description+'">').html(item.label)))
+                    .appendTo(ul);
+            };
+        }
 
         // Display the precise observation geometry on the map
         function displayObservationGeom(geojson, empty_layer) {
@@ -1741,8 +1887,13 @@ OccTax.events.on({
             return white_params;
         }
 
-        // Take a query string, decompose the corresponding parameters, set the form fields values
-        // And launch the search if needed
+        /**
+         * Take a URL query string, decompose the corresponding parameters,
+         * set the form fields values according to the read values
+         * And launch the search if needed
+         *
+         * @param {string} query_string The URL query string (everything after ? with ? included)
+        */
         function updateFormInputsFromUrl(query_string) {
             // Example URL
             // ?cd_nom%5B0%5D=79700&cd_nom%5B1%5D=447404&observateur=durand&date_min=2000-05-01&date_max=2019-01-01
@@ -1770,6 +1921,7 @@ OccTax.events.on({
             var white_params = getWhiteParams('url');
             var geometry_already_added = false;
             var cd_nom_list = [];
+            var jdd_id_list = [];
 
             // Reinit form and interface
             reinitSearchForm();
@@ -1795,7 +1947,13 @@ OccTax.events.on({
                     // cd_nom: recherche par liste de taxons
                     cd_nom_list = input_value;
                     for (var i in input_value) {
-                        addTaxonToSearch(input_value[i], 'cd_nom = ' + input_value[i]);
+                        addTaxonToSearch(input_value[i], 'CD_NOM = ' + input_value[i]);
+                    }
+                } else if (input_name == 'jdd_id' && Array.isArray(input_value) && input_value.length > 0) {
+                    // jdd_id: recherche par JDD
+                    jdd_id_list = input_value;
+                    for (var i in input_value) {
+                        addJddToSearch(input_value[i], 'JDD ID = ' + input_value[i]);
                     }
                 } else {
                     // Autres champs
@@ -1885,8 +2043,10 @@ OccTax.events.on({
             // Submit form
             if (trigger_submit) {
                 $('#' + tokenFormId).submit();
+
+                // Change name of chosen cd_nom in bucket
+                // Replace the ID by the taxon name
                 if (cd_nom_list.length > 0) {
-                    // Change name of chosen cd_nom in bucket
                     for (var i in cd_nom_list) {
                         var form_getter = '#form_occtax_service_commune';
                         $.post(
@@ -1896,6 +2056,23 @@ OccTax.events.on({
                                 if (data.status == 1) {
                                     deleteTaxonToSearch(data.result.cd_nom);
                                     addTaxonToSearch(data.result.cd_nom, data.result.nom_valide);
+                                }
+                            }, 'json'
+                        );
+                    }
+                }
+                // Change name of chosen jdd_id in bucket
+                // Replace the ID by the JDD label
+                if (jdd_id_list.length > 0) {
+                    for (var i in jdd_id_list) {
+                        var form_getter = '#form_occtax_service_commune';
+                        $.post(
+                            $(form_getter).attr('action').replace('getCommune', 'getJdd')
+                            , { jdd_id: jdd_id_list[i] }
+                            , function (data) {
+                                if (data.status == 1) {
+                                    deleteJddToSearch(data.result.jdd_id);
+                                    addJddToSearch(data.result.jdd_id, data.result.jdd_id + ' ' + data.result.jdd_libelle);
                                 }
                             }, 'json'
                         );
@@ -1937,6 +2114,9 @@ OccTax.events.on({
                 } else if (name == "cd_nom") {
                     var cd_nom = $('#' + tokenFormId + ' [name="' + name + '[]"]').val();
                     var input_value = cd_nom;
+                } else if (name == "jdd") {
+                    var jdd = $('#' + tokenFormId + ' [name="' + name + '[]"]').val();
+                    var input_value = jdd;
                 } else if (name == "panier_validation") {
                     var input_value = $('#' + tokenFormId + ' [name="' + name + '"]').prop("checked");
                     input_value = input_value ? 1 : 0;
@@ -3185,6 +3365,13 @@ OccTax.events.on({
         $('#' + tokenFormId + '_cd_nom').parent('.controls').parent('.control-group').hide();
         //$('#'+tokenFormId+'_main .jforms-table-group .control-group:nth-last-child(-n+2)').hide();
 
+        // JDD search
+        // Move JDD panier to the form
+        $('#' + tokenFormId + '_what').append($('#occtax_jdd_select_div'));
+        // Hide jdd
+        $('#' + tokenFormId + '_jdd_id').parent('.controls').parent('.control-group').hide();
+
+
         // Réinitialisation du formulaire
         function reinitSearchForm() {
             // Reinit taxon
@@ -3192,12 +3379,15 @@ OccTax.events.on({
             var removeFilters = true;
             clearTaxonFromSearch(removeTaxonPanier, removeFilters);
 
+            // Reinit JDD panier
+            clearJddFromSearch();
+
             // Reinit other fields
             var tokenFormId = $('#div_form_occtax_search_token form').attr('id');
             $('#' + tokenFormId).trigger("reset");
             // sumoselect
             $('select.jforms-ctrl-listbox').each(function () {
-                if ($(this).attr('id') != 'jforms_occtax_search_cd_nom') {
+                if ($(this).attr('id') != 'jforms_occtax_search_cd_nom' && $(this).attr('id') != 'jforms_occtax_search_jdd_id') {
                     $(this)[0].sumo.unSelectAll();
                 }
             });
@@ -3268,6 +3458,7 @@ OccTax.events.on({
 
         // Initialize autocompletion
         initTaxonAutocomplete();
+        initJddAutocomplete();
 
         // Replace taxon group values by values coherent with vm_obsevation.categorie
         // Insectes (papillons, mouches, abeilles) -> Insectes
@@ -3497,7 +3688,7 @@ OccTax.events.on({
             return false;
         });
 
-        // Show the taxon subpanel
+        // Show the metadata subpanel
         $('#occtax').on('click', 'a.getMetadata', function () {
             var classes = $(this).attr('class');
             var get_type = classes.split(' ')[1];

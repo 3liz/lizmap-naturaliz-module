@@ -47,15 +47,18 @@ Onglets taxons
 /*
 Panier de taxons
 */
-#occtax_taxon_select_div {
+#occtax_taxon_select_div,
+#occtax_jdd_select_div {
   overflow-x: auto;
   margin: 5px;
   background-color: white;
   border-radius: 5px;
   color: #333333;
+  width: 85%;
 }
-#occtax_taxon_select_div li span {
-  font-size: 1.1em;
+#occtax_taxon_select_div li span,
+#occtax_jdd_select_div li span {
+  font-size: 12px;
   display: inline;
   cursor: pointer;
   width: 190px;
@@ -64,12 +67,15 @@ Panier de taxons
   text-overflow: ellipsis;
   font-weight: bold;
 }
-#occtax_taxon_select_div li span:hover {
-  font-size: 1.1em;
+#occtax_taxon_select_div li span:hover ,
+#occtax_jdd_select_div li span:hover
+{
+  font-size: 12px;
   display: inline !important;
   color: #7cb0ff;
 }
-#occtax_taxon_select_list {
+#occtax_taxon_select_list,
+#occtax_jdd_select_list {
   margin: 0px;
 }
 
