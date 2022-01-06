@@ -17,10 +17,87 @@ class occtaxImport
     // CSV file
     protected $csv_file;
 
-    // CSV header
-    protected $header = array(
-        'id'
+    // CSV separator
+    protected $csv_separator = ',';
+
+    // All possible fields
+    protected $target_fields = array(
+        'identifiant_permanent',
+        'statut_observation',
+
+        'cd_nom',
+        'cd_ref',
+        'version_taxref',
+        'nom_cite',
+
+        'denombrement_min',
+        'denombrement_max',
+        'objet_denombrement',
+        'type_denombrement',
+        'commentaire',
+
+        'date_debut',
+        'date_fin',
+        'heure_debut',
+        'heure_fin',
+        'date_determination',
+
+        'altitude_min',
+        'altitude_moy',
+        'altitude_max',
+        'profondeur_min',
+        'profondeur_moy',
+        'profondeur_max',
+
+        'code_idcnp_dispositif',
+        'dee_floutage',
+        'diffusion_niveau_precision',
+        'ds_publique',
+        'identifiant_origine',
+
+        'jdd_id',
+        'statut_source',
+        'reference_biblio',
+
+        'sensible',
+        'sensi_date_attribution',
+        'sensi_niveau',
+        'sensi_referentiel',
+        'sensi_version_referentiel',
+
+        'validite_niveau',
+        'validite_date_validation',
+
+        'longitude',
+        'latitude',
+        'precision_geometrie',
+        'nature_objet_geo',
+
+        'descriptif_sujet',
     );
+
+    // Mandatory fields
+    protected $mandatory_fields = array(
+        'identifiant_origine',
+        'cd_nom',
+        'nom_cite',
+        'version_taxref',
+        'date_debut',
+        'date_fin',
+        'statut_observation',
+        'ds_publique',
+        'statut_source',
+        'sensible',
+        'longitude',
+        'latitude',
+        'nature_objet_geo',
+    );
+
+    // Corresponding fields
+    protected $corresponding_fields = array();
+
+    // Additional found fields
+    protected $additional_fields = array();
 
     // CSV parsed data
     protected $data;
@@ -41,7 +118,6 @@ class occtaxImport
      */
     public function __construct($csv_file)
     {
-
         // Set the csv_file property
         $this->csv_file = $csv_file;
 
@@ -59,7 +135,7 @@ class occtaxImport
     }
 
     /**
-     * Runs quick check on the CSV structure
+     * Runs the needed check on the CSV structure
      *
      * @param string $csv_content Content of the observation CSV file
      */
@@ -68,13 +144,51 @@ class occtaxImport
         $status = true;
         $message = '';
 
-        // Check the CSV header
+        // Get the csv header (first line)
         $header = $this->parseCsv(0, 1);
-        if (!$header === $this->header) {
+
+        // Check header
+        if (!is_array($header) || count($header) != 1) {
             return array(
                 false,
                 jLocale::get("occtax~import.csv.wrong.header")
             );
+        }
+        $header = $header[0];
+        $this->header = $header;
+
+        // Check mandatory fields are present
+        $missing_mandatory_fields = array();
+        foreach ($this->mandatory_fields as $field) {
+            if (!in_array($field, $header)) {
+                $missing_mandatory_fields[] = $field;
+            }
+        }
+
+        // find additional fields and corresponding fields
+        $additional_fields = array();
+        $corresponding_fields = array();
+        foreach ($header as $field) {
+            if (!in_array($field, $this->target_fields)) {
+                $additional_fields[] = $field;
+            } else {
+                $corresponding_fields[] = $field;
+            }
+        }
+
+        $this->additional_fields = $additional_fields;
+        $this->corresponding_fields = $corresponding_fields;
+
+        \jLog::log('header = ' . json_encode(($header)));
+        \jLog::log('additional = ' . json_encode(($additional_fields)));
+        \jLog::log('corresponding = ' . json_encode(($corresponding_fields)));
+        \jLog::log('missing = ' . json_encode(($missing_mandatory_fields)));
+
+        if (count($missing_mandatory_fields) > 0) {
+            $message = jLocale::get("occtax~import.csv.mandatory.fields.missing");
+            $message .= ': ' . implode(', ', $missing_mandatory_fields);
+            $status = false;
+            return array($status, $message);
         }
 
         return array($status, $message);
@@ -103,18 +217,18 @@ class occtaxImport
         $csv_data = array();
         $row = 1;
         $kept = 0;
-        if (($handle = fopen($this->csv_file, "r")) !== FALSE) {
-            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+        if (($handle = fopen($this->csv_file, 'r')) !== FALSE) {
+            while (($data = fgetcsv($handle, 1000, $this->csv_separator)) !== FALSE) {
                 // Manage offset
                 if ($row > $offset) {
                     // Add data to the table
                     $csv_data[] = $data;
+                    $kept++;
 
                     // Stop after n lines if asked
                     if ($limit > 0 && $kept >= $limit) {
                         break;
                     }
-                    $kept++;
                 }
                 $row++;
             }
@@ -134,8 +248,9 @@ class occtaxImport
      */
     private function query($sql, $params)
     {
-        $cnx = jDb::getConnection();
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
         $cnx->beginTransaction();
+        $data = array();
         try {
             $resultset = $cnx->prepare($sql);
             $resultset->execute($params);
@@ -144,6 +259,7 @@ class occtaxImport
         } catch (Exception $e) {
             $cnx->rollback();
             $data = null;
+            \jLog::log($e->getMessage());
         }
 
         return $data;
@@ -155,38 +271,70 @@ class occtaxImport
      *
      * @return null|array Not null content if success.
      */
-    protected function createTemporaryTable()
+    public function createTemporaryTables()
     {
-        $sql = '
-        DROP TABLE IF EXISTS $1;
-        CREATE TABLE $1 ( LIKE occtax.observation_temporaire INCLUDING ALL);
-        ';
-        $params = array($this->temporary_table);
+        $params = array();
+
+        // Drop tables
+        $sql = 'DROP TABLE IF EXISTS "' . $this->temporary_table . '_source", "' . $this->temporary_table . '_target"';
         $data = $this->query($sql, $params);
 
-        return $data;
+        // Create temporary table to store the CSV source data and the formatted imported data
+        $tables = array(
+            'source' => $this->header,
+            'target' => $this->target_fields,
+        );
+        foreach ($tables as $name => $columns) {
+            $sql = 'CREATE TABLE "' . $this->temporary_table . '_' . $name . '" (';
+            $sql .= ' temporary_id serial';
+            $comma = ',';
+            foreach ($columns as $column) {
+                $sql .= $comma . '"' . $column . '" text';
+            }
+            $sql .= ');';
+            $data = $this->query($sql, $params);
+            if (!is_array($data) && !$data) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
-     * Run multiple INSERT for the given table
+     * Insert the data from the CSV file
+     * into the target table.
      *
      * @param string $table Name of the table (include schema eg: occtax.a_table)
      * @param array $multiple_params Array of array of the parameters values
      *
      * @return boolean True if success
      */
-    private function multipleInsert($table, $multiple_params)
+    private function importCsvDataToTemporaryTable($table, $multiple_params)
     {
         $status = true;
-        $cnx = jDb::getConnection();
+
+        // Insert the CSV data into the source temporary table
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
         $cnx->beginTransaction();
         try {
+            // Loop through each CSV data line
             foreach ($multiple_params as $params) {
-                $sql = ' INSERT INTO $1 VALUES (';
-                $v = '';
-                for ($i = 0; $i = count($this->header); $i++) {
-                    $sql .= $v . '$' . $i;
-                    $v = ', ';
+                $sql = ' INSERT INTO "' . $table . '_source"';
+                $sql .= '(';
+                $comma = '';
+                foreach ($this->header as $column) {
+                    $sql .= $comma . '"' . $column . '"';
+                    $comma = ', ';
+                }
+                $sql .= ')';
+                $sql .= ' VALUES (';
+                $comma = '';
+                $i = 1;
+                foreach ($this->header as $column) {
+                    $sql .= $comma . 'Nullif(trim($' . $i . "), '')";
+                    $comma = ', ';
+                    $i++;
                 }
                 $sql .= ');';
                 $resultset = $cnx->prepare($sql);
@@ -194,6 +342,7 @@ class occtaxImport
             }
             $cnx->commit();
         } catch (Exception $e) {
+            jLog::log($e->getMessage());
             $cnx->rollback();
             $status = false;
         }
@@ -209,22 +358,91 @@ class occtaxImport
      *
      * @return null|array Not null content if success.
      */
-    protected function saveToTemporaryTable()
+    public function saveToSourceTemporaryTable()
     {
+        // Read data from the CSV file
+        // and set the data property with the read content
+        $set_data = $this->setData();
+
         // Check the data
         if (count($this->data) == 0) {
             return false;
         }
 
-        // Create the temporary table
-        if (!$this->createTemporaryTable()) {
-            return false;
-        }
-
         // Import the data
-        $this->multipleInsert($this->temporary_table, $this->data);
+        $status = $this->importCsvDataToTemporaryTable($this->temporary_table, $this->data);
 
-        return true;
+        return $status;
+    }
+
+    /**
+     * Insert the data from the temporary table containing the CSV content
+     * into the temporary formatted target table.
+     *
+     * @return boolean True if success
+     */
+    private function importCsvDataToTargetTable()
+    {
+        $status = true;
+
+        // Insert the CSV data into the source temporary table
+        $sql = 'INSERT INTO "' . $this->temporary_table . '_target"';
+        $sql .= ' (';
+        $comma = '';
+        $fields = '';
+        foreach ($this->corresponding_fields as $column) {
+            $fields .= $comma . '"' . $column . '"';
+            $comma = ', ';
+        }
+        $sql .= $fields;
+        $sql .= ')';
+        $sql .= ' SELECT ';
+        $sql .= $fields;
+        $sql .= ' FROM "' . $this->temporary_table . '_source"';
+        $sql .= ';';
+
+        $params = array();
+        $data = $this->query($sql, $params);
+
+        $status = (is_array($data));
+        return $status;
+    }
+
+    /**
+     * Write imported CSV data into the formatted temporary table
+     *
+     * @return null|array Not null content if success.
+     */
+    public function saveToTargetTemporaryTable()
+    {
+        // Insert to the target formatted table
+        $status = $this->importCsvDataToTargetTable();
+
+        return $status;
+    }
+
+    /**
+     * Validate the CSV imported data against the rules
+     * listed in the table occtax.critere_conformite
+     *
+     * @param string $type_conformite Type de la conformité à tester: not_null, format, valide
+     *
+     * @return array The list.
+     */
+    public function validateCsvData($type_conformite)
+    {
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
+        $sql = 'SELECT *';
+        $sql .= ' FROM occtax.test_conformite_observation($1, $2)';
+        $sql .= ' WHERE nb_lines > 0';
+        $sql .= ' ';
+        $params = array(
+            $this->temporary_table . '_target',
+            $type_conformite,
+        );
+        $data = $this->query($sql, $params);
+
+        return $data;
     }
 
     /**
@@ -237,8 +455,8 @@ class occtaxImport
         unlink($this->csv_file);
 
         // Drop the temporary table
-        $sql = 'DROP TABLE IF EXISTS $1';
-        $params = array($this->temporary_table);
+        $sql = 'DROP TABLE IF EXISTS "' . $this->temporary_table . '_source", "' . $this->temporary_table . '_target"';
+        $params = array();
         $data = $this->query($sql, $params);
     }
 }

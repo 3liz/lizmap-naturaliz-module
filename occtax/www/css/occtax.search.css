@@ -660,4 +660,18 @@ Message en haut de la carte*/
 #import div.menu-content {
   background-color: #F0F0F0;
   padding:5px;
+  font-size: 12px;
+}
+
+#import div.menu-content h4 {
+  color: darkred;
+  background-color: lightgray;
+  width: 100%;
+  padding: 3px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+#import div.menu-content table tr th{
+  font-size: 11px;
 }

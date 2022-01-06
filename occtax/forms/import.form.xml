@@ -7,10 +7,10 @@
         <help locale="occtax~import.input.jdd_id.help"/>
     </input>
 
-    <upload ref="observation" required="true" maxsize="200000" mimetype="text/csv" accept=".csv, application/csv, text/comma-separated-values">
-        <label locale="occtax~import.input.observations"/>
-        <hint locale="occtax~import.input.observations.help"/>
-        <help locale="occtax~import.input.observations.help"/>
+    <upload ref="observation_csv" required="true" maxsize="200000" accept=".csv,text/csv,application/csv,text/comma-separated-values">
+        <label locale="occtax~import.input.observation_csv"/>
+        <hint locale="occtax~import.input.observation_csv.help"/>
+        <help locale="occtax~import.input.observation_csv.help"/>
     </upload>
 
     <submit ref="check">
