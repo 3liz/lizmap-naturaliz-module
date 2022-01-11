@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2.11.1 - 2021-01-11
+
+* Correction d'un bug sur le script de mise à jour vers la 2.11.0
+
 ## 2.11.0 - 2021-01-11
 
 * Recherche: modification du champ de recherche pour filtrer les jeux de données (JDD):
