@@ -72,6 +72,7 @@ class occtaxDockableListener extends jEventListener{
 
                 // Remove some fields via rights
                 if (!jAcl2::check("requete.jdd.observation")) {
+                    $form->deactivate( 'jdd_autocomplete' );
                     $form->deactivate( 'jdd_id' );
                 }
                 if (!jAcl2::check("requete.observateur.observation")) {

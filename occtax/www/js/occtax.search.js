@@ -701,6 +701,9 @@ OccTax.events.on({
             $('#' + formId + ' input[name="jdd_autocomplete"]').val('');
         }
 
+        /**
+         * Ajout du datatable sur le tableau des statistiques
+         */
         function addResultsStatsTable() {
             var tableId = 'occtax_results_stats_table';
             // Get statistics
@@ -781,6 +784,114 @@ OccTax.events.on({
             });
         }
 
+
+        /**
+         * Ajout du datatable sur le tableau des JDD (jeux de données)
+         */
+         function addResultsJddTable() {
+            var tableId = 'occtax_results_jdd_table';
+            // Get statistics
+            var returnFields = $('#' + tableId + '').attr('data-value').split(',');
+            var DT_RowId = $('#' + tableId + ' thead tr').attr('data-value');
+            var datatableColumns = getDatatableColumns(tableId);
+            var DT_Columns = datatableColumns[0];
+            var displayFields = datatableColumns[1];
+            $('#' + tableId + '').DataTable({
+                "lengthChange": false,
+                "searching": false,
+                "dom": 'ipt',
+                //"pageLength":50,
+                "paging": false,
+                "deferRender": true,
+                "scrollY": '100%',
+                "scrollX": '95%',
+                "language": { url: jFormsJQ.config.basePath + lizUrls["dataTableLanguage"] },
+                "oLanguage": {
+                    "sInfoEmpty": "",
+                    "sEmptyTable": "Aucun résultat",
+                    "sInfo": "Affichage des JDD _START_ à _END_ sur _TOTAL_ jeux",
+                    "oPaginate": {
+                        "sPrevious": "Précédent",
+                        "sNext": "Suivant"
+                    }
+                },
+                "columns": DT_Columns,
+                "ajax": function (param, callback, settings) {
+                    // Check user is still connected if he was
+                    var ok = checkConnection();
+                    if (!ok) {
+                        return false;
+                    }
+                    var searchForm = $('#occtax_service_search_jdd_form');
+
+                    // Do not run the query if no token has been found
+                    var mytoken = searchForm.find('input[name="token"]').val();
+                    if (!mytoken)
+                        return false;
+                    $.post(searchForm.attr('action'), searchForm.serialize(),
+                        function (results) {
+                            var tData = {
+                                "recordsTotal": 0,
+                                "recordsFiltered": 0,
+                                "data": []
+                            };
+                            if (results.status = 1) {
+                                tData.recordsTotal = results.recordsTotal;
+                                tData.recordsFiltered = results.recordsFiltered;
+
+                                for (var i = 0, len = results.data.length; i < len; i++) {
+
+                                    // Add data to table
+                                    var r = {};
+                                    var d = results.data[i];
+                                    r['DT_RowId'] = d[returnFields.indexOf(DT_RowId)];
+                                    for (var j = 0, jlen = displayFields.length; j < jlen; j++) {
+                                        var f = displayFields[j];
+                                        r[f] = d[returnFields.indexOf(f)];
+                                    }
+                                    tData.data.push(r);
+                                }
+
+                            } else {
+                                if (results.msg.length != 0)
+                                    lizMap.addMessage(results.msg.join('<br/>'), 'error', true).attr('id', 'occtax-highlight-message');
+                                else
+                                    lizMap.addMessage('Error', 'error', true).attr('id', 'occtax-highlight-message');
+                            }
+                            refreshOcctaxDatatableSize('#occtax_results_jdd_table_div');
+                            callback(tData);
+                            $('#' + tableId + '').show();
+
+                        }, 'json'
+                    );
+                }
+            });
+
+            // Permettre de lancer le filtre par JDD si on clique sur l'icône
+            $('#' + tableId + '').on('draw.dt', function () {
+                $('#' + tableId + ' a.filterByJdd').click(function () {
+                    var tr = $($(this).parents('tr')[0]);
+                    var d = $('#' + tableId + '').DataTable().row(tr).data();
+                    var jdd_id = tr.attr('id');
+                    var row_label = $('#' + tableId + ' thead tr th.row-label').attr('data-value');
+                    row_label = row_label.split(',')[0];
+                    var jdd_label = $(d[row_label]).text();
+
+                    // Reinitialize JDD panier
+                    clearJddFromSearch();
+
+                    // Add new JDD to search
+                    addJddToSearch(jdd_id, jdd_label);
+                    $('#div_form_occtax_search_token form').submit();
+                    return false;
+                });
+            });
+
+        }
+
+        /**
+         * Ajout du datatable sur le tableau des JDD (jeux de données)
+         */
         function addResultsTaxonTable() {
             var tableId = 'occtax_results_taxon_table';
             // Get taxon fields to display
@@ -875,7 +986,8 @@ OccTax.events.on({
                             callback(tData);
                             $('#' + tableId + '').show();
                         }
-                        , 'json');
+                        , 'json'
+                    );
                 }
             });
             $('#' + tableId + '').on('page.dt', function () {
@@ -3297,6 +3409,8 @@ OccTax.events.on({
                         $('#occtax_results_stats_table').DataTable().ajax.reload();
                         $('#occtax_service_search_taxon_form input[name="token"]').val(tData.token).change();
                         $('#occtax_results_taxon_table').DataTable().ajax.reload();
+                        $('#occtax_service_search_jdd_form input[name="token"]').val(tData.token).change();
+                        $('#occtax_results_jdd_table').DataTable().ajax.reload();
 
                         if ($('#occtax_results_draw_maille_m01.btn').length) {
                             $('#occtax_service_search_maille_form_m01 input[name="token"]').val(tData.token).change();
@@ -3451,6 +3565,7 @@ OccTax.events.on({
         // See ligne containing: $('#'+tokenFormId).submit(function(){
         addResultsStatsTable();
         addResultsTaxonTable();
+        addResultsJddTable();
         addResultsMailleTable('m01');
         addResultsMailleTable('m02');
         addResultsMailleTable('m10');

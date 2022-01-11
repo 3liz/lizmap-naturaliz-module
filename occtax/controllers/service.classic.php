@@ -153,6 +153,8 @@ class serviceCtrl extends jController
             return $this->__search('occtaxSearchObservationMaille');
         } else if ($groupBy == 't') {
             return $this->__search('occtaxSearchObservationTaxon');
+        } else if ($groupBy == 'j') {
+            return $this->__search('occtaxSearchObservationJdd');
         } else {
             $map = $this->param('map');
             if ($map == 'on') {
@@ -306,6 +308,15 @@ class serviceCtrl extends jController
     function searchGroupByTaxon()
     {
         return $this->__search('occtaxSearchObservationTaxon');
+    }
+
+    /**
+     * Search group by JDD
+     *
+     */
+    function searchGroupByJdd()
+    {
+        return $this->__search('occtaxSearchObservationJdd');
     }
 
 

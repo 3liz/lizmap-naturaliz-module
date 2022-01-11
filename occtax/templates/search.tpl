@@ -162,7 +162,7 @@ Déplacé par JS dans le formulaire WHERE
 
 
 <!--
-RESUME DE LA RECHERCHE ET DES RESULTATS
+RESUME DE LA RECHERCHE ET DES RÉSULTATS
 -->
 
 <h3 class="occtax_search" style="display:none;"><span class="title"><span class="icon description"></span>&nbsp;<span
@@ -240,7 +240,7 @@ RESUME DE LA RECHERCHE ET DES RESULTATS
 
 
 <!--
-RESULTATS DE RECHERCHE (TABLEAUX)
+RÉSULTATS DE RECHERCHE (TABLEAUX)
 -->
 
 <h3 class="occtax_search" style="display:none;"><span class="title"><span class="icon search"></span>&nbsp;<span
@@ -257,14 +257,19 @@ RESULTATS DE RECHERCHE (TABLEAUX)
     <div class="tabbable menu-content" style="overflow-x: hidden;">
 
         <ul id="occtax_results_tabs" class="nav nav-tabs">
+            <!-- Liste des statistiques par groupe taxonomique -->
             <li><a id="occtax_results_stats_table_tab" href="#occtax_results_stats_table_div" data-toggle="tab"
                     title="{@occtax~search.result.stats.help@}">{@occtax~search.result.stats@}</a></li>
+            <!-- Liste des taxons distincts -->
             <li><a id="occtax_results_taxon_table_tab" href="#occtax_results_taxon_table_div" data-toggle="tab"
                     title="{@occtax~search.result.taxon@}">{@occtax~search.result.taxon@}</a></li>
+            <!-- Liste des JDD -->
+            <li><a id="occtax_results_jdd_table_tab" href="#occtax_results_jdd_table_div" data-toggle="tab"
+                    title="{@occtax~search.result.jdd@}">{@occtax~search.result.jdd@}</a></li>
 
-            <!--
-        On choisir de cacher les tableaux de maille
-        On doit les conserver car l'affichage carto est très lié au datatable
+<!--
+On choisir de cacher les tableaux de maille
+On doit les conserver dans le DOM car l'affichage carto est très lié au datatable
 -->
             {ifacl2 "visualisation.donnees.maille_01"}
             {if in_array('maille_01', $mailles_a_utiliser)}
@@ -294,8 +299,8 @@ RESULTATS DE RECHERCHE (TABLEAUX)
                     title="{@occtax~search.result.observation.help@}">{@occtax~search.result.observation@}</a></li>
             {/ifacl2}
 
-            <!--
-        exports
+<!--
+exports
 -->
             <li><a id="occtax_results_export_tab" href="#occtax_results_export_div" data-toggle="tab"
                     title="{@occtax~search.result.export.title.help@}">{@occtax~search.result.export.title@}</a></li>
@@ -304,6 +309,7 @@ RESULTATS DE RECHERCHE (TABLEAUX)
 
         <div class="tab-content">
 
+            <!-- Statistiques par groupe taxonomique -->
             <div id="occtax_results_stats_table_div" class="tab-pane active bottom-content attribute-content">
                 <form id="occtax_service_search_stats_form" method="post" action="{jurl 'occtax~service:searchStats'}"
                     style="display:none;">
@@ -313,6 +319,7 @@ RESULTATS DE RECHERCHE (TABLEAUX)
                 array('classId'=>'occtax~occtaxSearchObservationStats','tableId'=>'occtax_results_stats_table')}
             </div>
 
+            <!-- Liste des taxons -->
             <div id="occtax_results_taxon_table_div" class="tab-pane bottom-content attribute-content">
                 <form id="occtax_service_search_taxon_form" method="post"
                     action="{jurl 'occtax~service:searchGroupByTaxon'}" style="display:none;">
@@ -326,8 +333,18 @@ RESULTATS DE RECHERCHE (TABLEAUX)
                 array('classId'=>'occtax~occtaxSearchObservationTaxon','tableId'=>'occtax_results_taxon_table')}
             </div>
 
-            <!--
-        mailles 1
+            <!-- Liste des JDD -->
+            <div id="occtax_results_jdd_table_div" class="tab-pane active bottom-content attribute-content">
+                <form id="occtax_service_search_jdd_form" method="post" action="{jurl 'occtax~service:searchGroupByJdd'}"
+                    style="display:none;">
+                    <input type="text" name="token"></input>
+                </form>
+                {zone 'taxon~datatable',
+                array('classId'=>'occtax~occtaxSearchObservationJdd','tableId'=>'occtax_results_jdd_table')}
+            </div>
+
+<!--
+mailles 1
 -->
             {ifacl2 "visualisation.donnees.maille_01"}
             {if in_array('maille_01', $mailles_a_utiliser)}
@@ -343,8 +360,8 @@ RESULTATS DE RECHERCHE (TABLEAUX)
             </div>
             {/if}
             {/ifacl2}
-            <!--
-        mailles 2
+<!--
+mailles 2
 -->
             {ifacl2 "visualisation.donnees.maille_02"}
             {if in_array('maille_02', $mailles_a_utiliser)}
@@ -361,8 +378,8 @@ RESULTATS DE RECHERCHE (TABLEAUX)
             {/if}
             {/ifacl2}
 
-            <!--
-        mailles 10
+<!--
+mailles 10
 -->
             {if in_array('maille_10', $mailles_a_utiliser)}
             <div style="display:none;" id="occtax_results_maille_table_div_m10"
@@ -377,8 +394,8 @@ RESULTATS DE RECHERCHE (TABLEAUX)
             </div>
             {/if}
 
-            <!--
-        donnees brutes
+<!--
+donnees brutes
 -->
             {ifacl2 "visualisation.donnees.brutes"}
             <div id="occtax_results_observation_table_div" class="tab-pane bottom-content attribute-content">
@@ -398,8 +415,8 @@ RESULTATS DE RECHERCHE (TABLEAUX)
             </div>
             {/ifacl2}
 
-            <!--
-      export
+<!--
+export
 -->
             <div id="occtax_results_export_div" class="tab-pane bottom-content attribute-content">
 

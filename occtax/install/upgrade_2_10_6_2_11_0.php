@@ -4,7 +4,7 @@ class occtaxModuleUpgrader_2_10_6_2_11_0 extends jInstallerModule {
     public $targetVersions = array(
         '2.11.0',
     );
-    public $date = '2021-11-16';
+    public $date = '2022-01-11';
 
     function install() {
         if ($this->firstDbExec()) {
