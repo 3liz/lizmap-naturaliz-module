@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+## 2.11.0 - 2021-01-11
+
+* Recherche: modification du champ de recherche pour filtrer les jeux de données (JDD):
+  * le champ se présente comme pour la recherche d'un taxon, avec une autocomplétion
+  qui recherche dans l'identifiant, le libellé et la description du JDD,
+  * l'utilisateur peut ajouter 1 à plusieurs JDD dans une liste,
+* Panneau de résultats: ajout d'un nouvel onglet contenant la liste des JDD concernés
+  ainsi sur le décompte des observations et des taxons distincts pour chaque JDD.
+* Ajout de la possibilité d'ouvrir un panneau, accessible en cliquant sur le libellés des JDD,
+  qui affiche:
+  * les informations détaillées du JDD,
+  * les informations détaillées du cadre d'acquisition (si renseigné),
+  * un bouton permettant d'ouvrir l'URL précisée dans la base vers un site externe (ex: INPN)
+
 ## 2.10.6 - 2021-11-02
 
 * Historique de recherche:
