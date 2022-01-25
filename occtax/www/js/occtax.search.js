@@ -950,6 +950,7 @@ OccTax.events.on({
                                 "data": []
                             };
                             if (results.status = 1) {
+
                                 tData.recordsTotal = results.recordsTotal;
                                 tData.recordsFiltered = results.recordsFiltered;
 
@@ -3445,6 +3446,11 @@ OccTax.events.on({
                         // Click on the previous selected legend button
                         $('#' + selected_legend_button_id).click();
 
+                        // Store the extent of the found observations
+                        if (tData.recordsExtent) {
+                            $('#occtax_results_data_extent').text(tData.recordsExtent);
+                        }
+
                     } else {
                         $('#occtax-highlight-message').remove();
                         $('#occtax-message').remove();
@@ -3697,10 +3703,20 @@ OccTax.events.on({
 
         // Zoom to data
         $('#occtax_results_zoom').click(function () {
-            var rLayer = OccTax.layers['mailleLayer'];
-            if (rLayer.features.length > 0) {
-                OccTax.map.zoomToExtent(rLayer.getDataExtent());
+            // Get the result observations full extent
+            var result_extent_polygon = $('#occtax_results_data_extent').text();
+            if (!result_extent_polygon) {
+                return false;
             }
+
+            // Get the bounds in the map projection
+            var format = new OpenLayers.Format.GeoJSON();
+            var extent_geom = format.read(result_extent_polygon)[0].geometry;
+            extent_geom.transform('EPSG:4326', OccTax.map.projection);
+            var extent_bounds = extent_geom.getBounds();
+
+            // Zoom
+            OccTax.map.zoomToExtent(extent_bounds);
             //return False;
         });
 

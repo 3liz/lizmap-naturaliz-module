@@ -22,6 +22,8 @@ class occtaxSearch {
 
     protected $recordsTotal = Null;
 
+    protected $recordsExtent = Null;
+
     protected $returnFields = array();
 
     protected $tplFields = array();
@@ -108,8 +110,10 @@ class occtaxSearch {
         $this->setSql();
 //jLog::log($this->sql);
         // Get the number of total records
-        if( !$this->recordsTotal && $this->token && !$this->demande )
+        if (!$this->recordsTotal && $this->token && !$this->demande) {
             $this->setRecordsTotal();
+            $this->setRecordsExtent();
+        }
 
         // Store to cache
         if(!$this->demande)
@@ -469,6 +473,31 @@ class occtaxSearch {
                 $this->recordsTotal = $line->nb;
             }
         }
+    }
+
+    /**
+     * Calculate the extent of the found observations
+     * and set the object property
+     */
+    public function setRecordsExtent() {
+        if( $this->sql ) {
+            $cnx = jDb::getConnection('naturaliz_virtual_profile');
+            $sql = "SELECT ST_AsGeoJSON( ST_Transform( ST_Envelope(ST_Collect(geom)), 4326 ), 6) AS extent FROM (";
+            $sql.= $this->sql;
+            $sql.= ") AS foo;";
+            $result = $cnx->query( $sql );
+            foreach( $result->fetchAll() as $line ) {
+                $this->recordsExtent = $line->extent;
+            }
+        }
+    }
+
+    /**
+     * Get the number of records returned
+    */
+    public function getRecordsExtent(){
+        jLog::log($this->recordsExtent);
+        return $this->recordsExtent;
     }
 
     protected function setSql() {

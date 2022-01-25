@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+* Refonte du bouton de zoom sur les résultats: il s'appuie maintenant 
+  sur l'emprise totale de l'ensemble des observations renvoyées par la recherche
+  et pas sur les géométries affichées initialement sur la carte
+
 ## 2.11.1 - 2021-01-11
 
 * Correction d'un bug sur le script de mise à jour vers la 2.11.0

@@ -173,7 +173,6 @@ RESUME DE LA RECHERCHE ET DES RÉSULTATS
     <div class="menu-content">
         <div id="occtax_search_description_content"></div>
 
-
         <input id="occtax_observation_records_total" type="hidden" value="0">
         <button id="occtax-search-modify" type="button" class="btn btn-primary" name="mod" value="modify"
             style="">{@occtax~search.button.modify.search@}</button>
@@ -187,6 +186,9 @@ RESUME DE LA RECHERCHE ET DES RÉSULTATS
         {/ifacl2}
 
         <!-- zoom -->
+
+        <span id="occtax_results_data_extent" style="display:none;"></span>
+
         <span class="pull-right" id="occtax_result_button_bar" style="display:none;">
             <div class="btn-group">
                 <button id="occtax_results_zoom" type="button" class="btn btn-mini"

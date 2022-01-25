@@ -132,6 +132,7 @@ class serviceCtrl extends jController
             'status' => 1,
             'token' => $occtaxSearch->getToken(),
             'recordsTotal' => $occtaxSearch->getRecordsTotal(),
+            'recordsExtent' => $occtaxSearch->getRecordsExtent(),
             'description' => $description,
             'wfsUrl' => $wfsUrl
         );
