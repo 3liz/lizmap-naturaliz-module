@@ -721,7 +721,7 @@ OccTax.events.on({
                 "deferRender": true,
                 "scrollY": '100%',
                 "scrollX": '95%',
-                "language": { url: jFormsJQ.config.basePath + lizUrls["dataTableLanguage"] },
+                "language": { url: lizUrls["dataTableLanguage"] },
                 "oLanguage": {
                     "sInfoEmpty": "",
                     "sEmptyTable": "Aucun résultat",
@@ -805,7 +805,7 @@ OccTax.events.on({
                 "deferRender": true,
                 "scrollY": '100%',
                 "scrollX": '95%',
-                "language": { url: jFormsJQ.config.basePath + lizUrls["dataTableLanguage"] },
+                "language": { url: lizUrls["dataTableLanguage"] },
                 "oLanguage": {
                     "sInfoEmpty": "",
                     "sEmptyTable": "Aucun résultat",
@@ -910,7 +910,7 @@ OccTax.events.on({
                 //"searching": true,
                 "searching": false,
                 "dom": 'ipft',
-                "language": { url: jFormsJQ.config.basePath + lizUrls["dataTableLanguage"] },
+                "language": { url: lizUrls["dataTableLanguage"] },
                 "oLanguage": {
                     "sInfoEmpty": "",
                     "sEmptyTable": "Aucun résultat",
@@ -1065,7 +1065,7 @@ OccTax.events.on({
                 "deferRender": true,
                 "scrollY": '100%',
                 "scrollX": '95%',
-                "language": { url: jFormsJQ.config.basePath + lizUrls["dataTableLanguage"] },
+                "language": { url: lizUrls["dataTableLanguage"] },
                 "oLanguage": {
                     "sInfoEmpty": "",
                     "sEmptyTable": "Aucun résultat",
@@ -1290,7 +1290,7 @@ OccTax.events.on({
                 "scrollX": '95%',
                 "searching": false,
                 "dom": 'ipt',
-                "language": { url: jFormsJQ.config.basePath + lizUrls["dataTableLanguage"] },
+                "language": { url: lizUrls["dataTableLanguage"] },
                 "oLanguage": {
                     "sInfoEmpty": "",
                     "sEmptyTable": "Aucun résultat",
@@ -1517,6 +1517,10 @@ OccTax.events.on({
          */
          function initJddAutocomplete() {
             var formId = $('#div_form_occtax_search_token form').attr('id');
+            // Do nothing if the autocompletion is not visible
+            if ($('#' + formId + '_jdd_autocomplete').length == 0) {
+                return false;
+            }
             $('#' + formId + '_jdd_autocomplete').autocomplete({
                 minLength: 2,
                 autoFocus: true,

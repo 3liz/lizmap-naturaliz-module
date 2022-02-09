@@ -46,8 +46,41 @@ class defaultCtrl extends lizMapCtrl {
         }
 
         $rep = parent::index();
+
         if ( $rep instanceof jResponseHtml ) {
             $rep->body->assign( 'auth_url_return', jUrl::get('occtax~default:index') );
+
+            // For occtax we need to add all JQuery
+            // In Lizmap it is done only if the use has edition capabilities
+            $confUrlEngine = &jApp::config()->urlengine;
+            $bp = $confUrlEngine['basePath'];
+            $lang = jLocale::getCurrentLang();
+            $www = $confUrlEngine['jelixWWWPath'];
+
+            $rep->addJSLink($www.'jquery/include/jquery.include.js');
+            $rep->addJSLink($www.'js/jforms_jquery.js');
+
+            // Add datepickers jForms js
+            $confDate = &jApp::config()->datepickers;
+            $rep->addJSLink($confDate['default']);
+            if (isset($confDate['default.js'])) {
+                $js = $confDate['default.js'];
+                foreach ($js as $file) {
+                    $file = str_replace('$lang', $lang, $file);
+                    if (strpos($file, 'jquery.ui.datepicker-en.js') !== false) {
+                        continue;
+                    }
+                    $rep->addJSLink($file);
+                }
+            }
+
+            // Add other jForms js
+            $rep->addJSLink($bp.'assets/js/ckeditor5/ckeditor.js');
+            $rep->addJSLink($bp.'assets/js/ckeditor5/ckeditor_lizmap.js');
+            $rep->addJSLink($bp.'assets/js/fileUpload/jquery.fileupload.js');
+            $rep->addJsLink($bp.'assets/js/fileUpload/jquery.iframe-transport.js');
+
+            $rep->addJSLink($bp.'assets/js/bootstrapErrorDecoratorHtml.js');
 
             // Get local configuration (application name, projects name, etc.)
             $localConfig = jApp::configPath('naturaliz.ini.php');
@@ -56,10 +89,8 @@ class defaultCtrl extends lizMapCtrl {
             $rep->body->assign( 'WMSServiceTitle', $ini->getValue('projectName', 'naturaliz') );
             $rep->title = $ini->getValue('projectName', 'naturaliz');
             $rep->body->assign( 'repositoryLabel', $ini->getValue('appName', 'naturaliz') );
-            $bp = jApp::config()->urlengine['basePath'];
-            // fileupload
-            $rep->addJsLink( $bp.'js/fileUpload/jquery.iframe-transport.js' );
-            $rep->addJsLink( $bp.'js/fileUpload/jquery.fileupload.js' );
+
+
             // sumoselect
             $rep->addJsLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/sumoselect/jquery.sumoselect.min.js')));
             $rep->addCSSLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'css/sumoselect/sumoselect.css')));
@@ -81,10 +112,6 @@ class defaultCtrl extends lizMapCtrl {
             // occtax
             $rep->addJsLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/occtax.js')));
             $rep->addJsLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/occtax.search.js')));
-
-            // datatable scroller https://datatables.net/extensions/scroller/
-            $rep->addJsLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/dataTables.scroller.min.js')));
-            $rep->addCSSLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/scroller.dataTables.min.css')));
 
             // Add nomenclature
             $nomenclature = array();
@@ -152,4 +179,3 @@ class defaultCtrl extends lizMapCtrl {
         return $data;
     }
 }
-
