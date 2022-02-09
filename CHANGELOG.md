@@ -2,9 +2,11 @@
 
 ## Unreleased
 
-* Refonte du bouton de zoom sur les résultats: il s'appuie maintenant 
+* Refonte du bouton de zoom sur les résultats: il s'appuie maintenant
   sur l'emprise totale de l'ensemble des observations renvoyées par la recherche
   et pas sur les géométries affichées initialement sur la carte
+* Recherche - Ajout de données de tests pour l'envoi de polygones GeoJSON
+* Adaptations du code pour Lizmap Web Client >= 3.5
 
 ## 2.11.1 - 2021-01-11
 
