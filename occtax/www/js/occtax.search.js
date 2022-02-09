@@ -2346,6 +2346,48 @@ OccTax.events.on({
         }
 
         /**
+         * Merge the give search history with the localstorage one
+         *
+         * It only keep favorites from the local content
+         * which are not yet in the given history content
+         *
+         * @param {array} backend_history Search history taken from server
+         */
+        function addMissingStaredToGivenHistoryFromLocalStorage(backend_history) {
+
+            var current_storage = getSearchHistoryFromLocalStorage();
+            var merged_history = [];
+            var items_to_add = [];
+            var items_uid_to_add = [];
+
+            for (var i in current_storage) {
+                // Avoid localstorage items which are not favorites
+                if (!(current_storage[i].stared)) {
+                    continue;
+                }
+                // Add it to the items to add
+                items_to_add.push(current_storage[i]);
+                items_uid_to_add.push(current_storage[i].uid);
+            }
+
+            // Add the newest items kept from the local storage
+            // Do it before to put them on top
+            for (var i in items_to_add) {
+                merged_history.push(items_to_add[i]);
+            }
+
+            // Then add the backed history items
+            for (var i in backend_history) {
+                if ($.inArray(backend_history[i].uid, items_uid_to_add) > -1) {
+                    continue;
+                }
+                merged_history.push(backend_history[i]);
+            }
+
+            return merged_history;
+        }
+
+        /**
          * Set the stored search items to the browser localStorage (always)
          * When the user is authenticated, also lazilly stores to the backend cache
          *
@@ -3930,8 +3972,13 @@ OccTax.events.on({
             getSearchHistoryFromBackend(
                 function (history_storage) {
 
+                    // Add the search history items from the localstorage
+                    // which are favourites but are not yet in the connected user backend storage
+                    var merged_history = addMissingStaredToGivenHistoryFromLocalStorage(history_storage);
+
                     // Override the localstorage content
-                    saveSearchHistory(history_storage, false);
+                    // saveSearchHistory(history_storage, false);
+                    saveSearchHistory(merged_history, true);
 
                     // Refresh the content and enable the UI
                     refreshHistorySelector();

@@ -7,6 +7,8 @@
 * Refonte du bouton de zoom sur les résultats: il s'appuie maintenant
   sur l'emprise totale de l'ensemble des observations renvoyées par la recherche
   et pas sur les géométries affichées initialement sur la carte
+* Historique de recherche - Ajout des items favoris créés hors connexion dans les favoris 
+  de l'utilisateur lorsqu'il se reconnecte
 * Légères modifications de l'affichage des menaces dans la fiche Taxon:
   * le nom du statut est affiché au lieu du nom du groupe. Ex: "liste rouge nationale" au lieu de "liste rouge"
   * une icône avec la couleur de la menace est affichée à côté de la valeur
