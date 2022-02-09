@@ -1,12 +1,16 @@
 # Changelog
 
-## Unreleased
+## 2.11.2 - 2022-02-09
 
 * Refonte du bouton de zoom sur les résultats: il s'appuie maintenant
   sur l'emprise totale de l'ensemble des observations renvoyées par la recherche
   et pas sur les géométries affichées initialement sur la carte
-* Recherche - Ajout de données de tests pour l'envoi de polygones GeoJSON
+* Légères modifications de l'affichage des menaces dans la fiche Taxon:
+  * le nom du statut est affiché au lieu du nom du groupe. Ex: "liste rouge nationale" au lieu de "liste rouge"
+  * une icône avec la couleur de la menace est affichée à côté de la valeur
+  * l'infobulle au survol de la souris est traitée en JavaScript (affichage plus rapide)
 * Adaptations du code pour Lizmap Web Client >= 3.5
+* Recherche - Ajout de données de tests pour l'envoi de polygones GeoJSON
 
 ## 2.11.1 - 2021-01-11
 

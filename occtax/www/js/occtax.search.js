@@ -516,7 +516,7 @@ OccTax.events.on({
                         'mar': ['Martinique']
                     };
                     statut_localisations = occtaxClientConfig.statut_localisations;
-                    var html = '<ul>';
+                    var html = '<ul style="list-style-type: square;">';
                     for (var s in mdata._embedded.status) {
                         var status = mdata._embedded.status[s];
                         // Do not display if localisation is not in statut_localisations
@@ -529,9 +529,17 @@ OccTax.events.on({
                                     st_cursor = ' style="cursor:help;"';
                                 }
                                 html += '<li>';
-                                html += '<b>' + status.statusTypeGroup + '</b>: ';
-                                html += '<span ' + st_title + st_cursor + '>' + status.statusName + '</span>';
+                                if (status.statusTypeGroup == 'Liste rouge') {
+                                    html += '<b>' + status.statusTypeName + '</b>: ';
+                                } else {
+                                    html += '<b>' + status.statusTypeGroup + '</b>: ';
+                                }
+                                if (status.statusTypeGroup == 'Liste rouge') {
+                                    html += '<span class="redlist ' + status.statusCode + '">' + status.statusCode + '</span>&nbsp;';
+                                }
+                                html += '<span ' + st_cursor + st_title + '>' + status.statusName + '</span>';
                                 html += '<i> (' + status.locationName + ')</i>';
+                                // html += '<span style="">' + status.source + '</span>';
                                 html += '</li>';
                                 html += '';
                             }
@@ -540,6 +548,7 @@ OccTax.events.on({
                     html += '</ul>';
                     $('#taxon-detail-status div.dataviz-waiter').hide();
                     $('#taxon-detail-status').html(html);
+                    $('#taxon-detail-status li span[title]').tooltip();
 
                 } else {
                     $('#taxon-detail-status div.dataviz-waiter').hide();
