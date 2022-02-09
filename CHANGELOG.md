@@ -1,5 +1,7 @@
 # Changelog
 
+## Unreleased
+
 ## 2.11.2 - 2022-02-09
 
 * Refonte du bouton de zoom sur les résultats: il s'appuie maintenant
