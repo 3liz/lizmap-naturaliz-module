@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+* Ajout d'un outil de validation des données d'un fichier CSV selon le standard Occurences de Taxon
+
 ## 2.11.4 - 2022-03-21
 
 * Historique de recherche - modification du fichier de stockage des historiques des utilisateurs
@@ -20,7 +22,7 @@
 * Refonte du bouton de zoom sur les résultats: il s'appuie maintenant
   sur l'emprise totale de l'ensemble des observations renvoyées par la recherche
   et pas sur les géométries affichées initialement sur la carte
-* Historique de recherche - Ajout des items favoris créés hors connexion dans les favoris
+* Historique de recherche - Ajout des items favoris créés hors connexion dans les favoris 
   de l'utilisateur lorsqu'il se reconnecte
 * Légères modifications de l'affichage des menaces dans la fiche Taxon:
   * le nom du statut est affiché au lieu du nom du groupe. Ex: "liste rouge nationale" au lieu de "liste rouge"

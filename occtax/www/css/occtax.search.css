@@ -655,8 +655,32 @@ Message en haut de la carte*/
   font-size: 12px;
 }
 
-
+/* IMPORT */
 /* Module d'import des données */
+#bottom-dock div.tabbable.tabs-below {
+  height: 97%;
+}
+#bottom-dock-content {
+  height: 100%;
+}
+#mapmenu .nav-list > li.import .icon {
+  background-image: url(getfile?targetmodule=occtax&file=css/img/navbar/src/import_ffffff_20.png);
+}
+#mapmenu .nav-list > li.import.active .icon,
+#mapmenu .nav-list > li.import a:hover .icon {
+  background-image: url(getfile?targetmodule=occtax&file=css/img/navbar/src/import_343433_20.png);
+}
+
+#import h3 .icon {
+    background-image: url(getfile?targetmodule=occtax&file=css/img/navbar/src/import_ffffff_20.png);
+    background-position: 0px;
+}
+
+#import div.menu-content {
+  font-size: 12px;
+  line-height: normal;
+}
+
 #import div.menu-content {
   background-color: #F0F0F0;
   padding:5px;

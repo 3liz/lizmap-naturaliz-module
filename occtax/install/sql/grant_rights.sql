@@ -23,5 +23,7 @@ GRANT SELECT, INSERT, UPDATE ON TABLE occtax.validation_observation TO "{$DBUSER
 -- car le trigger copie les données depuis validation_observation vers validatite_niveau et validite_date_validation
 -- pour l'échelon ech_val = '2' (régional) lors de la modification de validation_observation
 GRANT SELECT, UPDATE ON TABLE occtax.observation TO "{$DBUSER_READONLY}";
+-- Aussi la vue pour la validation v_observation_champs_validation
+GRANT SELECT ON TABLE occtax.v_observation_champs_validation TO "{$DBUSER_READONLY}";
 
 COMMIT;

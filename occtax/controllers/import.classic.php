@@ -43,7 +43,8 @@ class importCtrl extends jController
         // Automatic form check
         $form->initFromRequest();
         if (!$form->check()) {
-            $return['messages'] = $form->getErrors();
+            $errors = $form->getErrors();
+            $return['messages'][] = "Le formulaire n'est pas valide. Veuillez renvoyer votre fichier CSV.";
             $rep->data = $return;
             return $rep;
         }
@@ -66,7 +67,6 @@ class importCtrl extends jController
             $rep->data = $return;
             return $rep;
         }
-
         // Import library
         jClasses::inc('occtax~occtaxImport');
         $import = new occtaxImport($csv_target_directory.'/'.$csv_target_filename);
@@ -141,7 +141,6 @@ class importCtrl extends jController
         // Return data
         $rep->data = $return;
 
-        \jLog::log('FIN');
         return $rep;
     }
 

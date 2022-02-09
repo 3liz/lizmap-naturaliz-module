@@ -60,6 +60,23 @@ lizMap.events.on({
                     return false;
                 }
 
+                // No error, display green message
+                if (response.data
+                    && response.data.not_null.length == 0
+                    && response.data.format.length == 0
+                    && response.data.conforme.length == 0
+                ) {
+                    $('#import_message')
+                    .html("✅ Aucune erreur n'a été détectée. Vos données sont valides !")
+                    .css('color', 'green')
+                    ;
+                } else {
+                    $('#import_message')
+                    .html("❗Des erreurs ont été détectées dans votre jeu de données !")
+                    .css('color', 'red')
+                    ;
+                }
+
                 for (var c in type_conformites) {
                     var type_conformite = type_conformites[c];
                     var lines = response.data[type_conformite];
@@ -68,13 +85,13 @@ lizMap.events.on({
                     for (var e in lines) {
                         var error_line = lines[e];
                         var intitule = (error_line.description !== null && error_line.description != '') ? error_line.description : error_line.libelle;
-                        console.log('TEST');
-                        console.log(error_line);
-                        console.log(intitule);
+                        // console.log('TEST');
+                        // console.log(error_line);
+                        // console.log(intitule);
                         html += '<tr title="' + intitule + '">';
                         html += '<td>' + intitule + '</td>';
                         html += '<td>' + error_line['nb_lines'] + '</td>';
-                        html += '<td>' + error_line['ids'] + '</td>';
+                        html += '<td>' + error_line['ids_text'] + '</td>';
                         html += '</tr>';
                     }
                     $('#import_conformite_' + type_conformite).html(table_header + html);

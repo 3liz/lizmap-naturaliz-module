@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form xmlns="http://jelix.org/ns/forms/1.1" allowAnyOrigin="true">
 
-    <input ref="jdd_id" required="true" type="integer">
+    <!-- <input ref="jdd_id" required="true" type="integer">
         <label locale="occtax~import.input.jdd_id"/>
         <hint locale="occtax~import.input.jdd_id.help"/>
         <help locale="occtax~import.input.jdd_id.help"/>
-    </input>
+    </input> -->
 
     <upload ref="observation_csv" required="true" maxsize="200000" accept=".csv,text/csv,application/csv,text/comma-separated-values">
         <label locale="occtax~import.input.observation_csv"/>
@@ -18,8 +18,8 @@
         <hint locale="occtax~import.input.check.help"/>
     </submit>
 
-    <submit ref="import">
+    <!-- <submit ref="import">
         <label locale="occtax~import.input.import"/>
         <hint locale="occtax~import.input.import.help"/>
-    </submit>
+    </submit> -->
 </form>

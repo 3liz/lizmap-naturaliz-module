@@ -1,3 +1,4 @@
+-- Stockage des critères de conformité au standard
 DROP TABLE IF EXISTS occtax.critere_conformite;
 CREATE TABLE occtax.critere_conformite (
     id serial not null PRIMARY KEY,
@@ -15,7 +16,102 @@ COMMENT ON TABLE occtax.critere_conformite
 IS 'Liste les critères de conformité des données à importer dans la table occtax.observation'
 ;
 
--- Fonction de validation de types
+-- Fonction de validation d'une identité unique
+DROP FUNCTION IF EXISTS occtax.is_valid_identite(identite text);
+CREATE OR REPLACE FUNCTION occtax.is_valid_identite(identite text)
+RETURNS TABLE (
+  is_valid boolean,
+  items text[]
+) AS $$
+DECLARE
+    items text[];
+BEGIN
+    items = regexp_match(
+        trim(identite),
+        '^([A-Z\u00C0-\u00FF\- ]+) +([A-Za-z\u00C0-\u00FF\- ]+ +)?\((.+)\)$'
+    );
+
+    -- Si on ne trouve rien via la regex, on renvoie FALSE
+    IF items IS NULL THEN
+        RETURN QUERY
+        SELECT FALSE, NULL::text[] AS items
+        -- LIMIT 1
+        ;
+        RETURN;
+    END IF;
+
+    -- On vérifie que le tableau de résultat a bien 3 items
+    IF NOT (array_length(items, 1) = 3) THEN
+        RETURN QUERY
+        SELECT FALSE, NULL::text[] AS items
+        -- LIMIT 1
+        ;
+        RETURN;
+    END IF;
+
+    -- Si le prénom est vide, il faut que le nom soit INCONNU
+    IF (trim(items[2]) = '' OR trim(items[2]) IS NULL) AND trim(items[1]) != 'INCONNU' THEN
+        RETURN QUERY
+        SELECT FALSE, NULL::text[] AS items
+        --LIMIT 1
+        ;
+        RETURN;
+    END IF;
+
+    -- Renvoie les données nettoyées
+    RETURN QUERY
+    SELECT TRUE, ARRAY[trim(items[1]), trim(items[2]), trim(items[3])]::text[] AS items
+    ;
+
+    RETURN;
+END;
+$$ LANGUAGE plpgsql
+;
+
+COMMENT ON FUNCTION occtax.is_valid_identite(text)
+IS 'Tester si l''identite est conforme: NOM-SOUS-NOM Prénom Autre prénom (Organisme) ou  INCONNU (Organisme)'
+;
+
+
+-- Fonction de validation d'une identité multiple (identités séparées par virgule)
+DROP FUNCTION IF EXISTS occtax.is_valid_identite_multiple(identites text);
+CREATE OR REPLACE FUNCTION occtax.is_valid_identite_multiple(identites text)
+RETURNS boolean AS $$
+DECLARE
+    var_is_valid boolean;
+    var_items text[];
+BEGIN
+    -- On sépare par virgule
+    FOR var_is_valid, var_items IN
+        WITH a AS (
+            SELECT regexp_split_to_array(identites, ',') AS personnes
+        ),
+        -- on sépare en enregistrements
+        b AS (
+            SELECT * FROM a, unnest(personnes) AS personne
+        ),
+        c AS (
+            SELECT * FROM b, occtax.is_valid_identite(personne)
+        )
+        SELECT is_valid, items FROM c
+
+    LOOP
+        IF NOT var_is_valid THEN
+            RETURN False;
+        END IF;
+    END LOOP;
+
+    RETURN True;
+END;
+$$ LANGUAGE plpgsql
+;
+
+COMMENT ON FUNCTION occtax.is_valid_identite_multiple(text)
+IS 'Tester si un champ contenant des personnes séparées par virgule est conforme selon le standard SINP. Ex: DUPONT Jean (Inconnu), INCONNU (Organisme)'
+;
+
+
+-- Fonction de validation de types de données
 CREATE OR REPLACE FUNCTION occtax.is_given_type(s text, t text) RETURNS BOOLEAN AS $$
 BEGIN
     -- Avoid to test empty strings
@@ -56,6 +152,7 @@ COMMENT ON FUNCTION occtax.is_given_type(text, text)
 IS 'Tester si le contenu d''un champ est du type attendu'
 ;
 
+-- Fonction de test de conformité des observations d'une table au standard
 DROP FUNCTION IF EXISTS occtax.test_conformite_observation(regclass, text);
 CREATE OR REPLACE FUNCTION occtax.test_conformite_observation(_table_temporaire regclass, _type_critere text)
 RETURNS TABLE (
@@ -106,7 +203,8 @@ BEGIN
             SELECT
                 %s AS id_critere, %s AS code,
                 %s AS libelle, %s AS description, %s AS condition,
-                count(o.temporary_id) AS nb_lines, array_agg(o.identifiant_origine::text) AS ids
+                count(o.temporary_id) AS nb_lines,
+                array_agg(o.identifiant_origine::text) AS ids
             FROM %s AS o
             ';
             sql_text := format(
@@ -163,59 +261,11 @@ IS 'Tester la conformité des observations contenues dans la table fournie en pa
 ;
 
 
--- Vue pour récupérer les informations sur les champs de occtax.observation
-
-CREATE VIEW occtax.champs_standard AS
-SELECT
-    a.attnum AS ordinal_position,
-    a.attname AS column_name,
-    t.typname AS data_type,
-    a.attlen AS char_max_len,
-    a.atttypmod AS modifier,
-    a.attnotnull AS notnull,
-    a.atthasdef AS hasdefault,
-    adef.adsrc AS default_value,
-    pg_catalog.format_type(a.atttypid, a.atttypmod) AS formatted_type,
-    (
-        SELECT pd.description
-        FROM pg_description pd
-        ,pg_class pc_
-        ,pg_attribute pa_
-        WHERE pc_.relname = 'observation'
-        AND attname = a.attname
-        AND pa_.attrelid = pc_.oid
-        AND pd.objoid = pc_.oid
-        AND pd.objsubid = pa_.attnum
-        LIMIT 1
-    ) AS st_comment
-FROM pg_class c
-INNER JOIN pg_attribute a
-    ON a.attrelid = c.oid
-INNER JOIN pg_type t
-    ON a.atttypid = t.oid
-INNER JOIN pg_namespace nsp
-    ON c.relnamespace = nsp.oid
-LEFT JOIN pg_attrdef adef
-    ON adef.adrelid = a.attrelid AND adef.adnum = a.attnum
-WHERE
-    a.attnum > 0
-	AND c.relname = 'observation'
-	AND nspname = 'occtax'
-ORDER BY a.attnum
-;
-
-
-
-
---
--- DONNEES
---
-
-
+-- Données de test de conformité
 -- critere_conformite
 TRUNCATE TABLE occtax.critere_conformite RESTART IDENTITY;
 
--- Ajout des contraintes sur les types de champs attendus
+-- Ajout des contraintes sur les types de champs attendus: format, non null, occtax
 INSERT INTO occtax.critere_conformite (code, libelle, condition, type_critere)
 VALUES
 ('obs_identifiant_permanent_format', 'Le format de <b>identifiant_permanent</b> est incorrect. Attendu: uuid' , $$occtax.is_given_type(identifiant_permanent, 'uuid')$$, 'format'),
@@ -249,11 +299,10 @@ ON CONFLICT ON CONSTRAINT critere_conformite_unique_code DO NOTHING
 -- NOT NULL
 INSERT INTO occtax.critere_conformite (code, libelle, condition, type_critere)
 VALUES
+('obs_observateurs_not_null', 'La valeur de <b>observateurs</b> est vide', $$observateurs IS NOT NULL$$, 'not_null'),
 ('obs_statut_observation_not_null', 'La valeur de <b>statut_observation</b> est vide', $$statut_observation IS NOT NULL$$, 'not_null'),
-('obs_cd_nom_not_null', 'La valeur de <b>cd_nom</b> est vide', $$cd_nom IS NOT NULL$$, 'not_null'),
 ('obs_denombrement_min_not_null', 'La valeur de <b>denombrement_min</b> est vide', $$denombrement_min IS NOT NULL$$, 'not_null'),
 ('obs_denombrement_max_not_null', 'La valeur de <b>denombrement_max</b> est vide', $$denombrement_max IS NOT NULL$$, 'not_null'),
-('obs_version_taxref_not_null', 'La valeur de <b>version_taxref</b> est vide', $$version_taxref IS NOT NULL$$, 'not_null'),
 ('obs_nom_cite_not_null', 'La valeur de <b>nom_cite</b> est vide', $$nom_cite IS NOT NULL$$, 'not_null'),
 ('obs_date_debut_not_null', 'La valeur de <b>date_debut</b> est vide', $$date_debut IS NOT NULL$$, 'not_null'),
 ('obs_date_fin_not_null', 'La valeur de <b>date_fin</b> est vide', $$date_fin IS NOT NULL$$, 'not_null'),
@@ -273,7 +322,7 @@ ON CONFLICT ON CONSTRAINT critere_conformite_unique_code DO NOTHING
 INSERT INTO occtax.critere_conformite (code, libelle, description, condition, type_critere)
 VALUES
 ('obs_statut_source_valide', 'La valeur de <b>statut_source</b> n''est pas conforme', 'Le champ <b>statut_source</b> doit correspondre à la nomenclature', $$( statut_source IN ( 'Te', 'Co', 'Li', 'NSP' ) )$$, 'conforme'),
-('obs_reference_biblio_valide', 'La valeur de r<b>eference_biblio</b> n''est pas conforme', 'Le champ <b>reference_biblio</b> doit être renseignée si le champ <b>statut_source</b> vaut Li', $$( (statut_source = 'Li' AND reference_biblio IS NOT NULL) OR statut_source != 'Li' )$$, 'conforme'),
+('obs_reference_biblio_valide', 'La valeur de <b>reference_biblio</b> n''est pas conforme', 'Le champ <b>reference_biblio</b> doit être renseignée si le champ <b>statut_source</b> vaut Li', $$( (statut_source = 'Li' AND reference_biblio IS NOT NULL) OR statut_source != 'Li' )$$, 'conforme'),
 ('obs_ds_publique_valide', 'La valeur de <b>ds_publique</b> n''est pas conforme', 'Le champ <b>ds_publique</b> doit correspondre à la nomenclature', $$( ds_publique IN ( 'Pu', 'Re', 'Ac', 'Pr', 'NSP' ) )$$, 'conforme'),
 ('obs_statut_observation_valide', 'La valeur de <b>statut_observation</b> n''est pas conforme', 'Le champ <b>statut_observation</b> doit correspondre à la nomenclature', $$( statut_observation IN ( 'Pr', 'No', 'NSP' ) )$$, 'conforme'),
 ('obs_objet_denombrement_valide', 'La valeur de <b>objet_denombrement</b> n''est pas conforme', 'Le champ <b>objet_denombrement</b> doit être différent de NSP si les champs <b>denombrement_min</b> ou <b>denombrement_max</b> sont renseignés', $$(
@@ -292,13 +341,13 @@ VALUES
 ('obs_sensi_niveau_valide', 'La valeur de <b>sensi_niveau</b> n''est pas conforme', 'Le champ <b>sensi_niveau</b> peut seulement prendre les valeurs suivantes: 0, 1, 2, 3, 4, 5, m01 ou m02', $$( sensi_niveau IN ( '0', '1', '2', '3', '4', '5', 'm01', 'm02' ) )$$, 'conforme'),
 ('obs_sensi_referentiel_valide', 'La valeur de <b>sensi_referentiel</b> n''est pas conforme', '', $$( ( sensi_niveau != '0' AND sensi_referentiel IS NOT NULL) OR sensi_niveau = '0' )$$, 'conforme'),
 ('obs_sensi_version_referentiel_valide', 'La valeur de <b>sensi_version_referentiel</b> n''est pas conforme', 'Le champ <b>sensi_version_referentiel</b> doit être renseigné si le champ <b>sensi_niveau</b> est différent de 0', $$( ( sensi_niveau != '0' AND sensi_version_referentiel IS NOT NULL) OR sensi_niveau = '0' )$$, 'conforme'),
-('obs_version_taxref_valide', 'La valeur de <b>version_taxref</b> n''est pas conforme', 'La version du TAXREF <b>version_taxref</b> doit être renseignée si le <b>cd_nom</b> est positif', $$(cd_nom IS NULL OR ( cd_nom IS NOT NULL AND cd_nom::integer > 0 AND version_taxref IS NOT NULL) OR ( cd_nom IS NOT NULL AND cd_nom::integer < 0 ))$$, 'conforme')
-
+('obs_version_taxref_valide', 'La valeur de <b>version_taxref</b> n''est pas conforme', 'La version du TAXREF <b>version_taxref</b> doit être renseignée si le <b>cd_nom</b> est positif', $$(cd_nom IS NULL OR ( cd_nom IS NOT NULL AND cd_nom::integer > 0 AND version_taxref IS NOT NULL) OR ( cd_nom IS NOT NULL AND cd_nom::integer < 0 ))$$, 'conforme'),
+('obs_observateurs_valide', 'La valeur de <b>observateurs</b> n''est pas conforme', 'Le champ <b>observateurs</b> doit être du type: NOM Prénom (Organisme 1), AUTRE-NOM Prénoms-Composé (Organisme 2), INCONNU (Indépendant)', $$(occtax.is_valid_identite_multiple(observateurs))$$, 'conforme'),
+('obs_determinateurs_valide', 'La valeur de <b>determinateurs</b> n''est pas conforme', 'Le champ <b>determinateurs</b> doit être rempli si le cd_nom est rempli', $$(cd_nom IS NULL OR ( cd_nom IS NOT NULL AND determinateurs IS NOT NULL))$$, 'conforme'),
+('obs_determinateurs_valide_format', 'La valeur de <b>determinateurs</b> n''est pas conforme', 'Le champ <b>determinateurs</b> doit être du type: NOM Prénom (Organisme 1), AUTRE-NOM Prénoms-Composé (Organisme 2), INCONNU (Indépendant)', $$(occtax.is_valid_identite_multiple(determinateurs))$$, 'conforme')
 ON CONFLICT ON CONSTRAINT critere_conformite_unique_code DO NOTHING
 ;
 
 
 -- TODO
 -- test de la géométrie à l'intérieur de la zone de la plateforme régionale
--- Tester le format des champs "observateurs": NOM Prénom (Organisme), NOM2 Prénom2 (INCONNU)
--- on force les gens à envoyer un fichier CSV des personnes

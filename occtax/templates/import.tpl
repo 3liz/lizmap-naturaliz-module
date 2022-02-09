@@ -1,13 +1,13 @@
 <div style="height:100%;overflow:auto;">
     <h3>
         <span class="title">
-            <span class="icon-download"></span>&nbsp;
+            <span class="icon"></span>&nbsp;
             <span class="text">{@import.dock.title@}</span>
         </span>
     </h3>
     <div class="menu-content">
         <div id="occtax_import_tab_div" class="container" style="width:100%;">
-            <b>Tester la conformité puis importer des données d'observation selon le standard Occurences de Taxon</b>
+            <h4>Tester la conformité de données d'observation selon le standard Occurences de Taxon</h4>
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#import_formulaire" data-toggle="tab">Formulaire</a></li>
                 <li class=""><a href="#import_conformite" data-toggle="tab">Conformité</a></li>
@@ -19,6 +19,8 @@
                     </div>
                 </div>
                 <div id="import_conformite" class="tab-pane ">
+
+                    <span id="import_message" style="font-weight: bold;font-size: 1.1em;"></span>
 
                     <div>
                         <h4>Valeurs vides</h4>

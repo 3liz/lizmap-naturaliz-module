@@ -110,6 +110,11 @@ class occtaxModuleInstaller extends jInstallerModule {
                 $sql = $tpl->fetchFromString($sqlTpl, 'text');
                 $db->exec($sql);
 
+                // Import
+                $sqlPath = $this->path . 'install/sql/import.pgsql.sql';
+                $sql = jFile::read( $sqlPath );
+                $db->exec($sql);
+
                 // Add data for lists
                 $this->execSQLScript('sql/data');
 
@@ -287,6 +292,15 @@ class occtaxModuleInstaller extends jInstallerModule {
             );
             jAcl2DbManager::addRight('admins', 'validation.online.access');
             jAcl2DbManager::addRight('naturaliz_validateurs', 'validation.online.access');
+
+            // Ajout d'un nouveau droit d'import en ligne
+            jAcl2DbManager::addSubject('import.online.access', 'occtax~jacl2.import.online.access', 'naturaliz.subject.group');
+            jAcl2DbUserGroup::createGroup(
+                'naturaliz_importateurs',
+                'naturaliz_importateurs'
+            );
+            jAcl2DbManager::addRight('admins', 'import.online.access');
+            jAcl2DbManager::addRight('naturaliz_importateurs', 'import.online.access');
 
         }
 

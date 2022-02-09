@@ -2,6 +2,8 @@
 
 ## Import de données
 
+### Import manuel via des scripts SQL
+
 Lors de l'installation, une structure de données conforme au standard "Occurences de taxon" a été créée dans la base de données. Pour pouvoir exploiter l'application, il faut importer des données d'observations.
 
 
@@ -17,11 +19,20 @@ REFRESH MATERIALIZED VIEW occtax.vm_observation;
 
 ```
 
+### Import assisté depuis l'interface Web
+
+Une entrée de menu permet de proposer à l'utilisateur ayant les droits requis de téléverser dans l'application un fichier CSV, puis de lancer
+
+* la validation du jeu de données: champs requis, format des données, respect des règles du standard Occurences de Taxon
+* l'import des données dans la base, avec un statut "A valider". Les observations importées ne seront visibles que par les administrateurs de la base dans l'application
+
+Le fichier CSV attendu doit correspondre à un modèle bien spécfique, avec une liste minimal de champs, nommés correctements. Un fichier CSV exemple est disponible dans les sources.
+
 ## Jeux de données
 
 todo: expliquer la notion et les tables utilisées
 
-### Gestion de la sensibilité des données
+## Gestion de la sensibilité des données
 
 Les modalités de diffusion des données sont définies par la charte régionale du SINP.
 Cette dernière prévoit deux niveaux d’accès : experts et professionnels, ou grand public.
@@ -42,7 +53,7 @@ Le logigramme suivant synthétise les différents cas de figure possibles:
 ![Logigramme diffusion des données](media/diagramme_diffusion_donnees.png)
 
 
-#### Calcul automatique de sensibilité selon des critères
+### Calcul automatique de sensibilité selon des critères
 
 La sensibilité des observations peut être décidée pendant l'import des données, ou bien après l'import, via une liste de conditions pré-établie.
 La sensibilité des observations dépend en effet de nombreux critères sur les taxons, la position de l'observation, les commentaires, et d'autres conditions spécifiques.
@@ -76,24 +87,8 @@ NB: Si on veut pouvoir comprendre le nombre d'observations impactées par chacun
 
 Voir [un exemple d'ajout de critères et de calcul de sensibilité automatique](doc/validation/validation_calcul_validation_sensibilite_via_ajout_de_criteres.sql) qui montre comment utiliser les tables de critères, et comment faire une jointure avec table spatiale (par exemple de zonages de sensibilité) pour créer un critère qui teste l'intersection entre les observations et des polygones. Des exemples complexes montrent comment utiliser un filtre sur `descriptif_sujet`
 
-### Gestion de la validité des données
 
-Le grand public (personnes non connectées à l'application) ne doivent pas pouvoir visualiser certaines observations. Pour cela, il existe la variable de configuration `validite_niveaux_grand_public` modifiable depuis l'interface d'administration, menu Occtax.
-
-Par défaut, les personnes non connectées ne peuvent visualiser que les données dont le niveau de validation est 1 ou 2
-
-* Voir un exemple d'ajout de critères et de calcul de validation automatique:
-
-doc/validation/validation_calcul_validation_sensibilite_via_ajout_de_criteres.sql
-
-* Projet QGIS exemple pour les validateurs : todo
-
-
-
-
-#### Fonction de modification de la sensibilité des données
-
-#### Vue matérialisée pour gérer la diffusion des données à partir de cette sensibilité
+### Vue matérialisée pour gérer la diffusion des données à partir de cette sensibilité
 
 Les requêtes effectuées dans l'application font une jointure entre la table `observation` et la vue matérialisée `observation_diffusion`. Le champ utilisé pour faire les filtres et restreindre les données affichées est le champ `diffusion` qui contient un tableau JSON des diffusions possibles.
 
@@ -138,7 +133,18 @@ Dans ce cas, la diffusion est utilisée dans les situations suivantes :
 * todo : vérifier ces critères lorsqu'on va activer le droit pour le grand public (personnes non connectées) de voir l'onglet "observations" sur l'appli. Il faudra filtrer les données via `AND ( foo.diffusion ? 'g')`. Et aussi pour l'export CSV. On pourrait alors toujours faire un CASE WHEN pour que la géométrie sortie soit dépendante du champ diffusion
 
 
-## Gestion des personnes (observateurs)
+## Gestion de la validité scientifique des données
+
+Le grand public (personnes non connectées à l'application) ne doivent pas pouvoir visualiser certaines observations. Pour cela, il existe la variable de configuration `validite_niveaux_grand_public` modifiable depuis l'interface d'administration, menu Occtax.
+
+Par défaut, les personnes non connectées ne peuvent visualiser que les données dont le niveau de validation est 1 ou 2
+
+* Voir un exemple d'ajout de critères et de calcul de validation automatique:
+
+doc/validation/validation_calcul_validation_sensibilite_via_ajout_de_criteres.sql
+
+* Projet QGIS exemple pour les validateurs : todo
+
 
 ### Gestion de la localisation spatiale
 
@@ -404,22 +410,3 @@ Une fois les vues matérialisées crées et remplies, il faut utiliser un projet
 
 * [projet QGIS](doc/qgis/stat_borbonica.qgs)
 * [configuration Lizmap](doc/qgis/stat_borbonica.qgs.cfg)
-
-## Module Mascarine
-
-Module de saisie d'observation floristiques en suivant les bordereaux d'inventaire conçus par le Conservatoire Botanique National de Mascarin (CBN-CBIE Mascarine, La Réunion)
-
-### Validation des données saisies
-
-Les données saisies à travers l'interface (ou via l'outil mobile) tombent dans un sas de validation. Le gestionnaire des données de l'application (profil 1) doit valider manuellement chaque observation pour qu'elles soient consultable par l'ensemble des utilisateurs (sinon, seul l'auteur et le gestionnaire peuvent les consulter).
-
-Une fois validée, les observations de Mascarine peuvent être automatiquement exportées vers le schéma "Occurence de taxons" (occtax). Pour cela, il faut se connecter à la base de données, et lancer la fonction **mascarine.export_validated_mascarine_observation_into_occtax** en passant en paramètre une liste d'identifiants d'observations. Par exemple
-
-```
-SELECT mascarine.export_validated_mascarine_observation_into_occtax(o.id_obs) FROM mascarine.m_observation o WHERE validee_obs = 1 AND blablalba;
-```
-
-
-
-## TODO
-

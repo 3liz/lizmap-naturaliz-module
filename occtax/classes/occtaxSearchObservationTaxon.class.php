@@ -12,7 +12,7 @@ jClasses::inc('occtax~occtaxSearchObservation');
 
 class occtaxSearchObservationTaxon extends occtaxSearchObservation {
 
-    protected $name = 'stats';
+    protected $name = 'taxon';
 
     protected $orderClause = '';
 

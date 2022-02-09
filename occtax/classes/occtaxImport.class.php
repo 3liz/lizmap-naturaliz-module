@@ -30,6 +30,9 @@ class occtaxImport
         'version_taxref',
         'nom_cite',
 
+        'observateurs',
+        'determinateurs',
+
         'denombrement_min',
         'denombrement_max',
         'objet_denombrement',
@@ -179,11 +182,6 @@ class occtaxImport
         $this->additional_fields = $additional_fields;
         $this->corresponding_fields = $corresponding_fields;
 
-        \jLog::log('header = ' . json_encode(($header)));
-        \jLog::log('additional = ' . json_encode(($additional_fields)));
-        \jLog::log('corresponding = ' . json_encode(($corresponding_fields)));
-        \jLog::log('missing = ' . json_encode(($missing_mandatory_fields)));
-
         if (count($missing_mandatory_fields) > 0) {
             $message = jLocale::get("occtax~import.csv.mandatory.fields.missing");
             $message .= ': ' . implode(', ', $missing_mandatory_fields);
@@ -291,6 +289,7 @@ class occtaxImport
             foreach ($columns as $column) {
                 $sql .= $comma . '"' . $column . '" text';
             }
+            $sql.= ', odata json';
             $sql .= ');';
             $data = $this->query($sql, $params);
             if (!is_array($data) && !$data) {
@@ -390,14 +389,33 @@ class occtaxImport
         $sql .= ' (';
         $comma = '';
         $fields = '';
+
+        // Corresponding fields
         foreach ($this->corresponding_fields as $column) {
             $fields .= $comma . '"' . $column . '"';
             $comma = ', ';
         }
         $sql .= $fields;
+
+        // JSON containing other data
+        $sql.= ', odata';
+
         $sql .= ')';
         $sql .= ' SELECT ';
         $sql .= $fields;
+        if (!empty($this->additional_fields)) {
+            $comma = '';
+            $sql_add = ', json_build_object(';
+            foreach ($this->additional_fields as $column) {
+                $sql_add .= $comma . "'" . $column ."', " . '"' . $column . '"';
+                $comma = ', ';
+            }
+            $sql_add .= ")";
+            $sql .= $sql_add;
+        } else {
+            $sql .= ', NULL::json';
+        }
+
         $sql .= ' FROM "' . $this->temporary_table . '_source"';
         $sql .= ';';
 
@@ -432,7 +450,7 @@ class occtaxImport
     public function validateCsvData($type_conformite)
     {
         $cnx = jDb::getConnection('naturaliz_virtual_profile');
-        $sql = 'SELECT *';
+        $sql = "SELECT *, array_to_string(ids, ', ') AS ids_text";
         $sql .= ' FROM occtax.test_conformite_observation($1, $2)';
         $sql .= ' WHERE nb_lines > 0';
         $sql .= ' ';
@@ -455,7 +473,9 @@ class occtaxImport
         unlink($this->csv_file);
 
         // Drop the temporary table
-        $sql = 'DROP TABLE IF EXISTS "' . $this->temporary_table . '_source", "' . $this->temporary_table . '_target"';
+        $sql = 'DROP TABLE IF EXISTS "' . $this->temporary_table . '_source"';
+        $sql .= ', "' . $this->temporary_table . '_target"';
+        // \jLog::log($this->temporary_table . '_target"');
         $params = array();
         $data = $this->query($sql, $params);
     }
