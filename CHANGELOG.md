@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 2.11.4 - 2022-03-21
+
+* Historique de recherche - modification du fichier de stockage des historiques des utilisateurs
+  pour prendre en compte des installation avec la configuration séparée du code source
+
 ## 2.11.3 - 2022-03-21
 
 * Historique de recherche:

@@ -18,7 +18,7 @@ class occtaxModuleUpgrader_2_11_2__2_11_3 extends jInstallerModule {
             $profile_ini->setValue('driver', 'file', 'jcache:naturaliz_file_cache' );
             $profile_ini->setValue('ttl', '0', 'jcache:naturaliz_file_cache' );
             $profile_ini->setValue('enabled', '1', 'jcache:naturaliz_file_cache' );
-            $profile_ini->setValue('cache_dir', 'app:var/cache/', 'jcache:naturaliz_file_cache' );
+            $profile_ini->setValue('cache_dir', 'var:cache/', 'jcache:naturaliz_file_cache' );
             $profile_ini->setValue('file_locking', '1', 'jcache:naturaliz_file_cache' );
             $profile_ini->setValue('directory_level', '0', 'jcache:naturaliz_file_cache' );
             $profile_ini->save();
