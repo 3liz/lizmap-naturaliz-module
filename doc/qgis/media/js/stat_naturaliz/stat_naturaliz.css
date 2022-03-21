@@ -1,0 +1,92 @@
+/*  PAS POSSIBLE DE LE CHANGER ICI CAR SURCHARGE PAR THEME VIA INTERFACE ADMIN */
+/*
+#bottom-dock {
+    opacity: 1 !important;
+}
+*/
+
+#bottom-dock h3 {
+    /* color: #5A863A; */
+    font-weight: bold;
+    border-bottom: 1px solid grey;
+    padding: 0px;
+}
+
+div.dataviz_plot_container > h3 > span.title {
+    padding: 0px !important;
+    padding-bottom: 5px !important;
+}
+
+div.dataviz_plot_container > div.menu-content > p {
+    color: rgb(51, 51, 51);
+    font-size: 0.8em;
+}
+
+#attributeLayers div.bottom-content {
+    background: white !important;
+}
+
+#attributeLayers-tabs > li > a {
+    color: lightgray;
+}
+
+/*
+masque le formulaire avec les options
+*/
+#jforms_view_attribute_layers_option {
+    display: none;
+}
+
+#nav-tab-dataviz-main > a {
+    font-weight: normal;
+    font-size: 0.8em;
+}
+
+#dataviz h3 .icon {
+    background-image: url(dataviz-icon-dark.png);
+    display: none;
+}
+
+#dataviz {
+    font-size:16pt;
+    /* color: #5A863A !important; */
+}
+
+#dataviz-content .nav-tabs > li > a {
+    color: grey;
+    background-color: lightgray;
+}
+
+#dataviz-content .nav-tabs > li.active > a {
+    /* background-color: white;
+    color: #5A863A; */
+}
+
+#dataviz-content div.tab-pane{
+    /* color: #272727 !important; */
+    margin-top: 0px;
+}
+
+#dataviz-main.bottom-content div.menu-content {
+    font-size:12pt;
+    padding: 5px;
+    /* color: #272727 !important;
+    background-color:white !important; */
+    bottom: 5px;
+}
+
+#dataviz-content div.row-fluid {
+    padding-bottom: 10px;
+    /* background-color: white !important; */
+}
+
+#dataviz-content div.row-fluid div.span4,
+#dataviz-content div.row-fluid div.span6,
+#dataviz-content div.row-fluid div.span3{
+    margin-top: 10px;
+}
+
+/* On active le passage à la ligne des textes longs*/
+table.attribute-table-table tr td {
+    white-space: initial !important;
+}
