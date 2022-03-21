@@ -28,7 +28,9 @@ class historyCtrl extends jController
             // Get the history from cache
             $login = $user->login;
             $key = 'naturaliz_history_' . $login;
-            $history = jCache::get($key);
+            $profile = 'naturaliz_file_cache';
+            $history = jCache::get($key, $profile);
+
             if ($history) {
                 $data = json_decode($history);
             }
@@ -68,7 +70,9 @@ class historyCtrl extends jController
             $login = $user->login;
             $key = 'naturaliz_history_' . $login;
             $value = json_encode($json);
-            jCache::set($key, $value);
+            $profile = 'naturaliz_file_cache';
+            $ttl = 0;
+            jCache::set($key, $value, $ttl, $profile);
         }
 
         $rep->data = $data;
