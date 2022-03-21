@@ -4,6 +4,7 @@ var error_connection = false;
 var previous_search_token = null;
 var observation_geometries_displayed = false;
 var observation_geometries_extent = null;
+var search_history_items = []
 var search_history_max_unstared = 10;
 var search_history_max_stared = 20;
 
@@ -2280,7 +2281,7 @@ OccTax.events.on({
         }
 
 
-        // MANAGE THE HISTORY OF URLS
+        // MANAGE THE HISTORY OF SEARCH ITEMS
 
         /**
          * Return a valid UUID.
@@ -2306,8 +2307,7 @@ OccTax.events.on({
         }
 
         /**
-         * Get the stored search items from localStorage
-         * or from the backend cache for authenticated users
+         * Get the stored search items from the backend cache for authenticated users
          * and returns an array of items.
          *
          * @param {callback} aCallback The function calling this method.
@@ -2330,16 +2330,41 @@ OccTax.events.on({
 
         /**
          * Get the stored search items from the local Storage
-         * and returns an array of items.
+         *
+         * If the target is given, respect it: localStorage or globalVariable
+         * If target is 'auto', choose it depending on the logged status:
+         * globalVariable for authenticated users
+         * localStorage for the anonymous ones
+         *
+         * @param {string} source: localStorage or globalVariable
          *
          * @return {array} The array of search history items.
          */
-        function getSearchHistoryFromLocalStorage() {
-            var current_storage_json = localStorage.getItem('naturaliz_search_history');
-
+        function getLocalSearchHistory(target) {
+            // Default empty data
             var current_storage = [];
-            if (current_storage_json) {
-                current_storage = JSON.parse(current_storage_json);
+
+            // Default value to auto
+            target = typeof target !== 'undefined' ?  target : 'auto';
+            // Auto will choose global variable for authenticated users
+            if (target == 'auto') {
+                if ($('#info-user-login').text() != '') {
+                    target = 'globalVariable';
+                }
+                // localStorage for anonymous users
+                else {
+                    target = 'localStorage';
+                }
+            }
+
+            if (target == 'globalVariable') {
+                current_storage = search_history_items;
+            }
+            else if (target == 'localStorage') {
+                var current_storage_json = localStorage.getItem('naturaliz_search_history');
+                if (current_storage_json) {
+                    current_storage = JSON.parse(current_storage_json);
+                }
             }
 
             return current_storage;
@@ -2354,8 +2379,12 @@ OccTax.events.on({
          * @param {array} backend_history Search history taken from server
          */
         function addMissingStaredToGivenHistoryFromLocalStorage(backend_history) {
-
-            var current_storage = getSearchHistoryFromLocalStorage();
+console.log('addmissin machin');
+console.log('backend_history');
+console.log(backend_history);
+            var current_storage = getLocalSearchHistory('localStorage');
+console.log('localStorage');
+console.log(current_storage);
             var merged_history = [];
             var items_to_add = [];
             var items_uid_to_add = [];
@@ -2396,8 +2425,14 @@ OccTax.events.on({
          */
         function saveSearchHistory(storage, send) {
 
-            // Save the history in the browser local storage for unauthenticated users
-            localStorage.setItem('naturaliz_search_history', JSON.stringify(storage));
+            // Save the history in the browser global variable for authenticated users
+            // or in localStorage for the anonymous users
+            if ($('#info-user-login').text() != '') {
+                search_history_items = storage;
+            }
+            else {
+                localStorage.setItem('naturaliz_search_history', JSON.stringify(storage));
+            }
 
             if (send && $('#info-user-login').text() != '') {
                 // Send the history data to the server
@@ -2425,7 +2460,8 @@ OccTax.events.on({
          * @return {array} The array of search history items
          */
         function cleanSearchHistory(max_stared, max_unstared) {
-            var current_storage = getSearchHistoryFromLocalStorage();
+
+            var current_storage = getLocalSearchHistory();
 
             // Filter the item based on the stared status
             var filtered_storage = [];
@@ -2463,7 +2499,7 @@ OccTax.events.on({
          * @return {array} The found search index and history item.
          */
         function findSearchItemByQueryString(query_string) {
-            var current_storage = getSearchHistoryFromLocalStorage();
+            var current_storage = getLocalSearchHistory();
             var item = null;
             for (var i in current_storage) {
                 let stored_query_string = cleanQueryString(current_storage[i].value);
@@ -2484,7 +2520,7 @@ OccTax.events.on({
          * @return {object} The found search item.
          */
         function findSearchItemByUid(uid) {
-            var current_storage = getSearchHistoryFromLocalStorage();
+            var current_storage = getLocalSearchHistory();
             var found_item = null;
 
             // Rename current item in naturaliz_search_history
@@ -2514,7 +2550,7 @@ OccTax.events.on({
             query_string = cleanQueryString(query_string);
 
             // Get all the stored items
-            var current_storage = getSearchHistoryFromLocalStorage();
+            var current_storage = getLocalSearchHistory();
             if (!current_storage) {
                 return false;
             }
@@ -2587,7 +2623,7 @@ OccTax.events.on({
          * @return {object} The modified storage
          */
         function starSearchItems(uids) {
-            var current_storage = getSearchHistoryFromLocalStorage();
+            var current_storage = getLocalSearchHistory();
             for (var u in uids) {
                 var uid = uids[u];
                 var new_item = null;
@@ -2628,7 +2664,7 @@ OccTax.events.on({
          * @return {object} The modified search item.
          */
         function renameSearchItem(uid) {
-            var current_storage = getSearchHistoryFromLocalStorage();
+            var current_storage = getLocalSearchHistory();
             var new_item = null;
 
             // Rename current item in naturaliz_search_history
@@ -2671,7 +2707,7 @@ OccTax.events.on({
          * @return {object} The updated storage.
          */
         function deleteSearchItems(uids) {
-            var current_storage = getSearchHistoryFromLocalStorage();
+            var current_storage = getLocalSearchHistory();
             var deleted = [];
 
             // Get confirmation only if there is more than 1 item
@@ -2710,7 +2746,7 @@ OccTax.events.on({
          * @return {string} The query string which has been launched
          */
         function runSearchItem(uid) {
-            var current_storage = getSearchHistoryFromLocalStorage();
+            var current_storage = getLocalSearchHistory();
             var query_string = null;
 
             for (var i in current_storage) {
@@ -2736,30 +2772,19 @@ OccTax.events.on({
         }
 
         /**
-         * Empty the search history.
+         * Empty the local search history (localStorage & global variable)
          *
-         * You can choose which one to empty with the stared_status parameter.
-         *
-         * @param {string} stared_status - The status of the items to delete: all, stared, unstared.
          * @return {boolean} - True on success, false if canceled.
          */
-        function emptySearchHistory(stared_status) {
-            var confirm_msg = 'Êtes-vous sûr de vouloir vider votre historique de recherches ?'
-            var confirm_action = confirm(confirm_msg);
-            if (!confirm_action) {
-                return false;
-            }
+        function emptySearchHistory() {
 
-            if (stared_status == 'unstared') {
-                cleanSearchHistory(20, 0);
-            } else if (stared_status == 'stared') {
-                cleanSearchHistory(0, 10);
-            } else {
-                cleanSearchHistory(0, 0);
-            }
+            // Empty the local storage
+            var empty_history = [];
+            localStorage.setItem('naturaliz_search_history', JSON.stringify(empty_history));
 
-            // Refresh the select
-            refreshHistorySelector(null);
+            // Empty the global variable
+            search_history_items = [];
+
             return true;
         }
 
@@ -2773,7 +2798,7 @@ OccTax.events.on({
             var count_unstared = 0;
             var count_stared = 0;
             // Add options from the items
-            var current_storage = getSearchHistoryFromLocalStorage();
+            var current_storage = getLocalSearchHistory();
             var first_uid = null;
             for (var i in current_storage) {
                 var item = current_storage[i];
@@ -2866,6 +2891,7 @@ OccTax.events.on({
             }
         });
 
+
         // Trigger the star/unstar
         $('#occtax-search-history-star').click(function () {
             var uids = $('#occtax-search-history-select').val();
@@ -2891,6 +2917,9 @@ OccTax.events.on({
             }
 
         });
+
+        // Add tooltip
+        $('#history button.btn').tooltip();
 
 
         /** Get the JDD metadata and display it in the subdock panel
@@ -3970,14 +3999,15 @@ OccTax.events.on({
 
             // Then we get the search history content from the backend
             getSearchHistoryFromBackend(
-                function (history_storage) {
+                function (backend_history) {
 
-                    // Add the search history items from the localstorage
+                    // Add the search history items from the local history
                     // which are favourites but are not yet in the connected user backend storage
-                    var merged_history = addMissingStaredToGivenHistoryFromLocalStorage(history_storage);
+                    var merged_history = addMissingStaredToGivenHistoryFromLocalStorage(backend_history);
 
-                    // Override the localstorage content
-                    // saveSearchHistory(history_storage, false);
+                    // Delete the local data for safety reasons (localStorage and global variable)
+                    emptySearchHistory();
+
                     saveSearchHistory(merged_history, true);
 
                     // Refresh the content and enable the UI

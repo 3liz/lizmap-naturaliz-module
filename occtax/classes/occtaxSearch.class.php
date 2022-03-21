@@ -112,7 +112,9 @@ class occtaxSearch {
         // Get the number of total records
         if (!$this->recordsTotal && $this->token && !$this->demande) {
             $this->setRecordsTotal();
-            $this->setRecordsExtent();
+            if (in_array($this->name, array('observation', 'brute'))) {
+                $this->setRecordsExtent();
+            }
         }
 
         // Store to cache
@@ -496,7 +498,7 @@ class occtaxSearch {
      * Get the number of records returned
     */
     public function getRecordsExtent(){
-        jLog::log($this->recordsExtent);
+        // jLog::log($this->recordsExtent);
         return $this->recordsExtent;
     }
 
