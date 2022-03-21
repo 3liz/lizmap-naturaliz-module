@@ -2,7 +2,7 @@
 class occtaxModuleUpgrader_2_11_2__2_11_3 extends jInstallerModule {
 
     public $targetVersions = array(
-        '2.11.2',
+        '2.11.3',
     );
     public $date = '2022-03-21';
 

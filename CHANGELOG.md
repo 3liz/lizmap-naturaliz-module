@@ -2,12 +2,20 @@
 
 ## Unreleased
 
+## 2.11.3 - 2022-03-21
+
+* Historique de recherche:
+  * Suppression de l'historique de recherche du navigateur lorsqu'un utilisateur se connecte
+  * Déplacement du stockage de l'historique de recherche dans un répertoire système stable
+  pour éviter sa suppression lors du vidage du cache
+* Statistiques: mise à jour du projet support des statistiques `doc/qgis/stat_naturaliz.qgs`
+
 ## 2.11.2 - 2022-02-09
 
 * Refonte du bouton de zoom sur les résultats: il s'appuie maintenant
   sur l'emprise totale de l'ensemble des observations renvoyées par la recherche
   et pas sur les géométries affichées initialement sur la carte
-* Historique de recherche - Ajout des items favoris créés hors connexion dans les favoris 
+* Historique de recherche - Ajout des items favoris créés hors connexion dans les favoris
   de l'utilisateur lorsqu'il se reconnecte
 * Légères modifications de l'affichage des menaces dans la fiche Taxon:
   * le nom du statut est affiché au lieu du nom du groupe. Ex: "liste rouge nationale" au lieu de "liste rouge"
