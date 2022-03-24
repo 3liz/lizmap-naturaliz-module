@@ -109,7 +109,7 @@ class occtaxImport
     protected $login;
 
     // Identifiant du jeu de données
-    protected $jdd_id;
+    protected $jdd_uid;
 
     // Temporary table to store the content of the CSV file
     protected $temporary_table;
@@ -275,6 +275,7 @@ class occtaxImport
 
         // Drop tables
         $sql = 'DROP TABLE IF EXISTS "' . $this->temporary_table . '_source", "' . $this->temporary_table . '_target"';
+        $params = array();
         $data = $this->query($sql, $params);
 
         // Create temporary table to store the CSV source data and the formatted imported data
@@ -289,7 +290,13 @@ class occtaxImport
             foreach ($columns as $column) {
                 $sql .= $comma . '"' . $column . '" text';
             }
-            $sql.= ', odata json';
+            if (preg_match('/"odata" text/', $sql)) {
+                // Replace odata type text into json
+                $sql = str_replace('"odata" text', '"odata" json', $sql);
+            } else {
+                // Add odata field it if not present
+                $sql.= ', "odata" json';
+            }
             $sql .= ');';
             $data = $this->query($sql, $params);
             if (!is_array($data) && !$data) {
@@ -398,7 +405,9 @@ class occtaxImport
         $sql .= $fields;
 
         // JSON containing other data
-        $sql.= ', odata';
+        if (!preg_match('/, odata/', $sql)) {
+            $sql.= ', odata';
+        }
 
         $sql .= ')';
         $sql .= ' SELECT ';
@@ -464,6 +473,100 @@ class occtaxImport
     }
 
     /**
+     * Import the CSV imported data in the database
+     * observation table
+     *
+     * @param string $login The authenticated user login.
+     * @param string $jdd_uid JDD UUID.
+     * @param string $organisme_responsable Organisme
+     *
+     * @return boolean $status The status of the import.
+     */
+    public function importCsvIntoObservation($login, $jdd_uid, $organisme_responsable)
+    {
+        // Import dans la table observation
+        $sql = ' SELECT count(*) AS nb';
+        $sql .= ' FROM occtax.import_observations_depuis_table_temporaire($1, $2, $3, $4)';
+        $params = array(
+            $this->temporary_table . '_target',
+            $login,
+            $jdd_uid,
+            $organisme_responsable,
+        );
+        $import_observation = $this->query($sql, $params);
+        if (!is_array($import_observation)) {
+            return null;
+        }
+        if (count($import_observation) != 1) {
+            return null;
+        }
+        $import_observation = $import_observation[0];
+
+        return $import_observation;
+    }
+
+    /**
+     * Add the other data from the previously imported
+     * csv data: lien, organisme, personne, spatial relationships
+     *
+     * @param string $login The authenticated user login.
+     * @param string $jdd_uid JDD UUID.
+     *
+     * @return boolean $status The status of the import.
+     */
+    public function addImportedObservationPostData($login, $jdd_uid)
+    {
+        // Import dans les tables liées à observation
+        $sql = ' SELECT import_report';
+        $sql .= ' FROM occtax.import_observations_post_data($1, $2, $3)';
+        $params = array(
+            $this->temporary_table . '_target',
+            $login,
+            $jdd_uid,
+        );
+        $import_other = $this->query($sql, $params);
+        if (!is_array($import_other)) {
+            return null;
+        }
+        if (count($import_other) != 1) {
+            return null;
+        }
+        $import_other = json_decode($import_other[0]->import_report);
+
+        return $import_other;
+    }
+
+    /**
+     * Delete the previously imported data
+     * from the different tables.
+     *
+     * It is useful if a previous step has failed.
+     *
+     * @param string $jdd_uid JDD UUID.
+     *
+     * @return boolean $status The status of the import.
+     */
+    public function deleteImportedData($jdd_uid)
+    {
+        // Suppression
+        $sql = ' SELECT *';
+        $sql .= ' FROM occtax.import_delete_imported_observations($1, $2)';
+        $params = array(
+            $this->temporary_table . '_target',
+            $jdd_uid,
+        );
+        $result = $this->query($sql, $params);
+        if (!is_array($result)) {
+            return null;
+        }
+        if (count($result) != 1) {
+            return null;
+        }
+
+        return $result;
+    }
+
+    /**
      * Clean the import process
      *
      */
@@ -478,5 +581,97 @@ class occtaxImport
         // \jLog::log($this->temporary_table . '_target"');
         $params = array();
         $data = $this->query($sql, $params);
+    }
+
+    /**
+     * Check if a given string is a valid UUID.
+     *
+     * @param string $uuid The string to check
+     *
+     * @return bool
+     */
+    public function isValidUuid($uuid)
+    {
+        if (empty($uuid)) {
+            return false;
+        }
+        if (!is_string($uuid) || (preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $uuid) !== 1)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Get the data of a given JDD id
+     * by querying the INPN public API
+     *
+     * $jddData = array(
+     *     'jdd_id' => 40895,
+     *     'jdd_code' => 'Suivi des gîtes à chiroptères de Martinique (PNRM, SFEPM 2015-2022)',
+     *     'jdd_libelle' => 'Suivi gîtes chiroptères Martinique',
+     *     'jdd_description' => 'Suivi terrain sur 53 gîtes localisés sur toute la Martinique, détermination des espèces présentes et comptage des effectifs',
+     *     'jdd_metadonnee_dee_id' => '93733D7D-A447-70EE-E053-5014A8C03C91',
+     *     'jdd_cadre' => '25856',
+     *     'ayants_droit' => '',
+     *     'date_minimum_de_diffusion' => '',
+     *     'url_fiche' => 'https://inpn.mnhn.fr/mtd/cadre/jdd/edit/40895',
+     *     'cadre_id' => '25856',
+     *     'cadre_uuid' => 'AADC610C-1566-7740-E053-2614A8C0710E',
+     *     'cadre_libelle' => 'Élaboration des aménagements des forêts domaniales et départementales de Mayotte',
+     *     'cadre_description' => 'description',
+     *     'cadre_date_lancement' => '2014-01-01',
+     *     'cadre_date_cloture' => '2018-12-31',
+     *     'cadre_url_fiche' => 'https://inpn.mnhn.fr/mtd/cadre/edit/25856',
+     * );
+     *
+     * @param string $jddUid JDD UID. Ex: AAEEEA9C-B888-40CC-E053-2614A8C03D42
+     * @param string $source Source where to get the JDD data from. 'api' or 'database'
+     *
+     * @return array The JDD data
+     */
+    public function getJdd($jddUid, $source='database')
+    {
+        $jddData = array();
+
+        // Get JDD from source
+        if (!in_array($source, array('api', 'database'))) {
+            $source = 'database';
+        }
+        if ($source == 'api') {
+            // Get XML
+            $jddUrl = 'https://inpn.mnhn.fr/mtd/cadre/jdd/export/xml/GetRecordById?id='.$jddUid;
+            // try {
+            //     $lizmapProxy = jClasses::getService('lizmap~lizmapProxy');
+            //     list($data, $mime, $http_code) = $lizmapProxy->getRemoteData($jddUrl);
+            // } catch(Exception $e) {
+            //     list($data, $mime, $http_code) = \Lizmap\Request\Proxy::getRemoteData($jddUrl);
+            // }
+            // if ($http_code != 200) {
+            //     return $jddData;
+            // }
+
+            return $jddData;
+
+        } else {
+            // Query the database
+            $sql = 'SELECT j.*,';
+            $sql .= ' c.cadre_id, c.cadre_uuid, c.libelle AS cadre_libelle, c.description AS cadre_description,';
+            $sql .= ' c.date_lancement AS cadre_date_lancement, c.date_cloture AS cadre_cloture, c.url_fiche AS cadre_url_fiche';
+            $sql .= ' FROM occtax.jdd AS j';
+            $sql .= ' LEFT JOIN occtax.cadre AS c';
+            $sql .= '     ON j.jdd_cadre = c.cadre_id';
+            $sql .= ' WHERE jdd_metadonnee_dee_id = $1';
+            $sql .= ' LIMIT 1';
+            $params = array($jddUid);
+            $data = $this->query($sql, $params);
+            if (is_array($data) && count($data) == 1) {
+                $jddData = $data;
+            }
+
+            return $jddData;
+        }
+
+        return $jddData;
     }
 }

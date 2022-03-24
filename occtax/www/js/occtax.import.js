@@ -23,6 +23,11 @@ lizMap.events.on({
         }
 
         // Handle form submit
+        // First set the check_or_import input data depending on the clicked button
+        $('#jforms_occtax_import input[type="submit"]').on('click', function(){
+            let action_input = $('#jforms_occtax_import input[name="check_or_import"]');
+            action_input.val(this.name);
+        });
         $('#jforms_occtax_import').submit(function () {
             $('body').css('cursor', 'wait');
             var form_id = '#jforms_occtax_import';
@@ -35,7 +40,9 @@ lizMap.events.on({
             sendFormPromise.then(function (data) {
                 $('body').css('cursor', 'auto');
                 let response = JSON.parse(data);
-                let status = (response.status == 0) ? 'error' : 'info';
+                let status_check = (response.status_check == 0) ? 'error' : 'info';
+                let action = response.action;
+
                 let type_conformites = ['not_null', 'format', 'conforme'];
 
                 var table_header = '';
@@ -51,8 +58,8 @@ lizMap.events.on({
                 empty_html += '<td>-</td>';
                 empty_html += '</tr>';
 
-                if (status == 'error') {
-                    OccTax.addTimedMessage('import-naturaliz', response.messages.join('</br>'), status, 30000, true);
+                if (status_check == 'error') {
+                    OccTax.addTimedMessage('import-naturaliz', response.messages.join('</br>'), status_check, 30000, true);
                     for (var c in type_conformites) {
                         var type_conformite = type_conformites[c];
                         $('#import_conformite_' + type_conformite).html(table_header + empty_html);
@@ -85,9 +92,6 @@ lizMap.events.on({
                     for (var e in lines) {
                         var error_line = lines[e];
                         var intitule = (error_line.description !== null && error_line.description != '') ? error_line.description : error_line.libelle;
-                        // console.log('TEST');
-                        // console.log(error_line);
-                        // console.log(intitule);
                         html += '<tr title="' + intitule + '">';
                         html += '<td>' + intitule + '</td>';
                         html += '<td>' + error_line['nb_lines'] + '</td>';
@@ -95,8 +99,47 @@ lizMap.events.on({
                         html += '</tr>';
                     }
                     $('#import_conformite_' + type_conformite).html(table_header + html);
-                    $('a[href="#import_conformite"]').click()
+                    $('a[href="#import_conformite"]').click();
                 }
+
+                if (action == 'import') {
+                    let status_import = (response.status_import == 0) ? 'error' : 'info';
+                    // import has been tried
+                    $('a[href="#import_resultat"]').click();
+                    if (status_import == 'error') {
+                        $('#import_resultat_observations').html('-');
+                        $('#import_resultat_organismes').html('-');
+                        $('#import_resultat_personnes').html('-');
+                        $('#import_resultat_observateurs').html('-');
+                        $('#import_resultat_determinateurs').html('-');
+                        var msg = response.messages.join('</br>');
+                        OccTax.addTimedMessage('import-naturaliz', msg, status_import, 30000, true);
+                        $('#import_message_resultat')
+                        .html("❗" + msg)
+                        .css('color', 'red')
+                        ;
+                    } else {
+                        $('#import_resultat_observations').html(response.data['observations']['nb']);
+                        $('#import_resultat_organismes').html(response.data['other']['organismes']);
+                        $('#import_resultat_personnes').html(response.data['other']['personnes']);
+                        $('#import_resultat_observateurs').html(response.data['other']['observateurs']);
+                        $('#import_resultat_determinateurs').html(response.data['other']['determinateurs']);
+                        if (response.data['observations']['nb'] > 0) {
+                            var msg = response.messages.join('</br>');
+                        } else {
+                            var msg = "Aucune observation n'a été importée.";
+                            msg += ' Elles sont probablement déjà dans la base, en attente de validation';
+                        }
+                        OccTax.addTimedMessage('import-naturaliz', msg, status_import, 30000, true);
+                        $('#import_message_resultat')
+                        .html("✅ " + msg)
+                        .css('color', 'green')
+                        ;
+                    }
+
+                    return false;
+                }
+
             });
 
             return false;

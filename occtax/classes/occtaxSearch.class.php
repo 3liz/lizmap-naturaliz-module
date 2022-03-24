@@ -498,7 +498,7 @@ class occtaxSearch {
      * Get the number of records returned
     */
     public function getRecordsExtent(){
-        jLog::log($this->recordsExtent);
+        // jLog::log($this->recordsExtent);
         return $this->recordsExtent;
     }
 

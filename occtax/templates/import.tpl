@@ -11,6 +11,7 @@
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#import_formulaire" data-toggle="tab">Formulaire</a></li>
                 <li class=""><a href="#import_conformite" data-toggle="tab">Conformité</a></li>
+                <li class=""><a href="#import_resultat" data-toggle="tab">Résultat</a></li>
             </ul>
             <div class="tab-content">
                 <div id="import_formulaire" class="tab-pane active">
@@ -66,6 +67,31 @@
                                 <td>-</td>
                                 <td>-</td>
                                 <td>-</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="import_resultat" class="tab-pane ">
+
+                    <span id="import_message_resultat" style="font-weight: bold;font-size: 1.1em;"></span>
+
+                    <div>
+                        <h4>Nombre d'éléments importés</h4>
+                        <table id="import_resultat_table" class="table table-condensed table-striped table-bordered">
+                            <tr>
+                                <th>Observations</th>
+                                <th>Organismes</th>
+                                <th>Personnes</th>
+                                <th>Liens observation/observateurs</th>
+                                <th>Liens observation/déterminateurs</th>
+                            </tr>
+                            <tr>
+                                <td id="import_resultat_observations">-</td>
+                                <td id="import_resultat_organismes">-</td>
+                                <td id="import_resultat_personnes">-</td>
+                                <td id="import_resultat_observateurs">-</td>
+                                <td id="import_resultat_determinateurs">-</td>
                             </tr>
                         </table>
                     </div>

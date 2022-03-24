@@ -1,3 +1,4 @@
+
 -- Stockage des critères de conformité au standard
 DROP TABLE IF EXISTS occtax.critere_conformite;
 CREATE TABLE occtax.critere_conformite (
@@ -286,7 +287,7 @@ VALUES
 ('obs_profondeur_moy_format', 'Le format de <b>profondeur_moy</b> est incorrect. Attendu: numérique' , $$occtax.is_given_type(profondeur_moy, 'real')$$, 'format'),
 ('obs_sensi_date_attribution_format', 'Le format de <b>sensi_date_attribution</b> est incorrect. Attendu: date JJ/MM/AAAA' , $$occtax.is_given_type(sensi_date_attribution, 'date')$$, 'format'),
 ('obs_validite_niveau_format', 'Le format de <b>validite_niveau</b> est incorrect. Attendu: entier' , $$occtax.is_given_type(validite_niveau, 'integer')$$, 'format'),
-('obs_validite_date_validation_format', 'Le format de <b>validite_date_validation</b> est incorrect. Attendu: uuid' , $$occtax.is_given_type(validite_date_validation, 'date')$$, 'format'),
+('obs_validite_date_validation_format', 'Le format de <b>validite_date_validation</b> est incorrect. Attendu: date' , $$occtax.is_given_type(validite_date_validation, 'date')$$, 'format'),
 ('obs_longitude_format', 'Le format de <b>longitude</b> est incorrect. Attendu: numérique' , $$occtax.is_given_type(longitude, 'real')$$, 'format'),
 ('obs_latitude_format', 'Le format de <b>latitude</b> est incorrect. Attendu: numérique' , $$occtax.is_given_type(latitude, 'real')$$, 'format'),
 ('obs_precision_geometrie_format', 'Le format de <b>precision_geometrie</b> est incorrect. Attendu: entier' , $$occtax.is_given_type(precision_geometrie, 'integer')$$, 'format')
@@ -348,6 +349,552 @@ VALUES
 ON CONFLICT ON CONSTRAINT critere_conformite_unique_code DO NOTHING
 ;
 
+DROP FUNCTION IF EXISTS occtax.import_observations_depuis_table_temporaire(regclass, text, text, text);
+CREATE OR REPLACE FUNCTION occtax.import_observations_depuis_table_temporaire(
+    _table_temporaire regclass,
+    _import_login text,
+    _jdd_uid text,
+    _organisme_responsable text
+)
+RETURNS TABLE (
+    cle_obs bigint,
+    identifiant_permanent text
+) AS
+$BODY$
+DECLARE
+    sql_template TEXT;
+    sql_text TEXT;
+    _jdd_id TEXT;
+BEGIN
+    -- Get jdd_id from uid
+    SELECT jdd_id INTO _jdd_id
+    FROM occtax.jdd WHERE jdd_metadonnee_dee_id = _jdd_uid
+    ;
 
--- TODO
--- test de la géométrie à l'intérieur de la zone de la plateforme régionale
+    PERFORM 'SELECT Setval(''occtax.observation_cle_obs_seq'', (SELECT max(cle_obs) FROM occtax.observation ) )';
+
+    -- Buils INSERT SQL
+    sql_template := '
+    INSERT INTO occtax.observation
+    (
+        cle_obs,
+        identifiant_permanent,
+        identifiant_origine,
+
+        statut_observation,
+        cd_nom,
+        cd_ref,
+        cd_nom_cite,
+        version_taxref,
+        nom_cite,
+
+        denombrement_min,
+        denombrement_max,
+        objet_denombrement,
+        type_denombrement,
+
+        commentaire,
+
+        date_debut,
+        date_fin,
+        heure_debut,
+        heure_fin,
+        date_determination,
+
+        dee_date_derniere_modification,
+        dee_date_transformation,
+
+        altitude_min,
+        altitude_moy,
+        altitude_max,
+        profondeur_min,
+        profondeur_moy,
+        profondeur_max,
+
+        dee_floutage,
+        diffusion_niveau_precision,
+        ds_publique,
+
+        jdd_code,
+        jdd_id,
+        jdd_metadonnee_dee_id,
+        jdd_source_id,
+
+        organisme_gestionnaire_donnees,
+        org_transformation,
+        statut_source,
+        reference_biblio,
+
+        sensible,
+        sensi_date_attribution,
+        sensi_niveau,
+        sensi_referentiel,
+        sensi_version_referentiel,
+
+        validite_niveau,
+        validite_date_validation,
+
+        descriptif_sujet,
+        donnee_complementaire,
+
+        precision_geometrie,
+        nature_objet_geo,
+        geom,
+
+        odata,
+
+        organisme_standard
+    )
+    WITH info_jdd AS (
+        SELECT * FROM occtax.jdd WHERE jdd_metadonnee_dee_id = ''%1$s''
+    ),
+    organisme_responsable AS (
+        SELECT ''%2$s'' AS nom_organisme
+    ),
+    source_sans_doublon AS (
+        SELECT csv.*
+        FROM temp_1648040236_target AS csv, info_jdd AS j
+        WHERE True
+        AND csv.identifiant_origine NOT IN
+		(	SELECT o.identifiant_origine
+			FROM occtax.observation AS o
+			WHERE True
+			AND jdd_id = j.jdd_id
+		)
+    )
+    SELECT
+        nextval(''occtax.observation_cle_obs_seq''::regclass) AS cle_obs,
+        -- C''est la plateforme régionale qui définit les id permanents
+        CASE
+            WHEN loip.identifiant_permanent IS NOT NULL THEN loip.identifiant_permanent
+            ELSE CAST(uuid_generate_v4() AS text)
+        END AS identifiant_permanent,
+        s.identifiant_origine,
+
+        s.statut_observation,
+        s.cd_nom::bigint,
+        s.cd_nom::bigint AS cd_ref,
+        s.cd_nom::bigint AS cd_nom_cite,
+        s.version_taxref,
+        s.nom_cite,
+
+        s.denombrement_min::integer,
+        s.denombrement_max::integer,
+        s.objet_denombrement,
+        s.type_denombrement,
+
+        s.commentaire,
+
+        s.date_debut::date,
+        s.date_fin::date,
+        s.heure_debut::time with time zone,
+        s.heure_fin::time with time zone,
+        s.date_determination::date,
+
+        now()::date AS dee_date_derniere_modification,
+        now()::date AS dee_date_transformation,
+
+        s.altitude_min::real,
+        s.altitude_moy::real,
+        s.altitude_max::real,
+        s.profondeur_min::real,
+        s.profondeur_moy::real,
+        s.profondeur_max::real,
+
+        NULL AS dee_floutage,
+        NULL AS diffusion_niveau_precision,
+        s.ds_publique,
+
+        j.jdd_code,
+        j.jdd_id,
+        j.jdd_metadonnee_dee_id,
+        NULL AS jdd_source_id,
+
+        org.nom_organisme AS organisme_gestionnaire_donnees,
+        org.nom_organisme AS org_transformation,
+
+        s.statut_source,
+        s.reference_biblio,
+
+        s.sensible,
+        s.sensi_date_attribution::date,
+        s.sensi_niveau::text,
+        s.sensi_referentiel,
+        s.sensi_version_referentiel,
+
+        ''1'' AS validite_niveau,
+        now()::date AS validite_date_validation,
+
+        NULL descriptif_sujet,
+        NULL AS donnee_complementaire,
+
+        s.precision_geometrie::integer,
+        s.nature_objet_geo,
+        ST_MakePoint(s.longitude::real, s.latitude::real) AS geom,
+
+        json_build_object(
+            ''observateurs'', s.observateurs,
+            ''determinateurs'', s.determinateurs,
+            ''import_login'', ''%3$s'',
+            ''import_temp_table'', ''%4$s''
+        ) AS odata,
+
+        org.nom_organisme AS organisme_standard
+
+    FROM
+        info_jdd AS j,
+        organisme_responsable AS org,
+        source_sans_doublon AS s
+        -- jointure pour récupérer les identifiants permanents si déjà créés lors d''un import passé
+        LEFT JOIN occtax.lien_observation_identifiant_permanent AS loip
+            ON loip.jdd_id = ''%5$s''
+            AND loip.identifiant_origine = s.identifiant_origine::TEXT
+
+    ON CONFLICT DO NOTHING
+    RETURNING cle_obs, identifiant_permanent
+    ';
+    sql_text := format(sql_template,
+        _jdd_uid,
+        _organisme_responsable,
+        _import_login,
+        _table_temporaire,
+        _jdd_id
+    );
+
+    -- RAISE NOTICE '%', sql_text;
+    -- Import
+    RETURN QUERY EXECUTE sql_text;
+
+END
+$BODY$
+LANGUAGE plpgsql VOLATILE
+COST 100
+;
+
+
+COMMENT ON FUNCTION occtax.import_observations_depuis_table_temporaire(regclass, text, text, text)
+IS 'Importe les observations contenues dans la table fournie en paramètre pour le JDD fourni et l''organisme responsable'
+;
+
+-- Importe les données complémentaires (observateurs, liens spatiaux, etc.)
+DROP FUNCTION IF EXISTS occtax.import_observations_post_data(regclass, text, text);
+CREATE OR REPLACE FUNCTION occtax.import_observations_post_data(
+    _table_temporaire regclass,
+    _import_login text,
+    _jdd_uid text
+)
+RETURNS TABLE (
+    import_report json
+) AS
+$BODY$
+DECLARE
+    sql_template TEXT;
+    sql_text TEXT;
+    _import_status boolean;
+    _import_report json;
+    _jdd_id TEXT;
+    _nom_type_personne text;
+    _nom_role_personne text;
+    _set_val integer;
+    _nb_lignes integer;
+    _result_information jsonb;
+BEGIN
+    -- Get jdd_id from uid
+    SELECT jdd_id
+    INTO _jdd_id
+    FROM occtax.jdd WHERE jdd_metadonnee_dee_id = _jdd_uid
+    ;
+
+    -- table occtax.lien_observation_identifiant_permanent
+    -- Conservation des liens entre les identifiants origine et les identifiants permanents
+    sql_template := '
+    WITH ins AS (
+        INSERT INTO occtax.lien_observation_identifiant_permanent
+        (jdd_id, identifiant_origine, identifiant_permanent, dee_date_derniere_modification, dee_date_transformation)
+        SELECT o.jdd_id, o.identifiant_origine, o.identifiant_permanent, o.dee_date_derniere_modification, o.dee_date_transformation
+        FROM occtax.observation o
+        WHERE True
+            AND o.jdd_id IN (''%1$s'')
+            AND odata->>''import_temp_table'' = ''%2$s''
+            AND odata->>''import_login'' = ''%3$s''
+        ON CONFLICT ON CONSTRAINT lien_observation_identifiant__jdd_id_identifiant_origine_id_key
+        DO NOTHING
+        RETURNING identifiant_origine
+    ) SELECT count(*) AS nb FROM ins
+    ;
+    ';
+    sql_text := format(sql_template,
+        _jdd_id,
+        _table_temporaire,
+        _import_login
+    );
+    -- RAISE NOTICE '-- table occtax.lien_observation_identifiant_permanent';
+    -- RAISE NOTICE '%', sql_text;
+    EXECUTE sql_text INTO _nb_lignes;
+    -- RAISE NOTICE 'occtax.organisme: %', _nb_lignes;
+    _result_information := jsonb_build_object('liens', _nb_lignes);
+
+    -- Table occtax.organisme
+    SELECT setval('occtax.organisme_id_organisme_seq', (SELECT max(id_organisme) FROM occtax.organisme))
+    INTO _set_val;
+    sql_template := '
+    WITH ins AS (
+        WITH personnes AS (
+            SELECT DISTINCT observateurs AS personnes
+            FROM %1$s
+            UNION
+            SELECT DISTINCT determinateurs AS personnes
+            FROM %1$s
+        ),
+        personne AS (
+            SELECT DISTINCT trim(regexp_split_to_table(personnes, '','')) AS personne
+            FROM personnes
+        ),
+        valide AS (
+            SELECT
+                personne, v.*
+            FROM personne, occtax.is_valid_identite(personne) AS v
+        )
+        INSERT INTO occtax.organisme (nom_organisme)
+        SELECT DISTINCT items[3]
+        FROM valide AS v
+        WHERE is_valid
+        ON CONFLICT DO NOTHING
+		RETURNING nom_organisme
+    ) SELECT count(*) AS nb FROM ins
+    ;
+    ';
+    sql_text := format(sql_template,
+        _table_temporaire
+    );
+    -- RAISE NOTICE '-- table occtax.organisme';
+    -- RAISE NOTICE '%', sql_text;
+    EXECUTE sql_text INTO _nb_lignes;
+    -- RAISE NOTICE 'occtax.organisme: %', _nb_lignes;
+    _result_information := _result_information || jsonb_build_object('organismes', _nb_lignes);
+
+    -- Table occtax.personne
+    SELECT setval('occtax.personne_id_personne_seq', (SELECT max(id_personne) FROM occtax.personne))
+    INTO _set_val;
+    sql_template := '
+    WITH ins AS (
+        WITH personnes AS (
+            SELECT DISTINCT observateurs AS personnes
+            FROM %1$s
+            UNION
+            SELECT DISTINCT determinateurs AS personnes
+            FROM %1$s
+        ),
+        personne AS (
+            SELECT DISTINCT trim(regexp_split_to_table(personnes, '','')) AS personne
+            FROM personnes
+        ),
+        valide AS (
+            SELECT
+                personne, v.*
+            FROM personne, occtax.is_valid_identite(personne) AS v
+        )
+        INSERT INTO occtax.personne (identite, nom, prenom, mail, organisme, id_organisme)
+        SELECT DISTINCT
+            concat(items[1], '' '' || items[2]) AS identite,
+            items[1] AS nom,
+            items[2] AS prenom,
+            ''inconnu@inco.nnu'' AS mail,
+            items[3] AS organisme,
+            o.id_organisme
+        FROM valide AS v
+        LEFT JOIN occtax.organisme AS o
+            ON o.nom_organisme = items[3]
+        WHERE is_valid
+        ON CONFLICT DO NOTHING
+		RETURNING identite
+    ) SELECT count(*) AS nb FROM ins
+    ;
+    ';
+    sql_text := format(sql_template,
+        _table_temporaire
+    );
+    -- RAISE NOTICE '-- table occtax.personne';
+    -- RAISE NOTICE '%', sql_text;
+    EXECUTE sql_text INTO _nb_lignes;
+    -- RAISE NOTICE 'occtax.personne: %', _nb_lignes;
+    _result_information := _result_information || jsonb_build_object('personnes', _nb_lignes);
+
+    -- Table occtax.observation_personne
+    -- observateurs & déterminateurs
+    FOR _nom_type_personne, _nom_role_personne IN
+        SELECT 'observateurs' AS nom, 'Obs' AS typ
+        UNION
+        SELECT 'determinateurs' AS nom, 'Det' AS typ
+    LOOP
+        sql_template := '
+        WITH ins AS (
+            INSERT INTO occtax.observation_personne (cle_obs, id_personne, role_personne)
+            WITH source AS (
+                SELECT
+                cle_obs,
+                odata->>''%1$s'' AS odata_%1$s,
+                trim(%1$s) AS %2$s, rn
+                FROM
+                occtax.observation AS o,
+                regexp_split_to_table(odata->>''%1$s'', '','')  WITH ORDINALITY x(%1$s, rn)
+                WHERE True
+                AND odata->>''%1$s'' IS NOT NULL
+                AND o.jdd_metadonnee_dee_id = ''%3$s''
+                ORDER BY o.cle_obs, rn
+            )
+            SELECT
+                s.cle_obs, p.id_personne, ''%4$s'' AS role_personne
+            FROM source AS s
+            JOIN occtax.personne AS p
+                ON s.%2$s = concat(p.identite, '' ('', (SELECT nom_organisme FROM occtax.organisme og WHERE og.id_organisme = p.id_organisme), '')'')
+            ORDER BY cle_obs, rn
+            ON CONFLICT DO NOTHING
+		    RETURNING cle_obs, id_personne, role_personne
+        ) SELECT count(*) AS nb FROM ins
+        ;
+        ';
+        sql_text := format(sql_template,
+            _nom_type_personne,
+            -- on enlève le s final
+            substr(_nom_type_personne, 1, length(_nom_type_personne) - 1),
+            _jdd_uid,
+            _nom_role_personne
+        );
+        -- RAISE NOTICE '-- table occtax.observation_personne, %', _nom_type_personne;
+        -- RAISE NOTICE '%', sql_text;
+        EXECUTE sql_text INTO _nb_lignes;
+        -- RAISE NOTICE '  lignes: %', _nb_lignes;
+        _result_information := _result_information || jsonb_build_object(_nom_type_personne, _nb_lignes);
+
+    END LOOP;
+
+    -- Relations spatiales
+    sql_template := '
+        SELECT occtax.occtax_update_spatial_relationships(ARRAY[''%1$s'']) AS update_spatial;
+    ';
+    sql_text := format(sql_template,
+        _jdd_id
+    );
+    -- RAISE NOTICE '-- update_spatial';
+    -- RAISE NOTICE '%', sql_text;
+    EXECUTE sql_text INTO _nb_lignes;
+    _result_information := _result_information || jsonb_build_object('update_spatial', _nb_lignes);
+
+    -- Nettoyage
+    sql_template := '
+    WITH ins AS (
+        UPDATE occtax.observation
+        SET odata = odata - ''observateurs'' - ''determinateurs''
+        WHERE True
+        AND jdd_id = ''%1$s''
+        AND odata->>''import_temp_table'' = ''%2$s''
+        AND odata->>''import_login'' = ''%3$s''
+        RETURNING cle_obs
+    ) SELECT count(*) AS nb FROM ins
+    ;
+    ';
+    sql_text := format(sql_template,
+        _jdd_id,
+        _table_temporaire::text,
+        _import_login
+    );
+    -- RAISE NOTICE '-- nettoyage';
+    -- RAISE NOTICE '%', sql_text;
+    EXECUTE sql_text INTO _nb_lignes;
+    _result_information := _result_information || jsonb_build_object('clean', _nb_lignes);
+
+    -- Return information
+    RETURN QUERY SELECT _result_information::json;
+
+    RETURN;
+
+END
+$BODY$
+LANGUAGE plpgsql VOLATILE
+COST 100
+;
+
+
+COMMENT ON FUNCTION occtax.import_observations_post_data(regclass, text, text)
+IS 'Importe les données complémentaires (observateurs, liens spatiaux, etc.) sur les observations contenues dans la table fournie en paramètre'
+;
+
+
+
+-- Supprime les données importées (nettoyage)
+DROP FUNCTION IF EXISTS occtax.import_delete_imported_observations(regclass, text);
+CREATE OR REPLACE FUNCTION occtax.import_delete_imported_observations(
+    _table_temporaire regclass,
+    _jdd_uid text
+)
+RETURNS BOOLEAN AS
+$BODY$
+DECLARE
+    _jdd_id TEXT;
+BEGIN
+    -- Get jdd_id from uid
+    SELECT jdd_id
+    INTO _jdd_id
+    FROM occtax.jdd WHERE jdd_metadonnee_dee_id = _jdd_uid
+    ;
+
+    -- Nettoyage
+    DELETE FROM occtax.localisation_commune WHERE cle_obs IN (
+        SELECT cle_obs FROM occtax.observation
+        WHERE jdd_id = _jdd_id AND odata->>'import_temp_table' = _table_temporaire::text
+    );
+    DELETE FROM occtax.localisation_departement WHERE cle_obs IN (
+        SELECT cle_obs FROM occtax.observation
+        WHERE jdd_id = _jdd_id AND odata->>'import_temp_table' = _table_temporaire::text
+    );
+    DELETE FROM occtax.localisation_espace_naturel WHERE cle_obs IN (
+        SELECT cle_obs FROM occtax.observation
+        WHERE jdd_id = _jdd_id AND odata->>'import_temp_table' = _table_temporaire::text
+    );
+    DELETE FROM occtax.localisation_habitat WHERE cle_obs IN (
+        SELECT cle_obs FROM occtax.observation
+        WHERE jdd_id = _jdd_id AND odata->>'import_temp_table' = _table_temporaire::text
+    );
+    DELETE FROM occtax.localisation_maille_01 WHERE cle_obs IN (
+        SELECT cle_obs FROM occtax.observation
+        WHERE jdd_id = _jdd_id AND odata->>'import_temp_table' = _table_temporaire::text
+    );
+    DELETE FROM occtax.localisation_maille_02 WHERE cle_obs IN (
+        SELECT cle_obs FROM occtax.observation
+        WHERE jdd_id = _jdd_id AND odata->>'import_temp_table' = _table_temporaire::text
+    );
+    DELETE FROM occtax.localisation_maille_05 WHERE cle_obs IN (
+        SELECT cle_obs FROM occtax.observation
+        WHERE jdd_id = _jdd_id AND odata->>'import_temp_table' = _table_temporaire::text
+    );
+    DELETE FROM occtax.localisation_maille_10 WHERE cle_obs IN (
+        SELECT cle_obs FROM occtax.observation
+        WHERE jdd_id = _jdd_id AND odata->>'import_temp_table' = _table_temporaire::text
+    );
+    DELETE FROM occtax.localisation_masse_eau WHERE cle_obs IN (
+        SELECT cle_obs FROM occtax.observation
+        WHERE jdd_id = _jdd_id AND odata->>'import_temp_table' = _table_temporaire::text
+    );
+    DELETE FROM occtax.observation_personne WHERE cle_obs IN (
+        SELECT cle_obs FROM occtax.observation
+        WHERE jdd_id = _jdd_id AND odata->>'import_temp_table' = _table_temporaire::text
+    );
+    DELETE FROM occtax.lien_observation_identifiant_permanent WHERE identifiant_permanent IN (
+        SELECT identifiant_permanent FROM occtax.observation
+        WHERE jdd_id = _jdd_id AND odata->>'import_temp_table' = _table_temporaire::text
+    );
+    DELETE FROM occtax.observation
+    WHERE jdd_id IN (_jdd_id) AND odata->>'import_temp_table' = _table_temporaire::text;
+
+    RETURN True;
+
+END
+$BODY$
+LANGUAGE plpgsql VOLATILE
+COST 100
+;
+
+COMMENT ON FUNCTION occtax.import_delete_imported_observations(regclass, text)
+IS 'Suppression des données importées, utile si un souci a été rencontré lors de la procédure'
+;

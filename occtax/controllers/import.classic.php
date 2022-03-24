@@ -11,7 +11,6 @@
 
 class importCtrl extends jController
 {
-
     /**
      * Get the data from the import form
      * and return error or data depending on the status
@@ -20,15 +19,16 @@ class importCtrl extends jController
     {
         // Define the object to return
         $return = array(
-            'status' => 0,
+            'action' => 'check',
+            'status_check' => 0,
+            'status_import' => 0,
             'messages' => array(),
             'data' =>  array()
         );
         $rep = $this->getResponse('json');
 
         // if (!jAcl2::check("import.online.access")) {
-        if (!jAcl2::check("validation.online.access")) {
-            $return['status'] = 0;
+        if (!jAcl2::check("import.online.access")) {
             $return['messages'][] = jLocale::get('occtax~import.form.error.right');
             $rep->data = $return;
             return $rep;
@@ -67,9 +67,11 @@ class importCtrl extends jController
             $rep->data = $return;
             return $rep;
         }
+
         // Import library
         jClasses::inc('occtax~occtaxImport');
         $import = new occtaxImport($csv_target_directory.'/'.$csv_target_filename);
+
         // Check the CSV structure
         list($check, $messages) = $import->checkStructure();
         if (!$check) {
@@ -127,12 +129,109 @@ class importCtrl extends jController
             return $rep;
         }
 
-        $return['status'] = 1;
+        // Check if we must import or only validate the data
+        $action = $form->getData('check_or_import');
+        if (!in_array($action, array('check', 'import'))) {
+            $action = 'check';
+        }
+
         $return['data'] = array(
             'not_null'=>$check_not_null,
             'format'=>$check_format,
             'conforme'=>$check_conforme,
         );
+
+        $return['status_check'] = 1;
+
+        // Only import if it is asked
+        // If not we can clean the data and return
+        if ($action == 'check') {
+            $return['action'] = 'check';
+            jForms::destroy("occtax~import");
+            $import->clean();
+            $rep->data = $return;
+            return $rep;
+        }
+
+        // Go on trying to import the data
+        $return['action'] = 'import';
+
+        // We must NOT go on if the check has found some problems
+        if (count($check_not_null) || count($check_format) || count($check_conforme)) {
+            jForms::destroy("occtax~import");
+            $import->clean();
+            $return['messages'][] = "Aucune observation n'a été importée car le contrôle a trouvé des erreurs.";
+            $rep->data = $return;
+            return $rep;
+        }
+
+        // Check the uid of the JDD is valid
+        $jdd_uid = (string) $form->getData('jdd_uid');
+        if (!$import->isValidUuid($jdd_uid)) {
+            jForms::destroy("occtax~import");
+            $import->clean();
+            $return['messages'][] = "L'identifiant SINP du jeu de données n'est pas valide.";
+            $rep->data = $return;
+            return $rep;
+        }
+
+        // Get the JDD and cadre data for the given JDD uid
+        $jdd_data = $import->getJdd($jdd_uid, 'database');
+        // if (empty($jdd_data)) {
+        //     $jdd_data = $import->getJdd($jdd_uid, 'api');
+        // }
+        if (empty($jdd_data)) {
+            jForms::destroy("occtax~import");
+            $import->clean();
+            $return['messages'][] = "Impossible de récupérer les données du jeu de données dans la base";
+            $rep->data = $return;
+            return $rep;
+        }
+
+        // Get the logged user login
+        $user = \jAuth::getUserSession();
+        $login = null;
+        if ($user) {
+            $login = $user->login;
+        }
+        if (!$login) {
+            jForms::destroy("occtax~import");
+            $import->clean();
+            $return['messages'][] = "Impossible de récupérer le login de la personne connectée";
+            $rep->data = $return;
+            return $rep;
+        }
+
+        // Import observations
+        $organisme_responsable = 'PNRM';
+        $import_observation = $import->importCsvIntoObservation($login, $jdd_uid, $organisme_responsable);
+        if (!$import_observation) {
+            // Delete already imported data
+            $import->deleteImportedData($jdd_uid);
+            jForms::destroy("occtax~import");
+            $import->clean();
+            $return['messages'][] = "Aucune observation n'a été importée dans la base";
+            $rep->data = $return;
+            return $rep;
+        }
+
+        // Import other data
+        $import_other_data = $import->addImportedObservationPostData($login, $jdd_uid);
+        if (!$import_other_data) {
+            // Delete already imported data
+            $import->deleteImportedData($jdd_uid);
+            jForms::destroy("occtax~import");
+            $import->clean();
+            $return['messages'][] = "Une erreur a été rencontrée lors de l'ajout des données tierces (organismes, personnes)";
+            $rep->data = $return;
+            return $rep;
+        }
+
+        // Add detail in the returned object
+        $return['status_import'] = 1;
+        $return['data']['observations'] = $import_observation;
+        $return['data']['other'] = $import_other_data;
+        $return['messages'][] = "Les observations ont été importées dans la base. Elle seront activée par l'administrateur.";
 
         // Clean
         jForms::destroy("occtax~import");
