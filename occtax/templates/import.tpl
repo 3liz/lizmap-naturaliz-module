@@ -8,6 +8,12 @@
     <div class="menu-content">
         <div id="occtax_import_tab_div" class="container" style="width:100%;">
             <h4>Tester la conformité de données d'observation selon le standard Occurences de Taxon</h4>
+
+            <p>Veuillez consulter au préalable les ressources suivantes</p>
+            <ul>
+                <li>le <a href="https://standards-sinp.mnhn.fr/category/standards/occurrences-de-taxons/" target="_blank">Standard Occurrences de Taxon</a></li>
+                <li>un <a href="{jurl 'occtax~import:getTemplateCsv'}" target="_blank">Exemple de fichier CSV conforme</a></li>
+            </ul>
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#import_formulaire" data-toggle="tab">Formulaire</a></li>
                 <li class=""><a href="#import_conformite" data-toggle="tab">Conformité</a></li>

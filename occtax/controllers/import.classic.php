@@ -11,6 +11,24 @@
 
 class importCtrl extends jController
 {
+
+
+    /**
+     * Get the template CSV
+     *
+     */
+    function getTemplateCsv()
+    {
+        $rep = $this->getResponse('binary');
+        $rep->deleteFileAfterSending = false;
+        $rep->fileName = jApp::getModulePath('occtax') . 'install/config/import_observations_csv_template.csv';
+        $rep->outputFileName = 'observations_exemple.csv';
+        $rep->mimeType = 'text/csv';
+        $rep->doDownload = true;
+
+        return $rep;
+    }
+
     /**
      * Get the data from the import form
      * and return error or data depending on the status
