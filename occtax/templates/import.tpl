@@ -11,13 +11,15 @@
 
             <p>Veuillez consulter au préalable les ressources suivantes</p>
             <ul>
-                <li>le <a href="https://standards-sinp.mnhn.fr/category/standards/occurrences-de-taxons/" target="_blank">Standard Occurrences de Taxon</a></li>
-                <li>un <a href="{jurl 'occtax~import:getTemplateCsv'}" target="_blank">Exemple de fichier CSV conforme</a></li>
+                <li>le <a href="https://standards-sinp.mnhn.fr/category/standards/occurrences-de-taxons/" target="_blank">Standard Occurrences de Taxon</a> et le <a href="{jurl 'occtax~import:getRessourceFile', array('ressource'=>'pdf')}" target="_blank">fichier PDF descriptif</a></li>
+                <li>un <a href="{jurl 'occtax~import:getRessourceFile', array('ressource'=>'csv')}" target="_blank">Exemple de fichier CSV conforme</a></li>
             </ul>
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#import_formulaire" data-toggle="tab">Formulaire</a></li>
                 <li class=""><a href="#import_conformite" data-toggle="tab">Conformité</a></li>
+                {ifacl2 "import.online.access.import"}
                 <li class=""><a href="#import_resultat" data-toggle="tab">Résultat</a></li>
+                {/ifacl2}
             </ul>
             <div class="tab-content">
                 <div id="import_formulaire" class="tab-pane active">
@@ -78,6 +80,7 @@
                     </div>
                 </div>
 
+                {ifacl2 "import.online.access.import"}
                 <div id="import_resultat" class="tab-pane ">
 
                     <span id="import_message_resultat" style="font-weight: bold;font-size: 1.1em;"></span>
@@ -102,6 +105,7 @@
                         </table>
                     </div>
                 </div>
+                {/ifacl2}
             </div>
         </div>
     </div>

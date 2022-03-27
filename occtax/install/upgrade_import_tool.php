@@ -5,7 +5,7 @@ class occtaxModuleUpgrader_import_tool extends jInstallerModule
     public $targetVersions = array(
         '2.12.0',
     );
-    public $date = '2022-02-28';
+    public $date = '2022-03-28';
 
     function install()
     {
@@ -65,15 +65,18 @@ class occtaxModuleUpgrader_import_tool extends jInstallerModule
                 jLog::log($e->getMessage());
             }
 
-            // Ajout d'un nouveau droit d'import en ligne
+            // Ajoute les 2 nouveaux droits pour l'import CSV en ligne
             try {
-                jAcl2DbManager::addSubject('import.online.access', 'occtax~jacl2.import.online.access', 'naturaliz.subject.group');
+                jAcl2DbManager::addSubject('import.online.access.conformite', 'occtax~jacl2.import.online.access.conformite', 'naturaliz.subject.group');
+                jAcl2DbManager::addSubject('import.online.access.import', 'occtax~jacl2.import.online.access.import', 'naturaliz.subject.group');
                 jAcl2DbUserGroup::createGroup(
                     'naturaliz_importateurs',
                     'naturaliz_importateurs'
                 );
-                jAcl2DbManager::addRight('admins', 'import.online.access');
-                jAcl2DbManager::addRight('naturaliz_importateurs', 'import.online.access');
+                jAcl2DbManager::addRight('admins', 'import.online.access.conformite');
+                jAcl2DbManager::addRight('admins', 'import.online.access.import');
+                jAcl2DbManager::addRight('naturaliz_importateurs', 'import.online.access.conformite');
+                jAcl2DbManager::addRight('naturaliz_importateurs', 'import.online.access.import');
             } catch (Exception $e) {
                 jLog::log("Erreur lors de l'ajout du droit pour les importateurs en ligne: import.online.access");
                 jLog::log($e->getMessage());

@@ -153,6 +153,54 @@ COMMENT ON FUNCTION occtax.is_given_type(text, text)
 IS 'Tester si le contenu d''un champ est du type attendu'
 ;
 
+CREATE OR REPLACE FUNCTION occtax.intersects_maille_10(longitude real, latitude real) RETURNS BOOLEAN AS $$
+DECLARE
+    _srid integer;
+    _nb_maille integer;
+    _inside boolean;
+BEGIN
+    -- Avoid to test empty data
+    IF longitude IS NULL AND latitude IS NULL THEN
+        return true;
+    END IF;
+
+    -- Get observation table SRID
+    SELECT srid
+    INTO _srid
+    FROM geometry_columns
+    WHERE f_table_schema = 'occtax' AND f_table_name = 'observation'
+    ;
+
+    -- Intersects
+    SELECT count(m.*)
+    INTO _nb_maille
+    FROM sig.maille_10 AS m
+    WHERE True
+    AND ST_Intersects(
+        m.geom,
+        ST_Transform(
+            ST_SetSRID(ST_MakePoint(longitude, latitude), _srid),
+            _srid
+        )
+    ) ;
+    -- If there is an intersection, return True
+    IF _nb_maille > 0 THEN
+        RETURN True;
+    ELSE
+        RETURN False;
+    END IF;
+
+EXCEPTION WHEN others THEN
+    return false;
+END;
+$$ LANGUAGE plpgsql
+;
+
+COMMENT ON FUNCTION occtax.intersects_maille_10(real, real)
+IS 'Tester si les géométries point issues de longitude et latitude sont contenus dans les mailles 10x10km.'
+;
+
+
 -- Fonction de test de conformité des observations d'une table au standard
 DROP FUNCTION IF EXISTS occtax.test_conformite_observation(regclass, text);
 CREATE OR REPLACE FUNCTION occtax.test_conformite_observation(_table_temporaire regclass, _type_critere text)
@@ -345,7 +393,10 @@ VALUES
 ('obs_version_taxref_valide', 'La valeur de <b>version_taxref</b> n''est pas conforme', 'La version du TAXREF <b>version_taxref</b> doit être renseignée si le <b>cd_nom</b> est positif', $$(cd_nom IS NULL OR ( cd_nom IS NOT NULL AND cd_nom::integer > 0 AND version_taxref IS NOT NULL) OR ( cd_nom IS NOT NULL AND cd_nom::integer < 0 ))$$, 'conforme'),
 ('obs_observateurs_valide', 'La valeur de <b>observateurs</b> n''est pas conforme', 'Le champ <b>observateurs</b> doit être du type: NOM Prénom (Organisme 1), AUTRE-NOM Prénoms-Composé (Organisme 2), INCONNU (Indépendant)', $$(occtax.is_valid_identite_multiple(observateurs))$$, 'conforme'),
 ('obs_determinateurs_valide', 'La valeur de <b>determinateurs</b> n''est pas conforme', 'Le champ <b>determinateurs</b> doit être rempli si le cd_nom est rempli', $$(cd_nom IS NULL OR ( cd_nom IS NOT NULL AND determinateurs IS NOT NULL))$$, 'conforme'),
-('obs_determinateurs_valide_format', 'La valeur de <b>determinateurs</b> n''est pas conforme', 'Le champ <b>determinateurs</b> doit être du type: NOM Prénom (Organisme 1), AUTRE-NOM Prénoms-Composé (Organisme 2), INCONNU (Indépendant)', $$(occtax.is_valid_identite_multiple(determinateurs))$$, 'conforme')
+('obs_determinateurs_valide_format', 'La valeur de <b>determinateurs</b> n''est pas conforme', 'Le champ <b>determinateurs</b> doit être du type: NOM Prénom (Organisme 1), AUTRE-NOM Prénoms-Composé (Organisme 2), INCONNU (Indépendant)', $$(occtax.is_valid_identite_multiple(determinateurs))$$, 'conforme'),
+-- géométrie dans les mailles 10x10km
+('obs_geometrie_localisation_dans_maille', 'Les <b>géométries</b> ne sont pas conformes', 'Les <b>géométries</b> doivent être à l''intérieur des mailles 10x10km.' , $$occtax.intersects_maille_10(longitude, latitude)$$, 'conforme')
+
 ON CONFLICT ON CONSTRAINT critere_conformite_unique_code DO NOTHING
 ;
 
@@ -365,12 +416,21 @@ DECLARE
     sql_template TEXT;
     sql_text TEXT;
     _jdd_id TEXT;
+    _srid integer;
 BEGIN
     -- Get jdd_id from uid
     SELECT jdd_id INTO _jdd_id
     FROM occtax.jdd WHERE jdd_metadonnee_dee_id = _jdd_uid
     ;
 
+    -- Get observation table SRID
+    SELECT srid
+    INTO _srid
+    FROM geometry_columns
+    WHERE f_table_schema = 'occtax' AND f_table_name = 'observation'
+    ;
+
+    -- Set occtax.observation sequence to the max of cle_obs
     PERFORM 'SELECT Setval(''occtax.observation_cle_obs_seq'', (SELECT max(cle_obs) FROM occtax.observation ) )';
 
     -- Buils INSERT SQL
@@ -453,7 +513,7 @@ BEGIN
     ),
     source_sans_doublon AS (
         SELECT csv.*
-        FROM temp_1648040236_target AS csv, info_jdd AS j
+        FROM "%4$s" AS csv, info_jdd AS j
         WHERE True
         AND csv.identifiant_origine NOT IN
 		(	SELECT o.identifiant_origine
@@ -530,13 +590,20 @@ BEGIN
 
         s.precision_geometrie::integer,
         s.nature_objet_geo,
-        ST_MakePoint(s.longitude::real, s.latitude::real) AS geom,
+        ST_Transform(
+            ST_SetSRID(
+                ST_MakePoint(s.longitude::real, s.latitude::real),
+                %6$s
+            ),
+            %6$s
+        ) AS geom,
 
         json_build_object(
             ''observateurs'', s.observateurs,
             ''determinateurs'', s.determinateurs,
             ''import_login'', ''%3$s'',
-            ''import_temp_table'', ''%4$s''
+            ''import_temp_table'', ''%4$s'',
+            ''import_time'', now()::timestamp(0)
         ) AS odata,
 
         org.nom_organisme AS organisme_standard
@@ -558,7 +625,8 @@ BEGIN
         _organisme_responsable,
         _import_login,
         _table_temporaire,
-        _jdd_id
+        _jdd_id,
+        _srid
     );
 
     -- RAISE NOTICE '%', sql_text;
@@ -823,9 +891,9 @@ IS 'Importe les données complémentaires (observateurs, liens spatiaux, etc.) s
 
 
 -- Supprime les données importées (nettoyage)
-DROP FUNCTION IF EXISTS occtax.import_delete_imported_observations(regclass, text);
+DROP FUNCTION IF EXISTS occtax.import_delete_imported_observations(text, text);
 CREATE OR REPLACE FUNCTION occtax.import_delete_imported_observations(
-    _table_temporaire regclass,
+    _table_temporaire text,
     _jdd_uid text
 )
 RETURNS BOOLEAN AS
@@ -897,4 +965,52 @@ COST 100
 
 COMMENT ON FUNCTION occtax.import_delete_imported_observations(regclass, text)
 IS 'Suppression des données importées, utile si un souci a été rencontré lors de la procédure'
+;
+
+-- Vue pour lister les données importées
+DROP VIEW IF EXISTS occtax.v_import_web_liste;
+CREATE OR REPLACE VIEW occtax.v_import_web_liste AS
+SELECT
+(odata->>'import_time')::timestamp(0) AS date_import,
+jdd_metadonnee_dee_id AS jdd,
+count(cle_obs) AS nombre_observations,
+odata->>'import_temp_table' AS code_import,
+odata->>'import_login' AS login_import
+FROM occtax.observation
+WHERE odata ? 'import_login' AND odata ? 'import_time'
+GROUP BY odata, jdd_metadonnee_dee_id
+ORDER BY date_import, code_import, login_import;
+;
+
+COMMENT ON VIEW occtax.v_import_web_liste
+IS 'Vue utile pour lister les imports effectués par les utilisateurs depuis l''interface Web, à partir de fichier CSV'
+;
+
+-- Vue pour voir toutes les observations importées en attente d'intégration
+DROP VIEW IF EXISTS occtax.v_import_web_observations;
+CREATE OR REPLACE VIEW occtax.v_import_web_observations AS
+SELECT
+o.cle_obs, o.identifiant_origine, o.identifiant_permanent,
+cd_nom, nom_cite, cd_ref,
+denombrement_min, denombrement_max, objet_denombrement, type_denombrement,
+commentaire,
+date_debut, date_fin, heure_debut, heure_fin, date_determination,
+dee_floutage, diffusion_niveau_precision, ds_publique,
+jdd_metadonnee_dee_id,
+statut_source, reference_biblio,
+sensible, sensi_date_attribution, sensi_niveau, sensi_referentiel, sensi_version_referentiel,
+validite_niveau, validite_date_validation,
+precision_geometrie, nature_objet_geo,
+geom,
+(odata->>'import_time')::timestamp(0) AS date_import,
+odata->>'import_temp_table' AS code_import,
+odata->>'import_login' AS login_import
+
+FROM occtax.observation AS o
+WHERE odata ? 'import_login' AND odata ? 'import_time'
+ORDER BY jdd_metadonnee_dee_id, date_import, code_import, login_import;
+;
+
+COMMENT ON VIEW occtax.v_import_web_observations
+IS 'Vue utile pour lister les observations importées par les utilisateurs depuis l''interface Web, à partir de fichier CSV'
 ;

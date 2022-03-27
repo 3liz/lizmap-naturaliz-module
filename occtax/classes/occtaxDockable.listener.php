@@ -315,10 +315,16 @@ class occtaxDockableListener extends jEventListener{
                 // Import tool
                 // Create import form
                 if (jAuth::isConnected()
-                    // && jAcl2::check("import.online.access")
+                    && jAcl2::check("import.online.access.conformite")
                 ) {
                     // Add import form and tools
                     $form = jForms::create("occtax~import");
+
+                    // Hide import submit if not enough right
+                    if (!jAcl2::check("import.online.access.import")) {
+                        $form->deactivate('import');
+                        $form->deactivate('jdd_uid');
+                    }
                     $assign = array(
                         'form' => $form,
                     );

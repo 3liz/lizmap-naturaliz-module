@@ -14,17 +14,29 @@ class importCtrl extends jController
 
 
     /**
-     * Get the template CSV
+     * Get the template CSV or the Occtax PDF
      *
      */
-    function getTemplateCsv()
+    function getRessourceFile()
     {
         $rep = $this->getResponse('binary');
-        $rep->deleteFileAfterSending = false;
-        $rep->fileName = jApp::getModulePath('occtax') . 'install/config/import_observations_csv_template.csv';
-        $rep->outputFileName = 'observations_exemple.csv';
-        $rep->mimeType = 'text/csv';
+
+        $fichier = jApp::getModulePath('occtax') . 'install/config/import_observations_csv_template.csv';
+        $nom_fichier = 'observations_exemple.csv';
+        $mime = 'text/csv';
+
+        $ressource = $this->param('ressource', 'csv');
+        if ($ressource == 'pdf') {
+            $fichier = jApp::getModulePath('occtax') . 'install/config/Occurrences_de_taxon-v1_2_1_FINALE.pdf';
+            $nom_fichier = 'Occurrences_de_taxon-v1_2_1_FINALE.pdf';
+            $mime = 'application/pdf';
+        }
+
+        $rep->fileName = $fichier;
+        $rep->outputFileName = $nom_fichier;
+        $rep->mimeType = $mime;
         $rep->doDownload = true;
+        $rep->deleteFileAfterSending = false;
 
         return $rep;
     }
@@ -45,8 +57,7 @@ class importCtrl extends jController
         );
         $rep = $this->getResponse('json');
 
-        // if (!jAcl2::check("import.online.access")) {
-        if (!jAcl2::check("import.online.access")) {
+        if (!jAcl2::check("import.online.access.conformite")) {
             $return['messages'][] = jLocale::get('occtax~import.form.error.right');
             $rep->data = $return;
             return $rep;
@@ -161,8 +172,12 @@ class importCtrl extends jController
 
         $return['status_check'] = 1;
 
-        // Only import if it is asked
-        // If not we can clean the data and return
+        // Only import if it is asked or available for the authenticated user
+        if ($action == 'import' && !jAcl2::check("import.online.access.import")) {
+            $action = 'check';
+        }
+
+        // If we only check, we can clean the data and return the reponse
         if ($action == 'check') {
             $return['action'] = 'check';
             jForms::destroy("occtax~import");
