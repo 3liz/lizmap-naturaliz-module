@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2.12.1 - 2022-03-28
+
+* Outil d'import - Correction du script SQL d'installation
+
 ## 2.12.0 - 2022-03-28
 
 * Ajout d'un outil de validation et d'import des données d'observations
