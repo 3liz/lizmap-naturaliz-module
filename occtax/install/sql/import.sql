@@ -963,7 +963,7 @@ LANGUAGE plpgsql VOLATILE
 COST 100
 ;
 
-COMMENT ON FUNCTION occtax.import_delete_imported_observations(regclass, text)
+COMMENT ON FUNCTION occtax.import_delete_imported_observations(text, text)
 IS 'Suppression des données importées, utile si un souci a été rencontré lors de la procédure'
 ;
 
