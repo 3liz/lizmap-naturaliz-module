@@ -764,13 +764,12 @@ BEGIN
                 personne, v.*
             FROM personne, occtax.is_valid_identite(personne) AS v
         )
-        INSERT INTO occtax.personne (identite, nom, prenom, mail, organisme, id_organisme)
+        INSERT INTO occtax.personne (identite, nom, prenom, mail, id_organisme)
         SELECT DISTINCT
             concat(items[1], '' '' || items[2]) AS identite,
             items[1] AS nom,
             items[2] AS prenom,
             ''inconnu@inco.nnu'' AS mail,
-            items[3] AS organisme,
             o.id_organisme
         FROM valide AS v
         LEFT JOIN occtax.organisme AS o

@@ -32,7 +32,8 @@ occtax.observation, occtax.lien_observation_identifiant_permanent, occtax.organi
 occtax.localisation_commune, occtax.localisation_departement,
 occtax.localisation_maille_10, occtax.localisation_maille_05,
 occtax.localisation_maille_02, occtax.localisation_maille_01,
-occtax.localisation_masse_eau, occtax.localisation_espace_naturel
+occtax.localisation_masse_eau, occtax.localisation_espace_naturel,
+occtax.localisation_habitat
 TO "{$DBUSER_READONLY}";
 
 
