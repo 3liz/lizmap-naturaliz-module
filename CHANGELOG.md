@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+## 2.12.2 - 2022-03-29
+
+* Outil d'import: améliorations diverses
+  * Ajout d'un lien pour télécharger un fichier Excel avec la nomenclature des champs
+    du standard
+  * Augmentation de la limite de taille du CSV (de 200 ko à 2 Mo)
+  * Correction des droits sur les tables pour permettre la modification en ligne
+  * Ajout d'un test de conformité sur le champ nature_objet_geo
+  * Ajout d'une géométrie représentant l'enveloppe des observations dans la vue
+    qui montre les différents imports
+
 ## 2.12.1 - 2022-03-28
 
 * Outil d'import - Correction du script SQL d'installation
