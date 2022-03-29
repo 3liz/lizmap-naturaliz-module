@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 2.12.3 - 2022-03-30
+
+* Outil d'import:
+  * Ajout d'un filtre pour masquer dans les résultats de recherche les observations
+  qui ont été importées mais pas encore activées par les administrateurs
+  * Correction du bug sur le test de conformité des géométries par rapport aux mailles 10km
+  * Correction des scripts SQL
+
 ## 2.12.2 - 2022-03-29
 
 * Outil d'import: améliorations diverses
