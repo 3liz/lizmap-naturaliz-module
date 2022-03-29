@@ -397,7 +397,7 @@ VALUES
 ('obs_nature_objet_geo_valide', 'La valeur de <b>nature_objet_geo</b> n''est pas conforme', 'Le champ <b>nature_objet_geo</b> peut prendre les valeurs: In, St, NSP', $$(geom IS NOT NULL AND (nature_objet_geo = ANY (ARRAY['St'::text, 'In'::text, 'NSP'::text])) OR geom IS NULL)$$, 'conforme'),
 
 -- géométrie dans les mailles 10x10km
-('obs_geometrie_localisation_dans_maille', 'Les <b>géométries</b> ne sont pas conformes', 'Les <b>géométries</b> doivent être à l''intérieur des mailles 10x10km.' , $$occtax.intersects_maille_10(longitude, latitude)$$, 'conforme')
+('obs_geometrie_localisation_dans_maille', 'Les <b>géométries</b> ne sont pas conformes', 'Les <b>géométries</b> doivent être à l''intérieur des mailles 10x10km.' , $$occtax.intersects_maille_10(longitude::real, latitude::real)$$, 'conforme')
 
 ON CONFLICT ON CONSTRAINT critere_conformite_unique_code DO NOTHING
 ;
