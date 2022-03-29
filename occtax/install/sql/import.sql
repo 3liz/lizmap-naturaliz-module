@@ -394,6 +394,8 @@ VALUES
 ('obs_observateurs_valide', 'La valeur de <b>observateurs</b> n''est pas conforme', 'Le champ <b>observateurs</b> doit être du type: NOM Prénom (Organisme 1), AUTRE-NOM Prénoms-Composé (Organisme 2), INCONNU (Indépendant)', $$(occtax.is_valid_identite_multiple(observateurs))$$, 'conforme'),
 ('obs_determinateurs_valide', 'La valeur de <b>determinateurs</b> n''est pas conforme', 'Le champ <b>determinateurs</b> doit être rempli si le cd_nom est rempli', $$(cd_nom IS NULL OR ( cd_nom IS NOT NULL AND determinateurs IS NOT NULL))$$, 'conforme'),
 ('obs_determinateurs_valide_format', 'La valeur de <b>determinateurs</b> n''est pas conforme', 'Le champ <b>determinateurs</b> doit être du type: NOM Prénom (Organisme 1), AUTRE-NOM Prénoms-Composé (Organisme 2), INCONNU (Indépendant)', $$(occtax.is_valid_identite_multiple(determinateurs))$$, 'conforme'),
+('obs_nature_objet_geo_valide', 'La valeur de <b>nature_objet_geo</b> n''est pas conforme', 'Le champ <b>nature_objet_geo</b> peut prendre les valeurs: In, St, NSP', $$(geom IS NOT NULL AND (nature_objet_geo = ANY (ARRAY['St'::text, 'In'::text, 'NSP'::text])) OR geom IS NULL)$$, 'conforme'),
+
 -- géométrie dans les mailles 10x10km
 ('obs_geometrie_localisation_dans_maille', 'Les <b>géométries</b> ne sont pas conformes', 'Les <b>géométries</b> doivent être à l''intérieur des mailles 10x10km.' , $$occtax.intersects_maille_10(longitude, latitude)$$, 'conforme')
 
@@ -975,7 +977,8 @@ SELECT
 jdd_metadonnee_dee_id AS jdd,
 count(cle_obs) AS nombre_observations,
 odata->>'import_temp_table' AS code_import,
-odata->>'import_login' AS login_import
+odata->>'import_login' AS login_import,
+ST_ConvexHull(ST_Collect(ST_Centroid(geom)))::geometry(POLYGON, {$SRID}) AS geom
 FROM occtax.observation
 WHERE odata ? 'import_login' AND odata ? 'import_time'
 GROUP BY odata, jdd_metadonnee_dee_id
@@ -1001,7 +1004,7 @@ statut_source, reference_biblio,
 sensible, sensi_date_attribution, sensi_niveau, sensi_referentiel, sensi_version_referentiel,
 validite_niveau, validite_date_validation,
 precision_geometrie, nature_objet_geo,
-geom,
+(ST_Centroid(geom))::geometry(point, {$SRID}) AS geom,
 (odata->>'import_time')::timestamp(0) AS date_import,
 odata->>'import_temp_table' AS code_import,
 odata->>'import_login' AS login_import
@@ -1012,5 +1015,5 @@ ORDER BY jdd_metadonnee_dee_id, date_import, code_import, login_import;
 ;
 
 COMMENT ON VIEW occtax.v_import_web_observations
-IS 'Vue utile pour lister les observations importées par les utilisateurs depuis l''interface Web, à partir de fichier CSV'
+IS 'Vue utile pour lister les observations importées par les utilisateurs depuis l''interface Web, à partir de fichier CSV. Seuls les centroides des géométries sont affichés.'
 ;

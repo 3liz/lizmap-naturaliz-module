@@ -26,4 +26,14 @@ GRANT SELECT, UPDATE ON TABLE occtax.observation TO "{$DBUSER_READONLY}";
 -- Aussi la vue pour la validation v_observation_champs_validation
 GRANT SELECT ON TABLE occtax.v_observation_champs_validation TO "{$DBUSER_READONLY}";
 
+-- Droits pour l'ajout de données via l'outil d'import
+GRANT INSERT, UPDATE, DELETE ON TABLE
+occtax.observation, occtax.lien_observation_identifiant_permanent, occtax.organisme, occtax.personne, occtax.observation_personne,
+occtax.localisation_commune, occtax.localisation_departement,
+occtax.localisation_maille_10, occtax.localisation_maille_05,
+occtax.localisation_maille_02, occtax.localisation_maille_01,
+occtax.localisation_masse_eau, occtax.localisation_espace_naturel
+TO "{$DBUSER_READONLY}";
+
+
 COMMIT;

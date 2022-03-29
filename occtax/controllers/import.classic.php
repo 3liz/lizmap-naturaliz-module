@@ -30,6 +30,10 @@ class importCtrl extends jController
             $fichier = jApp::getModulePath('occtax') . 'install/config/Occurrences_de_taxon-v1_2_1_FINALE.pdf';
             $nom_fichier = 'Occurrences_de_taxon-v1_2_1_FINALE.pdf';
             $mime = 'application/pdf';
+        } elseif ($ressource == 'nomenclature') {
+            $fichier = jApp::getModulePath('occtax') . 'install/config/occtax_nomenclature.xlsx';
+            $nom_fichier = 'occtax_nomenclature.xlsx';
+            $mime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
         }
 
         $rep->fileName = $fichier;

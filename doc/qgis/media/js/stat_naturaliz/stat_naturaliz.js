@@ -2,9 +2,9 @@ lizMap.events.on({
 
   uicreated: function(e){
     // Le bouton Home redirige vers naturaliz
-    // var newHomeLink = window.location.origin;
-    // $('#mapmenu li.home a').attr('href', newHomeLink);
-    // $('#mapmenu li.home a').attr('target', '_blank');
+    var newHomeLink = var newDatavizLink = window.location.origin + '/dev/index.php/occtax/';
+    $('#mapmenu li.home a').attr('href', newHomeLink);
+    $('#mapmenu li.home a').attr('target', '_blank');
 
     // On masque l'outil de légende
     $('#mapmenu li.switcher.active a').click().hide();

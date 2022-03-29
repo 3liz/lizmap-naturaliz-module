@@ -11,7 +11,7 @@
 
             <p>Veuillez consulter au préalable les ressources suivantes</p>
             <ul>
-                <li>le <a href="https://standards-sinp.mnhn.fr/category/standards/occurrences-de-taxons/" target="_blank">Standard Occurrences de Taxon</a> et le <a href="{jurl 'occtax~import:getRessourceFile', array('ressource'=>'pdf')}" target="_blank">fichier PDF descriptif</a></li>
+                <li>la page INPN sur <a href="https://standards-sinp.mnhn.fr/category/standards/occurrences-de-taxons/" target="_blank">le standard "Occurrences de Taxon"</a>, le <a href="{jurl 'occtax~import:getRessourceFile', array('ressource'=>'pdf')}" target="_blank">fichier PDF descriptif</a> et <a href="{jurl 'occtax~import:getRessourceFile', array('ressource'=>'nomenclature')}" target="_blank">la nomenclature du standard</a></li>
                 <li>un <a href="{jurl 'occtax~import:getRessourceFile', array('ressource'=>'csv')}" target="_blank">Exemple de fichier CSV conforme</a></li>
             </ul>
             <ul class="nav nav-tabs">

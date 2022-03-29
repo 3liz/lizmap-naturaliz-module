@@ -13,7 +13,7 @@ class occtaxModuleUpgrader_import_tool extends jInstallerModule
             // Get variables
             $localConfig = jApp::configPath('naturaliz.ini.php');
             $ini = new jIniFileModifier($localConfig);
-
+            $srid = $ini->getValue('srid', 'naturaliz');
             $colonne_locale = $ini->getValue('colonne_locale', 'naturaliz');
             if (empty($dbuser_readonly)) {
                 $colonne_locale = 'reu';
@@ -33,8 +33,7 @@ class occtaxModuleUpgrader_import_tool extends jInstallerModule
             $sqlPath = $this->path . 'install/sql/import.sql';
             $sqlTpl = jFile::read($sqlPath);
             $tpl = new jTpl();
-            $tpl->assign('colonne_locale', $colonne_locale);
-            $tpl->assign('liste_rangs', $liste_rangs);
+            $tpl->assign('SRID', $srid);
             $sql = $tpl->fetchFromString($sqlTpl, 'text');
             $db->exec($sql);
 

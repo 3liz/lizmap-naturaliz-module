@@ -112,7 +112,10 @@ class occtaxModuleInstaller extends jInstallerModule {
 
                 // Import
                 $sqlPath = $this->path . 'install/sql/import.pgsql.sql';
-                $sql = jFile::read( $sqlPath );
+                $sqlTpl = jFile::read( $sqlPath );
+                $tpl = new jTpl();
+                $tpl->assign('SRID', $srid);
+                $sql = $tpl->fetchFromString($sqlTpl, 'text');
                 $db->exec($sql);
 
                 // Add data for lists
