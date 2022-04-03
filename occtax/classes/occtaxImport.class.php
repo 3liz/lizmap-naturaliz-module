@@ -189,6 +189,15 @@ class occtaxImport
             return array($status, $message);
         }
 
+        // Check that the first line (header) contains the same number of columns
+        // that the second (data) to avoid errors
+        $first_line = $this->parseCsv(1, 1);
+        if (empty($first_line) || count($first_line[0]) != count($header)) {
+            $message = jLocale::get("occtax~import.csv.columns.number.mismatch");
+            $status = false;
+            return array($status, $message);
+        }
+
         return array($status, $message);
     }
 
@@ -232,7 +241,6 @@ class occtaxImport
             }
             fclose($handle);
         }
-
         return $csv_data;
     }
 
