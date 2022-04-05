@@ -19,39 +19,44 @@ class metadataCtrl extends jController
         if (!in_array($mdType, array('jdd', 'cadre'))) {
             $mdType = 'jdd';
         }
-        $mdId = $this->intParam('id', -1);
+        $mdId = $this->param('id', '-1');
         $url = null;
+        $jdds = null;
+        $cadre = null;
 
-        if ($mdType == 'jdd') {
-            // Get the JDD data
-            $dao_jdd = jDao::get('occtax~jdd', 'naturaliz_virtual_profile');
-            $jdd = $dao_jdd->get($mdId);
-
-            // Get the related cadre
-            if ($jdd) {
-                $url = $jdd->url_fiche;
-                $jdds = array($jdd);
-                $dao_cadre = jDao::get('occtax~cadre', 'naturaliz_virtual_profile');
-                $cadre = $dao_cadre->get($jdd->jdd_cadre);
-            } else {
-                $jdds = null;
-                $cadre = null;
-            }
-
-        } else {
-            // Get the cadre data
-            $dao_cadre = jDao::get('occtax~cadre', 'naturaliz_virtual_profile');
-            $cadre = $dao_cadre->get($mdId);
-
-            // Get the related jdds
-            if ($cadre) {
-                $url = $cadre->url_fiche;
+        // We check the given ID is valid
+        if (preg_match('#^[a-zA-Z0-9_-]+$#', $mdId)) {
+            if ($mdType == 'jdd') {
+                // Get the JDD data
                 $dao_jdd = jDao::get('occtax~jdd', 'naturaliz_virtual_profile');
-                $conditions = jDao::createConditions();
-                $conditions->addCondition('jdd_cadre', '=', $mdId);
-                $jdds = $dao_jdd->findBy($conditions);
+                $jdd = $dao_jdd->get($mdId);
+
+                // Get the related cadre
+                if ($jdd) {
+                    $url = $jdd->url_fiche;
+                    $jdds = array($jdd);
+                    $dao_cadre = jDao::get('occtax~cadre', 'naturaliz_virtual_profile');
+                    $cadre = $dao_cadre->get($jdd->jdd_cadre);
+                } else {
+                    $jdds = null;
+                    $cadre = null;
+                }
+
             } else {
-                $jdds = null;
+                // Get the cadre data
+                $dao_cadre = jDao::get('occtax~cadre', 'naturaliz_virtual_profile');
+                $cadre = $dao_cadre->get($mdId);
+
+                // Get the related jdds
+                if ($cadre) {
+                    $url = $cadre->url_fiche;
+                    $dao_jdd = jDao::get('occtax~jdd', 'naturaliz_virtual_profile');
+                    $conditions = jDao::createConditions();
+                    $conditions->addCondition('jdd_cadre', '=', $mdId);
+                    $jdds = $dao_jdd->findBy($conditions);
+                } else {
+                    $jdds = null;
+                }
             }
         }
 
