@@ -2379,12 +2379,8 @@ OccTax.events.on({
          * @param {array} backend_history Search history taken from server
          */
         function addMissingStaredToGivenHistoryFromLocalStorage(backend_history) {
-console.log('addmissin machin');
-console.log('backend_history');
-console.log(backend_history);
+
             var current_storage = getLocalSearchHistory('localStorage');
-console.log('localStorage');
-console.log(current_storage);
             var merged_history = [];
             var items_to_add = [];
             var items_uid_to_add = [];
@@ -2840,6 +2836,9 @@ console.log(current_storage);
             }
             var history_title = description.join('&nbsp;&nbsp;&nbsp;')
             $('#occtax-search-history-title-counter').html(history_title);
+
+            // Update size to avoid double scroll
+            $('#history').height('100%');
 
         }
 
