@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+## 2.12.4 - 2022-04-06
+
+* Outil d'import:
+  * Ajout d'un contrôle sur le nombre de colonnes de l'entête et de la 1ère ligne
+  * Correction du fichier CSV exemple (mauvaises valeurs pour les observateurs et déterminateurs)
+* Historique de recherche
+  * Adaptation dynamique de la hauteur en fonction de la taille de la fenêtre
+    pour éviter la double barre de défilement
+  * Correction du répertoire de destination par défaut pour le stockage
+* Métadonnées JDD - Autoriser l'utilisation d'un jdd_id non entier
+
 ## 2.12.3 - 2022-03-30
 
 * Outil d'import:
