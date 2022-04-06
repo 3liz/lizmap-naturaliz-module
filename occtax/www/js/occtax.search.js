@@ -2837,11 +2837,45 @@ OccTax.events.on({
             var history_title = description.join('&nbsp;&nbsp;&nbsp;')
             $('#occtax-search-history-title-counter').html(history_title);
 
-            // Update size to avoid double scroll
-            $('#history').height('100%');
-
+            updateMiniDockSize();
         }
 
+        function updateMiniDockSize() {
+            // Set the select size to 10
+            $('#occtax-search-history-select').prop('size', 10);
+            // Set the mini-dock max height
+            $('#mini-dock').css('height', '500');
+            $('#history div.menu-content').css('height', '500');
+            $('#history div.menu-content').css('max-height', 'none');
+
+            // Update size to avoid double scroll
+            let select_container =  $('#history div.menu-content');
+            var count = 1;
+            var select_size = $('#occtax-search-history-select').prop('size');
+            while (
+                select_container.prop('offsetHeight') < select_container.prop('scrollHeight')
+                || $('#mini-dock').prop('offsetHeight') < $('#mini-dock').prop('scrollHeight')
+            ) {
+                count ++;
+                // Set the new size and get the new value
+                $('#occtax-search-history-select').prop('size', select_size - 1);
+                select_size = $('#occtax-search-history-select').prop('size');
+
+                // set back the height of the mini-dock and div
+                $('#history div.menu-content').css('height', 'auto');
+                $('#mini-dock').css('height', 'auto');
+
+                // Stop
+                if (count > 10 || select_size < 2) {break;}
+            }
+
+            $('#history div.menu-content').css('height', 'auto');
+            $('#mini-dock').css('height', 'auto');
+
+        }
+        OccTax.updateMiniDockSize = function () {
+            return updateMiniDockSize();
+        }
 
         /**
          * Change some UI elements based on the selected option
