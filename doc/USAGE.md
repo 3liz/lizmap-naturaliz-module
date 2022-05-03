@@ -28,6 +28,81 @@ Une entrée de menu permet de proposer à l'utilisateur ayant les droits requis 
 
 Le fichier CSV attendu doit correspondre à un modèle bien spécfique, avec une liste minimal de champs, nommés correctements. Un fichier CSV exemple est disponible dans les sources.
 
+
+#### Visualiser les observations importées via fichier CSV
+
+Une fois le fichier CSV importé avec succès dans la base de données, depuis le formulaire,
+**les données ne sont pas encore visibles pour les utilisateurs**. Elles ont en effet été importées
+avec un statut "à valider", via la présence de propriétés spécifiques dans le champ `odata`
+de la table `occtax.observation`. Voici un exemple de contenu du champ `odata` pour ces observations non validées :
+
+```json
+{
+  "import_time": "2022-04-29T15:09:59",
+  "import_login": "dupont",
+  "import_temp_table": "temp_1651259398_target"
+}
+```
+
+On peut avoir une **vue synthétique** des données à valider via la vue `occtax.v_import_web_liste` :
+
+```sql
+SELECT * FROM occtax.v_import_web_liste;
+```
+
+renvoie le contenu suivant (la géométrie, lourde, a été masquée ici)
+
+```
+date_import         | 2022-04-29 15:09:59
+jdd                 | DCB578EC-84AE-2545-E053-3014A8C03597
+nombre_observations | 10
+code_import         | temp_1651259398_target
+login_import        | dupont
+geom                | [...]
+```
+
+On peut afficher dans QGIS la vue `occtax.v_import_web_observations` qui sélectionne l'ensemble
+de **toutes les observations à valider**. Cela permet de confirmer que l'import a bien enregistré les données attendues.
+
+Si on le souhaite, on peut aussi ajouter cette vue au projet QGIS qui est publié pour
+l'application Naturaliz via Lizmap Web Client, en ne la rendant accessible qu'au groupe `admins`.
+Cela permet de visualiser directement dans l'interface Web l'ensemble des données à valider.
+On peut aussi ajouter une "popup" pour cette couche, pour permettre d'interroger les données d'une observation en cliquant sur la carte.
+
+Une fois les données contrôlées manuellement, il est possible de **valider ces données**
+pour qu'elles soient visibles par les utilisateurs de Naturaliz, en fonction de leurs droits.
+Pour cela, on peut lancer la commande SQL suivante qui va supprimer du champ `odata` les propriétés caractéristiques de l'import CSV:
+
+```sql
+UPDATE occtax.observation
+SET odata = odata - 'import_time' - 'import_login' - 'import_temp_table'
+WHERE True
+AND odata ? 'import_login' AND odata ? 'import_time'
+AND odata->>'import_login' = 'dupont'
+AND odata->>'import_temp_table' = 'temp_1651259398_target'
+;
+```
+
+Attention à bien vérifier que votre clause `WHERE` permet de filtrer correctement les données à valider.
+
+NB:
+* Une fonction spécifique de validation devrait être créée
+  pour faciliter cette validation des données importées.
+* Il faudrait aussi ajouter une ligne dans la table `occtax.jdd_import`
+  pour faciliter le suivi des imports de données.
+
+Pour **supprimer les données importées**, si on ne souhaite pas les valider mais au contraire
+les supprimer la base de données, on peut lancer la commande suivante :
+
+```sql
+SELECT occtax.import_delete_imported_observations(
+    -- Nom de la table temporaire, visible dans la vue occtax.v_import_web_liste
+    'temp_1651259398_target',
+    -- UUID du JDD, visible dans la table occtax.jdd
+    'DCB578EC-84AE-2545-E053-3014A8C03597'
+);
+```
+
 ## Jeux de données
 
 todo: expliquer la notion et les tables utilisées

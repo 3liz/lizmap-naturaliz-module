@@ -191,17 +191,17 @@ statut_localisations=fra,reu
 
 #### Configuration des accès à PostgreSQL
 
-Vous devez vérifier dans le fichier `lizmap/var/config/profiles.ini.php` 
-les informations de connexion à la base de données PostGreSQL : l'utilisateur 
-doit **avoir des droits élevé pour l'installation**. Vous pouvez par exemple 
+Vous devez vérifier dans le fichier `lizmap/var/config/profiles.ini.php`
+les informations de connexion à la base de données PostGreSQL : l'utilisateur
+doit **avoir des droits élevé pour l'installation**. Vous pouvez par exemple
 utiliser l'utilisateur *postgres*.
 
-Dans la section [jdb:jauth], modifier les variables "user" et "password" 
-pour utiliser par exemple l'utilisateur "postgres". Vous pouvez aussi modifier 
+Dans la section [jdb:jauth], modifier les variables "user" et "password"
+pour utiliser par exemple l'utilisateur "postgres". Vous pouvez aussi modifier
 l'hôte de connexion, le port et le nom de la base de données si besoin.
 
-Si vous avez installé Lizmap via **lizmap-box**, vous devez remplacer 
-l'utilisateur *lizmap* par *postgres* et remplacer le mot de passe par 
+Si vous avez installé Lizmap via **lizmap-box**, vous devez remplacer
+l'utilisateur *lizmap* par *postgres* et remplacer le mot de passe par
 celui entré pour postgres.
 
 
@@ -225,7 +225,7 @@ persistent=off
 
 ### Lancer l'installation des modules Naturaliz
 
-Modifiez les droits pour que l'application puisse écrire dans les répertoires 
+Modifiez les droits pour que l'application puisse écrire dans les répertoires
 temporaires, puis lancer l'installateur de l'application.
 
 ```bash
@@ -234,8 +234,8 @@ lizmap/install/set_rights.sh
 php lizmap/install/installer.php
 ```
 
-Si l'installation s'est bien passée, vous ne devez pas voir d'erreurs affichées 
-dans le log. Si ce n'est pas le cas, vérifier les fichiers de configuration, 
+Si l'installation s'est bien passée, vous ne devez pas voir d'erreurs affichées
+dans le log. Si ce n'est pas le cas, vérifier les fichiers de configuration,
 notamment l'accès à la base de données.
 
 Exemple de retour convenable:
@@ -264,16 +264,16 @@ Installation ended.
 
 ```
 
-Une fois cette installation réussie, vous avez maintenant une base de donnée qui 
+Une fois cette installation réussie, vous avez maintenant une base de donnée qui
 contient l'ensemble des schémas nécessaires à l'application, avec les tables et fonctions.
 
-Il faut maintenant créer un utilisateur aux droits limités, qui sera utilisé par 
+Il faut maintenant créer un utilisateur aux droits limités, qui sera utilisé par
 l'application Web pour lancer les requêtes:
 
 * créer un utilisateur `naturaliz` dans PostgreSQL
 * donner les **droits** d'accès à la base de données, aux tables et aux fonctions.
 
-Vous pouvez créer l'utilisateur naturaliz via les commandes suivantes (ou via 
+Vous pouvez créer l'utilisateur naturaliz via les commandes suivantes (ou via
 votre client PostgreSQL, par exemple PgAdmin)
 
 
@@ -316,7 +316,7 @@ exit
 ```
 
 
-On peut aussi faire cela plus directement ainsi. ATTENTION: remplacer le nom de 
+On peut aussi faire cela plus directement ainsi. ATTENTION: remplacer le nom de
 la base naturaliz par votre nom (ex: naturaliz_reunion)
 
 ```sql
@@ -343,7 +343,7 @@ GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA mascarine TO naturaliz;
 ```
 
 
-Pour l'utilisateur lizmap qui n'est pas superuser mais a les droits sur la base 
+Pour l'utilisateur lizmap qui n'est pas superuser mais a les droits sur la base
 de données Lizmap (création, suppression de tables, schéma, etc.)
 
 ```sql
@@ -363,12 +363,12 @@ GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA gestion TO lizmap;
 ```
 
 
-Une fois cet utlisateur créé et les droits appliqués, vous devez modifier 
-le fichier de configuration des profils `lizmap/var/config/profiles.ini.php` pour 
-remplacer l'utilisateur "postgres" par l'utilisateur avec droits limités "naturaliz" 
-dans la section `[jdb:jauth]`. Il faut ensuite copier/coller les informations 
-de cette section, et créer une nouvelle section `[jdb:jauth_super]` qui aura les 
-mêmes informations, mais avec des droits superuser (elle sera utilisée pour les 
+Une fois cet utlisateur créé et les droits appliqués, vous devez modifier
+le fichier de configuration des profils `lizmap/var/config/profiles.ini.php` pour
+remplacer l'utilisateur "postgres" par l'utilisateur avec droits limités "naturaliz"
+dans la section `[jdb:jauth]`. Il faut ensuite copier/coller les informations
+de cette section, et créer une nouvelle section `[jdb:jauth_super]` qui aura les
+mêmes informations, mais avec des droits superuser (elle sera utilisée pour les
 mises à jours notamment).
 
 ```bash
@@ -382,8 +382,8 @@ lizmap/install/set_rights.sh www-data www-data
 ```
 
 
-Dans le fichier `lizmap/var/config/profiles.ini.php`, vous aurez donc les 2 
-sections `[jdb:jauth]` et `[jdb:jauth_super]` suivantes (adapter les mots de 
+Dans le fichier `lizmap/var/config/profiles.ini.php`, vous aurez donc les 2
+sections `[jdb:jauth]` et `[jdb:jauth_super]` suivantes (adapter les mots de
 passe, et nom de la bdd si besoin):
 
 ```ini
@@ -408,8 +408,8 @@ persistent=off
 ```
 
 
-**IMPORTANT** L'application utilise un service PostgreSQL pour certaines 
-fonctionnalités, comme l'export PDF des cartes. Vous devez donc configurer 
+**IMPORTANT** L'application utilise un service PostgreSQL pour certaines
+fonctionnalités, comme l'export PDF des cartes. Vous devez donc configurer
 ce service sur le serveur.
 
 ```bash
@@ -435,16 +435,16 @@ psql service=naturaliz
 
 ## Importer les données de référence
 
-L'installateur a créé la structure dans la base de données PostGreSQL (schéma, 
-tables, vues, etc.), mais aucune donnée n'a encore été importée, à part les 
-listes liées à la nomenclature du standard TAXREF et du schéma Occurence de 
-taxons. Les imports peuvent être réalisés via des scripts de l'application. 
-Pour cela, il faut bien avoir configuré le fichier `lizmap/var/config/profiles.ini.php` 
+L'installateur a créé la structure dans la base de données PostGreSQL (schéma,
+tables, vues, etc.), mais aucune donnée n'a encore été importée, à part les
+listes liées à la nomenclature du standard TAXREF et du schéma Occurence de
+taxons. Les imports peuvent être réalisés via des scripts de l'application.
+Pour cela, il faut bien avoir configuré le fichier `lizmap/var/config/profiles.ini.php`
 comme décrit précédemment.
 
 ### Import TAXREF : données officielles des taxons
 
-Pour pouvoir effectuer des recherche via le module taxon, vous devez au 
+Pour pouvoir effectuer des recherche via le module taxon, vous devez au
 préalable récupérer les données officielles du TAXREF, puis les importer.
 
 Les fichiers concernant TAXREF, les menaces (listes rouges) et les protections sont téléchargés directement depuis la plateforme SINP (site du MNHN)
@@ -489,9 +489,9 @@ Certaines données spatiales de références sont nécessaires au fonctionnement
 
 Ces données peuvent être récupérées sur le site du MNHN : https://inpn.mnhn.fr/telechargement/cartes-et-information-geographique/ref/referentiels
 
-Nous conseillons de récupérer au maximum les données au format WFS 
+Nous conseillons de récupérer au maximum les données au format WFS
 (Web Feature Service), pour être sûr d'avoir les données les plus à jour.
-Certaines données doivent être récupérées ailleurs, comme par exemple les 
+Certaines données doivent être récupérées ailleurs, comme par exemple les
 communes et les mailles 1x1km et 2x2km.
 
 Les habitats doivent aussi être récupérés et importés.
@@ -510,8 +510,8 @@ Il faut créer la couche Mailles 2x2 à partir de la couche 1x1, dans QGIS, via 
 * Choisir un fichier de sortie ( le mettre au même endroit que le fichier des mailles 1x1km
 * Lancer le traitement via le bouton OK
 
-Pour pouvoir importer ces données dans la base, il faut le faire manuellement. 
-Nous conseillons fortement d'utiliser l'outil en ligne de commande `ogr2ogr` 
+Pour pouvoir importer ces données dans la base, il faut le faire manuellement.
+Nous conseillons fortement d'utiliser l'outil en ligne de commande `ogr2ogr`
 qui permet de bien contrôler les options d'import: encodage, renommage de champs, filtres, etc.
 
 Un script exemple est disponible dans le code source de naturaliz:
@@ -526,56 +526,96 @@ Pour pouvoir lancer ces commandes ogr2ogr d'import, il faut d'abord installer Gd
 * Sous Linux, il faut installer Gdal, avec la commande `apt install gdal-bin`
 * Sous Windows, il faut avoir préalablement installé QGIS, puis lancer l'invite de commande `Osgeo4W Shell`
 
-Il faut aussi avoir configuré un **service PostgreSQL** pour pouvoir accéder à 
+Il faut aussi avoir configuré un **service PostgreSQL** pour pouvoir accéder à
 la base de données sur laquelle l'application Naturaliz est installée.
 
-Dans les scripts, certaines commandes commentées permettent de supprimer les 
-données SIG, par exemple suite à une erreur d'import, pour repartir de zéro. 
+Dans les scripts, certaines commandes commentées permettent de supprimer les
+données SIG, par exemple suite à une erreur d'import, pour repartir de zéro.
 Par exemple:
 
 * Suppression des communes: `psql service=naturaliz_pnrmartinique_dev -c "TRUNCATE sig.commune RESTART IDENTITY"`
 * Suppression des RNN dans la table des espaces naturels: `psql service=naturaliz_pnrmartinique_dev -c "DELETE FROM sig.espace_naturel WHERE type_en = 'RNN'"`
 
-NB: Pour les mailles 02, la donnée ne provient pas des sites du MNHN. Il faut 
-appliquer une requête sur les données pour pouvoir modifier le code et qu'il ait 
-la même structure que les données
+
+Script SQL de création dynamique de grilles
 
 ```sql
-WITH a AS (
-SELECT code_maille, nom_maille,
-concat(
-    '2kmUTM40E',
-    regexp_replace(nom_maille, '\-\d+$', ''),
-    'S',
-    regexp_replace(nom_maille, '^\d+\-', '')
-) AS code
-FROM sig.maille_02
+BEGIN;
+
+TRUNCATE sig.maille_02 RESTART IDENTITY;
+WITH
+taille AS (
+	SELECT 2000 AS maille
+),
+metadata AS (
+	SELECT
+	maille,
+	(maille/1000) || 'kmUTM20' AS code_maille_prefix,
+	'2022' AS version_ref,
+	'Grille nationale (' || (maille/1000) || 'km x ' || (maille/1000) || 'km) Martinique' AS nom_ref
+	FROM taille
+),
+forme AS (
+	SELECT ST_Union(geom) AS geom
+	FROM sig.maille_10
+),
+bounds AS (
+	SELECT
+	maille,
+	ST_Xmin(geom) AS x_min, ST_Xmax(geom) AS x_max,
+	ST_Ymin(geom) AS y_min, ST_Ymax(geom) AS y_max,
+	ST_Xmax(geom)::int - ST_Xmin(geom)::int AS largeur,
+	(ST_Xmax(geom)::int - ST_Xmin(geom)::int)/maille AS nb_largeur,
+	ST_Ymax(geom)::int - ST_Ymin(geom)::int AS hauteur,
+	(ST_Ymax(geom)::int - ST_Ymin(geom)::int)/maille AS nb_hauteur
+	FROM forme, metadata
+),
+env AS (
+	SELECT gx,
+	(x_min + gx * maille)::int AS x_min,
+	(y_min + gy * maille)::int AS y_min,
+	(x_min + (gx+1) * maille)::int AS x_max,
+	(y_min + (gy+1) * maille)::int AS y_max
+	FROM bounds AS b,
+	generate_series(0, nb_largeur - 1) AS gx,
+	generate_series(0, nb_hauteur - 1) AS gy
+),
+grille AS (
+	SELECT
+	t.*,
+	e.*,
+	ST_MakeEnvelope(e.x_min, e.y_min, e.x_max, e.y_max, 5490)::geometry(polygon, 5490) AS geom
+	FROM env AS e, metadata AS t
+),
+final AS (
+	SELECT
+	row_number() OVER() AS id_maille,
+	concat(
+		code_maille_prefix,
+		'W', (x_min/1000)::int,
+		'N', (y_min/1000)::int
+	) AS code_maille,
+	concat(
+		(x_min/1000)::int, '-', (y_min/1000)::int
+	) AS nom_maille,
+	version_ref,
+	nom_ref,
+	g.geom
+	FROM grille AS g
+	JOIN forme AS f
+	ON ST_Intersects(ST_Centroid(g.geom), f.geom)
 )
-UPDATE sig.maille_02 t
-SET code_maille = code
-FROM a
-WHERE a.code_maille = t.code_maille
+INSERT INTO sig.maille_02
+(code_maille, nom_maille, version_ref, nom_ref, geom)
+SELECT code_maille, nom_maille, version_ref, nom_ref, geom
+FROM final
+ORDER BY id_maille
 ;
 
-WITH a AS (
-SELECT code_maille, nom_maille,
-concat(
-    '2kmUTM40E',
-    regexp_replace(nom_maille, '\-\d+$', ''),
-    'S',
-    regexp_replace(nom_maille, '^\d+\-', '')
-) AS code
-FROM sig.maille_02
-)
-UPDATE occtax.localisation_maille_02 t
-SET code_maille = code
-FROM a
-WHERE t.code_maille = a.nom_maille
-;
-
+COMMIT;
 ```
 
-Pour les départements, il faut choisir quelle géométrie est utilisée. Par défaut, l'application n'importe aucune données dans la table département. Vous devez ajouter une ou plusieurs lignes si vous souhaitez que les exports donnent le code du département. Pour les îles, comme La Réunion ou la Guadeloupe, il peut être intéressant d'utiliser la Zone économique exclusive comme géométrie du département. Pour cela on peut, par exemple pour La Réunion:
+Pour les **départements**, il faut choisir quelle géométrie est utilisée. Par défaut, l'application n'importe aucune données dans la table département. Vous devez ajouter une ou plusieurs lignes si vous souhaitez que les exports donnent le code du département. Pour les îles, comme La Réunion ou la Guadeloupe, il peut être intéressant d'utiliser la Zone économique exclusive comme géométrie du département. Pour cela on peut, par exemple pour La Réunion:
 
 * importer le fichier SHP de la zone économique exclusive dans la base de données, schéma sig, avec le nom de table "zone_economique_exclusive"
 * lancer la requête SQL suivante pour ajouter cette géométrie dans la table des départements
