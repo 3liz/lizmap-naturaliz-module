@@ -7,7 +7,7 @@
         <help locale="occtax~import.input.observation_csv.help"/>
     </upload>
 
-    <input ref="jdd_uid" required="false" type="string" pattern="/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/">
+    <input ref="jdd_uid" required="false" type="string" pattern="/^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$/">
         <label locale="occtax~import.input.jdd_uid"/>
         <hint locale="occtax~import.input.jdd_uid.help"/>
         <help locale="occtax~import.input.jdd_uid.help"/>
