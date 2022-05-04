@@ -558,7 +558,7 @@ class occtaxImport
     {
         // Suppression
         $sql = ' SELECT *';
-        $sql .= ' FROM occtax.import_delete_imported_observations($1, $2)';
+        $sql .= ' FROM occtax.import_supprimer_observations_importees($1, $2)';
         $params = array(
             $this->temporary_table . '_target',
             $jdd_uid,

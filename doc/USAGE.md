@@ -1,10 +1,21 @@
 # Naturaliz - Guide d'utilisation
 
+## Jeux de données
+
+Pour pouvoir faire le suivi des données importées et caractériser notamment leurs métadonnées,
+il est important pour chaque jeu de données de créer des enregistrements dans les deux tables suivantes :
+
+* `occtax.cadre`: elle recense les **cadres d'acquisition**
+* `occtax.jdd`: elle recense les **jeux de données**. Un jeu de données doit référencer un cadre d'acquisition.
+
+Les données à insérer doivent correspondre aux informations saisies sur le site officiel de l'INPN.
+
 ## Import de données
 
 ### Import manuel via des scripts SQL
 
-Lors de l'installation, une structure de données conforme au standard "Occurences de taxon" a été créée dans la base de données. Pour pouvoir exploiter l'application, il faut importer des données d'observations.
+Lors de l'installation, une structure de données conforme au standard "Occurrences de taxon" a été créée dans la base de données.
+Pour pouvoir exploiter l'application, il faut importer des données d'observations.
 
 
 Une fois les données importées, il faut absolument rafraîchir certaines vues matérialisées utilisées par l'application.
@@ -21,13 +32,18 @@ REFRESH MATERIALIZED VIEW occtax.vm_observation;
 
 ### Import assisté depuis l'interface Web
 
-Une entrée de menu permet de proposer à l'utilisateur ayant les droits requis de téléverser dans l'application un fichier CSV, puis de lancer
+Une entrée de menu permet de proposer à l'utilisateur ayant les droits requis de téléverser dans l'application un fichier CSV, puis de lancer :
 
-* la validation du jeu de données: champs requis, format des données, respect des règles du standard Occurences de Taxon
-* l'import des données dans la base, avec un statut "A valider". Les observations importées ne seront visibles que par les administrateurs de la base dans l'application
+* la **validation** du jeu de données: champs requis, format des données,
+  respect des règles du standard "Occurrences de Taxon"
+* l'**import** des données dans la base, avec un statut "A valider". Les observations importées
+  ne seront visibles que par les administrateurs de la base dans l'application.
 
-Le fichier CSV attendu doit correspondre à un modèle bien spécfique, avec une liste minimal de champs, nommés correctements. Un fichier CSV exemple est disponible dans les sources.
+Pour pouvoir réaliser l'**import** des données dans la base, il est nécessaire que le jeu de données
+soit au préalable ajouté dans la table `occtax.jdd`, avec la bonne valeur dans le champ `jdd_metadonnee_dee_id`.
 
+Le fichier CSV doit correspondre à un modèle bien spécifique, avec une liste minimale de champs, nommés correctement.
+Un fichier CSV exemple est disponible dans les sources et peut être téléchargé depuis le formulaire.
 
 #### Visualiser les observations importées via fichier CSV
 
@@ -67,45 +83,38 @@ de **toutes les observations à valider**. Cela permet de confirmer que l'import
 Si on le souhaite, on peut aussi ajouter cette vue au projet QGIS qui est publié pour
 l'application Naturaliz via Lizmap Web Client, en ne la rendant accessible qu'au groupe `admins`.
 Cela permet de visualiser directement dans l'interface Web l'ensemble des données à valider.
-On peut aussi ajouter une "popup" pour cette couche, pour permettre d'interroger les données d'une observation en cliquant sur la carte.
+On peut aussi ajouter une "popup" pour cette couche, pour permettre d'interroger les données
+d'une observation en cliquant sur la carte.
 
 Une fois les données contrôlées manuellement, il est possible de **valider ces données**
 pour qu'elles soient visibles par les utilisateurs de Naturaliz, en fonction de leurs droits.
-Pour cela, on peut lancer la commande SQL suivante qui va supprimer du champ `odata` les propriétés caractéristiques de l'import CSV:
+Pour cela, on peut lancer la commande SQL suivante qui appelle une fonction spécifique et
+va supprimer du champ `odata` les propriétés caractéristiques de l'import CSV:
 
 ```sql
-UPDATE occtax.observation
-SET odata = odata - 'import_time' - 'import_login' - 'import_temp_table'
-WHERE True
-AND odata ? 'import_login' AND odata ? 'import_time'
-AND odata->>'import_login' = 'dupont'
-AND odata->>'import_temp_table' = 'temp_1651259398_target'
+SELECT occtax.import_valider_observations_importees(
+    -- Nom de la table temporaire, visible dans la vue occtax.v_import_web_liste
+    'temp_1651259398_target',
+    -- UUID du JDD, visible dans la table occtax.jdd
+    'DCB578EC-84AE-2545-E053-3014A8C03597'
+) AS nombre_lignes
 ;
 ```
 
-Attention à bien vérifier que votre clause `WHERE` permet de filtrer correctement les données à valider.
-
-NB:
-* Une fonction spécifique de validation devrait être créée
-  pour faciliter cette validation des données importées.
-* Il faudrait aussi ajouter une ligne dans la table `occtax.jdd_import`
-  pour faciliter le suivi des imports de données.
+Après cette étape de validation, il est conseillé d'ajouter une ligne
+dans la table `occtax.jdd_import` pour faciliter le suivi des imports de données.
 
 Pour **supprimer les données importées**, si on ne souhaite pas les valider mais au contraire
 les supprimer la base de données, on peut lancer la commande suivante :
 
 ```sql
-SELECT occtax.import_delete_imported_observations(
+SELECT occtax.import_supprimer_observations_importees(
     -- Nom de la table temporaire, visible dans la vue occtax.v_import_web_liste
     'temp_1651259398_target',
     -- UUID du JDD, visible dans la table occtax.jdd
     'DCB578EC-84AE-2545-E053-3014A8C03597'
 );
 ```
-
-## Jeux de données
-
-todo: expliquer la notion et les tables utilisées
 
 ## Gestion de la sensibilité des données
 
