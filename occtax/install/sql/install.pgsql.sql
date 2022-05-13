@@ -1240,3 +1240,15 @@ END
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
+
+
+
+-- Création d'une table pour stocker les recherches enregistrées
+CREATE TABLE IF NOT EXISTS occtax.historique_recherche (
+    id serial not null primary key,
+    usr_login text not null unique,
+    history jsonb not null
+);
+
+COMMENT ON TABLE occtax.historique_recherche
+IS 'Table de stockage de l''historique de recherche pour les personnes enregistrées dans l''application (avec un login): dernières recherches et recherches favorites';

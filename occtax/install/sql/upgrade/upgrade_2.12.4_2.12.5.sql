@@ -1,7 +1,84 @@
 
 -- Renommage de la fonction de suppression des données importées
-ALTER FUNCTION occtax.import_delete_imported_observations(text, text)
-RENAME TO occtax.import_supprimer_observations_importees;
+DROP FUNCTION IF EXISTS occtax.import_delete_imported_observations(text, text);
+DROP FUNCTION IF EXISTS occtax.import_supprimer_observations_importees(text, text);
+CREATE OR REPLACE FUNCTION occtax.import_supprimer_observations_importees(
+    _table_temporaire text,
+    _jdd_uid text
+)
+RETURNS BOOLEAN AS
+$BODY$
+DECLARE
+    _jdd_id TEXT;
+BEGIN
+    -- Get jdd_id from uid
+    SELECT jdd_id
+    INTO _jdd_id
+    FROM occtax.jdd WHERE jdd_metadonnee_dee_id = _jdd_uid
+    ;
+
+    -- Nettoyage
+    DELETE FROM occtax.localisation_commune WHERE cle_obs IN (
+        SELECT cle_obs FROM occtax.observation
+        WHERE jdd_id = _jdd_id AND odata->>'import_temp_table' = _table_temporaire::text
+    );
+    DELETE FROM occtax.localisation_departement WHERE cle_obs IN (
+        SELECT cle_obs FROM occtax.observation
+        WHERE jdd_id = _jdd_id AND odata->>'import_temp_table' = _table_temporaire::text
+    );
+    DELETE FROM occtax.localisation_espace_naturel WHERE cle_obs IN (
+        SELECT cle_obs FROM occtax.observation
+        WHERE jdd_id = _jdd_id AND odata->>'import_temp_table' = _table_temporaire::text
+    );
+    DELETE FROM occtax.localisation_habitat WHERE cle_obs IN (
+        SELECT cle_obs FROM occtax.observation
+        WHERE jdd_id = _jdd_id AND odata->>'import_temp_table' = _table_temporaire::text
+    );
+    DELETE FROM occtax.localisation_maille_01 WHERE cle_obs IN (
+        SELECT cle_obs FROM occtax.observation
+        WHERE jdd_id = _jdd_id AND odata->>'import_temp_table' = _table_temporaire::text
+    );
+    DELETE FROM occtax.localisation_maille_02 WHERE cle_obs IN (
+        SELECT cle_obs FROM occtax.observation
+        WHERE jdd_id = _jdd_id AND odata->>'import_temp_table' = _table_temporaire::text
+    );
+    DELETE FROM occtax.localisation_maille_05 WHERE cle_obs IN (
+        SELECT cle_obs FROM occtax.observation
+        WHERE jdd_id = _jdd_id AND odata->>'import_temp_table' = _table_temporaire::text
+    );
+    DELETE FROM occtax.localisation_maille_10 WHERE cle_obs IN (
+        SELECT cle_obs FROM occtax.observation
+        WHERE jdd_id = _jdd_id AND odata->>'import_temp_table' = _table_temporaire::text
+    );
+    DELETE FROM occtax.localisation_masse_eau WHERE cle_obs IN (
+        SELECT cle_obs FROM occtax.observation
+        WHERE jdd_id = _jdd_id AND odata->>'import_temp_table' = _table_temporaire::text
+    );
+    DELETE FROM occtax.observation_personne WHERE cle_obs IN (
+        SELECT cle_obs FROM occtax.observation
+        WHERE jdd_id = _jdd_id AND odata->>'import_temp_table' = _table_temporaire::text
+    );
+    DELETE FROM occtax.lien_observation_identifiant_permanent WHERE identifiant_permanent IN (
+        SELECT identifiant_permanent FROM occtax.observation
+        WHERE jdd_id = _jdd_id AND odata->>'import_temp_table' = _table_temporaire::text
+    );
+    DELETE FROM occtax.observation
+    WHERE jdd_id IN (_jdd_id) AND odata->>'import_temp_table' = _table_temporaire::text;
+
+    RETURN True;
+
+END
+$BODY$
+LANGUAGE plpgsql VOLATILE
+COST 100
+;
+
+COMMENT ON FUNCTION occtax.import_supprimer_observations_importees(text, text)
+IS 'Suppression des données importées, utile si un souci a été rencontré lors de la procédure. Elle attend en paramètre la table temporaire et le JDD UUID.'
+;
+
+
+
 
 COMMENT ON FUNCTION occtax.import_supprimer_observations_importees(text, text)
 IS 'Suppression des données importées, utile si un souci a été rencontré lors de la procédure. Elle attend en paramètre la table temporaire et le JDD UUID.'
@@ -74,3 +151,14 @@ COST 100
 COMMENT ON FUNCTION occtax.import_valider_observations_importees(text, text)
 IS 'Validation des observations importées pour la table temporaire et le JDD UUID fournis. Elle seront alors disponibles dans l''application';
 ;
+
+
+-- Création d'une table pour stocker les recherches enregistrées
+CREATE TABLE IF NOT EXISTS occtax.historique_recherche (
+    id serial not null primary key,
+    usr_login text not null unique,
+    history jsonb not null
+);
+
+COMMENT ON TABLE occtax.historique_recherche
+IS 'Table de stockage de l''historique de recherche pour les personnes enregistrées dans l''application (avec un login): dernières recherches et recherches favorites';

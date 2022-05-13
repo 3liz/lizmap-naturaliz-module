@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+* Import CSV
+  - Améliorations et ajout d'une fonction de validation
+  - Contrôle moins stricte de la valeur de l'identifiant du JDD (UUID)
+  - Amélioration de la documentation
+* Historique de recherche
+  * Création d'une table dans la base PostgreSQL pour stocker l'historique
+    et script de migration pour récupérer les données actuelles depuis le cache
+
 ## 2.12.4 - 2022-04-06
 
 * Outil d'import:

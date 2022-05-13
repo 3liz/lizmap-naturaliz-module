@@ -5,7 +5,7 @@ class occtaxModuleUpgrader_2_12_4__2_12_5 extends jInstallerModule
     public $targetVersions = array(
         '2.12.5',
     );
-    public $date = '2022-05-04';
+    public $date = '2022-05-13';
 
     function install()
     {
@@ -49,6 +49,35 @@ class occtaxModuleUpgrader_2_12_4__2_12_5 extends jInstallerModule
                 $db->exec($sql);
             } catch (Exception $e) {
                 jLog::log("Upgrade - Rights where not reapplied on database objects");
+                jLog::log($e->getMessage());
+            }
+
+            // Insert data in occtax.historique_recherche from existing cache files (old way of storing history)
+            // Get all logins
+            try {
+                $sql = 'SELECT DISTINCT usr_login FROM jlx_user';
+                $logins = $db->query($sql);
+                $has_content = False;
+                $inserts = array();
+                foreach ($logins as $item) {
+                    $login = $item->usr_login;
+                    $key = 'naturaliz_history_' . $login;
+                    $profile = 'naturaliz_file_cache';
+                    $history = jCache::get($key, $profile);
+                    if ($history) {
+                        $has_content = true;
+                        $line_data = '(' . $db->quote($login) . ', $$' . $history . '$$::jsonb)';
+                        $inserts[] = $line_data;
+                    }
+                }
+                if ($has_content) {
+                    $sql_insert = ' INSERT INTO occtax.historique_recherche ("usr_login", "history") VALUES ';
+                    $sql_insert .= implode(', ', $inserts);
+                    $sql_insert .= ' ON CONFLICT DO NOTHING;';
+                    $db->exec($sql_insert);
+                }
+            } catch (Exception $e) {
+                jLog::log("Upgrade - Errors while migrating search history from cache to database");
                 jLog::log($e->getMessage());
             }
         }

@@ -466,7 +466,6 @@ class occtaxImport
      */
     public function validateCsvData($type_conformite)
     {
-        $cnx = jDb::getConnection('naturaliz_virtual_profile');
         $sql = "SELECT *, array_to_string(ids, ', ') AS ids_text";
         $sql .= ' FROM occtax.test_conformite_observation($1, $2)';
         $sql .= ' WHERE nb_lines > 0';
