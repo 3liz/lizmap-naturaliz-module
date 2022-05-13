@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.12.5 - 2022-05-13
+
 * Import CSV
   - Améliorations et ajout d'une fonction de validation
   - Contrôle moins stricte de la valeur de l'identifiant du JDD (UUID)
