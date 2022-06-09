@@ -502,6 +502,25 @@ OccTax.events.on({
             });
         }
 
+        // Filtre les valeurs complexes de statusRemark
+        // et renvoie le texte à afficher
+        // ex: B(1+2)ab(iii,v) C2a(ii) - Nicheur certain
+        // renvoie: Nicheur certain
+        function getCleanedStatusRemark(str) {
+
+            var cleaned = null;
+            var rx = /[a-zA-Zàâäéèêëïîùüûöô]{4,}(?: +[a-zA-Zàâäéèêëïîùüûöô]+)*/g;
+            var arr = rx.exec(str);
+            if (arr !== null && arr.length && arr[0]) {
+                cleaned = arr[0].trim();
+                if (cleaned.length == 0) {
+                    cleaned = null;
+                }
+            }
+
+            return cleaned;
+        }
+
         function getTaxonStatus(status_url) {
             detailTaxonLoad(status_url).then(function (mdata) {
                 if (
@@ -520,6 +539,7 @@ OccTax.events.on({
                     var html = '<ul style="list-style-type: square;">';
                     for (var s in mdata._embedded.status) {
                         var status = mdata._embedded.status[s];
+
                         // Do not display if localisation is not in statut_localisations
                         for (var sl in statut_localisations) {
                             var names = colonne_locale_labels[statut_localisations[sl]];
@@ -531,7 +551,15 @@ OccTax.events.on({
                                 }
                                 html += '<li>';
                                 if (status.statusTypeGroup == 'Liste rouge') {
-                                    html += '<b>' + status.statusTypeName + '</b>: ';
+                                    html += '<b>' + status.statusTypeName;
+                                    // Nicheur ou pas, présent ou pas
+                                    if (status.statusRemarks) {
+                                        var remarks = getCleanedStatusRemark(status.statusRemarks)
+                                        if (remarks !== null) {
+                                            html += ' (' + remarks + ')';
+                                        }
+                                    }
+                                    html += '</b>: ';
                                 } else {
                                     html += '<b>' + status.statusTypeGroup + '</b>: ';
                                 }
@@ -540,7 +568,6 @@ OccTax.events.on({
                                 }
                                 html += '<span ' + st_cursor + st_title + '>' + status.statusName + '</span>';
                                 html += '<i> (' + status.locationName + ')</i>';
-                                // html += '<span style="">' + status.source + '</span>';
                                 html += '</li>';
                                 html += '';
                             }
