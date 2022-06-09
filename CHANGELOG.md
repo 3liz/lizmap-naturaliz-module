@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2.12.6 - 2022-06-09
+
+* Fiche taxon - Listes rouges: ajout du contexte Nicheur, Visiteur, etc.
+
 ## 2.12.5 - 2022-05-13
 
 * Import CSV
