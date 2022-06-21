@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+
+## 2.12.7 - 2022-06-21
+
+* Corrections dans les fichiers de locales
+* Corrections dans les dépendances des fichiers module.xml
+
 ## 2.12.6 - 2022-06-09
 
 * Fiche taxon - Listes rouges: ajout du contexte Nicheur, Visiteur, etc.
