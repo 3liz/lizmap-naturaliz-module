@@ -1,6 +1,10 @@
 # Installation des modules Naturaliz pour Lizmap
 
-Pour pouvoir installer l'application Naturaliz, vous devez au préalable avoir installé un serveur cartographique basé sur Lizmap. Vous pouvez cela utiliser les script de déploiement automatique **lizmap-box** pour cela. Nous considérons dans la suite de ce document que Lizmap Web Client a été installé et est fonctionnel.
+Pour pouvoir installer l'application Naturaliz, vous devez au préalable avoir installé un serveur cartographique basé sur Lizmap. 
+Vous pouvez pour cela utiliser les script de déploiement automatique **lizmap-box** pour cela. Nous considérons dans la suite de 
+ce document que Lizmap Web Client a été installé et est fonctionnel.
+
+Il faut au minimum Lizmap 3.4.
 
 > Attention: Pour que la recherche plein texte dans taxons fonctionne correctement, il est important de vérifier que la variable locale $LANG est bien spécifiée à fr_FR.UTF-8 avant l'installation de PostgreSQL. On peut par exemple ajouter cette ligne dans le fichier /etc/profile ```: ${LANG:=fr_FR.UTF-8}; export LANG``` et se déconnecter puis reconnecter, ou on peut exporter manuellement la variable.
 

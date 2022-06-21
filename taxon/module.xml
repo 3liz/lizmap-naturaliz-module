@@ -5,12 +5,12 @@
         <label lang="en_US">taxon</label>
         <description lang="en_US" />
         <license URL="http://www.mozilla.org/MPL/">Mozilla Public License</license>
-        <copyright>2011 3liz</copyright>
+        <copyright>2011-2022 3liz</copyright>
         <creator name="your name" email="infol@3liz.com" active="true"/>
         <!--<contributor name="hisname" email="hisemail@yoursite.undefined" active="true" since="" role=""/>-->
         <homepageURL>http://3liz.com</homepageURL>
     </info>
     <dependencies>
-        <jelix minversion="1.6.0" maxversion="1.6.*"/>
+        <module name="lizmap" minversion="3.4.0" maxversion="3.5.*"/>
     </dependencies>
 </module>
