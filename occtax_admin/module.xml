@@ -11,7 +11,7 @@
         <homepageURL>http://3liz.com</homepageURL>
     </info>
     <dependencies>
-        <module name="lizmap" minversion="3.4.0" maxversion="3.5.*"/>
+        <module name="lizmap" minversion="3.4.0" maxversion="3.6.*"/>
         <module name="view" />
         <module name="taxon" />
         <module name="occtax" />

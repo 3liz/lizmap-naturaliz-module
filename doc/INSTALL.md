@@ -28,25 +28,49 @@ Il est fortement conseillé d'utiliser le compte root et non avec un simple sudo
 
 ### Récupérer les modules
 
-Vous pouvez le faire via l'outil git, en se connectant avec vos identifiants de la plateforme git (Gitlab ou Github). Ou bien vous rendre sur la plateforme, et télécharger au format ZIP, puis coller le ZIP dans le répertoire /root/ et dézipper.
+Si vous aviez déjà installé les modules dans le repertoire `lizmap/lizmap-modules`,
+effacez les de ce répertoire.
 
-Dans l'exemple suivant, nous utilisons la plateforme Github de 3liz, avec accès https: https://github.com/3liz/lizmap-naturaliz-module/
+Il faut installer Composer, le système de paquet de PHP. Aller sur [le site de Composer](https://getcomposer.org/download/)
+pour savoir comment faire.
+
+Ensuite :
+
+* dans `lizmap/my-packages`, créer le fichier `composer.json` s'il n'existe pas
+  déjà, en copiant le fichier `composer.json.dist`, qui s'y trouve.
+```bash
+cp -n lizmap/my-packages/composer.json.dist lizmap/my-packages/composer.json
+
+```
+* en ligne de commande, dans le répertoire `lizmap/my-packages/`, tapez :
 
 ```bash
-mkdir -p ~/naturaliz_modules
-cd ~/naturaliz_modules
-
-# Avec Git
-git clone https://projects.3liz.org/clients/naturaliz-reunion.git naturaliz
-cp -R ~/naturaliz_modules/naturaliz/* /srv/lizmap_web_client/lizmap/lizmap-modules/
-
-# copier les modules dans le répertoire lizmap-modules de lizmap
-ls -lh /srv/lizmap_web_client/lizmap/lizmap-modules/
+cd lizmap/my-packages
+composer require "lizmap/naturaliz-modules"
 ```
+
+### Lancer le configurateur
+
+Si vous utilisez Lizmap 3.6 ou plus, lancez les commandes
+
+```bash
+cd lizmap/install/
+php configurator.php gestion
+php configurator.php occtax_admin
+```
+
+Sinon, pour Lizmap 3.4 ou 3.5, lancez les commandes
+
+```bash
+cp lizmap/lizmap-modules/occtax/install/config/naturaliz.ini.php.dist lizmap/var/config/naturaliz.ini.php
+```
+
 
 ### Adapter les fichiers de configuration pour Lizmap
 
-L'installateur lit certains fichiers de configuration, que vous devez donc créer et adapter à votre environnement avant de lancer l'installation. Des fichiers exemples sont fournis, que vous pouvez copier avant de les modifier.
+L'installateur lit certains fichiers de configuration, que vous devez donc créer 
+et adapter à votre environnement avant de lancer l'installation. Des fichiers 
+exemples sont fournis, que vous pouvez copier avant de les modifier.
 
 #### Configuration locale
 
@@ -85,9 +109,6 @@ Voir l'exemple naturaliz.ini.php.dist à la racine de ce dépôt.
 ```bash
 # aller à la racine de Lizmap Web Client
 cd /srv/lizmap_web_client/
-
-# copie le fichier de configuration naturaliz
-cp lizmap/lizmap-modules/occtax/install/config/naturaliz.ini.php.dist lizmap/var/config/naturaliz.ini.php
 
 # editer le fichier
 nano lizmap/var/config/naturaliz.ini.php # Faire les modifications nécessaires

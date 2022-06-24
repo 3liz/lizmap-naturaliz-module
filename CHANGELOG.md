@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+* adaptation de l'installation pour Lizmap 3.6
 
 ## 2.12.7 - 2022-06-21
 
