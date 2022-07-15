@@ -517,6 +517,16 @@ OccTax.events.on({
                     cleaned = null;
                 }
             }
+            // On pourrait récupérer seulement ce qui est derrière le tiret, mais cela ne fonctionne pas si le code contient un tiret
+            // if (str.indexOf('-') !== -1) {
+            //     var arr = str.split('-');
+            //     if (arr !== null && arr.length) {
+            //         cleaned = arr[arr.length - 1].trim();
+            //         if (cleaned.length == 0) {
+            //             cleaned = null;
+            //         }
+            //     }
+            // }
 
             return cleaned;
         }
@@ -554,8 +564,10 @@ OccTax.events.on({
                                     html += '<b>' + status.statusTypeName;
                                     // Nicheur ou pas, présent ou pas
                                     if (status.statusRemarks) {
+                                        console.log(status.statusRemarks);
                                         var remarks = getCleanedStatusRemark(status.statusRemarks)
                                         if (remarks !== null) {
+                                            console.log(remarks);
                                             html += ' (' + remarks + ')';
                                         }
                                     }
