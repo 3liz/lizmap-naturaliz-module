@@ -493,10 +493,6 @@ class occtaxSearchObservation extends occtaxSearch {
             $sql.= " AND o.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
         }
 
-        // Do not display observation which have been imported
-        // with the web form, and not yet validated
-        $sql.= " AND o.cle_obs NOT IN (SELECT cle_obs FROM occtax.observation WHERE odata ? 'import_time' )";
-
         return $sql;
 
     }

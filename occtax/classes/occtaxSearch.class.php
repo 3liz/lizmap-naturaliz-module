@@ -681,6 +681,12 @@ class occtaxSearch {
             }
         }
 
+        // Do not display observation which have been imported
+        // with the web form, and not yet validated
+        // NB: it seems it is not taken into account here
+        // So we put the code in the occtaxSearchObservation.class.php too
+        $sql.= " AND o.cle_obs NOT IN (SELECT cle_obs FROM occtax.observation WHERE odata ? 'import_time' )";
+
         // Add restriction coming from demande table
         $sql.= $this->getDemandeFilter();
 
@@ -699,12 +705,6 @@ class occtaxSearch {
                 SELECT identifiant_permanent FROM occtax.validation_panier WHERE usr_login = ".$cnx->quote($this->login)."
             )";
         }
-
-        // Do not display observation which have been imported
-        // with the web form, and not yet validated
-        // NB: it seems it is not taken into account here
-        // So we put the code in the occtaxSearchObservation.class.php too
-        $sql.= " AND o.cle_obs NOT IN (SELECT cle_obs FROM occtax.observation WHERE odata ? 'import_time' )";
 
         return $sql;
     }
