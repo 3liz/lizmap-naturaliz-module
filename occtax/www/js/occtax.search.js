@@ -1588,6 +1588,9 @@ OccTax.events.on({
                     return false;
                 },
                 close: function (e, ui) {
+                    // Force the autocomplete popup to stay visible
+                    // This allow to select many items at a time
+                    $(this).autocomplete('widget').show();
                 },
                 change: function (e, ui) {
                     if ($(this).val().length < $(this).autocomplete('option', 'minLength'))
@@ -1602,16 +1605,25 @@ OccTax.events.on({
                     $('#' + formId + '_jdd_hidden').val(ui.item.jdd_id);
 
                     // Suppression du contenu et perte du focus
-                    $(this).val('').blur();
+                    // $(this).val('').blur();
+                    // Commenté pour permettre de cliquer sur plusieurs JDD
+                    // pour faciliter l'ajout multiple
 
-                    // Ajout du taxon au panier
+                    // Ajout du jdd au panier
                     addJddToSearch(ui.item.jdd_id, ui.item.jdd_libelle);
 
                     return false;
                 }
             }).autocomplete("widget").css("z-index", "1050");
 
-            // Add image to the proposed items
+            // Hide the autocomplete popup when clicking outside
+            // Needed because of the code written above in the "close" event
+            $('#' + formId + '_jdd_autocomplete').on('blur', function () {
+                $('#' + formId + '_jdd_autocomplete').autocomplete('widget').hide();
+                $(this).val('');
+              });
+
+            // Adapt the content of the proposed items in the popup
             $('#' + formId + '_jdd_autocomplete').autocomplete("instance")._renderItem = function (ul, item) {
                 return $("<li>")
                     .append($("<a>").html($('<a title="'+item.jdd_description+'">').html(item.label)))
