@@ -61,17 +61,48 @@ COMMENT ON COLUMN occtax.validation_observation.nom_retenu IS 'Nom scientifique 
 
 
 CREATE OR REPLACE VIEW occtax.v_validateur AS
-SELECT CASE WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE p.identite END AS identite,
-CASE WHEN p.anonymiser IS TRUE THEN '' ELSE p.mail END AS mail,
-CASE WHEN p.anonymiser IS TRUE OR lower(p.identite) = lower(nom_organisme) THEN NULL ELSE Coalesce(nom_organisme, 'INCONNU') END AS organisme,
-p.id_personne, vv.identifiant_permanent, p.prenom, p.nom, p.anonymiser,
-p.identite AS identite_non_floutee,
-p.mail AS mail_non_floute,
-Coalesce(nom_organisme, 'INCONNU') AS organisme_non_floute
-FROM occtax.validation_observation vv
-LEFT JOIN occtax.personne p ON vv.validateur = p.id_personne
-LEFT JOIN occtax.organisme o ON p.id_organisme = o.id_organisme
-WHERE ech_val = '2' -- uniquement validation de niveau régional
+WITH personne_avec_organisme AS (
+    SELECT
+        CASE
+            WHEN p.anonymiser IS TRUE THEN 'ANONYME'::text
+            ELSE p.identite
+        END AS identite,
+        CASE
+            WHEN p.anonymiser IS TRUE THEN ''::text
+            ELSE p.mail
+        END AS mail,
+        CASE
+            WHEN p.anonymiser IS TRUE OR lower(p.identite) = lower(o.nom_organisme) THEN NULL::text
+            ELSE COALESCE(o.nom_organisme, 'INCONNU'::text)
+        END AS organisme,
+        p.id_personne,
+        p.prenom,
+        p.nom,
+        p.anonymiser,
+        p.identite AS identite_non_floutee,
+        p.mail AS mail_non_floute,
+        COALESCE(o.nom_organisme, 'INCONNU'::text) AS organisme_non_floute
+    FROM occtax.personne p
+    LEFT JOIN occtax.organisme o ON p.id_organisme = o.id_organisme
+)
+
+SELECT
+    p.identite,
+    p.mail,
+    p.organisme,
+    p.id_personne,
+    vv.identifiant_permanent,
+    p.prenom,
+    p.nom,
+    p.anonymiser,
+    p.identite_non_floutee,
+    p.mail_non_floute,
+    p.organisme_non_floute
+FROM occtax.validation_observation AS vv
+INNER JOIN personne_avec_organisme AS p
+    ON vv.validateur = p.id_personne
+-- uniquement validation de niveau régional
+WHERE vv.ech_val = '2'::text
 ;
 
 CREATE OR REPLACE VIEW occtax.v_determinateur AS
