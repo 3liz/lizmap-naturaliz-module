@@ -70,7 +70,7 @@ class occtaxSearchObservation extends occtaxSearch {
         'lien_nom_valide' => array( 'type' => 'string', 'sortable' => "true", 'sorting_field' => 'lb_nom_valide'),
         //'source_objet' => array( 'type' => 'string', 'sortable' => "true", 'className' => 'dt-center'),
         'observateur' => array( 'type' => 'string', 'sortable' => "true", 'sorting_field' => 'identite_observateur'),
-        'validite' => array( 'type' => 'string', 'sortable' => "true", 'className' => 'dt-center', 'sorting_field' => 'vo.niv_val'),
+        'validite' => array( 'type' => 'string', 'sortable' => "true", 'className' => 'dt-center', 'sorting_field' => 'niv_val_text'),
     );
 
     protected $querySelectors = array(

@@ -246,6 +246,8 @@ class serviceCtrl extends jController
         } catch (Exception $e) {
             $return['status'] = 0;
             $return['msg'][] = jLocale::get('occtax~search.form.error.query');
+            $message = $e->getMessage();
+            \jLog::log('Naturaliz error: ' . $message, 'error');
             $rep->data = $return;
             return $rep;
         }
