@@ -15,32 +15,49 @@ class autocomplete
     /**
      * Construct the SQL query
      *
+     * @param string $searchType If 'filter', return data corresponding to the given term
+     *                           else return all data
      * @return string SQL query
      */
-    protected function getSql()
+    protected function getSql($searchType = 'filter')
     {
-        $sql = "
-            SELECT
-                *, ts_headline(foo.val, query) AS label
-            FROM
-            (
-                SELECT jdd_id, jdd_libelle, jdd_description,
-                concat(jdd_id, ' - ', jdd_libelle) AS val,
-                ts_rank(
-                    to_tsvector(unaccent(coalesce(concat(jdd_id, ' ', jdd_libelle, ' ', jdd_description ),'')) )::tsvector,
-                    query
-                ) AS rnk,
-                query,
-                similarity(trim( $1 ), concat(jdd_id, ' ', jdd_libelle, ' ', jdd_description )) AS sim
-                FROM occtax.jdd AS j,
-                to_tsquery('french_text_search', regexp_replace( unaccent( trim( $1 ) ), '[^0-9a-zA-Z]+', ' & ', 'g') || ':*' ) AS query
+        if ($searchType == 'filter') {
+            $sql = "
+                SELECT
+                    *, ts_headline(foo.val, query) AS label
+                FROM
+                (
+                    SELECT jdd_id, jdd_libelle, jdd_description,
+                    concat(jdd_id, ' - ', jdd_libelle) AS val,
+                    ts_rank(
+                        to_tsvector(unaccent(coalesce(concat(jdd_id, ' ', jdd_libelle, ' ', jdd_description ),'')) )::tsvector,
+                        query
+                    ) AS rnk,
+                    query,
+                    similarity(trim( $1 ), concat(jdd_id, ' ', jdd_libelle, ' ', jdd_description )) AS sim
+                    FROM occtax.jdd AS j,
+                    to_tsquery('french_text_search', regexp_replace( unaccent( trim( $1 ) ), '[^0-9a-zA-Z]+', ' & ', 'g') || ':*' ) AS query
 
+                    WHERE True
+                    AND query @@ to_tsvector( unaccent(coalesce(concat(jdd_id, ' ', jdd_libelle, ' ', jdd_description ),'')) )::tsvector
+                    ORDER BY sim DESC, rnk DESC
+                    LIMIT $2
+                ) foo
+            ";
+        } else {
+            $sql = "
+                SELECT jdd_id, jdd_libelle, jdd_description,
+                concat(jdd_id, ' - ', jdd_libelle) AS label,
+                1 AS rnk,
+                NULL AS query,
+                1 AS sim
+                FROM occtax.jdd AS j
                 WHERE True
-                AND query @@ to_tsvector( unaccent(coalesce(concat(jdd_id, ' ', jdd_libelle, ' ', jdd_description ),'')) )::tsvector
-                ORDER BY sim DESC, rnk DESC
-                LIMIT $2
-            ) foo
-        ";
+                ORDER BY jdd_libelle
+                LIMIT $1
+            ";
+        }
+
         return $sql;
     }
 
@@ -64,12 +81,17 @@ class autocomplete
      * @param $term Searched term
      * @return List of matching taxons
      */
-    function getData($term, $limit = 15)
+    function getData($term, $limit = 50)
     {
+        if (trim($term) == '') {
+            $sql = $this->getSql('all');
+            $filterParams = array($limit);
+        } else {
+            $sql = $this->getSql('filter');
+            $filterParams = array($term, $limit);
+        }
 
-        $sql = $this->getSql();
-
-        $return = $this->query($sql, array($term, $limit));
+        $return = $this->query($sql, $filterParams);
         return $return;
     }
 }

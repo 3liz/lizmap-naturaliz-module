@@ -497,7 +497,7 @@ class serviceCtrl extends jController
 
         $term = $this->param('field', 'jdd');
         $term = $this->param('term');
-        $limit = $this->intParam('limit', 10);
+        $limit = $this->intParam('limit', 50);
 
         $autocomplete = jClasses::getService('occtax~autocomplete');
         $result = $autocomplete->getData($term, $limit);

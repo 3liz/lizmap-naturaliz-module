@@ -564,10 +564,8 @@ OccTax.events.on({
                                     html += '<b>' + status.statusTypeName;
                                     // Nicheur ou pas, présent ou pas
                                     if (status.statusRemarks) {
-                                        console.log(status.statusRemarks);
                                         var remarks = getCleanedStatusRemark(status.statusRemarks)
                                         if (remarks !== null) {
-                                            console.log(remarks);
                                             html += ' (' + remarks + ')';
                                         }
                                     }
@@ -1517,6 +1515,9 @@ OccTax.events.on({
                     return false;
                 },
                 close: function (e, ui) {
+                    // Force the autocomplete popup to stay visible
+                    // This allow to select many items at a time
+                    $(this).autocomplete('widget').show();
                 },
                 change: function (e, ui) {
                     if ($(this).val().length < $(this).autocomplete('option', 'minLength'))
@@ -1539,7 +1540,9 @@ OccTax.events.on({
                     var label = ui.item.nom_valide;
 
                     // Suppression du contenu et perte du focus
-                    $(this).val('').blur();
+                    // $(this).val('').blur();
+                    // Commenté pour permettre de cliquer sur plusieurs taxons
+                    // pour faciliter l'ajout multiple
 
                     // Ajout du taxon au panier
                     addTaxonToSearch(ui.item.cd_ref, label);
@@ -1547,6 +1550,13 @@ OccTax.events.on({
                     return false;
                 }
             }).autocomplete("widget").css("z-index", "1050");
+
+            // Hide the autocomplete popup when clicking outside
+            // Needed because of the code written above in the "close" event
+            $('#' + formId + '_autocomplete').on('blur', function () {
+                $('#' + formId + '_autocomplete').autocomplete('widget').hide();
+                $(this).val('');
+            });
 
             // Render filtered items in HTML
             // Add image to the proposed items
@@ -1571,7 +1581,7 @@ OccTax.events.on({
                 return false;
             }
             $('#' + formId + '_jdd_autocomplete').autocomplete({
-                minLength: 2,
+                minLength: 0,
                 autoFocus: true,
                 source: function (request, response) {
                     request.limit = $('#form_jdd_service_autocomplete input[name="limit"]').val();
@@ -1621,7 +1631,16 @@ OccTax.events.on({
             $('#' + formId + '_jdd_autocomplete').on('blur', function () {
                 $('#' + formId + '_jdd_autocomplete').autocomplete('widget').hide();
                 $(this).val('');
-              });
+            });
+
+            // On focus, run autofocus
+            $('#' + formId + '_jdd_autocomplete').on('focus', function () {
+                var search_value = $(this).val();
+                if (!search_value || search_value.trim() == '') {
+                    search_value = '';
+                }
+                $('#' + formId + '_jdd_autocomplete').autocomplete('search', search_value);
+            });
 
             // Adapt the content of the proposed items in the popup
             $('#' + formId + '_jdd_autocomplete').autocomplete("instance")._renderItem = function (ul, item) {
