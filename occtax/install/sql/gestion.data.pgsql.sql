@@ -9,7 +9,8 @@ INSERT INTO gestion.g_nomenclature VALUES ('type_demande', 'PS', 'Publication sc
 INSERT INTO gestion.g_nomenclature VALUES ('type_demande', 'AP', 'Accès producteur', NULL, 6);
 INSERT INTO gestion.g_nomenclature VALUES ('type_demande', 'AT', 'Accès tête de réseau', NULL, 7);
 INSERT INTO gestion.g_nomenclature VALUES ('type_demande', 'CO', 'Conservation', NULL, 8);
-INSERT INTO gestion.g_nomenclature VALUES ('type_demande', 'AU', 'Autre', NULL, 9);
+INSERT INTO gestion.g_nomenclature VALUES ('type_demande', 'VA', 'Validation en ligne (accès aux données)', NULL, 9);
+INSERT INTO gestion.g_nomenclature VALUES ('type_demande', 'AU', 'Autre', NULL, 10);
 
 INSERT INTO gestion.g_nomenclature VALUES ('civilite', 'M', 'Monsieur', NULL, 1);
 INSERT INTO gestion.g_nomenclature VALUES ('civilite', 'Mme', 'Madame', NULL, 2);

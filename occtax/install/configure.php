@@ -37,16 +37,5 @@ class occtaxModuleConfigurator extends \Jelix\Installer\Module\Configurator {
             $helpers->copyFile('config/naturaliz.ini.php.dist', $naturalizConfigPath);
         }
 
-        // Add naturaliz_file cache profile used for the search items history
-        \jFile::createDir(jApp::varPath('uploads/cache'));
-        $profile_ini = $helpers->getProfilesIni();
-        $profile_ini->setValue('driver', 'file', 'jcache:naturaliz_file_cache' );
-        $profile_ini->setValue('ttl', '0', 'jcache:naturaliz_file_cache' );
-        $profile_ini->setValue('enabled', '1', 'jcache:naturaliz_file_cache' );
-        $profile_ini->setValue('cache_dir', 'var:uploads/cache/', 'jcache:naturaliz_file_cache' );
-        $profile_ini->setValue('file_locking', '1', 'jcache:naturaliz_file_cache' );
-        $profile_ini->setValue('directory_level', '0', 'jcache:naturaliz_file_cache' );
-        $profile_ini->save();
-
     }
 }

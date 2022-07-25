@@ -1,116 +1,55 @@
 
--- Table et fonction pour gérer les vues matérialisées
-CREATE TABLE IF NOT EXISTS occtax.materialized_object_list(
-    ob_id serial NOT NULL PRIMARY KEY,
-    ob_schema text NOT NULL,
-    ob_name text NOT NULL,
-    ob_order smallint NOT NULL
-);
+-- Renvoie les validateurs pour les observations
+-- avec les informations sur la personne et sur la validation effectuée
+-- il peut y avoir plusieurs lignes par observation
+-- pour prendre en compte les différentes échelles de validation (ech_val)
+CREATE OR REPLACE VIEW occtax.v_validateurs AS
+WITH personne_avec_organisme AS (
+    SELECT
+        CASE
+            WHEN p.anonymiser IS TRUE THEN 'ANONYME'::text
+            ELSE p.identite
+        END AS identite,
+        CASE
+            WHEN p.anonymiser IS TRUE THEN ''::text
+            ELSE p.mail
+        END AS mail,
+        CASE
+            WHEN p.anonymiser IS TRUE OR lower(p.identite) = lower(o.nom_organisme) THEN NULL::text
+            ELSE COALESCE(o.nom_organisme, 'INCONNU'::text)
+        END AS organisme,
+        p.id_personne,
+        p.prenom,
+        p.nom,
+        p.anonymiser,
+        p.identite AS identite_non_floutee,
+        p.mail AS mail_non_floute,
+        COALESCE(o.nom_organisme, 'INCONNU'::text) AS organisme_non_floute
+    FROM occtax.personne p
+    LEFT JOIN occtax.organisme o ON p.id_organisme = o.id_organisme
+)
 
-COMMENT ON TABLE occtax.materialized_object_list IS 'Liste des vues matérialisées à rafraîchir via script cron.';
-COMMENT ON COLUMN occtax.materialized_object_list.ob_id IS 'Identifiant unique automatique';
-COMMENT ON COLUMN occtax.materialized_object_list.ob_schema IS 'Schéma de la vue matérialiée';
-COMMENT ON COLUMN occtax.materialized_object_list.ob_name IS 'Nom de la vue matérialisée';
-COMMENT ON COLUMN occtax.materialized_object_list.ob_order IS 'Ordre : l''ordre est important: il faut notamment rafraîchir d''abord les vues matérialisées dont dépendent les autres.';
+SELECT
+    vv.*,
+    p.identite,
+    p.mail,
+    p.organisme,
+    p.id_personne,
+    p.prenom,
+    p.nom,
+    p.anonymiser,
+    p.identite_non_floutee,
+    p.mail_non_floute,
+    p.organisme_non_floute
+FROM occtax.validation_observation AS vv
+INNER JOIN personne_avec_organisme AS p
+    ON vv.validateur = p.id_personne
+;
+COMMENT ON VIEW occtax.v_validateurs
+IS 'Renvoie les validateurs pour les observations avec les informations sur la personne et sur la validation effectuée
+il peut y avoir plusieurs lignes par observation pour prendre en compte les différentes échelles de validation (ech_val)';
 
-ALTER TABLE occtax.materialized_object_list DROP CONSTRAINT IF EXISTS materialized_object_list_unique;
-ALTER TABLE occtax.materialized_object_list ADD CONSTRAINT materialized_object_list_unique UNIQUE (ob_schema, ob_name);
-
--- FUNCTION: occtax.manage_materialized_objects(text, boolean, text)
-
--- DROP FUNCTION occtax.manage_materialized_objects(text, boolean, text);
-
-CREATE OR REPLACE FUNCTION occtax.manage_materialized_objects(
-    p_action text,
-    p_cascade boolean,
-    p_object_schema text)
-    RETURNS integer
-    LANGUAGE 'plpgsql'
-
-    COST 100
-    VOLATILE
-AS $BODY$
-DECLARE
-    sql_template TEXT;
-    sql_text TEXT;
-    _ob_schema text;
-    _ob_name text;
-    _ob_full_type text;
-    _ob_col text;
-BEGIN
-
-    sql_template:= '';
-    sql_text:= '';
-
-    -- Loop through views to create
-    FOR
-        _ob_schema, _ob_name
-    IN
-        SELECT
-        ob_schema, ob_name
-        FROM occtax.materialized_object_list
-        WHERE ob_schema = p_object_schema OR p_object_schema IS NULL
-        ORDER BY ob_order
-    LOOP
-        _ob_full_type := 'MATERIALIZED VIEW';
-
-        -- DROP OBJETS
-        IF
-            -- if asked to do so
-            p_action = 'drop'
-        THEN
-            sql_template := '
-                 DROP %s IF EXISTS %I.%I %s;
-            ';
-            sql_text := concat(
-                sql_text,
-                format(
-                    sql_template,
-                    _ob_full_type,
-                    _ob_schema,
-                    _ob_name,
-                    CASE WHEN p_cascade THEN 'CASCADE' ELSE '' END
-                )
-            );
-        END IF;
-
-        -- REFRESH OBJECTS
-        IF p_action = 'refresh'
-        THEN
-            sql_template := '
-                REFRESH MATERIALIZED VIEW %I.%I;
-            ';
-            sql_text := concat(
-                sql_text,
-                format(
-                    sql_template,
-                    _ob_schema,
-                    _ob_name
-                )
-            );
-        END IF;
-
-    END LOOP;
-
-    -- Execute SQL
-    BEGIN
-        --RAISE NOTICE '%' , sql_text;
-        EXECUTE sql_text;
-        RETURN 1;
-    EXCEPTION WHEN OTHERS THEN
-        --RAISE NOTICE '%' , sql_text;
-        RAISE NOTICE '% %', SQLERRM, SQLSTATE;
-        RETURN 0;
-    END;
-
-END;
-$BODY$;
-
--- OCCTAX
---
-
-
--- Vue source pour la vue matérialisée occtax.vm_observation
+-- Vue source pour occtax.vm_observation
 DROP VIEW IF EXISTS occtax.v_vm_observation;
 CREATE OR REPLACE VIEW occtax.v_vm_observation AS
 WITH s AS (
@@ -362,13 +301,11 @@ On peut modifier cette vue puis rafraîchir la vue vm_observation si besoin.
 Dans le cas où la liste de champs reste inchangée, cela facilite les choses car cela n''oblige pas
 à supprimer et recréer vm_observation et ses vues dépendantes (stats)';
 
-
--- VUE MATERIALISEE DE CONSOLIDATION DES DONNEES
+-- Remplacement de la vue vm_observation
 DROP MATERIALIZED VIEW IF EXISTS occtax.vm_observation CASCADE;
 CREATE MATERIALIZED VIEW occtax.vm_observation AS
 SELECT *
-FROM occtax.v_vm_observation
-;
+FROM occtax.v_vm_observation;
 
 CREATE INDEX vm_observation_cle_obs_idx ON occtax.vm_observation (cle_obs);
 CREATE INDEX vm_observation_identifiant_permanent_idx ON occtax.vm_observation (identifiant_permanent);
@@ -390,24 +327,6 @@ CREATE INDEX vm_observation_code_maille_02_unique_idx ON occtax.vm_observation (
 CREATE INDEX vm_observation_code_maille_10_unique_idx ON occtax.vm_observation (code_maille_10_unique);
 CREATE INDEX vm_observation_diffusion_idx ON occtax.vm_observation USING GIN (diffusion);
 
-
--- Liste des vues et vues matérialisées qui dépendent de vm_observation
--- occtax.vm_stat_nb_observations_par_groupe_taxonomique
--- occtax.vm_stat_nb_taxons_observes_par_groupe_taxonomique AS
--- stats.repartition_temporelle AS
--- stats.repartition_habitats AS
--- stats.connaissance_par_groupe_taxonomique AS
--- stats.nombre_taxons AS
--- stats.repartition_groupe_taxonomique AS
--- stats.observations_par_maille_02 AS
--- stats.avancement_imports AS
--- stats.nombre_obs_par_menace AS
--- stats.nombre_taxons_par_menace AS
--- stats.chiffres_cles AS
--- stats.rangs_taxonomiques AS
--- stats.nombre_taxons_par_statut_biogeographique AS
--- stats.nombre_obs_par_statut_biogeographique AS
--- occtax.v_observation_validation
 
 -- VUES POUR LES STATISTIQUES
 -- nb_observations_par_groupe_taxonomique
@@ -1134,32 +1053,8 @@ LEFT JOIN (
 ;
 
 
-
-
--- Ajout des lignes dans occtax.materialized_object_list
-
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('occtax', 'observation_diffusion', -1) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('occtax', 'vm_observation',  0) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'repartition_altitudinale_observations', 1) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'repartition_altitudinale_taxons', 2) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'repartition_temporelle', 3) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'repartition_habitats', 4) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'connaissance_par_groupe_taxonomique', 5) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'nombre_taxons', 6) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'repartition_groupe_taxonomique', 7) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'observations_par_maille_02', 8) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'observations_par_commune', 9) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'avancement_imports', 10) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'validation', 11) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'nombre_obs_par_menace', 12) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'nombre_taxons_par_menace', 13) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'chiffres_cles', 14) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'rangs_taxonomique', 15) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'nombre_taxons_par_statut_biogeographique', 16) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'nombre_obs_par_statut_biogeographique', 17) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'sensibilite_donnees', 18) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'types_demandes', 19) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'liste_adherents', 20) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'liste_jdd', 21) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'liste_demandes', 22) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'liste_organismes', 23) ON CONFLICT DO NOTHING;
+-- Nomenclature
+INSERT INTO gestion.g_nomenclature (champ, code, valeur, g_order)
+VALUES ('type_demande', 'VA', 'Validation en ligne (accès aux données)', 9)
+ON CONFLICT DO NOTHING;
+UPDATE gestion.g_nomenclature SET g_order = 10 WHERE champ = 'type_demande' AND code = 'AU';

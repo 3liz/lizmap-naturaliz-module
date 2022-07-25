@@ -60,7 +60,7 @@ COMMENT ON COLUMN occtax.validation_observation.comm_val IS 'Commentaire sur la 
 COMMENT ON COLUMN occtax.validation_observation.nom_retenu IS 'Nom scientifique du taxon attribué par le validateur, dans le cas où ce taxon est différent du taxon cité initialement par l''observateur (sinon le champ reste NULL). Cela peut arriver en cas d''identification erronnée par l''observateur, ou bien lorsque le validateur valide l''observation au niveau d''un parent taxonomique. Le champ n''a toutefois pas vocation à stocker un nom qui serait synonyme de celui cité par l''observateur, Taxref permettant déjà de traiter les cas de synonymie.' ;
 
 
-CREATE OR REPLACE VIEW occtax.v_validateur AS
+CREATE OR REPLACE VIEW occtax.v_validateurs AS
 WITH personne_avec_organisme AS (
     SELECT
         CASE
@@ -87,11 +87,11 @@ WITH personne_avec_organisme AS (
 )
 
 SELECT
+    vv.*,
     p.identite,
     p.mail,
     p.organisme,
     p.id_personne,
-    vv.identifiant_permanent,
     p.prenom,
     p.nom,
     p.anonymiser,
@@ -101,9 +101,11 @@ SELECT
 FROM occtax.validation_observation AS vv
 INNER JOIN personne_avec_organisme AS p
     ON vv.validateur = p.id_personne
--- uniquement validation de niveau régional
-WHERE vv.ech_val = '2'::text
 ;
+COMMENT ON VIEW occtax.v_validateurs
+IS 'Renvoie les validateurs pour les observations avec les informations sur la personne et sur la validation effectuée
+il peut y avoir plusieurs lignes par observation pour prendre en compte les différentes échelles de validation (ech_val)';
+
 
 CREATE OR REPLACE VIEW occtax.v_determinateur AS
 SELECT CASE WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE p.identite END AS identite,
