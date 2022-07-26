@@ -50,7 +50,6 @@ IS 'Renvoie les validateurs pour les observations avec les informations sur la p
 il peut y avoir plusieurs lignes par observation pour prendre en compte les différentes échelles de validation (ech_val)';
 
 -- Vue source pour occtax.vm_observation
-DROP VIEW IF EXISTS occtax.v_vm_observation;
 CREATE OR REPLACE VIEW occtax.v_vm_observation AS
 WITH s AS (
     WITH
@@ -674,7 +673,7 @@ UNION
     'Nombre de producteurs ayant transmis des jeux de données' AS libelle,
     count(DISTINCT r.id_organisme) AS valeur
    FROM ( SELECT jdd.jdd_id,
-            (jsonb_array_elements(jdd.ayants_droit) ->> 'id_organisme'::text)::integer AS id_organisme,
+            jsonb_array_elements(jdd.ayants_droit) ->> 'id_organisme'::text AS id_organisme,
             jsonb_array_elements(jdd.ayants_droit) ->> 'role'::text AS role
            FROM occtax.jdd) r
 UNION

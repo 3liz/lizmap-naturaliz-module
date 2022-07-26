@@ -20,7 +20,7 @@ class occtaxModuleUpgrader_2_12_7__2_12_8 extends jInstallerModule
             }
             $colonne_locale = 'reu';
             if (array_key_exists('naturaliz', $ini) && array_key_exists('colonne_locale', $ini['naturaliz'])) {
-                $srid = $ini['naturaliz']['colonne_locale'];
+                $colonne_locale = $ini['naturaliz']['colonne_locale'];
             }
 
             // SQL upgrade

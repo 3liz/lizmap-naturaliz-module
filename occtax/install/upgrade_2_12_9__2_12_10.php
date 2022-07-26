@@ -1,9 +1,9 @@
 <?php
-class occtaxModuleUpgrader_2_12_8__2_12_9 extends jInstallerModule
+class occtaxModuleUpgrader_2_12_9__2_12_10 extends jInstallerModule
 {
 
     public $targetVersions = array(
-        '2.12.9',
+        '2.12.10',
     );
     public $date = '2022-07-26';
 
@@ -26,7 +26,7 @@ class occtaxModuleUpgrader_2_12_8__2_12_9 extends jInstallerModule
             // SQL upgrade
             $this->useDbProfile('jauth_super');
             $db = $this->dbConnection(); // A PLACER TOUJOURS DERRIERE $this->useDbProfile('jauth_super');
-            $sqlPath = $this->path . 'install/sql/upgrade/upgrade_2.12.8_2.12.9.sql';
+            $sqlPath = $this->path . 'install/sql/upgrade/upgrade_2.12.9_2.12.10.sql';
             $sqlTpl = jFile::read($sqlPath);
             $tpl = new jTpl();
             // CAREFUL, SRID must be UPPERCASE
