@@ -3,6 +3,10 @@
 ## Unreleased
 
 
+## 2.12.10 - 2022-07-26
+
+* SQL - Correction de bugs sur les vues matérialisées
+
 ## 2.12.9 - 2022-07-26
 
 * SQL - Ajout d'un index sur le champ `odata` de la table observation pour améliorer
