@@ -3,6 +3,10 @@
 ## Unreleased
 
 
+## 2.12.9 - 2022-07-26
+
+* SQL - Ajout d'un index sur le champ `odata` de la table observation pour améliorer
+  les performances des requêtes par maille en mode non connecté
 
 ## 2.12.8 - 2022-07-25
 

@@ -804,6 +804,7 @@ CREATE INDEX ON occtax.observation (cd_nom);
 CREATE INDEX ON occtax.observation (date_debut, date_fin DESC);
 CREATE INDEX ON occtax.observation (jdd_id);
 CREATE INDEX ON occtax.observation USING GIN (descriptif_sujet);
+CREATE INDEX observation_odata_import_time ON occtax.observation USING GIN (odata);
 
 CREATE INDEX ON occtax.personne (identite);
 
