@@ -2,7 +2,18 @@
 
 ## Unreleased
 
-* adaptation de l'installation pour Lizmap 3.6
+
+
+## 2.12.8 - 2022-07-25
+
+* Doc - Gestion: amélioration du projet QGIS de gestion & ajout configuration Lizmap pour publication
+* Vue matérialisée - Amélioration des requêtes pour consolider les données dans vm_observation
+* Formulaire de recherche - Autocomplétion taxon et JDD: permettre l'ajout multiple sans fermer la popup
+* Tableau des observations - Correction du bug sur le tri par niveau de validité
+* Import CSV - Correction de la visibilité des observations importées
+* Fiche taxon - ajout de commentaire dans la récupération du contexte pour les menaces
+* Adaptation de l'installation pour Lizmap 3.6
+
 
 ## 2.12.7 - 2022-06-21
 
