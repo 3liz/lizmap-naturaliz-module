@@ -168,6 +168,29 @@
 
 </group>
 
+
+<group ref="import_csv">
+  <label locale="occtax_admin~admin.form.import_csv.label" />
+
+
+  <input ref="organisme_gestionnaire_donnees" type="string" defaultvalue="Inconnu">
+   <label locale="occtax_admin~admin.form.import_csv.organisme_gestionnaire_donnees.label" />
+  </input>
+
+  <input ref="org_transformation" type="string" defaultvalue="Inconnu">
+   <label locale="occtax_admin~admin.form.import_csv.org_transformation.label" />
+  </input>
+
+  <input ref="organisme_standard" type="string" defaultvalue="Inconnu">
+   <label locale="occtax_admin~admin.form.import_csv.organisme_standard.label" />
+  </input>
+
+  <input ref="default_email" type="string" defaultvalue="inconnu@acme.org">
+   <label locale="occtax_admin~admin.form.import_csv.default_email.label" />
+  </input>
+
+</group>
+
 <submit ref="_submit">
     <label locale="admin~admin.form.admin_services.submit.label"/>
 </submit>
