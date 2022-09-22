@@ -1018,7 +1018,7 @@ COST 100
 ;
 
 
-COMMENT ON FUNCTION occtax.import_observations_post_data(regclass, text, text, text)
+COMMENT ON FUNCTION occtax.import_observations_post_data(regclass, text, text, text, text, text, text)
 IS 'Importe les données complémentaires (observateurs, liens spatiaux, etc.)
 sur les observations contenues dans la table fournie en paramètre'
 ;
