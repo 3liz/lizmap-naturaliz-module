@@ -1,4 +1,4 @@
-<qgis projectname="" saveDateTime="2022-07-21T15:16:42" saveUser="" saveUserFull="" version="3.16.16-Hannover">
+<qgis projectname="" saveDateTime="2022-09-07T14:01:03" saveUser="" saveUserFull="" version="3.16.16-Hannover">
   <homePath path=""></homePath>
   <title></title>
   <autotransaction active="0"></autotransaction>
@@ -19,51 +19,79 @@
   </projectCrs>
   <layer-tree-group>
     <customproperties></customproperties>
-    <layer-tree-layer checked="Qt::Checked" expanded="1" id="jlx_user20190123150225648" legend_exp="" legend_split_behavior="0" name="jlx_user" patch_size="0,0" providerKey="postgres" source="service='naturaliz_dev' sslmode=disable key='usr_login' estimatedmetadata=true checkPrimaryKeyUnicity='1' table=&quot;public&quot;.&quot;jlx_user&quot;">
+    <layer-tree-group checked="Qt::Checked" expanded="1" name="Lizmap">
       <customproperties></customproperties>
-    </layer-tree-layer>
-    <layer-tree-layer checked="Qt::Checked" expanded="1" id="acteur20190123120309698" legend_exp="" legend_split_behavior="0" name="acteur" patch_size="0,0" providerKey="postgres" source="service='naturaliz_dev' sslmode=disable key='id_acteur' checkPrimaryKeyUnicity='1' table=&quot;gestion&quot;.&quot;acteur&quot;">
+      <layer-tree-layer checked="Qt::Checked" expanded="1" id="jlx_user20190123150225648" legend_exp="" legend_split_behavior="0" name="jlx_user" patch_size="0,0" providerKey="postgres" source="service='naturaliz_dev' sslmode=disable key='usr_login' estimatedmetadata=true checkPrimaryKeyUnicity='1' table=&quot;public&quot;.&quot;jlx_user&quot;">
+        <customproperties></customproperties>
+      </layer-tree-layer>
+    </layer-tree-group>
+    <layer-tree-group checked="Qt::Checked" expanded="1" name="Gestion des demandes">
       <customproperties></customproperties>
-    </layer-tree-layer>
-    <layer-tree-layer checked="Qt::Checked" expanded="1" id="organisme20190123143729184" legend_exp="" legend_split_behavior="0" name="organisme" patch_size="0,0" providerKey="postgres" source="service='naturaliz_dev' sslmode=disable key='id_organisme' checkPrimaryKeyUnicity='1' table=&quot;occtax&quot;.&quot;organisme&quot;">
-      <customproperties></customproperties>
-    </layer-tree-layer>
-    <layer-tree-layer checked="Qt::Checked" expanded="1" id="adherent20190123120310018" legend_exp="" legend_split_behavior="0" name="adherent" patch_size="0,0" providerKey="postgres" source="service='naturaliz_dev' sslmode=disable key='id_adherent' checkPrimaryKeyUnicity='1' table=&quot;gestion&quot;.&quot;adherent&quot;">
-      <customproperties></customproperties>
-    </layer-tree-layer>
-    <layer-tree-layer checked="Qt::Checked" expanded="1" id="demande20190123120310066" legend_exp="" legend_split_behavior="0" name="demande" patch_size="0,0" providerKey="postgres" source="service='naturaliz_dev' sslmode=disable key='id' srid=2975 type=MultiPolygon checkPrimaryKeyUnicity='1' table=&quot;gestion&quot;.&quot;demande&quot; (geom)">
-      <customproperties></customproperties>
-    </layer-tree-layer>
-    <layer-tree-layer checked="Qt::Checked" expanded="1" id="echange_inpn20190123120310111" legend_exp="" legend_split_behavior="0" name="echange_inpn" patch_size="0,0" providerKey="postgres" source="service='naturaliz_dev' sslmode=disable key='id_echange' checkPrimaryKeyUnicity='1' table=&quot;gestion&quot;.&quot;echange_inpn&quot;">
-      <customproperties></customproperties>
-    </layer-tree-layer>
-    <layer-tree-layer checked="Qt::Checked" expanded="1" id="jdd_import20190123150642447" legend_exp="" legend_split_behavior="0" name="jdd_import" patch_size="0,0" providerKey="postgres" source="service='naturaliz_dev' sslmode=disable key='id_import' checkPrimaryKeyUnicity='1' table=&quot;occtax&quot;.&quot;jdd_import&quot;">
-      <customproperties></customproperties>
-    </layer-tree-layer>
-    <layer-tree-layer checked="Qt::Checked" expanded="1" id="jdd20190416103640150" legend_exp="" legend_split_behavior="0" name="jdd" patch_size="0,0" providerKey="postgres" source="service='naturaliz_dev' sslmode=disable key='jdd_id' checkPrimaryKeyUnicity='1' table=&quot;occtax&quot;.&quot;jdd&quot;">
-      <customproperties></customproperties>
-    </layer-tree-layer>
-    <layer-tree-layer checked="Qt::Checked" expanded="1" id="g_nomenclature20190123120310126" legend_exp="" legend_split_behavior="0" name="g_nomenclature" patch_size="0,0" providerKey="postgres" source="service='naturaliz_dev' sslmode=disable key='champ,code' checkPrimaryKeyUnicity='1' table=&quot;gestion&quot;.&quot;g_nomenclature&quot;">
-      <customproperties></customproperties>
-    </layer-tree-layer>
+      <layer-tree-layer checked="Qt::Checked" expanded="1" id="acteur20190123120309698" legend_exp="" legend_split_behavior="0" name="acteur" patch_size="0,0" providerKey="postgres" source="service='naturaliz_dev' sslmode=disable key='id_acteur' checkPrimaryKeyUnicity='1' table=&quot;gestion&quot;.&quot;acteur&quot;">
+        <customproperties></customproperties>
+      </layer-tree-layer>
+      <layer-tree-layer checked="Qt::Checked" expanded="1" id="organisme20190123143729184" legend_exp="" legend_split_behavior="0" name="organisme" patch_size="0,0" providerKey="postgres" source="service='naturaliz_dev' sslmode=disable key='id_organisme' checkPrimaryKeyUnicity='1' table=&quot;occtax&quot;.&quot;organisme&quot;">
+        <customproperties></customproperties>
+      </layer-tree-layer>
+      <layer-tree-layer checked="Qt::Checked" expanded="1" id="adherent20190123120310018" legend_exp="" legend_split_behavior="0" name="adherent" patch_size="0,0" providerKey="postgres" source="service='naturaliz_dev' sslmode=disable key='id_adherent' checkPrimaryKeyUnicity='1' table=&quot;gestion&quot;.&quot;adherent&quot;">
+        <customproperties></customproperties>
+      </layer-tree-layer>
+      <layer-tree-layer checked="Qt::Checked" expanded="1" id="demande20190123120310066" legend_exp="" legend_split_behavior="0" name="demande" patch_size="0,0" providerKey="postgres" source="service='naturaliz_dev' sslmode=disable key='id' srid=2975 type=MultiPolygon checkPrimaryKeyUnicity='1' table=&quot;gestion&quot;.&quot;demande&quot; (geom)">
+        <customproperties></customproperties>
+      </layer-tree-layer>
+      <layer-tree-layer checked="Qt::Checked" expanded="1" id="echange_inpn20190123120310111" legend_exp="" legend_split_behavior="0" name="echange_inpn" patch_size="0,0" providerKey="postgres" source="service='naturaliz_dev' sslmode=disable key='id_echange' checkPrimaryKeyUnicity='1' table=&quot;gestion&quot;.&quot;echange_inpn&quot;">
+        <customproperties></customproperties>
+      </layer-tree-layer>
+      <layer-tree-layer checked="Qt::Checked" expanded="1" id="g_nomenclature20190123120310126" legend_exp="" legend_split_behavior="0" name="g_nomenclature" patch_size="0,0" providerKey="postgres" source="service='naturaliz_dev' sslmode=disable key='champ,code' checkPrimaryKeyUnicity='1' table=&quot;gestion&quot;.&quot;g_nomenclature&quot;">
+        <customproperties></customproperties>
+      </layer-tree-layer>
+    </layer-tree-group>
     <layer-tree-layer checked="Qt::Unchecked" expanded="1" id="commune_cd39115d_fdd4_49fc_b0db_cf217670a18b" legend_exp="" legend_split_behavior="0" name="commune" patch_size="-1,-1" providerKey="postgres" source="service='naturaliz' sslmode=disable key='code_commune' estimatedmetadata=true srid=2975 type=MultiPolygon checkPrimaryKeyUnicity='1' table=&quot;sig&quot;.&quot;commune&quot; (geom)">
       <customproperties></customproperties>
     </layer-tree-layer>
+    <layer-tree-group checked="Qt::Checked" expanded="1" name="Métadonnées">
+      <customproperties></customproperties>
+      <layer-tree-layer checked="Qt::Checked" expanded="1" id="cadre_9622af4e_a9e7_4c32_86ac_da725d0b6f2d" legend_exp="" legend_split_behavior="0" name="cadre" patch_size="-1,-1" providerKey="postgres" source="service='naturaliz_dev' sslmode=disable key='cadre_id' estimatedmetadata=true checkPrimaryKeyUnicity='1' table=&quot;occtax&quot;.&quot;cadre&quot;">
+        <customproperties></customproperties>
+      </layer-tree-layer>
+      <layer-tree-layer checked="Qt::Checked" expanded="1" id="jdd_import20190123150642447" legend_exp="" legend_split_behavior="0" name="jdd_import" patch_size="0,0" providerKey="postgres" source="service='naturaliz_dev' sslmode=disable key='id_import' checkPrimaryKeyUnicity='1' table=&quot;occtax&quot;.&quot;jdd_import&quot;">
+        <customproperties></customproperties>
+      </layer-tree-layer>
+      <layer-tree-layer checked="Qt::Checked" expanded="1" id="jdd20190416103640150" legend_exp="" legend_split_behavior="0" name="jdd" patch_size="0,0" providerKey="postgres" source="service='naturaliz_dev' sslmode=disable key='jdd_id' checkPrimaryKeyUnicity='1' table=&quot;occtax&quot;.&quot;jdd&quot;">
+        <customproperties></customproperties>
+      </layer-tree-layer>
+    </layer-tree-group>
+    <layer-tree-group checked="Qt::Checked" expanded="1" name="Imports CSV web">
+      <customproperties></customproperties>
+      <layer-tree-layer checked="Qt::Checked" expanded="1" id="v_import_web_liste_75b05297_0e7f_477a_b314_3159132b7de9" legend_exp="" legend_split_behavior="0" name="v_import_web_liste" patch_size="-1,-1" providerKey="postgres" source="service='naturaliz_dev' sslmode=disable key='id' estimatedmetadata=true srid=2975 type=Polygon checkPrimaryKeyUnicity='0' table=&quot;occtax&quot;.&quot;v_import_web_liste&quot; (geom)">
+        <customproperties></customproperties>
+      </layer-tree-layer>
+      <layer-tree-layer checked="Qt::Checked" expanded="1" id="v_import_web_observations_148f04d8_1017_49ff_98b9_11ced73f9e95" legend_exp="" legend_split_behavior="0" name="v_import_web_observations" patch_size="-1,-1" providerKey="postgres" source="service='naturaliz_dev' sslmode=disable key='cle_obs' estimatedmetadata=true type=Point checkPrimaryKeyUnicity='1' table=&quot;occtax&quot;.&quot;v_import_web_observations&quot; (geom)">
+        <customproperties></customproperties>
+      </layer-tree-layer>
+    </layer-tree-group>
     <layer-tree-group checked="Qt::Checked" expanded="1" name="Hidden">
       <customproperties></customproperties>
       <layer-tree-layer checked="Qt::Checked" expanded="1" id="osm_mapnik20190123143431304" legend_exp="" legend_split_behavior="0" name="osm-mapnik" patch_size="0,0" providerKey="wms" source="crs=EPSG:3857&amp;format=&amp;type=xyz&amp;url=http://tile.openstreetmap.org/%7Bz%7D/%7Bx%7D/%7By%7D.png">
         <customproperties></customproperties>
       </layer-tree-layer>
     </layer-tree-group>
+    <layer-tree-group checked="Qt::Checked" expanded="1" name="Context">
+      <customproperties></customproperties>
+    </layer-tree-group>
     <custom-order enabled="0">
       <item>demande20190123120310066</item>
       <item>osm_mapnik20190123143431304</item>
       <item>commune_cd39115d_fdd4_49fc_b0db_cf217670a18b</item>
+      <item>v_import_web_liste_75b05297_0e7f_477a_b314_3159132b7de9</item>
+      <item>v_import_web_observations_148f04d8_1017_49ff_98b9_11ced73f9e95</item>
     </custom-order>
   </layer-tree-group>
   <snapping-settings enabled="1" intersection-snapping="0" maxScale="0" minScale="0" mode="1" scaleDependencyMode="0" self-snapping="0" tolerance="10" type="3" unit="1">
     <individual-layer-settings>
+      <layer-setting enabled="0" id="v_import_web_liste_75b05297_0e7f_477a_b314_3159132b7de9" maxScale="0" minScale="0" tolerance="0" type="1" units="2"></layer-setting>
       <layer-setting enabled="1" id="demande20190123120310066" maxScale="0" minScale="0" tolerance="10" type="2" units="1"></layer-setting>
+      <layer-setting enabled="0" id="v_import_web_observations_148f04d8_1017_49ff_98b9_11ced73f9e95" maxScale="0" minScale="0" tolerance="0" type="1" units="2"></layer-setting>
       <layer-setting enabled="0" id="commune_cd39115d_fdd4_49fc_b0db_cf217670a18b" maxScale="0" minScale="0" tolerance="0" type="1" units="2"></layer-setting>
     </individual-layer-settings>
   </snapping-settings>
@@ -89,14 +117,17 @@
     <relation id="jdd_import_jdd_id_jdd2019041_jdd_id" name="Jdd Imports par Jdd" referencedLayer="jdd20190416103640150" referencingLayer="jdd_import20190123150642447" strength="Association">
       <fieldRef referencedField="jdd_id" referencingField="jdd_id"></fieldRef>
     </relation>
+    <relation id="v_import_w_jdd_metadonnee_dee_id_v_import_w_jdd" name="Observations importées par JDD" referencedLayer="v_import_web_liste_75b05297_0e7f_477a_b314_3159132b7de9" referencingLayer="v_import_web_observations_148f04d8_1017_49ff_98b9_11ced73f9e95" strength="Association">
+      <fieldRef referencedField="jdd" referencingField="jdd_metadonnee_dee_id"></fieldRef>
+    </relation>
   </relations>
   <mapcanvas annotationsVisible="1" name="theMapCanvas">
     <units>meters</units>
     <extent>
-      <xmin>6142603.76668897457420826</xmin>
-      <ymin>-2446164.34442312084138393</ymin>
-      <xmax>6217750.52226552553474903</xmax>
-      <ymax>-2369580.5590598713606596</ymax>
+      <xmin>6144467.43891588598489761</xmin>
+      <ymin>-2440124.59126549027860165</ymin>
+      <xmax>6217717.86930865794420242</xmax>
+      <ymax>-2374773.97801873832941055</ymax>
     </extent>
     <rotation>0</rotation>
     <destinationsrs>
@@ -117,56 +148,79 @@
   </mapcanvas>
   <projectModels></projectModels>
   <legend updateDrawingOrder="true">
-    <legendlayer checked="Qt::Checked" drawingOrder="-1" name="jlx_user" open="true" showFeatureCount="0">
-      <filegroup hidden="false" open="true">
-        <legendlayerfile isInOverview="0" layerid="jlx_user20190123150225648" visible="1"></legendlayerfile>
-      </filegroup>
-    </legendlayer>
-    <legendlayer checked="Qt::Checked" drawingOrder="-1" name="acteur" open="true" showFeatureCount="0">
-      <filegroup hidden="false" open="true">
-        <legendlayerfile isInOverview="0" layerid="acteur20190123120309698" visible="1"></legendlayerfile>
-      </filegroup>
-    </legendlayer>
-    <legendlayer checked="Qt::Checked" drawingOrder="-1" name="organisme" open="true" showFeatureCount="0">
-      <filegroup hidden="false" open="true">
-        <legendlayerfile isInOverview="0" layerid="organisme20190123143729184" visible="1"></legendlayerfile>
-      </filegroup>
-    </legendlayer>
-    <legendlayer checked="Qt::Checked" drawingOrder="-1" name="adherent" open="true" showFeatureCount="0">
-      <filegroup hidden="false" open="true">
-        <legendlayerfile isInOverview="0" layerid="adherent20190123120310018" visible="1"></legendlayerfile>
-      </filegroup>
-    </legendlayer>
-    <legendlayer checked="Qt::Checked" drawingOrder="-1" name="demande" open="true" showFeatureCount="0">
-      <filegroup hidden="false" open="true">
-        <legendlayerfile isInOverview="0" layerid="demande20190123120310066" visible="1"></legendlayerfile>
-      </filegroup>
-    </legendlayer>
-    <legendlayer checked="Qt::Checked" drawingOrder="-1" name="echange_inpn" open="true" showFeatureCount="0">
-      <filegroup hidden="false" open="true">
-        <legendlayerfile isInOverview="0" layerid="echange_inpn20190123120310111" visible="1"></legendlayerfile>
-      </filegroup>
-    </legendlayer>
-    <legendlayer checked="Qt::Checked" drawingOrder="-1" name="jdd_import" open="true" showFeatureCount="0">
-      <filegroup hidden="false" open="true">
-        <legendlayerfile isInOverview="0" layerid="jdd_import20190123150642447" visible="1"></legendlayerfile>
-      </filegroup>
-    </legendlayer>
-    <legendlayer checked="Qt::Checked" drawingOrder="-1" name="jdd" open="true" showFeatureCount="0">
-      <filegroup hidden="false" open="true">
-        <legendlayerfile isInOverview="0" layerid="jdd20190416103640150" visible="1"></legendlayerfile>
-      </filegroup>
-    </legendlayer>
-    <legendlayer checked="Qt::Checked" drawingOrder="-1" name="g_nomenclature" open="true" showFeatureCount="0">
-      <filegroup hidden="false" open="true">
-        <legendlayerfile isInOverview="0" layerid="g_nomenclature20190123120310126" visible="1"></legendlayerfile>
-      </filegroup>
-    </legendlayer>
+    <legendgroup checked="Qt::Checked" name="Lizmap" open="true">
+      <legendlayer checked="Qt::Checked" drawingOrder="-1" name="jlx_user" open="true" showFeatureCount="0">
+        <filegroup hidden="false" open="true">
+          <legendlayerfile isInOverview="0" layerid="jlx_user20190123150225648" visible="1"></legendlayerfile>
+        </filegroup>
+      </legendlayer>
+    </legendgroup>
+    <legendgroup checked="Qt::Checked" name="Gestion des demandes" open="true">
+      <legendlayer checked="Qt::Checked" drawingOrder="-1" name="acteur" open="true" showFeatureCount="0">
+        <filegroup hidden="false" open="true">
+          <legendlayerfile isInOverview="0" layerid="acteur20190123120309698" visible="1"></legendlayerfile>
+        </filegroup>
+      </legendlayer>
+      <legendlayer checked="Qt::Checked" drawingOrder="-1" name="organisme" open="true" showFeatureCount="0">
+        <filegroup hidden="false" open="true">
+          <legendlayerfile isInOverview="0" layerid="organisme20190123143729184" visible="1"></legendlayerfile>
+        </filegroup>
+      </legendlayer>
+      <legendlayer checked="Qt::Checked" drawingOrder="-1" name="adherent" open="true" showFeatureCount="0">
+        <filegroup hidden="false" open="true">
+          <legendlayerfile isInOverview="0" layerid="adherent20190123120310018" visible="1"></legendlayerfile>
+        </filegroup>
+      </legendlayer>
+      <legendlayer checked="Qt::Checked" drawingOrder="-1" name="demande" open="true" showFeatureCount="0">
+        <filegroup hidden="false" open="true">
+          <legendlayerfile isInOverview="0" layerid="demande20190123120310066" visible="1"></legendlayerfile>
+        </filegroup>
+      </legendlayer>
+      <legendlayer checked="Qt::Checked" drawingOrder="-1" name="echange_inpn" open="true" showFeatureCount="0">
+        <filegroup hidden="false" open="true">
+          <legendlayerfile isInOverview="0" layerid="echange_inpn20190123120310111" visible="1"></legendlayerfile>
+        </filegroup>
+      </legendlayer>
+      <legendlayer checked="Qt::Checked" drawingOrder="-1" name="g_nomenclature" open="true" showFeatureCount="0">
+        <filegroup hidden="false" open="true">
+          <legendlayerfile isInOverview="0" layerid="g_nomenclature20190123120310126" visible="1"></legendlayerfile>
+        </filegroup>
+      </legendlayer>
+    </legendgroup>
     <legendlayer checked="Qt::Unchecked" drawingOrder="-1" name="commune" open="true" showFeatureCount="0">
       <filegroup hidden="false" open="true">
         <legendlayerfile isInOverview="0" layerid="commune_cd39115d_fdd4_49fc_b0db_cf217670a18b" visible="0"></legendlayerfile>
       </filegroup>
     </legendlayer>
+    <legendgroup checked="Qt::Checked" name="Métadonnées" open="true">
+      <legendlayer checked="Qt::Checked" drawingOrder="-1" name="cadre" open="true" showFeatureCount="0">
+        <filegroup hidden="false" open="true">
+          <legendlayerfile isInOverview="0" layerid="cadre_9622af4e_a9e7_4c32_86ac_da725d0b6f2d" visible="1"></legendlayerfile>
+        </filegroup>
+      </legendlayer>
+      <legendlayer checked="Qt::Checked" drawingOrder="-1" name="jdd_import" open="true" showFeatureCount="0">
+        <filegroup hidden="false" open="true">
+          <legendlayerfile isInOverview="0" layerid="jdd_import20190123150642447" visible="1"></legendlayerfile>
+        </filegroup>
+      </legendlayer>
+      <legendlayer checked="Qt::Checked" drawingOrder="-1" name="jdd" open="true" showFeatureCount="0">
+        <filegroup hidden="false" open="true">
+          <legendlayerfile isInOverview="0" layerid="jdd20190416103640150" visible="1"></legendlayerfile>
+        </filegroup>
+      </legendlayer>
+    </legendgroup>
+    <legendgroup checked="Qt::Checked" name="Imports CSV web" open="true">
+      <legendlayer checked="Qt::Checked" drawingOrder="-1" name="v_import_web_liste" open="true" showFeatureCount="0">
+        <filegroup hidden="false" open="true">
+          <legendlayerfile isInOverview="0" layerid="v_import_web_liste_75b05297_0e7f_477a_b314_3159132b7de9" visible="1"></legendlayerfile>
+        </filegroup>
+      </legendlayer>
+      <legendlayer checked="Qt::Checked" drawingOrder="-1" name="v_import_web_observations" open="true" showFeatureCount="0">
+        <filegroup hidden="false" open="true">
+          <legendlayerfile isInOverview="0" layerid="v_import_web_observations_148f04d8_1017_49ff_98b9_11ced73f9e95" visible="1"></legendlayerfile>
+        </filegroup>
+      </legendlayer>
+    </legendgroup>
     <legendgroup checked="Qt::Checked" name="Hidden" open="true">
       <legendlayer checked="Qt::Checked" drawingOrder="-1" name="osm-mapnik" open="true" showFeatureCount="0">
         <filegroup hidden="false" open="true">
@@ -174,9 +228,85 @@
         </filegroup>
       </legendlayer>
     </legendgroup>
+    <legendgroup checked="Qt::Checked" name="Context" open="true"></legendgroup>
   </legend>
   <mapViewDocks></mapViewDocks>
   <mapViewDocks3D></mapViewDocks3D>
+  <mapcanvas annotationsVisible="1" name="mAreaCanvas">
+    <units>degrees</units>
+    <extent>
+      <xmin>0</xmin>
+      <ymin>0</ymin>
+      <xmax>0</xmax>
+      <ymax>0</ymax>
+    </extent>
+    <rotation>0</rotation>
+    <destinationsrs>
+      <spatialrefsys>
+        <wkt>GEOGCRS["WGS 84",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",0.0174532925199433]],CS[ellipsoidal,2],AXIS["geodetic latitude (Lat)",north,ORDER[1],ANGLEUNIT["degree",0.0174532925199433]],AXIS["geodetic longitude (Lon)",east,ORDER[2],ANGLEUNIT["degree",0.0174532925199433]],USAGE[SCOPE["unknown"],AREA["World"],BBOX[-90,-180,90,180]],ID["EPSG",4326]]</wkt>
+        <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+        <srsid>3452</srsid>
+        <srid>4326</srid>
+        <authid>EPSG:4326</authid>
+        <description>WGS 84</description>
+        <projectionacronym>longlat</projectionacronym>
+        <ellipsoidacronym>EPSG:7030</ellipsoidacronym>
+        <geographicflag>true</geographicflag>
+      </spatialrefsys>
+    </destinationsrs>
+    <rendermaptile>0</rendermaptile>
+    <expressionContextScope></expressionContextScope>
+  </mapcanvas>
+  <mapcanvas annotationsVisible="1" name="mAreaCanvas">
+    <units>degrees</units>
+    <extent>
+      <xmin>0</xmin>
+      <ymin>0</ymin>
+      <xmax>0</xmax>
+      <ymax>0</ymax>
+    </extent>
+    <rotation>0</rotation>
+    <destinationsrs>
+      <spatialrefsys>
+        <wkt>GEOGCRS["WGS 84",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",0.0174532925199433]],CS[ellipsoidal,2],AXIS["geodetic latitude (Lat)",north,ORDER[1],ANGLEUNIT["degree",0.0174532925199433]],AXIS["geodetic longitude (Lon)",east,ORDER[2],ANGLEUNIT["degree",0.0174532925199433]],USAGE[SCOPE["unknown"],AREA["World"],BBOX[-90,-180,90,180]],ID["EPSG",4326]]</wkt>
+        <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+        <srsid>3452</srsid>
+        <srid>4326</srid>
+        <authid>EPSG:4326</authid>
+        <description>WGS 84</description>
+        <projectionacronym>longlat</projectionacronym>
+        <ellipsoidacronym>EPSG:7030</ellipsoidacronym>
+        <geographicflag>true</geographicflag>
+      </spatialrefsys>
+    </destinationsrs>
+    <rendermaptile>0</rendermaptile>
+    <expressionContextScope></expressionContextScope>
+  </mapcanvas>
+  <mapcanvas annotationsVisible="1" name="mAreaCanvas">
+    <units>degrees</units>
+    <extent>
+      <xmin>0</xmin>
+      <ymin>0</ymin>
+      <xmax>0</xmax>
+      <ymax>0</ymax>
+    </extent>
+    <rotation>0</rotation>
+    <destinationsrs>
+      <spatialrefsys>
+        <wkt>GEOGCRS["WGS 84",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",0.0174532925199433]],CS[ellipsoidal,2],AXIS["geodetic latitude (Lat)",north,ORDER[1],ANGLEUNIT["degree",0.0174532925199433]],AXIS["geodetic longitude (Lon)",east,ORDER[2],ANGLEUNIT["degree",0.0174532925199433]],USAGE[SCOPE["unknown"],AREA["World"],BBOX[-90,-180,90,180]],ID["EPSG",4326]]</wkt>
+        <proj4>+proj=longlat +datum=WGS84 +no_defs</proj4>
+        <srsid>3452</srsid>
+        <srid>4326</srid>
+        <authid>EPSG:4326</authid>
+        <description>WGS 84</description>
+        <projectionacronym>longlat</projectionacronym>
+        <ellipsoidacronym>EPSG:7030</ellipsoidacronym>
+        <geographicflag>true</geographicflag>
+      </spatialrefsys>
+    </destinationsrs>
+    <rendermaptile>0</rendermaptile>
+    <expressionContextScope></expressionContextScope>
+  </mapcanvas>
   <main-annotation-layer autoRefreshEnabled="0" autoRefreshTime="0" refreshOnNotifyEnabled="0" refreshOnNotifyMessage="" type="annotation">
     <id>Annotations_cf82efcf_b838_4526_a6b1_6de1d1dc7398</id>
     <datasource></datasource>
@@ -1170,6 +1300,322 @@ def my_form_open(dialog, layer, feature):
 </previewExpression>
       <mapTip></mapTip>
     </maplayer>
+    <maplayer autoRefreshEnabled="0" autoRefreshTime="0" geometry="No geometry" hasScaleBasedVisibilityFlag="0" maxScale="0" minScale="1e+08" readOnly="0" refreshOnNotifyEnabled="0" refreshOnNotifyMessage="" styleCategories="AllStyleCategories" type="vector" wkbType="NoGeometry">
+      <id>cadre_9622af4e_a9e7_4c32_86ac_da725d0b6f2d</id>
+      <datasource>service='naturaliz_dev' sslmode=disable key='cadre_id' estimatedmetadata=true checkPrimaryKeyUnicity='1' table="occtax"."cadre"</datasource>
+      <keywordList>
+        <value></value>
+      </keywordList>
+      <layername>cadre</layername>
+      <srs>
+        <spatialrefsys>
+          <wkt></wkt>
+          <proj4></proj4>
+          <srsid>0</srsid>
+          <srid>0</srid>
+          <authid></authid>
+          <description></description>
+          <projectionacronym></projectionacronym>
+          <ellipsoidacronym></ellipsoidacronym>
+          <geographicflag>false</geographicflag>
+        </spatialrefsys>
+      </srs>
+      <resourceMetadata>
+        <identifier></identifier>
+        <parentidentifier></parentidentifier>
+        <language></language>
+        <type>dataset</type>
+        <title></title>
+        <abstract>Recense les cadres d'acquisition tels que renseignés dans l'application nationale https://inpn.mnhn.fr/mtd/. Un cadre d'acquisition regroupe de 1 à n jeux de données. On cherchera la cohérence dans le remplissage par rapport à ce qui est renseigné en ligne.</abstract>
+        <contact>
+          <name></name>
+          <organization></organization>
+          <position></position>
+          <voice></voice>
+          <fax></fax>
+          <email></email>
+          <role></role>
+        </contact>
+        <links></links>
+        <fees></fees>
+        <encoding></encoding>
+        <crs>
+          <spatialrefsys>
+            <wkt></wkt>
+            <proj4></proj4>
+            <srsid>0</srsid>
+            <srid>0</srid>
+            <authid></authid>
+            <description></description>
+            <projectionacronym></projectionacronym>
+            <ellipsoidacronym></ellipsoidacronym>
+            <geographicflag>false</geographicflag>
+          </spatialrefsys>
+        </crs>
+        <extent>
+          <spatial crs="" dimensions="2" maxx="0" maxy="0" maxz="0" minx="0" miny="0" minz="0"></spatial>
+          <temporal>
+            <period>
+              <start></start>
+              <end></end>
+            </period>
+          </temporal>
+        </extent>
+      </resourceMetadata>
+      <provider encoding="">postgres</provider>
+      <vectorjoins></vectorjoins>
+      <layerDependencies></layerDependencies>
+      <dataDependencies></dataDependencies>
+      <expressionfields></expressionfields>
+      <map-layer-style-manager current="défaut">
+        <map-layer-style name="défaut"></map-layer-style>
+      </map-layer-style-manager>
+      <auxiliaryLayer></auxiliaryLayer>
+      <flags>
+        <Identifiable>1</Identifiable>
+        <Removable>1</Removable>
+        <Searchable>1</Searchable>
+      </flags>
+      <temporal accumulate="0" durationField="" durationUnit="min" enabled="0" endExpression="" endField="" fixedDuration="0" mode="0" startExpression="" startField="">
+        <fixedRange>
+          <start></start>
+          <end></end>
+        </fixedRange>
+      </temporal>
+      <customproperties>
+        <property key="QFieldSync/action" value="offline"></property>
+        <property key="QFieldSync/cloud_action" value="offline"></property>
+        <property key="QFieldSync/photo_naming" value="{}"></property>
+        <property key="dualview/previewExpressions">
+          <value>COALESCE( "libelle", '&lt;NULL&gt;' )</value>
+          <value>COALESCE( "libelle", '&lt;NULL&gt;' )</value>
+          <value>"description"</value>
+          <value>COALESCE( "libelle", '&lt;NULL&gt;' )</value>
+          <value>COALESCE( "libelle", '&lt;NULL&gt;' )</value>
+        </property>
+        <property key="embeddedWidgets/count" value="0"></property>
+        <property key="variableNames"></property>
+        <property key="variableValues"></property>
+      </customproperties>
+      <geometryOptions geometryPrecision="0" removeDuplicateNodes="0">
+        <activeChecks></activeChecks>
+        <checkConfiguration></checkConfiguration>
+      </geometryOptions>
+      <legend type="default-vector"></legend>
+      <referencedLayers></referencedLayers>
+      <fieldConfiguration>
+        <field configurationFlags="None" name="cadre_id">
+          <editWidget type="TextEdit">
+            <config>
+              <Option type="Map">
+                <Option name="IsMultiline" type="bool" value="false"></Option>
+                <Option name="UseHtml" type="bool" value="false"></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="cadre_uuid">
+          <editWidget type="TextEdit">
+            <config>
+              <Option type="Map">
+                <Option name="IsMultiline" type="bool" value="false"></Option>
+                <Option name="UseHtml" type="bool" value="false"></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="libelle">
+          <editWidget type="TextEdit">
+            <config>
+              <Option type="Map">
+                <Option name="IsMultiline" type="bool" value="false"></Option>
+                <Option name="UseHtml" type="bool" value="false"></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="description">
+          <editWidget type="TextEdit">
+            <config>
+              <Option type="Map">
+                <Option name="IsMultiline" type="bool" value="true"></Option>
+                <Option name="UseHtml" type="bool" value="false"></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="ayants_droit">
+          <editWidget type="TextEdit">
+            <config>
+              <Option type="Map">
+                <Option name="IsMultiline" type="bool" value="true"></Option>
+                <Option name="UseHtml" type="bool" value="false"></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="date_lancement">
+          <editWidget type="DateTime">
+            <config>
+              <Option type="Map">
+                <Option name="allow_null" type="bool" value="true"></Option>
+                <Option name="calendar_popup" type="bool" value="true"></Option>
+                <Option name="display_format" type="QString" value="yyyy-MM-dd"></Option>
+                <Option name="field_format" type="QString" value="yyyy-MM-dd"></Option>
+                <Option name="field_iso_format" type="bool" value="false"></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="date_cloture">
+          <editWidget type="DateTime">
+            <config>
+              <Option type="Map">
+                <Option name="allow_null" type="bool" value="true"></Option>
+                <Option name="calendar_popup" type="bool" value="true"></Option>
+                <Option name="display_format" type="QString" value="yyyy-MM-dd"></Option>
+                <Option name="field_format" type="QString" value="yyyy-MM-dd"></Option>
+                <Option name="field_iso_format" type="bool" value="false"></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="url_fiche">
+          <editWidget type="TextEdit">
+            <config>
+              <Option type="Map">
+                <Option name="IsMultiline" type="bool" value="false"></Option>
+                <Option name="UseHtml" type="bool" value="false"></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
+      </fieldConfiguration>
+      <aliases>
+        <alias field="cadre_id" index="0" name="Id unique"></alias>
+        <alias field="cadre_uuid" index="1" name="UUID INPN"></alias>
+        <alias field="libelle" index="2" name="Libellé"></alias>
+        <alias field="description" index="3" name="Description"></alias>
+        <alias field="ayants_droit" index="4" name="Ayant droits"></alias>
+        <alias field="date_lancement" index="5" name="Date de lancement"></alias>
+        <alias field="date_cloture" index="6" name="Date de clôture"></alias>
+        <alias field="url_fiche" index="7" name="URL de la fiche"></alias>
+      </aliases>
+      <defaults>
+        <default applyOnUpdate="0" expression="" field="cadre_id"></default>
+        <default applyOnUpdate="0" expression="" field="cadre_uuid"></default>
+        <default applyOnUpdate="0" expression="" field="libelle"></default>
+        <default applyOnUpdate="0" expression="" field="description"></default>
+        <default applyOnUpdate="0" expression="" field="ayants_droit"></default>
+        <default applyOnUpdate="0" expression="" field="date_lancement"></default>
+        <default applyOnUpdate="0" expression="" field="date_cloture"></default>
+        <default applyOnUpdate="0" expression="" field="url_fiche"></default>
+      </defaults>
+      <constraints>
+        <constraint constraints="3" exp_strength="0" field="cadre_id" notnull_strength="1" unique_strength="1"></constraint>
+        <constraint constraints="3" exp_strength="0" field="cadre_uuid" notnull_strength="1" unique_strength="1"></constraint>
+        <constraint constraints="1" exp_strength="0" field="libelle" notnull_strength="1" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="description" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="ayants_droit" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="date_lancement" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="date_cloture" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="2" exp_strength="0" field="url_fiche" notnull_strength="0" unique_strength="1"></constraint>
+      </constraints>
+      <constraintExpressions>
+        <constraint desc="" exp="" field="cadre_id"></constraint>
+        <constraint desc="" exp="" field="cadre_uuid"></constraint>
+        <constraint desc="" exp="" field="libelle"></constraint>
+        <constraint desc="" exp="" field="description"></constraint>
+        <constraint desc="" exp="" field="ayants_droit"></constraint>
+        <constraint desc="" exp="" field="date_lancement"></constraint>
+        <constraint desc="" exp="" field="date_cloture"></constraint>
+        <constraint desc="" exp="" field="url_fiche"></constraint>
+      </constraintExpressions>
+      <expressionfields></expressionfields>
+      <attributeactions>
+        <defaultAction key="Canvas" value="{00000000-0000-0000-0000-000000000000}"></defaultAction>
+      </attributeactions>
+      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
+        <columns>
+          <column hidden="0" name="cadre_id" type="field" width="-1"></column>
+          <column hidden="0" name="cadre_uuid" type="field" width="-1"></column>
+          <column hidden="0" name="libelle" type="field" width="-1"></column>
+          <column hidden="0" name="description" type="field" width="-1"></column>
+          <column hidden="1" name="ayants_droit" type="field" width="-1"></column>
+          <column hidden="0" name="date_lancement" type="field" width="-1"></column>
+          <column hidden="0" name="date_cloture" type="field" width="-1"></column>
+          <column hidden="0" name="url_fiche" type="field" width="-1"></column>
+          <column hidden="1" type="actions" width="-1"></column>
+        </columns>
+      </attributetableconfig>
+      <conditionalstyles>
+        <rowstyles></rowstyles>
+        <fieldstyles></fieldstyles>
+      </conditionalstyles>
+      <storedexpressions></storedexpressions>
+      <editform tolerant="1"></editform>
+      <editforminit></editforminit>
+      <editforminitcodesource>0</editforminitcodesource>
+      <editforminitfilepath></editforminitfilepath>
+      <editforminitcode># -*- coding: utf-8 -*-
+"""
+Les formulaires QGIS peuvent avoir une fonction Python qui sera appelée à l'ouverture du formulaire.
+
+Utilisez cette fonction pour ajouter plus de fonctionnalités à vos formulaires.
+
+Entrez le nom de la fonction dans le champ "Fonction d'initialisation Python".
+Voici un exemple à suivre:
+"""
+from qgis.PyQt.QtWidgets import QWidget
+
+def my_form_open(dialog, layer, feature):
+	geom = feature.geometry()
+	control = dialog.findChild(QWidget, "MyLineEdit")
+
+</editforminitcode>
+      <featformsuppress>0</featformsuppress>
+      <editorlayout>tablayout</editorlayout>
+      <attributeEditorForm>
+        <attributeEditorContainer columnCount="1" groupBox="0" name="Cadre" showLabel="1" visibilityExpression="" visibilityExpressionEnabled="0">
+          <attributeEditorContainer columnCount="1" groupBox="1" name="Identifiants" showLabel="1" visibilityExpression="" visibilityExpressionEnabled="0">
+            <attributeEditorField index="0" name="cadre_id" showLabel="1"></attributeEditorField>
+            <attributeEditorField index="1" name="cadre_uuid" showLabel="1"></attributeEditorField>
+            <attributeEditorField index="2" name="libelle" showLabel="1"></attributeEditorField>
+            <attributeEditorField index="3" name="description" showLabel="1"></attributeEditorField>
+          </attributeEditorContainer>
+          <attributeEditorContainer columnCount="1" groupBox="1" name="Informations" showLabel="1" visibilityExpression="" visibilityExpressionEnabled="0">
+            <attributeEditorField index="4" name="ayants_droit" showLabel="1"></attributeEditorField>
+            <attributeEditorField index="5" name="date_lancement" showLabel="1"></attributeEditorField>
+            <attributeEditorField index="6" name="date_cloture" showLabel="1"></attributeEditorField>
+            <attributeEditorField index="7" name="url_fiche" showLabel="1"></attributeEditorField>
+          </attributeEditorContainer>
+        </attributeEditorContainer>
+      </attributeEditorForm>
+      <editable>
+        <field editable="1" name="ayants_droit"></field>
+        <field editable="1" name="cadre_id"></field>
+        <field editable="1" name="cadre_uuid"></field>
+        <field editable="1" name="date_cloture"></field>
+        <field editable="1" name="date_lancement"></field>
+        <field editable="1" name="description"></field>
+        <field editable="1" name="libelle"></field>
+        <field editable="1" name="url_fiche"></field>
+      </editable>
+      <labelOnTop>
+        <field labelOnTop="0" name="ayants_droit"></field>
+        <field labelOnTop="0" name="cadre_id"></field>
+        <field labelOnTop="0" name="cadre_uuid"></field>
+        <field labelOnTop="0" name="date_cloture"></field>
+        <field labelOnTop="0" name="date_lancement"></field>
+        <field labelOnTop="0" name="description"></field>
+        <field labelOnTop="0" name="libelle"></field>
+        <field labelOnTop="0" name="url_fiche"></field>
+      </labelOnTop>
+      <dataDefinedFieldProperties></dataDefinedFieldProperties>
+      <widgets></widgets>
+      <previewExpression>COALESCE( "libelle", '&lt;NULL&gt;' )</previewExpression>
+      <mapTip></mapTip>
+    </maplayer>
     <maplayer autoRefreshEnabled="0" autoRefreshTime="0" geometry="Polygon" hasScaleBasedVisibilityFlag="0" labelsEnabled="1" maxScale="0" minScale="100000000" readOnly="0" refreshOnNotifyEnabled="0" refreshOnNotifyMessage="" simplifyAlgorithm="0" simplifyDrawingHints="1" simplifyDrawingTol="1" simplifyLocal="0" simplifyMaxScale="1" styleCategories="AllStyleCategories" type="vector" wkbType="MultiPolygon">
       <extent>
         <xmin>314671.5</xmin>
@@ -1353,7 +1799,7 @@ def my_form_open(dialog, layer, feature):
               <Option name="drawToAllParts" type="bool" value="false"></Option>
               <Option name="enabled" type="QString" value="0"></Option>
               <Option name="labelAnchorPoint" type="QString" value="point_on_exterior"></Option>
-              <Option name="lineSymbol" type="QString" value="&lt;symbol alpha=&quot;1&quot; clip_to_extent=&quot;1&quot; name=&quot;symbol&quot; force_rhr=&quot;0&quot; type=&quot;line&quot;>&lt;layer enabled=&quot;1&quot; class=&quot;SimpleLine&quot; pass=&quot;0&quot; locked=&quot;0&quot;>&lt;prop v=&quot;0&quot; k=&quot;align_dash_pattern&quot;/>&lt;prop v=&quot;square&quot; k=&quot;capstyle&quot;/>&lt;prop v=&quot;5;2&quot; k=&quot;customdash&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;customdash_map_unit_scale&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;customdash_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;dash_pattern_offset&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;dash_pattern_offset_map_unit_scale&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;dash_pattern_offset_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;draw_inside_polygon&quot;/>&lt;prop v=&quot;bevel&quot; k=&quot;joinstyle&quot;/>&lt;prop v=&quot;60,60,60,255&quot; k=&quot;line_color&quot;/>&lt;prop v=&quot;solid&quot; k=&quot;line_style&quot;/>&lt;prop v=&quot;0.3&quot; k=&quot;line_width&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;line_width_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;offset&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;offset_map_unit_scale&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;offset_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;ring_filter&quot;/>&lt;prop v=&quot;0&quot; k=&quot;tweak_dash_pattern_on_corners&quot;/>&lt;prop v=&quot;0&quot; k=&quot;use_custom_dash&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;width_map_unit_scale&quot;/>&lt;data_defined_properties>&lt;Option type=&quot;Map&quot;>&lt;Option value=&quot;&quot; name=&quot;name&quot; type=&quot;QString&quot;/>&lt;Option name=&quot;properties&quot;/>&lt;Option value=&quot;collection&quot; name=&quot;type&quot; type=&quot;QString&quot;/>&lt;/Option>&lt;/data_defined_properties>&lt;/layer>&lt;/symbol>"></Option>
+              <Option name="lineSymbol" type="QString" value="&lt;symbol type=&quot;line&quot; clip_to_extent=&quot;1&quot; name=&quot;symbol&quot; alpha=&quot;1&quot; force_rhr=&quot;0&quot;>&lt;layer locked=&quot;0&quot; pass=&quot;0&quot; class=&quot;SimpleLine&quot; enabled=&quot;1&quot;>&lt;prop k=&quot;align_dash_pattern&quot; v=&quot;0&quot;/>&lt;prop k=&quot;capstyle&quot; v=&quot;square&quot;/>&lt;prop k=&quot;customdash&quot; v=&quot;5;2&quot;/>&lt;prop k=&quot;customdash_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;customdash_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;dash_pattern_offset&quot; v=&quot;0&quot;/>&lt;prop k=&quot;dash_pattern_offset_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;dash_pattern_offset_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;draw_inside_polygon&quot; v=&quot;0&quot;/>&lt;prop k=&quot;joinstyle&quot; v=&quot;bevel&quot;/>&lt;prop k=&quot;line_color&quot; v=&quot;60,60,60,255&quot;/>&lt;prop k=&quot;line_style&quot; v=&quot;solid&quot;/>&lt;prop k=&quot;line_width&quot; v=&quot;0.3&quot;/>&lt;prop k=&quot;line_width_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;offset&quot; v=&quot;0&quot;/>&lt;prop k=&quot;offset_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;offset_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;ring_filter&quot; v=&quot;0&quot;/>&lt;prop k=&quot;tweak_dash_pattern_on_corners&quot; v=&quot;0&quot;/>&lt;prop k=&quot;use_custom_dash&quot; v=&quot;0&quot;/>&lt;prop k=&quot;width_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;data_defined_properties>&lt;Option type=&quot;Map&quot;>&lt;Option type=&quot;QString&quot; name=&quot;name&quot; value=&quot;&quot;/>&lt;Option name=&quot;properties&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;type&quot; value=&quot;collection&quot;/>&lt;/Option>&lt;/data_defined_properties>&lt;/layer>&lt;/symbol>"></Option>
               <Option name="minLength" type="double" value="0"></Option>
               <Option name="minLengthMapUnitScale" type="QString" value="3x:0,0,0,0,0,0"></Option>
               <Option name="minLengthUnit" type="QString" value="MM"></Option>
@@ -1381,6 +1827,7 @@ def my_form_open(dialog, layer, feature):
       <SingleCategoryDiagramRenderer attributeLegend="1" diagramType="Histogram">
         <DiagramCategory backgroundAlpha="255" backgroundColor="#ffffff" barWidth="5" diagramOrientation="Up" direction="0" enabled="0" height="15" labelPlacementMethod="XHeight" lineSizeScale="3x:0,0,0,0,0,0" lineSizeType="MM" maxScaleDenominator="1e+08" minScaleDenominator="0" minimumSize="0" opacity="1" penAlpha="255" penColor="#000000" penWidth="0" rotationOffset="270" scaleBasedVisibility="0" scaleDependency="Area" showAxis="1" sizeScale="3x:0,0,0,0,0,0" sizeType="MM" spacing="5" spacingUnit="MM" spacingUnitScale="3x:0,0,0,0,0,0" width="15">
           <fontProperties description="Sans Serif,9,-1,5,50,0,0,0,0,0" style=""></fontProperties>
+          <attribute color="#000000" field="" label=""></attribute>
           <axisSymbol>
             <symbol alpha="1" clip_to_extent="1" force_rhr="0" name="" type="line">
               <layer class="SimpleLine" enabled="1" locked="0" pass="0">
@@ -1722,7 +2169,7 @@ def my_form_open(dialog, layer, feature):
               <Option name="drawToAllParts" type="bool" value="false"></Option>
               <Option name="enabled" type="QString" value="0"></Option>
               <Option name="labelAnchorPoint" type="QString" value="point_on_exterior"></Option>
-              <Option name="lineSymbol" type="QString" value="&lt;symbol alpha=&quot;1&quot; clip_to_extent=&quot;1&quot; name=&quot;symbol&quot; force_rhr=&quot;0&quot; type=&quot;line&quot;>&lt;layer enabled=&quot;1&quot; class=&quot;SimpleLine&quot; pass=&quot;0&quot; locked=&quot;0&quot;>&lt;prop v=&quot;0&quot; k=&quot;align_dash_pattern&quot;/>&lt;prop v=&quot;square&quot; k=&quot;capstyle&quot;/>&lt;prop v=&quot;5;2&quot; k=&quot;customdash&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;customdash_map_unit_scale&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;customdash_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;dash_pattern_offset&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;dash_pattern_offset_map_unit_scale&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;dash_pattern_offset_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;draw_inside_polygon&quot;/>&lt;prop v=&quot;bevel&quot; k=&quot;joinstyle&quot;/>&lt;prop v=&quot;60,60,60,255&quot; k=&quot;line_color&quot;/>&lt;prop v=&quot;solid&quot; k=&quot;line_style&quot;/>&lt;prop v=&quot;0.3&quot; k=&quot;line_width&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;line_width_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;offset&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;offset_map_unit_scale&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;offset_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;ring_filter&quot;/>&lt;prop v=&quot;0&quot; k=&quot;tweak_dash_pattern_on_corners&quot;/>&lt;prop v=&quot;0&quot; k=&quot;use_custom_dash&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;width_map_unit_scale&quot;/>&lt;data_defined_properties>&lt;Option type=&quot;Map&quot;>&lt;Option value=&quot;&quot; name=&quot;name&quot; type=&quot;QString&quot;/>&lt;Option name=&quot;properties&quot;/>&lt;Option value=&quot;collection&quot; name=&quot;type&quot; type=&quot;QString&quot;/>&lt;/Option>&lt;/data_defined_properties>&lt;/layer>&lt;/symbol>"></Option>
+              <Option name="lineSymbol" type="QString" value="&lt;symbol type=&quot;line&quot; clip_to_extent=&quot;1&quot; name=&quot;symbol&quot; alpha=&quot;1&quot; force_rhr=&quot;0&quot;>&lt;layer locked=&quot;0&quot; pass=&quot;0&quot; class=&quot;SimpleLine&quot; enabled=&quot;1&quot;>&lt;prop k=&quot;align_dash_pattern&quot; v=&quot;0&quot;/>&lt;prop k=&quot;capstyle&quot; v=&quot;square&quot;/>&lt;prop k=&quot;customdash&quot; v=&quot;5;2&quot;/>&lt;prop k=&quot;customdash_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;customdash_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;dash_pattern_offset&quot; v=&quot;0&quot;/>&lt;prop k=&quot;dash_pattern_offset_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;dash_pattern_offset_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;draw_inside_polygon&quot; v=&quot;0&quot;/>&lt;prop k=&quot;joinstyle&quot; v=&quot;bevel&quot;/>&lt;prop k=&quot;line_color&quot; v=&quot;60,60,60,255&quot;/>&lt;prop k=&quot;line_style&quot; v=&quot;solid&quot;/>&lt;prop k=&quot;line_width&quot; v=&quot;0.3&quot;/>&lt;prop k=&quot;line_width_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;offset&quot; v=&quot;0&quot;/>&lt;prop k=&quot;offset_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;offset_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;ring_filter&quot; v=&quot;0&quot;/>&lt;prop k=&quot;tweak_dash_pattern_on_corners&quot; v=&quot;0&quot;/>&lt;prop k=&quot;use_custom_dash&quot; v=&quot;0&quot;/>&lt;prop k=&quot;width_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;data_defined_properties>&lt;Option type=&quot;Map&quot;>&lt;Option type=&quot;QString&quot; name=&quot;name&quot; value=&quot;&quot;/>&lt;Option name=&quot;properties&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;type&quot; value=&quot;collection&quot;/>&lt;/Option>&lt;/data_defined_properties>&lt;/layer>&lt;/symbol>"></Option>
               <Option name="minLength" type="double" value="0"></Option>
               <Option name="minLengthMapUnitScale" type="QString" value="3x:0,0,0,0,0,0"></Option>
               <Option name="minLengthUnit" type="QString" value="MM"></Option>
@@ -1740,9 +2187,7 @@ def my_form_open(dialog, layer, feature):
         <property key="QFieldSync/action" value="offline"></property>
         <property key="QFieldSync/cloud_action" value="offline"></property>
         <property key="QFieldSync/photo_naming" value="{}"></property>
-        <property key="dualview/previewExpressions">
-          <value>concat(id, ' ', usr_login, ' ', date_demande)</value>
-        </property>
+        <property key="dualview/previewExpressions" value="concat(id, ' ', usr_login, ' ', date_demande)"></property>
         <property key="embeddedWidgets/count" value="0"></property>
         <property key="variableNames"></property>
         <property key="variableValues"></property>
@@ -2978,6 +3423,7 @@ def my_form_open(dialog, layer, feature):
         <property key="QFieldSync/action" value="offline"></property>
         <property key="QFieldSync/cloud_action" value="offline"></property>
         <property key="QFieldSync/photo_naming" value="{}"></property>
+        <property key="dualview/previewExpressions" value="concat(jdd_id, ' ', jdd_code)"></property>
         <property key="embeddedWidgets/count" value="0"></property>
         <property key="variableNames"></property>
         <property key="variableValues"></property>
@@ -3131,13 +3577,13 @@ def my_form_open(dialog, layer, feature):
       <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
         <columns>
           <column hidden="0" name="jdd_id" type="field" width="-1"></column>
-          <column hidden="0" name="jdd_code" type="field" width="-1"></column>
-          <column hidden="0" name="jdd_description" type="field" width="-1"></column>
-          <column hidden="0" name="jdd_metadonnee_dee_id" type="field" width="-1"></column>
+          <column hidden="0" name="jdd_code" type="field" width="178"></column>
+          <column hidden="0" name="jdd_description" type="field" width="233"></column>
+          <column hidden="0" name="jdd_metadonnee_dee_id" type="field" width="275"></column>
           <column hidden="0" name="jdd_cadre" type="field" width="-1"></column>
           <column hidden="1" type="actions" width="-1"></column>
           <column hidden="0" name="ayants_droit" type="field" width="-1"></column>
-          <column hidden="0" name="jdd_libelle" type="field" width="-1"></column>
+          <column hidden="0" name="jdd_libelle" type="field" width="1399"></column>
           <column hidden="0" name="date_minimum_de_diffusion" type="field" width="-1"></column>
           <column hidden="0" name="url_fiche" type="field" width="-1"></column>
         </columns>
@@ -4594,11 +5040,1176 @@ def my_form_open(dialog, layer, feature):
       </pipe>
       <blendMode>0</blendMode>
     </maplayer>
+    <maplayer autoRefreshEnabled="0" autoRefreshTime="0" geometry="Polygon" hasScaleBasedVisibilityFlag="0" labelsEnabled="1" maxScale="0" minScale="100000000" readOnly="0" refreshOnNotifyEnabled="0" refreshOnNotifyMessage="" simplifyAlgorithm="0" simplifyDrawingHints="1" simplifyDrawingTol="1" simplifyLocal="0" simplifyMaxScale="1" styleCategories="AllStyleCategories" type="vector" wkbType="Polygon">
+      <extent>
+        <xmin>315931</xmin>
+        <ymin>7670087.00100094545632601</ymin>
+        <xmax>316001</xmax>
+        <ymax>7670113.99755082558840513</ymax>
+      </extent>
+      <id>v_import_web_liste_75b05297_0e7f_477a_b314_3159132b7de9</id>
+      <datasource>service='naturaliz_dev' sslmode=disable key='id' estimatedmetadata=true srid=2975 type=Polygon checkPrimaryKeyUnicity='0' table="occtax"."v_import_web_liste" (geom)</datasource>
+      <title>Imports à activer</title>
+      <keywordList>
+        <value></value>
+      </keywordList>
+      <layername>v_import_web_liste</layername>
+      <srs>
+        <spatialrefsys>
+          <wkt>PROJCRS["RGR92 / UTM zone 40S",BASEGEOGCRS["RGR92",DATUM["Reseau Geodesique de la Reunion 1992",ELLIPSOID["GRS 1980",6378137,298.257222101,LENGTHUNIT["metre",1]]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",0.0174532925199433]],ID["EPSG",4627]],CONVERSION["UTM zone 40S",METHOD["Transverse Mercator",ID["EPSG",9807]],PARAMETER["Latitude of natural origin",0,ANGLEUNIT["degree",0.0174532925199433],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",57,ANGLEUNIT["degree",0.0174532925199433],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",0.9996,SCALEUNIT["unity",1],ID["EPSG",8805]],PARAMETER["False easting",500000,LENGTHUNIT["metre",1],ID["EPSG",8806]],PARAMETER["False northing",10000000,LENGTHUNIT["metre",1],ID["EPSG",8807]]],CS[Cartesian,2],AXIS["(E)",east,ORDER[1],LENGTHUNIT["metre",1]],AXIS["(N)",north,ORDER[2],LENGTHUNIT["metre",1]],USAGE[SCOPE["unknown"],AREA["Reunion - east of 54ºE"],BBOX[-24.72,54,-18.28,58.24]],ID["EPSG",2975]]</wkt>
+          <proj4>+proj=utm +zone=40 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+          <srsid>942</srsid>
+          <srid>2975</srid>
+          <authid>EPSG:2975</authid>
+          <description>RGR92 / UTM zone 40S</description>
+          <projectionacronym>utm</projectionacronym>
+          <ellipsoidacronym>EPSG:7019</ellipsoidacronym>
+          <geographicflag>false</geographicflag>
+        </spatialrefsys>
+      </srs>
+      <resourceMetadata>
+        <identifier></identifier>
+        <parentidentifier></parentidentifier>
+        <language></language>
+        <type>dataset</type>
+        <title></title>
+        <abstract></abstract>
+        <links></links>
+        <fees></fees>
+        <encoding></encoding>
+        <crs>
+          <spatialrefsys>
+            <wkt>PROJCRS["RGR92 / UTM zone 40S",BASEGEOGCRS["RGR92",DATUM["Reseau Geodesique de la Reunion 1992",ELLIPSOID["GRS 1980",6378137,298.257222101,LENGTHUNIT["metre",1]]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",0.0174532925199433]],ID["EPSG",4627]],CONVERSION["UTM zone 40S",METHOD["Transverse Mercator",ID["EPSG",9807]],PARAMETER["Latitude of natural origin",0,ANGLEUNIT["degree",0.0174532925199433],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",57,ANGLEUNIT["degree",0.0174532925199433],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",0.9996,SCALEUNIT["unity",1],ID["EPSG",8805]],PARAMETER["False easting",500000,LENGTHUNIT["metre",1],ID["EPSG",8806]],PARAMETER["False northing",10000000,LENGTHUNIT["metre",1],ID["EPSG",8807]]],CS[Cartesian,2],AXIS["(E)",east,ORDER[1],LENGTHUNIT["metre",1]],AXIS["(N)",north,ORDER[2],LENGTHUNIT["metre",1]],USAGE[SCOPE["unknown"],AREA["Reunion - east of 54ºE"],BBOX[-24.72,54,-18.28,58.24]],ID["EPSG",2975]]</wkt>
+            <proj4>+proj=utm +zone=40 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+            <srsid>942</srsid>
+            <srid>2975</srid>
+            <authid>EPSG:2975</authid>
+            <description>RGR92 / UTM zone 40S</description>
+            <projectionacronym>utm</projectionacronym>
+            <ellipsoidacronym>EPSG:7019</ellipsoidacronym>
+            <geographicflag>false</geographicflag>
+          </spatialrefsys>
+        </crs>
+        <extent></extent>
+      </resourceMetadata>
+      <provider encoding="">postgres</provider>
+      <vectorjoins></vectorjoins>
+      <layerDependencies></layerDependencies>
+      <dataDependencies></dataDependencies>
+      <expressionfields></expressionfields>
+      <map-layer-style-manager current="défaut">
+        <map-layer-style name="défaut"></map-layer-style>
+      </map-layer-style-manager>
+      <auxiliaryLayer></auxiliaryLayer>
+      <flags>
+        <Identifiable>1</Identifiable>
+        <Removable>1</Removable>
+        <Searchable>1</Searchable>
+      </flags>
+      <temporal accumulate="0" durationField="" durationUnit="min" enabled="0" endExpression="" endField="" fixedDuration="0" mode="0" startExpression="" startField="">
+        <fixedRange>
+          <start></start>
+          <end></end>
+        </fixedRange>
+      </temporal>
+      <renderer-v2 enableorderby="0" forceraster="0" symbollevels="0" type="singleSymbol">
+        <symbols>
+          <symbol alpha="1" clip_to_extent="1" force_rhr="0" name="0" type="fill">
+            <layer class="SimpleFill" enabled="1" locked="0" pass="0">
+              <prop k="border_width_map_unit_scale" v="3x:0,0,0,0,0,0"></prop>
+              <prop k="color" v="53,121,177,255"></prop>
+              <prop k="joinstyle" v="bevel"></prop>
+              <prop k="offset" v="0,0"></prop>
+              <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"></prop>
+              <prop k="offset_unit" v="MM"></prop>
+              <prop k="outline_color" v="53,121,177,255"></prop>
+              <prop k="outline_style" v="solid"></prop>
+              <prop k="outline_width" v="0.96"></prop>
+              <prop k="outline_width_unit" v="MM"></prop>
+              <prop k="style" v="no"></prop>
+              <data_defined_properties>
+                <Option type="Map">
+                  <Option name="name" type="QString" value=""></Option>
+                  <Option name="properties"></Option>
+                  <Option name="type" type="QString" value="collection"></Option>
+                </Option>
+              </data_defined_properties>
+            </layer>
+          </symbol>
+        </symbols>
+        <rotation></rotation>
+        <sizescale></sizescale>
+      </renderer-v2>
+      <labeling type="simple">
+        <settings calloutType="simple">
+          <text-style allowHtml="0" blendMode="0" capitalization="0" fieldName="concat(&#xA;'Import du ',  format_date(&quot;date_import&quot;, &#xA;'dd.MM.yyyy'), ' par ', &quot;login_import&quot;, '&#xA;', &quot;nombre_observations&quot;, ' observations'&#xA;)" fontFamily="Sans Serif" fontItalic="0" fontKerning="1" fontLetterSpacing="0" fontSize="8" fontSizeMapUnitScale="3x:0,0,0,0,0,0" fontSizeUnit="Point" fontStrikeout="0" fontUnderline="0" fontWeight="50" fontWordSpacing="0" isExpression="1" multilineHeight="1" namedStyle="Normal" previewBkgrdColor="255,255,255,255" textColor="0,0,0,255" textOpacity="1" textOrientation="horizontal" useSubstitutions="0">
+            <text-buffer bufferBlendMode="0" bufferColor="255,255,255,255" bufferDraw="1" bufferJoinStyle="128" bufferNoFill="1" bufferOpacity="1" bufferSize="0.8" bufferSizeMapUnitScale="3x:0,0,0,0,0,0" bufferSizeUnits="MM"></text-buffer>
+            <text-mask maskEnabled="0" maskJoinStyle="128" maskOpacity="1" maskSize="1.5" maskSizeMapUnitScale="3x:0,0,0,0,0,0" maskSizeUnits="MM" maskType="0" maskedSymbolLayers=""></text-mask>
+            <background shapeBlendMode="0" shapeBorderColor="128,128,128,255" shapeBorderWidth="0" shapeBorderWidthMapUnitScale="3x:0,0,0,0,0,0" shapeBorderWidthUnit="MM" shapeDraw="0" shapeFillColor="255,255,255,255" shapeJoinStyle="64" shapeOffsetMapUnitScale="3x:0,0,0,0,0,0" shapeOffsetUnit="MM" shapeOffsetX="0" shapeOffsetY="0" shapeOpacity="1" shapeRadiiMapUnitScale="3x:0,0,0,0,0,0" shapeRadiiUnit="MM" shapeRadiiX="0" shapeRadiiY="0" shapeRotation="0" shapeRotationType="0" shapeSVGFile="" shapeSizeMapUnitScale="3x:0,0,0,0,0,0" shapeSizeType="0" shapeSizeUnit="MM" shapeSizeX="0" shapeSizeY="0" shapeType="0">
+              <symbol alpha="0" clip_to_extent="1" force_rhr="0" name="markerSymbol" type="marker">
+                <layer class="SimpleMarker" enabled="1" locked="0" pass="0">
+                  <prop k="angle" v="0"></prop>
+                  <prop k="color" v="229,182,54,255"></prop>
+                  <prop k="horizontal_anchor_point" v="1"></prop>
+                  <prop k="joinstyle" v="bevel"></prop>
+                  <prop k="name" v="circle"></prop>
+                  <prop k="offset" v="0,0"></prop>
+                  <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"></prop>
+                  <prop k="offset_unit" v="MM"></prop>
+                  <prop k="outline_color" v="35,35,35,255"></prop>
+                  <prop k="outline_style" v="solid"></prop>
+                  <prop k="outline_width" v="0"></prop>
+                  <prop k="outline_width_map_unit_scale" v="3x:0,0,0,0,0,0"></prop>
+                  <prop k="outline_width_unit" v="MM"></prop>
+                  <prop k="scale_method" v="diameter"></prop>
+                  <prop k="size" v="2"></prop>
+                  <prop k="size_map_unit_scale" v="3x:0,0,0,0,0,0"></prop>
+                  <prop k="size_unit" v="MM"></prop>
+                  <prop k="vertical_anchor_point" v="1"></prop>
+                  <data_defined_properties>
+                    <Option type="Map">
+                      <Option name="name" type="QString" value=""></Option>
+                      <Option name="properties"></Option>
+                      <Option name="type" type="QString" value="collection"></Option>
+                    </Option>
+                  </data_defined_properties>
+                </layer>
+              </symbol>
+            </background>
+            <shadow shadowBlendMode="6" shadowColor="0,0,0,255" shadowDraw="0" shadowOffsetAngle="135" shadowOffsetDist="1" shadowOffsetGlobal="1" shadowOffsetMapUnitScale="3x:0,0,0,0,0,0" shadowOffsetUnit="MM" shadowOpacity="0.7" shadowRadius="1.5" shadowRadiusAlphaOnly="0" shadowRadiusMapUnitScale="3x:0,0,0,0,0,0" shadowRadiusUnit="MM" shadowScale="100" shadowUnder="0"></shadow>
+            <dd_properties>
+              <Option type="Map">
+                <Option name="name" type="QString" value=""></Option>
+                <Option name="properties"></Option>
+                <Option name="type" type="QString" value="collection"></Option>
+              </Option>
+            </dd_properties>
+            <substitutions></substitutions>
+          </text-style>
+          <text-format addDirectionSymbol="0" autoWrapLength="0" decimals="3" formatNumbers="0" leftDirectionSymbol="&lt;" multilineAlign="3" placeDirectionSymbol="0" plussign="0" reverseDirectionSymbol="0" rightDirectionSymbol=">" useMaxLineLengthForAutoWrap="1" wrapChar=""></text-format>
+          <placement centroidInside="0" centroidWhole="0" dist="0" distMapUnitScale="3x:0,0,0,0,0,0" distUnits="MM" fitInPolygonOnly="0" geometryGenerator="" geometryGeneratorEnabled="0" geometryGeneratorType="PointGeometry" labelOffsetMapUnitScale="3x:0,0,0,0,0,0" layerType="PolygonGeometry" lineAnchorPercent="0.5" lineAnchorType="0" maxCurvedCharAngleIn="25" maxCurvedCharAngleOut="-25" offsetType="0" offsetUnits="MM" overrunDistance="0" overrunDistanceMapUnitScale="3x:0,0,0,0,0,0" overrunDistanceUnit="MM" placement="0" placementFlags="10" polygonPlacementFlags="2" predefinedPositionOrder="TR,TL,BR,BL,R,L,TSR,BSR" preserveRotation="1" priority="5" quadOffset="4" repeatDistance="0" repeatDistanceMapUnitScale="3x:0,0,0,0,0,0" repeatDistanceUnits="MM" rotationAngle="0" xOffset="0" yOffset="0"></placement>
+          <rendering displayAll="0" drawLabels="1" fontLimitPixelSize="0" fontMaxPixelSize="10000" fontMinPixelSize="3" labelPerPart="0" limitNumLabels="0" maxNumLabels="2000" mergeLines="0" minFeatureSize="0" obstacle="1" obstacleFactor="1" obstacleType="1" scaleMax="0" scaleMin="0" scaleVisibility="0" upsidedownLabels="0" zIndex="0"></rendering>
+          <dd_properties>
+            <Option type="Map">
+              <Option name="name" type="QString" value=""></Option>
+              <Option name="properties"></Option>
+              <Option name="type" type="QString" value="collection"></Option>
+            </Option>
+          </dd_properties>
+          <callout type="simple">
+            <Option type="Map">
+              <Option name="anchorPoint" type="QString" value="pole_of_inaccessibility"></Option>
+              <Option name="ddProperties" type="Map">
+                <Option name="name" type="QString" value=""></Option>
+                <Option name="properties"></Option>
+                <Option name="type" type="QString" value="collection"></Option>
+              </Option>
+              <Option name="drawToAllParts" type="bool" value="false"></Option>
+              <Option name="enabled" type="QString" value="0"></Option>
+              <Option name="labelAnchorPoint" type="QString" value="point_on_exterior"></Option>
+              <Option name="lineSymbol" type="QString" value="&lt;symbol type=&quot;line&quot; clip_to_extent=&quot;1&quot; name=&quot;symbol&quot; alpha=&quot;1&quot; force_rhr=&quot;0&quot;>&lt;layer locked=&quot;0&quot; pass=&quot;0&quot; class=&quot;SimpleLine&quot; enabled=&quot;1&quot;>&lt;prop k=&quot;align_dash_pattern&quot; v=&quot;0&quot;/>&lt;prop k=&quot;capstyle&quot; v=&quot;square&quot;/>&lt;prop k=&quot;customdash&quot; v=&quot;5;2&quot;/>&lt;prop k=&quot;customdash_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;customdash_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;dash_pattern_offset&quot; v=&quot;0&quot;/>&lt;prop k=&quot;dash_pattern_offset_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;dash_pattern_offset_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;draw_inside_polygon&quot; v=&quot;0&quot;/>&lt;prop k=&quot;joinstyle&quot; v=&quot;bevel&quot;/>&lt;prop k=&quot;line_color&quot; v=&quot;60,60,60,255&quot;/>&lt;prop k=&quot;line_style&quot; v=&quot;solid&quot;/>&lt;prop k=&quot;line_width&quot; v=&quot;0.3&quot;/>&lt;prop k=&quot;line_width_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;offset&quot; v=&quot;0&quot;/>&lt;prop k=&quot;offset_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;offset_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;ring_filter&quot; v=&quot;0&quot;/>&lt;prop k=&quot;tweak_dash_pattern_on_corners&quot; v=&quot;0&quot;/>&lt;prop k=&quot;use_custom_dash&quot; v=&quot;0&quot;/>&lt;prop k=&quot;width_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;data_defined_properties>&lt;Option type=&quot;Map&quot;>&lt;Option type=&quot;QString&quot; name=&quot;name&quot; value=&quot;&quot;/>&lt;Option name=&quot;properties&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;type&quot; value=&quot;collection&quot;/>&lt;/Option>&lt;/data_defined_properties>&lt;/layer>&lt;/symbol>"></Option>
+              <Option name="minLength" type="double" value="0"></Option>
+              <Option name="minLengthMapUnitScale" type="QString" value="3x:0,0,0,0,0,0"></Option>
+              <Option name="minLengthUnit" type="QString" value="MM"></Option>
+              <Option name="offsetFromAnchor" type="double" value="0"></Option>
+              <Option name="offsetFromAnchorMapUnitScale" type="QString" value="3x:0,0,0,0,0,0"></Option>
+              <Option name="offsetFromAnchorUnit" type="QString" value="MM"></Option>
+              <Option name="offsetFromLabel" type="double" value="0"></Option>
+              <Option name="offsetFromLabelMapUnitScale" type="QString" value="3x:0,0,0,0,0,0"></Option>
+              <Option name="offsetFromLabelUnit" type="QString" value="MM"></Option>
+            </Option>
+          </callout>
+        </settings>
+      </labeling>
+      <customproperties>
+        <property key="QFieldSync/action" value="offline"></property>
+        <property key="QFieldSync/cloud_action" value="offline"></property>
+        <property key="QFieldSync/photo_naming" value="{}"></property>
+        <property key="dualview/previewExpressions">
+          <value>"nombre_observations"</value>
+        </property>
+        <property key="embeddedWidgets/count" value="0"></property>
+        <property key="variableNames"></property>
+        <property key="variableValues"></property>
+      </customproperties>
+      <blendMode>0</blendMode>
+      <featureBlendMode>0</featureBlendMode>
+      <layerOpacity>1</layerOpacity>
+      <SingleCategoryDiagramRenderer attributeLegend="1" diagramType="Histogram">
+        <DiagramCategory backgroundAlpha="255" backgroundColor="#ffffff" barWidth="5" diagramOrientation="Up" direction="0" enabled="0" height="15" labelPlacementMethod="XHeight" lineSizeScale="3x:0,0,0,0,0,0" lineSizeType="MM" maxScaleDenominator="1e+08" minScaleDenominator="0" minimumSize="0" opacity="1" penAlpha="255" penColor="#000000" penWidth="0" rotationOffset="270" scaleBasedVisibility="0" scaleDependency="Area" showAxis="1" sizeScale="3x:0,0,0,0,0,0" sizeType="MM" spacing="5" spacingUnit="MM" spacingUnitScale="3x:0,0,0,0,0,0" width="15">
+          <fontProperties description="Sans Serif,9,-1,5,50,0,0,0,0,0" style=""></fontProperties>
+          <attribute color="#000000" field="" label=""></attribute>
+          <axisSymbol>
+            <symbol alpha="1" clip_to_extent="1" force_rhr="0" name="" type="line">
+              <layer class="SimpleLine" enabled="1" locked="0" pass="0">
+                <prop k="align_dash_pattern" v="0"></prop>
+                <prop k="capstyle" v="square"></prop>
+                <prop k="customdash" v="5;2"></prop>
+                <prop k="customdash_map_unit_scale" v="3x:0,0,0,0,0,0"></prop>
+                <prop k="customdash_unit" v="MM"></prop>
+                <prop k="dash_pattern_offset" v="0"></prop>
+                <prop k="dash_pattern_offset_map_unit_scale" v="3x:0,0,0,0,0,0"></prop>
+                <prop k="dash_pattern_offset_unit" v="MM"></prop>
+                <prop k="draw_inside_polygon" v="0"></prop>
+                <prop k="joinstyle" v="bevel"></prop>
+                <prop k="line_color" v="35,35,35,255"></prop>
+                <prop k="line_style" v="solid"></prop>
+                <prop k="line_width" v="0.26"></prop>
+                <prop k="line_width_unit" v="MM"></prop>
+                <prop k="offset" v="0"></prop>
+                <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"></prop>
+                <prop k="offset_unit" v="MM"></prop>
+                <prop k="ring_filter" v="0"></prop>
+                <prop k="tweak_dash_pattern_on_corners" v="0"></prop>
+                <prop k="use_custom_dash" v="0"></prop>
+                <prop k="width_map_unit_scale" v="3x:0,0,0,0,0,0"></prop>
+                <data_defined_properties>
+                  <Option type="Map">
+                    <Option name="name" type="QString" value=""></Option>
+                    <Option name="properties"></Option>
+                    <Option name="type" type="QString" value="collection"></Option>
+                  </Option>
+                </data_defined_properties>
+              </layer>
+            </symbol>
+          </axisSymbol>
+        </DiagramCategory>
+      </SingleCategoryDiagramRenderer>
+      <DiagramLayerSettings dist="0" linePlacementFlags="18" obstacle="0" placement="1" priority="0" showAll="1" zIndex="0">
+        <properties>
+          <Option type="Map">
+            <Option name="name" type="QString" value=""></Option>
+            <Option name="properties"></Option>
+            <Option name="type" type="QString" value="collection"></Option>
+          </Option>
+        </properties>
+      </DiagramLayerSettings>
+      <geometryOptions geometryPrecision="0" removeDuplicateNodes="0">
+        <activeChecks></activeChecks>
+        <checkConfiguration type="Map">
+          <Option name="QgsGeometryGapCheck" type="Map">
+            <Option name="allowedGapsBuffer" type="double" value="0"></Option>
+            <Option name="allowedGapsEnabled" type="bool" value="false"></Option>
+            <Option name="allowedGapsLayer" type="QString" value=""></Option>
+          </Option>
+        </checkConfiguration>
+      </geometryOptions>
+      <legend type="default-vector"></legend>
+      <referencedLayers></referencedLayers>
+      <fieldConfiguration>
+        <field configurationFlags="None" name="id">
+          <editWidget type="Range">
+            <config>
+              <Option type="Map">
+                <Option name="AllowNull" type="bool" value="true"></Option>
+                <Option name="Max" type="int" value="2147483647"></Option>
+                <Option name="Min" type="int" value="-2147483648"></Option>
+                <Option name="Precision" type="int" value="0"></Option>
+                <Option name="Step" type="int" value="1"></Option>
+                <Option name="Style" type="QString" value="SpinBox"></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="date_import">
+          <editWidget type="DateTime">
+            <config>
+              <Option type="Map">
+                <Option name="allow_null" type="bool" value="true"></Option>
+                <Option name="calendar_popup" type="bool" value="true"></Option>
+                <Option name="display_format" type="QString" value="yyyy-MM-dd HH:mm:ss"></Option>
+                <Option name="field_format" type="QString" value="yyyy-MM-dd HH:mm:ss"></Option>
+                <Option name="field_iso_format" type="bool" value="false"></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="jdd">
+          <editWidget type="ValueRelation">
+            <config>
+              <Option type="Map">
+                <Option name="AllowMulti" type="bool" value="false"></Option>
+                <Option name="AllowNull" type="bool" value="false"></Option>
+                <Option name="Description" type="QString" value="&quot;jdd_description&quot;"></Option>
+                <Option name="FilterExpression" type="QString" value=""></Option>
+                <Option name="Key" type="QString" value="jdd_metadonnee_dee_id"></Option>
+                <Option name="Layer" type="QString" value="jdd20190416103640150"></Option>
+                <Option name="LayerName" type="QString" value="jdd"></Option>
+                <Option name="LayerProviderName" type="QString" value="postgres"></Option>
+                <Option name="LayerSource" type="QString" value="service='naturaliz_dev' sslmode=disable key='jdd_id' checkPrimaryKeyUnicity='1' table=&quot;occtax&quot;.&quot;jdd&quot;"></Option>
+                <Option name="NofColumns" type="int" value="1"></Option>
+                <Option name="OrderByValue" type="bool" value="true"></Option>
+                <Option name="UseCompleter" type="bool" value="false"></Option>
+                <Option name="Value" type="QString" value="jdd_libelle"></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="nombre_observations">
+          <editWidget type="TextEdit">
+            <config>
+              <Option type="Map">
+                <Option name="IsMultiline" type="bool" value="false"></Option>
+                <Option name="UseHtml" type="bool" value="false"></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="code_import">
+          <editWidget type="TextEdit">
+            <config>
+              <Option type="Map">
+                <Option name="IsMultiline" type="bool" value="false"></Option>
+                <Option name="UseHtml" type="bool" value="false"></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="login_import">
+          <editWidget type="TextEdit">
+            <config>
+              <Option type="Map">
+                <Option name="IsMultiline" type="bool" value="false"></Option>
+                <Option name="UseHtml" type="bool" value="false"></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
+      </fieldConfiguration>
+      <aliases>
+        <alias field="id" index="0" name="Identifiant"></alias>
+        <alias field="date_import" index="1" name="Date de l'import"></alias>
+        <alias field="jdd" index="2" name="Identifiant du JDD"></alias>
+        <alias field="nombre_observations" index="3" name="Nombre d'osbervations"></alias>
+        <alias field="code_import" index="4" name="Table temporaire de stockage"></alias>
+        <alias field="login_import" index="5" name="Importateur (login)"></alias>
+      </aliases>
+      <defaults>
+        <default applyOnUpdate="0" expression="" field="id"></default>
+        <default applyOnUpdate="0" expression="" field="date_import"></default>
+        <default applyOnUpdate="0" expression="" field="jdd"></default>
+        <default applyOnUpdate="0" expression="" field="nombre_observations"></default>
+        <default applyOnUpdate="0" expression="" field="code_import"></default>
+        <default applyOnUpdate="0" expression="" field="login_import"></default>
+      </defaults>
+      <constraints>
+        <constraint constraints="3" exp_strength="0" field="id" notnull_strength="1" unique_strength="1"></constraint>
+        <constraint constraints="3" exp_strength="0" field="date_import" notnull_strength="1" unique_strength="1"></constraint>
+        <constraint constraints="0" exp_strength="0" field="jdd" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="nombre_observations" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="code_import" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="login_import" notnull_strength="0" unique_strength="0"></constraint>
+      </constraints>
+      <constraintExpressions>
+        <constraint desc="" exp="" field="id"></constraint>
+        <constraint desc="" exp="" field="date_import"></constraint>
+        <constraint desc="" exp="" field="jdd"></constraint>
+        <constraint desc="" exp="" field="nombre_observations"></constraint>
+        <constraint desc="" exp="" field="code_import"></constraint>
+        <constraint desc="" exp="" field="login_import"></constraint>
+      </constraintExpressions>
+      <expressionfields></expressionfields>
+      <attributeactions>
+        <defaultAction key="Canvas" value="{00000000-0000-0000-0000-000000000000}"></defaultAction>
+      </attributeactions>
+      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
+        <columns>
+          <column hidden="0" name="id" type="field" width="100"></column>
+          <column hidden="0" name="date_import" type="field" width="136"></column>
+          <column hidden="0" name="jdd" type="field" width="334"></column>
+          <column hidden="0" name="nombre_observations" type="field" width="175"></column>
+          <column hidden="0" name="code_import" type="field" width="174"></column>
+          <column hidden="0" name="login_import" type="field" width="-1"></column>
+          <column hidden="1" type="actions" width="-1"></column>
+        </columns>
+      </attributetableconfig>
+      <conditionalstyles>
+        <rowstyles></rowstyles>
+        <fieldstyles></fieldstyles>
+      </conditionalstyles>
+      <storedexpressions></storedexpressions>
+      <editform tolerant="1"></editform>
+      <editforminit></editforminit>
+      <editforminitcodesource>0</editforminitcodesource>
+      <editforminitfilepath></editforminitfilepath>
+      <editforminitcode># -*- coding: utf-8 -*-
+"""
+Les formulaires QGIS peuvent avoir une fonction Python qui sera appelée à l'ouverture du formulaire.
+
+Utilisez cette fonction pour ajouter plus de fonctionnalités à vos formulaires.
+
+Entrez le nom de la fonction dans le champ "Fonction d'initialisation Python".
+Voici un exemple à suivre:
+"""
+from qgis.PyQt.QtWidgets import QWidget
+
+def my_form_open(dialog, layer, feature):
+	geom = feature.geometry()
+	control = dialog.findChild(QWidget, "MyLineEdit")
+
+</editforminitcode>
+      <featformsuppress>0</featformsuppress>
+      <editorlayout>generatedlayout</editorlayout>
+      <editable>
+        <field editable="1" name="code_import"></field>
+        <field editable="1" name="date_import"></field>
+        <field editable="1" name="id"></field>
+        <field editable="1" name="jdd"></field>
+        <field editable="1" name="login_import"></field>
+        <field editable="1" name="nombre_observations"></field>
+      </editable>
+      <labelOnTop>
+        <field labelOnTop="0" name="code_import"></field>
+        <field labelOnTop="0" name="date_import"></field>
+        <field labelOnTop="0" name="id"></field>
+        <field labelOnTop="0" name="jdd"></field>
+        <field labelOnTop="0" name="login_import"></field>
+        <field labelOnTop="0" name="nombre_observations"></field>
+      </labelOnTop>
+      <dataDefinedFieldProperties></dataDefinedFieldProperties>
+      <widgets></widgets>
+      <previewExpression>"nombre_observations"</previewExpression>
+      <mapTip>concat(
+'Import du ',  format_date("date_import", 
+'dd.MM.yyyy'), ' par ', "login_import", '
+', "nombre_observations", ' observations'
+)</mapTip>
+    </maplayer>
+    <maplayer autoRefreshEnabled="0" autoRefreshTime="0" geometry="Point" hasScaleBasedVisibilityFlag="0" labelsEnabled="0" maxScale="0" minScale="100000000" readOnly="0" refreshOnNotifyEnabled="0" refreshOnNotifyMessage="" simplifyAlgorithm="0" simplifyDrawingHints="0" simplifyDrawingTol="1" simplifyLocal="0" simplifyMaxScale="1" styleCategories="AllStyleCategories" type="vector" wkbType="Point">
+      <extent>
+        <xmin>315932</xmin>
+        <ymin>7670088</ymin>
+        <xmax>316000</xmax>
+        <ymax>7670113</ymax>
+      </extent>
+      <id>v_import_web_observations_148f04d8_1017_49ff_98b9_11ced73f9e95</id>
+      <datasource>service='naturaliz_dev' sslmode=disable key='cle_obs' estimatedmetadata=true type=Point checkPrimaryKeyUnicity='1' table="occtax"."v_import_web_observations" (geom)</datasource>
+      <title>Observation importées à activer</title>
+      <keywordList>
+        <value></value>
+      </keywordList>
+      <layername>v_import_web_observations</layername>
+      <srs>
+        <spatialrefsys>
+          <wkt>PROJCRS["RGR92 / UTM zone 40S",BASEGEOGCRS["RGR92",DATUM["Reseau Geodesique de la Reunion 1992",ELLIPSOID["GRS 1980",6378137,298.257222101,LENGTHUNIT["metre",1]]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",0.0174532925199433]],ID["EPSG",4627]],CONVERSION["UTM zone 40S",METHOD["Transverse Mercator",ID["EPSG",9807]],PARAMETER["Latitude of natural origin",0,ANGLEUNIT["degree",0.0174532925199433],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",57,ANGLEUNIT["degree",0.0174532925199433],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",0.9996,SCALEUNIT["unity",1],ID["EPSG",8805]],PARAMETER["False easting",500000,LENGTHUNIT["metre",1],ID["EPSG",8806]],PARAMETER["False northing",10000000,LENGTHUNIT["metre",1],ID["EPSG",8807]]],CS[Cartesian,2],AXIS["(E)",east,ORDER[1],LENGTHUNIT["metre",1]],AXIS["(N)",north,ORDER[2],LENGTHUNIT["metre",1]],USAGE[SCOPE["unknown"],AREA["Reunion - east of 54ºE"],BBOX[-24.72,54,-18.28,58.24]],ID["EPSG",2975]]</wkt>
+          <proj4>+proj=utm +zone=40 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+          <srsid>942</srsid>
+          <srid>2975</srid>
+          <authid>EPSG:2975</authid>
+          <description>RGR92 / UTM zone 40S</description>
+          <projectionacronym>utm</projectionacronym>
+          <ellipsoidacronym>EPSG:7019</ellipsoidacronym>
+          <geographicflag>false</geographicflag>
+        </spatialrefsys>
+      </srs>
+      <resourceMetadata>
+        <identifier></identifier>
+        <parentidentifier></parentidentifier>
+        <language></language>
+        <type>dataset</type>
+        <title></title>
+        <abstract>Vue utile pour lister les observations importées par les utilisateurs depuis l'interface Web, à partir de fichier CSV. Seuls les centroides des géométries sont affichés.</abstract>
+        <contact>
+          <name></name>
+          <organization></organization>
+          <position></position>
+          <voice></voice>
+          <fax></fax>
+          <email></email>
+          <role></role>
+        </contact>
+        <links></links>
+        <fees></fees>
+        <encoding></encoding>
+        <crs>
+          <spatialrefsys>
+            <wkt>PROJCRS["RGR92 / UTM zone 40S",BASEGEOGCRS["RGR92",DATUM["Reseau Geodesique de la Reunion 1992",ELLIPSOID["GRS 1980",6378137,298.257222101,LENGTHUNIT["metre",1]]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",0.0174532925199433]],ID["EPSG",4627]],CONVERSION["UTM zone 40S",METHOD["Transverse Mercator",ID["EPSG",9807]],PARAMETER["Latitude of natural origin",0,ANGLEUNIT["degree",0.0174532925199433],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",57,ANGLEUNIT["degree",0.0174532925199433],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",0.9996,SCALEUNIT["unity",1],ID["EPSG",8805]],PARAMETER["False easting",500000,LENGTHUNIT["metre",1],ID["EPSG",8806]],PARAMETER["False northing",10000000,LENGTHUNIT["metre",1],ID["EPSG",8807]]],CS[Cartesian,2],AXIS["(E)",east,ORDER[1],LENGTHUNIT["metre",1]],AXIS["(N)",north,ORDER[2],LENGTHUNIT["metre",1]],USAGE[SCOPE["unknown"],AREA["Reunion - east of 54ºE"],BBOX[-24.72,54,-18.28,58.24]],ID["EPSG",2975]]</wkt>
+            <proj4>+proj=utm +zone=40 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs</proj4>
+            <srsid>942</srsid>
+            <srid>2975</srid>
+            <authid>EPSG:2975</authid>
+            <description>RGR92 / UTM zone 40S</description>
+            <projectionacronym>utm</projectionacronym>
+            <ellipsoidacronym>EPSG:7019</ellipsoidacronym>
+            <geographicflag>false</geographicflag>
+          </spatialrefsys>
+        </crs>
+        <extent>
+          <spatial crs="EPSG:2975" dimensions="2" maxx="0" maxy="0" maxz="0" minx="0" miny="0" minz="0"></spatial>
+          <temporal>
+            <period>
+              <start></start>
+              <end></end>
+            </period>
+          </temporal>
+        </extent>
+      </resourceMetadata>
+      <provider encoding="">postgres</provider>
+      <vectorjoins></vectorjoins>
+      <layerDependencies></layerDependencies>
+      <dataDependencies></dataDependencies>
+      <expressionfields></expressionfields>
+      <map-layer-style-manager current="défaut">
+        <map-layer-style name="défaut"></map-layer-style>
+      </map-layer-style-manager>
+      <auxiliaryLayer></auxiliaryLayer>
+      <flags>
+        <Identifiable>1</Identifiable>
+        <Removable>1</Removable>
+        <Searchable>1</Searchable>
+      </flags>
+      <temporal accumulate="0" durationField="" durationUnit="min" enabled="0" endExpression="" endField="" fixedDuration="0" mode="0" startExpression="" startField="">
+        <fixedRange>
+          <start></start>
+          <end></end>
+        </fixedRange>
+      </temporal>
+      <renderer-v2 enableorderby="0" forceraster="0" symbollevels="0" type="singleSymbol">
+        <symbols>
+          <symbol alpha="1" clip_to_extent="1" force_rhr="0" name="0" type="marker">
+            <layer class="SimpleMarker" enabled="1" locked="0" pass="1">
+              <prop k="angle" v="0"></prop>
+              <prop k="color" v="81,157,255,255"></prop>
+              <prop k="horizontal_anchor_point" v="1"></prop>
+              <prop k="joinstyle" v="bevel"></prop>
+              <prop k="name" v="circle"></prop>
+              <prop k="offset" v="0,0"></prop>
+              <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"></prop>
+              <prop k="offset_unit" v="MM"></prop>
+              <prop k="outline_color" v="255,255,255,255"></prop>
+              <prop k="outline_style" v="solid"></prop>
+              <prop k="outline_width" v="0.4"></prop>
+              <prop k="outline_width_map_unit_scale" v="3x:0,0,0,0,0,0"></prop>
+              <prop k="outline_width_unit" v="MM"></prop>
+              <prop k="scale_method" v="diameter"></prop>
+              <prop k="size" v="2.8"></prop>
+              <prop k="size_map_unit_scale" v="3x:0,0,0,0,0,0"></prop>
+              <prop k="size_unit" v="MM"></prop>
+              <prop k="vertical_anchor_point" v="1"></prop>
+              <data_defined_properties>
+                <Option type="Map">
+                  <Option name="name" type="QString" value=""></Option>
+                  <Option name="properties"></Option>
+                  <Option name="type" type="QString" value="collection"></Option>
+                </Option>
+              </data_defined_properties>
+            </layer>
+          </symbol>
+        </symbols>
+        <rotation></rotation>
+        <sizescale></sizescale>
+      </renderer-v2>
+      <customproperties>
+        <property key="QFieldSync/action" value="offline"></property>
+        <property key="QFieldSync/cloud_action" value="offline"></property>
+        <property key="QFieldSync/photo_naming" value="{}"></property>
+        <property key="dualview/previewExpressions">
+          <value>"cd_nom"</value>
+        </property>
+        <property key="embeddedWidgets/count" value="0"></property>
+        <property key="variableNames"></property>
+        <property key="variableValues"></property>
+      </customproperties>
+      <blendMode>0</blendMode>
+      <featureBlendMode>0</featureBlendMode>
+      <layerOpacity>1</layerOpacity>
+      <SingleCategoryDiagramRenderer attributeLegend="1" diagramType="Histogram">
+        <DiagramCategory backgroundAlpha="255" backgroundColor="#ffffff" barWidth="5" diagramOrientation="Up" direction="0" enabled="0" height="15" labelPlacementMethod="XHeight" lineSizeScale="3x:0,0,0,0,0,0" lineSizeType="MM" maxScaleDenominator="1e+08" minScaleDenominator="0" minimumSize="0" opacity="1" penAlpha="255" penColor="#000000" penWidth="0" rotationOffset="270" scaleBasedVisibility="0" scaleDependency="Area" showAxis="1" sizeScale="3x:0,0,0,0,0,0" sizeType="MM" spacing="5" spacingUnit="MM" spacingUnitScale="3x:0,0,0,0,0,0" width="15">
+          <fontProperties description="Sans Serif,9,-1,5,50,0,0,0,0,0" style=""></fontProperties>
+          <attribute color="#000000" field="" label=""></attribute>
+          <axisSymbol>
+            <symbol alpha="1" clip_to_extent="1" force_rhr="0" name="" type="line">
+              <layer class="SimpleLine" enabled="1" locked="0" pass="0">
+                <prop k="align_dash_pattern" v="0"></prop>
+                <prop k="capstyle" v="square"></prop>
+                <prop k="customdash" v="5;2"></prop>
+                <prop k="customdash_map_unit_scale" v="3x:0,0,0,0,0,0"></prop>
+                <prop k="customdash_unit" v="MM"></prop>
+                <prop k="dash_pattern_offset" v="0"></prop>
+                <prop k="dash_pattern_offset_map_unit_scale" v="3x:0,0,0,0,0,0"></prop>
+                <prop k="dash_pattern_offset_unit" v="MM"></prop>
+                <prop k="draw_inside_polygon" v="0"></prop>
+                <prop k="joinstyle" v="bevel"></prop>
+                <prop k="line_color" v="35,35,35,255"></prop>
+                <prop k="line_style" v="solid"></prop>
+                <prop k="line_width" v="0.26"></prop>
+                <prop k="line_width_unit" v="MM"></prop>
+                <prop k="offset" v="0"></prop>
+                <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"></prop>
+                <prop k="offset_unit" v="MM"></prop>
+                <prop k="ring_filter" v="0"></prop>
+                <prop k="tweak_dash_pattern_on_corners" v="0"></prop>
+                <prop k="use_custom_dash" v="0"></prop>
+                <prop k="width_map_unit_scale" v="3x:0,0,0,0,0,0"></prop>
+                <data_defined_properties>
+                  <Option type="Map">
+                    <Option name="name" type="QString" value=""></Option>
+                    <Option name="properties"></Option>
+                    <Option name="type" type="QString" value="collection"></Option>
+                  </Option>
+                </data_defined_properties>
+              </layer>
+            </symbol>
+          </axisSymbol>
+        </DiagramCategory>
+      </SingleCategoryDiagramRenderer>
+      <DiagramLayerSettings dist="0" linePlacementFlags="18" obstacle="0" placement="0" priority="0" showAll="1" zIndex="0">
+        <properties>
+          <Option type="Map">
+            <Option name="name" type="QString" value=""></Option>
+            <Option name="properties"></Option>
+            <Option name="type" type="QString" value="collection"></Option>
+          </Option>
+        </properties>
+      </DiagramLayerSettings>
+      <geometryOptions geometryPrecision="0" removeDuplicateNodes="0">
+        <activeChecks></activeChecks>
+        <checkConfiguration></checkConfiguration>
+      </geometryOptions>
+      <legend type="default-vector"></legend>
+      <referencedLayers>
+        <relation dataSource="service='naturaliz_dev' sslmode=disable key='id' estimatedmetadata=true srid=2975 type=Polygon checkPrimaryKeyUnicity='0' table=&quot;occtax&quot;.&quot;v_import_web_liste&quot; (geom)" id="v_import_w_jdd_metadonnee_dee_id_v_import_w_jdd" layerId="v_import_web_liste_75b05297_0e7f_477a_b314_3159132b7de9" layerName="v_import_web_liste" name="Observations importées par JDD" providerKey="postgres" referencedLayer="v_import_web_liste_75b05297_0e7f_477a_b314_3159132b7de9" referencingLayer="v_import_web_observations_148f04d8_1017_49ff_98b9_11ced73f9e95" strength="Association">
+          <fieldRef referencedField="jdd" referencingField="jdd_metadonnee_dee_id"></fieldRef>
+        </relation>
+      </referencedLayers>
+      <fieldConfiguration>
+        <field configurationFlags="None" name="cle_obs">
+          <editWidget type="TextEdit">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="identifiant_origine">
+          <editWidget type="TextEdit">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="identifiant_permanent">
+          <editWidget type="TextEdit">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="cd_nom">
+          <editWidget type="TextEdit">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="nom_cite">
+          <editWidget type="TextEdit">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="cd_ref">
+          <editWidget type="TextEdit">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="denombrement_min">
+          <editWidget type="Range">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="denombrement_max">
+          <editWidget type="Range">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="objet_denombrement">
+          <editWidget type="TextEdit">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="type_denombrement">
+          <editWidget type="TextEdit">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="commentaire">
+          <editWidget type="TextEdit">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="date_debut">
+          <editWidget type="DateTime">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="date_fin">
+          <editWidget type="DateTime">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="heure_debut">
+          <editWidget type="TextEdit">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="heure_fin">
+          <editWidget type="TextEdit">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="date_determination">
+          <editWidget type="DateTime">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="dee_floutage">
+          <editWidget type="TextEdit">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="diffusion_niveau_precision">
+          <editWidget type="TextEdit">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="ds_publique">
+          <editWidget type="TextEdit">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="jdd_metadonnee_dee_id">
+          <editWidget type="TextEdit">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="statut_source">
+          <editWidget type="TextEdit">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="reference_biblio">
+          <editWidget type="TextEdit">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="sensible">
+          <editWidget type="TextEdit">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="sensi_date_attribution">
+          <editWidget type="DateTime">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="sensi_niveau">
+          <editWidget type="TextEdit">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="sensi_referentiel">
+          <editWidget type="TextEdit">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="sensi_version_referentiel">
+          <editWidget type="TextEdit">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="validite_niveau">
+          <editWidget type="TextEdit">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="validite_date_validation">
+          <editWidget type="DateTime">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="precision_geometrie">
+          <editWidget type="Range">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="nature_objet_geo">
+          <editWidget type="TextEdit">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="date_import">
+          <editWidget type="DateTime">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="code_import">
+          <editWidget type="TextEdit">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="login_import">
+          <editWidget type="TextEdit">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+      </fieldConfiguration>
+      <aliases>
+        <alias field="cle_obs" index="0" name=""></alias>
+        <alias field="identifiant_origine" index="1" name=""></alias>
+        <alias field="identifiant_permanent" index="2" name=""></alias>
+        <alias field="cd_nom" index="3" name=""></alias>
+        <alias field="nom_cite" index="4" name=""></alias>
+        <alias field="cd_ref" index="5" name=""></alias>
+        <alias field="denombrement_min" index="6" name=""></alias>
+        <alias field="denombrement_max" index="7" name=""></alias>
+        <alias field="objet_denombrement" index="8" name=""></alias>
+        <alias field="type_denombrement" index="9" name=""></alias>
+        <alias field="commentaire" index="10" name=""></alias>
+        <alias field="date_debut" index="11" name=""></alias>
+        <alias field="date_fin" index="12" name=""></alias>
+        <alias field="heure_debut" index="13" name=""></alias>
+        <alias field="heure_fin" index="14" name=""></alias>
+        <alias field="date_determination" index="15" name=""></alias>
+        <alias field="dee_floutage" index="16" name=""></alias>
+        <alias field="diffusion_niveau_precision" index="17" name=""></alias>
+        <alias field="ds_publique" index="18" name=""></alias>
+        <alias field="jdd_metadonnee_dee_id" index="19" name=""></alias>
+        <alias field="statut_source" index="20" name=""></alias>
+        <alias field="reference_biblio" index="21" name=""></alias>
+        <alias field="sensible" index="22" name=""></alias>
+        <alias field="sensi_date_attribution" index="23" name=""></alias>
+        <alias field="sensi_niveau" index="24" name=""></alias>
+        <alias field="sensi_referentiel" index="25" name=""></alias>
+        <alias field="sensi_version_referentiel" index="26" name=""></alias>
+        <alias field="validite_niveau" index="27" name=""></alias>
+        <alias field="validite_date_validation" index="28" name=""></alias>
+        <alias field="precision_geometrie" index="29" name=""></alias>
+        <alias field="nature_objet_geo" index="30" name=""></alias>
+        <alias field="date_import" index="31" name=""></alias>
+        <alias field="code_import" index="32" name=""></alias>
+        <alias field="login_import" index="33" name=""></alias>
+      </aliases>
+      <defaults>
+        <default applyOnUpdate="0" expression="" field="cle_obs"></default>
+        <default applyOnUpdate="0" expression="" field="identifiant_origine"></default>
+        <default applyOnUpdate="0" expression="" field="identifiant_permanent"></default>
+        <default applyOnUpdate="0" expression="" field="cd_nom"></default>
+        <default applyOnUpdate="0" expression="" field="nom_cite"></default>
+        <default applyOnUpdate="0" expression="" field="cd_ref"></default>
+        <default applyOnUpdate="0" expression="" field="denombrement_min"></default>
+        <default applyOnUpdate="0" expression="" field="denombrement_max"></default>
+        <default applyOnUpdate="0" expression="" field="objet_denombrement"></default>
+        <default applyOnUpdate="0" expression="" field="type_denombrement"></default>
+        <default applyOnUpdate="0" expression="" field="commentaire"></default>
+        <default applyOnUpdate="0" expression="" field="date_debut"></default>
+        <default applyOnUpdate="0" expression="" field="date_fin"></default>
+        <default applyOnUpdate="0" expression="" field="heure_debut"></default>
+        <default applyOnUpdate="0" expression="" field="heure_fin"></default>
+        <default applyOnUpdate="0" expression="" field="date_determination"></default>
+        <default applyOnUpdate="0" expression="" field="dee_floutage"></default>
+        <default applyOnUpdate="0" expression="" field="diffusion_niveau_precision"></default>
+        <default applyOnUpdate="0" expression="" field="ds_publique"></default>
+        <default applyOnUpdate="0" expression="" field="jdd_metadonnee_dee_id"></default>
+        <default applyOnUpdate="0" expression="" field="statut_source"></default>
+        <default applyOnUpdate="0" expression="" field="reference_biblio"></default>
+        <default applyOnUpdate="0" expression="" field="sensible"></default>
+        <default applyOnUpdate="0" expression="" field="sensi_date_attribution"></default>
+        <default applyOnUpdate="0" expression="" field="sensi_niveau"></default>
+        <default applyOnUpdate="0" expression="" field="sensi_referentiel"></default>
+        <default applyOnUpdate="0" expression="" field="sensi_version_referentiel"></default>
+        <default applyOnUpdate="0" expression="" field="validite_niveau"></default>
+        <default applyOnUpdate="0" expression="" field="validite_date_validation"></default>
+        <default applyOnUpdate="0" expression="" field="precision_geometrie"></default>
+        <default applyOnUpdate="0" expression="" field="nature_objet_geo"></default>
+        <default applyOnUpdate="0" expression="" field="date_import"></default>
+        <default applyOnUpdate="0" expression="" field="code_import"></default>
+        <default applyOnUpdate="0" expression="" field="login_import"></default>
+      </defaults>
+      <constraints>
+        <constraint constraints="3" exp_strength="0" field="cle_obs" notnull_strength="1" unique_strength="1"></constraint>
+        <constraint constraints="0" exp_strength="0" field="identifiant_origine" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="identifiant_permanent" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="cd_nom" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="nom_cite" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="cd_ref" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="denombrement_min" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="denombrement_max" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="objet_denombrement" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="type_denombrement" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="commentaire" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="date_debut" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="date_fin" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="heure_debut" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="heure_fin" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="date_determination" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="dee_floutage" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="diffusion_niveau_precision" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="ds_publique" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="jdd_metadonnee_dee_id" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="statut_source" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="reference_biblio" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="sensible" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="sensi_date_attribution" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="sensi_niveau" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="sensi_referentiel" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="sensi_version_referentiel" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="validite_niveau" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="validite_date_validation" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="precision_geometrie" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="nature_objet_geo" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="date_import" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="code_import" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="login_import" notnull_strength="0" unique_strength="0"></constraint>
+      </constraints>
+      <constraintExpressions>
+        <constraint desc="" exp="" field="cle_obs"></constraint>
+        <constraint desc="" exp="" field="identifiant_origine"></constraint>
+        <constraint desc="" exp="" field="identifiant_permanent"></constraint>
+        <constraint desc="" exp="" field="cd_nom"></constraint>
+        <constraint desc="" exp="" field="nom_cite"></constraint>
+        <constraint desc="" exp="" field="cd_ref"></constraint>
+        <constraint desc="" exp="" field="denombrement_min"></constraint>
+        <constraint desc="" exp="" field="denombrement_max"></constraint>
+        <constraint desc="" exp="" field="objet_denombrement"></constraint>
+        <constraint desc="" exp="" field="type_denombrement"></constraint>
+        <constraint desc="" exp="" field="commentaire"></constraint>
+        <constraint desc="" exp="" field="date_debut"></constraint>
+        <constraint desc="" exp="" field="date_fin"></constraint>
+        <constraint desc="" exp="" field="heure_debut"></constraint>
+        <constraint desc="" exp="" field="heure_fin"></constraint>
+        <constraint desc="" exp="" field="date_determination"></constraint>
+        <constraint desc="" exp="" field="dee_floutage"></constraint>
+        <constraint desc="" exp="" field="diffusion_niveau_precision"></constraint>
+        <constraint desc="" exp="" field="ds_publique"></constraint>
+        <constraint desc="" exp="" field="jdd_metadonnee_dee_id"></constraint>
+        <constraint desc="" exp="" field="statut_source"></constraint>
+        <constraint desc="" exp="" field="reference_biblio"></constraint>
+        <constraint desc="" exp="" field="sensible"></constraint>
+        <constraint desc="" exp="" field="sensi_date_attribution"></constraint>
+        <constraint desc="" exp="" field="sensi_niveau"></constraint>
+        <constraint desc="" exp="" field="sensi_referentiel"></constraint>
+        <constraint desc="" exp="" field="sensi_version_referentiel"></constraint>
+        <constraint desc="" exp="" field="validite_niveau"></constraint>
+        <constraint desc="" exp="" field="validite_date_validation"></constraint>
+        <constraint desc="" exp="" field="precision_geometrie"></constraint>
+        <constraint desc="" exp="" field="nature_objet_geo"></constraint>
+        <constraint desc="" exp="" field="date_import"></constraint>
+        <constraint desc="" exp="" field="code_import"></constraint>
+        <constraint desc="" exp="" field="login_import"></constraint>
+      </constraintExpressions>
+      <expressionfields></expressionfields>
+      <attributeactions>
+        <defaultAction key="Canvas" value="{00000000-0000-0000-0000-000000000000}"></defaultAction>
+      </attributeactions>
+      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
+        <columns>
+          <column hidden="0" name="cle_obs" type="field" width="-1"></column>
+          <column hidden="0" name="identifiant_origine" type="field" width="-1"></column>
+          <column hidden="0" name="identifiant_permanent" type="field" width="-1"></column>
+          <column hidden="0" name="cd_nom" type="field" width="-1"></column>
+          <column hidden="0" name="nom_cite" type="field" width="-1"></column>
+          <column hidden="0" name="cd_ref" type="field" width="-1"></column>
+          <column hidden="0" name="denombrement_min" type="field" width="-1"></column>
+          <column hidden="0" name="denombrement_max" type="field" width="-1"></column>
+          <column hidden="0" name="objet_denombrement" type="field" width="-1"></column>
+          <column hidden="0" name="type_denombrement" type="field" width="-1"></column>
+          <column hidden="0" name="commentaire" type="field" width="-1"></column>
+          <column hidden="0" name="date_debut" type="field" width="-1"></column>
+          <column hidden="0" name="date_fin" type="field" width="-1"></column>
+          <column hidden="0" name="heure_debut" type="field" width="-1"></column>
+          <column hidden="0" name="heure_fin" type="field" width="-1"></column>
+          <column hidden="0" name="date_determination" type="field" width="-1"></column>
+          <column hidden="0" name="dee_floutage" type="field" width="-1"></column>
+          <column hidden="0" name="diffusion_niveau_precision" type="field" width="-1"></column>
+          <column hidden="0" name="ds_publique" type="field" width="-1"></column>
+          <column hidden="0" name="jdd_metadonnee_dee_id" type="field" width="286"></column>
+          <column hidden="0" name="statut_source" type="field" width="-1"></column>
+          <column hidden="0" name="reference_biblio" type="field" width="-1"></column>
+          <column hidden="0" name="sensible" type="field" width="-1"></column>
+          <column hidden="0" name="sensi_date_attribution" type="field" width="-1"></column>
+          <column hidden="0" name="sensi_niveau" type="field" width="-1"></column>
+          <column hidden="0" name="sensi_referentiel" type="field" width="-1"></column>
+          <column hidden="0" name="sensi_version_referentiel" type="field" width="-1"></column>
+          <column hidden="0" name="validite_niveau" type="field" width="-1"></column>
+          <column hidden="0" name="validite_date_validation" type="field" width="-1"></column>
+          <column hidden="0" name="precision_geometrie" type="field" width="-1"></column>
+          <column hidden="0" name="nature_objet_geo" type="field" width="-1"></column>
+          <column hidden="0" name="date_import" type="field" width="-1"></column>
+          <column hidden="0" name="code_import" type="field" width="-1"></column>
+          <column hidden="0" name="login_import" type="field" width="-1"></column>
+          <column hidden="1" type="actions" width="-1"></column>
+        </columns>
+      </attributetableconfig>
+      <conditionalstyles>
+        <rowstyles></rowstyles>
+        <fieldstyles></fieldstyles>
+      </conditionalstyles>
+      <storedexpressions></storedexpressions>
+      <editform tolerant="1"></editform>
+      <editforminit></editforminit>
+      <editforminitcodesource>0</editforminitcodesource>
+      <editforminitfilepath></editforminitfilepath>
+      <editforminitcode># -*- coding: utf-8 -*-
+"""
+Les formulaires QGIS peuvent avoir une fonction Python qui sera appelée à l'ouverture du formulaire.
+
+Utilisez cette fonction pour ajouter plus de fonctionnalités à vos formulaires.
+
+Entrez le nom de la fonction dans le champ "Fonction d'initialisation Python".
+Voici un exemple à suivre:
+"""
+from qgis.PyQt.QtWidgets import QWidget
+
+def my_form_open(dialog, layer, feature):
+	geom = feature.geometry()
+	control = dialog.findChild(QWidget, "MyLineEdit")
+
+</editforminitcode>
+      <featformsuppress>0</featformsuppress>
+      <editorlayout>generatedlayout</editorlayout>
+      <editable>
+        <field editable="1" name="cd_nom"></field>
+        <field editable="1" name="cd_ref"></field>
+        <field editable="1" name="cle_obs"></field>
+        <field editable="1" name="code_import"></field>
+        <field editable="1" name="commentaire"></field>
+        <field editable="1" name="date_debut"></field>
+        <field editable="1" name="date_determination"></field>
+        <field editable="1" name="date_fin"></field>
+        <field editable="1" name="date_import"></field>
+        <field editable="1" name="dee_floutage"></field>
+        <field editable="1" name="denombrement_max"></field>
+        <field editable="1" name="denombrement_min"></field>
+        <field editable="1" name="diffusion_niveau_precision"></field>
+        <field editable="1" name="ds_publique"></field>
+        <field editable="1" name="heure_debut"></field>
+        <field editable="1" name="heure_fin"></field>
+        <field editable="1" name="identifiant_origine"></field>
+        <field editable="1" name="identifiant_permanent"></field>
+        <field editable="1" name="jdd_metadonnee_dee_id"></field>
+        <field editable="1" name="login_import"></field>
+        <field editable="1" name="nature_objet_geo"></field>
+        <field editable="1" name="nom_cite"></field>
+        <field editable="1" name="objet_denombrement"></field>
+        <field editable="1" name="precision_geometrie"></field>
+        <field editable="1" name="reference_biblio"></field>
+        <field editable="1" name="sensi_date_attribution"></field>
+        <field editable="1" name="sensi_niveau"></field>
+        <field editable="1" name="sensi_referentiel"></field>
+        <field editable="1" name="sensi_version_referentiel"></field>
+        <field editable="1" name="sensible"></field>
+        <field editable="1" name="statut_source"></field>
+        <field editable="1" name="type_denombrement"></field>
+        <field editable="1" name="validite_date_validation"></field>
+        <field editable="1" name="validite_niveau"></field>
+      </editable>
+      <labelOnTop>
+        <field labelOnTop="0" name="cd_nom"></field>
+        <field labelOnTop="0" name="cd_ref"></field>
+        <field labelOnTop="0" name="cle_obs"></field>
+        <field labelOnTop="0" name="code_import"></field>
+        <field labelOnTop="0" name="commentaire"></field>
+        <field labelOnTop="0" name="date_debut"></field>
+        <field labelOnTop="0" name="date_determination"></field>
+        <field labelOnTop="0" name="date_fin"></field>
+        <field labelOnTop="0" name="date_import"></field>
+        <field labelOnTop="0" name="dee_floutage"></field>
+        <field labelOnTop="0" name="denombrement_max"></field>
+        <field labelOnTop="0" name="denombrement_min"></field>
+        <field labelOnTop="0" name="diffusion_niveau_precision"></field>
+        <field labelOnTop="0" name="ds_publique"></field>
+        <field labelOnTop="0" name="heure_debut"></field>
+        <field labelOnTop="0" name="heure_fin"></field>
+        <field labelOnTop="0" name="identifiant_origine"></field>
+        <field labelOnTop="0" name="identifiant_permanent"></field>
+        <field labelOnTop="0" name="jdd_metadonnee_dee_id"></field>
+        <field labelOnTop="0" name="login_import"></field>
+        <field labelOnTop="0" name="nature_objet_geo"></field>
+        <field labelOnTop="0" name="nom_cite"></field>
+        <field labelOnTop="0" name="objet_denombrement"></field>
+        <field labelOnTop="0" name="precision_geometrie"></field>
+        <field labelOnTop="0" name="reference_biblio"></field>
+        <field labelOnTop="0" name="sensi_date_attribution"></field>
+        <field labelOnTop="0" name="sensi_niveau"></field>
+        <field labelOnTop="0" name="sensi_referentiel"></field>
+        <field labelOnTop="0" name="sensi_version_referentiel"></field>
+        <field labelOnTop="0" name="sensible"></field>
+        <field labelOnTop="0" name="statut_source"></field>
+        <field labelOnTop="0" name="type_denombrement"></field>
+        <field labelOnTop="0" name="validite_date_validation"></field>
+        <field labelOnTop="0" name="validite_niveau"></field>
+      </labelOnTop>
+      <dataDefinedFieldProperties></dataDefinedFieldProperties>
+      <widgets></widgets>
+      <previewExpression>"cd_nom"</previewExpression>
+      <mapTip></mapTip>
+    </maplayer>
   </projectlayers>
   <layerorder>
     <layer id="demande20190123120310066"></layer>
     <layer id="osm_mapnik20190123143431304"></layer>
     <layer id="commune_cd39115d_fdd4_49fc_b0db_cf217670a18b"></layer>
+    <layer id="v_import_web_liste_75b05297_0e7f_477a_b314_3159132b7de9"></layer>
+    <layer id="v_import_web_observations_148f04d8_1017_49ff_98b9_11ced73f9e95"></layer>
   </layerorder>
   <properties>
     <DefaultStyles>
@@ -4658,6 +6269,10 @@ def my_form_open(dialog, layer, feature):
       <AreaUnits type="QString">m2</AreaUnits>
       <DistanceUnits type="QString">meters</DistanceUnits>
     </Measurement>
+    <Mergin>
+      <PhotoQuality type="int">0</PhotoQuality>
+      <Snapping type="int">0</Snapping>
+    </Mergin>
     <PAL>
       <CandidatesLine type="int">50</CandidatesLine>
       <CandidatesLinePerCM type="double">5</CandidatesLinePerCM>
@@ -4682,6 +6297,11 @@ def my_form_open(dialog, layer, feature):
       <DecimalPlaces type="int">2</DecimalPlaces>
       <DegreeFormat type="QString">MU</DegreeFormat>
     </PositionPrecision>
+    <QFieldSync>
+      <attachmentDirs type="QStringList">
+        <value>DCIM</value>
+      </attachmentDirs>
+    </QFieldSync>
     <SpatialRefSys>
       <ProjectCRSID type="int">3452</ProjectCRSID>
       <ProjectCRSProj4String type="QString">+proj=longlat +datum=WGS84 +no_defs</ProjectCRSProj4String>
@@ -4703,6 +6323,7 @@ def my_form_open(dialog, layer, feature):
     <WFSLayers type="QStringList">
       <value>acteur20190123120309698</value>
       <value>adherent20190123120310018</value>
+      <value>cadre_9622af4e_a9e7_4c32_86ac_da725d0b6f2d</value>
       <value>commune_cd39115d_fdd4_49fc_b0db_cf217670a18b</value>
       <value>demande20190123120310066</value>
       <value>echange_inpn20190123120310111</value>
@@ -4711,10 +6332,13 @@ def my_form_open(dialog, layer, feature):
       <value>jdd_import20190123150642447</value>
       <value>jlx_user20190123150225648</value>
       <value>organisme20190123143729184</value>
+      <value>v_import_web_liste_75b05297_0e7f_477a_b314_3159132b7de9</value>
+      <value>v_import_web_observations_148f04d8_1017_49ff_98b9_11ced73f9e95</value>
     </WFSLayers>
     <WFSLayersPrecision>
       <acteur20190123120309698 type="int">8</acteur20190123120309698>
       <adherent20190123120310018 type="int">8</adherent20190123120310018>
+      <cadre_9622af4e_a9e7_4c32_86ac_da725d0b6f2d type="int">8</cadre_9622af4e_a9e7_4c32_86ac_da725d0b6f2d>
       <commune_cd39115d_fdd4_49fc_b0db_cf217670a18b type="int">8</commune_cd39115d_fdd4_49fc_b0db_cf217670a18b>
       <demande20190123120310066 type="int">8</demande20190123120310066>
       <echange_inpn20190123120310111 type="int">8</echange_inpn20190123120310111>
@@ -4723,6 +6347,8 @@ def my_form_open(dialog, layer, feature):
       <jdd_import20190123150642447 type="int">8</jdd_import20190123150642447>
       <jlx_user20190123150225648 type="int">8</jlx_user20190123150225648>
       <organisme20190123143729184 type="int">8</organisme20190123143729184>
+      <v_import_web_liste_75b05297_0e7f_477a_b314_3159132b7de9 type="int">8</v_import_web_liste_75b05297_0e7f_477a_b314_3159132b7de9>
+      <v_import_web_observations_148f04d8_1017_49ff_98b9_11ced73f9e95 type="int">8</v_import_web_observations_148f04d8_1017_49ff_98b9_11ced73f9e95>
     </WFSLayersPrecision>
     <WFSTLayers>
       <Delete type="QStringList"></Delete>
@@ -4834,7 +6460,7 @@ def my_form_open(dialog, layer, feature):
   <Bookmarks></Bookmarks>
   <ProjectViewSettings UseProjectScales="0">
     <Scales></Scales>
-    <DefaultViewExtent xmax="6220486.48191792704164982" xmin="6139867.80703657306730747" ymax="-2369580.5590598713606596" ymin="-2446164.34442312084138393">
+    <DefaultViewExtent xmax="6217717.86930865794420242" xmin="6144467.43891588598489761" ymax="-2371097.97596963308751583" ymin="-2443800.59331459552049637">
       <spatialrefsys>
         <wkt>PROJCRS["WGS 84 / Pseudo-Mercator",BASEGEOGCRS["WGS 84",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",0.0174532925199433]],ID["EPSG",4326]],CONVERSION["Popular Visualisation Pseudo-Mercator",METHOD["Popular Visualisation Pseudo Mercator",ID["EPSG",1024]],PARAMETER["Latitude of natural origin",0,ANGLEUNIT["degree",0.0174532925199433],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",0,ANGLEUNIT["degree",0.0174532925199433],ID["EPSG",8802]],PARAMETER["False easting",0,LENGTHUNIT["metre",1],ID["EPSG",8806]],PARAMETER["False northing",0,LENGTHUNIT["metre",1],ID["EPSG",8807]]],CS[Cartesian,2],AXIS["easting (X)",east,ORDER[1],LENGTHUNIT["metre",1]],AXIS["northing (Y)",north,ORDER[2],LENGTHUNIT["metre",1]],USAGE[SCOPE["unknown"],AREA["World - 85°S to 85°N"],BBOX[-85.06,-180,85.06,180]],ID["EPSG",3857]]</wkt>
         <proj4>+proj=merc +a=6378137 +b=6378137 +lat_ts=0 +lon_0=0 +x_0=0 +y_0=0 +k=1 +units=m +nadgrids=@null +wktext +no_defs</proj4>

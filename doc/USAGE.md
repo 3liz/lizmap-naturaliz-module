@@ -34,23 +34,31 @@ REFRESH MATERIALIZED VIEW occtax.vm_observation;
 
 Une entrée de menu permet de proposer à l'utilisateur ayant les droits requis de téléverser dans l'application un fichier CSV, puis de lancer :
 
-* la **validation** du jeu de données: champs requis, format des données,
+* la **validation** de la structure et des données du jeu de données: champs requis, format des données,
   respect des règles du standard "Occurrences de Taxon"
-* l'**import** des données dans la base, avec un statut "A valider". Les observations importées
+* l'**import** des données dans la base, avec un statut "A activer". Les observations importées
   ne seront visibles que par les administrateurs de la base dans l'application.
 
-Pour pouvoir réaliser l'**import** des données dans la base, il est nécessaire que le jeu de données
+Pour que l'utilisateur en ligne puisse réaliser l'**import** des données dans la base,
+il est nécessaire que le jeu de données
 soit au préalable ajouté dans la table `occtax.jdd`, avec la bonne valeur dans le champ `jdd_metadonnee_dee_id`.
 
 Le fichier CSV doit correspondre à un modèle bien spécifique, avec une liste minimale de champs, nommés correctement.
 Un fichier CSV exemple est disponible dans les sources et peut être téléchargé depuis le formulaire.
 
-#### Visualiser les observations importées via fichier CSV
+Lorsque l'utilisateur a validé le format des données, et qu'il lance l'import, une **vérification des observations** est lancée
+pour vérifier si les observations du CSV ne sont pas déjà présentes dans la base de données. Les champs testés sont les suivants:
+`cd_nom, date_debut, heure_debut, date_fin, heure_fin, longitude, latitude`. Si des observations sont déjà présentes avec
+ces critères dans la base, un message d'erreur est renvoyé avec le nombre d'observation en doublons.
+
+#### Outils SQL pour gérer les observations importées
 
 Une fois le fichier CSV importé avec succès dans la base de données, depuis le formulaire,
 **les données ne sont pas encore visibles pour les utilisateurs**. Elles ont en effet été importées
-avec un statut "à valider", via la présence de propriétés spécifiques dans le champ `odata`
-de la table `occtax.observation`. Voici un exemple de contenu du champ `odata` pour ces observations non validées :
+avec un statut "à activer", via la présence de propriétés spécifiques dans le champ `odata`
+de la table `occtax.observation`.
+
+Voici un exemple de contenu du champ `odata` pour ces observations non validées :
 
 ```json
 {
@@ -60,13 +68,13 @@ de la table `occtax.observation`. Voici un exemple de contenu du champ `odata` p
 }
 ```
 
-On peut avoir une **vue synthétique** des données à valider via la vue `occtax.v_import_web_liste` :
+On peut avoir une **vue synthétique** des données à activer via la vue `occtax.v_import_web_liste` :
 
 ```sql
 SELECT * FROM occtax.v_import_web_liste;
 ```
 
-renvoie le contenu suivant (la géométrie, lourde, a été masquée ici)
+qui renvoie le contenu suivant (la géométrie, lourde, a été masquée ici):
 
 ```
 date_import         | 2022-04-29 15:09:59
@@ -78,7 +86,8 @@ geom                | [...]
 ```
 
 On peut afficher dans QGIS la vue `occtax.v_import_web_observations` qui sélectionne l'ensemble
-de **toutes les observations à valider**. Cela permet de confirmer que l'import a bien enregistré les données attendues.
+de **toutes les observations à activer**. Cela permet de confirmer que l'import CSV a bien enregistré
+les observations, et qu'elle contiennent les bonnes données.
 
 Si on le souhaite, on peut aussi ajouter cette vue au projet QGIS qui est publié pour
 l'application Naturaliz via Lizmap Web Client, en ne la rendant accessible qu'au groupe `admins`.
@@ -86,13 +95,15 @@ Cela permet de visualiser directement dans l'interface Web l'ensemble des donné
 On peut aussi ajouter une "popup" pour cette couche, pour permettre d'interroger les données
 d'une observation en cliquant sur la carte.
 
-Une fois les données contrôlées manuellement, il est possible de **valider ces données**
+NB: un projet QGIS de gestion dédié a été créé et offre les outils pour faire le suivi des imports.
+
+Une fois les données contrôlées manuellement, il est possible d'**activer ces données**
 pour qu'elles soient visibles par les utilisateurs de Naturaliz, en fonction de leurs droits.
 Pour cela, on peut lancer la commande SQL suivante qui appelle une fonction spécifique et
 va supprimer du champ `odata` les propriétés caractéristiques de l'import CSV:
 
 ```sql
-SELECT occtax.import_valider_observations_importees(
+SELECT occtax.import_activer_observations_importees(
     -- Nom de la table temporaire, visible dans la vue occtax.v_import_web_liste
     'temp_1651259398_target',
     -- UUID du JDD, visible dans la table occtax.jdd
@@ -101,11 +112,12 @@ SELECT occtax.import_valider_observations_importees(
 ;
 ```
 
-Après cette étape de validation, il est conseillé d'ajouter une ligne
+Après cette étape d'activation, il est conseillé d'ajouter une ligne
 dans la table `occtax.jdd_import` pour faciliter le suivi des imports de données.
 
-Pour **supprimer les données importées**, si on ne souhaite pas les valider mais au contraire
-les supprimer la base de données, on peut lancer la commande suivante :
+Au contraire, on peut souhaiter ne pas activer ces observations importées.
+Pour **supprimer les données importées**, si on veut les supprimer la base de données,
+on peut lancer la commande suivante :
 
 ```sql
 SELECT occtax.import_supprimer_observations_importees(
@@ -115,6 +127,45 @@ SELECT occtax.import_supprimer_observations_importees(
     'DCB578EC-84AE-2545-E053-3014A8C03597'
 );
 ```
+
+Il suffit alors de rafraîchir les vues `occtax.v_import_web_liste` et `occtax.v_import_web_observations`
+pour visualiser les modifications.
+
+#### Projet QGIS de gestion publié dans Lizmap pour gérer les imports CSV
+
+Un [projet QGIS](gestion/gestion_dev.qgs) de gestion des données, avec [sa configuration Lizmap](gestion/gestion_dev.qgs.cfg)
+et la [configuration du module action](gestion/gestion_dev.qgs.action) peut être publié dans l'application Lizmap.
+
+Il fournit une interface de consultation des données de gestion et
+propose aussi des formulaires d'édition pour modifier les données du schéma `gestion`.
+
+Il comporte aussi un groupe de couches `Imports CSV web` qui contient 2 couches :
+
+* la couche **Imports à activer** issue de la vue `v_import_web_liste` montre sur la carte
+  les polygones de chaque import (englobant les observations de chaque import Web)
+* la couche **Observation importées à activer** issue de la vue `v_import_web_observations`
+  montre les observations importées (mais pas activées)
+
+On peut cliquer sur le nom des couches dans la légende, ce qui ouvre un panneau.
+Un bouton permet de zoomer sur l'emprise des données
+
+Quelques points-clés :
+
+* les 2 couches ont une **"popup"** Lizmap configurée : on peut cliquer sur la carte,
+  et on voit les informations de l'objet sous le clic, qui s'affichent dans le panneau de gauche.
+* Pour **supprimer** les observations d'un import CSV, ou au contraire pour **activer ces observations**:
+  on clique sur le polygone de l'import CSV à traiter
+* Cela ouvre la popup : on voit les information de l'import (date de l'import, login, nombre d'observations, etc.)
+* Dans la barre d'outil de la popup, pour chaque objet, on voit apparaître 2 boutons
+  avec une infobulle au survol qui permettent de lancer une action :
+  "poubelle" pour supprimer et "pouce en l'air" pour activer
+* On peut cliquer sur un des boutons pour lancer l'action choisie.
+  Un message demande confirmation, et si vous validez, l'action sera lancée
+* Un message de confirmation s'affiche une fois l'action effectuée.
+* La carte est rafraîchie et l'import ainsi que ses observations disparaissent,
+  ce qui montrent qu'elles ont été traitées.
+
+
 
 ## Gestion de la sensibilité des données
 

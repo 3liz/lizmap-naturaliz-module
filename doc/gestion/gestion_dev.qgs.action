@@ -1,0 +1,58 @@
+{
+    "v_import_web_liste_75b05297_0e7f_477a_b314_3159132b7de9": [
+        {
+            "name": "supprimer_observations_import_csv",
+            "title": "Supprimer cet import et ses observations",
+            "confirm": "Souhaitez-vous vraiment supprimer ces observations ?",
+            "icon": "icon-trash",
+            "options": {},
+            "style": {
+                "graphicName": "circle",
+                "pointRadius": 6,
+                "fill": true,
+                "fillColor": "pink",
+                "fillOpacity": 0.3,
+                "stroke": true,
+                "strokeWidth": 4,
+                "strokeColor": "red",
+                "strokeOpacity": 0.8
+            },
+            "callbacks": [
+                {
+                    "method": "zoom"
+                }
+            ]
+        },
+        {
+            "name": "activer_observations_import_csv",
+            "title": "Activer cet import et ses observations",
+            "confirm": "Souhaitez-vous vraiment activer les observations de cet import ? NB: une fois l'action validée, cet import disparaîtra de la carte.",
+            "icon": "icon-thumbs-up",
+            "options": {},
+            "style": {
+                "graphicName": "circle",
+                "pointRadius": 6,
+                "fill": true,
+                "fillColor": "lightgreen",
+                "fillOpacity": 0.3,
+                "stroke": true,
+                "strokeWidth": 4,
+                "strokeColor": "green",
+                "strokeOpacity": 0.8
+            },
+            "callbacks": [
+                {
+                    "method": "zoom"
+                },
+                {
+                    "method": "redraw",
+                    "layerId": "v_import_web_liste_75b05297_0e7f_477a_b314_3159132b7de9"
+                },
+                {
+                    "method": "redraw",
+                    "layerId": "v_import_web_observations_148f04d8_1017_49ff_98b9_11ced73f9e95"
+                }
+            ]
+        }
+    ]
+}
