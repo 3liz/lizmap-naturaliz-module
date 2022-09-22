@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form xmlns="http://jelix.org/ns/forms/1.1" allowAnyOrigin="true">
 
-    <upload ref="observation_csv" required="true" maxsize="2000000" accept=".csv,text/csv,application/csv,text/comma-separated-values">
+<group ref="source_group">
+    <label locale="occtax~import.form.group.source.label"/>
+
+    <upload ref="observation_csv" required="true" maxsize="10000000" accept=".csv,text/csv,application/csv,text/comma-separated-values">
         <label locale="occtax~import.input.observation_csv"/>
         <hint locale="occtax~import.input.observation_csv.help"/>
         <help locale="occtax~import.input.observation_csv.help"/>
     </upload>
+
+</group>
+
+<group ref="import_group">
+
+  <label locale="occtax~import.form.group.import.label"/>
 
     <input ref="jdd_uid" required="false" type="string" pattern="/^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$/">
         <label locale="occtax~import.input.jdd_uid"/>
@@ -13,15 +22,44 @@
         <help locale="occtax~import.input.jdd_uid.help"/>
     </input>
 
-    <submit ref="check">
-        <label locale="occtax~import.input.check"/>
-        <hint locale="occtax~import.input.check.help"/>
-    </submit>
+    <input ref="organisme_gestionnaire_donnees" required="false" type="string" minlength="2" maxlength="200">
+        <label locale="occtax~import.input.organisme_gestionnaire_donnees"/>
+        <hint locale="occtax~import.input.organisme_gestionnaire_donnees.help"/>
+        <help locale="occtax~import.input.organisme_gestionnaire_donnees.help"/>
+    </input>
 
-    <submit ref="import">
-        <label locale="occtax~import.input.import"/>
-        <hint locale="occtax~import.input.import.help"/>
-    </submit>
+    <input ref="libelle_import" required="false" type="string" minlength="2" maxlength="200">
+        <label locale="occtax~import.input.libelle_import"/>
+        <hint locale="occtax~import.input.libelle_import.help"/>
+        <help locale="occtax~import.input.libelle_import.help"/>
+    </input>
 
-    <hidden ref="check_or_import"/>
+    <date ref="date_reception" required="false" mindate="-10 years" maxdate="+1 days">
+        <label locale="occtax~import.input.date_reception"/>
+        <hint locale="occtax~import.input.date_reception.help"/>
+        <help locale="occtax~import.input.date_reception.help"/>
+    </date>
+
+    <textarea ref="remarque_import" required="false">
+        <label locale="occtax~import.input.remarque_import"/>
+        <hint locale="occtax~import.input.remarque_import.help"/>
+        <help locale="occtax~import.input.remarque_import.help"/>
+    </textarea>
+
+
+</group>
+
+
+<hidden ref="check_or_import"/>
+
+<submit ref="check">
+    <label locale="occtax~import.input.check"/>
+    <hint locale="occtax~import.input.check.help"/>
+</submit>
+
+<submit ref="import">
+    <label locale="occtax~import.input.import"/>
+    <hint locale="occtax~import.input.import.help"/>
+</submit>
+
 </form>

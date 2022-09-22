@@ -57,7 +57,7 @@ class importCtrl extends jController
             'status_check' => 0,
             'status_import' => 0,
             'messages' => array(),
-            'data' =>  array()
+            'data' =>  array('other'=>array())
         );
         $rep = $this->getResponse('json');
 
@@ -77,7 +77,8 @@ class importCtrl extends jController
         $form->initFromRequest();
         if (!$form->check()) {
             $errors = $form->getErrors();
-            $return['messages'][] = "Le formulaire n'est pas valide. Veuillez renvoyer votre fichier CSV.";
+            $message = "Le formulaire n'est pas valide. Veuillez renvoyer votre fichier CSV.";
+            $return['messages'][] = $message;
             $rep->data = $return;
             return $rep;
         }
@@ -116,7 +117,7 @@ class importCtrl extends jController
         // Create the temporary tables
         $check = $import->createTemporaryTables();
         if (!$check) {
-            $return['messages'][] = 'Impossible de créer les tables temporaires nécessaires au déroulement de l\'import';
+            $return['messages'][] = 'Impossible de créer les tables temporaires nécessaires au déroulement de l\'import (erreur de requête)';
             $rep->data = $return;
             return $rep;
         }
@@ -124,7 +125,7 @@ class importCtrl extends jController
         // Import the CSV data into the source temporary table
         $check = $import->saveToSourceTemporaryTable();
         if (!$check) {
-            $return['messages'][] = 'Impossible de charger les données du CSV dans la table temporaire';
+            $return['messages'][] = 'Impossible de charger les données du CSV dans la table temporaire (erreur de requête)';
             $rep->data = $return;
             return $rep;
         }
@@ -132,7 +133,7 @@ class importCtrl extends jController
         // Import the CSV data into the formatted temporary table
         $check = $import->saveToTargetTemporaryTable();
         if (!$check) {
-            $return['messages'][] = 'Impossible de formatter les données du CSV dans le format attendu';
+            $return['messages'][] = 'Impossible de formatter les données du CSV dans le format attendu (erreur de requête)';
             $rep->data = $return;
             return $rep;
         }
@@ -141,7 +142,7 @@ class importCtrl extends jController
         // Check not null
         $check_not_null = $import->validateCsvData('not_null');
         if (!is_array($check_not_null)) {
-            $return['messages'][] = 'Impossible de vérifier que les valeurs du CSV sont non vides';
+            $return['messages'][] = 'Impossible de vérifier que les valeurs du CSV sont non vides (erreur de requête)';
             $rep->data = $return;
             return $rep;
         }
@@ -149,7 +150,7 @@ class importCtrl extends jController
         // Check format
         $check_format = $import->validateCsvData('format');
         if (!is_array($check_format)) {
-            $return['messages'][] = 'Impossible de vérifier que les valeurs du CSV sont au bon format';
+            $return['messages'][] = 'Impossible de vérifier que les valeurs du CSV sont au bon format (erreur de requête)';
             $rep->data = $return;
             return $rep;
         }
@@ -157,7 +158,7 @@ class importCtrl extends jController
         // Check validity
         $check_conforme = $import->validateCsvData('conforme');
         if (!is_array($check_conforme)) {
-            $return['messages'][] = 'Impossible de vérifier que les valeurs du CSV sont conformes au standard';
+            $return['messages'][] = 'Impossible de vérifier que les valeurs du CSV sont conformes au standard (erreur de requête)';
             $rep->data = $return;
             return $rep;
         }
@@ -181,7 +182,7 @@ class importCtrl extends jController
             $action = 'check';
         }
 
-        // If we only check, we can clean the data and return the reponse
+        // If we only check, we can clean the data and return the response
         if ($action == 'check') {
             $return['action'] = 'check';
             jForms::destroy("occtax~import");
@@ -212,15 +213,41 @@ class importCtrl extends jController
             return $rep;
         }
 
+        // Check that the other fields are correct and not empty
+        $organisme_gestionnaire_donnees = (string) $form->getData('organisme_gestionnaire_donnees');
+        $libelle_import = (string) $form->getData('libelle_import');
+        $date_reception = (string) $form->getData('date_reception');
+        $remarque_import = (string) $form->getData('remarque_import');
+        $required_data_fields = array(
+            'jdd_uid' => 'JDD',
+            'organisme_gestionnaire_donnees' => 'Organisme gestionnaire des données',
+            'libelle_import' => 'Libellé',
+            'date_reception' => 'Date de réception',
+            'remarque_import' => 'Remarque'
+        );
+        $empty_required_data = array();
+        $message = "Pour pouvoir importer les données, il faut spécifier des valeurs pour les champs : ";
+        foreach ($required_data_fields as $rfield => $rlabel) {
+            $rval = $form->getData($rfield);
+            \jLog::log($rfield . ' = ' . $rval);
+            if (empty($rval)) {
+                $empty_required_data[] = $rlabel ;
+            }
+        }
+        if (count($empty_required_data) > 0) {
+            $import->clean();
+            $return['messages'][] = $message . implode(', ', $empty_required_data);
+            $rep->data = $return;
+            return $rep;
+        }
+
         // Get the JDD and cadre data for the given JDD uid
         $jdd_data = $import->getJdd($jdd_uid, 'database');
-        // if (empty($jdd_data)) {
-        //     $jdd_data = $import->getJdd($jdd_uid, 'api');
-        // }
         if (empty($jdd_data)) {
-            jForms::destroy("occtax~import");
             $import->clean();
-            $return['messages'][] = "Impossible de récupérer les données du jeu de données dans la base";
+            $message = "Impossible de récupérer les données du jeu de données (JDD) dans la base à partir de son identifiant: ";
+            $message .= $jdd_uid;
+            $return['messages'][] = $message;
             $rep->data = $return;
             return $rep;
         }
@@ -239,9 +266,57 @@ class importCtrl extends jController
             return $rep;
         }
 
+        // Check if the CSV data does not contain observations
+        // that are already in the table occtax.observation of the database
+
+        // Check first for the specified JDD
+        $check_duplicate = $import->checkCsvDataDuplicatedObservations($jdd_uid, true);
+        // Then check against all observations
+        $check_duplicate_all = $import->checkCsvDataDuplicatedObservations($jdd_uid, false);
+        if (!is_array($check_duplicate) || !is_array($check_duplicate_all)) {
+            jForms::destroy("occtax~import");
+            $import->clean();
+            $return['messages'][] = "Impossible de vérifier si les observations sont en doublon (erreur de requête)";
+            $rep->data = $return;
+            return $rep;
+        }
+
+        if ($check_duplicate[0]->duplicate_count > 0 || $check_duplicate_all[0]->duplicate_count > 0) {
+            jForms::destroy("occtax~import");
+            $import->clean();
+            $message = '';
+            if ($check_duplicate[0]->duplicate_count > 0) {
+                $message .= $check_duplicate[0]->duplicate_count . " données du CSV sont déjà dans la base pour le JDD " . $jdd_uid . '.';
+            }
+            if ($check_duplicate_all[0]->duplicate_count > 0) {
+                $message .= $check_duplicate_all[0]->duplicate_count . " données du CSV sont déjà dans la base pour d'autres JDD.";
+            }
+
+            $return['messages'][] = $message;
+            $return['data']['duplicate_count'] = $check_duplicate[0]->duplicate_count;
+            $return['data']['duplicate_ids'] = $check_duplicate[0]->duplicate_ids;
+            $return['data']['duplicate_count_all'] = $check_duplicate_all[0]->duplicate_count;
+            $return['data']['duplicate_ids_all'] = $check_duplicate_all[0]->duplicate_ids;
+            $rep->data = $return;
+            return $rep;
+        }
+
         // Import observations
-        $organisme_responsable = 'PNRM';
-        $import_observation = $import->importCsvIntoObservation($login, $jdd_uid, $organisme_responsable);
+        $localConfig = jApp::configPath('naturaliz.ini.php');
+        $ini = parse_ini_file($localConfig, true);
+        $org_transformation = 'Inconnu';
+        if (array_key_exists('naturaliz', $ini) && array_key_exists('org_transformation', $ini['naturaliz'])) {
+            $org_transformation = $ini['naturaliz']['org_transformation'];
+        }
+        $organisme_standard = 'Inconnu';
+        if (array_key_exists('naturaliz', $ini) && array_key_exists('organisme_standard', $ini['naturaliz'])) {
+            $organisme_standard = $ini['naturaliz']['organisme_standard'];
+        }
+
+        $import_observation = $import->importCsvIntoObservation(
+            $login, $jdd_uid,
+            $organisme_gestionnaire_donnees, $org_transformation, $organisme_standard
+        );
         if (!$import_observation) {
             // Delete already imported data
             $import->deleteImportedData($jdd_uid);
@@ -253,7 +328,14 @@ class importCtrl extends jController
         }
 
         // Import other data
-        $import_other_data = $import->addImportedObservationPostData($login, $jdd_uid);
+        $default_email = 'inconnu@acme.org';
+        if (array_key_exists('naturaliz', $ini) && array_key_exists('default_email', $ini['naturaliz'])) {
+            $default_email = $ini['naturaliz']['default_email'];
+        }
+        $import_other_data = $import->addImportedObservationPostData(
+            $login, $jdd_uid, $default_email,
+            trim($libelle_import), $date_reception, trim($remarque_import)
+        );
         if (!$import_other_data) {
             // Delete already imported data
             $import->deleteImportedData($jdd_uid);

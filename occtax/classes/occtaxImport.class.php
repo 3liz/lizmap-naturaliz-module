@@ -346,7 +346,7 @@ class occtaxImport
                 $comma = '';
                 $i = 1;
                 foreach ($this->header as $column) {
-                    $sql .= $comma . 'Nullif(trim($' . $i . "), '')";
+                    $sql .= $comma . 'Nullif(Nullif(trim($' . $i . "), ''), 'NULL')";
                     $comma = ', ';
                     $i++;
                 }
@@ -480,25 +480,65 @@ class occtaxImport
     }
 
     /**
+     * Check that the target temporary table does not have
+     * observations already present in occtax.observation
+     *
+     * @param string $jdd_uid JDD UUID. If null given, check duplicates against all observations
+     * @param boolean $check_inside_this_jdd If True, check among observations of the same jdd.
+     *                                       If False, check among the other observations
+     *
+     * @return null|array Null if a SQL request has failed, and array with duplicate check data otherwise.
+     */
+    public function checkCsvDataDuplicatedObservations($jdd_uid, $check_inside_this_jdd=true)
+    {
+        $sql = "SELECT duplicate_count, duplicate_ids";
+        $sql .= ' FROM occtax.verification_doublons_avant_import($1, $2, ';
+        if ($check_inside_this_jdd) {
+            $sql .= 'TRUE';
+        } else {
+            $sql .= 'FALSE';
+        }
+        $sql .= ')';
+        $sql .= ' WHERE True';
+        $sql .= ' ';
+        if ($jdd_uid === null) {
+            $jdd_uid = '__ALL__';
+        }
+        $params = array(
+            $this->temporary_table . '_target',
+            $jdd_uid,
+        );
+        $check_duplicate = $this->query($sql, $params);
+
+        return $check_duplicate;
+    }
+
+    /**
      * Import the CSV imported data in the database
      * observation table
      *
      * @param string $login The authenticated user login.
      * @param string $jdd_uid JDD UUID.
-     * @param string $organisme_responsable Organisme
+     * @param string $organisme_gestionnaire_donnees Organisme gestionnaire de données
+     * @param string $org_transformation Organisme de transformation
+     * @param string $organisme_standard Organisme de standardisation
      *
      * @return boolean $status The status of the import.
      */
-    public function importCsvIntoObservation($login, $jdd_uid, $organisme_responsable)
-    {
+    public function importCsvIntoObservation($login, $jdd_uid,
+        $organisme_gestionnaire_donnees, $org_transformation, $organisme_standard
+    ) {
         // Import dans la table observation
         $sql = ' SELECT count(*) AS nb';
-        $sql .= ' FROM occtax.import_observations_depuis_table_temporaire($1, $2, $3, $4)';
+        $sql .= ' FROM occtax.import_observations_depuis_table_temporaire(
+            $1,
+            $2, $3,
+            $4, $5, $6
+        )';
         $params = array(
             $this->temporary_table . '_target',
-            $login,
-            $jdd_uid,
-            $organisme_responsable,
+            $login, $jdd_uid,
+            $organisme_gestionnaire_donnees, $org_transformation, $organisme_standard
         );
         $import_observation = $this->query($sql, $params);
         if (!is_array($import_observation)) {
@@ -518,18 +558,29 @@ class occtaxImport
      *
      * @param string $login The authenticated user login.
      * @param string $jdd_uid JDD UUID.
+     * @param string $default_email Default email for newly created persons.
+     * @param string $libelle_import Libellé de l'import
+     * @param string $date_reception Date de réception des données
+     * @param string $remarque_import Remarques sur l'import
      *
      * @return boolean $status The status of the import.
      */
-    public function addImportedObservationPostData($login, $jdd_uid)
-    {
+    public function addImportedObservationPostData(
+        $login, $jdd_uid, $default_email,
+        $libelle_import, $date_reception, $remarque_import
+    ) {
         // Import dans les tables liées à observation
         $sql = ' SELECT import_report';
-        $sql .= ' FROM occtax.import_observations_post_data($1, $2, $3)';
+        $sql .= ' FROM occtax.import_observations_post_data(
+            $1,
+            $2, $3, $4,
+            $5, $6, $7
+        )';
         $params = array(
             $this->temporary_table . '_target',
-            $login,
-            $jdd_uid,
+            $login, $jdd_uid,
+            $default_email,
+            $libelle_import, $date_reception, $remarque_import
         );
         $import_other = $this->query($sql, $params);
         if (!is_array($import_other)) {

@@ -85,6 +85,27 @@
 
                     <span id="import_message_resultat" style="font-weight: bold;font-size: 1.1em;"></span>
 
+                    <div id="import_erreurs" style="display:none">
+                        <h4>Erreurs sur les observations du CSV</h4>
+                        <table id="import_erreurs_table" class="table table-condensed table-striped table-bordered">
+                            <tr>
+                                <th>Jeu de données</th>
+                                <th>Nombre de doublons</th>
+                                <th>Identifiants d'origine</th>
+                            </tr>
+                            <tr>
+                                <td>JDD importé</td>
+                                <td id="import_erreurs_nombre">-</td>
+                                <td id="import_erreurs_ids">-</td>
+                            </tr>
+                            <tr>
+                                <td>Autres JDD</td>
+                                <td id="import_erreurs_nombre_all">-</td>
+                                <td id="import_erreurs_ids_all">-</td>
+                            </tr>
+                        </table>
+                    </div>
+
                     <div>
                         <h4>Nombre d'éléments importés</h4>
                         <table id="import_resultat_table" class="table table-condensed table-striped table-bordered">

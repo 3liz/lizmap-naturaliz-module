@@ -104,26 +104,53 @@ lizMap.events.on({
 
                 if (action == 'import') {
                     let status_import = (response.status_import == 0) ? 'error' : 'info';
-                    // import has been tried
+
+                    console.log(status_import);
+                    // import has been tried: open the result tab
                     $('a[href="#import_resultat"]').click();
+
                     if (status_import == 'error') {
+                        console.log(response.data);
+                        // Add data in the error table
+                        if ('duplicate_ids' in response.data) {
+                            $('#import_erreurs_nombre').html(response.data['duplicate_count']);
+                            $('#import_erreurs_ids').html(response.data['duplicate_ids']);
+                            $('#import_erreurs_nombre_all').html(response.data['duplicate_count_all']);
+                            $('#import_erreurs_ids_all').html(response.data['duplicate_ids_all']);
+                            $('#import_erreurs').show();
+                        }
+
+                        // Empty the data from the success table
                         $('#import_resultat_observations').html('-');
                         $('#import_resultat_organismes').html('-');
                         $('#import_resultat_personnes').html('-');
                         $('#import_resultat_observateurs').html('-');
                         $('#import_resultat_determinateurs').html('-');
+
+                        // Display message
                         var msg = response.messages.join('</br>');
                         OccTax.addTimedMessage('import-naturaliz', msg, status_import, 30000, true);
                         $('#import_message_resultat')
                         .html("❗" + msg)
                         .css('color', 'red')
                         ;
+
                     } else {
+                        // Empty data in the error table
+                        $('#import_erreurs').hide();
+                        $('#import_erreurs_nombre').html('-');
+                        $('#import_erreurs_ids').html('-');
+                        $('#import_erreurs_nombre_all').html('-');
+                        $('#import_erreurs_ids_all').html('-');
+
+                        // Add data in the result table
                         $('#import_resultat_observations').html(response.data['observations']['nb']);
                         $('#import_resultat_organismes').html(response.data['other']['organismes']);
                         $('#import_resultat_personnes').html(response.data['other']['personnes']);
                         $('#import_resultat_observateurs').html(response.data['other']['observateurs']);
                         $('#import_resultat_determinateurs').html(response.data['other']['determinateurs']);
+
+                        // Display message
                         if (response.data['observations']['nb'] > 0) {
                             var msg = response.messages.join('</br>');
                         } else {
