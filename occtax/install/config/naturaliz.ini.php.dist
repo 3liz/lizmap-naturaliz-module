@@ -99,6 +99,12 @@ taxon_detail_source_type=api
 taxon_detail_source_url="https://inpn.mnhn.fr/espece/cd_nom/CD_NOM"
 
 
+; Valeurs pour l'import CSV
+organisme_gestionnaire_donnees=Inconnu
+org_transformation=Inconnu
+organisme_standard=Inconnu
+default_email=inconnu@acme.org
+
 ; chmod for files created by Lizmap and Jelix
 ;chmodFile=0664
 ;chmodDir=0775

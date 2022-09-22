@@ -153,6 +153,7 @@ COMMENT ON FUNCTION occtax.is_given_type(text, text)
 IS 'Tester si le contenu d''un champ est du type attendu'
 ;
 
+-- Test d'intersection entre un point et les mailles 10
 CREATE OR REPLACE FUNCTION occtax.intersects_maille_10(longitude real, latitude real) RETURNS BOOLEAN AS $$
 DECLARE
     _srid integer;
@@ -306,7 +307,8 @@ COST 100
 
 
 COMMENT ON FUNCTION occtax.test_conformite_observation(regclass, text)
-IS 'Tester la conformité des observations contenues dans la table fournie en paramètre selon les critères stockés dans la table occtax.critere_conformite'
+IS 'Tester la conformité des observations contenues dans la table fournie en paramètre
+selon les critères stockés dans la table occtax.critere_conformite'
 ;
 
 
@@ -395,6 +397,8 @@ VALUES
 ('obs_determinateurs_valide', 'La valeur de <b>determinateurs</b> n''est pas conforme', 'Le champ <b>determinateurs</b> doit être rempli si le cd_nom est rempli', $$(cd_nom IS NULL OR ( cd_nom IS NOT NULL AND determinateurs IS NOT NULL))$$, 'conforme'),
 ('obs_determinateurs_valide_format', 'La valeur de <b>determinateurs</b> n''est pas conforme', 'Le champ <b>determinateurs</b> doit être du type: NOM Prénom (Organisme 1), AUTRE-NOM Prénoms-Composé (Organisme 2), INCONNU (Indépendant)', $$(occtax.is_valid_identite_multiple(determinateurs))$$, 'conforme'),
 ('obs_nature_objet_geo_valide', 'La valeur de <b>nature_objet_geo</b> n''est pas conforme', 'Le champ <b>nature_objet_geo</b> peut prendre les valeurs: In, St, NSP', $$(geom IS NOT NULL AND (nature_objet_geo = ANY (ARRAY['St'::text, 'In'::text, 'NSP'::text])) OR geom IS NULL)$$, 'conforme'),
+-- validite_niveau
+('obs_validite_niveau_valide', 'La valeur de <b>validite_niveau<b> n''est pas conforme', 'Le champ <b>validite_niveau</b> peut prendre les valeurs: 1 à 6', $$(validite_niveau IS NULL OR (validite_niveau IS NOT NULL AND validite_niveau IN ('1', '2', '3', '4', '5', '6')))$$, 'conforme'),
 
 -- géométrie dans les mailles 10x10km
 ('obs_geometrie_localisation_dans_maille', 'Les <b>géométries</b> ne sont pas conformes', 'Les <b>géométries</b> doivent être à l''intérieur des mailles 10x10km.' , $$occtax.intersects_maille_10(longitude::real, latitude::real)$$, 'conforme')
@@ -402,12 +406,127 @@ VALUES
 ON CONFLICT ON CONSTRAINT critere_conformite_unique_code DO NOTHING
 ;
 
+
+
+-- Vérification des doublons
+DROP FUNCTION IF EXISTS occtax.verification_doublons_avant_import(regclass, text);
+DROP FUNCTION IF EXISTS occtax.verification_doublons_avant_import(regclass, text, boolean);
+CREATE OR REPLACE FUNCTION occtax.verification_doublons_avant_import(
+    _table_temporaire regclass,
+    _jdd_uid text,
+    _check_inside_this_jdd boolean
+) RETURNS TABLE (
+    duplicate_count integer,
+    duplicate_ids text
+) AS
+$BODY$
+DECLARE
+    _srid integer;
+    sql_template TEXT;
+    sql_text TEXT;
+BEGIN
+
+    -- Get observation table SRID
+    SELECT srid
+    INTO _srid
+    FROM geometry_columns
+    WHERE f_table_schema = 'occtax' AND f_table_name = 'observation'
+    ;
+
+    -- Get ids of observation already in occtax.observation
+    sql_template := '
+    WITH source AS (
+        SELECT DISTINCT t.identifiant_origine
+        FROM "%1$s" AS t
+        INNER JOIN occtax.observation AS o
+        ON (
+            TRUE
+    '
+    ;
+    sql_text = format(sql_template,
+        _table_temporaire
+    );
+
+    -- Add equality checks to search for duplicates
+    sql_template = '
+            AND Coalesce(t.cd_nom::bigint, 0) = Coalesce(o.cd_nom, 0)
+            AND Coalesce(t.date_debut::date, ''1980-01-01'') = Coalesce(o.date_debut, ''1980-01-01'')
+            AND Coalesce(t.heure_debut::time with time zone, ''00:00'') = Coalesce(o.heure_debut, ''00:00'')
+            AND Coalesce(t.date_fin::date, ''1980-01-01'') = Coalesce(o.date_fin, ''1980-01-01'')
+            AND Coalesce(t.heure_fin::time with time zone, ''00:00'') = Coalesce(o.heure_fin, ''00:00'')
+            AND Coalesce(ST_Transform(
+                    ST_SetSRID(
+                        ST_MakePoint(t.longitude::real, t.latitude::real),
+                        %1$s
+                    ),
+                    %1$s
+                ), ST_MakePoint(0, 0)) = Coalesce(o.geom, ST_MakePoint(0, 0))
+        )
+        WHERE o.cle_obs IS NOT NULL
+    '
+    ;
+    sql_text = sql_text || format(sql_template,
+        _srid
+    );
+
+    -- If the jdd_uid is '__ALL__' check against the observations with another JDD UID
+    -- Else check against the observation with the given JDD UID
+    IF _check_inside_this_jdd IS TRUE THEN
+        sql_template := '
+            AND o.jdd_metadonnee_dee_id = ''%1$s''
+        ';
+    ELSE
+        sql_template := '
+            AND o.jdd_metadonnee_dee_id != ''%1$s''
+        ';
+    END IF;
+    sql_text = sql_text || format(sql_template,
+        _jdd_uid
+    );
+
+    -- Count results
+    sql_text =  sql_text || '
+    )
+    SELECT
+        count(identifiant_origine)::integer AS duplicate_count,
+        string_agg(identifiant_origine::text, '', '' ORDER BY identifiant_origine) AS duplicate_ids
+    FROM source
+    '
+    ;
+
+    RAISE NOTICE '%', sql_text;
+
+    BEGIN
+        -- On récupère les données
+        RETURN QUERY EXECUTE sql_text;
+    EXCEPTION WHEN others THEN
+        RAISE NOTICE '%', SQLERRM;
+        RAISE NOTICE '%' , sql_text;
+        RETURN QUERY SELECT 0 AS duplicate_count, '' AS duplicate_ids;
+    END;
+
+END
+$BODY$
+LANGUAGE plpgsql VOLATILE
+COST 100
+;
+
+COMMENT ON FUNCTION occtax.verification_doublons_avant_import(regclass, text, boolean)
+IS 'Vérifie que les données en attente d''import (dans la table fournie en paramètre)
+ne contiennent pas des données déjà existantes dans la table occtax.observation.
+Les comparaisons sont faites sur les champs: cd_nom, date_debut, heure_debut,
+date_fin, heure_fin, geom.'
+;
+
+
+-- Fonction d'import des données d'observation depuis la table temporaire vers occtax.observation
 DROP FUNCTION IF EXISTS occtax.import_observations_depuis_table_temporaire(regclass, text, text, text);
+DROP FUNCTION IF EXISTS occtax.import_observations_depuis_table_temporaire(regclass, text, text, text, text, text);
 CREATE OR REPLACE FUNCTION occtax.import_observations_depuis_table_temporaire(
     _table_temporaire regclass,
     _import_login text,
     _jdd_uid text,
-    _organisme_responsable text
+    _organisme_gestionnaire_donnees text, _org_transformation text, _organisme_standard textœ
 )
 RETURNS TABLE (
     cle_obs bigint,
@@ -511,11 +630,14 @@ BEGIN
         SELECT * FROM occtax.jdd WHERE jdd_metadonnee_dee_id = ''%1$s''
     ),
     organisme_responsable AS (
-        SELECT ''%2$s'' AS nom_organisme
+        SELECT
+        ''%2$s'' AS organisme_gestionnaire_donnees,
+        ''%3$s'' AS org_transformation,
+        ''%4$s'' AS organisme_standard
     ),
     source_sans_doublon AS (
         SELECT csv.*
-        FROM "%4$s" AS csv, info_jdd AS j
+        FROM "%6$s" AS csv, info_jdd AS j
         WHERE True
         AND csv.identifiant_origine NOT IN
 		(	SELECT o.identifiant_origine
@@ -572,8 +694,8 @@ BEGIN
         j.jdd_metadonnee_dee_id,
         NULL AS jdd_source_id,
 
-        org.nom_organisme AS organisme_gestionnaire_donnees,
-        org.nom_organisme AS org_transformation,
+        org.organisme_gestionnaire_donnees AS organisme_gestionnaire_donnees,
+        org.org_transformation AS org_transformation,
 
         s.statut_source,
         s.reference_biblio,
@@ -584,8 +706,14 @@ BEGIN
         s.sensi_referentiel,
         s.sensi_version_referentiel,
 
-        ''1'' AS validite_niveau,
-        now()::date AS validite_date_validation,
+        CASE
+            WHEN s.validite_niveau::integer BETWEEN 1 AND 6 THEN s.validite_niveau::text
+            ELSE ''6''
+        END AS validite_niveau,
+        CASE
+            WHEN s.validite_date_validation IS NOT NULL THEN s.validite_date_validation::date
+            ELSE now()::date
+        END AS validite_date_validation,
 
         NULL descriptif_sujet,
         NULL AS donnee_complementaire,
@@ -595,20 +723,20 @@ BEGIN
         ST_Transform(
             ST_SetSRID(
                 ST_MakePoint(s.longitude::real, s.latitude::real),
-                %6$s
+                %8$s
             ),
-            %6$s
+            %8$s
         ) AS geom,
 
         json_build_object(
             ''observateurs'', s.observateurs,
             ''determinateurs'', s.determinateurs,
-            ''import_login'', ''%3$s'',
-            ''import_temp_table'', ''%4$s'',
+            ''import_login'', ''%5$s'',
+            ''import_temp_table'', ''%6$s'',
             ''import_time'', now()::timestamp(0)
         ) AS odata,
 
-        org.nom_organisme AS organisme_standard
+        org.organisme_standard AS organisme_standard
 
     FROM
         info_jdd AS j,
@@ -616,7 +744,7 @@ BEGIN
         source_sans_doublon AS s
         -- jointure pour récupérer les identifiants permanents si déjà créés lors d''un import passé
         LEFT JOIN occtax.lien_observation_identifiant_permanent AS loip
-            ON loip.jdd_id = ''%5$s''
+            ON loip.jdd_id = ''%7$s''
             AND loip.identifiant_origine = s.identifiant_origine::TEXT
 
     ON CONFLICT DO NOTHING
@@ -624,7 +752,9 @@ BEGIN
     ';
     sql_text := format(sql_template,
         _jdd_uid,
-        _organisme_responsable,
+        _organisme_gestionnaire_donnees,
+        _org_transformation,
+        _organisme_standard,
         _import_login,
         _table_temporaire,
         _jdd_id,
@@ -642,16 +772,18 @@ COST 100
 ;
 
 
-COMMENT ON FUNCTION occtax.import_observations_depuis_table_temporaire(regclass, text, text, text)
-IS 'Importe les observations contenues dans la table fournie en paramètre pour le JDD fourni et l''organisme responsable'
+COMMENT ON FUNCTION occtax.import_observations_depuis_table_temporaire(regclass, text, text, text, text, text)
+IS 'Importe les observations contenues dans la table fournie en paramètre pour le JDD fourni et les organismes (gestionnaire, transformation et standardisation)'
 ;
 
 -- Importe les données complémentaires (observateurs, liens spatiaux, etc.)
 DROP FUNCTION IF EXISTS occtax.import_observations_post_data(regclass, text, text);
+DROP FUNCTION IF EXISTS occtax.import_observations_post_data(regclass, text, text, text);
+DROP FUNCTION IF EXISTS occtax.import_observations_post_data(regclass, text, text, text, text, text, text);
 CREATE OR REPLACE FUNCTION occtax.import_observations_post_data(
     _table_temporaire regclass,
-    _import_login text,
-    _jdd_uid text
+    _import_login text, _jdd_uid text, _default_email text,
+    _libelle_import text, _date_reception date, _remarque_import text
 )
 RETURNS TABLE (
     import_report json
@@ -769,7 +901,7 @@ BEGIN
             concat(items[1], '' '' || items[2]) AS identite,
             items[1] AS nom,
             items[2] AS prenom,
-            ''inconnu@inco.nnu'' AS mail,
+            ''%2$s'' AS mail,
             o.id_organisme
         FROM valide AS v
         LEFT JOIN occtax.organisme AS o
@@ -781,7 +913,8 @@ BEGIN
     ;
     ';
     sql_text := format(sql_template,
-        _table_temporaire
+        _table_temporaire,
+        _default_email
     );
     -- RAISE NOTICE '-- table occtax.personne';
     -- RAISE NOTICE '%', sql_text;
@@ -885,8 +1018,9 @@ COST 100
 ;
 
 
-COMMENT ON FUNCTION occtax.import_observations_post_data(regclass, text, text)
-IS 'Importe les données complémentaires (observateurs, liens spatiaux, etc.) sur les observations contenues dans la table fournie en paramètre'
+COMMENT ON FUNCTION occtax.import_observations_post_data(regclass, text, text, text)
+IS 'Importe les données complémentaires (observateurs, liens spatiaux, etc.)
+sur les observations contenues dans la table fournie en paramètre'
 ;
 
 
@@ -972,6 +1106,7 @@ IS 'Suppression des données importées, utile si un souci a été rencontré lo
 DROP VIEW IF EXISTS occtax.v_import_web_liste;
 CREATE OR REPLACE VIEW occtax.v_import_web_liste AS
 SELECT
+    row_number() OVER() AS id,
     (odata->>'import_time')::timestamp(0) AS date_import,
     jdd_metadonnee_dee_id AS jdd,
     count(cle_obs) AS nombre_observations,
@@ -1017,11 +1152,10 @@ COMMENT ON VIEW occtax.v_import_web_observations
 IS 'Vue utile pour lister les observations importées par les utilisateurs depuis l''interface Web, à partir de fichier CSV. Seuls les centroides des géométries sont affichés.'
 ;
 
-
--- Fonction pour valider les observations importées, c'est-à-dire enlever leur statut temporaire
--- et les rendre visibles dans l'application
-DROP FUNCTION IF EXISTS occtax.import_valider_observations_importees(text, text);
-CREATE OR REPLACE FUNCTION occtax.import_valider_observations_importees(
+-- Fonction pour activer les observations importées, c'est-à-dire enlever leur statut temporaire
+-- et les rendre visibles dans l'application pour l'ensemble des utilisateurs
+DROP FUNCTION IF EXISTS occtax.import_activer_observations_importees(text, text);
+CREATE OR REPLACE FUNCTION occtax.import_activer_observations_importees(
     _table_temporaire text,
     _jdd_uid text
 )
@@ -1061,6 +1195,143 @@ LANGUAGE plpgsql VOLATILE
 COST 100
 ;
 
-COMMENT ON FUNCTION occtax.import_valider_observations_importees(text, text)
-IS 'Validation des observations importées pour la table temporaire et le JDD UUID fournis. Elle seront alors disponibles dans l''application';
+COMMENT ON FUNCTION occtax.import_activer_observations_importees(text, text)
+IS 'Activation des observations importées depuis un CSV dans l''interface Web
+pour la table temporaire et le JDD UUID fournis.
+Ces observations seront alors disponibles dans l''application';
 ;
+
+
+-- Fonctions pour le module action de Lizmap
+-- utiliser dans le projet de gestion pour activer les observations importées
+-- ou les supprimer
+DROP FUNCTION IF EXISTS public.query_to_geojson(text);
+CREATE OR REPLACE FUNCTION public.query_to_geojson(datasource text)
+RETURNS json AS
+$$
+DECLARE
+    sqltext text;
+    ajson json;
+BEGIN
+    sqltext:= format('
+        SELECT jsonb_build_object(
+            ''type'',  ''FeatureCollection'',
+            ''features'', jsonb_agg(features.feature)
+        )::json
+        FROM (
+          SELECT jsonb_build_object(
+            ''type'',       ''Feature'',
+            ''id'',         id,
+            ''geometry'',   ST_AsGeoJSON(ST_Transform(geom, 4326))::jsonb,
+            ''properties'', to_jsonb(inputs) - ''geom''
+          ) AS feature
+          FROM (
+              SELECT * FROM (%s) foo
+          ) AS inputs
+        ) AS features
+    ', datasource);
+    RAISE NOTICE 'SQL = %s', sqltext;
+    EXECUTE sqltext INTO ajson;
+    RETURN ajson;
+END;
+$$
+LANGUAGE 'plpgsql'
+IMMUTABLE STRICT;
+
+COMMENT ON FUNCTION public.query_to_geojson(text) IS 'Generate a valid GEOJSON from a given SQL text query.';
+
+
+DROP FUNCTION IF EXISTS public.lizmap_get_data(json);
+CREATE OR REPLACE FUNCTION public.lizmap_get_data(parameters json)
+RETURNS json AS
+$$
+DECLARE
+    feature_id integer;
+    layer_name text;
+    layer_table text;
+    layer_schema text;
+    action_name text;
+    sqltext text;
+    datasource text;
+    ajson json;
+BEGIN
+
+    action_name:= parameters->>'action_name';
+    feature_id:= (parameters->>'feature_id')::integer;
+    layer_name:= parameters->>'layer_name';
+    layer_schema:= parameters->>'layer_schema';
+    layer_table:= parameters->>'layer_table';
+
+    IF action_name = 'supprimer_observations_import_csv' THEN
+        datasource:= format('
+		WITH get_import AS (
+            SELECT
+            %1$s AS id,
+			jdd, date_import, code_import, login_import nombre_observations,
+            ''Les '' || "nombre_observations" || '' observations de cet import du '' || "date_import" || '' par '' || "login_import" || '' ont été supprimées'' AS message,
+            geom
+            FROM "%2$s"."%3$s"
+            WHERE id = %1$s
+		), action_import AS (
+			SELECT occtax.import_supprimer_observations_importees(code_import, jdd) AS nb_action
+			FROM get_import
+		)
+		SELECT g.*, a.*
+		FROM get_import AS g, action_import AS a
+        ',
+        feature_id,
+        layer_schema,
+        layer_table
+        );
+
+	ELSEIF action_name = 'activer_observations_import_csv' THEN
+        datasource:= format('
+		WITH get_import AS (
+            SELECT
+            %1$s AS id,
+			jdd, date_import, code_import, login_import nombre_observations,
+            ''Les '' || "nombre_observations" || '' observations de cet import du '' || "date_import" || '' par '' || "login_import" || '' ont été activées'' AS message,
+            geom
+            FROM "%2$s"."%3$s"
+            WHERE id = %1$s
+		), action_import AS (
+			SELECT occtax.import_activer_observations_importees(code_import, jdd)
+			FROM get_import
+		)
+		SELECT g.*, a.*
+		FROM get_import AS g, action_import AS a
+        ',
+        feature_id,
+        layer_schema,
+        layer_table
+        );
+    ELSE
+    -- Default : return geometry
+        datasource:= format('
+            SELECT
+            %1$s AS id,
+            ''Action par défaut: la géométrie de l objet est affichée'' AS message,
+            geom
+            FROM "%2$s"."%3$s"
+            WHERE id = %1$s
+        ',
+        feature_id,
+        layer_schema,
+        layer_table
+        );
+
+    END IF;
+	RAISE NOTICE 'SQL = %', datasource;
+
+    SELECT query_to_geojson(datasource)
+    INTO ajson
+    ;
+    RETURN ajson;
+END;
+$$
+LANGUAGE 'plpgsql'
+VOLATILE STRICT;
+
+COMMENT ON FUNCTION public.lizmap_get_data(json)
+IS 'Generate a valid GeoJSON from an action described by a name,
+PostgreSQL schema and table name of the source data, a QGIS layer name, a feature id and additional options.';
