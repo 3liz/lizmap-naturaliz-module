@@ -1,4 +1,8 @@
-# Naturaliz - Lizmap modules for managing species observation data
+# Naturaliz Lizmap module
+
+[![Packagist Version](https://img.shields.io/packagist/v/lizmap/naturaliz-modules)](https://packagist.org/packages/lizmap/naturaliz-modules)
+
+**Lizmap modules for managing species observation data**
 
 ## Installation
 
