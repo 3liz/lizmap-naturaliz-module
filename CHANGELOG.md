@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## 2.13.0 - 2022-09-30
+
+* Import Web
+  * Amélioration des fonctions SQL: test des doublons, prise en compte des organismes, email par défaut
+  * Ajout des variables dans l'interface d'administration: organismes, email par défaut.
+  * Ajout automatique d'un item dans la table occtax.jdd_import
+  * Utilisation d'une liste déroulante pour le champ "Organisme gestionnaire de données"
+* Import Web et Gestion - Projet QGIS & Lizmap pour la gestion et la validation des imports
+* Doc - Amélioration de la documentation pour l'import CSV
 
 ## 2.12.10 - 2022-07-26
 
