@@ -229,7 +229,6 @@ class importCtrl extends jController
         $message = "Pour pouvoir importer les données, il faut spécifier des valeurs pour les champs : ";
         foreach ($required_data_fields as $rfield => $rlabel) {
             $rval = $form->getData($rfield);
-            \jLog::log($rfield . ' = ' . $rval);
             if (empty($rval)) {
                 $empty_required_data[] = $rlabel ;
             }
@@ -254,9 +253,10 @@ class importCtrl extends jController
 
         // Get the logged user login
         $user = \jAuth::getUserSession();
-        $login = null;
+        $login = null; $user_email = '';
         if ($user) {
             $login = $user->login;
+            $user_email = $user->email;
         }
         if (!$login) {
             jForms::destroy("occtax~import");
@@ -312,7 +312,6 @@ class importCtrl extends jController
         if (array_key_exists('naturaliz', $ini) && array_key_exists('organisme_standard', $ini['naturaliz'])) {
             $organisme_standard = $ini['naturaliz']['organisme_standard'];
         }
-
         $import_observation = $import->importCsvIntoObservation(
             $login, $jdd_uid,
             $organisme_gestionnaire_donnees, $org_transformation, $organisme_standard
@@ -334,7 +333,8 @@ class importCtrl extends jController
         }
         $import_other_data = $import->addImportedObservationPostData(
             $login, $jdd_uid, $default_email,
-            trim($libelle_import), $date_reception, trim($remarque_import)
+            trim($libelle_import), $date_reception, trim($remarque_import),
+            $user_email
         );
         if (!$import_other_data) {
             // Delete already imported data

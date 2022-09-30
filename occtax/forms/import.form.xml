@@ -22,11 +22,13 @@
         <help locale="occtax~import.input.jdd_uid.help"/>
     </input>
 
-    <input ref="organisme_gestionnaire_donnees" required="false" type="string" minlength="2" maxlength="200">
+    <menulist ref="organisme_gestionnaire_donnees">
         <label locale="occtax~import.input.organisme_gestionnaire_donnees"/>
-        <hint locale="occtax~import.input.organisme_gestionnaire_donnees.help"/>
+        <datasource dao="occtax~organisme" profile="naturaliz_virtual_profile"
+            method="getOrganismes" labelproperty="nom_organisme" valueproperty="nom_organisme"/>
         <help locale="occtax~import.input.organisme_gestionnaire_donnees.help"/>
-    </input>
+        <hint locale="occtax~import.input.organisme_gestionnaire_donnees.help"/>
+    </menulist>
 
     <input ref="libelle_import" required="false" type="string" minlength="2" maxlength="200">
         <label locale="occtax~import.input.libelle_import"/>

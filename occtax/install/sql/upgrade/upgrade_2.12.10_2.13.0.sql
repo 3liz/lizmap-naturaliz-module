@@ -237,9 +237,9 @@ BEGIN
     ),
     organisme_responsable AS (
         SELECT
-        ''%2$s'' AS organisme_gestionnaire_donnees,
-        ''%3$s'' AS org_transformation,
-        ''%4$s'' AS organisme_standard
+        $$%2$s$$ AS organisme_gestionnaire_donnees,
+        $$%3$s$$ AS org_transformation,
+        $$%4$s$$ AS organisme_standard
     ),
     source_sans_doublon AS (
         SELECT csv.*
@@ -383,14 +383,21 @@ IS 'Importe les observations contenues dans la table fournie en paramètre pour 
 ;
 
 
+-- Ajout d'un acteur INCONNU
+INSERT INTO gestion.acteur (id_acteur, nom, prenom, civilite, id_organisme, remarque)
+VALUES (-1, 'INCONNU', 'Inconnu', 'M', -1, 'Acteur non défini')
+ON CONFLICT DO NOTHING;
+
 -- Importe les données complémentaires (observateurs, liens spatiaux, etc.)
 DROP FUNCTION IF EXISTS occtax.import_observations_post_data(regclass, text, text);
 DROP FUNCTION IF EXISTS occtax.import_observations_post_data(regclass, text, text, text);
-DROP FUNCTION IF EXISTS occtax.import_observations_post_data(regclass, text, text, text, text, text, text);
+DROP FUNCTION IF EXISTS occtax.import_observations_post_data(regclass, text, text, text, text, date, text);
+DROP FUNCTION IF EXISTS occtax.import_observations_post_data(regclass, text, text, text, text, date, text, text);
 CREATE OR REPLACE FUNCTION occtax.import_observations_post_data(
     _table_temporaire regclass,
     _import_login text, _jdd_uid text, _default_email text,
-    _libelle_import text, _date_reception date, _remarque_import text
+    _libelle_import text, _date_reception date, _remarque_import text,
+    _import_user_email text
 )
 RETURNS TABLE (
     import_report json
@@ -590,6 +597,62 @@ BEGIN
     EXECUTE sql_text INTO _nb_lignes;
     _result_information := _result_information || jsonb_build_object('update_spatial', _nb_lignes);
 
+
+    -- Log d'import: table occtax.jdd_import
+    -- Table import
+    sql_template := '
+    WITH rapport AS (
+        SELECT
+            count(*) AS nb_importe,
+            min(date_debut::date) AS date_obs_min,
+            max(Coalesce(date_fin::date, date_debut::date)) AS date_obs_max
+        FROM "%1$s"
+    ),
+    acteur_connecte AS (
+        SELECT id_acteur
+        FROM gestion.acteur
+        WHERE courriel = trim($$%6$s$$)
+        LIMIT 1
+    ),
+    ins AS (
+        INSERT INTO occtax.jdd_import (
+            jdd_id,
+            libelle, remarque, date_reception,
+            date_import, nb_donnees_source, nb_donnees_import,
+            date_obs_min, date_obs_max,
+            acteur_referent,
+            acteur_importateur
+        )
+        SELECT
+            $$%2$s$$,
+            $$%3$s$$, $$%4$s$$, $$%5$s$$,
+            now()::date, r.nb_importe, r.nb_importe,
+            date_obs_min, date_obs_max,
+            -1,
+            CASE
+                WHEN ac.id_acteur IS NOT NULL
+                    THEN ac.id_acteur
+                ELSE -1
+            END AS acteur_importateur
+        FROM rapport AS r
+		LEFT JOIN acteur_connecte AS ac ON True
+        LIMIT 1
+        RETURNING id_import
+    ) SELECT count(*) AS nb FROM ins
+    ;
+    ';
+    sql_text := format(sql_template,
+        _table_temporaire,
+        _jdd_id,
+        _libelle_import, _remarque_import, _date_reception,
+        _import_user_email
+    );
+    -- RAISE NOTICE '-- nettoyage';
+    -- RAISE NOTICE '%', sql_text;
+    EXECUTE sql_text INTO _nb_lignes;
+    _result_information := _result_information || jsonb_build_object('jdd_import', _nb_lignes);
+
+
     -- Nettoyage
     sql_template := '
     WITH ins AS (
@@ -625,7 +688,7 @@ COST 100
 ;
 
 
-COMMENT ON FUNCTION occtax.import_observations_post_data(regclass, text, text, text, text, text, text)
+COMMENT ON FUNCTION occtax.import_observations_post_data(regclass, text, text, text, text, date, text, text)
 IS 'Importe les données complémentaires (observateurs, liens spatiaux, etc.)
 sur les observations contenues dans la table fournie en paramètre'
 ;

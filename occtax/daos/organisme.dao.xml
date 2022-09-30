@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dao xmlns="http://jelix.org/ns/dao/1.0">
+    <datasources>
+        <primarytable name="organisme" realname="organisme" primarykey="id_organisme" />
+    </datasources>
+    <record>
+        <property name="id_organisme" fieldname="id_organisme" datatype="integer" required="true"/>
+        <property name="nom_organisme" fieldname="nom_organisme" datatype="text" required="true"/>
+        <property name="sigle" fieldname="sigle" datatype="text"/>
+        <!--<property name="" fieldname="" datatype="string/int/float/date"
+        required="yes" maxlength="" minlength="" regexp="" sequence=""
+        updatepattern="" insertpattern="" selectpattern=""/>-->
+    </record>
+    <factory>
+        <method name="getOrganismes" type="select">
+            <conditions logic="and">
+                <neq property="id_organisme" value="-1"/>
+            </conditions>
+            <order>
+                <orderitem property="nom_organisme" way="asc" />
+            </order>
+        </method>
+    </factory>
+</dao>
