@@ -54,5 +54,56 @@
                 }
             ]
         }
+    ],
+    "v_jdd_spatial_820d68bf_babb_4ec4_941d_686260332097": [
+        {
+            "name": "delete_jdd_observations",
+            "title": "Supprimer les observations du JDD",
+            "confirm": "Souhaitez-vous vraiment supprimer les observations de cet import ? ",
+            "icon": "icon-trash",
+            "options": {},
+            "style": {
+                "graphicName": "circle",
+                "pointRadius": 6,
+                "fill": true,
+                "fillColor": "lightgreen",
+                "fillOpacity": 0.3,
+                "stroke": true,
+                "strokeWidth": 4,
+                "strokeColor": "green",
+                "strokeOpacity": 0.8
+            },
+            "callbacks": [
+                {
+                    "method": "zoom"
+                },
+                {
+                    "method": "redraw",
+                    "layerId": "v_jdd_spatial_820d68bf_babb_4ec4_941d_686260332097"
+                }
+            ]
+        }
+    ],
+    "departement_9f454c9f_7462_4837_8f00_506aa7ae47d5": [
+        {
+            "name": "refresh_materialized_views",
+            "title": "Rafraîchir les vues matérialisées",
+            "confirm": "Pour rafraîchir les vues matérialisées, cliquer sur OK",
+            "icon": "icon-star",
+            "options": {},
+            "style": {
+                "graphicName": "circle",
+                "pointRadius": 6,
+                "fill": true,
+                "fillColor": "lightgreen",
+                "fillOpacity": 0.3,
+                "stroke": true,
+                "strokeWidth": 4,
+                "strokeColor": "green",
+                "strokeOpacity": 0.8
+            },
+            "callbacks": [
+            ]
+        }
     ]
 }
