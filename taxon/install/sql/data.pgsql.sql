@@ -120,33 +120,32 @@ INSERT INTO taxon.t_nomenclature (champ, code, valeur, description, ordre) VALUE
 
 
 -- Ajout des catégories de groupes INPN');
-INSERT INTO taxon.t_group_categorie VALUES ('Algues', 'Algues brunes', 'group2_inpn', 'Chromista');
-INSERT INTO taxon.t_group_categorie VALUES ('Algues', 'Algues rouges', 'group2_inpn', 'Plantae');
-INSERT INTO taxon.t_group_categorie VALUES ('Algues', 'Algues vertes', 'group2_inpn', 'Plantae');
-INSERT INTO taxon.t_group_categorie VALUES ('Algues', 'Diatomées', 'group2_inpn', 'Chromista');
+INSERT INTO taxon.t_group_categorie VALUES ('Algues', 'Algues', 'group1_inpn', 'Chromista');
 INSERT INTO taxon.t_group_categorie VALUES ('Amphibiens', 'Amphibiens', 'group2_inpn', 'Animalia');
 INSERT INTO taxon.t_group_categorie VALUES ('Angiospermes (plantes à fruits)', 'Angiospermes', 'group2_inpn', 'Plantae');
 INSERT INTO taxon.t_group_categorie VALUES ('Arachnides (araignées, tiques, scorpions)', 'Arachnides', 'group2_inpn', 'Animalia');
 INSERT INTO taxon.t_group_categorie VALUES ('Arachnides (araignées, tiques, scorpions)', 'Pycnogonides', 'group2_inpn', 'Animalia');
 INSERT INTO taxon.t_group_categorie VALUES ('Ascidies (animaux marins filtrants)', 'Ascidies', 'group2_inpn', 'Animalia');
 INSERT INTO taxon.t_group_categorie VALUES ('Bactéries et algues bleues', 'Bactéries et algues bleues', 'group1_inpn', 'Bacteria');
+INSERT INTO taxon.t_group_categorie VALUES ('Bactéries et algues bleues', 'Cyanobactéries', 'group1_inpn', 'Bacteria');
+INSERT INTO taxon.t_group_categorie VALUES ('Bactéries et algues bleues', 'Protéobactéries', 'group1_inpn', 'Bacteria');
 INSERT INTO taxon.t_group_categorie VALUES ('Champignons', 'Ascomycètes', 'group1_inpn', 'Fungi');
 INSERT INTO taxon.t_group_categorie VALUES ('Champignons', 'Basidiomycètes', 'group1_inpn', 'Fungi');
+INSERT INTO taxon.t_group_categorie VALUES ('Champignons', 'Myxomycètes', 'group1_inpn', 'Fungi');
 INSERT INTO taxon.t_group_categorie VALUES ('Coraux', 'Octocoralliaires', 'group2_inpn', 'Animalia');
 INSERT INTO taxon.t_group_categorie VALUES ('Coraux', 'Scléractiniaires', 'group2_inpn', 'Animalia');
 INSERT INTO taxon.t_group_categorie VALUES ('Crustacés', 'Crustacés', 'group2_inpn', 'Animalia');
-INSERT INTO taxon.t_group_categorie VALUES ('Fougères', 'Fougères', 'group2_inpn', 'Plantae');
+INSERT INTO taxon.t_group_categorie VALUES ('Échinodermes (Étoiles de mer, oursins,...)', 'Echinodermes', 'group1_inpn', 'Animalia');
+INSERT INTO taxon.t_group_categorie VALUES ('Éponges', 'Porifères', 'group1_inpn', 'Animalia');
+INSERT INTO taxon.t_group_categorie VALUES ('Éponges', 'Spongiaires', 'group1_inpn', 'Animalia');
+INSERT INTO taxon.t_group_categorie VALUES ('Fougères', 'Ptéridophytes', 'group2_inpn', 'Plantae');
 INSERT INTO taxon.t_group_categorie VALUES ('Gymnospermes (plantes à graines nues: conifères)', 'Gymnospermes', 'group2_inpn', 'Plantae');
 INSERT INTO taxon.t_group_categorie VALUES ('Hydrozoaires (méduses)', 'Hydrozoaires', 'group2_inpn', 'Animalia');
 INSERT INTO taxon.t_group_categorie VALUES ('Insectes (papillons, mouches, abeilles)', 'Entognathes', 'group2_inpn', 'Animalia');
 INSERT INTO taxon.t_group_categorie VALUES ('Insectes (papillons, mouches, abeilles)', 'Insectes', 'group2_inpn', 'Animalia');
 INSERT INTO taxon.t_group_categorie VALUES ('Mammifères', 'Mammifères', 'group2_inpn', 'Animalia');
-INSERT INTO taxon.t_group_categorie VALUES ('Mollusques', 'Bivalves', 'group2_inpn', 'Animalia');
-INSERT INTO taxon.t_group_categorie VALUES ('Mollusques', 'Céphalopodes', 'group2_inpn', 'Animalia');
-INSERT INTO taxon.t_group_categorie VALUES ('Mollusques', 'Gastéropodes', 'group2_inpn', 'Animalia');
-INSERT INTO taxon.t_group_categorie VALUES ('Mousses', 'Hépatiques et Anthocérotes', 'group2_inpn', 'Plantae');
-INSERT INTO taxon.t_group_categorie VALUES ('Mousses', 'Lichens', 'group2_inpn', 'Fungi');
-INSERT INTO taxon.t_group_categorie VALUES ('Mousses', 'Mousses', 'group2_inpn', 'Plantae');
+INSERT INTO taxon.t_group_categorie VALUES ('Mollusques', 'Mollusques', 'group1_inpn', 'Animalia');
+INSERT INTO taxon.t_group_categorie VALUES ('Mousses', 'Bryophytes', 'group1_inpn', 'Plantae');
 INSERT INTO taxon.t_group_categorie VALUES ('Myriapodes (mille-pattes)', 'Myriapodes', 'group2_inpn', 'Animalia');
 INSERT INTO taxon.t_group_categorie VALUES ('Oiseaux', 'Oiseaux', 'group2_inpn', 'Animalia');
 INSERT INTO taxon.t_group_categorie VALUES ('Poissons', 'Poissons', 'group2_inpn', 'Animalia');
@@ -157,6 +156,7 @@ INSERT INTO taxon.t_group_categorie VALUES ('Vers', 'Nématodes', 'group2_inpn',
 INSERT INTO taxon.t_group_categorie VALUES ('Vers', 'Némertes', 'group2_inpn', 'Animalia');
 INSERT INTO taxon.t_group_categorie VALUES ('Vers', 'Plathelminthes', 'group2_inpn', 'Animalia');
 
+UPDATE taxon.t_group_categorie SET libelle_court = (regexp_split_to_array( cat_nom, ' '))[1] WHERE libelle_court IS NULL;
 
 -- Ajout des rangs
 INSERT INTO taxon.t_nomenclature (champ, code, valeur, description, ordre)
