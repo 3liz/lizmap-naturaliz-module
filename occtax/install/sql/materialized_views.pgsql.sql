@@ -1154,7 +1154,7 @@ INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order")
 INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'nombre_obs_par_menace', 12) ON CONFLICT DO NOTHING;
 INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'nombre_taxons_par_menace', 13) ON CONFLICT DO NOTHING;
 INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'chiffres_cles', 14) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'rangs_taxonomique', 15) ON CONFLICT DO NOTHING;
+INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'rangs_taxonomiques', 15) ON CONFLICT DO NOTHING;
 INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'nombre_taxons_par_statut_biogeographique', 16) ON CONFLICT DO NOTHING;
 INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'nombre_obs_par_statut_biogeographique', 17) ON CONFLICT DO NOTHING;
 INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'sensibilite_donnees', 18) ON CONFLICT DO NOTHING;

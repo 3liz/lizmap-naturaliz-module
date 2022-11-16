@@ -29,8 +29,14 @@ DECLARE
 BEGIN
     items = regexp_match(
         trim(identite),
-        '^([A-Z\u00C0-\u00FF\- ]+) +([A-Za-z\u00C0-\u00FF\- ]+ +)?\((.+)\)$'
+        '^([A-Z\u00C0-\u00FF\- ]+) +([A-Za-z\u00C0-\u00FF\-\. ]+ +)?\((.+)\)$'
     );
+    -- NB:
+    -- Le premier bloc prend le nom
+    -- le 2ème le prénom
+    -- le point dans le deuxième bloc (pour le prénom) permet d'avoir une initiale
+    -- suivie d'un point : DUPONT M. serait donc valide
+    -- L'organisme est le troisième bloc attrapé
 
     -- Si on ne trouve rien via la regex, on renvoie FALSE
     IF items IS NULL THEN
@@ -778,6 +784,11 @@ COMMENT ON FUNCTION occtax.import_observations_depuis_table_temporaire(regclass,
 IS 'Importe les observations contenues dans la table fournie en paramètre pour le JDD fourni et les organismes (gestionnaire, transformation et standardisation)'
 ;
 
+-- Ajout d'un organisme avec id = -1 pour faciliter les imports (en évitant soucis de contraintes de clé étrangère)
+INSERT INTO occtax.organisme (id_organisme, nom_organisme, commentaire)
+VALUES (-1, 'Non défini', 'Organisme non défini. Utiliser pour éviter les soucis de contrainte de clé étrangère avec la table personne. Il faut utiliser l''organisme inconnu ou indépendant à la place')
+ON CONFLICT DO NOTHING
+;
 -- Ajout d'un acteur INCONNU
 INSERT INTO gestion.acteur (id_acteur, nom, prenom, civilite, id_organisme, remarque)
 VALUES (-1, 'INCONNU', 'Inconnu', 'M', -1, 'Acteur non défini')
@@ -1370,6 +1381,45 @@ BEGIN
         layer_schema,
         layer_table
         );
+	ELSEIF action_name = 'delete_jdd_observations' THEN
+        datasource:= format('
+		WITH jdd_source AS (
+            SELECT *
+            FROM occtax.jdd
+            WHERE jdd_id = %1$s
+        ),
+        delete_obs AS (
+            DELETE
+            FROM occtax.observation
+            WHERE jdd_metadonnee_dee_id IN (
+                SELECT jdd_metadonnee_dee_id
+                FROM jdd_source
+            )
+		)
+        SELECT
+        1 AS id,
+        ''Les observations du JDD "'' || j.jdd_code ||''" ont bien été supprimées'' AS message,
+        NULL AS geom,
+		FROM delete_obs AS d, jdd_source AS j
+        ',
+        feature_id
+        );
+	ELSEIF action_name = 'refresh_materialized_views' THEN
+        datasource:= '
+		WITH refresh_views AS (
+            SELECT occtax.manage_materialized_objects(''refresh'', True, NULL) AS ok
+        ),
+        fin AS (
+            SELECT
+            1 AS id,
+            ''Les vues matérialisées ont bien été rafraîchies'' AS message,
+            NULL AS geom,
+            r.ok
+            FROM refresh_views AS r
+		)
+		SELECT *
+		FROM fin
+        ';
     ELSE
     -- Default : return geometry
         datasource:= format('

@@ -383,6 +383,11 @@ IS 'Importe les observations contenues dans la table fournie en paramètre pour 
 ;
 
 
+-- Ajout d'un organisme avec id = -1 pour faciliter les imports (en évitant soucis de contraintes de clé étrangère)
+INSERT INTO occtax.organisme (id_organisme, nom_organisme, commentaire)
+VALUES (-1, 'Non défini', 'Organisme non défini. Utiliser pour éviter les soucis de contrainte de clé étrangère avec la table personne. Il faut utiliser l''organisme inconnu ou indépendant à la place')
+ON CONFLICT DO NOTHING
+;
 -- Ajout d'un acteur INCONNU
 INSERT INTO gestion.acteur (id_acteur, nom, prenom, civilite, id_organisme, remarque)
 VALUES (-1, 'INCONNU', 'Inconnu', 'M', -1, 'Acteur non défini')
