@@ -9,9 +9,6 @@ class occtaxViewListener extends jEventListener{
         $defaultRep = $ini->getValue('defaultRepository', 'naturaliz');
         $defaultProject = $ini->getValue('defaultProject', 'naturaliz');
 
-        $request->params['repository'] = $defaultRep;
-        $request->params['project'] = $defaultProject;
-
         $applicationName = $ini->getValue('appName', 'naturaliz');
         $projectName = $ini->getValue('projectName', 'naturaliz');
         $projectDescription = html_entity_decode($ini->getValue('projectDescription', 'naturaliz') );
