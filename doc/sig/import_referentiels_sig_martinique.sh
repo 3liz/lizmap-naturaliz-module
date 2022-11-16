@@ -1,5 +1,5 @@
 # Aller dans le répertoire source
-cd /home/mdouchin/Documents/3liz/PNR_Martinique/naturaliz/sig
+cd /home/mdouchin/Documents/3liz/PNR_Martinique/echange/sig/
 
 # Pour les communes, récupérer la BDTOPO Licence Ouverte
 # ftp://BDTOPO_V3_NL_ext:Ohp3quaz2aideel4@ftp3.ign.fr/BDTOPO_3-0_2020-12-15/BDTOPO_3-0_TOUSTHEMES_SHP_RGAF09UTM20_D972_2020-12-15.7z
@@ -163,3 +163,11 @@ psql service=naturaliz_martinique_dev -c "SELECT code_me, nom_me, ST_Area(geom) 
 
 # DEPARTEMENT: on prend le contour du PNM
 psql service=naturaliz_martinique_dev -c "INSERT INTO sig.departement SELECT '972', 'La Martinique', 2021, geom FROM sig.espace_naturel WHERE code_en = 'FR9100010'"
+
+# UNESCO
+# psql service=naturaliz_martinique_dev -c "DELETE FROM sig.espace_naturel WHERE type_en = 'BPM'"
+echo "UNESCO"
+# Fichier fourni par le PNRM "UNESCO/perimetre_coeur_du_bien_juin_2019.shp"
+ogr2ogr -append -s_srs "EPSG:32620" -t_srs "EPSG:5490" -f PostgreSQL "PG:service=naturaliz_martinique_dev active_schema=sig" "UNESCO/perimetre_coeur_du_bien_juin_2019.shp" -nlt PROMOTE_TO_MULTI -nln espace_naturel -lco GEOMETRY_NAME=geom -lco PG_USE_COPY=YES -gt 100000 -sql "SELECT concat('UNESCO_', cast(id AS character)) AS code_en, 'BPM' AS type_en, lieu_2 AS nom_en, '' AS url, '06/2019' AS version_en FROM perimetre_coeur_du_bien_juin_2019"
+# verification
+psql service=naturaliz_martinique_dev -c "SELECT code_en, type_en, nom_en, ST_Area(geom) FROM sig.espace_naturel WHERE type_en = 'BPM' LIMIT 2"
