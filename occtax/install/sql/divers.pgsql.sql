@@ -880,7 +880,7 @@ COMMENT ON COLUMN divers.jdd_analyse.nb_valeurs IS 'Nombre de valeurs uniques du
 -- Name: COLUMN jdd_analyse.valeurs; Type: COMMENT; Schema: divers; Owner: -
 --
 
-COMMENT ON COLUMN divers.jdd_analyse.valeurs IS 'Valeurs uniques du champ et occurences';
+COMMENT ON COLUMN divers.jdd_analyse.valeurs IS 'Valeurs uniques du champ et occurrences';
 
 
 --
@@ -1426,4 +1426,3 @@ ALTER TABLE ONLY divers.observation_doublon
 
 ALTER TABLE ONLY divers.suivi_imports
     ADD CONSTRAINT suivi_imports_pkey PRIMARY KEY (nom_jdd);
-

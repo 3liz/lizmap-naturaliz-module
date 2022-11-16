@@ -10,7 +10,7 @@ appName=Naturaliz
 
 defaultRepository=
 defaultProject=
-projectName=Occurences de Taxon
+projectName=Occurrences de Taxon
 projectDescription=Cette application permet de consulter les observations faunistiques et floristiques.
 
 ; champ determinant le statut local : valeures possibles fr, gf, mar, gua, sm, sb, spm, may, epa, reu, taff, pf, nc, wf, cli

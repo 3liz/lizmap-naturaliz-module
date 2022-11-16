@@ -4383,7 +4383,7 @@ def my_form_open(dialog, layer, feature):
         <language></language>
         <type>dataset</type>
         <title></title>
-        <abstract>Recense les jeux de données officiels du standard Occurence de taxons. Un jeu de données correspond souvent à une base de données</abstract>
+        <abstract>Recense les jeux de données officiels du standard Occurrence de taxons. Un jeu de données correspond souvent à une base de données</abstract>
         <contact>
           <name></name>
           <organization></organization>

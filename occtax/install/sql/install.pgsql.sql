@@ -256,7 +256,7 @@ COMMENT ON COLUMN occtax.observation.validite_niveau IS 'Niveau de validité sci
 COMMENT ON COLUMN occtax.observation.validite_date_validation IS 'Date de réalisation de la validation scientifique de l''observation';
 
 COMMENT ON COLUMN occtax.observation.descriptif_sujet IS 'Donnée sur le descriptif_sujet, au format JSON.';
-COMMENT ON COLUMN occtax.observation.donnee_complementaire IS 'Données complémentaires issues de la source de données, mais en dehors du format Occurences de taxon. Gardé ici pour conservation. Au format JSON';
+COMMENT ON COLUMN occtax.observation.donnee_complementaire IS 'Données complémentaires issues de la source de données, mais en dehors du format Occurrences de taxon. Gardé ici pour conservation. Au format JSON';
 
 COMMENT ON COLUMN occtax.observation.cd_nom_cite IS 'Code du taxon « cd_nom » de TaxRef référençant au niveau national le taxon tel qu''il a été initialement cité par l''observateur dans le champ nom_cite. Le rang taxinomique de la donnée doit être celui de la donnée d''origine. Par défaut, cd_nom = cd_nom_cite. cd_nom peut être modifié dans le cas de la procédure de validation après accord du producteur selon les règles définies dans le protocole régional de validation.' ;
 
@@ -590,7 +590,7 @@ CREATE TABLE occtax.jdd (
     date_minimum_de_diffusion date
 );
 
-COMMENT ON TABLE occtax.jdd IS 'Recense les jeux de données officiels du standard Occurence de taxons. Un jeu de données correspond souvent à une base de données';
+COMMENT ON TABLE occtax.jdd IS 'Recense les jeux de données officiels du standard Occurrence de taxons. Un jeu de données correspond souvent à une base de données';
 COMMENT ON COLUMN occtax.jdd.jdd_id IS 'Un identifiant pour la collection ou le jeu de données terrain d’où provient l’enregistrement. Exemple code IDCNP pour l’INPN : « 00-15 ».';
 COMMENT ON COLUMN occtax.jdd.jdd_code IS 'Le nom, l’acronyme, le code ou l’initiale identifiant la collection ou le jeu de données dont l’enregistrement de la Donnée Source provient. Exemple « INPN », « Silène », « BDMAP »';
 COMMENT ON COLUMN occtax.jdd.jdd_libelle IS 'Libellé court et intelligible du jeu de données';

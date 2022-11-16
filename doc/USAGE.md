@@ -530,7 +530,7 @@ REFRESH MATERIALIZED VIEW occtax.vm_observation ;
 
 ## Module Occtax
 
-Module de gestion des données au format Occurence de Taxon
+Module de gestion des données au format Occurrence de Taxon
 
 
 ### Gestion des listes rouges et des espèces protégées

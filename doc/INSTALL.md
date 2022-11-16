@@ -102,7 +102,7 @@ Les modules Naturaliz lisent dans le fichier **lizmap/var/config/naturaliz.ini.p
 
 Pour le module mascarine:
 
-* le code officiel (cf standard "Occurence de taxon", champ ) des habitats de la zone d'étude (par exemple GUAEAR )
+* le code officiel (cf standard "Occurrence de taxon", champ ) des habitats de la zone d'étude (par exemple GUAEAR )
 
 Voir l'exemple naturaliz.ini.php.dist à la racine de ce dépôt.
 
@@ -131,7 +131,7 @@ appName=Naturaliz
 
 defaultRepository=
 defaultProject=
-projectName=Occurences de Taxon
+projectName=Occurrences de Taxon
 projectDescription=Cette application permet de consulter les observations faunistiques et floristiques.
 projectCss=""
 
@@ -462,7 +462,7 @@ psql service=naturaliz
 
 L'installateur a créé la structure dans la base de données PostGreSQL (schéma,
 tables, vues, etc.), mais aucune donnée n'a encore été importée, à part les
-listes liées à la nomenclature du standard TAXREF et du schéma Occurence de
+listes liées à la nomenclature du standard TAXREF et du schéma Occurrence de
 taxons. Les imports peuvent être réalisés via des scripts de l'application.
 Pour cela, il faut bien avoir configuré le fichier `lizmap/var/config/profiles.ini.php`
 comme décrit précédemment.
@@ -503,7 +503,7 @@ Pour pouvoir lancer les commandes SQL qui copient les données depuis les fichie
 
 
 
-### Import Occurences de taxon : données de références
+### Import Occurrences de taxon : données de références
 
 Certaines données spatiales de références sont nécessaires au fonctionnement de l'application :
 

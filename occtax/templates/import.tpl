@@ -7,7 +7,7 @@
     </h3>
     <div class="menu-content">
         <div id="occtax_import_tab_div" class="container" style="width:100%;">
-            <h4>Tester la conformité de données d'observation selon le standard Occurences de Taxon</h4>
+            <h4>Tester la conformité de données d'observation selon le standard Occurrences de Taxon</h4>
 
             <p>Veuillez consulter au préalable les ressources suivantes</p>
             <ul>
