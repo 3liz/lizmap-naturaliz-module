@@ -130,11 +130,8 @@ class exportCtrl extends jController {
             $this->params()
         );
         $rep->addJSCode("var checkUrl = '" . $checkUrl . "'; ");
-        $jslink = jUrl::get(
-            'jelix~www:getfile',
-            array('targetmodule'=>'occtax', 'file'=>'js/occtax.export.js')
-        );
-        $rep->addJSLink($jslink);
+        $basePath = jApp::urlBasePath();
+        $rep->addJSLink($basePath . 'occtax/js/occtax.export.js');
 
         // Locales
         $locales = $this->getLocales();

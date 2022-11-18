@@ -53,7 +53,7 @@ class defaultCtrl extends lizMapCtrl {
             // For occtax we need to add all JQuery
             // In Lizmap it is done only if the use has edition capabilities
             $confUrlEngine = &jApp::config()->urlengine;
-            $bp = $confUrlEngine['basePath'];
+            $basePath = $confUrlEngine['basePath'];
             $lang = jLocale::getCurrentLang();
             $www = $confUrlEngine['jelixWWWPath'];
 
@@ -75,12 +75,12 @@ class defaultCtrl extends lizMapCtrl {
             }
 
             // Add other jForms js
-            $rep->addJSLink($bp.'assets/js/ckeditor5/ckeditor.js');
-            $rep->addJSLink($bp.'assets/js/ckeditor5/ckeditor_lizmap.js');
-            $rep->addJSLink($bp.'assets/js/fileUpload/jquery.fileupload.js');
-            $rep->addJsLink($bp.'assets/js/fileUpload/jquery.iframe-transport.js');
+            $rep->addJSLink($basePath.'assets/js/ckeditor5/ckeditor.js');
+            $rep->addJSLink($basePath.'assets/js/ckeditor5/ckeditor_lizmap.js');
+            $rep->addJSLink($basePath.'assets/js/fileUpload/jquery.fileupload.js');
+            $rep->addJsLink($basePath.'assets/js/fileUpload/jquery.iframe-transport.js');
 
-            $rep->addJSLink($bp.'assets/js/bootstrapErrorDecoratorHtml.js');
+            $rep->addJSLink($basePath.'assets/js/bootstrapErrorDecoratorHtml.js');
 
             // Get local configuration (application name, projects name, etc.)
             $localConfig = jApp::configPath('naturaliz.ini.php');
@@ -92,8 +92,9 @@ class defaultCtrl extends lizMapCtrl {
 
 
             // sumoselect
-            $rep->addJsLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/sumoselect/jquery.sumoselect.min.js')));
-            $rep->addCSSLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'css/sumoselect/sumoselect.css')));
+            $rep->addJsLink($basePath . 'occtax/js/sumoselect/jquery.sumoselect.min.js');
+            $rep->addCSSLink($basePath . 'occtax/css/sumoselect/sumoselect.css');
+
 
             // For recent versions of Lizmap Wbe Client, since 3.4.0, we need to add some OpenLayers 2.13.1 JS files
             // Which have been removed from the OL 2 build
@@ -105,13 +106,14 @@ class defaultCtrl extends lizMapCtrl {
             $major = (integer) $exp_version[0];
             $minor = (integer) $exp_version[1];
             if ($major >= 4 || ($major = 3 && $minor >= 4)) {
-                $rep->addJsLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/OpenLayers_2_13_1/Strategy.js')));
-                $rep->addJsLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/OpenLayers_2_13_1/Strategy/Cluster.js')));
+                $rep->addJsLink($basePath . 'occtax/js/OpenLayers_2_13_1/Strategy.js');
+                $rep->addJsLink($basePath . 'occtax/js/OpenLayers_2_13_1/Strategy/Cluster.js');
+
             }
 
             // occtax
-            $rep->addJsLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/occtax.js')));
-            $rep->addJsLink(jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/occtax.search.js')));
+            $rep->addJsLink($basePath . 'occtax/js/occtax.js');
+            $rep->addJsLink($basePath . 'occtax/js/occtax.search.js');
 
             // Add nomenclature
             $nomenclature = array();

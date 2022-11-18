@@ -6,6 +6,8 @@ class occtaxDockableListener extends jEventListener{
 
         function onmapDockable ($event) {
             $coord = jApp::coord();
+            $basePath = jApp::urlBasePath();
+
             if ($coord->moduleName == 'occtax') {
                 $project = $event->getParam( 'project' );
                 $repository = $event->getParam( 'repository' );
@@ -24,7 +26,7 @@ class occtaxDockableListener extends jEventListener{
                     jLocale::get("taxon~search.dock.title"),
                     $content,
                     9,
-                    jUrl::get('jelix~www:getfile', array('targetmodule'=>'taxon', 'file'=>'css/taxon.search.css'))
+                    $basePath . 'taxon/css/taxon.search.css'
                 );
                 $event->add($dock);
 
@@ -180,8 +182,7 @@ class occtaxDockableListener extends jEventListener{
                     jLocale::get("occtax~search.dock.title"),
                     $content,
                     10,
-                    jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'css/occtax.search.css')),
-
+                    $basePath . 'occtax/css/occtax.search.css',
                     Null // JS loaded in occtax default controller
                 );
                 $event->add($dock);
@@ -245,6 +246,8 @@ class occtaxDockableListener extends jEventListener{
 
         function onmapMiniDockable ( $event ) {
             $coord = jApp::coord();
+            $basePath = jApp::urlBasePath();
+
             if ($coord->moduleName == 'occtax') {
                 $project = $event->getParam( 'project' );
                 $repository = $event->getParam( 'repository' );
@@ -296,7 +299,7 @@ class occtaxDockableListener extends jEventListener{
                         $content,
                         15,
                         Null,
-                        jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/occtax.validation.js'))
+                        $basePath . 'occtax/js/occtax.validation.js'
                     );
                     $event->add($dock);
                 }
@@ -311,6 +314,8 @@ class occtaxDockableListener extends jEventListener{
 
         function onmapBottomDockable ( $event ) {
             $coord = jApp::coord();
+            $basePath = jApp::urlBasePath();
+
             if ($coord->moduleName == 'occtax') {
                 // Import tool
                 // Create import form
@@ -339,7 +344,7 @@ class occtaxDockableListener extends jEventListener{
                         $content,
                         40,
                         null,
-                        jUrl::get('jelix~www:getfile', array('targetmodule'=>'occtax', 'file'=>'js/occtax.import.js'))
+                        $basePath . 'occtax/js/occtax.import.js'
                     );
                     $event->add($dock);
                 }
