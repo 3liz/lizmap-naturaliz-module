@@ -1,66 +1,50 @@
 <?php
-class occtaxModuleUpgrader_2_13_0__2_13_1 extends jInstallerModule
+
+/**
+ * @package   lizmap
+ * @subpackage occtax
+ * @author    Michaël Douchin
+ * @contributor Laurent Jouanneau
+ * @copyright 2014-2022 3liz
+ * @link      http://3liz.com
+ * @license    All rights reserved
+ */
+require_once(__DIR__ . '/upgradeTrait.php');
+class occtaxModuleUpgrader_2_13_0__2_13_1 extends jInstallerModule //\Jelix\Installer\Module\Installer
 {
+    use upgradeTrait;
 
     public $targetVersions = array(
         '2.13.1',
     );
-    public $date = '2022-11-16';
+    public $date = '2022-11-18';
 
+    protected $sqlUpgradeFile = 'upgrade/upgrade_2.13.0_2.13.1.sql';
+
+    protected $sqlGrantFile = 'grant_rights.sql';
+
+    //function install(\Jelix\Installer\Module\API\InstallHelpers $helpers)
     function install()
     {
-        if ($this->firstDbExec()) {
-            // Get variables
-            // Keep here variable srid, colonne_locale
-            $localConfig = jApp::configPath('naturaliz.ini.php');
-            $ini = parse_ini_file($localConfig, true);
-            $srid = '2975';
-            if (array_key_exists('naturaliz', $ini) && array_key_exists('srid', $ini['naturaliz'])) {
-                $srid = $ini['naturaliz']['srid'];
-            }
-            $colonne_locale = 'reu';
-            if (array_key_exists('naturaliz', $ini) && array_key_exists('colonne_locale', $ini['naturaliz'])) {
-                $colonne_locale = $ini['naturaliz']['colonne_locale'];
-            }
+        // Get path
+        // $sqlDirPath = $this->getPath() . 'install/sql/';
+        $sqlDirPath = $this->path . 'install/sql/';
 
-            // SQL upgrade
-            $this->useDbProfile('jauth_super');
-            $db = $this->dbConnection(); // A PLACER TOUJOURS DERRIERE $this->useDbProfile('jauth_super');
-            $sqlPath = $this->path . 'install/sql/upgrade/upgrade_2.13.0_2.13.1.sql';
-            $sqlTpl = jFile::read($sqlPath);
-            $tpl = new jTpl();
-            // CAREFUL, SRID must be UPPERCASE
-            $tpl->assign('SRID', $srid);
-            $tpl->assign('colonne_locale', $colonne_locale);
-            $sql = $tpl->fetchFromString($sqlTpl, 'text');
-            $db->exec($sql);
+        // Get database connection
+        // $helpers->database()->useDbProfile('jauth_super');
+        // $db = $helpers->database()->dbConnection();
+        $this->useDbProfile('jauth_super');
+        $db = $this->dbConnection(); // A PLACER TOUJOURS DERRIERE $this->useDbProfile('jauth_super');
 
-            // Grant rights
-            $sqlPath = $this->path . 'install/sql/grant_rights.sql';
-            $sqlTpl = jFile::read($sqlPath);
-            $tpl = new jTpl();
-            $prof = jProfiles::get('jdb', $this->dbProfile, true);
-            $tpl->assign('DBNAME', $prof['database']);
-            $dbuser_readonly = 'naturaliz';
-            if (array_key_exists('naturaliz', $ini) && array_key_exists('dbuser_readonly', $ini['naturaliz'])) {
-                $dbuser_readonly = $ini['naturaliz']['dbuser_readonly'];
-            }
-            $dbuser_owner = 'naturaliz';
-            if (array_key_exists('naturaliz', $ini) && array_key_exists('dbuser_owner', $ini['naturaliz'])) {
-                $dbuser_owner = $ini['naturaliz']['dbuser_owner'];
-            }
-            $tpl->assign('DBUSER_READONLY', $dbuser_readonly);
-            $tpl->assign('DBUSER_OWNER', $dbuser_owner);
-            $sql = $tpl->fetchFromString($sqlTpl, 'text');
+        // Naturaliz specific config file
+        // $localConfig = jApp::varConfigPath('naturaliz.ini.php');
+        $localConfig = jApp::configPath('naturaliz.ini.php');
 
-            // Try to reapply some rights on possibly newly created tables
-            // If it fails, no worries as it can be done manually after upgrade
-            try {
-                $db->exec($sql);
-            } catch (Exception $e) {
-                jLog::log("Upgrade - Rights where not reapplied on database objects", 'error');
-                jLog::log($e->getMessage(), 'error');
-            }
-        }
+        // Upgrade structure
+        $this->upgradeDatabaseStructure($localConfig, $db, $sqlDirPath . $this->sqlUpgradeFile);
+
+        // Grant rights
+        $sqlPath = $sqlDirPath . $this->sqlGrantFile;
+        $this->grantRightsToDatabaseObjects($localConfig, $db, $sqlDirPath . $this->sqlUpgradeFile);
     }
 }
