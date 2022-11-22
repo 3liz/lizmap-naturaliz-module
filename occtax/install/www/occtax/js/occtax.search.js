@@ -708,10 +708,15 @@ OccTax.events.on({
                 $('#' + formId + '_filter select option').prop('selected', function () {
                     return this.defaultSelected;
                 });
-                // sumoselect specific of taxon filter tab
+                // Transformer les <select multiple> en inline-select
                 $('#' + formId + '_filter select.jforms-ctrl-listbox').each(function () {
-                    if ($(this).attr('id') != 'jforms_occtax_search_cd_nom') {
-                        $(this)[0].sumo.unSelectAll();
+                    if ($(this).attr('id') != 'jforms_occtax_search_cd_nom' && $(this).attr('id') != 'jforms_occtax_search_jdd_id') {
+                        // $(this)[0].sumo.unSelectAll();
+                        let sourceSelect = document.getElementById($(this).attr('id'));
+                        sourceSelect.selectedIndex = -1;
+                        // We set the inline-select values (active class set on needed span)
+                        // By triggering the change on the source select input
+                        sourceSelect.dispatchEvent(new Event('change'));
                     }
                 });
             }
@@ -835,7 +840,7 @@ OccTax.events.on({
         /**
          * Ajout du datatable sur le tableau des JDD (jeux de données)
          */
-         function addResultsJddTable() {
+        function addResultsJddTable() {
             var tableId = 'occtax_results_jdd_table';
             // Get statistics
             var returnFields = $('#' + tableId + '').attr('data-value').split(',');
@@ -1574,7 +1579,7 @@ OccTax.events.on({
          * Activate the autocompletion for the JDD search input
          *
          */
-         function initJddAutocomplete() {
+        function initJddAutocomplete() {
             var formId = $('#div_form_occtax_search_token form').attr('id');
             // Do nothing if the autocompletion is not visible
             if ($('#' + formId + '_jdd_autocomplete').length == 0) {
@@ -1645,7 +1650,7 @@ OccTax.events.on({
             // Adapt the content of the proposed items in the popup
             $('#' + formId + '_jdd_autocomplete').autocomplete("instance")._renderItem = function (ul, item) {
                 return $("<li>")
-                    .append($("<a>").html($('<a title="'+item.jdd_description+'">').html(item.label)))
+                    .append($("<a>").html($('<a title="' + item.jdd_description + '">').html(item.label)))
                     .appendTo(ul);
             };
         }
@@ -2160,13 +2165,17 @@ OccTax.events.on({
                         input_item = $('#' + tokenFormId + ' [name="' + input_name + '[]"]');
                         ismulti = true;
                     }
-                    input_item.val(input_value);
-                    // sumoselect too
+                    input_item.val(input_value).change();
+                    // Prise en compte des inline-select
                     if (ismulti && input_item && input_item[0]) {
-                        input_item[0].sumo.unSelectAll();
-                        for (var i in input_value) {
-                            input_item[0].sumo.selectItem(input_value[i]);
-                        }
+                        // input_item[0].sumo.unSelectAll();
+                        // for (var i in input_value) {
+                        //     input_item[0].sumo.selectItem(input_value[i]);
+                        // }
+                        // We set the inline-select values (active class set on needed span)
+                        // By triggering the change on the source select input
+                        let sourceSelect = document.getElementById(input_item.attr('id'));
+                        sourceSelect.dispatchEvent(new Event('change'));
                     }
 
                 }
@@ -2415,7 +2424,7 @@ OccTax.events.on({
             var current_storage = [];
 
             // Default value to auto
-            target = typeof target !== 'undefined' ?  target : 'auto';
+            target = typeof target !== 'undefined' ? target : 'auto';
             // Auto will choose global variable for authenticated users
             if (target == 'auto') {
                 if ($('#info-user-login').text() != '') {
@@ -2919,14 +2928,14 @@ OccTax.events.on({
             $('#history div.menu-content').css('max-height', 'none');
 
             // Update size to avoid double scroll
-            let select_container =  $('#history div.menu-content');
+            let select_container = $('#history div.menu-content');
             var count = 1;
             var select_size = $('#occtax-search-history-select').prop('size');
             while (
                 select_container.prop('offsetHeight') < select_container.prop('scrollHeight')
                 || $('#mini-dock').prop('offsetHeight') < $('#mini-dock').prop('scrollHeight')
             ) {
-                count ++;
+                count++;
                 // Set the new size and get the new value
                 $('#occtax-search-history-select').prop('size', select_size - 1);
                 select_size = $('#occtax-search-history-select').prop('size');
@@ -2936,7 +2945,7 @@ OccTax.events.on({
                 $('#mini-dock').css('height', 'auto');
 
                 // Stop
-                if (count > 10 || select_size < 2) {break;}
+                if (count > 10 || select_size < 2) { break; }
             }
 
             $('#history div.menu-content').css('height', 'auto');
@@ -3692,10 +3701,12 @@ OccTax.events.on({
             // Reinit other fields
             var tokenFormId = $('#div_form_occtax_search_token form').attr('id');
             $('#' + tokenFormId).trigger("reset");
-            // sumoselect
+            // Prise en compte des inline-select
             $('select.jforms-ctrl-listbox').each(function () {
                 if ($(this).attr('id') != 'jforms_occtax_search_cd_nom' && $(this).attr('id') != 'jforms_occtax_search_jdd_id') {
-                    $(this)[0].sumo.unSelectAll();
+                    // $(this)[0].sumo.unSelectAll();
+                    let selectBox = document.getElementById($(this).attr('id'));
+                    selectBox.selectedIndex = -1;
                 }
             });
 
@@ -4032,21 +4043,47 @@ OccTax.events.on({
         // Modification du mot "Rechercher"
         $('#search-query').attr('placeholder', 'Rechercher un lieu');
 
-        // Ajout de sumoselect pour les listes déroulantes multiples
-        $('#occtax select.jforms-ctrl-listbox').SumoSelect(
-            {
-                placeholder: 'Saisir/Choisir dans la liste',
-                captionFormat: '{0} sélectionnés',
-                captionFormatAllSelected: '{0} tout est sélectionné !',
-                okCancelInMulti: false,
-                isClickAwayOk: true,
-                //selectAll: true, // disabled because of bad perf
-                search: true,
-                searchText: 'Recherche...',
-                noMatch: 'Pas de correspondance pour "{0}"',
-                locale: ['OK', 'Annuler', 'Tous']
+        // Transformation des <select> multiples en inline-select (webcomponent maison)
+        let inlineSelectSources = [
+            'type_en',
+            'group',
+            'menace_monde',
+            'menace_nationale',
+            'menace_regionale',
+            'protection',
+            'endemicite',
+            'statut',
+            'invasibilite',
+            'habitat',
+            'validite_niveau',
+        ];
+        for (k in inlineSelectSources) {
+            let key = inlineSelectSources[k];
+            let selectId = 'jforms_occtax_search_' + key;
+            let classes = '';
+            let breakLine = '-1';
+            let label = "text";
+            if (key == 'group') {
+                classes = 'groupe_taxonomique img';
+                label = 'none';
+                // breakLine = '11';
             }
-        );
+            else if (key == 'habitat') {
+                classes = 'habitat img';
+                label = 'none';
+            }
+            else if (key == 'type_en') {
+                label = 'value';
+            }
+            else if (key.startsWith('menace_')) {
+                classes = 'redlist';
+                label = 'value';
+            }
+            let sourceSelect = document.getElementById(selectId);
+            if (!sourceSelect) continue;
+            let html = `<inline-select source="${selectId}" label="${label}" class="${classes}" max-cols="${breakLine}"></inline-select>`;
+            sourceSelect.insertAdjacentHTML("afterend", html);
+        }
 
         // On replie les couches
         $('#layers-fold-all').click();

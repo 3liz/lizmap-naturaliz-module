@@ -1,3 +1,11 @@
+/* Largeur maximum des menu-content du dock */
+#dock div.menu-content {
+	max-width: 550px;
+}
+#content.mobile #dock div.menu-content {
+  max-width: none;
+}
+
 /*
 Formulaire de recherche
 */
@@ -14,6 +22,36 @@ div#occtax_search_observation_card.not_enabled {
     opacity: 0.4;
 }
 
+/* Rendu plus compact pour les champs de formulaire */
+#dock legend, div.modal legend {
+	margin-bottom: 1px;
+	margin-top: 1px;
+	font-size: 13px;
+	line-height: 20px;
+}
+
+#dock div.control-group, div.modal div.control-group {
+	margin-bottom: 0px;
+}
+#dock div.control-group label, div.modal div.control-group label {
+	margin-bottom: 0px;
+  font-size: 13px;
+}
+
+#dock .form-horizontal #jforms_occtax_search_filter .controls {
+	margin-left: 115px;
+	margin-right: 5px;
+/* Essai de passer à la ligne après un <label> */
+	margin-left: 4px;
+	float: left;
+}
+#dock .form-horizontal #jforms_occtax_search_filter .control-label {
+	width: 110px;
+
+/* Essai de passer à la ligne après un <label> */
+  width: auto;
+	margin: 0px 2px;
+}
 /*
 Onglets taxons
 */
@@ -80,6 +118,13 @@ Panier de taxons
 }
 
 /*
+ Onglet de recherche attribut
+*/
+#jforms_occtax_search_filter {
+  overflow: clip;
+}
+
+/*
 Boutons de requête spatial
 */
 #obs-spatial-query-buttons button.btn {
@@ -89,40 +134,40 @@ Boutons de requête spatial
 }
 
 #obs-spatial-query-buttons button.commune {
-    background:url(./img/sig/mActionSelectCommune.png) no-repeat 2px 2px #F5F5F5;
+    background:url(img/sig/mActionSelectCommune.png) no-repeat 2px 2px #F5F5F5;
 }
 #obs-spatial-query-buttons button.masse_eau {
-    background:url(./img/sig/mActionSelectMasseEau.png) no-repeat 2px 2px #F5F5F5;
+    background:url(img/sig/mActionSelectMasseEau.png) no-repeat 2px 2px #F5F5F5;
 }
 #obs-spatial-query-buttons button.maille {
-    background:url(./img/sig/mActionSelect.png) no-repeat 2px 2px #F5F5F5;
+    background:url(img/sig/mActionSelect.png) no-repeat 2px 2px #F5F5F5;
 }
 #obs-spatial-query-buttons button.maille.m01 {
-    background:url(./img/sig/mActionSelectM01.png) no-repeat 2px 2px #F5F5F5;
+    background:url(img/sig/mActionSelectM01.png) no-repeat 2px 2px #F5F5F5;
 }
 #obs-spatial-query-buttons button.maille.m02 {
-    background:url(./img/sig/mActionSelectM02.png) no-repeat 2px 2px #F5F5F5;
+    background:url(img/sig/mActionSelectM02.png) no-repeat 2px 2px #F5F5F5;
 }
 #obs-spatial-query-buttons button.maille.m05 {
-    background:url(./img/sig/mActionSelectM05.png) no-repeat 2px 2px #F5F5F5;
+    background:url(img/sig/mActionSelectM05.png) no-repeat 2px 2px #F5F5F5;
 }
 #obs-spatial-query-buttons button.maille.m10 {
-    background:url(./img/sig/mActionSelectM10.png) no-repeat 2px 2px #F5F5F5;
+    background:url(img/sig/mActionSelectM10.png) no-repeat 2px 2px #F5F5F5;
 }
 #obs-spatial-query-buttons button.circle {
-    background:url(./img/sig/mActionSelectCircle.png) no-repeat 2px 2px #F5F5F5;
+    background:url(img/sig/mActionSelectCircle.png) no-repeat 2px 2px #F5F5F5;
 }
 #obs-spatial-query-buttons button.polygon {
-    background:url(./img/sig/mActionSelectPolygon.png) no-repeat 2px 2px #F5F5F5;
+    background:url(img/sig/mActionSelectPolygon.png) no-repeat 2px 2px #F5F5F5;
 }
 #obs-spatial-query-buttons button.import {
-    background:url(./img/sig/mActionSelectUpload.png) no-repeat 2px 2px #F5F5F5;
+    background:url(img/sig/mActionSelectUpload.png) no-repeat 2px 2px #F5F5F5;
 }
 #obs-spatial-query-buttons button.delete {
-    background:url(./img/sig/Erase.png) no-repeat 2px 2px #F5F5F5;
+    background:url(img/sig/Erase.png) no-repeat 2px 2px #F5F5F5;
 }
 #obs-spatial-query-buttons button.modify {
-    background:url(./img/sig/mActionMoveVertex.png) no-repeat 2px 2px #F5F5F5;
+    background:url(img/sig/mActionMoveVertex.png) no-repeat 2px 2px #F5F5F5;
 }
 
 #div_form_occtax_search_token,
@@ -181,23 +226,23 @@ Left Menu button
 
 /* taxon */
 #mapmenu .nav-list > li.taxon .icon {
-  background-image:url(./img/navbar/occtax_navbar.png);
+  background-image:url(img/navbar/occtax_navbar.png);
   background-position: -175px 0px;
 }
 #mapmenu .nav-list > li.taxon.active .icon,
 #mapmenu .nav-list > li.taxon a:hover .icon {
-  background-image:url(./img/navbar/occtax_navbar.png);
+  background-image:url(img/navbar/occtax_navbar.png);
   background-position: -150px 0px;
 }
 
 /* occtax */
 #mapmenu .nav-list > li.occtax .icon {
-  background-image:url(./img/navbar/occtax_navbar.png);
+  background-image:url(img/navbar/occtax_navbar.png);
   background-position: -175px 0;
 }
 #mapmenu .nav-list > li.occtax.active .icon,
 #mapmenu .nav-list > li.occtax a:hover .icon {
-  background-image:url(./img/navbar/occtax_navbar.png);
+  background-image:url(img/navbar/occtax_navbar.png);
   background-position: -150px 0px;
 }
 
@@ -217,15 +262,15 @@ Left Menu button
 */
 
 #mapmenu .nav-list > li.occtax-legal .icon {
-  background-image: url(./img/navbar/src/legal-icon-white.png);
+  background-image: url(img/navbar/src/legal-icon-white.png);
 }
 #mapmenu .nav-list > li.occtax-legal.active .icon,
 #mapmenu .nav-list > li.occtax-legal a:hover .icon {
-  background-image: url(./img/navbar/src/legal-icon-dark.png);
+  background-image: url(img/navbar/src/legal-icon-dark.png);
 }
 
 #occtax-legal h3 .icon {
-    background-image: url(./img/navbar/src/legal-icon-white.png);
+    background-image: url(img/navbar/src/legal-icon-white.png);
 }
 #occtax-legal-content {
     overflow: auto;
@@ -238,39 +283,39 @@ Toolbar buttons
 */
 
 #taxon h3 .icon.search {
-    background-image: url(./img/navbar/occtax_navbar.png);
+    background-image: url(img/navbar/occtax_navbar.png);
   background-position: -175px 0px;
 }
 #taxon h3 .icon.description {
-    background-image: url(./img/navbar/occtax_navbar.png);
+    background-image: url(img/navbar/occtax_navbar.png);
   background-position: -175px 0px;
 }
 #taxon h3 .icon.result {
-    background-image: url(./img/navbar/occtax_navbar.png);
+    background-image: url(img/navbar/occtax_navbar.png);
   background-position: -225px 0px;
 }
 
 #occtax h3 .icon.search {
-    background-image: url(./img/navbar/occtax_navbar.png);
+    background-image: url(img/navbar/occtax_navbar.png);
   background-position: -175px 0px;
 }
 
 #occtax h3 .icon.description {
-    background-image: url(./img/navbar/occtax_navbar.png);
+    background-image: url(img/navbar/occtax_navbar.png);
   background-position: -175px 0px;
 }
 #occtax h3 .icon.result {
-    background-image: url(./img/navbar/occtax_navbar.png);
+    background-image: url(img/navbar/occtax_navbar.png);
   background-position: -25px 0px;
 }
 
 
 #div_occtax_taxon_modal  h3 .icon.search {
-    background-image: url(./img/navbar/occtax_navbar.png);
+    background-image: url(img/navbar/occtax_navbar.png);
   background-position: -150px 0px;
 }
 #div_occtax_taxon_modal  h3 .icon.result {
-    background-image: url(./img/navbar/occtax_navbar.png);
+    background-image: url(img/navbar/occtax_navbar.png);
   background-position: -200px 0px;
 }
 
@@ -535,15 +580,15 @@ VALIDATION
 */
 
 #mapmenu .nav-list > li.validation .icon {
-  background-image: url(./img/navbar/src/check_ffffff_20.png);
+  background-image: url(img/navbar/src/check_ffffff_20.png);
 }
 #mapmenu .nav-list > li.validation.active .icon,
 #mapmenu .nav-list > li.validation a:hover .icon {
-  background-image: url(./img/navbar/src/check_343433_20.png);
+  background-image: url(img/navbar/src/check_343433_20.png);
 }
 
 #validation h3 .icon {
-    background-image: url(./img/navbar/src/check_ffffff_20.png);
+    background-image: url(img/navbar/src/check_ffffff_20.png);
     background-position: 0px;
 }
 
@@ -664,15 +709,15 @@ Message en haut de la carte*/
   height: 100%;
 }
 #mapmenu .nav-list > li.import .icon {
-  background-image: url(./img/navbar/src/import_ffffff_20.png);
+  background-image: url(img/navbar/src/import_ffffff_20.png);
 }
 #mapmenu .nav-list > li.import.active .icon,
 #mapmenu .nav-list > li.import a:hover .icon {
-  background-image: url(./img/navbar/src/import_343433_20.png);
+  background-image: url(img/navbar/src/import_343433_20.png);
 }
 
 #import h3 .icon {
-    background-image: url(./img/navbar/src/import_ffffff_20.png);
+    background-image: url(img/navbar/src/import_ffffff_20.png);
     background-position: 0px;
 }
 

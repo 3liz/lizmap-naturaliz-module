@@ -16,3 +16,100 @@ span.protectionlist.EPN  { background-color:#7499ff; }
 span.protectionlist.EPC  { background-color:#7fa8ff; }
 span.protectionlist.EPI  { background-color:#a4c1ff; color: rgb(51, 51, 51); }
 span.protectionlist.EPA  { background-color:#c4d7ff; color: rgb(51, 51, 51); }
+
+/* Images des groupes taxonomiques */
+span.groupe_taxonomique[data-value="Algues"] {
+    background-image: url(images/groupes/algues.png);
+}
+
+span.groupe_taxonomique[data-value="Amphibiens"] {
+    background-image: url(images/groupes/amphibiens.png);
+}
+
+span.groupe_taxonomique[data-value="Angiospermes"] {
+    background-image: url(images/groupes/angiospermes.png);
+}
+
+span.groupe_taxonomique[data-value="Arachnides"] {
+    background-image: url(images/groupes/arachnides.png);
+}
+
+span.groupe_taxonomique[data-value="Ascidies"] {
+    background-image: url(images/groupes/ascidies.png);
+}
+
+span.groupe_taxonomique[data-value="Bactéries"] {
+    background-image: url(images/groupes/bacteries.png);
+}
+
+span.groupe_taxonomique[data-value="Champignons"] {
+    background-image: url(images/groupes/champignons.png);
+}
+
+span.groupe_taxonomique[data-value="Coraux"] {
+    background-image: url(images/groupes/coraux.png);
+}
+
+span.groupe_taxonomique[data-value="Crustacés"] {
+    background-image: url(images/groupes/crustaces.png);
+}
+
+span.groupe_taxonomique[data-value="Échinodermes"] {
+    background-image: url(images/groupes/echinodermes.png);
+}
+
+span.groupe_taxonomique[data-value="Éponges"] {
+    background-image: url(images/groupes/eponges.png);
+}
+
+span.groupe_taxonomique[data-value="Fougères"] {
+    background-image: url(images/groupes/fougeres.png);
+}
+
+span.groupe_taxonomique[data-value="Gymnospermes"] {
+    background-image: url(images/groupes/gymnospermes.png);
+}
+
+span.groupe_taxonomique[data-value="Hydrozoaires"] {
+    background-image: url(images/groupes/hydrozoaires.png);
+}
+
+span.groupe_taxonomique[data-value="Insectes"] {
+    background-image: url(images/groupes/insectes.png);
+}
+
+span.groupe_taxonomique[data-value="Mammifères"] {
+    background-image: url(images/groupes/mammiferes.png);
+}
+
+span.groupe_taxonomique[data-value="Mollusques"] {
+    background-image: url(images/groupes/mollusques.png);
+}
+
+span.groupe_taxonomique[data-value="Mousses"] {
+    background-image: url(images/groupes/mousses.png);
+}
+
+span.groupe_taxonomique[data-value="Myriapodes"] {
+    background-image: url(images/groupes/myriapodes.png);
+}
+
+span.groupe_taxonomique[data-value="Oiseaux"] {
+    background-image: url(images/groupes/oiseaux.png);
+}
+
+span.groupe_taxonomique[data-value="Poissons"] {
+    background-image: url(images/groupes/poissons.png);
+}
+
+span.groupe_taxonomique[data-value="Reptiles"] {
+    background-image: url(images/groupes/reptiles.png);
+}
+
+span.groupe_taxonomique[data-value="Vers"] {
+    background-image: url(images/groupes/vers.png);
+}
+
+span.groupe_taxonomique[data-value="Autres"] {
+    background-image: url(images/groupes/autres.png);
+}

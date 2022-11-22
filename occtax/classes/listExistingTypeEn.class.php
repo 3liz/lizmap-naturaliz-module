@@ -19,7 +19,7 @@ class listExistingTypeEn implements jIFormsDatasource
     $this->formId = $id;
     $cnx = jDb::getConnection('naturaliz_virtual_profile');
     $sql = "
-        SELECT DISTINCT n.code, n.valeur
+        SELECT DISTINCT n.code, n.valeur, n.description
         FROM occtax.nomenclature n
         LEFT JOIN sig.espace_naturel en ON en.type_en = n.code
         WHERE TRUE
@@ -29,7 +29,7 @@ class listExistingTypeEn implements jIFormsDatasource
     $res = $cnx->query($sql);
     $data = array();
     foreach( $res as $line ) {
-        $data[$line->code] = $line->valeur;
+        $data[$line->code] = $line->description;
     }
     $this->datas = $data;
   }

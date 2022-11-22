@@ -4,7 +4,7 @@
     <hidden ref="cle_obs"/>
 
     <group ref="main">
-    <label locale="taxon~search.group.main"/>
+        <label locale="taxon~search.group.main"/>
 
         <input ref="autocomplete">
             <label locale="taxon~search.input.autocomplete"/>
@@ -29,127 +29,95 @@
     </group>
 
     <group ref="filter">
-    <label locale="taxon~search.group.filter"/>
+        <label locale="taxon~search.group.filter"/>
+
+        <!-- GROUPES TAXONOMIQUES     -->
         <listbox multiple="true" ref="group">
             <label locale="taxon~search.input.group"/>
-<!--
+            <!--
             <emptyitem locale="taxon~search.input.emptyitem"/>
 -->
-            <datasource dao="taxon~t_group_categorie"
-            profile="naturaliz_virtual_profile"
-              method="getDistinctCategorie"
-              labelproperty="libelle_court" valueproperty="libelle_court"/>
+            <datasource dao="taxon~t_group_categorie" profile="naturaliz_virtual_profile" method="getDistinctCategorie" labelproperty="libelle_court" valueproperty="libelle_court"/>
             <hint locale="taxon~search.input.group.help"/>
         </listbox>
 
-        <listbox multiple="true" ref="habitat">
-            <label locale="taxon~search.input.habitat"/>
-<!--
-            <emptyitem locale="taxon~search.input.emptyitem"/>
--->
-            <datasource dao="taxon~t_nomenclature" profile="naturaliz_virtual_profile"
-              method="findByChamp" criteria="habitat"
-              labelproperty="valeur"
-              valueproperty="code"/>
-            <hint locale="taxon~search.input.habitat.help"/>
-        </listbox>
 
-        <listbox multiple="true" ref="statut">
-            <label locale="taxon~search.input.statut"/>
-<!--
-            <emptyitem locale="taxon~search.input.emptyitem"/>
--->
-            <datasource dao="taxon~t_nomenclature" profile="naturaliz_virtual_profile"
-              method="findByChamp" criteria="statut"
-              labelproperty="valeur"  labelseparator=" - "
-              valueproperty="code"/>
-            <hint locale="taxon~search.input.statut.help"/>
-        </listbox>
-
-<!--
-Désactivé car redondant et sujet à débat
-        <listbox multiple="true" ref="rarete">
-            <label locale="taxon~search.input.rarete"/>
-            <emptyitem locale="taxon~search.input.emptyitem"/>
-            <datasource dao="taxon~t_nomenclature" profile="naturaliz_virtual_profile"
-              method="findByChamp" criteria="rarete"
-              labelproperty="valeur"  labelseparator=" - "
-              valueproperty="code"/>
-        </listbox>
--->
-
-        <listbox multiple="true" ref="endemicite">
-            <label locale="taxon~search.input.endemicite"/>
-<!--
-            <emptyitem locale="taxon~search.input.emptyitem"/>
--->
-            <datasource dao="taxon~t_nomenclature" profile="naturaliz_virtual_profile"
-              method="findByChamp" criteria="endemicite"
-              labelproperty="valeur,description"  labelseparator=" "
-              valueproperty="code"/>
-            <hint locale="taxon~search.input.endemicite.help"/>
-        </listbox>
-
-        <listbox multiple="true" ref="invasibilite">
-            <label locale="taxon~search.input.invasibilite"/>
-<!--
-            <emptyitem locale="taxon~search.input.emptyitem"/>
--->
-            <datasource dao="taxon~t_nomenclature" profile="naturaliz_virtual_profile"
-              method="findByChamp" criteria="invasibilite"
-              labelproperty="valeur"  labelseparator=" - "
-              valueproperty="code"/>
-            <hint locale="taxon~search.input.invasibilite.help"/>
-        </listbox>
-
-<!--
-Menaces
--->
+        <!-- MENACES -->
         <listbox multiple="true" ref="menace_regionale">
             <label locale="taxon~search.input.menace_regionale"/>
-            <datasource dao="taxon~t_nomenclature" profile="naturaliz_virtual_profile"
-              method="findByChamp" criteria="menace"
-              labelproperty="valeur"  labelseparator=" - "
-              valueproperty="code"/>
+            <datasource dao="taxon~t_nomenclature" profile="naturaliz_virtual_profile" method="findByChamp" criteria="menace" labelproperty="valeur" labelseparator=" - " valueproperty="code"/>
             <hint locale="taxon~search.input.menace_regionale.help"/>
         </listbox>
 
         <listbox multiple="true" ref="menace_nationale">
             <label locale="taxon~search.input.menace_nationale"/>
-            <datasource dao="taxon~t_nomenclature" profile="naturaliz_virtual_profile"
-              method="findByChamp" criteria="menace"
-              labelproperty="valeur"  labelseparator=" - "
-              valueproperty="code"/>
+            <datasource dao="taxon~t_nomenclature" profile="naturaliz_virtual_profile" method="findByChamp" criteria="menace" labelproperty="valeur" labelseparator=" - " valueproperty="code"/>
             <hint locale="taxon~search.input.menace_nationale.help"/>
         </listbox>
 
         <listbox multiple="true" ref="menace_monde">
             <label locale="taxon~search.input.menace_monde"/>
-            <datasource dao="taxon~t_nomenclature" profile="naturaliz_virtual_profile"
-              method="findByChamp" criteria="menace"
-              labelproperty="valeur"  labelseparator=" - "
-              valueproperty="code"/>
+            <datasource dao="taxon~t_nomenclature" profile="naturaliz_virtual_profile" method="findByChamp" criteria="menace" labelproperty="valeur" labelseparator=" - " valueproperty="code"/>
             <hint locale="taxon~search.input.menace_monde.help"/>
         </listbox>
 
+        <!-- PROTECTION -->
         <listbox multiple="true" ref="protection">
             <label locale="taxon~search.input.protection"/>
-<!--
+            <!--
             <emptyitem locale="taxon~search.input.emptyitem"/>
 -->
-            <datasource dao="taxon~t_nomenclature" profile="naturaliz_virtual_profile"
-              method="getProtections" labelproperty="valeur" valueproperty="code"/>
+            <datasource dao="taxon~t_nomenclature" profile="naturaliz_virtual_profile" method="getProtections" labelproperty="valeur" valueproperty="code"/>
             <hint locale="taxon~search.input.protection.help"/>
         </listbox>
 
-<!--
+
+        <!-- ENDEMICITE -->
+        <listbox multiple="true" ref="endemicite">
+            <label locale="taxon~search.input.endemicite"/>
+            <!--
+            <emptyitem locale="taxon~search.input.emptyitem"/>
+-->
+            <datasource dao="taxon~t_nomenclature" profile="naturaliz_virtual_profile" method="findByChamp" criteria="endemicite" labelproperty="valeur,description" labelseparator=" " valueproperty="code"/>
+            <hint locale="taxon~search.input.endemicite.help"/>
+        </listbox>
+
+        <!-- STATUT -->
+        <listbox multiple="true" ref="statut">
+            <label locale="taxon~search.input.statut"/>
+            <!--
+            <emptyitem locale="taxon~search.input.emptyitem"/>
+-->
+            <datasource dao="taxon~t_nomenclature" profile="naturaliz_virtual_profile" method="findByChamp" criteria="statut" labelproperty="valeur" labelseparator=" - " valueproperty="code"/>
+            <hint locale="taxon~search.input.statut.help"/>
+        </listbox>
+
+
+        <!-- INVASIBILITE -->
+        <listbox multiple="true" ref="invasibilite">
+            <label locale="taxon~search.input.invasibilite"/>
+            <!--
+            <emptyitem locale="taxon~search.input.emptyitem"/>
+-->
+            <datasource dao="taxon~t_nomenclature" profile="naturaliz_virtual_profile" method="findByChamp" criteria="invasibilite" labelproperty="valeur" labelseparator=" - " valueproperty="code"/>
+            <hint locale="taxon~search.input.invasibilite.help"/>
+        </listbox>
+
+        <!-- HABITAT -->
+        <listbox multiple="true" ref="habitat">
+            <label locale="taxon~search.input.habitat"/>
+            <!--
+            <emptyitem locale="taxon~search.input.emptyitem"/>
+-->
+            <datasource dao="taxon~t_nomenclature" profile="naturaliz_virtual_profile" method="findByChamp" criteria="habitat" labelproperty="valeur" valueproperty="code"/>
+            <hint locale="taxon~search.input.habitat.help"/>
+        </listbox>
+
+        <!--
         <listbox multiple="true" ref="det_znieff">
             <label locale="taxon~search.input.det_znieff"/>
             <emptyitem locale="taxon~search.input.emptyitem"/>
-            <datasource dao="taxon~t_nomenclature" profile="naturaliz_virtual_profile"
-              method="findByChamp" criteria="det_znieff"
-              labelproperty="valeur"  labelseparator=" - "
-              valueproperty="code"/>
+            <datasource dao="taxon~t_nomenclature" profile="naturaliz_virtual_profile" method="findByChamp" criteria="det_znieff" labelproperty="valeur" labelseparator=" - " valueproperty="code"/>
         </listbox>
 -->
 
@@ -160,9 +128,7 @@ Menaces
 
         <!-- <listbox multiple="true" ref="jdd_id">
             <label locale="occtax~search.input.jdd_id"/>
-            <datasource dao="occtax~jdd" profile="naturaliz_virtual_profile"
-              method="getJddList" labelproperty="jdd_libelle"
-              valueproperty="jdd_id"/>
+            <datasource dao="occtax~jdd" profile="naturaliz_virtual_profile" method="getJddList" labelproperty="jdd_libelle" valueproperty="jdd_id"/>
             <hint locale="occtax~search.input.jdd_id.help"/>
         </listbox> -->
 
@@ -191,12 +157,12 @@ Menaces
     <group ref="when">
         <label locale="occtax~search.group.when"/>
 
-        <date ref="date_min" defaultvalue=""  mindate="1600-01-01" maxdate="now">
+        <date ref="date_min" defaultvalue="" mindate="1600-01-01" maxdate="now">
             <label locale="occtax~search.input.date_min"/>
             <hint locale="occtax~search.input.date_min.help"/>
         </date>
 
-        <date ref="date_max" defaultvalue=""  mindate="1600-01-01" maxdate="now">
+        <date ref="date_max" defaultvalue="" mindate="1600-01-01" maxdate="now">
             <label locale="occtax~search.input.date_max"/>
             <hint locale="occtax~search.input.date_max.help"/>
         </date>
@@ -208,9 +174,6 @@ Menaces
 
         <listbox multiple="true" ref="type_en">
             <label locale="occtax~search.input.type_en"/>
-<!--
-            <emptyitem locale="occtax~search.input.emptyitem"/>
--->
             <datasource class="occtax~listExistingTypeEn" />
             <hint locale="occtax~search.input.type_en.help"/>
         </listbox>
@@ -250,7 +213,7 @@ Menaces
             <hint locale="occtax~search.input.panier_validation.help"/>
         </checkbox>
 
-<!--
+        <!--
     <input ref="validite_niveau" type="integer" minvalue="1" maxvalue="6">
         <label locale="validation.input.niv_val"/>
         <hint locale="validation.input.niv_val.help"/>
@@ -259,23 +222,20 @@ Menaces
 
         <listbox multiple="true" ref="validite_niveau">
             <label locale="occtax~search.input.validite_niveau"/>
-            <datasource dao="occtax~nomenclature" profile="naturaliz_virtual_profile"
-              method="findByChamp" criteria="validite_niveau"
-              labelproperty="valeur"
-              valueproperty="code"/>
+            <datasource dao="occtax~nomenclature" profile="naturaliz_virtual_profile" method="findByChamp" criteria="validite_niveau" labelproperty="valeur" valueproperty="code"/>
             <hint locale="occtax~search.input.validite_niveau.help"/>
         </listbox>
 
     </group>
 
-  <reset ref="reinit">
-    <label locale="occtax~search.input.reinit"/>
-    <hint locale="occtax~search.input.reinit.help"/>
-  </reset>
+    <reset ref="reinit">
+        <label locale="occtax~search.input.reinit"/>
+        <hint locale="occtax~search.input.reinit.help"/>
+    </reset>
 
-  <submit ref="submit">
-    <label locale="occtax~search.input.submit"/>
-    <hint locale="occtax~search.input.submit.help"/>
-  </submit>
+    <submit ref="submit">
+        <label locale="occtax~search.input.submit"/>
+        <hint locale="occtax~search.input.submit.help"/>
+    </submit>
 
 </form>

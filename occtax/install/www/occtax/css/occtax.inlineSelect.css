@@ -1,0 +1,184 @@
+div.input-title {
+    font-size: 0.8em;
+    margin-bottom: 3px;
+}
+
+div.inline-select {
+    padding: 2px;
+    margin-bottom: 2px;
+    font-size: 0.8em;
+    color: darkgray;
+}
+
+span.inline-select-option {
+    cursor: pointer;
+    display: inline-block;
+    margin-bottom: 3px;
+    border: 2px solid lightgray;
+    border-radius: 5px;
+    padding: 0px 4px;
+    filter: grayscale(80%) brightness(0.8);
+}
+
+/* Break after N spans */
+/* span.inline-select-option { float:left }
+span.inline-select-option:nth-child(12n+1) { clear: both; } */
+
+/* Size of groups images */
+span.inline-select-option.img {
+    height: 18px;
+    width: 18px;
+    padding: 4px 4px;
+    border: 2px solid lightgray;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+/* Active spans */
+span.inline-select-option.active {
+    color: black;
+    border: 2px solid black;
+    background-color: white;
+    filter: none;
+}
+
+/* Apply active style on hover only for pointing devices to avoid the active color to be seen after second touch. Without this, the hover style is removed only if the user touches another part of the interface*/
+
+@media (hover: hover) {
+    span.inline-select-option:hover {
+        color: black;
+        border: 2px solid black;
+        background-color: white;
+        filter: none;
+    }
+    span.inline-select-option.img:hover,
+    span.inline-select-option.redlist:hover {
+        color: white;
+        border: 2px solid black;
+        filter: none;
+    }
+}
+
+/* Tooltips */
+[data-tooltip]:before {
+    /* needed - do not touch */
+    content: attr(data-tooltip);
+    position: absolute;
+    opacity: 0;
+
+    /* customizable */
+    padding: 5px;
+    color: white;
+    font-size: 10px;
+    border-radius: 10px;
+    box-shadow: 2px 2px 1px silver;
+}
+
+[data-tooltip]:hover:before {
+    /* needed - do not touch */
+    opacity: 1;
+
+    /* customizable */
+    background: #1d1e22;
+    margin-top: -50px;
+    margin-left: 20px;
+}
+
+[data-tooltip]:not([data-tooltip-persistent]):before {
+    pointer-events: none;
+}
+
+/* Colors of menace spans */
+span.inline-select-option.redlist {
+    width: 20px;
+    text-align: center;
+    font-size: 1.2em;
+    color: gray;
+    padding: 3px 3px;
+    border: 2px solid lightgray;
+}
+
+span.inline-select-option.redlist.active,
+span.inline-select-option.img.active {
+    color: white;
+    font-weight: bold;
+    border: 2px solid black;
+}
+
+span.inline-select-option.redlist[data-value="CR"] {
+    background-color: #d3001b;
+}
+
+span.inline-select-option.redlist[data-value="DD"] {
+    background-color: #d3d4d5;
+}
+
+span.inline-select-option.redlist[data-value="EN"] {
+    background-color: #fbbf00;
+}
+
+span.inline-select-option.redlist[data-value="EW"] {
+    background-color: #3d1951;
+}
+
+span.inline-select-option.redlist[data-value="EX"] {
+    background-color: #000000;
+}
+
+span.inline-select-option.redlist[data-value="LC"] {
+    background-color: #78b74a;
+}
+
+span.inline-select-option.redlist[data-value="NA"] {
+    background-color: #919294;
+}
+
+span.inline-select-option.redlist[data-value="NE"] {
+    background-color: #e9eaeb;
+    color: rgb(110, 110, 110);
+}
+
+span.inline-select-option.redlist[data-value="NT"] {
+    background-color: #fbf2ca;
+    color: rgb(100, 100, 100);
+}
+
+span.inline-select-option.redlist[data-value="RE"] {
+    background-color: #5a1a63;
+}
+
+span.inline-select-option.redlist[data-value="VU"] {
+    background-color: #ffed00;
+    color: rgb(100, 100, 100);
+}
+
+/* habitats */
+span.inline-select-option.img.habitat {
+    width: 25px;
+    height: 25px;
+    background-size: contain;
+}
+span.habitat[data-value="1"] {
+    background-image: url(img/habitat/habitat-1.svg);
+}
+span.habitat[data-value="2"] {
+    background-image: url(img/habitat/habitat-2.svg);
+}
+span.habitat[data-value="3"] {
+    background-image: url(img/habitat/habitat-3.svg);
+}
+span.habitat[data-value="4"] {
+    background-image: url(img/habitat/habitat-4.svg);
+}
+span.habitat[data-value="5"] {
+    background-image: url(img/habitat/habitat-5.svg);
+}
+span.habitat[data-value="6"] {
+    background-image: url(img/habitat/habitat-6.svg);
+}
+span.habitat[data-value="7"] {
+    background-image: url(img/habitat/habitat-7.svg);
+}
+span.habitat[data-value="8"] {
+    background-image: url(img/habitat/habitat-8.svg);
+}

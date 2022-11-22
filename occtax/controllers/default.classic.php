@@ -92,9 +92,11 @@ class defaultCtrl extends lizMapCtrl {
 
 
             // sumoselect
-            $rep->addJsLink($basePath . 'occtax/js/sumoselect/jquery.sumoselect.min.js');
-            $rep->addCSSLink($basePath . 'occtax/css/sumoselect/sumoselect.css');
+            // $rep->addJsLink($basePath . 'occtax/js/sumoselect/jquery.sumoselect.min.js');
+            // $rep->addCSSLink($basePath . 'occtax/css/sumoselect/sumoselect.css');
 
+            // inline-select : remplace un <select multiple> par un web-component <inline-select>
+            $rep->addCSSLink($basePath . 'occtax/css/occtax.inlineSelect.css');
 
             // For recent versions of Lizmap Wbe Client, since 3.4.0, we need to add some OpenLayers 2.13.1 JS files
             // Which have been removed from the OL 2 build
@@ -112,6 +114,7 @@ class defaultCtrl extends lizMapCtrl {
             }
 
             // occtax
+            $rep->addJsLink($basePath . 'occtax/js/occtax.inlineSelect.js');
             $rep->addJsLink($basePath . 'occtax/js/occtax.js');
             $rep->addJsLink($basePath . 'occtax/js/occtax.search.js');
 
