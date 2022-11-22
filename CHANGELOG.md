@@ -2,21 +2,37 @@
 
 ## Unreleased
 
+### Fixed
+
+### Added
+
 ## 2.13.1 - 2022-11-22
 
+### Changed
+
 * Formulaire de recherche - amélioration de l'interface de recherche par attributs de taxon
-  * Remplacement des listes déroulantes par des listes de boutons poissoirs
+  * Remplacement des listes déroulantes par des listes de boutons poussoirs
   * Utilisation d'images pour les groupes taxonomiques et les habitats
   * Utilisation des couleurs pour les menaces
-  * Rendu plus compacte du formulaire (marges, espacements, taille des polices)
-* Taxon - Correction des données d'installation pour taxon.t_group_categorie
+  * Rendu plus compact du formulaire (marges, espacements, taille des polices)
 * Gestion - Amélioration du projet de gestion
   * Nouvelle couche v_jdd_spatial pour visualiser les emprises des JDD et supprimer les observations
   * Nouvelle couche ZEE pour rafraîchir les vues matérialisées
-* Import des référentiels SIG - Martinique : Ajout de l'UNESCO dans le script d'import SIG
 * Documentation - Amélioration du fichier USAGE.md
+
+### Fixed
+
+* Taxon - Correction des données d'installation pour taxon.t_group_categorie
+
+### Added
+
 * Installation & mise à jour - amélioration des scripts et support de Lizmap Web Client 3.6
+* Import des référentiels SIG - Martinique : Ajout de l'UNESCO dans le script d'import SIG
+
+### Backend
+
 * Code interne - Déplacement des fichiers CSS et JavaScript
+
 ## 2.13.0 - 2022-09-30
 
 * Import Web
