@@ -138,7 +138,10 @@ lizAdaptEditingCreateChildCombobox = function () {
             if (isCreation && reopen_form_after_creation_for_layers.indexOf(layerConfig['name']) > -1) {
                 // Reopen the form once the observation is created
                 $('#jforms_view_edition_liz_future_action').val('edit');
+            }else {
+                $('#jforms_view_edition_liz_future_action').val('close');
             }
+
 
             // Replace the combobox with child layers
             // by several buttons, one per child layer
