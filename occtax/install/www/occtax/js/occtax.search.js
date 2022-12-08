@@ -370,46 +370,57 @@ OccTax.events.on({
          */
         function getTaxonDataFromApi(cd_nom, aCallback) {
 
-            var turl = 'https://taxref.mnhn.fr/api/taxa/';
-            turl += cd_nom;
-
-            $.getJSON(turl, null, function (tdata) {
-                var keys = ['id', 'referenceId', 'scientificName', 'authority', 'frenchVernacularName'];
-                var rdata = {};
+            let taxonUrl = `https://taxref.mnhn.fr/api/taxa/${cd_nom}`;
+            detailTaxonLoad(taxonUrl).then(function (taxonData) {
+                let keys = ['id', 'referenceId', 'scientificName', 'authority', 'frenchVernacularName'];
+                let returnedTaxon = {};
                 for (var k in keys) {
-                    rdata[keys[k]] = tdata[keys[k]];
+                    returnedTaxon[keys[k]] = taxonData[keys[k]];
                 }
-                if ('_links' in tdata) {
-                    rdata['inpnWebpage'] = tdata._links.inpnWebpage.href;
-                }
-                rdata['media_url'] = null;
-                rdata['status_url'] = null;
 
-                // media
-                if (
-                    '_links' in tdata
-                    && 'media' in tdata._links
-                ) {
-                    var murl = tdata._links.media.href;
-                    rdata['media_url'] = murl;
+                // Get the links
+                if ('_links' in taxonData) {
+                    returnedTaxon['inpnWebpage'] = taxonData._links.inpnWebpage.href;
                 }
-                // status
+                returnedTaxon['media_url'] = null;
+                returnedTaxon['status_url'] = null;
+
+                // Get the media URL
                 if (
-                    '_links' in tdata
-                    && 'status' in tdata._links
+                    '_links' in taxonData
+                    && 'media' in taxonData._links
                 ) {
-                    var surl = tdata._links.status.href;
-                    rdata['status_url'] = surl;
+                    let mediaUrl = taxonData._links.media.href;
+                    returnedTaxon['media_url'] = mediaUrl;
                 }
-                aCallback(rdata);
+
+                // Get the taxon status URL
+                if (
+                    '_links' in taxonData
+                    && 'status' in taxonData._links
+                ) {
+                    let statusUrl = taxonData._links.status.href;
+                    returnedTaxon['status_url'] = statusUrl;
+                }
+
+                // Callback
+                aCallback(returnedTaxon);
+            }, function (Error) {
+                console.log(Error);
+                $('#taxon-detail-media div.dataviz-waiter').hide();
             });
         }
 
+        /**
+         * Request the MNHN Taxon API
+         * and returns content
+         */
         function detailTaxonLoad(url) {
             return new Promise(function (resolve, reject) {
                 var request = new XMLHttpRequest();
                 request.open('GET', url);
                 request.responseType = 'json';
+                // request.timeout = 30000;
                 // When the request loads, check whether it was successful
                 request.onload = function () {
                     if (request.status === 200) {
@@ -419,6 +430,9 @@ OccTax.events.on({
                         // If it fails, reject the promise with a error message
                         reject(Error('URL did not load successfully; error code:' + request.statusText));
                     }
+                };
+                request.ontimeout = (e) => {
+                    reject(Error('There was a timeout error.'));
                 };
                 request.onerror = function () {
                     reject(Error('There was a network error.'));
@@ -478,20 +492,66 @@ OccTax.events.on({
             return html;
         };
 
-        function getTaxonMedia(media_url) {
-            detailTaxonLoad(media_url).then(function (mdata) {
+        /**
+         * Load an image and return a promise
+         *
+         */
+        async function loadImage(url, elem) {
+            return new Promise((resolve, reject) => {
+                elem.onload = () => resolve(elem);
+                elem.onerror = reject;
+                elem.src = url;
+            });
+        }
+
+        /**
+         * Add a media image to the given carousel when the image is loaded
+         */
+        async function addImageToCarousel(carouselElement, src, imageElement) {
+            await loadImage(src, imageElement);
+            carouselElement.insertAdjacentHTML(
+                'beforeend',
+                imageElement.outerHTML
+            );
+        }
+
+        /**
+         * Get the list of taxon medias
+         * and display them in a carousel
+         */
+        function getTaxonMedias(media_url) {
+            detailTaxonLoad(media_url).then(function (mediaData) {
+
                 if (
-                    '_embedded' in mdata
-                    && 'media' in mdata._embedded
-                    && mdata._embedded.media.length > 0
+                    'status' in mediaData && mediaData.status == 'success'
+                    && mediaData.data
+                    && mediaData.data.medias.length > 0
                 ) {
-                    var media_href = mdata._embedded.media[0]._links.thumbnailFile.href;
-                    var html = '';
-                    html += '<img src="';
-                    html += media_href;
-                    html += '" width="100%">';
+                    // Add the carousel, but empty
+                    // We will add image one by one when the loading is done
+                    let mediaHtml = `
+                    <lizmap-carousel-slider class="sub-dock-slider">
+                    </lizmap-carousel-slider>
+                    `;
                     $('#taxon-detail-media div.dataviz-waiter').hide();
-                    $('#taxon-detail-media').html(html);
+                    $('#taxon-detail-media').html(mediaHtml);
+
+                    // Then add each image when it is loaded
+                    let medias = mediaData.data.medias;
+                    const carousel = document.querySelector('lizmap-carousel-slider.sub-dock-slider');
+                    for (let m in medias) {
+                        let media = medias[m];
+
+                        // Build the image
+                        const image = new Image();
+                        image.alt = `${media.copyright}`;
+                        image.title = `${media.copyright} (${media.licence})`;
+                        const imageSrc = media.url;
+
+                        // Add it to the carousel, only when full loaded
+                        addImageToCarousel(carousel, imageSrc, image)
+
+                    }
                 } else {
                     $('#taxon-detail-media div.dataviz-waiter').hide();
                     $('#sub-dock').css('min-width', '')
@@ -661,9 +721,15 @@ OccTax.events.on({
                         $('#taxon-detail-status div.dataviz-waiter').hide();
                     }
 
-                    // Load media
+                    // Load medias
+                    // Replace the original INPN API call
+                    // https://taxref.mnhn.fr/api/taxa/60927/media
+                    // by the taxon proxy developped specifically
+                    let taxonUrl = $('#form_taxon_service_autocomplete').attr('action');
+                    taxonUrl = taxonUrl.replace('service/autocomplete', 'media/getMedias');
+                    taxonUrl += '?cd_ref=' + cd_nom;
                     if (data.media_url) {
-                        getTaxonMedia(data.media_url);
+                        getTaxonMedias(taxonUrl);
                     } else {
                         $('#taxon-detail-media div.dataviz-waiter').hide();
                     }

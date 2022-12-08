@@ -90,13 +90,11 @@ class defaultCtrl extends lizMapCtrl {
             $rep->title = $ini->getValue('projectName', 'naturaliz');
             $rep->body->assign( 'repositoryLabel', $ini->getValue('appName', 'naturaliz') );
 
-
-            // sumoselect
-            // $rep->addJsLink($basePath . 'occtax/js/sumoselect/jquery.sumoselect.min.js');
-            // $rep->addCSSLink($basePath . 'occtax/css/sumoselect/sumoselect.css');
-
             // inline-select : remplace un <select multiple> par un web-component <inline-select>
             $rep->addCSSLink($basePath . 'occtax/css/occtax.inlineSelect.css');
+
+            // carousel
+            $rep->addCSSLink($basePath . 'occtax/css/occtax.carousel.css');
 
             // For recent versions of Lizmap Wbe Client, since 3.4.0, we need to add some OpenLayers 2.13.1 JS files
             // Which have been removed from the OL 2 build
@@ -115,6 +113,7 @@ class defaultCtrl extends lizMapCtrl {
 
             // occtax
             $rep->addJsLink($basePath . 'occtax/js/occtax.inlineSelect.js');
+            $rep->addJsLink($basePath . 'occtax/js/occtax.carousel.js');
             $rep->addJsLink($basePath . 'occtax/js/occtax.js');
             $rep->addJsLink($basePath . 'occtax/js/occtax.search.js');
 

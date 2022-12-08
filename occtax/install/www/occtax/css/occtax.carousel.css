@@ -1,0 +1,70 @@
+.liz-slider {
+    width: 100%;
+    /* max-width: 400px; */
+    height: 350px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 15px;
+}
+
+.liz-slide {
+    width: 100%;
+    /* max-width: 400px; */
+    height: 350px;
+    position: absolute;
+    transition: all 0.5s;
+    background:
+    linear-gradient(217deg, rgba(255,0,0,.8), rgba(255,0,0,0) 70.71%),
+    linear-gradient(127deg, rgba(0,255,0,.8), rgba(0,255,0,0) 70.71%),
+    linear-gradient(336deg, rgba(0,0,255,.8), rgba(0,0,255,0) 70.71%);
+}
+
+.liz-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.liz-slide-attribution {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    width: calc(100% - 40px); /* width - left - right - 2*padding*/
+    padding: 0px 10px;
+    overflow: auto;
+    background-color: rgba(255, 255, 255, 0.5);
+    border: none;
+    border-radius: 5px;
+    height: 25px;
+    z-index: 10px;
+    font-size: 12px;
+    text-align: right;
+}
+
+.liz-slide-btn {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    padding: 10px;
+    border: none;
+    border-radius: 50%;
+    z-index: 10px;
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.7);
+    font-size: 18px;
+}
+
+.liz-slide-btn:active {
+    transform: scale(1.1);
+}
+
+.liz-slide-btn-prev {
+    top: 45%;
+    left: 2%;
+}
+
+.liz-slide-btn-next {
+    top: 45%;
+    right: 2%;
+}

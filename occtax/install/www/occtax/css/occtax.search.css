@@ -568,12 +568,6 @@ Fiche détail d'un taxon*/
   max-height: 70%;
   text-align: center;
 }
-#taxon-detail-media img{
-  height: auto;
-  width: auto;
-  max-height: 100%;
-  max-width: 95%;
-}
 
 /*
 VALIDATION

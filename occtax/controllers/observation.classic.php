@@ -132,7 +132,7 @@ class observationCtrl extends jController {
         $tpl->assign('data', $data);
         $tpl->assign('children', $children);
 
-        // Fields to display ( here again, to manage json properties for descriptfi_sujet )
+        // Fields to display ( here again, to manage json properties for descriptif_sujet )
         $observation_card_fields = array();
         if($observation_card_fields = $ini->getValue('observation_card_fields', 'naturaliz')){
             $observation_card_fields = array_map('trim', explode(',', $observation_card_fields));
