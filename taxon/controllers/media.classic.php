@@ -18,7 +18,7 @@ class mediaCtrl extends jController {
         $rep = $this->getResponse('json');
         $cd_ref = $this->intParam('cd_ref');
 
-        // Get INPN images
+        // Get media informations from the database and the INPN API
         jClasses::inc('taxon~mediaManagerINPN');
         $mediaManager = new mediaManagerINPN($cd_ref);
         $media = $mediaManager->getMediaInformation();
@@ -40,12 +40,13 @@ class mediaCtrl extends jController {
 
         $rep = $this->getResponse('redirectUrl');
         $cd_ref = $this->intParam('cd_ref');
-        $token = $this->param('token');
+        $id = $this->intParam('id');
+        $source = $this->param('source');
 
         // Get INPN images
         jClasses::inc('taxon~mediaManagerINPN');
         $mediaManager = new mediaManagerINPN($cd_ref);
-        $mediaUrl = $mediaManager->getMediaUrl($token);
+        $mediaUrl = $mediaManager->getMediaUrl($id, $source);
 
         $rep->url = $mediaUrl;
 

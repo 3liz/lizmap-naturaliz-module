@@ -368,10 +368,10 @@ OccTax.events.on({
          * @param {integer} cd_nom The taxon identifier.
          * @param {callback} aCallback The callback function run with the data.
          */
-        function getTaxonDataFromApi(cd_nom, aCallback) {
+        function getTaxonData(cd_nom, aCallback) {
 
             let taxonUrl = `https://taxref.mnhn.fr/api/taxa/${cd_nom}`;
-            detailTaxonLoad(taxonUrl).then(function (taxonData) {
+            requestTaxonData(taxonUrl, 2000).then(function (taxonData) {
                 let keys = ['id', 'referenceId', 'scientificName', 'authority', 'frenchVernacularName'];
                 let returnedTaxon = {};
                 for (var k in keys) {
@@ -405,9 +405,24 @@ OccTax.events.on({
 
                 // Callback
                 aCallback(returnedTaxon);
+
             }, function (Error) {
                 console.log(Error);
+                console.log('Mode dégradé - Appel aux données depuis la base');
+                let taxonUrl = $('#form_taxon_service_autocomplete').attr('action');
+                taxonUrl = taxonUrl.replace('/autocomplete', '/getTaxonData');
+                taxonUrl += '?cd_nom=' + cd_nom;
+                requestTaxonData(taxonUrl, 5000).then(function (taxonData) {
+                    console.log(taxonData);
+                    aCallback(taxonData);
+
+                }, function (Error) {
+                    console.log(Error);
+                    $('#taxon-detail-media div.dataviz-waiter').hide();
+                });
+
                 $('#taxon-detail-media div.dataviz-waiter').hide();
+
             });
         }
 
@@ -415,12 +430,12 @@ OccTax.events.on({
          * Request the MNHN Taxon API
          * and returns content
          */
-        function detailTaxonLoad(url) {
+        function requestTaxonData(url, timeout=2000) {
             return new Promise(function (resolve, reject) {
                 var request = new XMLHttpRequest();
                 request.open('GET', url);
                 request.responseType = 'json';
-                // request.timeout = 30000;
+                request.timeout = timeout;
                 // When the request loads, check whether it was successful
                 request.onload = function () {
                     if (request.status === 200) {
@@ -520,7 +535,7 @@ OccTax.events.on({
          * and display them in a carousel
          */
         function getTaxonMedias(media_url) {
-            detailTaxonLoad(media_url).then(function (mediaData) {
+            requestTaxonData(media_url, 10000).then(function (mediaData) {
 
                 if (
                     'status' in mediaData && mediaData.status == 'success'
@@ -544,13 +559,12 @@ OccTax.events.on({
 
                         // Build the image
                         const image = new Image();
-                        image.alt = `${media.copyright}`;
-                        image.title = `${media.copyright} (${media.licence})`;
+                        image.alt = `${media.auteur}`;
+                        image.title = `${media.auteur} (${media.licence})`;
                         const imageSrc = media.url;
 
                         // Add it to the carousel, only when full loaded
                         addImageToCarousel(carousel, imageSrc, image)
-
                     }
                 } else {
                     $('#taxon-detail-media div.dataviz-waiter').hide();
@@ -592,7 +606,7 @@ OccTax.events.on({
         }
 
         function getTaxonStatus(status_url) {
-            detailTaxonLoad(status_url).then(function (mdata) {
+            requestTaxonData(status_url, 5000).then(function (mdata) {
                 if (
                     '_embedded' in mdata
                     && 'status' in mdata._embedded
@@ -701,7 +715,7 @@ OccTax.events.on({
             var durl = occtaxClientConfig.taxon_detail_source_url;
             if (dtype == 'api' || durl.trim() == '') {
                 // Use the MNHN API to create and display a fact sheet about this taxon
-                getTaxonDataFromApi(cd_nom, function (data) {
+                getTaxonData(cd_nom, function (data) {
                     var html = buildTaxonFicheHtml(data);
                     html += '<button id="hide-sub-dock" class="btn pull-right" style="margin-top:5px;" name="close" title="' + lizDict['generic.btn.close.title'] + '">' + lizDict['generic.btn.close.title'] + '</button>';
 

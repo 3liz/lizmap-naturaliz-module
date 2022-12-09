@@ -159,5 +159,51 @@ class serviceCtrl extends jController {
 
         return $rep;
     }
-}
 
+
+    /**
+     * Get information about a taxon
+     *
+     * It is first used as a replacement of the INPN API
+     *
+     */
+    public function getTaxonData() {
+        $rep = $this->getResponse('json');
+        $cd_nom = $this->intParam('cd_nom');
+
+        // Get media informations from the database and the INPN API
+        $cnx = jDb::getConnection('naturaliz_virtual_profile');
+        $sql = "
+            SELECT *
+            FROM taxon.taxref_consolide
+            WHERE cd_nom = $1
+        ";
+        $resultset = $cnx->prepare($sql);
+        $params = array(
+            $cd_nom
+        );
+        $resultset->execute($params);
+        $get = $resultset->fetchAll();
+        $taxonData = array(
+            'id' => $cd_nom,
+            'referenceId' => null,
+            'scientificName' => '',
+            'authority' => '',
+            'frenchVernacularName' => '',
+            'media_url' => 'valeur_par_defaut',
+            'status_url' => null,
+            'inpnWebpage' => 'https://inpn.mnhn.fr/espece/cd_nom/'.$cd_nom,
+        );
+        foreach ($get as $taxon) {
+            $taxonData['id'] = $taxon->cd_nom;
+            $taxonData['referenceId'] = $taxon->cd_ref;
+            $taxonData['scientificName'] = $taxon->nom_valide;
+            $taxonData['authority'] = $taxon->lb_auteur;
+            $taxonData['frenchVernacularName'] = trim($taxon->nom_vern, ' ,');
+
+        }
+        $rep->data = $taxonData;
+
+        return $rep;
+    }
+}

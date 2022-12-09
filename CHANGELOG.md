@@ -2,9 +2,26 @@
 
 ## Unreleased
 
-### Fixed
+
+### Changed
+
+* Base de données, schéma taxon - Ajout de la table `taxon.medias` pour stocker
+  les informations sur les médias téléchargés depuis l'API ou stocké en local
+* Taxons - Ajout des icônes pour les échinodermes, les mousses et les éponges
+* Gestion - Modification mineure du JavaScript du projet
 
 ### Added
+
+* Fiche Taxon
+  - Récupération de plusieurs images issues de l'API de l'INPN
+  - Ajout d'un carousel avec l'affichage de la photo, du titre et de l'auteur
+  - Mise en cache des données et photos de l'INPN, et utilisation d'un timeout
+    pour permettre d'afficher quand même la fiche lorsque l'API ne répond pas.
+    Les images sont stockées dans le répertoire `media/taxon/inpn/` avec un répertoire
+    par taxon (`cd_nom`) qui contient les images.
+  - Possibilité d'afficher des images définies manuellement dans la table des medias
+    qui doivent être stockées dans `media/taxon/local/cd_nom/`. Les noms des fichiers
+    sont libres, car c'est la table qui contient les informations pour chaque média.
 
 ## 2.13.1 - 2022-11-22
 

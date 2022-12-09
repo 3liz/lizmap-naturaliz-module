@@ -59,20 +59,11 @@
         updatepattern="" insertpattern="" selectpattern=""/>-->
     </record>
     <factory>
-        <!--<method name="findByStage" type="select/selectfirst/delete/update/php">
-            <parameter name="" />
-            <values>
-                <value property="" value="" />
-            </values>
-            <conditions logic="and/or">
-                <eq property="" value="" />
+        <method name="getByCdRef" type="selectfirst">
+            <parameter name="cd_ref" />
+            <conditions logic="and">
+                <eq property="cd_ref" expr="$cd_ref" />
             </conditions>
-            <order>
-                <orderitem property="" way="asc/desc" />
-            </order>
-            <limit offset="" count=""/>
-            <body><![CDATA[
-            ]]></body>
-        </method>-->
+        </method>
     </factory>
 </dao>
