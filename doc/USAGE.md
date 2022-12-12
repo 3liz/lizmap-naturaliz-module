@@ -549,7 +549,7 @@ On peut aussi tout à fait ajouter manuellement des photographies "locales", cad
 * Ajouter la photographie dans le répertoire `media/upload/taxon/local/` sur le serveur FTP
 * Ajouter une ligne dans la table `taxon.medias` avec les informations nécessaires, notamment le cd_nom, le cd_ref et le `media_path`, qui se présente sous la forme d'un chemin relatif au projet QGIS de gestion, par exemple : `media/upload/taxon/local/pigeon_biset.jpg`
 
-| id | cd_nom | cd_ref | principale | source | id_origine | url_origine | media_path                                | titre                 | auteur  | description | licence  |
+| id | cd_nom | cd_ref | principal  | source | id_origine | url_origine | media_path                                | titre                 | auteur  | description | licence  |
 |----|--------|--------|------------|--------|------------|-------------|-------------------------------------------|-----------------------|---------|-------------|----------|
 | 47 | 3420   | 3420   | f          | local  |            |             | media/upload/taxon/local/pigeon_biset.jpg | Belle photo de pigeon | Michaël |             | CC-BY-SA |
 

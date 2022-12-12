@@ -3,6 +3,8 @@
 ## Unreleased
 
 
+## 2.13.2 - 2022-12-12
+
 ### Changed
 
 * Base de données, schéma taxon - Ajout de la table `taxon.medias` pour stocker
