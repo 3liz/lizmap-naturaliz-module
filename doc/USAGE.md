@@ -528,6 +528,33 @@ Quelques sources possibles:
 REFRESH MATERIALIZED VIEW occtax.vm_observation ;
 ```
 
+### Ajout de photographies régionales pour les fiches taxon
+
+Dans l'application, lorsque le nom d'un taxon est affiché, on peut cliquer sur le lien pour ouvrir la fiche du taxon.
+Cette fiche affiche les informations principales du taxon, issues de l'API de l'INPN:
+
+* son nom valide,
+* ses noms vernaculaires
+* un carrousel avec les photographies du taxon
+* les status du taxon : menaces, arrêtés de protection, etc.
+
+![Fiche taxon](media/fiche_taxon.png)
+
+L'API de l'INPN ne propose pas toujours des photographies pour les taxons locaux, ou alors elles ne sont pas libres de droit.
+Il est possible d'utiliser le projet de gestion pour ajouter des photographies. Voir la vidéo suivante:
+![Ajout d'une photographie via le module de gestion](media/taxon_ajout_photographie_via_carte_de_gestion.webm)
+
+On peut aussi tout à fait ajouter manuellement des photographies "locales", cad personnalisées. Pour cela, il faut :
+
+* Ajouter la photographie dans le répertoire `media/upload/taxon/local/` sur le serveur FTP
+* Ajouter une ligne dans la table `taxon.medias` avec les informations nécessaires, notamment le cd_nom, le cd_ref et le `media_path`, qui se présente sous la forme d'un chemin relatif au projet QGIS de gestion, par exemple : `media/upload/taxon/local/pigeon_biset.jpg`
+
+| id | cd_nom | cd_ref | principale | source | id_origine | url_origine | media_path                                | titre                 | auteur  | description | licence  |
+|----|--------|--------|------------|--------|------------|-------------|-------------------------------------------|-----------------------|---------|-------------|----------|
+| 47 | 3420   | 3420   | f          | local  |            |             | media/upload/taxon/local/pigeon_biset.jpg | Belle photo de pigeon | Michaël |             | CC-BY-SA |
+
+
+
 ## Module Occtax
 
 Module de gestion des données au format Occurrence de Taxon

@@ -6,9 +6,13 @@
 ### Changed
 
 * Base de données, schéma taxon - Ajout de la table `taxon.medias` pour stocker
-  les informations sur les médias téléchargés depuis l'API ou stocké en local
+  les informations sur les médias téléchargés depuis l'API ou stockés en local
 * Taxons - Ajout des icônes pour les échinodermes, les mousses et les éponges
-* Gestion - Modification mineure du JavaScript du projet
+* Gestion :
+  - Modification mineure du JavaScript du projet
+  - Ajout de deux couches "Taxons observés" et "medias" pour permettre d'ajouter
+    des photographies facilement via l'interface Web de Lizmap (formulaire d'édition)
+    et les consulter via l'outil "Table attributaire"
 
 ### Added
 
@@ -20,7 +24,7 @@
     Les images sont stockées dans le répertoire `media/taxon/inpn/` avec un répertoire
     par taxon (`cd_nom`) qui contient les images.
   - Possibilité d'afficher des images définies manuellement dans la table des medias
-    qui doivent être stockées dans `media/taxon/local/cd_nom/`. Les noms des fichiers
+    qui doivent être stockées dans `media/taxon/local/`. Les noms des fichiers
     sont libres, car c'est la table qui contient les informations pour chaque média.
 
 ## 2.13.1 - 2022-11-22

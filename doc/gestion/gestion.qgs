@@ -1,4 +1,4 @@
-<qgis projectname="" saveDateTime="2022-11-16T15:56:36" saveUser="mdouchin" saveUserFull="mdouchin" version="3.22.12-Białowieża">
+<qgis projectname="" saveDateTime="2022-12-12T16:31:13" saveUser="mdouchin" saveUserFull="mdouchin" version="3.22.12-Białowieża">
   <homePath path=""></homePath>
   <title></title>
   <autotransaction active="0"></autotransaction>
@@ -126,6 +126,21 @@
         </customproperties>
       </layer-tree-layer>
     </layer-tree-group>
+    <layer-tree-group checked="Qt::Checked" expanded="1" name="Photos des taxons">
+      <customproperties>
+        <Option></Option>
+      </customproperties>
+      <layer-tree-layer checked="Qt::Checked" expanded="1" id="Taxons_observ_s_81d02051_49f4_4756_83be_2ac90a6d589c" legend_exp="" legend_split_behavior="0" name="Taxons observés" patch_size="-1,-1" providerKey="postgres" source="service='naturaliz' sslmode=disable key='cd_nom' estimatedmetadata=true checkPrimaryKeyUnicity='1' table=&quot;(SELECT DISTINCT t.cd_nom, t.cd_ref, t.nom_valide, t.nom_vern, t.group1_inpn, t.group2_inpn  FROM taxon.taxref_consolide AS t  INNER JOIN occtax.observation AS o  &#x9;ON o.cd_ref = t.cd_ref&#xA;)&quot;">
+        <customproperties>
+          <Option></Option>
+        </customproperties>
+      </layer-tree-layer>
+      <layer-tree-layer checked="Qt::Checked" expanded="1" id="medias_d7189654_62f2_41ea_be13_b930d74f5d30" legend_exp="" legend_split_behavior="0" name="medias" patch_size="-1,-1" providerKey="postgres" source="service='naturaliz' sslmode=disable key='id' estimatedmetadata=true checkPrimaryKeyUnicity='1' table=&quot;taxon&quot;.&quot;medias&quot; sql=&quot;source&quot; = 'local'">
+        <customproperties>
+          <Option></Option>
+        </customproperties>
+      </layer-tree-layer>
+    </layer-tree-group>
     <layer-tree-group checked="Qt::Checked" expanded="1" name="Hidden">
       <customproperties>
         <Option></Option>
@@ -153,12 +168,12 @@
   </layer-tree-group>
   <snapping-settings enabled="1" intersection-snapping="0" maxScale="0" minScale="0" mode="1" scaleDependencyMode="0" self-snapping="0" tolerance="10" type="3" unit="1">
     <individual-layer-settings>
-      <layer-setting enabled="0" id="departement_9f454c9f_7462_4837_8f00_506aa7ae47d5" maxScale="0" minScale="0" tolerance="0" type="1" units="2"></layer-setting>
       <layer-setting enabled="0" id="commune_cd39115d_fdd4_49fc_b0db_cf217670a18b" maxScale="0" minScale="0" tolerance="0" type="1" units="2"></layer-setting>
+      <layer-setting enabled="0" id="departement_9f454c9f_7462_4837_8f00_506aa7ae47d5" maxScale="0" minScale="0" tolerance="0" type="1" units="2"></layer-setting>
+      <layer-setting enabled="0" id="v_jdd_spatial_820d68bf_babb_4ec4_941d_686260332097" maxScale="0" minScale="0" tolerance="0" type="1" units="2"></layer-setting>
+      <layer-setting enabled="0" id="v_import_web_liste_75b05297_0e7f_477a_b314_3159132b7de9" maxScale="0" minScale="0" tolerance="0" type="1" units="2"></layer-setting>
       <layer-setting enabled="1" id="demande20190123120310066" maxScale="0" minScale="0" tolerance="10" type="2" units="1"></layer-setting>
       <layer-setting enabled="0" id="v_import_web_observations_148f04d8_1017_49ff_98b9_11ced73f9e95" maxScale="0" minScale="0" tolerance="0" type="1" units="2"></layer-setting>
-      <layer-setting enabled="0" id="v_import_web_liste_75b05297_0e7f_477a_b314_3159132b7de9" maxScale="0" minScale="0" tolerance="0" type="1" units="2"></layer-setting>
-      <layer-setting enabled="0" id="v_jdd_spatial_820d68bf_babb_4ec4_941d_686260332097" maxScale="0" minScale="0" tolerance="0" type="1" units="2"></layer-setting>
     </individual-layer-settings>
   </snapping-settings>
   <relations>
@@ -182,6 +197,9 @@
     </relation>
     <relation id="jdd_import_jdd_id_jdd2019041_jdd_id" name="Jdd Imports par Jdd" referencedLayer="jdd20190416103640150" referencingLayer="jdd_import20190123150642447" strength="Association">
       <fieldRef referencedField="jdd_id" referencingField="jdd_id"></fieldRef>
+    </relation>
+    <relation id="medias_d71_cd_nom_Taxons_obs_cd_nom" name="Photographies des taxons observés" referencedLayer="Taxons_observ_s_81d02051_49f4_4756_83be_2ac90a6d589c" referencingLayer="medias_d7189654_62f2_41ea_be13_b930d74f5d30" strength="Association">
+      <fieldRef referencedField="cd_nom" referencingField="cd_nom"></fieldRef>
     </relation>
     <relation id="v_import_w_jdd_metadonnee_dee_id_v_import_w_jdd" name="Observations importées par JDD" referencedLayer="v_import_web_liste_75b05297_0e7f_477a_b314_3159132b7de9" referencingLayer="v_import_web_observations_148f04d8_1017_49ff_98b9_11ced73f9e95" strength="Association">
       <fieldRef referencedField="jdd" referencingField="jdd_metadonnee_dee_id"></fieldRef>
@@ -308,6 +326,18 @@
         </filegroup>
       </legendlayer>
     </legendgroup>
+    <legendgroup checked="Qt::Checked" name="Photos des taxons" open="true">
+      <legendlayer checked="Qt::Checked" drawingOrder="-1" name="Taxons observés" open="true" showFeatureCount="0">
+        <filegroup hidden="false" open="true">
+          <legendlayerfile isInOverview="0" layerid="Taxons_observ_s_81d02051_49f4_4756_83be_2ac90a6d589c" visible="1"></legendlayerfile>
+        </filegroup>
+      </legendlayer>
+      <legendlayer checked="Qt::Checked" drawingOrder="-1" name="medias" open="true" showFeatureCount="0">
+        <filegroup hidden="false" open="true">
+          <legendlayerfile isInOverview="0" layerid="medias_d7189654_62f2_41ea_be13_b930d74f5d30" visible="1"></legendlayerfile>
+        </filegroup>
+      </legendlayer>
+    </legendgroup>
     <legendgroup checked="Qt::Checked" name="Hidden" open="true">
       <legendlayer checked="Qt::Checked" drawingOrder="-1" name="osm-mapnik" open="true" showFeatureCount="0">
         <filegroup hidden="false" open="true">
@@ -370,6 +400,192 @@
     <paintEffect></paintEffect>
   </main-annotation-layer>
   <projectlayers>
+    <maplayer autoRefreshEnabled="0" autoRefreshTime="0" geometry="No geometry" hasScaleBasedVisibilityFlag="0" legendPlaceholderImage="" maxScale="0" minScale="1e+08" readOnly="0" refreshOnNotifyEnabled="0" refreshOnNotifyMessage="" styleCategories="AllStyleCategories" type="vector" wkbType="NoGeometry">
+      <id>Taxons_observ_s_81d02051_49f4_4756_83be_2ac90a6d589c</id>
+      <datasource>service='naturaliz' sslmode=disable key='cd_nom' estimatedmetadata=true checkPrimaryKeyUnicity='1' table="(SELECT DISTINCT t.cd_nom, t.cd_ref, t.nom_valide, t.nom_vern, t.group1_inpn, t.group2_inpn  FROM taxon.taxref_consolide AS t  INNER JOIN occtax.observation AS o  	ON o.cd_ref = t.cd_ref
+)"</datasource>
+      <keywordList>
+        <value></value>
+      </keywordList>
+      <layername>Taxons observés</layername>
+      <srs>
+        <spatialrefsys>
+          <wkt></wkt>
+          <proj4></proj4>
+          <srsid>0</srsid>
+          <srid>0</srid>
+          <authid></authid>
+          <description></description>
+          <projectionacronym></projectionacronym>
+          <ellipsoidacronym></ellipsoidacronym>
+          <geographicflag>false</geographicflag>
+        </spatialrefsys>
+      </srs>
+      <resourceMetadata>
+        <identifier></identifier>
+        <parentidentifier></parentidentifier>
+        <language></language>
+        <type>dataset</type>
+        <title></title>
+        <abstract></abstract>
+        <links></links>
+        <fees></fees>
+        <encoding></encoding>
+        <crs>
+          <spatialrefsys>
+            <wkt></wkt>
+            <proj4></proj4>
+            <srsid>0</srsid>
+            <srid>0</srid>
+            <authid></authid>
+            <description></description>
+            <projectionacronym></projectionacronym>
+            <ellipsoidacronym></ellipsoidacronym>
+            <geographicflag>false</geographicflag>
+          </spatialrefsys>
+        </crs>
+        <extent></extent>
+      </resourceMetadata>
+      <provider encoding="">postgres</provider>
+      <vectorjoins></vectorjoins>
+      <layerDependencies></layerDependencies>
+      <dataDependencies></dataDependencies>
+      <expressionfields></expressionfields>
+      <map-layer-style-manager current="défaut">
+        <map-layer-style name="défaut"></map-layer-style>
+      </map-layer-style-manager>
+      <auxiliaryLayer></auxiliaryLayer>
+      <metadataUrls></metadataUrls>
+      <flags>
+        <Identifiable>1</Identifiable>
+        <Removable>1</Removable>
+        <Searchable>1</Searchable>
+        <Private>0</Private>
+      </flags>
+      <temporal accumulate="0" durationField="" durationUnit="min" enabled="0" endExpression="" endField="" fixedDuration="0" limitMode="0" mode="0" startExpression="" startField="">
+        <fixedRange>
+          <start></start>
+          <end></end>
+        </fixedRange>
+      </temporal>
+      <customproperties>
+        <Option type="Map">
+          <Option name="QFieldSync/action" type="QString" value="offline"></Option>
+          <Option name="QFieldSync/cloud_action" type="QString" value="offline"></Option>
+          <Option name="QFieldSync/photo_naming" type="QString" value="{}"></Option>
+        </Option>
+      </customproperties>
+      <geometryOptions geometryPrecision="0" removeDuplicateNodes="0">
+        <activeChecks type="StringList">
+          <Option type="QString" value=""></Option>
+        </activeChecks>
+        <checkConfiguration></checkConfiguration>
+      </geometryOptions>
+      <legend showLabelLegend="0" type="default-vector"></legend>
+      <referencedLayers></referencedLayers>
+      <fieldConfiguration>
+        <field configurationFlags="None" name="cd_nom">
+          <editWidget type="">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="cd_ref">
+          <editWidget type="">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="nom_valide">
+          <editWidget type="">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="nom_vern">
+          <editWidget type="">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="group1_inpn">
+          <editWidget type="">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="group2_inpn">
+          <editWidget type="">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+      </fieldConfiguration>
+      <aliases>
+        <alias field="cd_nom" index="0" name=""></alias>
+        <alias field="cd_ref" index="1" name=""></alias>
+        <alias field="nom_valide" index="2" name=""></alias>
+        <alias field="nom_vern" index="3" name=""></alias>
+        <alias field="group1_inpn" index="4" name=""></alias>
+        <alias field="group2_inpn" index="5" name=""></alias>
+      </aliases>
+      <defaults>
+        <default applyOnUpdate="0" expression="" field="cd_nom"></default>
+        <default applyOnUpdate="0" expression="" field="cd_ref"></default>
+        <default applyOnUpdate="0" expression="" field="nom_valide"></default>
+        <default applyOnUpdate="0" expression="" field="nom_vern"></default>
+        <default applyOnUpdate="0" expression="" field="group1_inpn"></default>
+        <default applyOnUpdate="0" expression="" field="group2_inpn"></default>
+      </defaults>
+      <constraints>
+        <constraint constraints="3" exp_strength="0" field="cd_nom" notnull_strength="1" unique_strength="1"></constraint>
+        <constraint constraints="0" exp_strength="0" field="cd_ref" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="nom_valide" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="nom_vern" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="group1_inpn" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="group2_inpn" notnull_strength="0" unique_strength="0"></constraint>
+      </constraints>
+      <constraintExpressions>
+        <constraint desc="" exp="" field="cd_nom"></constraint>
+        <constraint desc="" exp="" field="cd_ref"></constraint>
+        <constraint desc="" exp="" field="nom_valide"></constraint>
+        <constraint desc="" exp="" field="nom_vern"></constraint>
+        <constraint desc="" exp="" field="group1_inpn"></constraint>
+        <constraint desc="" exp="" field="group2_inpn"></constraint>
+      </constraintExpressions>
+      <expressionfields></expressionfields>
+      <attributeactions>
+        <defaultAction key="Canvas" value="{00000000-0000-0000-0000-000000000000}"></defaultAction>
+      </attributeactions>
+      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
+        <columns></columns>
+      </attributetableconfig>
+      <conditionalstyles>
+        <rowstyles></rowstyles>
+        <fieldstyles></fieldstyles>
+      </conditionalstyles>
+      <storedexpressions></storedexpressions>
+      <editform tolerant="1"></editform>
+      <editforminit></editforminit>
+      <editforminitcodesource>0</editforminitcodesource>
+      <editforminitfilepath></editforminitfilepath>
+      <editforminitcode></editforminitcode>
+      <featformsuppress>0</featformsuppress>
+      <editorlayout>generatedlayout</editorlayout>
+      <editable></editable>
+      <labelOnTop></labelOnTop>
+      <reuseLastValue></reuseLastValue>
+      <dataDefinedFieldProperties></dataDefinedFieldProperties>
+      <widgets></widgets>
+      <previewExpression></previewExpression>
+      <mapTip></mapTip>
+    </maplayer>
     <maplayer autoRefreshEnabled="0" autoRefreshTime="0" geometry="No geometry" hasScaleBasedVisibilityFlag="0" legendPlaceholderImage="" maxScale="0" minScale="1e+08" readOnly="0" refreshOnNotifyEnabled="0" refreshOnNotifyMessage="" styleCategories="AllStyleCategories" type="vector" wkbType="NoGeometry">
       <id>acteur20190123120309698</id>
       <datasource>service='naturaliz' sslmode=disable key='id_acteur' checkPrimaryKeyUnicity='1' table="gestion"."acteur"</datasource>
@@ -642,17 +858,6 @@
             </config>
           </editWidget>
         </field>
-        <field configurationFlags="None" name="en_poste">
-          <editWidget type="CheckBox">
-            <config>
-              <Option type="Map">
-                <Option name="CheckedState" type="QString" value=""></Option>
-                <Option name="TextDisplayMethod" type="int" value="0"></Option>
-                <Option name="UncheckedState" type="QString" value=""></Option>
-              </Option>
-            </config>
-          </editWidget>
-        </field>
         <field configurationFlags="None" name="libelle">
           <editWidget type="TextEdit">
             <config>
@@ -679,8 +884,7 @@
         <alias field="reunion_sinp" index="11" name="Participe aux réunion du SINP local"></alias>
         <alias field="service" index="12" name="Service ou direction de rattachement au sein de l'organisme"></alias>
         <alias field="date_maj" index="13" name="Date à laquelle l'enregistrement a été modifié pour la dernière fois "></alias>
-        <alias field="en_poste" index="14" name="En poste ?"></alias>
-        <alias field="libelle" index="15" name=""></alias>
+        <alias field="libelle" index="14" name=""></alias>
       </aliases>
       <defaults>
         <default applyOnUpdate="0" expression="" field="id_acteur"></default>
@@ -697,7 +901,6 @@
         <default applyOnUpdate="0" expression="" field="reunion_sinp"></default>
         <default applyOnUpdate="0" expression="" field="service"></default>
         <default applyOnUpdate="0" expression="" field="date_maj"></default>
-        <default applyOnUpdate="0" expression="" field="en_poste"></default>
         <default applyOnUpdate="0" expression="" field="libelle"></default>
       </defaults>
       <constraints>
@@ -715,7 +918,6 @@
         <constraint constraints="0" exp_strength="0" field="reunion_sinp" notnull_strength="0" unique_strength="0"></constraint>
         <constraint constraints="0" exp_strength="0" field="service" notnull_strength="0" unique_strength="0"></constraint>
         <constraint constraints="0" exp_strength="0" field="date_maj" notnull_strength="0" unique_strength="0"></constraint>
-        <constraint constraints="0" exp_strength="0" field="en_poste" notnull_strength="0" unique_strength="0"></constraint>
         <constraint constraints="0" exp_strength="0" field="libelle" notnull_strength="0" unique_strength="0"></constraint>
       </constraints>
       <constraintExpressions>
@@ -733,7 +935,6 @@
         <constraint desc="" exp="" field="reunion_sinp"></constraint>
         <constraint desc="" exp="" field="service"></constraint>
         <constraint desc="" exp="" field="date_maj"></constraint>
-        <constraint desc="" exp="" field="en_poste"></constraint>
         <constraint desc="" exp="" field="libelle"></constraint>
       </constraintExpressions>
       <expressionfields>
@@ -800,7 +1001,7 @@ def my_form_open(dialog, layer, feature):
             <attributeEditorField index="8" name="id_organisme" showLabel="1"></attributeEditorField>
             <attributeEditorField index="12" name="service" showLabel="1"></attributeEditorField>
             <attributeEditorField index="7" name="fonction" showLabel="1"></attributeEditorField>
-            <attributeEditorField index="14" name="en_poste" showLabel="1"></attributeEditorField>
+            <attributeEditorField index="-1" name="en_poste" showLabel="1"></attributeEditorField>
             <attributeEditorField index="4" name="courriel" showLabel="1"></attributeEditorField>
             <attributeEditorField index="5" name="tel_1" showLabel="1"></attributeEditorField>
             <attributeEditorField index="6" name="tel_2" showLabel="1"></attributeEditorField>
@@ -1896,7 +2097,7 @@ def my_form_open(dialog, layer, feature):
               <Option name="drawToAllParts" type="bool" value="false"></Option>
               <Option name="enabled" type="QString" value="0"></Option>
               <Option name="labelAnchorPoint" type="QString" value="point_on_exterior"></Option>
-              <Option name="lineSymbol" type="QString" value="&lt;symbol name=&quot;symbol&quot; clip_to_extent=&quot;1&quot; type=&quot;line&quot; force_rhr=&quot;0&quot; alpha=&quot;1&quot;>&lt;data_defined_properties>&lt;Option type=&quot;Map&quot;>&lt;Option name=&quot;name&quot; type=&quot;QString&quot; value=&quot;&quot;/>&lt;Option name=&quot;properties&quot;/>&lt;Option name=&quot;type&quot; type=&quot;QString&quot; value=&quot;collection&quot;/>&lt;/Option>&lt;/data_defined_properties>&lt;layer pass=&quot;0&quot; enabled=&quot;1&quot; class=&quot;SimpleLine&quot; locked=&quot;0&quot;>&lt;Option type=&quot;Map&quot;>&lt;Option name=&quot;align_dash_pattern&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;capstyle&quot; type=&quot;QString&quot; value=&quot;square&quot;/>&lt;Option name=&quot;customdash&quot; type=&quot;QString&quot; value=&quot;5;2&quot;/>&lt;Option name=&quot;customdash_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option name=&quot;customdash_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;dash_pattern_offset&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;dash_pattern_offset_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option name=&quot;dash_pattern_offset_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;draw_inside_polygon&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;joinstyle&quot; type=&quot;QString&quot; value=&quot;bevel&quot;/>&lt;Option name=&quot;line_color&quot; type=&quot;QString&quot; value=&quot;60,60,60,255&quot;/>&lt;Option name=&quot;line_style&quot; type=&quot;QString&quot; value=&quot;solid&quot;/>&lt;Option name=&quot;line_width&quot; type=&quot;QString&quot; value=&quot;0.3&quot;/>&lt;Option name=&quot;line_width_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;offset&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;offset_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option name=&quot;offset_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;ring_filter&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;trim_distance_end&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;trim_distance_end_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option name=&quot;trim_distance_end_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;trim_distance_start&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;trim_distance_start_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option name=&quot;trim_distance_start_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;tweak_dash_pattern_on_corners&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;use_custom_dash&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;width_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;/Option>&lt;prop k=&quot;align_dash_pattern&quot; v=&quot;0&quot;/>&lt;prop k=&quot;capstyle&quot; v=&quot;square&quot;/>&lt;prop k=&quot;customdash&quot; v=&quot;5;2&quot;/>&lt;prop k=&quot;customdash_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;customdash_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;dash_pattern_offset&quot; v=&quot;0&quot;/>&lt;prop k=&quot;dash_pattern_offset_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;dash_pattern_offset_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;draw_inside_polygon&quot; v=&quot;0&quot;/>&lt;prop k=&quot;joinstyle&quot; v=&quot;bevel&quot;/>&lt;prop k=&quot;line_color&quot; v=&quot;60,60,60,255&quot;/>&lt;prop k=&quot;line_style&quot; v=&quot;solid&quot;/>&lt;prop k=&quot;line_width&quot; v=&quot;0.3&quot;/>&lt;prop k=&quot;line_width_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;offset&quot; v=&quot;0&quot;/>&lt;prop k=&quot;offset_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;offset_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;ring_filter&quot; v=&quot;0&quot;/>&lt;prop k=&quot;trim_distance_end&quot; v=&quot;0&quot;/>&lt;prop k=&quot;trim_distance_end_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;trim_distance_end_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;trim_distance_start&quot; v=&quot;0&quot;/>&lt;prop k=&quot;trim_distance_start_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;trim_distance_start_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;tweak_dash_pattern_on_corners&quot; v=&quot;0&quot;/>&lt;prop k=&quot;use_custom_dash&quot; v=&quot;0&quot;/>&lt;prop k=&quot;width_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;data_defined_properties>&lt;Option type=&quot;Map&quot;>&lt;Option name=&quot;name&quot; type=&quot;QString&quot; value=&quot;&quot;/>&lt;Option name=&quot;properties&quot;/>&lt;Option name=&quot;type&quot; type=&quot;QString&quot; value=&quot;collection&quot;/>&lt;/Option>&lt;/data_defined_properties>&lt;/layer>&lt;/symbol>"></Option>
+              <Option name="lineSymbol" type="QString" value="&lt;symbol clip_to_extent=&quot;1&quot; type=&quot;line&quot; name=&quot;symbol&quot; force_rhr=&quot;0&quot; alpha=&quot;1&quot;>&lt;data_defined_properties>&lt;Option type=&quot;Map&quot;>&lt;Option type=&quot;QString&quot; name=&quot;name&quot; value=&quot;&quot;/>&lt;Option name=&quot;properties&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;type&quot; value=&quot;collection&quot;/>&lt;/Option>&lt;/data_defined_properties>&lt;layer pass=&quot;0&quot; class=&quot;SimpleLine&quot; enabled=&quot;1&quot; locked=&quot;0&quot;>&lt;Option type=&quot;Map&quot;>&lt;Option type=&quot;QString&quot; name=&quot;align_dash_pattern&quot; value=&quot;0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;capstyle&quot; value=&quot;square&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;customdash&quot; value=&quot;5;2&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;customdash_map_unit_scale&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;customdash_unit&quot; value=&quot;MM&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;dash_pattern_offset&quot; value=&quot;0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;dash_pattern_offset_map_unit_scale&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;dash_pattern_offset_unit&quot; value=&quot;MM&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;draw_inside_polygon&quot; value=&quot;0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;joinstyle&quot; value=&quot;bevel&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;line_color&quot; value=&quot;60,60,60,255&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;line_style&quot; value=&quot;solid&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;line_width&quot; value=&quot;0.3&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;line_width_unit&quot; value=&quot;MM&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;offset&quot; value=&quot;0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;offset_map_unit_scale&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;offset_unit&quot; value=&quot;MM&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;ring_filter&quot; value=&quot;0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;trim_distance_end&quot; value=&quot;0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;trim_distance_end_map_unit_scale&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;trim_distance_end_unit&quot; value=&quot;MM&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;trim_distance_start&quot; value=&quot;0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;trim_distance_start_map_unit_scale&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;trim_distance_start_unit&quot; value=&quot;MM&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;tweak_dash_pattern_on_corners&quot; value=&quot;0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;use_custom_dash&quot; value=&quot;0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;width_map_unit_scale&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;/Option>&lt;prop v=&quot;0&quot; k=&quot;align_dash_pattern&quot;/>&lt;prop v=&quot;square&quot; k=&quot;capstyle&quot;/>&lt;prop v=&quot;5;2&quot; k=&quot;customdash&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;customdash_map_unit_scale&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;customdash_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;dash_pattern_offset&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;dash_pattern_offset_map_unit_scale&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;dash_pattern_offset_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;draw_inside_polygon&quot;/>&lt;prop v=&quot;bevel&quot; k=&quot;joinstyle&quot;/>&lt;prop v=&quot;60,60,60,255&quot; k=&quot;line_color&quot;/>&lt;prop v=&quot;solid&quot; k=&quot;line_style&quot;/>&lt;prop v=&quot;0.3&quot; k=&quot;line_width&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;line_width_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;offset&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;offset_map_unit_scale&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;offset_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;ring_filter&quot;/>&lt;prop v=&quot;0&quot; k=&quot;trim_distance_end&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;trim_distance_end_map_unit_scale&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;trim_distance_end_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;trim_distance_start&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;trim_distance_start_map_unit_scale&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;trim_distance_start_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;tweak_dash_pattern_on_corners&quot;/>&lt;prop v=&quot;0&quot; k=&quot;use_custom_dash&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;width_map_unit_scale&quot;/>&lt;data_defined_properties>&lt;Option type=&quot;Map&quot;>&lt;Option type=&quot;QString&quot; name=&quot;name&quot; value=&quot;&quot;/>&lt;Option name=&quot;properties&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;type&quot; value=&quot;collection&quot;/>&lt;/Option>&lt;/data_defined_properties>&lt;/layer>&lt;/symbol>"></Option>
               <Option name="minLength" type="double" value="0"></Option>
               <Option name="minLengthMapUnitScale" type="QString" value="3x:0,0,0,0,0,0"></Option>
               <Option name="minLengthUnit" type="QString" value="MM"></Option>
@@ -2416,7 +2617,7 @@ def my_form_open(dialog, layer, feature):
               <Option name="drawToAllParts" type="bool" value="false"></Option>
               <Option name="enabled" type="QString" value="0"></Option>
               <Option name="labelAnchorPoint" type="QString" value="point_on_exterior"></Option>
-              <Option name="lineSymbol" type="QString" value="&lt;symbol name=&quot;symbol&quot; clip_to_extent=&quot;1&quot; type=&quot;line&quot; force_rhr=&quot;0&quot; alpha=&quot;1&quot;>&lt;data_defined_properties>&lt;Option type=&quot;Map&quot;>&lt;Option name=&quot;name&quot; type=&quot;QString&quot; value=&quot;&quot;/>&lt;Option name=&quot;properties&quot;/>&lt;Option name=&quot;type&quot; type=&quot;QString&quot; value=&quot;collection&quot;/>&lt;/Option>&lt;/data_defined_properties>&lt;layer pass=&quot;0&quot; enabled=&quot;1&quot; class=&quot;SimpleLine&quot; locked=&quot;0&quot;>&lt;Option type=&quot;Map&quot;>&lt;Option name=&quot;align_dash_pattern&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;capstyle&quot; type=&quot;QString&quot; value=&quot;square&quot;/>&lt;Option name=&quot;customdash&quot; type=&quot;QString&quot; value=&quot;5;2&quot;/>&lt;Option name=&quot;customdash_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option name=&quot;customdash_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;dash_pattern_offset&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;dash_pattern_offset_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option name=&quot;dash_pattern_offset_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;draw_inside_polygon&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;joinstyle&quot; type=&quot;QString&quot; value=&quot;bevel&quot;/>&lt;Option name=&quot;line_color&quot; type=&quot;QString&quot; value=&quot;60,60,60,255&quot;/>&lt;Option name=&quot;line_style&quot; type=&quot;QString&quot; value=&quot;solid&quot;/>&lt;Option name=&quot;line_width&quot; type=&quot;QString&quot; value=&quot;0.3&quot;/>&lt;Option name=&quot;line_width_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;offset&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;offset_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option name=&quot;offset_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;ring_filter&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;trim_distance_end&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;trim_distance_end_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option name=&quot;trim_distance_end_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;trim_distance_start&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;trim_distance_start_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option name=&quot;trim_distance_start_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;tweak_dash_pattern_on_corners&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;use_custom_dash&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;width_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;/Option>&lt;prop k=&quot;align_dash_pattern&quot; v=&quot;0&quot;/>&lt;prop k=&quot;capstyle&quot; v=&quot;square&quot;/>&lt;prop k=&quot;customdash&quot; v=&quot;5;2&quot;/>&lt;prop k=&quot;customdash_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;customdash_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;dash_pattern_offset&quot; v=&quot;0&quot;/>&lt;prop k=&quot;dash_pattern_offset_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;dash_pattern_offset_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;draw_inside_polygon&quot; v=&quot;0&quot;/>&lt;prop k=&quot;joinstyle&quot; v=&quot;bevel&quot;/>&lt;prop k=&quot;line_color&quot; v=&quot;60,60,60,255&quot;/>&lt;prop k=&quot;line_style&quot; v=&quot;solid&quot;/>&lt;prop k=&quot;line_width&quot; v=&quot;0.3&quot;/>&lt;prop k=&quot;line_width_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;offset&quot; v=&quot;0&quot;/>&lt;prop k=&quot;offset_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;offset_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;ring_filter&quot; v=&quot;0&quot;/>&lt;prop k=&quot;trim_distance_end&quot; v=&quot;0&quot;/>&lt;prop k=&quot;trim_distance_end_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;trim_distance_end_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;trim_distance_start&quot; v=&quot;0&quot;/>&lt;prop k=&quot;trim_distance_start_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;trim_distance_start_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;tweak_dash_pattern_on_corners&quot; v=&quot;0&quot;/>&lt;prop k=&quot;use_custom_dash&quot; v=&quot;0&quot;/>&lt;prop k=&quot;width_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;data_defined_properties>&lt;Option type=&quot;Map&quot;>&lt;Option name=&quot;name&quot; type=&quot;QString&quot; value=&quot;&quot;/>&lt;Option name=&quot;properties&quot;/>&lt;Option name=&quot;type&quot; type=&quot;QString&quot; value=&quot;collection&quot;/>&lt;/Option>&lt;/data_defined_properties>&lt;/layer>&lt;/symbol>"></Option>
+              <Option name="lineSymbol" type="QString" value="&lt;symbol clip_to_extent=&quot;1&quot; type=&quot;line&quot; name=&quot;symbol&quot; force_rhr=&quot;0&quot; alpha=&quot;1&quot;>&lt;data_defined_properties>&lt;Option type=&quot;Map&quot;>&lt;Option type=&quot;QString&quot; name=&quot;name&quot; value=&quot;&quot;/>&lt;Option name=&quot;properties&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;type&quot; value=&quot;collection&quot;/>&lt;/Option>&lt;/data_defined_properties>&lt;layer pass=&quot;0&quot; class=&quot;SimpleLine&quot; enabled=&quot;1&quot; locked=&quot;0&quot;>&lt;Option type=&quot;Map&quot;>&lt;Option type=&quot;QString&quot; name=&quot;align_dash_pattern&quot; value=&quot;0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;capstyle&quot; value=&quot;square&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;customdash&quot; value=&quot;5;2&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;customdash_map_unit_scale&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;customdash_unit&quot; value=&quot;MM&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;dash_pattern_offset&quot; value=&quot;0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;dash_pattern_offset_map_unit_scale&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;dash_pattern_offset_unit&quot; value=&quot;MM&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;draw_inside_polygon&quot; value=&quot;0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;joinstyle&quot; value=&quot;bevel&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;line_color&quot; value=&quot;60,60,60,255&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;line_style&quot; value=&quot;solid&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;line_width&quot; value=&quot;0.3&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;line_width_unit&quot; value=&quot;MM&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;offset&quot; value=&quot;0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;offset_map_unit_scale&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;offset_unit&quot; value=&quot;MM&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;ring_filter&quot; value=&quot;0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;trim_distance_end&quot; value=&quot;0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;trim_distance_end_map_unit_scale&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;trim_distance_end_unit&quot; value=&quot;MM&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;trim_distance_start&quot; value=&quot;0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;trim_distance_start_map_unit_scale&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;trim_distance_start_unit&quot; value=&quot;MM&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;tweak_dash_pattern_on_corners&quot; value=&quot;0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;use_custom_dash&quot; value=&quot;0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;width_map_unit_scale&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;/Option>&lt;prop v=&quot;0&quot; k=&quot;align_dash_pattern&quot;/>&lt;prop v=&quot;square&quot; k=&quot;capstyle&quot;/>&lt;prop v=&quot;5;2&quot; k=&quot;customdash&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;customdash_map_unit_scale&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;customdash_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;dash_pattern_offset&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;dash_pattern_offset_map_unit_scale&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;dash_pattern_offset_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;draw_inside_polygon&quot;/>&lt;prop v=&quot;bevel&quot; k=&quot;joinstyle&quot;/>&lt;prop v=&quot;60,60,60,255&quot; k=&quot;line_color&quot;/>&lt;prop v=&quot;solid&quot; k=&quot;line_style&quot;/>&lt;prop v=&quot;0.3&quot; k=&quot;line_width&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;line_width_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;offset&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;offset_map_unit_scale&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;offset_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;ring_filter&quot;/>&lt;prop v=&quot;0&quot; k=&quot;trim_distance_end&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;trim_distance_end_map_unit_scale&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;trim_distance_end_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;trim_distance_start&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;trim_distance_start_map_unit_scale&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;trim_distance_start_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;tweak_dash_pattern_on_corners&quot;/>&lt;prop v=&quot;0&quot; k=&quot;use_custom_dash&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;width_map_unit_scale&quot;/>&lt;data_defined_properties>&lt;Option type=&quot;Map&quot;>&lt;Option type=&quot;QString&quot; name=&quot;name&quot; value=&quot;&quot;/>&lt;Option name=&quot;properties&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;type&quot; value=&quot;collection&quot;/>&lt;/Option>&lt;/data_defined_properties>&lt;/layer>&lt;/symbol>"></Option>
               <Option name="minLength" type="double" value="0"></Option>
               <Option name="minLengthMapUnitScale" type="QString" value="3x:0,0,0,0,0,0"></Option>
               <Option name="minLengthUnit" type="QString" value="MM"></Option>
@@ -2639,17 +2840,6 @@ def my_form_open(dialog, layer, feature):
             </config>
           </editWidget>
         </field>
-        <field configurationFlags="None" name="motif_anonyme">
-          <editWidget type="CheckBox">
-            <config>
-              <Option type="Map">
-                <Option name="CheckedState" type="QString" value=""></Option>
-                <Option name="TextDisplayMethod" type="int" value="0"></Option>
-                <Option name="UncheckedState" type="QString" value=""></Option>
-              </Option>
-            </config>
-          </editWidget>
-        </field>
         <field configurationFlags="None" name="type_demande">
           <editWidget type="ValueRelation">
             <config>
@@ -2694,6 +2884,66 @@ def my_form_open(dialog, layer, feature):
             </config>
           </editWidget>
         </field>
+        <field configurationFlags="None" name="date_validite_min">
+          <editWidget type="DateTime">
+            <config>
+              <Option type="Map">
+                <Option name="allow_null" type="bool" value="true"></Option>
+                <Option name="calendar_popup" type="bool" value="true"></Option>
+                <Option name="display_format" type="QString" value="yyyy-MM-dd"></Option>
+                <Option name="field_format" type="QString" value="yyyy-MM-dd"></Option>
+                <Option name="field_iso_format" type="bool" value="false"></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="date_validite_max">
+          <editWidget type="DateTime">
+            <config>
+              <Option type="Map">
+                <Option name="allow_null" type="bool" value="true"></Option>
+                <Option name="calendar_popup" type="bool" value="true"></Option>
+                <Option name="display_format" type="QString" value="yyyy-MM-dd"></Option>
+                <Option name="field_format" type="QString" value="yyyy-MM-dd"></Option>
+                <Option name="field_iso_format" type="bool" value="false"></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="date_creation">
+          <editWidget type="DateTime">
+            <config>
+              <Option type="Map">
+                <Option name="allow_null" type="bool" value="true"></Option>
+                <Option name="calendar_popup" type="bool" value="true"></Option>
+                <Option name="display_format" type="QString" value="yyyy-MM-dd"></Option>
+                <Option name="field_format" type="QString" value="yyyy-MM-dd"></Option>
+                <Option name="field_iso_format" type="bool" value="false"></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="libelle_geom">
+          <editWidget type="TextEdit">
+            <config>
+              <Option type="Map">
+                <Option name="IsMultiline" type="bool" value="true"></Option>
+                <Option name="UseHtml" type="bool" value="false"></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="motif_anonyme">
+          <editWidget type="CheckBox">
+            <config>
+              <Option type="Map">
+                <Option name="CheckedState" type="QString" value=""></Option>
+                <Option name="TextDisplayMethod" type="int" value="0"></Option>
+                <Option name="UncheckedState" type="QString" value=""></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
         <field configurationFlags="None" name="statut">
           <editWidget type="ValueRelation">
             <config>
@@ -2721,97 +2971,6 @@ def my_form_open(dialog, layer, feature):
               <Option type="Map">
                 <Option name="IsMultiline" type="bool" value="true"></Option>
                 <Option name="UseHtml" type="bool" value="false"></Option>
-              </Option>
-            </config>
-          </editWidget>
-        </field>
-        <field configurationFlags="None" name="date_validite_min">
-          <editWidget type="DateTime">
-            <config>
-              <Option type="Map">
-                <Option name="allow_null" type="bool" value="true"></Option>
-                <Option name="calendar_popup" type="bool" value="true"></Option>
-                <Option name="display_format" type="QString" value="yyyy-MM-dd"></Option>
-                <Option name="field_format" type="QString" value="yyyy-MM-dd"></Option>
-                <Option name="field_iso_format" type="bool" value="false"></Option>
-              </Option>
-            </config>
-          </editWidget>
-        </field>
-        <field configurationFlags="None" name="date_validite_max">
-          <editWidget type="DateTime">
-            <config>
-              <Option type="Map">
-                <Option name="allow_null" type="bool" value="true"></Option>
-                <Option name="calendar_popup" type="bool" value="true"></Option>
-                <Option name="display_format" type="QString" value="yyyy-MM-dd"></Option>
-                <Option name="field_format" type="QString" value="yyyy-MM-dd"></Option>
-                <Option name="field_iso_format" type="bool" value="false"></Option>
-              </Option>
-            </config>
-          </editWidget>
-        </field>
-        <field configurationFlags="None" name="cd_ref">
-          <editWidget type="List">
-            <config>
-              <Option></Option>
-            </config>
-          </editWidget>
-        </field>
-        <field configurationFlags="None" name="group1_inpn">
-          <editWidget type="List">
-            <config>
-              <Option></Option>
-            </config>
-          </editWidget>
-        </field>
-        <field configurationFlags="None" name="group2_inpn">
-          <editWidget type="List">
-            <config>
-              <Option></Option>
-            </config>
-          </editWidget>
-        </field>
-        <field configurationFlags="None" name="date_creation">
-          <editWidget type="DateTime">
-            <config>
-              <Option type="Map">
-                <Option name="allow_null" type="bool" value="true"></Option>
-                <Option name="calendar_popup" type="bool" value="true"></Option>
-                <Option name="display_format" type="QString" value="yyyy-MM-dd"></Option>
-                <Option name="field_format" type="QString" value="yyyy-MM-dd"></Option>
-                <Option name="field_iso_format" type="bool" value="false"></Option>
-              </Option>
-            </config>
-          </editWidget>
-        </field>
-        <field configurationFlags="None" name="libelle_geom">
-          <editWidget type="TextEdit">
-            <config>
-              <Option type="Map">
-                <Option name="IsMultiline" type="bool" value="true"></Option>
-                <Option name="UseHtml" type="bool" value="false"></Option>
-              </Option>
-            </config>
-          </editWidget>
-        </field>
-        <field configurationFlags="None" name="validite_niveau">
-          <editWidget type="ValueRelation">
-            <config>
-              <Option type="Map">
-                <Option name="AllowMulti" type="bool" value="true"></Option>
-                <Option name="AllowNull" type="bool" value="true"></Option>
-                <Option name="Description" type="QString" value="&quot;description&quot;"></Option>
-                <Option name="FilterExpression" type="QString" value=" &quot;champ&quot; = 'validite_niveau'"></Option>
-                <Option name="Key" type="QString" value="code"></Option>
-                <Option name="Layer" type="QString" value="g_nomenclature_6b2ea411_c29f_4ae4_b7ba_0b5c14303186"></Option>
-                <Option name="LayerName" type="QString" value="nomenclature"></Option>
-                <Option name="LayerProviderName" type="QString" value="postgres"></Option>
-                <Option name="LayerSource" type="QString" value="service='naturaliz' key='champ,code' estimatedmetadata=true checkPrimaryKeyUnicity='0' table=&quot;occtax&quot;.&quot;nomenclature&quot;"></Option>
-                <Option name="NofColumns" type="int" value="1"></Option>
-                <Option name="OrderByValue" type="bool" value="false"></Option>
-                <Option name="UseCompleter" type="bool" value="false"></Option>
-                <Option name="Value" type="QString" value="valeur"></Option>
               </Option>
             </config>
           </editWidget>
@@ -2871,24 +3030,20 @@ def my_form_open(dialog, layer, feature):
         <alias field="id_acteur" index="2" name="Acteur ayant émis la demande"></alias>
         <alias field="id_organisme" index="3" name="Organisme ayant émis la demande"></alias>
         <alias field="motif" index="4" name="Motif"></alias>
-        <alias field="motif_anonyme" index="5" name="Le motif de la demande doit être anonymisé temporairement ?"></alias>
-        <alias field="type_demande" index="6" name="Type de demande"></alias>
-        <alias field="date_demande" index="7" name="Date de la demande"></alias>
-        <alias field="commentaire" index="8" name="Remarques générales sur la demande"></alias>
-        <alias field="statut" index="9" name="Etat d'avancement de la demande d'accès aux données "></alias>
-        <alias field="detail_decision" index="10" name="Détail de la décision pour cette demande"></alias>
-        <alias field="date_validite_min" index="11" name="Date minimale de validité"></alias>
-        <alias field="date_validite_max" index="12" name="Date maximale de validité"></alias>
-        <alias field="cd_ref" index="13" name=""></alias>
-        <alias field="group1_inpn" index="14" name=""></alias>
-        <alias field="group2_inpn" index="15" name=""></alias>
-        <alias field="date_creation" index="16" name="Date de création de la ligne dans la table "></alias>
-        <alias field="libelle_geom" index="17" name="Description littérale de la zone géographique"></alias>
-        <alias field="validite_niveau" index="18" name="Niveaux de validité"></alias>
-        <alias field="critere_additionnel" index="19" name="Critère additionnel au format SQL (préfixer avec o. )"></alias>
-        <alias field="id_validateur" index="20" name="Validateur (identifiant) seulement si type='VA'"></alias>
-        <alias field="has_geom" index="21" name="A une géométrie ?"></alias>
-        <alias field="libelle" index="22" name=""></alias>
+        <alias field="type_demande" index="5" name="Type de demande"></alias>
+        <alias field="date_demande" index="6" name="Date de la demande"></alias>
+        <alias field="commentaire" index="7" name="Remarques générales sur la demande"></alias>
+        <alias field="date_validite_min" index="8" name="Date minimale de validité"></alias>
+        <alias field="date_validite_max" index="9" name="Date maximale de validité"></alias>
+        <alias field="date_creation" index="10" name="Date de création de la ligne dans la table "></alias>
+        <alias field="libelle_geom" index="11" name="Description littérale de la zone géographique"></alias>
+        <alias field="motif_anonyme" index="12" name="Le motif de la demande doit être anonymisé temporairement ?"></alias>
+        <alias field="statut" index="13" name="Etat d'avancement de la demande d'accès aux données "></alias>
+        <alias field="detail_decision" index="14" name="Détail de la décision pour cette demande"></alias>
+        <alias field="critere_additionnel" index="15" name="Critère additionnel au format SQL (préfixer avec o. )"></alias>
+        <alias field="id_validateur" index="16" name="Validateur (identifiant) seulement si type='VA'"></alias>
+        <alias field="has_geom" index="17" name="A une géométrie ?"></alias>
+        <alias field="libelle" index="18" name=""></alias>
       </aliases>
       <defaults>
         <default applyOnUpdate="0" expression="" field="id"></default>
@@ -2896,20 +3051,16 @@ def my_form_open(dialog, layer, feature):
         <default applyOnUpdate="0" expression="" field="id_acteur"></default>
         <default applyOnUpdate="0" expression="" field="id_organisme"></default>
         <default applyOnUpdate="0" expression="" field="motif"></default>
-        <default applyOnUpdate="0" expression="" field="motif_anonyme"></default>
         <default applyOnUpdate="0" expression="" field="type_demande"></default>
         <default applyOnUpdate="0" expression="" field="date_demande"></default>
         <default applyOnUpdate="0" expression="" field="commentaire"></default>
-        <default applyOnUpdate="0" expression="" field="statut"></default>
-        <default applyOnUpdate="0" expression="" field="detail_decision"></default>
         <default applyOnUpdate="0" expression="" field="date_validite_min"></default>
         <default applyOnUpdate="0" expression="" field="date_validite_max"></default>
-        <default applyOnUpdate="0" expression="" field="cd_ref"></default>
-        <default applyOnUpdate="0" expression="" field="group1_inpn"></default>
-        <default applyOnUpdate="0" expression="" field="group2_inpn"></default>
         <default applyOnUpdate="0" expression="" field="date_creation"></default>
         <default applyOnUpdate="0" expression="" field="libelle_geom"></default>
-        <default applyOnUpdate="0" expression="" field="validite_niveau"></default>
+        <default applyOnUpdate="0" expression="" field="motif_anonyme"></default>
+        <default applyOnUpdate="0" expression="" field="statut"></default>
+        <default applyOnUpdate="0" expression="" field="detail_decision"></default>
         <default applyOnUpdate="0" expression="" field="critere_additionnel"></default>
         <default applyOnUpdate="0" expression="" field="id_validateur"></default>
         <default applyOnUpdate="0" expression="" field="has_geom"></default>
@@ -2921,20 +3072,16 @@ def my_form_open(dialog, layer, feature):
         <constraint constraints="1" exp_strength="0" field="id_acteur" notnull_strength="1" unique_strength="0"></constraint>
         <constraint constraints="1" exp_strength="0" field="id_organisme" notnull_strength="1" unique_strength="0"></constraint>
         <constraint constraints="1" exp_strength="0" field="motif" notnull_strength="1" unique_strength="0"></constraint>
-        <constraint constraints="1" exp_strength="0" field="motif_anonyme" notnull_strength="1" unique_strength="0"></constraint>
         <constraint constraints="1" exp_strength="0" field="type_demande" notnull_strength="1" unique_strength="0"></constraint>
         <constraint constraints="1" exp_strength="0" field="date_demande" notnull_strength="1" unique_strength="0"></constraint>
         <constraint constraints="0" exp_strength="0" field="commentaire" notnull_strength="0" unique_strength="0"></constraint>
-        <constraint constraints="0" exp_strength="0" field="statut" notnull_strength="0" unique_strength="0"></constraint>
-        <constraint constraints="0" exp_strength="0" field="detail_decision" notnull_strength="0" unique_strength="0"></constraint>
         <constraint constraints="1" exp_strength="0" field="date_validite_min" notnull_strength="1" unique_strength="0"></constraint>
         <constraint constraints="1" exp_strength="0" field="date_validite_max" notnull_strength="1" unique_strength="0"></constraint>
-        <constraint constraints="0" exp_strength="0" field="cd_ref" notnull_strength="0" unique_strength="0"></constraint>
-        <constraint constraints="0" exp_strength="0" field="group1_inpn" notnull_strength="0" unique_strength="0"></constraint>
-        <constraint constraints="0" exp_strength="0" field="group2_inpn" notnull_strength="0" unique_strength="0"></constraint>
         <constraint constraints="0" exp_strength="0" field="date_creation" notnull_strength="0" unique_strength="0"></constraint>
         <constraint constraints="0" exp_strength="0" field="libelle_geom" notnull_strength="0" unique_strength="0"></constraint>
-        <constraint constraints="1" exp_strength="0" field="validite_niveau" notnull_strength="1" unique_strength="0"></constraint>
+        <constraint constraints="1" exp_strength="0" field="motif_anonyme" notnull_strength="1" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="statut" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="detail_decision" notnull_strength="0" unique_strength="0"></constraint>
         <constraint constraints="0" exp_strength="0" field="critere_additionnel" notnull_strength="0" unique_strength="0"></constraint>
         <constraint constraints="4" exp_strength="2" field="id_validateur" notnull_strength="0" unique_strength="0"></constraint>
         <constraint constraints="0" exp_strength="0" field="has_geom" notnull_strength="0" unique_strength="0"></constraint>
@@ -2946,20 +3093,16 @@ def my_form_open(dialog, layer, feature):
         <constraint desc="" exp="" field="id_acteur"></constraint>
         <constraint desc="" exp="" field="id_organisme"></constraint>
         <constraint desc="" exp="" field="motif"></constraint>
-        <constraint desc="" exp="" field="motif_anonyme"></constraint>
         <constraint desc="" exp="" field="type_demande"></constraint>
         <constraint desc="" exp="" field="date_demande"></constraint>
         <constraint desc="" exp="" field="commentaire"></constraint>
-        <constraint desc="" exp="" field="statut"></constraint>
-        <constraint desc="" exp="" field="detail_decision"></constraint>
         <constraint desc="" exp="" field="date_validite_min"></constraint>
         <constraint desc="" exp="" field="date_validite_max"></constraint>
-        <constraint desc="" exp="" field="cd_ref"></constraint>
-        <constraint desc="" exp="" field="group1_inpn"></constraint>
-        <constraint desc="" exp="" field="group2_inpn"></constraint>
         <constraint desc="" exp="" field="date_creation"></constraint>
         <constraint desc="" exp="" field="libelle_geom"></constraint>
-        <constraint desc="" exp="" field="validite_niveau"></constraint>
+        <constraint desc="" exp="" field="motif_anonyme"></constraint>
+        <constraint desc="" exp="" field="statut"></constraint>
+        <constraint desc="" exp="" field="detail_decision"></constraint>
         <constraint desc="" exp="" field="critere_additionnel"></constraint>
         <constraint desc="Il faut renseigner le validateur si le type de demande est VA" exp="type_demande != 'VA' OR (type_demande = 'VA' AND id_validateur IS NOT NULL)" field="id_validateur"></constraint>
         <constraint desc="" exp="" field="has_geom"></constraint>
@@ -3035,22 +3178,22 @@ def my_form_open(dialog, layer, feature):
             <attributeEditorField index="2" name="id_acteur" showLabel="1"></attributeEditorField>
             <attributeEditorField index="3" name="id_organisme" showLabel="1"></attributeEditorField>
             <attributeEditorField index="4" name="motif" showLabel="1"></attributeEditorField>
-            <attributeEditorField index="6" name="type_demande" showLabel="1"></attributeEditorField>
-            <attributeEditorField index="20" name="id_validateur" showLabel="1"></attributeEditorField>
-            <attributeEditorField index="7" name="date_demande" showLabel="1"></attributeEditorField>
-            <attributeEditorField index="16" name="date_creation" showLabel="1"></attributeEditorField>
+            <attributeEditorField index="5" name="type_demande" showLabel="1"></attributeEditorField>
+            <attributeEditorField index="16" name="id_validateur" showLabel="1"></attributeEditorField>
+            <attributeEditorField index="6" name="date_demande" showLabel="1"></attributeEditorField>
+            <attributeEditorField index="10" name="date_creation" showLabel="1"></attributeEditorField>
             <attributeEditorField index="-1" name="perenne" showLabel="1"></attributeEditorField>
-            <attributeEditorField index="8" name="commentaire" showLabel="1"></attributeEditorField>
-            <attributeEditorField index="5" name="motif_anonyme" showLabel="1"></attributeEditorField>
-            <attributeEditorField index="9" name="statut" showLabel="1"></attributeEditorField>
-            <attributeEditorField index="10" name="detail_decision" showLabel="1"></attributeEditorField>
+            <attributeEditorField index="7" name="commentaire" showLabel="1"></attributeEditorField>
+            <attributeEditorField index="12" name="motif_anonyme" showLabel="1"></attributeEditorField>
+            <attributeEditorField index="13" name="statut" showLabel="1"></attributeEditorField>
+            <attributeEditorField index="14" name="detail_decision" showLabel="1"></attributeEditorField>
           </attributeEditorContainer>
           <attributeEditorContainer columnCount="1" groupBox="1" name="Restrictions" showLabel="1" visibilityExpression="" visibilityExpressionEnabled="0">
-            <attributeEditorField index="11" name="date_validite_min" showLabel="1"></attributeEditorField>
-            <attributeEditorField index="12" name="date_validite_max" showLabel="1"></attributeEditorField>
-            <attributeEditorField index="18" name="validite_niveau" showLabel="1"></attributeEditorField>
-            <attributeEditorField index="19" name="critere_additionnel" showLabel="1"></attributeEditorField>
-            <attributeEditorField index="17" name="libelle_geom" showLabel="1"></attributeEditorField>
+            <attributeEditorField index="8" name="date_validite_min" showLabel="1"></attributeEditorField>
+            <attributeEditorField index="9" name="date_validite_max" showLabel="1"></attributeEditorField>
+            <attributeEditorField index="-1" name="validite_niveau" showLabel="1"></attributeEditorField>
+            <attributeEditorField index="15" name="critere_additionnel" showLabel="1"></attributeEditorField>
+            <attributeEditorField index="11" name="libelle_geom" showLabel="1"></attributeEditorField>
           </attributeEditorContainer>
         </attributeEditorContainer>
       </attributeEditorForm>
@@ -4482,16 +4625,6 @@ def my_form_open(dialog, layer, feature):
             </config>
           </editWidget>
         </field>
-        <field configurationFlags="None" name="jdd_libelle">
-          <editWidget type="TextEdit">
-            <config>
-              <Option type="Map">
-                <Option name="IsMultiline" type="bool" value="false"></Option>
-                <Option name="UseHtml" type="bool" value="false"></Option>
-              </Option>
-            </config>
-          </editWidget>
-        </field>
         <field configurationFlags="None" name="jdd_description">
           <editWidget type="TextEdit">
             <config>
@@ -4529,6 +4662,16 @@ def my_form_open(dialog, layer, feature):
             </config>
           </editWidget>
         </field>
+        <field configurationFlags="None" name="jdd_libelle">
+          <editWidget type="TextEdit">
+            <config>
+              <Option type="Map">
+                <Option name="IsMultiline" type="bool" value="false"></Option>
+                <Option name="UseHtml" type="bool" value="false"></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
         <field configurationFlags="None" name="date_minimum_de_diffusion">
           <editWidget type="DateTime">
             <config>
@@ -4556,44 +4699,44 @@ def my_form_open(dialog, layer, feature):
       <aliases>
         <alias field="jdd_id" index="0" name=""></alias>
         <alias field="jdd_code" index="1" name=""></alias>
-        <alias field="jdd_libelle" index="2" name=""></alias>
-        <alias field="jdd_description" index="3" name=""></alias>
-        <alias field="jdd_metadonnee_dee_id" index="4" name=""></alias>
-        <alias field="jdd_cadre" index="5" name=""></alias>
-        <alias field="ayants_droit" index="6" name=""></alias>
+        <alias field="jdd_description" index="2" name=""></alias>
+        <alias field="jdd_metadonnee_dee_id" index="3" name=""></alias>
+        <alias field="jdd_cadre" index="4" name=""></alias>
+        <alias field="ayants_droit" index="5" name=""></alias>
+        <alias field="jdd_libelle" index="6" name=""></alias>
         <alias field="date_minimum_de_diffusion" index="7" name=""></alias>
         <alias field="url_fiche" index="8" name=""></alias>
       </aliases>
       <defaults>
         <default applyOnUpdate="0" expression="" field="jdd_id"></default>
         <default applyOnUpdate="0" expression="" field="jdd_code"></default>
-        <default applyOnUpdate="0" expression="" field="jdd_libelle"></default>
         <default applyOnUpdate="0" expression="" field="jdd_description"></default>
         <default applyOnUpdate="0" expression="" field="jdd_metadonnee_dee_id"></default>
         <default applyOnUpdate="0" expression="" field="jdd_cadre"></default>
         <default applyOnUpdate="0" expression="" field="ayants_droit"></default>
+        <default applyOnUpdate="0" expression="" field="jdd_libelle"></default>
         <default applyOnUpdate="0" expression="" field="date_minimum_de_diffusion"></default>
         <default applyOnUpdate="0" expression="" field="url_fiche"></default>
       </defaults>
       <constraints>
         <constraint constraints="3" exp_strength="0" field="jdd_id" notnull_strength="1" unique_strength="1"></constraint>
         <constraint constraints="3" exp_strength="0" field="jdd_code" notnull_strength="1" unique_strength="1"></constraint>
-        <constraint constraints="0" exp_strength="0" field="jdd_libelle" notnull_strength="0" unique_strength="0"></constraint>
         <constraint constraints="0" exp_strength="0" field="jdd_description" notnull_strength="0" unique_strength="0"></constraint>
         <constraint constraints="1" exp_strength="0" field="jdd_metadonnee_dee_id" notnull_strength="1" unique_strength="0"></constraint>
         <constraint constraints="0" exp_strength="0" field="jdd_cadre" notnull_strength="0" unique_strength="0"></constraint>
         <constraint constraints="0" exp_strength="0" field="ayants_droit" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="jdd_libelle" notnull_strength="0" unique_strength="0"></constraint>
         <constraint constraints="0" exp_strength="0" field="date_minimum_de_diffusion" notnull_strength="0" unique_strength="0"></constraint>
         <constraint constraints="0" exp_strength="0" field="url_fiche" notnull_strength="0" unique_strength="0"></constraint>
       </constraints>
       <constraintExpressions>
         <constraint desc="" exp="" field="jdd_id"></constraint>
         <constraint desc="" exp="" field="jdd_code"></constraint>
-        <constraint desc="" exp="" field="jdd_libelle"></constraint>
         <constraint desc="" exp="" field="jdd_description"></constraint>
         <constraint desc="" exp="" field="jdd_metadonnee_dee_id"></constraint>
         <constraint desc="" exp="" field="jdd_cadre"></constraint>
         <constraint desc="" exp="" field="ayants_droit"></constraint>
+        <constraint desc="" exp="" field="jdd_libelle"></constraint>
         <constraint desc="" exp="" field="date_minimum_de_diffusion"></constraint>
         <constraint desc="" exp="" field="url_fiche"></constraint>
       </constraintExpressions>
@@ -5556,6 +5699,440 @@ def my_form_open(dialog, layer, feature):
       <mapTip></mapTip>
     </maplayer>
     <maplayer autoRefreshEnabled="0" autoRefreshTime="0" geometry="No geometry" hasScaleBasedVisibilityFlag="0" legendPlaceholderImage="" maxScale="0" minScale="1e+08" readOnly="0" refreshOnNotifyEnabled="0" refreshOnNotifyMessage="" styleCategories="AllStyleCategories" type="vector" wkbType="NoGeometry">
+      <id>medias_d7189654_62f2_41ea_be13_b930d74f5d30</id>
+      <datasource>service='naturaliz' sslmode=disable key='id' estimatedmetadata=true checkPrimaryKeyUnicity='1' table="taxon"."medias" sql="source" = 'local'</datasource>
+      <keywordList>
+        <value></value>
+      </keywordList>
+      <layername>medias</layername>
+      <srs>
+        <spatialrefsys>
+          <wkt></wkt>
+          <proj4></proj4>
+          <srsid>0</srsid>
+          <srid>0</srid>
+          <authid></authid>
+          <description></description>
+          <projectionacronym></projectionacronym>
+          <ellipsoidacronym></ellipsoidacronym>
+          <geographicflag>false</geographicflag>
+        </spatialrefsys>
+      </srs>
+      <resourceMetadata>
+        <identifier></identifier>
+        <parentidentifier></parentidentifier>
+        <language></language>
+        <type>dataset</type>
+        <title></title>
+        <abstract>Stockage des informations sur les médias liés aux taxons. Plusieurs sources possibles: inpn ou local.
+Le chemin enregistré dans media_path est le chemin relatif vers le fichier par rapport au répertoire Lizmap.</abstract>
+        <contact>
+          <name></name>
+          <organization></organization>
+          <position></position>
+          <voice></voice>
+          <fax></fax>
+          <email></email>
+          <role></role>
+        </contact>
+        <links></links>
+        <fees></fees>
+        <encoding></encoding>
+        <crs>
+          <spatialrefsys>
+            <wkt></wkt>
+            <proj4></proj4>
+            <srsid>0</srsid>
+            <srid>0</srid>
+            <authid></authid>
+            <description></description>
+            <projectionacronym></projectionacronym>
+            <ellipsoidacronym></ellipsoidacronym>
+            <geographicflag>false</geographicflag>
+          </spatialrefsys>
+        </crs>
+        <extent>
+          <spatial crs="" dimensions="2" maxx="0" maxy="0" maxz="0" minx="0" miny="0" minz="0"></spatial>
+          <temporal>
+            <period>
+              <start></start>
+              <end></end>
+            </period>
+          </temporal>
+        </extent>
+      </resourceMetadata>
+      <provider encoding="">postgres</provider>
+      <vectorjoins></vectorjoins>
+      <layerDependencies></layerDependencies>
+      <dataDependencies></dataDependencies>
+      <expressionfields>
+        <field comment="" expression="concat(&#xA;&#x9;'&lt;img data-src=&quot;', &quot;media_path&quot; , '&quot; src=&quot;/themes/default/css/img/logo_footer.png&quot; style=&quot;height:60px;&quot;&#xA;&#x9;onload=&quot;this.src = `${lizUrls.media}?repository=${lizUrls.params.repository}&amp;project=${lizUrls.params.project}&amp;path=${this.getAttribute(\'data-src\')}`;&quot;>'&#xA;)" length="0" name="vignette" precision="0" subType="0" type="10" typeName="string"></field>
+      </expressionfields>
+      <map-layer-style-manager current="défaut">
+        <map-layer-style name="défaut"></map-layer-style>
+      </map-layer-style-manager>
+      <auxiliaryLayer></auxiliaryLayer>
+      <metadataUrls></metadataUrls>
+      <flags>
+        <Identifiable>1</Identifiable>
+        <Removable>1</Removable>
+        <Searchable>1</Searchable>
+        <Private>0</Private>
+      </flags>
+      <temporal accumulate="0" durationField="id" durationUnit="min" enabled="0" endExpression="" endField="" fixedDuration="0" limitMode="0" mode="0" startExpression="" startField="">
+        <fixedRange>
+          <start></start>
+          <end></end>
+        </fixedRange>
+      </temporal>
+      <customproperties>
+        <Option type="Map">
+          <Option name="QFieldSync/action" type="QString" value="offline"></Option>
+          <Option name="QFieldSync/cloud_action" type="QString" value="offline"></Option>
+          <Option name="QFieldSync/photo_naming" type="QString" value="{&quot;media_path&quot;: &quot;'DCIM/medias_' || format_date(now(),'yyyyMMddhhmmsszzz') || '.jpg'&quot;}"></Option>
+          <Option name="dualview/previewExpressions" type="List">
+            <Option type="QString" value="&quot;description&quot;"></Option>
+          </Option>
+          <Option name="embeddedWidgets/count" type="int" value="0"></Option>
+          <Option name="variableNames"></Option>
+          <Option name="variableValues"></Option>
+        </Option>
+      </customproperties>
+      <geometryOptions geometryPrecision="0" removeDuplicateNodes="0">
+        <activeChecks></activeChecks>
+        <checkConfiguration></checkConfiguration>
+      </geometryOptions>
+      <legend showLabelLegend="0" type="default-vector"></legend>
+      <referencedLayers>
+        <relation dataSource="service='naturaliz' sslmode=disable key='cd_nom' estimatedmetadata=true checkPrimaryKeyUnicity='1' table=&quot;(SELECT DISTINCT t.cd_nom, t.cd_ref, t.nom_valide, t.nom_vern, t.group1_inpn, t.group2_inpn  FROM taxon.taxref_consolide AS t  INNER JOIN occtax.observation AS o  &#x9;ON o.cd_ref = t.cd_ref&#xA;)&quot;" id="medias_d71_cd_nom_Taxons_obs_cd_nom" layerId="Taxons_observ_s_81d02051_49f4_4756_83be_2ac90a6d589c" layerName="Taxons observés" name="Photographies des taxons observés" providerKey="postgres" referencedLayer="Taxons_observ_s_81d02051_49f4_4756_83be_2ac90a6d589c" referencingLayer="medias_d7189654_62f2_41ea_be13_b930d74f5d30" strength="Association">
+          <fieldRef referencedField="cd_nom" referencingField="cd_nom"></fieldRef>
+        </relation>
+      </referencedLayers>
+      <fieldConfiguration>
+        <field configurationFlags="None" name="id">
+          <editWidget type="TextEdit">
+            <config>
+              <Option type="Map">
+                <Option name="IsMultiline" type="bool" value="false"></Option>
+                <Option name="UseHtml" type="bool" value="false"></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="cd_nom">
+          <editWidget type="TextEdit">
+            <config>
+              <Option type="Map">
+                <Option name="IsMultiline" type="bool" value="false"></Option>
+                <Option name="UseHtml" type="bool" value="false"></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="cd_ref">
+          <editWidget type="TextEdit">
+            <config>
+              <Option type="Map">
+                <Option name="IsMultiline" type="bool" value="false"></Option>
+                <Option name="UseHtml" type="bool" value="false"></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="principal">
+          <editWidget type="CheckBox">
+            <config>
+              <Option type="Map">
+                <Option name="CheckedState" type="QString" value=""></Option>
+                <Option name="TextDisplayMethod" type="int" value="0"></Option>
+                <Option name="UncheckedState" type="QString" value=""></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="source">
+          <editWidget type="ValueMap">
+            <config>
+              <Option type="Map">
+                <Option name="map" type="List">
+                  <Option type="Map">
+                    <Option name="local" type="QString" value="local"></Option>
+                  </Option>
+                </Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="id_origine">
+          <editWidget type="Range">
+            <config>
+              <Option type="Map">
+                <Option name="AllowNull" type="bool" value="true"></Option>
+                <Option name="Max" type="int" value="2147483647"></Option>
+                <Option name="Min" type="int" value="-2147483648"></Option>
+                <Option name="Precision" type="int" value="0"></Option>
+                <Option name="Step" type="int" value="1"></Option>
+                <Option name="Style" type="QString" value="SpinBox"></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="url_origine">
+          <editWidget type="TextEdit">
+            <config>
+              <Option type="Map">
+                <Option name="IsMultiline" type="bool" value="false"></Option>
+                <Option name="UseHtml" type="bool" value="false"></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="media_path">
+          <editWidget type="ExternalResource">
+            <config>
+              <Option type="Map">
+                <Option name="DefaultRoot" type="QString" value="media/upload/taxon/local"></Option>
+                <Option name="DocumentViewer" type="int" value="1"></Option>
+                <Option name="DocumentViewerHeight" type="int" value="0"></Option>
+                <Option name="DocumentViewerWidth" type="int" value="0"></Option>
+                <Option name="FileWidget" type="bool" value="true"></Option>
+                <Option name="FileWidgetButton" type="bool" value="true"></Option>
+                <Option name="FileWidgetFilter" type="QString" value="*.jpg"></Option>
+                <Option name="PropertyCollection" type="Map">
+                  <Option name="name" type="QString" value=""></Option>
+                  <Option name="properties" type="invalid"></Option>
+                  <Option name="type" type="QString" value="collection"></Option>
+                </Option>
+                <Option name="RelativeStorage" type="int" value="2"></Option>
+                <Option name="StorageAuthConfigId" type="QString" value=""></Option>
+                <Option name="StorageMode" type="int" value="0"></Option>
+                <Option name="StorageType" type="QString" value=""></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="titre">
+          <editWidget type="TextEdit">
+            <config>
+              <Option type="Map">
+                <Option name="IsMultiline" type="bool" value="false"></Option>
+                <Option name="UseHtml" type="bool" value="false"></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="auteur">
+          <editWidget type="TextEdit">
+            <config>
+              <Option type="Map">
+                <Option name="IsMultiline" type="bool" value="false"></Option>
+                <Option name="UseHtml" type="bool" value="false"></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="description">
+          <editWidget type="TextEdit">
+            <config>
+              <Option type="Map">
+                <Option name="IsMultiline" type="bool" value="false"></Option>
+                <Option name="UseHtml" type="bool" value="false"></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="licence">
+          <editWidget type="TextEdit">
+            <config>
+              <Option type="Map">
+                <Option name="IsMultiline" type="bool" value="false"></Option>
+                <Option name="UseHtml" type="bool" value="false"></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
+        <field configurationFlags="None" name="vignette">
+          <editWidget type="TextEdit">
+            <config>
+              <Option></Option>
+            </config>
+          </editWidget>
+        </field>
+      </fieldConfiguration>
+      <aliases>
+        <alias field="id" index="0" name="Identifiant unique (auto)"></alias>
+        <alias field="cd_nom" index="1" name=""></alias>
+        <alias field="cd_ref" index="2" name=""></alias>
+        <alias field="principal" index="3" name="Principal (pas encore supporté)"></alias>
+        <alias field="source" index="4" name="Source"></alias>
+        <alias field="id_origine" index="5" name=""></alias>
+        <alias field="url_origine" index="6" name=""></alias>
+        <alias field="media_path" index="7" name="Photographie"></alias>
+        <alias field="titre" index="8" name="Titre"></alias>
+        <alias field="auteur" index="9" name="Auteur"></alias>
+        <alias field="description" index="10" name="Description"></alias>
+        <alias field="licence" index="11" name="Licence"></alias>
+        <alias field="vignette" index="12" name=""></alias>
+      </aliases>
+      <defaults>
+        <default applyOnUpdate="0" expression="" field="id"></default>
+        <default applyOnUpdate="0" expression="" field="cd_nom"></default>
+        <default applyOnUpdate="0" expression="&quot;cd_nom&quot;" field="cd_ref"></default>
+        <default applyOnUpdate="0" expression="false" field="principal"></default>
+        <default applyOnUpdate="0" expression="'local'" field="source"></default>
+        <default applyOnUpdate="0" expression="" field="id_origine"></default>
+        <default applyOnUpdate="0" expression="" field="url_origine"></default>
+        <default applyOnUpdate="0" expression="" field="media_path"></default>
+        <default applyOnUpdate="0" expression="" field="titre"></default>
+        <default applyOnUpdate="0" expression="" field="auteur"></default>
+        <default applyOnUpdate="0" expression="" field="description"></default>
+        <default applyOnUpdate="0" expression="" field="licence"></default>
+        <default applyOnUpdate="0" expression="" field="vignette"></default>
+      </defaults>
+      <constraints>
+        <constraint constraints="3" exp_strength="0" field="id" notnull_strength="1" unique_strength="1"></constraint>
+        <constraint constraints="1" exp_strength="0" field="cd_nom" notnull_strength="1" unique_strength="0"></constraint>
+        <constraint constraints="1" exp_strength="0" field="cd_ref" notnull_strength="1" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="principal" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="1" exp_strength="0" field="source" notnull_strength="1" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="id_origine" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="url_origine" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="1" exp_strength="0" field="media_path" notnull_strength="2" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="titre" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="auteur" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="description" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="licence" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="vignette" notnull_strength="0" unique_strength="0"></constraint>
+      </constraints>
+      <constraintExpressions>
+        <constraint desc="" exp="" field="id"></constraint>
+        <constraint desc="" exp="" field="cd_nom"></constraint>
+        <constraint desc="" exp="" field="cd_ref"></constraint>
+        <constraint desc="" exp="" field="principal"></constraint>
+        <constraint desc="" exp="" field="source"></constraint>
+        <constraint desc="" exp="" field="id_origine"></constraint>
+        <constraint desc="" exp="" field="url_origine"></constraint>
+        <constraint desc="" exp="" field="media_path"></constraint>
+        <constraint desc="" exp="" field="titre"></constraint>
+        <constraint desc="" exp="" field="auteur"></constraint>
+        <constraint desc="" exp="" field="description"></constraint>
+        <constraint desc="" exp="" field="licence"></constraint>
+        <constraint desc="" exp="" field="vignette"></constraint>
+      </constraintExpressions>
+      <expressionfields>
+        <field comment="" expression="concat(&#xA;&#x9;'&lt;img data-src=&quot;', &quot;media_path&quot; , '&quot; src=&quot;/themes/default/css/img/logo_footer.png&quot; style=&quot;height:60px;&quot;&#xA;&#x9;onload=&quot;this.src = `${lizUrls.media}?repository=${lizUrls.params.repository}&amp;project=${lizUrls.params.project}&amp;path=${this.getAttribute(\'data-src\')}`;&quot;>'&#xA;)" length="0" name="vignette" precision="0" subType="0" type="10" typeName="string"></field>
+      </expressionfields>
+      <attributeactions>
+        <defaultAction key="Canvas" value="{00000000-0000-0000-0000-000000000000}"></defaultAction>
+      </attributeactions>
+      <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
+        <columns>
+          <column hidden="1" name="id" type="field" width="-1"></column>
+          <column hidden="0" name="cd_nom" type="field" width="-1"></column>
+          <column hidden="0" name="cd_ref" type="field" width="-1"></column>
+          <column hidden="1" name="principal" type="field" width="-1"></column>
+          <column hidden="0" name="source" type="field" width="-1"></column>
+          <column hidden="0" name="id_origine" type="field" width="-1"></column>
+          <column hidden="0" name="url_origine" type="field" width="-1"></column>
+          <column hidden="0" name="vignette" type="field" width="-1"></column>
+          <column hidden="0" name="media_path" type="field" width="-1"></column>
+          <column hidden="0" name="titre" type="field" width="-1"></column>
+          <column hidden="0" name="auteur" type="field" width="-1"></column>
+          <column hidden="0" name="description" type="field" width="-1"></column>
+          <column hidden="0" name="licence" type="field" width="-1"></column>
+          <column hidden="1" type="actions" width="-1"></column>
+        </columns>
+      </attributetableconfig>
+      <conditionalstyles>
+        <rowstyles></rowstyles>
+        <fieldstyles></fieldstyles>
+      </conditionalstyles>
+      <storedexpressions></storedexpressions>
+      <editform tolerant="1"></editform>
+      <editforminit></editforminit>
+      <editforminitcodesource>0</editforminitcodesource>
+      <editforminitfilepath></editforminitfilepath>
+      <editforminitcode># -*- coding: utf-8 -*-
+"""
+Les formulaires QGIS peuvent avoir une fonction Python qui est appelée lorsque le formulaire est
+ouvert.
+
+Utilisez cette fonction pour ajouter une logique supplémentaire à vos formulaires.
+
+Entrez le nom de la fonction dans le champ 
+"Fonction d'initialisation Python".
+Voici un exemple:
+"""
+from qgis.PyQt.QtWidgets import QWidget
+
+def my_form_open(dialog, layer, feature):
+    geom = feature.geometry()
+    control = dialog.findChild(QWidget, "MyLineEdit")
+</editforminitcode>
+      <featformsuppress>0</featformsuppress>
+      <editorlayout>tablayout</editorlayout>
+      <attributeEditorForm>
+        <attributeEditorField index="0" name="id" showLabel="1"></attributeEditorField>
+        <attributeEditorField index="1" name="cd_nom" showLabel="1"></attributeEditorField>
+        <attributeEditorField index="2" name="cd_ref" showLabel="1"></attributeEditorField>
+        <attributeEditorField index="3" name="principal" showLabel="1"></attributeEditorField>
+        <attributeEditorField index="4" name="source" showLabel="1"></attributeEditorField>
+        <attributeEditorField index="7" name="media_path" showLabel="1"></attributeEditorField>
+        <attributeEditorField index="8" name="titre" showLabel="1"></attributeEditorField>
+        <attributeEditorField index="9" name="auteur" showLabel="1"></attributeEditorField>
+        <attributeEditorField index="11" name="licence" showLabel="1"></attributeEditorField>
+      </attributeEditorForm>
+      <editable>
+        <field editable="1" name="auteur"></field>
+        <field editable="1" name="cd_nom"></field>
+        <field editable="1" name="cd_ref"></field>
+        <field editable="1" name="description"></field>
+        <field editable="0" name="id"></field>
+        <field editable="1" name="id_origine"></field>
+        <field editable="1" name="licence"></field>
+        <field editable="1" name="media_path"></field>
+        <field editable="0" name="principal"></field>
+        <field editable="1" name="source"></field>
+        <field editable="1" name="titre"></field>
+        <field editable="1" name="url_origine"></field>
+        <field editable="0" name="vignette"></field>
+      </editable>
+      <labelOnTop>
+        <field labelOnTop="0" name="auteur"></field>
+        <field labelOnTop="0" name="cd_nom"></field>
+        <field labelOnTop="0" name="cd_ref"></field>
+        <field labelOnTop="0" name="description"></field>
+        <field labelOnTop="0" name="id"></field>
+        <field labelOnTop="0" name="id_origine"></field>
+        <field labelOnTop="0" name="licence"></field>
+        <field labelOnTop="0" name="media_path"></field>
+        <field labelOnTop="0" name="principal"></field>
+        <field labelOnTop="0" name="source"></field>
+        <field labelOnTop="0" name="titre"></field>
+        <field labelOnTop="0" name="url_origine"></field>
+        <field labelOnTop="0" name="vignette"></field>
+      </labelOnTop>
+      <reuseLastValue>
+        <field name="auteur" reuseLastValue="0"></field>
+        <field name="cd_nom" reuseLastValue="0"></field>
+        <field name="cd_ref" reuseLastValue="0"></field>
+        <field name="description" reuseLastValue="0"></field>
+        <field name="id" reuseLastValue="0"></field>
+        <field name="id_origine" reuseLastValue="0"></field>
+        <field name="licence" reuseLastValue="0"></field>
+        <field name="media_path" reuseLastValue="0"></field>
+        <field name="principal" reuseLastValue="0"></field>
+        <field name="source" reuseLastValue="0"></field>
+        <field name="titre" reuseLastValue="0"></field>
+        <field name="url_origine" reuseLastValue="0"></field>
+        <field name="vignette" reuseLastValue="0"></field>
+      </reuseLastValue>
+      <dataDefinedFieldProperties></dataDefinedFieldProperties>
+      <widgets></widgets>
+      <previewExpression>"description"</previewExpression>
+      <mapTip></mapTip>
+    </maplayer>
+    <maplayer autoRefreshEnabled="0" autoRefreshTime="0" geometry="No geometry" hasScaleBasedVisibilityFlag="0" legendPlaceholderImage="" maxScale="0" minScale="1e+08" readOnly="0" refreshOnNotifyEnabled="0" refreshOnNotifyMessage="" styleCategories="AllStyleCategories" type="vector" wkbType="NoGeometry">
       <id>organisme20190123143729184</id>
       <datasource>service='naturaliz' sslmode=disable key='id_organisme' checkPrimaryKeyUnicity='1' table="occtax"."organisme"</datasource>
       <title>Organismes</title>
@@ -5778,7 +6355,7 @@ def my_form_open(dialog, layer, feature):
             </config>
           </editWidget>
         </field>
-        <field configurationFlags="None" name="uuid_national">
+        <field configurationFlags="None" name="date_maj">
           <editWidget type="TextEdit">
             <config>
               <Option type="Map">
@@ -5788,7 +6365,7 @@ def my_form_open(dialog, layer, feature):
             </config>
           </editWidget>
         </field>
-        <field configurationFlags="None" name="date_maj">
+        <field configurationFlags="None" name="uuid_national">
           <editWidget type="TextEdit">
             <config>
               <Option type="Map">
@@ -5812,8 +6389,8 @@ def my_form_open(dialog, layer, feature):
         <alias field="cedex" index="9" name="Cedex"></alias>
         <alias field="csr" index="10" name="Indique si la structure est membre du Comité de suivi régional du SINP"></alias>
         <alias field="commentaire" index="11" name="Commentaires"></alias>
-        <alias field="uuid_national" index="12" name="Identifiant au niveau national "></alias>
-        <alias field="date_maj" index="13" name="Date à laquelle l'enregistrement a été modifé pour la dernière fois "></alias>
+        <alias field="date_maj" index="12" name="Date à laquelle l'enregistrement a été modifé pour la dernière fois "></alias>
+        <alias field="uuid_national" index="13" name="Identifiant au niveau national "></alias>
       </aliases>
       <defaults>
         <default applyOnUpdate="0" expression="" field="id_organisme"></default>
@@ -5828,8 +6405,8 @@ def my_form_open(dialog, layer, feature):
         <default applyOnUpdate="0" expression="" field="cedex"></default>
         <default applyOnUpdate="0" expression="" field="csr"></default>
         <default applyOnUpdate="0" expression="" field="commentaire"></default>
-        <default applyOnUpdate="0" expression="" field="uuid_national"></default>
         <default applyOnUpdate="0" expression="" field="date_maj"></default>
+        <default applyOnUpdate="0" expression="" field="uuid_national"></default>
       </defaults>
       <constraints>
         <constraint constraints="3" exp_strength="0" field="id_organisme" notnull_strength="2" unique_strength="2"></constraint>
@@ -5844,8 +6421,8 @@ def my_form_open(dialog, layer, feature):
         <constraint constraints="0" exp_strength="0" field="cedex" notnull_strength="0" unique_strength="0"></constraint>
         <constraint constraints="0" exp_strength="0" field="csr" notnull_strength="0" unique_strength="0"></constraint>
         <constraint constraints="0" exp_strength="0" field="commentaire" notnull_strength="0" unique_strength="0"></constraint>
-        <constraint constraints="0" exp_strength="0" field="uuid_national" notnull_strength="0" unique_strength="0"></constraint>
         <constraint constraints="0" exp_strength="0" field="date_maj" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="0" exp_strength="0" field="uuid_national" notnull_strength="0" unique_strength="0"></constraint>
       </constraints>
       <constraintExpressions>
         <constraint desc="" exp="" field="id_organisme"></constraint>
@@ -5860,8 +6437,8 @@ def my_form_open(dialog, layer, feature):
         <constraint desc="" exp="" field="cedex"></constraint>
         <constraint desc="" exp="" field="csr"></constraint>
         <constraint desc="" exp="" field="commentaire"></constraint>
-        <constraint desc="" exp="" field="uuid_national"></constraint>
         <constraint desc="" exp="" field="date_maj"></constraint>
+        <constraint desc="" exp="" field="uuid_national"></constraint>
       </constraintExpressions>
       <expressionfields></expressionfields>
       <attributeactions>
@@ -5928,8 +6505,8 @@ def my_form_open(dialog, layer, feature):
             <attributeEditorField index="9" name="cedex" showLabel="1"></attributeEditorField>
             <attributeEditorField index="10" name="csr" showLabel="1"></attributeEditorField>
             <attributeEditorField index="11" name="commentaire" showLabel="1"></attributeEditorField>
-            <attributeEditorField index="13" name="date_maj" showLabel="1"></attributeEditorField>
-            <attributeEditorField index="12" name="uuid_national" showLabel="1"></attributeEditorField>
+            <attributeEditorField index="12" name="date_maj" showLabel="1"></attributeEditorField>
+            <attributeEditorField index="13" name="uuid_national" showLabel="1"></attributeEditorField>
           </attributeEditorContainer>
         </attributeEditorContainer>
         <attributeEditorContainer columnCount="1" groupBox="0" name="Adhérents" showLabel="1" visibilityExpression="" visibilityExpressionEnabled="0">
@@ -6267,6 +6844,17 @@ def my_form_open(dialog, layer, feature):
             </config>
           </editWidget>
         </field>
+        <field configurationFlags="None" name="anonymiser">
+          <editWidget type="CheckBox">
+            <config>
+              <Option type="Map">
+                <Option name="CheckedState" type="QString" value=""></Option>
+                <Option name="TextDisplayMethod" type="int" value="0"></Option>
+                <Option name="UncheckedState" type="QString" value=""></Option>
+              </Option>
+            </config>
+          </editWidget>
+        </field>
         <field configurationFlags="None" name="id_organisme">
           <editWidget type="ValueRelation">
             <config>
@@ -6288,17 +6876,6 @@ def my_form_open(dialog, layer, feature):
             </config>
           </editWidget>
         </field>
-        <field configurationFlags="None" name="anonymiser">
-          <editWidget type="CheckBox">
-            <config>
-              <Option type="Map">
-                <Option name="CheckedState" type="QString" value=""></Option>
-                <Option name="TextDisplayMethod" type="int" value="0"></Option>
-                <Option name="UncheckedState" type="QString" value=""></Option>
-              </Option>
-            </config>
-          </editWidget>
-        </field>
       </fieldConfiguration>
       <aliases>
         <alias field="id_personne" index="0" name="Identifiant auto"></alias>
@@ -6306,8 +6883,8 @@ def my_form_open(dialog, layer, feature):
         <alias field="prenom" index="2" name="Prénom"></alias>
         <alias field="nom" index="3" name="Nom"></alias>
         <alias field="mail" index="4" name="Email"></alias>
-        <alias field="id_organisme" index="5" name="Organisme"></alias>
-        <alias field="anonymiser" index="6" name=""></alias>
+        <alias field="anonymiser" index="5" name=""></alias>
+        <alias field="id_organisme" index="6" name="Organisme"></alias>
       </aliases>
       <defaults>
         <default applyOnUpdate="0" expression="" field="id_personne"></default>
@@ -6315,8 +6892,8 @@ def my_form_open(dialog, layer, feature):
         <default applyOnUpdate="0" expression="" field="prenom"></default>
         <default applyOnUpdate="0" expression="" field="nom"></default>
         <default applyOnUpdate="0" expression="" field="mail"></default>
-        <default applyOnUpdate="0" expression="-1" field="id_organisme"></default>
         <default applyOnUpdate="0" expression="" field="anonymiser"></default>
+        <default applyOnUpdate="0" expression="-1" field="id_organisme"></default>
       </defaults>
       <constraints>
         <constraint constraints="3" exp_strength="0" field="id_personne" notnull_strength="1" unique_strength="1"></constraint>
@@ -6324,8 +6901,8 @@ def my_form_open(dialog, layer, feature):
         <constraint constraints="0" exp_strength="0" field="prenom" notnull_strength="0" unique_strength="0"></constraint>
         <constraint constraints="4" exp_strength="1" field="nom" notnull_strength="0" unique_strength="0"></constraint>
         <constraint constraints="0" exp_strength="0" field="mail" notnull_strength="0" unique_strength="0"></constraint>
-        <constraint constraints="1" exp_strength="0" field="id_organisme" notnull_strength="1" unique_strength="0"></constraint>
         <constraint constraints="0" exp_strength="0" field="anonymiser" notnull_strength="0" unique_strength="0"></constraint>
+        <constraint constraints="1" exp_strength="0" field="id_organisme" notnull_strength="1" unique_strength="0"></constraint>
       </constraints>
       <constraintExpressions>
         <constraint desc="" exp="" field="id_personne"></constraint>
@@ -6333,8 +6910,8 @@ def my_form_open(dialog, layer, feature):
         <constraint desc="" exp="" field="prenom"></constraint>
         <constraint desc="Le nom doit être en majuscules" exp="upper(nom) = nom" field="nom"></constraint>
         <constraint desc="" exp="" field="mail"></constraint>
-        <constraint desc="" exp="" field="id_organisme"></constraint>
         <constraint desc="" exp="" field="anonymiser"></constraint>
+        <constraint desc="" exp="" field="id_organisme"></constraint>
       </constraintExpressions>
       <expressionfields></expressionfields>
       <attributeactions>
@@ -6386,8 +6963,8 @@ def my_form_open(dialog, layer, feature):
         <attributeEditorField index="3" name="nom" showLabel="1"></attributeEditorField>
         <attributeEditorField index="1" name="identite" showLabel="1"></attributeEditorField>
         <attributeEditorField index="4" name="mail" showLabel="1"></attributeEditorField>
-        <attributeEditorField index="5" name="id_organisme" showLabel="1"></attributeEditorField>
-        <attributeEditorField index="6" name="anonymiser" showLabel="1"></attributeEditorField>
+        <attributeEditorField index="6" name="id_organisme" showLabel="1"></attributeEditorField>
+        <attributeEditorField index="5" name="anonymiser" showLabel="1"></attributeEditorField>
       </attributeEditorForm>
       <editable>
         <field editable="1" name="anonymiser"></field>
@@ -6706,7 +7283,7 @@ def my_form_open(dialog, layer, feature):
               <Option name="drawToAllParts" type="bool" value="false"></Option>
               <Option name="enabled" type="QString" value="0"></Option>
               <Option name="labelAnchorPoint" type="QString" value="point_on_exterior"></Option>
-              <Option name="lineSymbol" type="QString" value="&lt;symbol name=&quot;symbol&quot; clip_to_extent=&quot;1&quot; type=&quot;line&quot; force_rhr=&quot;0&quot; alpha=&quot;1&quot;>&lt;data_defined_properties>&lt;Option type=&quot;Map&quot;>&lt;Option name=&quot;name&quot; type=&quot;QString&quot; value=&quot;&quot;/>&lt;Option name=&quot;properties&quot;/>&lt;Option name=&quot;type&quot; type=&quot;QString&quot; value=&quot;collection&quot;/>&lt;/Option>&lt;/data_defined_properties>&lt;layer pass=&quot;0&quot; enabled=&quot;1&quot; class=&quot;SimpleLine&quot; locked=&quot;0&quot;>&lt;Option type=&quot;Map&quot;>&lt;Option name=&quot;align_dash_pattern&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;capstyle&quot; type=&quot;QString&quot; value=&quot;square&quot;/>&lt;Option name=&quot;customdash&quot; type=&quot;QString&quot; value=&quot;5;2&quot;/>&lt;Option name=&quot;customdash_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option name=&quot;customdash_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;dash_pattern_offset&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;dash_pattern_offset_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option name=&quot;dash_pattern_offset_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;draw_inside_polygon&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;joinstyle&quot; type=&quot;QString&quot; value=&quot;bevel&quot;/>&lt;Option name=&quot;line_color&quot; type=&quot;QString&quot; value=&quot;60,60,60,255&quot;/>&lt;Option name=&quot;line_style&quot; type=&quot;QString&quot; value=&quot;solid&quot;/>&lt;Option name=&quot;line_width&quot; type=&quot;QString&quot; value=&quot;0.3&quot;/>&lt;Option name=&quot;line_width_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;offset&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;offset_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option name=&quot;offset_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;ring_filter&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;trim_distance_end&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;trim_distance_end_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option name=&quot;trim_distance_end_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;trim_distance_start&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;trim_distance_start_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option name=&quot;trim_distance_start_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;tweak_dash_pattern_on_corners&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;use_custom_dash&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;width_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;/Option>&lt;prop k=&quot;align_dash_pattern&quot; v=&quot;0&quot;/>&lt;prop k=&quot;capstyle&quot; v=&quot;square&quot;/>&lt;prop k=&quot;customdash&quot; v=&quot;5;2&quot;/>&lt;prop k=&quot;customdash_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;customdash_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;dash_pattern_offset&quot; v=&quot;0&quot;/>&lt;prop k=&quot;dash_pattern_offset_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;dash_pattern_offset_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;draw_inside_polygon&quot; v=&quot;0&quot;/>&lt;prop k=&quot;joinstyle&quot; v=&quot;bevel&quot;/>&lt;prop k=&quot;line_color&quot; v=&quot;60,60,60,255&quot;/>&lt;prop k=&quot;line_style&quot; v=&quot;solid&quot;/>&lt;prop k=&quot;line_width&quot; v=&quot;0.3&quot;/>&lt;prop k=&quot;line_width_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;offset&quot; v=&quot;0&quot;/>&lt;prop k=&quot;offset_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;offset_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;ring_filter&quot; v=&quot;0&quot;/>&lt;prop k=&quot;trim_distance_end&quot; v=&quot;0&quot;/>&lt;prop k=&quot;trim_distance_end_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;trim_distance_end_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;trim_distance_start&quot; v=&quot;0&quot;/>&lt;prop k=&quot;trim_distance_start_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;trim_distance_start_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;tweak_dash_pattern_on_corners&quot; v=&quot;0&quot;/>&lt;prop k=&quot;use_custom_dash&quot; v=&quot;0&quot;/>&lt;prop k=&quot;width_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;data_defined_properties>&lt;Option type=&quot;Map&quot;>&lt;Option name=&quot;name&quot; type=&quot;QString&quot; value=&quot;&quot;/>&lt;Option name=&quot;properties&quot;/>&lt;Option name=&quot;type&quot; type=&quot;QString&quot; value=&quot;collection&quot;/>&lt;/Option>&lt;/data_defined_properties>&lt;/layer>&lt;/symbol>"></Option>
+              <Option name="lineSymbol" type="QString" value="&lt;symbol clip_to_extent=&quot;1&quot; type=&quot;line&quot; name=&quot;symbol&quot; force_rhr=&quot;0&quot; alpha=&quot;1&quot;>&lt;data_defined_properties>&lt;Option type=&quot;Map&quot;>&lt;Option type=&quot;QString&quot; name=&quot;name&quot; value=&quot;&quot;/>&lt;Option name=&quot;properties&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;type&quot; value=&quot;collection&quot;/>&lt;/Option>&lt;/data_defined_properties>&lt;layer pass=&quot;0&quot; class=&quot;SimpleLine&quot; enabled=&quot;1&quot; locked=&quot;0&quot;>&lt;Option type=&quot;Map&quot;>&lt;Option type=&quot;QString&quot; name=&quot;align_dash_pattern&quot; value=&quot;0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;capstyle&quot; value=&quot;square&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;customdash&quot; value=&quot;5;2&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;customdash_map_unit_scale&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;customdash_unit&quot; value=&quot;MM&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;dash_pattern_offset&quot; value=&quot;0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;dash_pattern_offset_map_unit_scale&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;dash_pattern_offset_unit&quot; value=&quot;MM&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;draw_inside_polygon&quot; value=&quot;0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;joinstyle&quot; value=&quot;bevel&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;line_color&quot; value=&quot;60,60,60,255&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;line_style&quot; value=&quot;solid&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;line_width&quot; value=&quot;0.3&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;line_width_unit&quot; value=&quot;MM&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;offset&quot; value=&quot;0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;offset_map_unit_scale&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;offset_unit&quot; value=&quot;MM&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;ring_filter&quot; value=&quot;0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;trim_distance_end&quot; value=&quot;0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;trim_distance_end_map_unit_scale&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;trim_distance_end_unit&quot; value=&quot;MM&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;trim_distance_start&quot; value=&quot;0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;trim_distance_start_map_unit_scale&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;trim_distance_start_unit&quot; value=&quot;MM&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;tweak_dash_pattern_on_corners&quot; value=&quot;0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;use_custom_dash&quot; value=&quot;0&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;width_map_unit_scale&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;/Option>&lt;prop v=&quot;0&quot; k=&quot;align_dash_pattern&quot;/>&lt;prop v=&quot;square&quot; k=&quot;capstyle&quot;/>&lt;prop v=&quot;5;2&quot; k=&quot;customdash&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;customdash_map_unit_scale&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;customdash_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;dash_pattern_offset&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;dash_pattern_offset_map_unit_scale&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;dash_pattern_offset_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;draw_inside_polygon&quot;/>&lt;prop v=&quot;bevel&quot; k=&quot;joinstyle&quot;/>&lt;prop v=&quot;60,60,60,255&quot; k=&quot;line_color&quot;/>&lt;prop v=&quot;solid&quot; k=&quot;line_style&quot;/>&lt;prop v=&quot;0.3&quot; k=&quot;line_width&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;line_width_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;offset&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;offset_map_unit_scale&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;offset_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;ring_filter&quot;/>&lt;prop v=&quot;0&quot; k=&quot;trim_distance_end&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;trim_distance_end_map_unit_scale&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;trim_distance_end_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;trim_distance_start&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;trim_distance_start_map_unit_scale&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;trim_distance_start_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;tweak_dash_pattern_on_corners&quot;/>&lt;prop v=&quot;0&quot; k=&quot;use_custom_dash&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;width_map_unit_scale&quot;/>&lt;data_defined_properties>&lt;Option type=&quot;Map&quot;>&lt;Option type=&quot;QString&quot; name=&quot;name&quot; value=&quot;&quot;/>&lt;Option name=&quot;properties&quot;/>&lt;Option type=&quot;QString&quot; name=&quot;type&quot; value=&quot;collection&quot;/>&lt;/Option>&lt;/data_defined_properties>&lt;/layer>&lt;/symbol>"></Option>
               <Option name="minLength" type="double" value="0"></Option>
               <Option name="minLengthMapUnitScale" type="QString" value="3x:0,0,0,0,0,0"></Option>
               <Option name="minLengthUnit" type="QString" value="MM"></Option>
@@ -8123,7 +8700,7 @@ def my_form_open(dialog, layer, feature):
               <Option name="drawToAllParts" type="bool" value="false"></Option>
               <Option name="enabled" type="QString" value="0"></Option>
               <Option name="labelAnchorPoint" type="QString" value="point_on_exterior"></Option>
-              <Option name="lineSymbol" type="QString" value="&lt;symbol name=&quot;symbol&quot; clip_to_extent=&quot;1&quot; type=&quot;line&quot; force_rhr=&quot;0&quot; alpha=&quot;1&quot;>&lt;data_defined_properties>&lt;Option type=&quot;Map&quot;>&lt;Option name=&quot;name&quot; type=&quot;QString&quot; value=&quot;&quot;/>&lt;Option name=&quot;properties&quot;/>&lt;Option name=&quot;type&quot; type=&quot;QString&quot; value=&quot;collection&quot;/>&lt;/Option>&lt;/data_defined_properties>&lt;layer pass=&quot;0&quot; enabled=&quot;1&quot; class=&quot;SimpleLine&quot; locked=&quot;0&quot;>&lt;Option type=&quot;Map&quot;>&lt;Option name=&quot;align_dash_pattern&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;capstyle&quot; type=&quot;QString&quot; value=&quot;square&quot;/>&lt;Option name=&quot;customdash&quot; type=&quot;QString&quot; value=&quot;5;2&quot;/>&lt;Option name=&quot;customdash_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option name=&quot;customdash_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;dash_pattern_offset&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;dash_pattern_offset_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option name=&quot;dash_pattern_offset_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;draw_inside_polygon&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;joinstyle&quot; type=&quot;QString&quot; value=&quot;bevel&quot;/>&lt;Option name=&quot;line_color&quot; type=&quot;QString&quot; value=&quot;60,60,60,255&quot;/>&lt;Option name=&quot;line_style&quot; type=&quot;QString&quot; value=&quot;solid&quot;/>&lt;Option name=&quot;line_width&quot; type=&quot;QString&quot; value=&quot;0.3&quot;/>&lt;Option name=&quot;line_width_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;offset&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;offset_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option name=&quot;offset_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;ring_filter&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;trim_distance_end&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;trim_distance_end_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option name=&quot;trim_distance_end_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;trim_distance_start&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;trim_distance_start_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;Option name=&quot;trim_distance_start_unit&quot; type=&quot;QString&quot; value=&quot;MM&quot;/>&lt;Option name=&quot;tweak_dash_pattern_on_corners&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;use_custom_dash&quot; type=&quot;QString&quot; value=&quot;0&quot;/>&lt;Option name=&quot;width_map_unit_scale&quot; type=&quot;QString&quot; value=&quot;3x:0,0,0,0,0,0&quot;/>&lt;/Option>&lt;prop k=&quot;align_dash_pattern&quot; v=&quot;0&quot;/>&lt;prop k=&quot;capstyle&quot; v=&quot;square&quot;/>&lt;prop k=&quot;customdash&quot; v=&quot;5;2&quot;/>&lt;prop k=&quot;customdash_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;customdash_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;dash_pattern_offset&quot; v=&quot;0&quot;/>&lt;prop k=&quot;dash_pattern_offset_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;dash_pattern_offset_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;draw_inside_polygon&quot; v=&quot;0&quot;/>&lt;prop k=&quot;joinstyle&quot; v=&quot;bevel&quot;/>&lt;prop k=&quot;line_color&quot; v=&quot;60,60,60,255&quot;/>&lt;prop k=&quot;line_style&quot; v=&quot;solid&quot;/>&lt;prop k=&quot;line_width&quot; v=&quot;0.3&quot;/>&lt;prop k=&quot;line_width_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;offset&quot; v=&quot;0&quot;/>&lt;prop k=&quot;offset_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;offset_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;ring_filter&quot; v=&quot;0&quot;/>&lt;prop k=&quot;trim_distance_end&quot; v=&quot;0&quot;/>&lt;prop k=&quot;trim_distance_end_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;trim_distance_end_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;trim_distance_start&quot; v=&quot;0&quot;/>&lt;prop k=&quot;trim_distance_start_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;prop k=&quot;trim_distance_start_unit&quot; v=&quot;MM&quot;/>&lt;prop k=&quot;tweak_dash_pattern_on_corners&quot; v=&quot;0&quot;/>&lt;prop k=&quot;use_custom_dash&quot; v=&quot;0&quot;/>&lt;prop k=&quot;width_map_unit_scale&quot; v=&quot;3x:0,0,0,0,0,0&quot;/>&lt;data_defined_properties>&lt;Option type=&quot;Map&quot;>&lt;Option name=&quot;name&quot; type=&quot;QString&quot; value=&quot;&quot;/>&lt;Option name=&quot;properties&quot;/>&lt;Option name=&quot;type&quot; type=&quot;QString&quot; value=&quot;collection&quot;/>&lt;/Option>&lt;/data_defined_properties>&lt;/layer>&lt;/symbol>"></Option>
+              <Option name="lineSymbol" type="QString" value="&lt;symbol force_rhr=&quot;0&quot; name=&quot;symbol&quot; alpha=&quot;1&quot; type=&quot;line&quot; clip_to_extent=&quot;1&quot;>&lt;data_defined_properties>&lt;Option type=&quot;Map&quot;>&lt;Option value=&quot;&quot; name=&quot;name&quot; type=&quot;QString&quot;/>&lt;Option name=&quot;properties&quot;/>&lt;Option value=&quot;collection&quot; name=&quot;type&quot; type=&quot;QString&quot;/>&lt;/Option>&lt;/data_defined_properties>&lt;layer locked=&quot;0&quot; class=&quot;SimpleLine&quot; enabled=&quot;1&quot; pass=&quot;0&quot;>&lt;Option type=&quot;Map&quot;>&lt;Option value=&quot;0&quot; name=&quot;align_dash_pattern&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;square&quot; name=&quot;capstyle&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;5;2&quot; name=&quot;customdash&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;3x:0,0,0,0,0,0&quot; name=&quot;customdash_map_unit_scale&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;MM&quot; name=&quot;customdash_unit&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;0&quot; name=&quot;dash_pattern_offset&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;3x:0,0,0,0,0,0&quot; name=&quot;dash_pattern_offset_map_unit_scale&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;MM&quot; name=&quot;dash_pattern_offset_unit&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;0&quot; name=&quot;draw_inside_polygon&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;bevel&quot; name=&quot;joinstyle&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;60,60,60,255&quot; name=&quot;line_color&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;solid&quot; name=&quot;line_style&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;0.3&quot; name=&quot;line_width&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;MM&quot; name=&quot;line_width_unit&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;0&quot; name=&quot;offset&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;3x:0,0,0,0,0,0&quot; name=&quot;offset_map_unit_scale&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;MM&quot; name=&quot;offset_unit&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;0&quot; name=&quot;ring_filter&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;0&quot; name=&quot;trim_distance_end&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;3x:0,0,0,0,0,0&quot; name=&quot;trim_distance_end_map_unit_scale&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;MM&quot; name=&quot;trim_distance_end_unit&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;0&quot; name=&quot;trim_distance_start&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;3x:0,0,0,0,0,0&quot; name=&quot;trim_distance_start_map_unit_scale&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;MM&quot; name=&quot;trim_distance_start_unit&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;0&quot; name=&quot;tweak_dash_pattern_on_corners&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;0&quot; name=&quot;use_custom_dash&quot; type=&quot;QString&quot;/>&lt;Option value=&quot;3x:0,0,0,0,0,0&quot; name=&quot;width_map_unit_scale&quot; type=&quot;QString&quot;/>&lt;/Option>&lt;prop v=&quot;0&quot; k=&quot;align_dash_pattern&quot;/>&lt;prop v=&quot;square&quot; k=&quot;capstyle&quot;/>&lt;prop v=&quot;5;2&quot; k=&quot;customdash&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;customdash_map_unit_scale&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;customdash_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;dash_pattern_offset&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;dash_pattern_offset_map_unit_scale&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;dash_pattern_offset_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;draw_inside_polygon&quot;/>&lt;prop v=&quot;bevel&quot; k=&quot;joinstyle&quot;/>&lt;prop v=&quot;60,60,60,255&quot; k=&quot;line_color&quot;/>&lt;prop v=&quot;solid&quot; k=&quot;line_style&quot;/>&lt;prop v=&quot;0.3&quot; k=&quot;line_width&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;line_width_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;offset&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;offset_map_unit_scale&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;offset_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;ring_filter&quot;/>&lt;prop v=&quot;0&quot; k=&quot;trim_distance_end&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;trim_distance_end_map_unit_scale&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;trim_distance_end_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;trim_distance_start&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;trim_distance_start_map_unit_scale&quot;/>&lt;prop v=&quot;MM&quot; k=&quot;trim_distance_start_unit&quot;/>&lt;prop v=&quot;0&quot; k=&quot;tweak_dash_pattern_on_corners&quot;/>&lt;prop v=&quot;0&quot; k=&quot;use_custom_dash&quot;/>&lt;prop v=&quot;3x:0,0,0,0,0,0&quot; k=&quot;width_map_unit_scale&quot;/>&lt;data_defined_properties>&lt;Option type=&quot;Map&quot;>&lt;Option value=&quot;&quot; name=&quot;name&quot; type=&quot;QString&quot;/>&lt;Option name=&quot;properties&quot;/>&lt;Option value=&quot;collection&quot; name=&quot;type&quot; type=&quot;QString&quot;/>&lt;/Option>&lt;/data_defined_properties>&lt;/layer>&lt;/symbol>"></Option>
               <Option name="minLength" type="double" value="0"></Option>
               <Option name="minLengthMapUnitScale" type="QString" value="3x:0,0,0,0,0,0"></Option>
               <Option name="minLengthUnit" type="QString" value="MM"></Option>
@@ -8462,6 +9039,7 @@ def my_form_open(dialog, layer, feature):
     <WCSLayers type="QStringList"></WCSLayers>
     <WCSUrl type="QString"></WCSUrl>
     <WFSLayers type="QStringList">
+      <value>Taxons_observ_s_81d02051_49f4_4756_83be_2ac90a6d589c</value>
       <value>acteur20190123120309698</value>
       <value>adherent20190123120310018</value>
       <value>cadre_9622af4e_a9e7_4c32_86ac_da725d0b6f2d</value>
@@ -8474,6 +9052,7 @@ def my_form_open(dialog, layer, feature):
       <value>jdd20190416103640150</value>
       <value>jdd_import20190123150642447</value>
       <value>jlx_user20190123150225648</value>
+      <value>medias_d7189654_62f2_41ea_be13_b930d74f5d30</value>
       <value>organisme20190123143729184</value>
       <value>personne_b0211134_f0b2_4781_8b1b_6073f5ef6131</value>
       <value>v_import_web_liste_75b05297_0e7f_477a_b314_3159132b7de9</value>
@@ -8481,6 +9060,7 @@ def my_form_open(dialog, layer, feature):
       <value>v_jdd_spatial_820d68bf_babb_4ec4_941d_686260332097</value>
     </WFSLayers>
     <WFSLayersPrecision>
+      <Taxons_observ_s_81d02051_49f4_4756_83be_2ac90a6d589c type="int">8</Taxons_observ_s_81d02051_49f4_4756_83be_2ac90a6d589c>
       <acteur20190123120309698 type="int">8</acteur20190123120309698>
       <adherent20190123120310018 type="int">8</adherent20190123120310018>
       <cadre_9622af4e_a9e7_4c32_86ac_da725d0b6f2d type="int">8</cadre_9622af4e_a9e7_4c32_86ac_da725d0b6f2d>
@@ -8493,6 +9073,7 @@ def my_form_open(dialog, layer, feature):
       <jdd20190416103640150 type="int">8</jdd20190416103640150>
       <jdd_import20190123150642447 type="int">8</jdd_import20190123150642447>
       <jlx_user20190123150225648 type="int">8</jlx_user20190123150225648>
+      <medias_d7189654_62f2_41ea_be13_b930d74f5d30 type="int">8</medias_d7189654_62f2_41ea_be13_b930d74f5d30>
       <organisme20190123143729184 type="int">8</organisme20190123143729184>
       <personne_b0211134_f0b2_4781_8b1b_6073f5ef6131 type="int">8</personne_b0211134_f0b2_4781_8b1b_6073f5ef6131>
       <v_import_web_liste_75b05297_0e7f_477a_b314_3159132b7de9 type="int">8</v_import_web_liste_75b05297_0e7f_477a_b314_3159132b7de9>
@@ -8608,7 +9189,7 @@ def my_form_open(dialog, layer, feature):
   <Bookmarks></Bookmarks>
   <ProjectViewSettings UseProjectScales="0" rotation="0">
     <Scales></Scales>
-    <DefaultViewExtent xmax="-6752370.64636431727558374" xmin="-6829537.1556340241804719" ymax="1684820.79835860221646726" ymin="1615942.54378823400475085">
+    <DefaultViewExtent xmax="-6745365.33356114942580462" xmin="-6836542.46843719203025103" ymax="1669505.55527167581021786" ymin="1631257.78687516041100025">
       <spatialrefsys>
         <wkt>PROJCRS["WGS 84 / Pseudo-Mercator",BASEGEOGCRS["WGS 84",ENSEMBLE["World Geodetic System 1984 ensemble",MEMBER["World Geodetic System 1984 (Transit)"],MEMBER["World Geodetic System 1984 (G730)"],MEMBER["World Geodetic System 1984 (G873)"],MEMBER["World Geodetic System 1984 (G1150)"],MEMBER["World Geodetic System 1984 (G1674)"],MEMBER["World Geodetic System 1984 (G1762)"],MEMBER["World Geodetic System 1984 (G2139)"],ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]],ENSEMBLEACCURACY[2.0]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",0.0174532925199433]],ID["EPSG",4326]],CONVERSION["Popular Visualisation Pseudo-Mercator",METHOD["Popular Visualisation Pseudo Mercator",ID["EPSG",1024]],PARAMETER["Latitude of natural origin",0,ANGLEUNIT["degree",0.0174532925199433],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",0,ANGLEUNIT["degree",0.0174532925199433],ID["EPSG",8802]],PARAMETER["False easting",0,LENGTHUNIT["metre",1],ID["EPSG",8806]],PARAMETER["False northing",0,LENGTHUNIT["metre",1],ID["EPSG",8807]]],CS[Cartesian,2],AXIS["easting (X)",east,ORDER[1],LENGTHUNIT["metre",1]],AXIS["northing (Y)",north,ORDER[2],LENGTHUNIT["metre",1]],USAGE[SCOPE["Web mapping and visualisation."],AREA["World between 85.06°S and 85.06°N."],BBOX[-85.06,-180,85.06,180]],ID["EPSG",3857]]</wkt>
         <proj4>+proj=merc +a=6378137 +b=6378137 +lat_ts=0 +lon_0=0 +x_0=0 +y_0=0 +k=1 +units=m +nadgrids=@null +wktext +no_defs</proj4>
