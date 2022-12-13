@@ -3,6 +3,15 @@
 ## Unreleased
 
 
+## 2.13.3 - 2022-12-13
+
+### Fixed
+
+* Installation
+  * Ajout des droits nécessaires sur la nouvelle table `taxon.medias`
+  * Correction du scrip de mise à jour pour qu'il écrase bien les fichiers JavaScript
+
+
 ## 2.13.2 - 2022-12-12
 
 ### Changed

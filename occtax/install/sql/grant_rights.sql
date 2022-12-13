@@ -36,5 +36,8 @@ occtax.localisation_masse_eau, occtax.localisation_espace_naturel,
 occtax.localisation_habitat
 TO "{$DBUSER_READONLY}";
 
+-- Droits pour l'ajout et la modification dans taxon.medias
+-- cache des photographies de l'API INPN
+GRANT SELECT, INSERT, UPDATE ON TABLE taxon.medias TO "{$DBUSER_READONLY}";
 
 COMMIT;
