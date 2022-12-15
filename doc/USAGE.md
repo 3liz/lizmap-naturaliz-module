@@ -530,8 +530,8 @@ REFRESH MATERIALIZED VIEW occtax.vm_observation ;
 
 ### Ajout de photographies régionales pour les fiches taxon
 
-Dans l'application, lorsque le nom d'un taxon est affiché, on peut cliquer sur le lien pour ouvrir la fiche du taxon.
-Cette fiche affiche les informations principales du taxon, issues de l'API de l'INPN:
+Dans l'application, lorsque le nom d'un taxon est affiché, on peut cliquer sur le lien pour ouvrir la **fiche du taxon**.
+Cette fiche affiche les informations principales du taxon, issues de l'API de l'INPN :
 
 * son nom valide,
 * ses noms vernaculaires
@@ -541,13 +541,22 @@ Cette fiche affiche les informations principales du taxon, issues de l'API de l'
 ![Fiche taxon](media/fiche_taxon.png)
 
 L'API de l'INPN ne propose pas toujours des photographies pour les taxons locaux, ou alors elles ne sont pas libres de droit.
-Il est possible d'utiliser le projet de gestion pour ajouter des photographies. Voir la vidéo suivante:
+
+La table `taxon.medias` stocke les informations relatives aux photographies :
+
+* ajoutées **automatiquement** par l'application à chaque ouverture d'une **fiche taxon** à partir de l'**API INPN**: alors le champ `"source"` vaut `'inpn'`, et le chemin enregistré dans `media_path` ressemble à `media/upload/taxon/inpn/1234/1234_99999.jpg` (on concatène le cd_nom et l'identifiant INPN de la photographie pour le nom de fichier)
+* ajoutées **manuellement** via le projet de gestion (ou via des requêtes SQL si besoin). Alors toutes les photos vont tomber dans le même répertoire `media/upload/taxon/local/`, le champ `"source"` vaudra `'local'`, et le chemin enregistré dans le champ `"media_path"` ressemble à `media/upload/taxon/local/nom_initial_de_la_photo.jpg`.
+
+Il est possible d'utiliser le projet de gestion pour ajouter des photographies. Voir la vidéo suivante :
+
 ![Ajout d'une photographie via le module de gestion](media/taxon_ajout_photographie_via_carte_de_gestion.webm)
 
-On peut aussi tout à fait ajouter manuellement des photographies "locales", cad personnalisées. Pour cela, il faut :
+À noter que dans le projet de gestion, n'apparaissent dans la table attributaire de la couche `medias` que les photographies avec la source `'local'`, pour ne montrer que les photos ajoutées manuellement. On pourrait bien sûr faire autrement selon le besoin (ajouter une autre couche basée sur la table media avec le filtre `"source" = 'inpn'` ou enlever le filtre de la couche actuelle)
 
-* Ajouter la photographie dans le répertoire `media/upload/taxon/local/` sur le serveur FTP
-* Ajouter une ligne dans la table `taxon.medias` avec les informations nécessaires, notamment le cd_nom, le cd_ref et le `media_path`, qui se présente sous la forme d'un chemin relatif au projet QGIS de gestion, par exemple : `media/upload/taxon/local/pigeon_biset.jpg`
+On peut aussi tout à fait ajouter manuellement des photographies "locales", c'est-à-dire personnalisées. Pour cela, il faut :
+
+* Ajouter la photographie dans le répertoire `media/upload/taxon/local/` sur le serveur FTP, relatif au projet QGIS support de l'application Naturaliz
+* Ajouter une ligne dans la table `taxon.medias` avec les informations nécessaires, notamment le `cd_nom`, le `cd_ref` et le `media_path`, qui se présente sous la forme d'un chemin relatif au projet QGIS de gestion, par exemple : `media/upload/taxon/local/pigeon_biset.jpg`
 
 | id | cd_nom | cd_ref | principal  | source | id_origine | url_origine | media_path                                | titre                 | auteur  | description | licence  |
 |----|--------|--------|------------|--------|------------|-------------|-------------------------------------------|-----------------------|---------|-------------|----------|
