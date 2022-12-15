@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Changed
+
+* Import CSV : suppression des critères de contrainte NON NULL pour les champs
+  `denombrement_min` et `denombrement_max`. On peut maintenant importer des données
+  sans information de dénombrement si `objet_denombrement` vaut 'NSP'
 
 ## 2.13.3 - 2022-12-13
 

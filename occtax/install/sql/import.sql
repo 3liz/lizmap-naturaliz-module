@@ -358,8 +358,6 @@ INSERT INTO occtax.critere_conformite (code, libelle, condition, type_critere)
 VALUES
 ('obs_observateurs_not_null', 'La valeur de <b>observateurs</b> est vide', $$observateurs IS NOT NULL$$, 'not_null'),
 ('obs_statut_observation_not_null', 'La valeur de <b>statut_observation</b> est vide', $$statut_observation IS NOT NULL$$, 'not_null'),
-('obs_denombrement_min_not_null', 'La valeur de <b>denombrement_min</b> est vide', $$denombrement_min IS NOT NULL$$, 'not_null'),
-('obs_denombrement_max_not_null', 'La valeur de <b>denombrement_max</b> est vide', $$denombrement_max IS NOT NULL$$, 'not_null'),
 ('obs_nom_cite_not_null', 'La valeur de <b>nom_cite</b> est vide', $$nom_cite IS NOT NULL$$, 'not_null'),
 ('obs_date_debut_not_null', 'La valeur de <b>date_debut</b> est vide', $$date_debut IS NOT NULL$$, 'not_null'),
 ('obs_date_fin_not_null', 'La valeur de <b>date_fin</b> est vide', $$date_fin IS NOT NULL$$, 'not_null'),
