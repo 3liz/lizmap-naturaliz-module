@@ -44,7 +44,6 @@ class occtaxModuleUpgrader_2_13_0__2_13_1 extends jInstallerModule //\Jelix\Inst
         $this->upgradeDatabaseStructure($localConfig, $db, $sqlDirPath . $this->sqlUpgradeFile);
 
         // Grant rights
-        $sqlPath = $sqlDirPath . $this->sqlGrantFile;
-        $this->grantRightsToDatabaseObjects($localConfig, $db, $sqlDirPath . $this->sqlUpgradeFile);
+        $this->grantRightsToDatabaseObjects($localConfig, $db, $sqlDirPath . $this->sqlGrantFile);
     }
 }
