@@ -8,6 +8,11 @@
   `denombrement_min` et `denombrement_max`. On peut maintenant importer des données
   sans information de dénombrement si `objet_denombrement` vaut 'NSP'
 
+### Fixed
+
+* configurateur du module taxon pour lizmap 3.6, qui l'assignait par erreur à l'admin, au niveau des urls
+
+
 ## 2.13.3 - 2022-12-13
 
 ### Fixed

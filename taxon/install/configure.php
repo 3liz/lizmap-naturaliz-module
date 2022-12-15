@@ -19,18 +19,6 @@ class taxonModuleConfigurator extends \Jelix\Installer\Module\Configurator {
         return array();
     }
 
-    public function declareUrls(EntryPointUrlModifier $registerOnEntryPoint)
-    {
-        // set the occtax_admin url on the admin entrypoint
-        $registerOnEntryPoint->havingName(
-            'admin',
-            array(
-                new MapInclude('urls.xml', '/occtax_admin'),
-            )
-        );
-    }
-
-
     function configure(\Jelix\Installer\Module\API\ConfigurationHelpers $helpers)
     {
         // Copy taxon configuration
