@@ -93,8 +93,15 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             'descriptif_sujet' => "String",
 
             // Validité
-            'validite_niveau' => 'String',
-            'validite_date_validation' => 'String',
+            'niv_val_producteur' => 'String',
+            'date_ctrl_producteur' => 'String',
+            'validateur_producteur' => 'String',
+            'niv_val_nationale' => 'String',
+            'date_ctrl_nationale' => 'String',
+            'validateur_nationale' => 'String',
+            'niv_val_regionale' => 'String',
+            'date_ctrl_regionale' => 'String',
+            'validateur_regionale' => 'String',
 
             // geometrie
             'precision_geometrie' => "Real",
@@ -273,11 +280,19 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 // descriptif du sujet
                 'o.descriptif_sujet::json AS descriptif_sujet' => Null,
 
-                // validite
-                //'o.validite_niveau' => Null,
-                //'o.validite_date_validation' => Null,
+                // Validation
+                "'no' AS in_panier" => Null,
+                "o.niv_val_producteur" => NULL,
+                "o.validation_producteur->>'date_ctrl' AS date_ctrl_producteur" => Null,
+                "o.validation_producteur->>'validateur' AS validateur_producteur" => Null,
+                "o.niv_val_nationale" => Null,
+                "o.validation_nationale->>'date_ctrl' AS date_ctrl_nationale" => Null,
+                "o.validation_nationale->>'validateur' AS validateur_nationale" => Null,
+                "o.niv_val_regionale" => Null,
+                "o.validation_regionale->>'date_ctrl' AS date_ctrl_regionale" => Null,
+                "o.validation_regionale->>'validateur' AS validateur_regionale" => Null,
 
-                // geometrie
+                // géométrie
                 'o.precision_geometrie' => Null,
                 'o.nature_objet_geo' => Null,
 
@@ -290,21 +305,6 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 "o.determinateur" => Null
 
             )
-        ),
-
-        // Need to join the v_observation_champs_validation view to get updated validation
-        // we do not use validation_observation because the trigger should update observation accordingly
-        // for ech_val = '2'
-        'occtax.v_observation_champs_validation' => array(
-            'alias' => 'oo',
-            'required' => True,
-            'join' => ' JOIN ',
-            'joinClause' => "
-                ON oo.identifiant_permanent = o.identifiant_permanent ",
-            'returnFields' => array(
-                "oo.validite_niveau"=> Null,
-                'oo.validite_date_validation' => Null,
-            ),
         ),
 
     );
@@ -402,9 +402,9 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
         // Create temporary files
         $paths = array();
         foreach($geometryTypes as $geometryType){
-            $path = '/tmp/' . time() . session_id() . $topic;
+            $path = '/tmp/'.time().session_id().$topic;
             if($geometryType != ''){
-                $path.= '_' . $geometryType;
+                $path.= '_'.$geometryType;
             }
             $path.= '.csv';
             $fp = fopen($path, 'w');
@@ -494,11 +494,14 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 if (substr( $att, 0, 6 ) === "menace") {
                     $attribut = 'menace';
                 }
+                if (substr( $att, 0, 7 ) === "niv_val") {
+                    $attribut = 'validite_niveau';
+                }
                 // on transforme les champs en nomenclature
                 if(in_array($attribut, $this->nomenclatureFields)
-                    and array_key_exists($attribut . '_' . $val, $codenom)
+                    and array_key_exists($attribut.'_'.$val, $codenom)
                 ){
-                    $val = $codenom[$attribut . '_' . $val];
+                    $val = $codenom[$attribut.'_'.$val];
                 }
                 // On le fait aussi pour descriptif sujet
                 if($att == 'descriptif_sujet'){
@@ -511,14 +514,14 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                             foreach($jitem as $j=>$v){
                                 $vv = $v;
                                 if(in_array($j, $this->nomenclatureFields)
-                                and array_key_exists($j . '_' . $v, $codenom)
+                                and array_key_exists($j.'_'.$v, $codenom)
                                 ){
 
-                                    $vv = $codenom[$j . '_' . $v];
+                                    $vv = $codenom[$j.'_'.$v];
                                 }
                                 $ditem[$j] = $vv;
                             }
-                            $dnew["Groupe d'individus n°" . $di] = $ditem;
+                            $dnew["Groupe d'individus n°".$di] = $ditem;
                             $di++;
                         }
                     }
@@ -573,14 +576,14 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
         // Create temporary file
         $_dirname = '/tmp';
         //$_tmp_file = tempnam($_dirname, 'wrt');
-        $_tmp_file = '/tmp/' . time() . session_id() . $topic;
+        $_tmp_file = '/tmp/'.time().session_id().$topic;
         if($geometryType != ''){
-            $_tmp_file.= '_' . $geometryType;
+            $_tmp_file.= '_'.$geometryType;
         }
         $_tmp_file.= '.csvt';
 
         if (!($fd = @fopen($_tmp_file, 'wb'))) {
-            $_tmp_file = $_dirname . '/' . uniqid('wrt');
+            $_tmp_file = $_dirname.'/'.uniqid('wrt');
             if (!($fd = @fopen($_tmp_file, 'wb'))) {
                 throw new jException('jelix~errors.file.write.error', array ($file, $_tmp_file));
             }
@@ -742,7 +745,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             array('geojson', 'wkt', 'descriptif_sujet')
         );
         $sql.= " GROUP BY ";
-        $sql.= implode(', ', $group_attributes ) . ',dict,geojson,geometry';
+        $sql.= implode(', ', $group_attributes ).',dict,geojson,geometry';
 
         $sql.= "
 
@@ -753,7 +756,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
 //jLog::log($sql);
 
         // Create temporary file name
-        $path = '/tmp/' . time() . session_id() . '.geojson';
+        $path = '/tmp/'.time().session_id().'.geojson';
         $fp = fopen($path, 'w');
         fwrite($fp, '');
         fclose($fp);
@@ -773,7 +776,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
         $query = $cnx->query( $sql );
         $v = '';
         foreach( $query as $feature){
-            fwrite($fd, $v . $feature->row_to_json);
+            fwrite($fd, $v.$feature->row_to_json);
             $v = ',';
         }
 
@@ -811,7 +814,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
         $geometryType = $typenames[$typename];
         if($geometryType){
             $sql.= "
-            AND GeometryType(geom) = '" . $geometryType .  "'
+            AND GeometryType(geom) = '".$geometryType."'
             ";
         }else{
             $sql.= "
@@ -835,7 +838,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             xmlelement(
                 name \"gml:featureMember\",
                 xmlelement(
-                    name \"qgs:"  . $typename .  "\",
+                    name \"qgs:".$typename."\",
                     xmlattributes(source.cle_obs AS \"gml:id\"),
 
                     -- box
@@ -969,10 +972,10 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
         if(!in_array('cle_obs', $group_attributes))
             $group_attributes[] = 'cle_obs';
         $sql.= " GROUP BY ";
-        $sql.= implode(', ', $group_attributes ) . ',dict,geom';
+        $sql.= implode(', ', $group_attributes ).',dict,geom';
 
         // Create temporary file name
-        $path = '/tmp/' . time() . session_id() . '.gml';
+        $path = '/tmp/'.time().session_id().'.gml';
         $fp = fopen($path, 'w');
         fwrite($fp, '');
         fclose($fp);
@@ -1012,4 +1015,3 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
 
 
 }
-

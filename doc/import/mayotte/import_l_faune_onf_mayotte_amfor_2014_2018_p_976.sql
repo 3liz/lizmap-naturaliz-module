@@ -1509,26 +1509,29 @@ ORDER BY tax.lb_nom, tax.nom_vern ;
 
 -- 8.2 Mise à jour des critères de diffusion
 
--- Vue qui calcule la sensibilité des données pour contrôler leur diffusion
-REFRESH MATERIALIZED VIEW occtax.observation_diffusion;
 -- Vue qui rassemble à plat dans une seule entité la plupart des informations sur les observations, utilisée ensuite pour la diffusion des données sur www.borbonica.re
 REFRESH MATERIALIZED VIEW occtax.vm_observation;
 
 -- Vérification : niveau de diffusion appliqués aux données du jeu de données
+WITH od AS (
+	SELECT
+	o.cle_obs,
+	occtax.calcul_diffusion(o.sensi_niveau, o.ds_publique, o.diffusion_niveau_precision) AS diffusion
+	FROM occtax.observation AS o
+	WHERE o.jdd_id in ('T40895')
+)
 SELECT
-        diffusion AS code_diffusion,
-        CASE
-                WHEN diffusion::TEXT ILIKE '%g%' THEN 'Diffusion grand public avec géométrie précise'
-                WHEN diffusion::TEXT ILIKE '%m02%' THEN 'Diffusion grand public à la maille de 2 km'
-                WHEN diffusion::TEXT ILIKE '%c%' THEN 'Diffusion grand public à la commune'
-                WHEN diffusion::TEXT ILIKE '%m10%' THEN 'Diffusion grand public à la maille de 10 km'
-                WHEN diffusion::TEXT ILIKE 'd%' THEN 'Diffusion grand public au département'
-                WHEN diffusion is NULL THEN 'Pas de diffusion grand public'
-        END AS libelle_diffusion,
-        count(o.cle_obs) AS nb_obs
-FROM occtax.observation_diffusion od
-INNER JOIN occtax.observation o USING (cle_obs)
-WHERE o.jdd_id in ('T40895')
+	od.diffusion AS code_diffusion,
+	CASE
+		WHEN od.diffusion::TEXT ILIKE '%g%' THEN 'Diffusion grand public avec géométrie précise'
+		WHEN od.diffusion::TEXT ILIKE '%m02%' THEN 'Diffusion grand public à la maille de 2 km'
+		WHEN od.diffusion::TEXT ILIKE '%c%' THEN 'Diffusion grand public à la commune'
+		WHEN od.diffusion::TEXT ILIKE '%m10%' THEN 'Diffusion grand public à la maille de 10 km'
+		WHEN od.diffusion::TEXT ILIKE 'd%' THEN 'Diffusion grand public au département'
+		WHEN od.diffusion is NULL THEN 'Pas de diffusion grand public'
+	END AS libelle_diffusion,
+	count(od.cle_obs) AS nb_obs
+FROM od
 GROUP BY diffusion
 ORDER BY diffusion ;
 

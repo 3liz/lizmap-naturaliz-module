@@ -93,8 +93,15 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
             'descriptif_sujet' => "String",
 
             // Validité
-            'validite_niveau' => 'String',
-            'validite_date_validation' => 'String',
+            'niv_val_producteur' => 'String',
+            'date_ctrl_producteur' => 'String',
+            'validateur_producteur' => 'String',
+            'niv_val_regionale' => 'String',
+            'date_ctrl_regionale' => 'String',
+            'validateur_regionale' => 'String',
+            'niv_val_nationale' => 'String',
+            'date_ctrl_nationale' => 'String',
+            'validateur_nationale' => 'String',
 
             // geometrie
             'precision_geometrie' => "Real",
@@ -271,24 +278,22 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
                 // personnes
                 "o.identite_observateur AS observateur" => Null,
                 "o.validateur" => Null,
-                "o.determinateur" => Null
+                "o.determinateur" => Null,
+
+                // Validation
+                "'no' AS in_panier" => Null,
+                "o.niv_val_producteur" => NULL,
+                "o.validation_producteur->>'date_ctrl' AS date_ctrl_producteur" => Null,
+                "o.validation_producteur->>'validateur' AS validateur_producteur" => Null,
+                "o.niv_val_nationale" => Null,
+                "o.validation_nationale->>'date_ctrl' AS date_ctrl_nationale" => Null,
+                "o.validation_nationale->>'validateur' AS validateur_nationale" => Null,
+                "o.niv_val_regionale" => Null,
+                "o.validation_regionale->>'date_ctrl' AS date_ctrl_regionale" => Null,
+                "o.validation_regionale->>'validateur' AS validateur_nationale" => Null,
+                "(SELECT dict->>concat('validite_niveau_', Coalesce(o.niv_val_regionale, '6')) FROM occtax.v_nomenclature_plat) AS niv_val_text"=> Null,
 
             )
-        ),
-
-        // Need to join the v_observation_champs_validation view to get updated validation
-        // we do not use validation_observation because the trigger should update observation accordingly
-        // for ech_val = '2'
-        'occtax.v_observation_champs_validation' => array(
-            'alias' => 'oo',
-            'required' => True,
-            'join' => ' JOIN ',
-            'joinClause' => "
-                ON oo.identifiant_permanent = o.identifiant_permanent ",
-            'returnFields' => array(
-                "oo.validite_niveau"=> Null,
-                'oo.validite_date_validation' => Null,
-            ),
         ),
 
     );
@@ -355,7 +360,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $login = $this->login;
         if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
             $sql.= " AND foo.diffusion ? 'c' ";
-            $sql.= " AND foo.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
+            $sql.= " AND foo.niv_val_regionale IN ( ".$this->validite_niveaux_grand_public." )";
         }
 //jLog::log($sql);
         if( $response == 'sql' )
@@ -380,7 +385,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $login = $this->login;
         if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
             $sql.= " AND foo.diffusion ? 'd' ";
-            $sql.= " AND foo.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
+            $sql.= " AND foo.niv_val_regionale IN ( ".$this->validite_niveaux_grand_public." )";
         }
 
         if( $response == 'sql' )
@@ -405,7 +410,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $login = $this->login;
         if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
             $sql.= " AND foo.diffusion ? 'm10' ";
-            $sql.= " AND foo.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
+            $sql.= " AND foo.niv_val_regionale IN ( ".$this->validite_niveaux_grand_public." )";
         }
 
         if( $response == 'sql' )
@@ -430,7 +435,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $login = $this->login;
         if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
             $sql.= " AND ( foo.diffusion ? 'm05' )";
-            $sql.= " AND foo.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
+            $sql.= " AND foo.niv_val_regionale IN ( ".$this->validite_niveaux_grand_public." )";
         }
 
         if( $response == 'sql' )
@@ -455,7 +460,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $login = $this->login;
         if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
             $sql.= " AND ( foo.diffusion ? 'm02' )";
-            $sql.= " AND foo.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
+            $sql.= " AND foo.niv_val_regionale IN ( ".$this->validite_niveaux_grand_public." )";
         }
 
         if( $response == 'sql' )
@@ -480,7 +485,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $login = $this->login;
         if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
             $sql.= " AND ( foo.diffusion ? 'm01' )";
-            $sql.= " AND foo.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
+            $sql.= " AND foo.niv_val_regionale IN ( ".$this->validite_niveaux_grand_public." )";
         }
 
         if( $response == 'sql' )
@@ -505,7 +510,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $login = $this->login;
         if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
             $sql.= " AND foo.diffusion ? 'e' ";
-            $sql.= " AND foo.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
+            $sql.= " AND foo.niv_val_regionale IN ( ".$this->validite_niveaux_grand_public." )";
         }
 
         if( $response == 'sql' )
@@ -530,7 +535,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $login = $this->login;
         if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
             $sql.= " AND foo.diffusion ? 'e' ";
-            $sql.= " AND foo.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
+            $sql.= " AND foo.niv_val_regionale IN ( ".$this->validite_niveaux_grand_public." )";
         }
 
         if( $response == 'sql' )
@@ -711,7 +716,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
     public function writeDee($output=null){
 
         // Create temporary file name
-        $path = '/tmp/' . time() . session_id() . '.dee.tmp';
+        $path = '/tmp/'.time().session_id().'.dee.tmp';
         $fp = fopen($path, 'w');
         fwrite($fp, '');
         fclose($fp);
@@ -729,7 +734,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
             and !empty($this->queryFilters['geom'])
         ){
             $v = $this->params['geom'];
-            $geoFilter= ', (SELECT ST_Transform( ST_GeomFromText(' . $cnx->quote($v) . ', 4326), '. $this->srid .') AS fgeom';
+            $geoFilter= ', (SELECT ST_Transform( ST_GeomFromText('.$cnx->quote($v).', 4326), '.$this->srid.') AS fgeom';
             $geoFilter.= ' ) AS fg
             ';
         }
@@ -762,23 +767,23 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         );
         $tpl->assign($assign);
         $header = $tpl->fetch('occtax~export_dee_header');
-        $headerfile = '/tmp/' . time() . session_id() . '.dee.header';
+        $headerfile = '/tmp/'.time().session_id().'.dee.header';
         jFile::write($headerfile, $header);
 
         // Footer
-        $footerfile = '/tmp/' . time() . session_id() . '.dee.footer';
+        $footerfile = '/tmp/'.time().session_id().'.dee.footer';
         jFile::write($footerfile, '
         </gml:FeatureCollection>');
 
         // Use bash to concatenate
         if(!$output){
-            $output = '/tmp/' . time() . session_id() . '.xml';
+            $output = '/tmp/'.time().session_id().'.xml';
         }
         try{
-            exec('cat "'. $headerfile.'" "'. $path .'" "'. $footerfile .'" > "'.$output . '"');
+            exec('cat "'.$headerfile.'" "'.$path.'" "'.$footerfile.'" > "'.$output.'"');
         }catch ( Exception $e ) {
             jLog::log( $e->getMessage(), 'error' );
-            echo $e->getMessage() . "\n";
+            echo $e->getMessage()."\n";
         }
 
         try{
@@ -787,7 +792,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
             unlink($footerfile);
         }catch ( Exception $e ) {
             jLog::log( $e->getMessage(), 'error' );
-            echo $e->getMessage() . "\n";
+            echo $e->getMessage()."\n";
         }
         if(file_exists($output)){
             return $output;
@@ -798,4 +803,3 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
     }
 
 }
-

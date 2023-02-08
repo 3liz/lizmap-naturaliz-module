@@ -20,7 +20,6 @@ FROM (
   to_char(date_debut, 'YYYY-MM-DD') AS date_debut
   FROM   occtax.observation  AS o
   WHERE True
-  -- AND o.validite_niveau IN ( '1', '2' )
 )
  AS f
  LEFT JOIN taxon.taxref_consolide AS t ON t.cd_nom = f.cd_nom

@@ -74,24 +74,13 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
                 'required' => True,
                 'multi' => True,
                 'join' => ' JOIN ',
-                'joinClause' => ' ON m.code_maille = code_' . $this->maille . '_unique',
+                'joinClause' => ' ON m.code_maille = code_'.$this->maille.'_unique',
                 'returnFields' => array(
                     'count(o.cle_obs) AS nbobs'=> Null,
                     'count(DISTINCT o.cd_ref) AS nbtax' => Null
                 )
             ),
 
-            // Need to join the v_observation_champs_validation view to get updated validation
-            // we do not use validation_observation because the trigger should update observation accordingly
-            // for ech_val = '2'
-            'occtax.v_observation_champs_validation' => array(
-                'alias' => 'oo',
-                'required' => False,
-                'join' => ' JOIN ',
-                'joinClause' => "
-                    ON oo.identifiant_permanent = o.identifiant_permanent ",
-                'returnFields' => array(),
-            ),
         );
 
         // Get maille type (1 or 2)
@@ -123,7 +112,7 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
             $x++;
         }
         $sqlr.= "
-                ELSE " . $this->legend_max_radius . "
+                ELSE ".$this->legend_max_radius."
             END * $m AS rayon";
         $this->querySelectors['sig.'.$this->maille]['returnFields'][$sqlr] = array();
 
@@ -163,7 +152,7 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
                 $question.= " OR o.diffusion ? 'm10' ";
             }
 
-            $sql.= $question . ')';
+            $sql.= $question.')';
         }
         return $sql;
 
@@ -177,4 +166,3 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
     }
 
 }
-

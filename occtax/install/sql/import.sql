@@ -342,7 +342,6 @@ VALUES
 ('obs_profondeur_max_format', 'Le format de <b>profondeur_max</b> est incorrect. Attendu: numérique' , $$occtax.is_given_type(profondeur_max, 'real')$$, 'format'),
 ('obs_profondeur_moy_format', 'Le format de <b>profondeur_moy</b> est incorrect. Attendu: numérique' , $$occtax.is_given_type(profondeur_moy, 'real')$$, 'format'),
 ('obs_sensi_date_attribution_format', 'Le format de <b>sensi_date_attribution</b> est incorrect. Attendu: date JJ/MM/AAAA' , $$occtax.is_given_type(sensi_date_attribution, 'date')$$, 'format'),
-('obs_validite_niveau_format', 'Le format de <b>validite_niveau</b> est incorrect. Attendu: entier' , $$occtax.is_given_type(validite_niveau, 'integer')$$, 'format'),
 ('obs_validite_date_validation_format', 'Le format de <b>validite_date_validation</b> est incorrect. Attendu: date' , $$occtax.is_given_type(validite_date_validation, 'date')$$, 'format'),
 ('obs_longitude_format', 'Le format de <b>longitude</b> est incorrect. Attendu: numérique' , $$occtax.is_given_type(longitude, 'real')$$, 'format'),
 ('obs_latitude_format', 'Le format de <b>latitude</b> est incorrect. Attendu: numérique' , $$occtax.is_given_type(latitude, 'real')$$, 'format'),
@@ -401,8 +400,6 @@ VALUES
 ('obs_determinateurs_valide', 'La valeur de <b>determinateurs</b> n''est pas conforme', 'Le champ <b>determinateurs</b> doit être rempli si le cd_nom est rempli', $$(cd_nom IS NULL OR ( cd_nom IS NOT NULL AND determinateurs IS NOT NULL))$$, 'conforme'),
 ('obs_determinateurs_valide_format', 'La valeur de <b>determinateurs</b> n''est pas conforme', 'Le champ <b>determinateurs</b> doit être du type: NOM Prénom (Organisme 1), AUTRE-NOM Prénoms-Composé (Organisme 2), INCONNU (Indépendant)', $$(occtax.is_valid_identite_multiple(determinateurs))$$, 'conforme'),
 ('obs_nature_objet_geo_valide', 'La valeur de <b>nature_objet_geo</b> n''est pas conforme', 'Le champ <b>nature_objet_geo</b> peut prendre les valeurs: In, St, NSP', $$(geom IS NOT NULL AND (nature_objet_geo = ANY (ARRAY['St'::text, 'In'::text, 'NSP'::text])) OR geom IS NULL)$$, 'conforme'),
--- validite_niveau
-('obs_validite_niveau_valide', 'La valeur de <b>validite_niveau<b> n''est pas conforme', 'Le champ <b>validite_niveau</b> peut prendre les valeurs: 1 à 6', $$(validite_niveau IS NULL OR (validite_niveau IS NOT NULL AND validite_niveau IN ('1', '2', '3', '4', '5', '6')))$$, 'conforme'),
 
 -- géométrie dans les mailles 10x10km
 ('obs_geometrie_localisation_dans_maille', 'Les <b>géométries</b> ne sont pas conformes', 'Les <b>géométries</b> doivent être à l''intérieur des mailles 10x10km.' , $$occtax.intersects_maille_10(longitude::real, latitude::real)$$, 'conforme')
@@ -465,7 +462,7 @@ BEGIN
                     ),
                     %1$s
                 ), ST_MakePoint(0, 0)) = Coalesce(o.geom, ST_MakePoint(0, 0))
-        )
+            )
         WHERE o.cle_obs IS NOT NULL
     '
     ;
@@ -618,9 +615,6 @@ BEGIN
         sensi_referentiel,
         sensi_version_referentiel,
 
-        validite_niveau,
-        validite_date_validation,
-
         descriptif_sujet,
         donnee_complementaire,
 
@@ -711,15 +705,6 @@ BEGIN
         s.sensi_niveau::text,
         s.sensi_referentiel,
         s.sensi_version_referentiel,
-
-        CASE
-            WHEN s.validite_niveau::integer BETWEEN 1 AND 6 THEN s.validite_niveau::text
-            ELSE ''6''
-        END AS validite_niveau,
-        CASE
-            WHEN s.validite_date_validation IS NOT NULL THEN s.validite_date_validation::date
-            ELSE now()::date
-        END AS validite_date_validation,
 
         NULL descriptif_sujet,
         NULL AS donnee_complementaire,
@@ -1210,7 +1195,6 @@ dee_floutage, diffusion_niveau_precision, ds_publique,
 jdd_metadonnee_dee_id,
 statut_source, reference_biblio,
 sensible, sensi_date_attribution, sensi_niveau, sensi_referentiel, sensi_version_referentiel,
-validite_niveau, validite_date_validation,
 precision_geometrie, nature_objet_geo,
 (ST_Centroid(geom))::geometry(point, {$SRID}) AS geom,
 (odata->>'import_time')::timestamp(0) AS date_import,
@@ -1381,23 +1365,24 @@ BEGIN
         );
 	ELSEIF action_name = 'delete_jdd_observations' THEN
         datasource:= format('
-		WITH jdd_source AS (
-            SELECT *
-            FROM occtax.jdd
-            WHERE jdd_id = %1$s
-        ),
-        delete_obs AS (
+		WITH delete_obs AS (
             DELETE
             FROM occtax.observation
             WHERE jdd_metadonnee_dee_id IN (
                 SELECT jdd_metadonnee_dee_id
-                FROM jdd_source
+                FROM occtax.jdd
+                WHERE jdd_id::text = %1$s::text
             )
-		)
+		),
+        jdd_source AS (
+            SELECT *
+            FROM occtax.jdd
+            WHERE jdd_id::text = %1$s::text
+        )
         SELECT
         1 AS id,
         ''Les observations du JDD "'' || j.jdd_code ||''" ont bien été supprimées'' AS message,
-        NULL AS geom,
+        NULL AS geom
 		FROM delete_obs AS d, jdd_source AS j
         ',
         feature_id

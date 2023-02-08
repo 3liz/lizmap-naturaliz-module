@@ -1293,7 +1293,7 @@ WHERE t.cd_nom = synthese_taxvern_13.cd_nom
 -- 6. Vérification :
 -----------------------------
 -- On vérifie à la fin que chaque obs a bien une correspondance dans taxref_valide
-SELECT cle_obs, o.cd_nom, o.cd_ref, o.nom_cite, o.jdd_code, o.validite_niveau
+SELECT cle_obs, o.cd_nom, o.cd_ref, o.nom_cite, o.jdd_code
 FROM occtax.observation o
 LEFT JOIN (
 SELECT cd_nom, cd_ref FROM taxon.taxref UNION SELECT cd_nom, cd_ref FROM taxref_local
@@ -1453,8 +1453,10 @@ COPY (
                 SELECT cd_ref,
                                 max(COALESCE(date_fin, date_debut)) AS date_derniere_obs,
                                 count(cle_obs) AS nb_obs
-                FROM observation
-                WHERE validite_niveau IN ('1', '2') AND statut_observation = 'Pr'
+                FROM observation AS ob
+                INNER JOIN occtax.validation_observation AS vo
+                        ON ech_val = '2' AND vo.identifiant_permanent = ob.identifiant_permanent
+                WHERE vo.niv_val IN ('1', '2') AND ob.statut_observation = 'Pr'
                 GROUP BY cd_ref
 
                 ),stats_completes AS (
@@ -1638,4 +1640,3 @@ DROP TABLE IF EXISTS taxon.protections ;
 DROP TABLE IF EXISTS taxon.menaces ;
 DROP TABLE taxon.invasibilite_flore_reu ;
 DROP TABLE taxon.invasibilite_faune_reu ;
-

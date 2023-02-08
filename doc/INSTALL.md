@@ -1,7 +1,7 @@
 # Installation des modules Naturaliz pour Lizmap
 
-Pour pouvoir installer l'application Naturaliz, vous devez au préalable avoir installé un serveur cartographique basé sur Lizmap. 
-Vous pouvez pour cela utiliser les script de déploiement automatique **lizmap-box** pour cela. Nous considérons dans la suite de 
+Pour pouvoir installer l'application Naturaliz, vous devez au préalable avoir installé un serveur cartographique basé sur Lizmap.
+Vous pouvez pour cela utiliser les script de déploiement automatique **lizmap-box** pour cela. Nous considérons dans la suite de
 ce document que Lizmap Web Client a été installé et est fonctionnel.
 
 Il faut au minimum Lizmap 3.4.
@@ -68,8 +68,8 @@ cp lizmap/lizmap-modules/occtax/install/config/naturaliz.ini.php.dist lizmap/var
 
 ### Adapter les fichiers de configuration pour Lizmap
 
-L'installateur lit certains fichiers de configuration, que vous devez donc créer 
-et adapter à votre environnement avant de lancer l'installation. Des fichiers 
+L'installateur lit certains fichiers de configuration, que vous devez donc créer
+et adapter à votre environnement avant de lancer l'installation. Des fichiers
 exemples sont fournis, que vous pouvez copier avant de les modifier.
 
 #### Configuration locale
@@ -92,6 +92,7 @@ Les modules Naturaliz lisent dans le fichier **lizmap/var/config/naturaliz.ini.p
 * La **liste des champs à afficher ou à exporter** dans la fiche d'observation (détail) et l'export en CSV ou WFS: **observation_card_fields**, **observation_card_fields_unsensitive**, **observation_card_children**, **observation_exported_fields** **observation_exported_fields_unsensitive**, **observation_exported_children**
 * L'ordre d'affichage des items dans la barre de menu de gauche: **menuOrder**. Par exemple `menuOrder=home, occtax-presentation, switcher, occtax, dataviz, print, measure, permaLink, occtax-legal, taxon, metadata`
 * liste des menaces à afficher respectivement dans le formulaire de recherche, l'icône menace à côté du nom de taxon, et dans le tableau des statistiques des taxons `search_form_menace_fields`, `taxon_detail_menace` et `taxon_table_menace_fields`
+* Échelle de validation sur laquelle faire la recherche: **search_form_validation_echelle**. Une valeur entre '1' (producteur), '2' (régionale), et '3' (nationale). Par exemple `search_form_validation_echelle="2"`
 * utilisateur PostgreSQL avec accès en lecture seule: **dbuser_readonly**. Par exemple `dbuser_readonly=naturaliz`
 * utilisateur PostgreSQL avec propriété sur les objets: **dbuser_owner**. Par exemple `dbuser_owner=lizmap`
 * Échelle maximum où zoomer avec le bouton de zoom par observation: **maximum_observation_scale**. Par exemple `maximum_observation_scale=24000`
@@ -166,7 +167,7 @@ legend_min_radius=100
 legend_max_radius=410
 
 ; liste blanche des champs à afficher dans la fiche d'observation
-observation_card_fields="cle_obs, dee_date_derniere_modification, identifiant_permanent, statut_observation, nom_cite, lb_nom_valide, nom_vern, cd_nom, group2_inpn, famille, loc, menace_regionale, protection, denombrement_min, denombrement_max, objet_denombrement, commentaire, date_debut, date_fin, date_determination, ds_publique, jdd_metadonnee_dee_id, organisme_gestionnaire_donnees, statut_source, sensi_niveau, observateur, determinateur, validateur, descriptif_sujet, obs_methode, occ_denombrement_min, occ_denombrement_max, occ_type_denombrement, occ_objet_denombrement, occ_etat_biologique, occ_naturalite, occ_sexe, occ_stade_de_vie, occ_statut_biologique, obs_contexte, obs_description, occ_methode_determination, validite_niveau, validite_date_validation, precision_geometrie"
+observation_card_fields="cle_obs, dee_date_derniere_modification, identifiant_permanent, statut_observation, nom_cite, lb_nom_valide, nom_vern, cd_nom, group2_inpn, famille, loc, menace_regionale, protection, denombrement_min, denombrement_max, objet_denombrement, commentaire, date_debut, date_fin, date_determination, ds_publique, jdd_metadonnee_dee_id, organisme_gestionnaire_donnees, statut_source, sensi_niveau, observateur, determinateur, validateur, descriptif_sujet, obs_methode, occ_denombrement_min, occ_denombrement_max, occ_type_denombrement, occ_objet_denombrement, occ_etat_biologique, occ_naturalite, occ_sexe, occ_stade_de_vie, occ_statut_biologique, obs_contexte, obs_description, occ_methode_determination, niv_val_regionale, date_ctrl_regionale, validateur_regionale, precision_geometrie"
 
 ; liste blanche des champs à afficher pour le grand public dans la fiche
 observation_card_fields_unsensitive=cle_obs, identifiant_permanent, statut_source, nom_cite, date_debut, date_fin, organisme_gestionnaire_donnees, source_objet, code_commune, code_departement, code_maille_10
@@ -176,7 +177,7 @@ observation_card_fields_unsensitive=cle_obs, identifiant_permanent, statut_sourc
 observation_card_children=commune, departement, maille_01, maille_02, maille_10, espace_naturel, masse_eau, habitat
 
 ; liste blanche des champs à exporter
-observation_exported_fields="cle_obs, identifiant_permanent, identifiant_origine, statut_observation, cd_nom, cd_ref, version_taxref, nom_cite, lb_nom_valide, nom_valide, nom_vern, group1_inpn, group2_inpn, famille, loc, menace_regionale, protection, denombrement_min, denombrement_max, type_denombrement, objet_denombrement, commentaire, date_debut, heure_debut, date_fin, heure_fin, altitude_moy, profondeur_moy, date_determination, ds_publique, jdd_metadonnee_dee_id, dee_date_derniere_modification, jdd_code, reference_biblio, organisme_gestionnaire_donnees, statut_source, sensi_niveau, observateur, determinateur, validateur, descriptif_sujet, validite_niveau, validite_date_validation, precision_geometrie, nature_objet_geo, wkt"
+observation_exported_fields="cle_obs, identifiant_permanent, identifiant_origine, statut_observation, cd_nom, cd_ref, version_taxref, nom_cite, lb_nom_valide, nom_valide, nom_vern, group1_inpn, group2_inpn, famille, loc, menace_regionale, protection, denombrement_min, denombrement_max, type_denombrement, objet_denombrement, commentaire, date_debut, heure_debut, date_fin, heure_fin, altitude_moy, profondeur_moy, date_determination, ds_publique, jdd_metadonnee_dee_id, dee_date_derniere_modification, jdd_code, reference_biblio, organisme_gestionnaire_donnees, statut_source, sensi_niveau, observateur, determinateur, validateur, descriptif_sujet, niv_val_regionale, date_ctrl_regionale, validateur_regionale, precision_geometrie, nature_objet_geo, wkt"
 
 ; liste blanche des champs à exporter pour le grand public
 observation_exported_fields_unsensitive=cle_obs, identifiant_permanent, statut_source, nom_cite, date_debut, date_fin, organisme_gestionnaire_donnees, source_objet, code_commune, code_departement, code_maille_10, wkt
@@ -196,6 +197,9 @@ taxon_detail_nom_menace=menace_nationale
 
 ; liste des champs menaces à afficher dans le formulaire de recherche
 search_form_menace_fields=menace_nationale, menace_monde
+
+; échelle de validation sur laquelle faire la recherche
+search_form_validation_echelle="2"
 
 ; ordre des items de menu Lizmap (barre de menu de gauche)
 menuOrder=home, occtax-presentation, switcher, occtax, dataviz, print, measure, permaLink, occtax-legal, taxon, metadata

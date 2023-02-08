@@ -745,26 +745,88 @@ Pas d'individu décrit
         </tr>
         {/if}
 
-        {if array_key_exists('validite_niveau', $data)}
+        <!-- Validation producteur -->
+        {if array_key_exists('niv_val_producteur', $data)}
         <tr>
-            <th>{@occtax~observation.output.validite_niveau@}</th>
+            <th>{@occtax~observation.output.niv_val_producteur@}</th>
             <td>
-                {if array_key_exists('validite_niveau' . '|' . $data['validite_niveau'], $nomenclature) }
-                {assign $k = 'validite_niveau' . '|' . $data['validite_niveau']}
-                <span class="niv_val n{$data['validite_niveau']}">{$nomenclature[$k]}</span>
+                {if array_key_exists('niv_val_producteur' . '|' . $data['niv_val_producteur'], $nomenclature) }
+                {assign $k = 'niv_val_producteur' . '|' . $data['niv_val_producteur']}
+                <span class="niv_val n{$data['niv_val_producteur']}">{$nomenclature[$k]}</span>
                 {else}
-                <span class="niv_val n{$data['validite_niveau']}">{$data['validite_niveau']}</span>
+                <span class="niv_val n{$data['niv_val_producteur']}">{$data['niv_val_producteur']}</span>
                 {/if}
             </td>
         </tr>
         {/if}
-
-        {if array_key_exists('validite_date_validation', $data)}
+        {if array_key_exists('date_ctrl_producteur', $data)}
         <tr>
-            <th>{@occtax~observation.output.validite_date_validation@}</th>
-            <td>{$data['validite_date_validation']|jdatetime:'db_date'}</td>
+            <th>{@occtax~observation.output.date_ctrl_producteur@}</th>
+            <td>{$data['date_ctrl_producteur']|jdatetime:'db_date'}</td>
         </tr>
         {/if}
+        {if array_key_exists('validateur_producteur', $data)}
+        <tr>
+            <th>{@occtax~observation.output.validateur_producteur@}</th>
+            <td>{$data['validateur_producteur']}</td>
+        </tr>
+        {/if}
+
+        <!-- Validation regionale -->
+        {if array_key_exists('niv_val_regionale', $data)}
+        <tr>
+            <th>{@occtax~observation.output.niv_val_regionale@}</th>
+            <td>
+                {if array_key_exists('niv_val_regionale' . '|' . $data['niv_val_regionale'], $nomenclature) }
+                {assign $k = 'niv_val_regionale' . '|' . $data['niv_val_regionale']}
+                <span class="niv_val n{$data['niv_val_regionale']}">{$nomenclature[$k]}</span>
+                {else}
+                <span class="niv_val n{$data['niv_val_regionale']}">{$data['niv_val_regionale']}</span>
+                {/if}
+            </td>
+        </tr>
+        {/if}
+        {if array_key_exists('date_ctrl_regionale', $data)}
+        <tr>
+            <th>{@occtax~observation.output.date_ctrl_regionale@}</th>
+            <td>{$data['date_ctrl_regionale']|jdatetime:'db_date'}</td>
+        </tr>
+        {/if}
+        {if array_key_exists('validateur_regionale', $data)}
+        <tr>
+            <th>{@occtax~observation.output.validateur_regionale@}</th>
+            <td>{$data['validateur_regionale']}</td>
+        </tr>
+        {/if}
+
+        <!-- Validation nationale -->
+        {if array_key_exists('niv_val_nationale', $data)}
+        <tr>
+            <th>{@occtax~observation.output.niv_val_nationale@}</th>
+            <td>
+                {if array_key_exists('niv_val_nationale' . '|' . $data['niv_val_nationale'], $nomenclature) }
+                {assign $k = 'niv_val_nationale' . '|' . $data['niv_val_nationale']}
+                <span class="niv_val n{$data['niv_val_nationale']}">{$nomenclature[$k]}</span>
+                {else}
+                <span class="niv_val n{$data['niv_val_nationale']}">{$data['niv_val_nationale']}</span>
+                {/if}
+            </td>
+        </tr>
+        {/if}
+        {if array_key_exists('date_ctrl_nationale', $data)}
+        <tr>
+            <th>{@occtax~observation.output.date_ctrl_nationale@}</th>
+            <td>{$data['date_ctrl_nationale']|jdatetime:'db_date'}</td>
+        </tr>
+        {/if}
+        {if array_key_exists('validateur_nationale', $data)}
+        <tr>
+            <th>{@occtax~observation.output.validateur_nationale@}</th>
+            <td>{$data['validateur_nationale']}</td>
+        </tr>
+        {/if}
+
+
     </table>
 </div>
 

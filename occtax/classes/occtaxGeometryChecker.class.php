@@ -14,6 +14,8 @@ class occtaxGeometryChecker {
     protected $y = Null;
     protected $srid = Null;
     protected $moduleName = Null;
+    protected $code = Null;
+    protected $type_maille = Null;
 
     function __construct($x, $y, $srid, $moduleName, $type_maille=null, $code=Null){
 
@@ -155,7 +157,6 @@ class occtaxGeometryChecker {
                 $sql.= ', (SELECT ST_Transform(ST_SetSRID(ST_MakePoint('.$this->x.', '.$this->y.'),4326), '. $this->srid .') as geom) as tgeo';
             }
             $sql.= ', occtax.observation o';
-            $sql.= ' JOIN occtax.observation_diffusion od ON od.cle_obs = o.cle_obs';
             $sql.= ' WHERE True';
             if ($this->x) {
                 $sql.= ' AND ST_Within( tgeo.geom, m.geom )';
@@ -164,7 +165,9 @@ class occtaxGeometryChecker {
                 $sql.= ' AND m.code_maille = ' . $cnx->quote($this->code);
             }
             $sql.= ' AND ST_Intersects( o.geom, m.geom )';
-            $sql.= " AND ( od.diffusion ? 'g' OR od.diffusion ? '" . $this->type_maille . "' )";
+            $sql.= " AND ( occtax.calcul_diffusion(o.sensi_niveau, o.ds_publique, o.diffusion_niveau_precision) ? 'g'
+            OR
+            occtax.calcul_diffusion(o.sensi_niveau, o.ds_publique, o.diffusion_niveau_precision) ? '" . $this->type_maille . "' )";
         }
 
 // jLog::log($sql, 'error');

@@ -68,9 +68,6 @@ class occtaxImport
         'sensi_referentiel',
         'sensi_version_referentiel',
 
-        'validite_niveau',
-        'validite_date_validation',
-
         'longitude',
         'latitude',
         'precision_geometrie',
@@ -134,7 +131,7 @@ class occtaxImport
 
         // Set the temporary table name
         $time = time();
-        $this->temporary_table = 'temp_' . $time;
+        $this->temporary_table = 'temp_'.$time;
     }
 
     /**
@@ -184,7 +181,7 @@ class occtaxImport
 
         if (count($missing_mandatory_fields) > 0) {
             $message = jLocale::get("occtax~import.csv.mandatory.fields.missing");
-            $message .= ': ' . implode(', ', $missing_mandatory_fields);
+            $message .= ': '.implode(', ', $missing_mandatory_fields);
             $status = false;
             return array($status, $message);
         }
@@ -282,7 +279,7 @@ class occtaxImport
         $params = array();
 
         // Drop tables
-        $sql = 'DROP TABLE IF EXISTS "' . $this->temporary_table . '_source", "' . $this->temporary_table . '_target"';
+        $sql = 'DROP TABLE IF EXISTS "'.$this->temporary_table.'_source", "'.$this->temporary_table.'_target"';
         $params = array();
         $data = $this->query($sql, $params);
 
@@ -292,11 +289,11 @@ class occtaxImport
             'target' => $this->target_fields,
         );
         foreach ($tables as $name => $columns) {
-            $sql = 'CREATE TABLE "' . $this->temporary_table . '_' . $name . '" (';
+            $sql = 'CREATE TABLE "'.$this->temporary_table.'_'.$name.'" (';
             $sql .= ' temporary_id serial';
             $comma = ',';
             foreach ($columns as $column) {
-                $sql .= $comma . '"' . $column . '" text';
+                $sql .= $comma.'"'.$column.'" text';
             }
             if (preg_match('/"odata" text/', $sql)) {
                 // Replace odata type text into json
@@ -334,11 +331,11 @@ class occtaxImport
         try {
             // Loop through each CSV data line
             foreach ($multiple_params as $params) {
-                $sql = ' INSERT INTO "' . $table . '_source"';
+                $sql = ' INSERT INTO "'.$table.'_source"';
                 $sql .= '(';
                 $comma = '';
                 foreach ($this->header as $column) {
-                    $sql .= $comma . '"' . $column . '"';
+                    $sql .= $comma.'"'.$column.'"';
                     $comma = ', ';
                 }
                 $sql .= ')';
@@ -346,7 +343,7 @@ class occtaxImport
                 $comma = '';
                 $i = 1;
                 foreach ($this->header as $column) {
-                    $sql .= $comma . 'Nullif(Nullif(trim($' . $i . "), ''), 'NULL')";
+                    $sql .= $comma.'Nullif(Nullif(trim($'.$i."), ''), 'NULL')";
                     $comma = ', ';
                     $i++;
                 }
@@ -400,14 +397,14 @@ class occtaxImport
         $status = true;
 
         // Insert the CSV data into the source temporary table
-        $sql = 'INSERT INTO "' . $this->temporary_table . '_target"';
+        $sql = 'INSERT INTO "'.$this->temporary_table.'_target"';
         $sql .= ' (';
         $comma = '';
         $fields = '';
 
         // Corresponding fields
         foreach ($this->corresponding_fields as $column) {
-            $fields .= $comma . '"' . $column . '"';
+            $fields .= $comma.'"'.$column.'"';
             $comma = ', ';
         }
         $sql .= $fields;
@@ -424,7 +421,7 @@ class occtaxImport
             $comma = '';
             $sql_add = ', json_build_object(';
             foreach ($this->additional_fields as $column) {
-                $sql_add .= $comma . "'" . $column ."', " . '"' . $column . '"';
+                $sql_add .= $comma."'".$column."', ".'"'.$column.'"';
                 $comma = ', ';
             }
             $sql_add .= ")";
@@ -433,7 +430,7 @@ class occtaxImport
             $sql .= ', NULL::json';
         }
 
-        $sql .= ' FROM "' . $this->temporary_table . '_source"';
+        $sql .= ' FROM "'.$this->temporary_table.'_source"';
         $sql .= ';';
 
         $params = array();
@@ -471,7 +468,7 @@ class occtaxImport
         $sql .= ' WHERE nb_lines > 0';
         $sql .= ' ';
         $params = array(
-            $this->temporary_table . '_target',
+            $this->temporary_table.'_target',
             $type_conformite,
         );
         $data = $this->query($sql, $params);
@@ -505,7 +502,7 @@ class occtaxImport
             $jdd_uid = '__ALL__';
         }
         $params = array(
-            $this->temporary_table . '_target',
+            $this->temporary_table.'_target',
             $jdd_uid,
         );
         $check_duplicate = $this->query($sql, $params);
@@ -536,7 +533,7 @@ class occtaxImport
             $4, $5, $6
         )';
         $params = array(
-            $this->temporary_table . '_target',
+            $this->temporary_table.'_target',
             $login, $jdd_uid,
             $organisme_gestionnaire_donnees, $org_transformation, $organisme_standard
         );
@@ -580,7 +577,7 @@ class occtaxImport
             $8
         )';
         $params = array(
-            $this->temporary_table . '_target',
+            $this->temporary_table.'_target',
             $login, $jdd_uid,
             $default_email,
             $libelle_import, $date_reception, $remarque_import,
@@ -614,7 +611,7 @@ class occtaxImport
         $sql = ' SELECT *';
         $sql .= ' FROM occtax.import_supprimer_observations_importees($1, $2)';
         $params = array(
-            $this->temporary_table . '_target',
+            $this->temporary_table.'_target',
             $jdd_uid,
         );
         $result = $this->query($sql, $params);
@@ -638,8 +635,8 @@ class occtaxImport
         unlink($this->csv_file);
 
         // Drop the temporary table
-        $sql = 'DROP TABLE IF EXISTS "' . $this->temporary_table . '_source"';
-        $sql .= ', "' . $this->temporary_table . '_target"';
+        $sql = 'DROP TABLE IF EXISTS "'.$this->temporary_table.'_source"';
+        $sql .= ', "'.$this->temporary_table.'_target"';
         // \jLog::log($this->temporary_table . '_target"');
         $params = array();
         $data = $this->query($sql, $params);

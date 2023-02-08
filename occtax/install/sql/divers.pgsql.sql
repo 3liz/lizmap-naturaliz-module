@@ -379,8 +379,6 @@ BEGIN
                     , '' ; ''
                     ) AS detail_individus,
                 string_agg(DISTINCT p.identite, '' - '' ORDER BY p.identite) AS observateurs,
-                o.validite_niveau,
-                o.validite_date_validation,
                 o.dee_date_derniere_modification::DATE,
                 max(i.date_import) AS dernier_import
         FROM occtax.observation o
@@ -452,16 +450,6 @@ BEGIN
                 ELSE CONCAT(s.detail_individus, '' | '', c.detail_individus)
             END AS detail_individus,
 
-            CASE WHEN s.validite_niveau = c.validite_niveau
-                THEN CONCAT(''Même niveau'', '' ('', s.validite_niveau, '')'')
-                ELSE CONCAT(s.validite_niveau, '' | '', c.validite_niveau)
-            END AS validite_niveau,
-
-            CASE WHEN s.validite_date_validation = c.validite_date_validation
-                THEN s.validite_date_validation::TEXT
-                ELSE CONCAT(s.validite_date_validation, '' | '', c.validite_date_validation)
-            END AS validite_date_validation,
-
             CASE WHEN s.dernier_import = c.dernier_import
                 THEN s.dernier_import::TEXT
                 ELSE CONCAT(s.dernier_import, '' | '', c.dernier_import)
@@ -492,7 +480,7 @@ BEGIN
 
     sql_group_by = '
     GROUP BY    s.jdd_code, c.jdd_code, s.jdd_id, c.jdd_id, s.cle_obs, c.cle_obs, c.identifiant_origine, s.identifiant_origine, s.identifiant_permanent, c.identifiant_permanent, c.organisme_gestionnaire_donnees, s.organisme_gestionnaire_donnees,
-    c.date_debut, t.nom_valide, t.group2_inpn, t.nom_vern, c.observateurs, s.observateurs, c.dernier_import, s.dernier_import, c.dee_date_derniere_modification, s.dee_date_derniere_modification, c.validite_niveau, s.validite_niveau, c.validite_date_validation, s.validite_date_validation, s.denombrement_min, c.denombrement_min, s.geom, c.geom, s.detail_individus, c.detail_individus
+    c.date_debut, t.nom_valide, t.group2_inpn, t.nom_vern, c.observateurs, s.observateurs, c.dernier_import, s.dernier_import, c.dee_date_derniere_modification, s.dee_date_derniere_modification, s.denombrement_min, c.denombrement_min, s.geom, c.geom, s.detail_individus, c.detail_individus
     ORDER BY s.identifiant_origine, c.identifiant_origine, st_distance(s.geom, c.geom)::NUMERIC(10,1) --  Finalement, on trie par id pour pouvoir mieux gérer les triplons, étant donné que de toutes façons on définit une distance max en paramètre dans la fonction.
     ' ;
 
@@ -502,7 +490,7 @@ BEGIN
             '
                 )
             --Insertion
-            INSERT INTO divers.controle_doublons(jdd_code, jdd_id, organisme_gestionnaire_donnees, cle_obs, identifiant_origine, identifiant_permanent, nb_obs, distance_geom_m, group2_inpn, nom_valide, nom_vern, date_debut, observateurs, denombrement_total, detail_individus, validite_niveau, validite_date_validation, dernier_import, dee_date_derniere_modification)
+            INSERT INTO divers.controle_doublons(jdd_code, jdd_id, organisme_gestionnaire_donnees, cle_obs, identifiant_origine, identifiant_permanent, nb_obs, distance_geom_m, group2_inpn, nom_valide, nom_vern, date_debut, observateurs, denombrement_total, detail_individus, dernier_import, dee_date_derniere_modification)
 
             -- On prend déjà les obs a priori complétement identiques
             SELECT jdd_code, jdd_id, organisme_gestionnaire_donnees,
@@ -524,12 +512,12 @@ BEGIN
                 string_agg(DISTINCT identifiant_permanent_cible, '','' ORDER BY identifiant_permanent_cible)
                 )AS identifiant_permanent,
             COUNT(DISTINCT cle_obs_cible) + COUNT(DISTINCT cle_obs_source) AS nb_obs,
-            distance_geom_m, group2_inpn, nom_valide, nom_vern, date_debut, observateurs, denombrement_total, detail_individus, validite_niveau, validite_date_validation, dernier_import, dee_date_derniere_modification
+            distance_geom_m, group2_inpn, nom_valide, nom_vern, date_debut, observateurs, denombrement_total, detail_individus, dernier_import, dee_date_derniere_modification
 
             FROM liste_doublons_brute
             WHERE observateurs ILIKE ''Même%%'' AND denombrement_total ILIKE ''Même%%'' AND detail_individus ILIKE ''Même%%''
 
-            GROUP BY jdd_code, jdd_id, organisme_gestionnaire_donnees, distance_geom_m, group2_inpn, nom_valide, nom_vern, date_debut, observateurs, denombrement_total, detail_individus, validite_niveau, validite_date_validation, dernier_import, dee_date_derniere_modification
+            GROUP BY jdd_code, jdd_id, organisme_gestionnaire_donnees, distance_geom_m, group2_inpn, nom_valide, nom_vern, date_debut, observateurs, denombrement_total, detail_individus, dernier_import, dee_date_derniere_modification
 
             -- Puis on complète par les obs qui présentent certaines différences sur les observateurs, le denombrement ou le détail des individus, qu''on ne regroupe pas
             UNION
@@ -538,7 +526,7 @@ BEGIN
             CONCAT(identifiant_origine_source, '' | '', identifiant_origine_cible) AS identifiant_origine,
             CONCAT(identifiant_permanent_source, '' | '', identifiant_permanent_cible) AS identifiant_permanent,
             2 AS nb_obs,
-            distance_geom_m, group2_inpn, nom_valide, nom_vern, date_debut, observateurs, denombrement_total, detail_individus, validite_niveau, validite_date_validation, dernier_import, dee_date_derniere_modification
+            distance_geom_m, group2_inpn, nom_valide, nom_vern, date_debut, observateurs, denombrement_total, detail_individus, dernier_import, dee_date_derniere_modification
 
             FROM liste_doublons_brute
             WHERE NOT(observateurs ILIKE ''Même%%'' AND denombrement_total ILIKE ''Même%%'' AND detail_individus ILIKE ''Même%%'')
@@ -549,14 +537,14 @@ BEGIN
             '
             )
             --Insertion
-            INSERT INTO divers.controle_doublons(jdd_code, jdd_id, organisme_gestionnaire_donnees, cle_obs, identifiant_origine, identifiant_permanent, nb_obs, distance_geom_m, group2_inpn, nom_valide, nom_vern, date_debut, observateurs, denombrement_total, detail_individus, validite_niveau, validite_date_validation, dernier_import, dee_date_derniere_modification)
+            INSERT INTO divers.controle_doublons(jdd_code, jdd_id, organisme_gestionnaire_donnees, cle_obs, identifiant_origine, identifiant_permanent, nb_obs, distance_geom_m, group2_inpn, nom_valide, nom_vern, date_debut, observateurs, denombrement_total, detail_individus, dernier_import, dee_date_derniere_modification)
 
             SELECT jdd_code, jdd_id, organisme_gestionnaire_donnees,
             CONCAT(cle_obs_source, '' | '', cle_obs_cible) AS cle_obs,
             CONCAT(identifiant_origine_source, '' | '', identifiant_origine_cible) AS identifiant_origine,
             CONCAT(identifiant_permanent_source, '' | '', identifiant_permanent_cible) AS identifiant_permanent,
             2 AS nb_obs,
-            distance_geom_m, group2_inpn, nom_valide, nom_vern, date_debut, observateurs, denombrement_total, detail_individus, validite_niveau, validite_date_validation, dernier_import, dee_date_derniere_modification
+            distance_geom_m, group2_inpn, nom_valide, nom_vern, date_debut, observateurs, denombrement_total, detail_individus,  dernier_import, dee_date_derniere_modification
 
             FROM liste_doublons_brute
 
@@ -777,8 +765,6 @@ CREATE TABLE divers.controle_doublons (
     observateurs text,
     denombrement_total text,
     detail_individus text,
-    validite_niveau text,
-    validite_date_validation text,
     dernier_import text,
     dee_date_derniere_modification text
 );
@@ -958,8 +944,6 @@ CREATE TABLE divers.observation_doublon (
     sensi_niveau text DEFAULT 0 NOT NULL,
     sensi_referentiel text,
     sensi_version_referentiel text,
-    validite_niveau text,
-    validite_date_validation date,
     precision_geometrie integer,
     nature_objet_geo text,
     descriptif_sujet jsonb,
@@ -1049,8 +1033,6 @@ CREATE TABLE divers.observation_hors_zee (
     sensi_niveau text,
     sensi_referentiel text,
     sensi_version_referentiel text,
-    validite_niveau text,
-    validite_date_validation date,
     precision_geometrie integer,
     nature_objet_geo text,
     descriptif_sujet jsonb,

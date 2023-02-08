@@ -56,7 +56,7 @@ class occtaxSearchObservation extends occtaxSearch {
         ',
 
         'validite' => '
-            <span class="niv_val n{$line->validite_niveau}" title="{@occtax~validation.input.niv_val@}: {$line->validite_niveau}" >
+            <span class="niv_val n{$line->niv_val_regionale}" title="{@occtax~validation.input.niv_val@}: {$line->niv_val_regionale}" >
                 {$line->niv_val_text}
             </span>
         ',
@@ -95,25 +95,19 @@ class occtaxSearchObservation extends occtaxSearch {
                 "o.menace_nationale" => Null,
                 "o.menace_monde" => Null,
                 "o.protection" => Null,
-                "'no' AS in_panier" => Null,
-            )
-        ),
 
-        // Need to join the v_observation_champs_validation view to get updated validation
-        // we do not use validation_observation because the trigger should update observation accordingly
-        // for ech_val = '2'
-        'occtax.v_observation_champs_validation' => array(
-            'alias' => 'oo',
-            'required' => True,
-            //'multi' => False,
-            'join' => ' JOIN ',
-            'joinClause' => "
-                ON oo.identifiant_permanent = o.identifiant_permanent ",
-            'returnFields' => array(
-                "oo.validite_niveau"=> Null,
-                "(SELECT dict->>concat('validite_niveau_', Coalesce(oo.validite_niveau, '6'))
-                FROM occtax.v_nomenclature_plat) AS niv_val_text"=> Null,
-            ),
+                // Validation
+                "'no' AS in_panier" => Null,
+                "o.niv_val_producteur" => NULL,
+                "o.validation_producteur->>'date_ctrl' AS date_ctrl_producteur" => Null,
+                "o.niv_val_regionale" => Null,
+                "o.validation_regionale->>'date_ctrl' AS date_ctrl_regionale" => Null,
+                "o.validation_regionale->>'validateur' AS validateur_regionale" => Null,
+                "(SELECT dict->>concat('validite_niveau_', Coalesce(o.niv_val_regionale, '6')) FROM occtax.v_nomenclature_plat) AS niv_val_text"=> Null,
+                "o.niv_val_nationale" => Null,
+                "o.validation_nationale->>'date_ctrl' AS date_ctrl_nationale" => Null,
+
+            )
         ),
 
     );
@@ -220,8 +214,8 @@ class occtaxSearchObservation extends occtaxSearch {
         ),
 
         'validite_niveau' => array (
-            'table' => 'occtax.v_observation_champs_validation',
-            'clause' => ' AND oo.validite_niveau IN ( @ )',
+            'table' => 'occtax.vm_observation',
+            'clause' => " AND niv_val_regionale IN ( @ )",
             'type' => 'string',
             'label'=> array(
                 'dao'=>'occtax~nomenclature',
@@ -392,15 +386,16 @@ class occtaxSearchObservation extends occtaxSearch {
 
         // Validation basket status, added only for people with right
         // Only needed in the observation table result, code 'observation'
-        if (in_array($this->name, array('observation', 'brute')) && $this->login) {
+        // And in the observation card
+        if (in_array($this->name, array('observation', 'brute', 'single', 'export')) && $this->login) {
 
             // If the user can use the validation too, fetch the correct data for in_panier
             if (jAcl2::checkByUser($login, 'validation.online.access' )) {
-                // Remove fake in_panier field
-                unset($this->querySelectors['vm_observation']['returnFields']["'no' AS in_panier"]);
 
+                // Remplacement de la valeur in_panier par une recherche sur la table validation_panier
+                unset($this->querySelectors['occtax.vm_observation']['returnFields']["'no' AS in_panier"]);
                 // Add new table with join parameter to check if observation is in the basket
-                $this->querySelectors['validation_panier'] = array(
+                $this->querySelectors['occtax.validation_panier'] = array(
                     'alias' => 'vp',
                     'required' => True,
                     //'multi' => False,
@@ -420,13 +415,51 @@ class occtaxSearchObservation extends occtaxSearch {
                         <a class="occtax_validation_button datatable" href="#{$action}@{$line->identifiant_permanent}" title="{@occtax~validation.button.validation_basket.$action.help@}"><i class="icon-star{if empty($line->in_panier)}-empty{/if}"></i></a>
                     ';
                 }
+
+                // We must use a JOIN from the v_validation_regionale
+                // To retrieve dynamic data and not use vm_observation
+                // vm_observation
+                // unset($this->querySelectors['occtax.vm_observation']['returnFields']["o.validation_regionale"]);
+                unset($this->querySelectors['occtax.vm_observation']['returnFields']["o.niv_val_regionale"]);
+                unset($this->querySelectors['occtax.vm_observation']['returnFields']["o.validation_regionale->>'date_ctrl' AS date_ctrl_regionale"]);
+                unset($this->querySelectors['occtax.vm_observation']['returnFields']["o.validation_regionale->>'validateur' AS validateur_regionale"]);
+                unset($this->querySelectors['occtax.vm_observation']['returnFields']["(SELECT dict->>concat('validite_niveau_', Coalesce(o.niv_val_regionale, '6')) FROM occtax.v_nomenclature_plat) AS niv_val_text"]);
+                // queryFilters
+                $this->querySelectors['occtax.v_validation_regionale'] = array(
+                    'alias' => 'oo',
+                    'required' => True,
+                    'join' => ' LEFT JOIN ',
+                    'joinClause' => "
+                        ON oo.identifiant_permanent = o.identifiant_permanent ",
+                    'returnFields' => array(
+                        'oo.niv_val_regionale' => Null,
+                        'oo.date_ctrl_regionale' => Null,
+                        "(SELECT dict->>concat('validite_niveau_', Coalesce(oo.niv_val_regionale, '6'))
+                        FROM occtax.v_nomenclature_plat) AS niv_val_text"=> Null,
+                        "(
+                            SELECT concat(
+                                identite,
+                                CASE
+                                    WHEN organisme IS NULL OR organisme = '' THEN ''
+                                    ELSE ' (' || organisme|| ')'
+                                END
+                            ) AS validateur
+                            FROM occtax.v_validateurs AS ovv
+                            WHERE ech_val = '2' AND ovv.identifiant_permanent = oo.identifiant_permanent
+                            LIMIT 1
+
+                        ) AS validateur_regionale" => Null,
+
+                    ),
+                );
+                $this->queryFilters['validite_niveau']['table'] = 'occtax.v_validation_regionale';
+
             }
 
             // Allow validator to see the full name of observers
             // Replace identite_observateur by identite_observateur_non_floute AS identite_observateur
             // todo
         }
-
 
         parent::__construct($token, $params, $demande, $login);
     }
@@ -450,7 +483,7 @@ class occtaxSearchObservation extends occtaxSearch {
 
         if( $format=='html' ){
             $titre = jLocale::get('occtax~search.description.active.filters');
-            $description = "<b>$titre</b> :<br/>" . $description;
+            $description = "<b>$titre</b> :<br/>".$description;
         }
 
         return $description;
@@ -490,7 +523,7 @@ class occtaxSearchObservation extends occtaxSearch {
 
         // Show only validated data for unlogged users
         if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
-            $sql.= " AND o.validite_niveau IN ( ".$this->validite_niveaux_grand_public." )";
+            $sql.= " AND niv_val_regionale IN ( ".$this->validite_niveaux_grand_public." ) ";
         }
 
         return $sql;

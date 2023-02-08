@@ -1,119 +1,111 @@
-
--- Table et fonction pour gérer les vues matérialisées
-CREATE TABLE IF NOT EXISTS occtax.materialized_object_list(
-    ob_id serial NOT NULL PRIMARY KEY,
-    ob_schema text NOT NULL,
-    ob_name text NOT NULL,
-    ob_order smallint NOT NULL
-);
-
-COMMENT ON TABLE occtax.materialized_object_list IS 'Liste des vues matérialisées à rafraîchir via script cron.';
-COMMENT ON COLUMN occtax.materialized_object_list.ob_id IS 'Identifiant unique automatique';
-COMMENT ON COLUMN occtax.materialized_object_list.ob_schema IS 'Schéma de la vue matérialiée';
-COMMENT ON COLUMN occtax.materialized_object_list.ob_name IS 'Nom de la vue matérialisée';
-COMMENT ON COLUMN occtax.materialized_object_list.ob_order IS 'Ordre : l''ordre est important: il faut notamment rafraîchir d''abord les vues matérialisées dont dépendent les autres.';
-
-ALTER TABLE occtax.materialized_object_list DROP CONSTRAINT IF EXISTS materialized_object_list_unique;
-ALTER TABLE occtax.materialized_object_list ADD CONSTRAINT materialized_object_list_unique UNIQUE (ob_schema, ob_name);
-
--- FUNCTION: occtax.manage_materialized_objects(text, boolean, text)
-
--- DROP FUNCTION occtax.manage_materialized_objects(text, boolean, text);
-
-CREATE OR REPLACE FUNCTION occtax.manage_materialized_objects(
-    p_action text,
-    p_cascade boolean,
-    p_object_schema text)
-    RETURNS integer
-    LANGUAGE 'plpgsql'
-
-    COST 100
-    VOLATILE
-AS $BODY$
+-- Fonction pour calculer la diffusion des données
+DROP FUNCTION IF EXISTS occtax.calcul_diffusion(text, text, text) CASCADE;
+CREATE OR REPLACE FUNCTION occtax.calcul_diffusion(sensi_niveau text, ds_publique text, diffusion_niveau_precision text)
+  RETURNS jsonb AS
+$BODY$
 DECLARE
-    sql_template TEXT;
-    sql_text TEXT;
-    _ob_schema text;
-    _ob_name text;
-    _ob_full_type text;
-    _ob_col text;
+    _diffusion jsonb;
 BEGIN
 
-    sql_template:= '';
-    sql_text:= '';
+    _diffusion =
+    CASE
+        --non sensible : précision maximale, sauf si diffusion_niveau_precision est NOT NULL et != 5
+        WHEN sensi_niveau = '0' THEN
+            CASE
+                WHEN ds_publique IN ('Ac', 'Pu', 'Re') THEN '["g", "d", "m10", "m02", "m01", "e", "c", "z"]'::jsonb
+                ELSE
+                    CASE
+                        -- tout sauf geom (diffusion standard régionale)
+                        WHEN diffusion_niveau_precision = 'm01' THEN '["d", "m10", "m02", "m01", "e", "c", "z"]'::jsonb
 
-    -- Loop through views to create
-    FOR
-        _ob_schema, _ob_name
-    IN
-        SELECT
-        ob_schema, ob_name
-        FROM occtax.materialized_object_list
-        WHERE ob_schema = p_object_schema OR p_object_schema IS NULL
-        ORDER BY ob_order
-    LOOP
-        _ob_full_type := 'MATERIALIZED VIEW';
+                        -- tout sauf geom (diffusion standard régionale)
+                        WHEN diffusion_niveau_precision = 'm02' THEN '["d", "m10", "m02", "e", "c", "z"]'::jsonb
 
-        -- DROP OBJETS
-        IF
-            -- if asked to do so
-            p_action = 'drop'
-        THEN
-            sql_template := '
-                 DROP %s IF EXISTS %I.%I %s;
-            ';
-            sql_text := concat(
-                sql_text,
-                format(
-                    sql_template,
-                    _ob_full_type,
-                    _ob_schema,
-                    _ob_name,
-                    CASE WHEN p_cascade THEN 'CASCADE' ELSE '' END
-                )
-            );
-        END IF;
+                        -- tout sauf geom et maille 2 (diffusion standard nationale):
+                        WHEN diffusion_niveau_precision = '0' THEN '["d", "m10", "e", "c", "z"]'::jsonb
 
-        -- REFRESH OBJECTS
-        IF p_action = 'refresh'
-        THEN
-            sql_template := '
-                REFRESH MATERIALIZED VIEW %I.%I;
-            ';
-            sql_text := concat(
-                sql_text,
-                format(
-                    sql_template,
-                    _ob_schema,
-                    _ob_name
-                )
-            );
-        END IF;
+                        -- commune et département
+                        WHEN diffusion_niveau_precision = '1' THEN '["d", "c"]'::jsonb
 
-    END LOOP;
+                        -- maille 10 et département
+                        WHEN diffusion_niveau_precision = '2' THEN '["d", "m10"]'::jsonb
 
-    -- Execute SQL
-    BEGIN
-        --RAISE NOTICE '%' , sql_text;
-        EXECUTE sql_text;
-        RETURN 1;
-    EXCEPTION WHEN OTHERS THEN
-        --RAISE NOTICE '%' , sql_text;
-        RAISE NOTICE '% %', SQLERRM, SQLSTATE;
-        RETURN 0;
-    END;
+                        -- département
+                        WHEN diffusion_niveau_precision = '3'  THEN '["d"]'::jsonb
 
-END;
-$BODY$;
+                        -- non diffusé
+                        WHEN diffusion_niveau_precision = '4' THEN NULL::jsonb
 
--- OCCTAX
---
+                        -- diffusion telle quelle. Si donnée existe, on fourni
+                        WHEN diffusion_niveau_precision = '5'  THEN '["g", "d", "m10", "m02", "m01", "e", "c", "z"]'::jsonb
+
+                        ELSE '["d", "m10", "m02", "m01", "e", "c", "z"]'::jsonb
+                    END
+            END
+
+        -- m02 = département, maille 10, maille 2
+        WHEN sensi_niveau = 'm02' THEN '["d", "m10", "m02"]'::jsonb
+
+        -- m01 = département, maille 10, maille 2, maille 1
+        WHEN sensi_niveau = 'm01' THEN '["d", "m10", "m02", "m01"]'::jsonb
+
+        -- 1 = tout sauf geom et maille 2 et 1: département, maille 10, espace naturel, commune, znieff
+        WHEN sensi_niveau = '1' THEN '["d", "m10", "e", "c", "z"]'::jsonb
+
+        -- 2 = département, maille 10
+        WHEN sensi_niveau = '2' THEN '["d", "m10"]'::jsonb
+
+        -- 3 = département
+        WHEN sensi_niveau = '3' THEN '["d"]'::jsonb
+
+        -- 4 = non diffusé
+        WHEN sensi_niveau = '4' THEN NULL::jsonb
+
+        -- aucune valeur
+        ELSE NULL::jsonb
+    END
+    ;
+
+    RETURN _diffusion;
+
+END
+$BODY$
+LANGUAGE plpgsql VOLATILE
+COST 100;
+
+COMMENT ON FUNCTION occtax.calcul_diffusion(text, text, text)
+IS 'Calcul de la diffusion en fonction des valeurs de "sensi_niveau", "ds_publique", "diffusion_niveau_precision".
+Cette fonction renvoie un jsonb qui permet à l''application de connaître comment afficher la donnée.
+Par exemple: ["d", "m10", "m02"] veut dire qu''on ne doit diffuser que pour le niveau département et mailles 1 et 2km'
+;
 
 
--- Vue source pour la vue matérialisée occtax.vm_observation
-DROP VIEW IF EXISTS occtax.v_vm_observation CASCADE;
+-- Suppression de la vue inutile car remplacement par une simple fonction
+DROP MATERIALIZED VIEW IF EXISTS occtax.observation_diffusion CASCADE;
+
+-- Suppression du trigger qui permet d'ajouter les champs
+DROP TRIGGER IF EXISTS trg_validation_renseigner_champs_observation ON occtax.validation_observation;
+DROP FUNCTION IF EXISTS occtax.update_observation_set_validation_fields();
+
+-- Suppression de cette vue remplacée par occtax.v_validation_regionale
+DROP VIEW IF EXISTS occtax.v_observation_champs_validation;
+
+-- Vue pour récupérer seulement la validation au niveau régional pour les observations
+CREATE OR REPLACE VIEW occtax.v_validation_regionale AS
+SELECT
+identifiant_permanent,
+niv_val AS niv_val_regionale, date_ctrl AS date_ctrl_regionale
+FROM occtax.validation_observation
+WHERE ech_val = '2'
+;
+COMMENT ON VIEW occtax.v_validation_regionale
+IS 'Vue qui récupère les lignes de la validation régionale depuis occtax.validation_observation (pour l''échelle 2 donc).
+Elle est utilisée dans l''application pour les requêtes réalisées en tant que validateur (sinon on utilise les champs de vm_observation).';
+
+
 
 -- vm_observation
+DROP VIEW IF EXISTS occtax.v_vm_observation CASCADE;
 CREATE OR REPLACE VIEW occtax.v_vm_observation AS
 WITH
 agg_m01 AS (
@@ -431,24 +423,27 @@ CREATE INDEX vm_observation_diffusion_idx ON occtax.vm_observation USING GIN (di
 CREATE INDEX vm_observation_validation_regionale_idx ON occtax.vm_observation USING GIN (validation_regionale);
 
 
--- Liste des vues et vues matérialisées qui dépendent de vm_observation
--- occtax.vm_stat_nb_observations_par_groupe_taxonomique
--- occtax.vm_stat_nb_taxons_observes_par_groupe_taxonomique AS
--- stats.repartition_temporelle AS
--- stats.repartition_habitats AS
--- stats.connaissance_par_groupe_taxonomique AS
--- stats.nombre_taxons AS
--- stats.repartition_groupe_taxonomique AS
--- stats.observations_par_maille_02 AS
--- stats.avancement_imports AS
--- stats.nombre_obs_par_menace AS
--- stats.nombre_taxons_par_menace AS
--- stats.chiffres_cles AS
--- stats.rangs_taxonomiques AS
--- stats.nombre_taxons_par_statut_biogeographique AS
--- stats.nombre_obs_par_statut_biogeographique AS
+-- DÉTAIL : vue occtax.v_vm_observation dépend de vue matérialisée occtax.observation_diffusion
+-- vue matérialisée occtax.vm_observation dépend de vue occtax.v_vm_observation
+-- vue occtax.vm_stat_nb_observations_par_groupe_taxonomique dépend de vue matérialisée occtax.vm_observation
+-- vue occtax.vm_stat_nb_taxons_observes_par_groupe_taxonomique dépend de vue matérialisée occtax.vm_observation
+-- vue matérialisée stats.repartition_temporelle dépend de vue matérialisée occtax.vm_observation
+-- vue matérialisée stats.repartition_habitats dépend de vue matérialisée occtax.vm_observation
+-- vue matérialisée stats.connaissance_par_groupe_taxonomique dépend de vue matérialisée occtax.vm_observation
+-- vue matérialisée stats.nombre_taxons dépend de vue matérialisée occtax.vm_observation
+-- vue matérialisée stats.repartition_groupe_taxonomique dépend de vue matérialisée occtax.vm_observation
+-- vue matérialisée stats.observations_par_maille_02 dépend de vue matérialisée occtax.vm_observation
+-- vue matérialisée stats.avancement_imports dépend de vue matérialisée occtax.vm_observation
+-- vue matérialisée stats.nombre_obs_par_menace dépend de vue matérialisée occtax.vm_observation
+-- vue matérialisée stats.nombre_taxons_par_menace dépend de vue matérialisée occtax.vm_observation
+-- vue matérialisée stats.rangs_taxonomiques dépend de vue matérialisée occtax.vm_observation
+-- vue matérialisée stats.nombre_taxons_par_statut_biogeographique dépend de vue matérialisée occtax.vm_observation
+-- vue matérialisée stats.nombre_obs_par_statut_biogeographique dépend de vue matérialisée occtax.vm_observation
+-- vue occtax.v_observation_validation dépend de vue matérialisée occtax.vm_observation
+-- vue matérialisée stats.chiffres_cles dépend de vue matérialisée occtax.vm_observation
 
 -- VUES POUR LES STATISTIQUES
+
 -- nb_observations_par_groupe_taxonomique
 DROP VIEW IF EXISTS occtax.vm_stat_nb_observations_par_groupe_taxonomique;
 CREATE VIEW occtax.vm_stat_nb_observations_par_groupe_taxonomique AS
@@ -1076,29 +1071,5 @@ ORDER BY count(o.cle_obs) DESC ;
 COMMENT ON MATERIALIZED VIEW stats.liste_taxons_observes IS 'Liste des taxons faisant l''objet d''au moins une observation dans Borbonica et statuts associés' ;
 
 
--- Ajout des lignes dans occtax.materialized_object_list
-
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('occtax', 'vm_observation',  0) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'repartition_altitudinale_observations', 1) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'repartition_altitudinale_taxons', 2) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'repartition_temporelle', 3) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'repartition_habitats', 4) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'connaissance_par_groupe_taxonomique', 5) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'nombre_taxons', 6) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'repartition_groupe_taxonomique', 7) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'observations_par_maille_02', 8) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'observations_par_commune', 9) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'avancement_imports', 10) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'validation', 11) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'nombre_obs_par_menace', 12) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'nombre_taxons_par_menace', 13) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'chiffres_cles', 14) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'rangs_taxonomiques', 15) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'nombre_taxons_par_statut_biogeographique', 16) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'nombre_obs_par_statut_biogeographique', 17) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'sensibilite_donnees', 18) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'types_demandes', 19) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'liste_adherents', 20) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'liste_jdd', 21) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'liste_demandes', 22) ON CONFLICT DO NOTHING;
-INSERT INTO occtax.materialized_object_list ("ob_schema", "ob_name", "ob_order") VALUES('stats ', 'liste_organismes', 23) ON CONFLICT DO NOTHING;
+DELETE FROM occtax.critere_conformite
+WHERE code IN ('obs_validite_niveau_format', 'obs_validite_niveau_valide');

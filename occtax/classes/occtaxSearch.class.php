@@ -108,7 +108,7 @@ class occtaxSearch {
 
         // Build SQL query
         $this->setSql();
-//jLog::log($this->sql);
+// jLog::log($this->sql);
         // Get the number of total records
         if (!$this->recordsTotal && $this->token && !$this->demande) {
             $this->setRecordsTotal();
@@ -303,7 +303,7 @@ class occtaxSearch {
                 }
                 $jdd = $dao_jdd->get($jdd_id);
                 if ($jdd) {
-                    $content.= '  * ' . $jdd->jdd_libelle . ' ( ' . $jdd->jdd_description . " )\r\n";
+                    $content.= '  * '.$jdd->jdd_libelle.' ( '.$jdd->jdd_description." )\r\n";
                 }
             }
         } else {
@@ -317,7 +317,7 @@ class occtaxSearch {
             $cnx = jDb::getConnection('naturaliz_virtual_profile');
             $result = $cnx->query( $sql );
             foreach( $result->fetchAll() as $jdd ) {
-                $content.= '  * ' . $jdd->jdd_libelle . ' ( ' . $jdd->jdd_description . " )\r\n";
+                $content.= '  * '.$jdd->jdd_libelle.' ( '.$jdd->jdd_description." )\r\n";
             }
             $content.= "\r\n\r\n";
             //$content.= 'NB: La liste des jeux de données (JDD) ci-dessus montre l\'ensemble des JDD disponibles dans la plate-forme. Elle n\'est pas filtrée en fonction des résultats.';
@@ -343,7 +343,7 @@ class occtaxSearch {
         }
         $categorie_normalized['Autres'] = 'autres';
         $categorie_normalized = var_export($categorie_normalized, True);
-        $tpl_categories = '{assign $categories =' . $categorie_normalized . "}";
+        $tpl_categories = '{assign $categories ='.$categorie_normalized."}";
         return $tpl_categories;
     }
 
@@ -391,9 +391,9 @@ class occtaxSearch {
                     $col = (string)$qfl['column'];
                     $html = (string)$qfl['html'];
                     if (!empty($html)) {
-                        $label.= $sep . $this->renderHtmlFromTemplate($item, $html);
+                        $label.= $sep.$this->renderHtmlFromTemplate($item, $html);
                     } else {
-                        $label.= $sep . $item->$col;
+                        $label.= $sep.$item->$col;
                     }
                     $sep = ', ';
                 }else{
@@ -550,10 +550,10 @@ class occtaxSearch {
             foreach( $fields as $field => $group ){
 
                 // Build select clause for this table
-                $sql.= $c . $field;
+                $sql.= $c.$field;
                 $c = ",
                 ";
-                $a = $alias . '.';
+                $a = $alias.'.';
                 if( $group == 'source_objet' ) // remove source_objet from SELECT
                     $a = '';
 
@@ -561,11 +561,11 @@ class occtaxSearch {
                 if( !$multi && !empty($group)){
 
                     if( !is_array( $group ) ){
-                        $gField = $a . $group;
+                        $gField = $a.$group;
                         $groupByFields[] = $gField;
                     }else{
                         foreach( $group as $ty ){
-                            $gField = $a . $ty;
+                            $gField = $a.$ty;
                             $groupByFields[] = $gField;
                         }
                     }
@@ -587,13 +587,13 @@ class occtaxSearch {
             foreach( $qs as $table => $d ){
                 $required = $d['required'];
                 if( $required ){
-                    $sql.= ' ' . $d['join'];
+                    $sql.= ' '.$d['join'];
                     if( substr(trim($table), 0, 1) == '(' )
                         $sql.= $table;
                     else
                         $sql.= ' '.$table.' ';
-                    $sql.= ' AS ' . $d['alias'] . ' ';
-                    $sql.= $d['joinClause'] . ' ';
+                    $sql.= ' AS '.$d['alias'].' ';
+                    $sql.= $d['joinClause'].' ';
                     $sql.= '
 ';
                     $t[] = $table;
@@ -607,10 +607,10 @@ class occtaxSearch {
                     $q = $qf[$k];
                     if( array_key_exists( 'table', $q)  && !in_array( $q['table'], $t ) ){
                         $d = $this->querySelectors[$q['table']];
-                        $sql.= ' ' . $d['join'];
-                        $sql.= ' ' . $q['table'] . ' ';
-                        $sql.= ' AS ' . $d['alias'] . ' ';
-                        $sql.= $d['joinClause'] . ' ';
+                        $sql.= ' '.$d['join'];
+                        $sql.= ' '.$q['table'].' ';
+                        $sql.= ' AS '.$d['alias'].' ';
+                        $sql.= $d['joinClause'].' ';
                     $sql.= '
 ';                        $t[] = $q['table'];
                     }
@@ -648,7 +648,7 @@ class occtaxSearch {
                             // On vient du WFS. Il faut decoder
                             $wktgeom = urldecode($v);
                         }
-                        $geoFilter = ', (SELECT ST_Transform( ST_GeomFromText(' . $cnx->quote($wktgeom) . ', 4326), '. $this->srid .') AS fgeom';
+                        $geoFilter = ', (SELECT ST_Transform( ST_GeomFromText('.$cnx->quote($wktgeom).', 4326), '.$this->srid.') AS fgeom';
                         $geoFilter.= ' ) AS fg
 ';
                         $this->fromClause.= $geoFilter;
@@ -670,11 +670,11 @@ class occtaxSearch {
                             $v = $cnx->quote( $v );
                         // Cas des recherches de type LIKE : type partial
                         if( $q['type'] == 'partial' )
-                            $v = $cnx->quote( '%' . $v .    '%' );
+                            $v = $cnx->quote( '%'.$v.'%' );
                     }
 
                     // Remplacement de @ par la valeur du formulaire
-                    $sql.= ' ' . str_replace('@', $v, $q['clause']);
+                    $sql.= ' '.str_replace('@', $v, $q['clause']);
                     $sql.= '
 ';
                 }
@@ -727,7 +727,7 @@ class occtaxSearch {
         if( count( $this->groupByFields ) > 0 )
             $groupClause = implode( ', ', $this->groupByFields );
         if( $groupClause )
-            $groupClause = ' GROUP BY ' . $groupClause;
+            $groupClause = ' GROUP BY '.$groupClause;
         return $groupClause;
     }
 
@@ -748,7 +748,7 @@ class occtaxSearch {
                 $orderCol = $this->displayFields[$orderCol]['sorting_field'];
             }
             $orderDir = strtoupper( $orderExp[1] );
-            $orderClause = " ORDER BY " . $orderCol . " " . $orderDir;
+            $orderClause = " ORDER BY ".$orderCol." ".$orderDir;
         }
         return $orderClause;
     }
@@ -762,7 +762,7 @@ class occtaxSearch {
     protected function getResult( $limit=50, $offset=0, $order="" ) {
         $cnx = jDb::getConnection('naturaliz_virtual_profile');
         $orderClause = $this->setOrderClause( $order );
-        $sql = $this->sql . " " . $orderClause;
+        $sql = $this->sql." ".$orderClause;
         return $cnx->limitQuery( $sql, $offset, $limit );
     }
 
@@ -806,7 +806,7 @@ class occtaxSearch {
 
             }
             // Add line
-            fwrite($handler, $virg . json_encode($item));
+            fwrite($handler, $virg.json_encode($item));
             unset($item);
             $virg = ',';
         }
@@ -826,7 +826,7 @@ class occtaxSearch {
             'params' => $this->params,
             'recordsTotal' => $this->recordsTotal
         );
-        $_SESSION['occtaxSearch' . $this->token] = $data;
+        $_SESSION['occtaxSearch'.$this->token] = $data;
 
         // Also write to file cache
         jCache::set($this->token, serialize($data), 0, 'naturaliz');
@@ -839,8 +839,8 @@ class occtaxSearch {
         if (empty($token)) {
             return Null;
         }
-        if( !empty($token) && isset( $_SESSION['occtaxSearch' . $token] ) ){
-            $cache = $_SESSION['occtaxSearch' . $token];
+        if( !empty($token) && isset( $_SESSION['occtaxSearch'.$token] ) ){
+            $cache = $_SESSION['occtaxSearch'.$token];
             return $cache;
         }
         // Also get from file cache

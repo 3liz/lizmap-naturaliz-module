@@ -70,7 +70,7 @@ GRANT SELECT ON occtax.v_descriptif_sujet_test TO validation_acme;
 -- c'est obligatoire mais sans souci pour la sécurité car seulement table avec contenu du standard validation
 GRANT SELECT, INSERT, UPDATE ON occtax.validation_observation TO validation_acme;
 
--- On donne le droite sur les champs de la table occtax.observation
+-- On donne le droit sur les champs de la table occtax.observation
 -- Nécessaire à cause du trigger occtax.update_observation_set_validation_fields()
 -- ON donne ce qui est strictement nécessaire, pas plus
 GRANT
@@ -100,4 +100,3 @@ FOR EACH ROW EXECUTE PROCEDURE occtax.update_observation_validation();
 
 
 COMMIT;
-

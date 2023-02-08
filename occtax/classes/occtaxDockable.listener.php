@@ -11,7 +11,7 @@ class occtaxDockableListener extends jEventListener{
             if ($coord->moduleName == 'occtax') {
                 $project = $event->getParam( 'project' );
                 $repository = $event->getParam( 'repository' );
-                $lproj = lizmap::getProject( $repository . '~' .$project );
+                $lproj = lizmap::getProject( $repository.'~'.$project );
 
                 // Get local configuration (application name, projects name, list of fields, etc.)
                 $localConfig = jApp::configPath('naturaliz.ini.php');
@@ -26,7 +26,7 @@ class occtaxDockableListener extends jEventListener{
                     jLocale::get("taxon~search.dock.title"),
                     $content,
                     9,
-                    $basePath . 'taxon/css/taxon.search.css'
+                    $basePath.'taxon/css/taxon.search.css'
                 );
                 $event->add($dock);
 
@@ -182,7 +182,7 @@ class occtaxDockableListener extends jEventListener{
                     jLocale::get("occtax~search.dock.title"),
                     $content,
                     10,
-                    $basePath . 'occtax/css/occtax.search.css',
+                    $basePath.'occtax/css/occtax.search.css',
                     Null // JS loaded in occtax default controller
                 );
                 $event->add($dock);
@@ -198,7 +198,7 @@ class occtaxDockableListener extends jEventListener{
 
                 // Read file beside QGIS project if existing
                 // This overrides previous presentation !!
-                $presentationSource = jFile::read( $lproj->getQgisPath() . '.presentation.html');
+                $presentationSource = jFile::read( $lproj->getQgisPath().'.presentation.html');
                 $dtpl = new jTpl();
                 $dassign = array(
                     'presentation' => $presentationSource
@@ -222,7 +222,7 @@ class occtaxDockableListener extends jEventListener{
 
                 // MENTIONS LEGALES
                 $legal = '';
-                $legalSource = jFile::read( $lproj->getQgisPath() . '.legal.html');
+                $legalSource = jFile::read( $lproj->getQgisPath().'.legal.html');
                 $dtpl = new jTpl();
                 $dassign = array(
                     'legal' => $legalSource
@@ -251,7 +251,7 @@ class occtaxDockableListener extends jEventListener{
             if ($coord->moduleName == 'occtax') {
                 $project = $event->getParam( 'project' );
                 $repository = $event->getParam( 'repository' );
-                $lproj = lizmap::getProject( $repository . '~' .$project );
+                $lproj = lizmap::getProject( $repository.'~'.$project );
 
                 // Search History dock
                 $tpl = new jTpl();
@@ -299,7 +299,7 @@ class occtaxDockableListener extends jEventListener{
                         $content,
                         15,
                         Null,
-                        $basePath . 'occtax/js/occtax.validation.js'
+                        $basePath.'occtax/js/occtax.validation.js'
                     );
                     $event->add($dock);
                 }
@@ -344,7 +344,7 @@ class occtaxDockableListener extends jEventListener{
                         $content,
                         40,
                         null,
-                        $basePath . 'occtax/js/occtax.import.js'
+                        $basePath.'occtax/js/occtax.import.js'
                     );
                     $event->add($dock);
                 }

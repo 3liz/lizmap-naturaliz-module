@@ -22,9 +22,6 @@ Une fois les données importées, il faut absolument **rafraîchir certaines vue
 
 ```sql
 
--- Vue qui calcul la sensibilité des données pour contrôler leur diffusion
-REFRESH MATERIALIZED VIEW observation_diffusion;
-
 -- Vue qui rassemble à plat dans une seule entité la plupart des informations sur les observations
 REFRESH MATERIALIZED VIEW occtax.vm_observation;
 
@@ -240,10 +237,8 @@ SELECT occtax.critere_sensibilite(
     False
 );
 
--- Pour rafraîchir les résultats sur la plateforme, il faut lancer le rafraîchissement des 2 vues
--- Vue qui calcul la sensibilité des données pour contrôler leur diffusion
-REFRESH MATERIALIZED VIEW occtax.observation_diffusion;
-
+-- Pour rafraîchir les résultats sur la plateforme, il faut lancer le rafraîchissement
+-- de la vue matérialisée occtax.vm_observation
 -- Vue qui rassemble à plat dans une seule entité la plupart des informations sur les observations
 REFRESH MATERIALIZED VIEW occtax.vm_observation;
 ```
@@ -263,9 +258,9 @@ Des exemples complexes montrent comment utiliser un filtre sur `descriptif_sujet
 
 ### Vue matérialisée pour gérer la diffusion des données à partir de cette sensibilité
 
-Les requêtes effectuées dans l'application font une jointure entre la table `observation` et
-la vue matérialisée `observation_diffusion`. Le champ utilisé pour faire les filtres et
-restreindre les données affichées est le champ `diffusion` qui contient un tableau JSON des diffusions possibles.
+Le champ utilisé pour faire les filtres et restreindre les données affichées
+est le champ `diffusion` de la vue matérialisée `occtax.vm_observation`
+qui contient un tableau JSON des diffusions possibles.
 
 Pour l'instant dans l'application, cette diffusion n'est utilisée pour filtrer que si la personne
 n'a pas le droit de voir les données brutes, c'est-à-dire seulement pour les personnes non connectées,
@@ -620,7 +615,7 @@ La liste des champs exportés est définie dans le fichier de configuration loca
 
 ```ini
 ; liste blanche des champs à exporter
-observation_exported_fields=cle_obs, identifiant_permanent, identifiant_origine, statut_observation, cd_nom, cd_ref, version_taxref, nom_cite, nom_valide, nom_vern, group1_inpn, group2_inpn, denombrement_min, denombrement_max, type_denombrement, objet_denombrement, commentaire, date_debut, heure_debut, date_fin, heure_fin, altitude_moy, profondeur_moy, date_determination, ds_publique, jdd_metadonnee_dee_id, dee_date_derniere_modification, jdd_code, reference_biblio, organisme_gestionnaire_donnees, statut_source, sensi_niveau, observateur, determinateur, validateur, descriptif_sujet, validite_niveau, validite_date_validation, precision_geometrie, nature_objet_geo, wkt
+observation_exported_fields=cle_obs, identifiant_permanent, identifiant_origine, statut_observation, cd_nom, cd_ref, version_taxref, nom_cite, nom_valide, nom_vern, group1_inpn, group2_inpn, denombrement_min, denombrement_max, type_denombrement, objet_denombrement, commentaire, date_debut, heure_debut, date_fin, heure_fin, altitude_moy, profondeur_moy, date_determination, ds_publique, jdd_metadonnee_dee_id, dee_date_derniere_modification, jdd_code, reference_biblio, organisme_gestionnaire_donnees, statut_source, sensi_niveau, observateur, determinateur, validateur, descriptif_sujet, niv_val_regionale, date_ctrl_regionale, validateur_regionale, precision_geometrie, nature_objet_geo, wkt
 
 ; liste blanche des champs à exporter pour le grand public
 observation_exported_fields_unsensitive=cle_obs, identifiant_permanent, statut_source, nom_cite, date_debut, date_fin, organisme_gestionnaire_donnees, source_objet, code_commune, code_departement, code_maille_10, wkt
@@ -655,7 +650,7 @@ ainsi que les données rattachées, sont définis dans le fichier de configurati
 
 ```ini
 ; liste blanche des champs à afficher dans la fiche d'observation
-observation_card_fields=cle_obs,statut_observation, nom_cite, denombrement_min, denombrement_max, objet_denombrement, commentaire, date_debut, date_fin, date_determination, ds_publique, jdd_metadonnee_dee_id, organisme_gestionnaire_donnees, statut_source, sensi_niveau, observateur, determinateur, validateur, descriptif_sujet, obs_methode, occ_denombrement_min, occ_denombrement_max, occ_type_denombrement, occ_objet_denombrement, occ_etat_biologique, occ_naturalite, occ_sexe, occ_stade_de_vie, occ_statut_biologique, obs_contexte, obs_description, occ_methode_determination,  validite_niveau, validite_date_validation, precision_geometrie
+observation_card_fields=cle_obs,statut_observation, nom_cite, denombrement_min, denombrement_max, objet_denombrement, commentaire, date_debut, date_fin, date_determination, ds_publique, jdd_metadonnee_dee_id, organisme_gestionnaire_donnees, statut_source, sensi_niveau, observateur, determinateur, validateur, descriptif_sujet, obs_methode, occ_denombrement_min, occ_denombrement_max, occ_type_denombrement, occ_objet_denombrement, occ_etat_biologique, occ_naturalite, occ_sexe, occ_stade_de_vie, occ_statut_biologique, obs_contexte, obs_description, occ_methode_determination,  niv_val_regionale, date_ctrl_regionale, validateur_regionale, precision_geometrie
 
 ; liste blanche des champs à afficher pour le grand public dans la fiche
 observation_card_fields_unsensitive=cle_obs, identifiant_permanent, statut_source, nom_cite, date_debut, date_fin, organisme_gestionnaire_donnees, source_objet, code_commune, code_departement, code_maille_10

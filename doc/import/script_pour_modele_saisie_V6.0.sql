@@ -6,7 +6,7 @@
 ---------------------------------------------------------------------------------------
 -- script pour modèle de saisie sous forme de tableur d’un jeu de données fictif dont le code serait pnrun_data_2018 et le jdd_id IN ('99999')
 
---> le jdd_code et le jdd_id sont donc les variables à remplacer de manière automatique pour adapter le code 
+--> le jdd_code et le jdd_id sont donc les variables à remplacer de manière automatique pour adapter le code
 --> jdd IN ('99999') replacer (par ex) par ('12345','67890')
 
 --> (ARRAY['99999']) replacer (par ex) par (ARRAY['12345','67890'])
@@ -16,14 +16,14 @@
 ---------------------------------------------------------------------------------------
 -- Je conseille de lire ce script puis de l'enregistrer en le personnalisant et en supprimant un grand nombre de commentaires
 ---------------------------------------------------------------------------------------
--- coordonnées en xy 
+-- coordonnées en xy
 -- coordonnées sous forme wkt (en commentaire)
 -- Pour l'import, il est utile de faire appel au standard occurrences de taxons mis en oeuvre dans Borbonica, en particulier pour les champs contrôlés par des listes de valeurs fermées.
 -- Au 17/09/2018, la version mise en oeuvre est la version 1.2.1 consultable ici : http://standards-sinp.mnhn.fr/occurrences_de_taxons_v1-2-1/
 -- les métadonnées sont à saisir sur https://inpn.mnhn.fr/mtd/
 
 ------------------------------
--- PLAN DU DOCUMENT : 
+-- PLAN DU DOCUMENT :
 
 -- PREAMBULE : Fonctionnement de Naturaliz et lien avec l'organisation du SINP
 
@@ -32,8 +32,8 @@
 
 -- PARTIE I : Import des données source
 -- ------------------------------------------------
--- 		1 Personnes et organismes 
--- 			1.1 - organismes 
+-- 		1 Personnes et organismes
+-- 			1.1 - organismes
 -- 			1.2 - personnes -> observateurs
 -- 		2 - Métadonnées
 --			2.0 import des tables brutes de métadonnées
@@ -42,7 +42,7 @@
 -- 		3 - Import des observations
 -- 		4 - Import des autres tables éventuelles (1)
 --		5 - Import des autres tables éventuelles (2)
--- 		6 - modifications éventuelles d’erreurs détectées et confirmées par le producteur 
+-- 		6 - modifications éventuelles d’erreurs détectées et confirmées par le producteur
 --		– Il peut s’agir de mettre à jour (UPDATE) certains champs erronés.
 -- 		- Remplacement des valeurs '' par des valeurs NULL pour nettoyer le jdd
 -- 		7 - Analyse du jeu de données à partir de la fonction jdd_analyse
@@ -58,8 +58,8 @@
 -- ------------------------------------------------
 -- 		1 - Suppression des données avant réimport
 -- 		2 - Import dans la table occtax.observation
--- 		3 - Vidage puis remplissage de lien_observation_identifiant_permanent 
--- 		4 - Renseignement des personnes associées aux observations 
+-- 		3 - Vidage puis remplissage de lien_observation_identifiant_permanent
+-- 		4 - Renseignement des personnes associées aux observations
 -- 			4.0 vérifications préalables
 -- 			4.1 table organisme
 -- 			4.2 table personne
@@ -97,38 +97,38 @@
 ------------------------------
 -- Le fonctionnement de Naturaliz (Borbonica à La Réunion, Karunati en Guadeloupe, Mayotte (en cours de déploiement)) est basé sur plusieurs outils :
 		-- - une base de données spatiale PostgreSQL/PostGIS, dans une version de dev (diffusée sur dev.borbonica.re) et une version de prod (diffusée sur www.borbonica.re)
-		-- - deux applications internet accessibles via dev.borbonica.re (permettant de tester les nouveaux développements avant mise en production) et www.borbonica.re (site officiel accessible au grand public et aux professionnels). Ces applications sont basées sur des projets QGIS transformés grâce au plugin Lizmap. 
+		-- - deux applications internet accessibles via dev.borbonica.re (permettant de tester les nouveaux développements avant mise en production) et www.borbonica.re (site officiel accessible au grand public et aux professionnels). Ces applications sont basées sur des projets QGIS transformés grâce au plugin Lizmap.
 		-- - un site Internet www.borbonica.re en cours de développement côté La Réunion (échéance : août 2019) pour y intégrer en plus de l'application ci-dessus une page d'accueil, une documentation utilisateur (tutoriels)...
 		-- - un Gitlab permettant d'échanger sur les développements en cours de l'application et contenant une doc administrateurs (https://projects.3liz.org/clients/naturaliz-reunion). Le Gitlab est partagé depuis 2019 entre 3Liz, PNG, DEAL Guadeloupe, PNRun et DEAL Réunion.
 		-- - l'application nationale de saisie de métadonnées de l'INPN, qui permet de compléter les informations très basiques de métadonnées déjà renseignées dans la base de données (tables cadre, jdd et jdd_import)
 		-- - un FTP stockant notamment les bases de données, les projets QGIS utilisés et les autres éléments requis pour les applications web
 		-- - le FTP et le site Internet sont hébergés sur le serveur localisé au Port payé par le PNRun et la DEAL à Cahri. Le Gitlab est stocké sur les serveurs de 3Liz, prestataire en charge du développement de Naturaliz pour La Réunion et la Guadeloupe.
-		
--- L'intégration de nouvelles données naturalistes dans Naturaliz repose sur plusieurs opérations successives reposant sur ces outils et décrites dans le présent document. Elle permet in fine de : 
+
+-- L'intégration de nouvelles données naturalistes dans Naturaliz repose sur plusieurs opérations successives reposant sur ces outils et décrites dans le présent document. Elle permet in fine de :
 		-- - intégrer des données issues de formats informatiques divers (tableur, SIG...) dans une base de données PostgreSQL
 		-- - formater ces données dans le format standard SINP "occurrence de taxon" mis en oeuvre dans Naturaliz
 		-- - tester la validité des données
 		-- - les enrichir avec certains paramètres calculés automatiquement (altitude, milieu naturel concerné)
 		-- - valoriser les données sous la forme de fiches de métadonnées sur le site national de l'INPN
-		
+
 -- Les données sont récoltées auprès de producteurs en particulier dans le cadre de l'adhésion à la charte régionale du SINP. Chaque producteur s'engage à verser ses données historiques au moment de l'adhésion puis les nouvelles données acquises annuellement à une date fixe.
 
 -- L'intégration de données de producteurs nécessite des échanges avec le producteur a minima à ces étapes clés :
 		-- - à réception des données : s'assurer que la donnée est complète (idéalement en s'appuyant sur le format standard de saisie publié sur http://www.naturefrance.fr/la-reunion/format-standard-de-donnees). Lever les doutes éventuels sur l'interprétation de certains points
 		-- - une fois l'import réalisé en base de développement : transmettre le rapport d'import provisoire et les informations de connexion au producteur. Lui demander validation du rapport et test des données sur dev.borbonica.re grâce à ses identifiants
 		-- - une fois l'import réalisé en base de production : transmettre le rapport d'import définitif et les identifiants créés sur www.borbonica.re
-		
+
 -- Le détail des différentes phases d'import est décrit dans le document "qui fait quoi des administrateurs" validé le 25/04/2017 par la DEAL et le PNRun, en particulier dans son annexe 2. Des informations plus détaillées sur le fonctionnement du SINP à La Réunion sont accessibles sur le portail régional http://www.naturefrance.fr/la-reunion.
 
 /*Pour info et mémoire : qq rq de Solène Robert (MNHN)
 
-    La date de dernière modification n'est pas renseignée lorsqu'il n'y a pas eu de modification. 
+    La date de dernière modification n'est pas renseignée lorsqu'il n'y a pas eu de modification.
     Pour la date de transformation, c'est un attribut que nous envisageons de supprimer dans la prochaine version du standard (à débattre en GT Standard).
 
 	En toute logique, quand il n'y a pas de dénombrement, il n'y a pas non plus d'objet dénombrement. Je préconise donc dans ce cas de laisser null.
 => 	denombrement_min = denombrement_max = objet_denombrement = type_denombrement = NULL*/
 
------------------------------------------------------------------------		
+-----------------------------------------------------------------------
 BEGIN;
 SET search_path TO taxon, occtax, gestion, sig, fdw, divers, public;
 
@@ -137,7 +137,7 @@ SET search_path TO taxon, occtax, gestion, sig, fdw, divers, public;
 -- PARTIE 0 : Remplissage de la table divers.suivi_imports
 ------------------------------
 
---  à la reception d'un nouveau jeu de données (JDD), remplir "manuellement" ou en utilisant le morceau de script ci-dessous la table divers.suivi_imports de la base de données lizmap => production (n'existe pas en dev) 
+--  à la reception d'un nouveau jeu de données (JDD), remplir "manuellement" ou en utilisant le morceau de script ci-dessous la table divers.suivi_imports de la base de données lizmap => production (n'existe pas en dev)
 -- ceci n'est fait qu'une fois par jdd et donc à la réception ou à l'import en dev
 --> aller sur la base de Prod
 
@@ -155,9 +155,9 @@ INSERT INTO divers.suivi_imports
 	commentaire,
 	jdd_id
 )
-SELECT 
+SELECT
 	'pnrun_data_2018' AS nom_jdd, --> S'il n'y a qu'un JDD prendre le jdd_code pour "nom_jdd", sinon, donner un nom au lot
-	'blablabla' AS decription_detaillee, --> S'il n'y a qu'un JDD prendre le jdd_description pour "nom_jdd", sinon, décrire lot 
+	'blablabla' AS decription_detaillee, --> S'il n'y a qu'un JDD prendre le jdd_description pour "nom_jdd", sinon, décrire lot
 	'2018-12-01' AS  date_reception,
 	NULL AS date_import_dev,
 	NULL AS date_import_prod,
@@ -177,10 +177,10 @@ ON CONFLICT DO NOTHING
 -- Avant l'import, penser à enregistrer le fichier en CSV, UTF8
 -- le codage du fichier est primordial UTF8 !!!
 
------------------------------------- 
--- 1 Personnes et organismes 
+------------------------------------
+-- 1 Personnes et organismes
 
--- 1.1 - organismes 
+-- 1.1 - organismes
 -- Les organismes et surtout l'id_organisme sont utilisés dans les métadonnées, dans la table des personnes...
 -- Si de nouveaux organismes ont été saisis en utilisant le fichier modèle de saisie, exporter les lignes correspondantes de l'onglet organismes dans un fichier spécifique -> organismes.csv.
 
@@ -210,7 +210,7 @@ HEADER CSV DELIMITER ',' ;
 -- NB : Les organismes nouvreaux sont importés dans la base de données -> III 4.1 : table organisme
 -- Faire cet import si nécessaire avant l'import des observateurs afin de pouvoir compléter manuellement le "id_organisme" de la table "acteur"
 
------------------------------------- 
+------------------------------------
 -- 1.2 - personnes -> observateurs
 DROP TABLE IF EXISTS fdw.pnrun_data_2018_acteurs;
 CREATE TABLE fdw.pnrun_data_2018_acteurs (
@@ -229,7 +229,7 @@ HEADER CSV DELIMITER ',' ;
 -- SELECT * FROM fdw.pnrun_data_2018_acteurs;
 
 
------------------------------------- 
+------------------------------------
 -- 2 Métadonnées -> cadre et JDD
 
 -- Remplissage des tables occtax.cadre et occtax.jdd contenant les métadonnées
@@ -238,7 +238,7 @@ HEADER CSV DELIMITER ',' ;
 
 --Pour rappel :
 ------------------------------
--- métadonnées pour les tables occtax.cadre et occtax.jdd 
+-- métadonnées pour les tables occtax.cadre et occtax.jdd
 ------------------------------
 -- exemple de JDD:
 -- Identifiant du cadre d'acquisition : T13407
@@ -256,10 +256,10 @@ HEADER CSV DELIMITER ',' ;
 
 -- 2.0 import des tables brutes de métadonnées
 -- -> pour des livraisons à multiples CA et JDD -> cf 2e exemple pour l'import du CA et du JDD
-	
+
 DROP TABLE IF EXISTS fdw.ca_pnrun_data_2018 ;
 
-CREATE TABLE fdw.ca_pnrun_data_2018 (	
+CREATE TABLE fdw.ca_pnrun_data_2018 (
 	cadre_id	text,
 	cadre_uuid	text,
 	libelle	text,
@@ -273,7 +273,7 @@ CREATE TABLE fdw.ca_pnrun_data_2018 (
 ) ;
 
 COPY fdw.ca_pnrun_data_2018 FROM '/tmp/CA_pnrun_data_2018.csv'
-HEADER CSV DELIMITER ',' ; 
+HEADER CSV DELIMITER ',' ;
 
 
 DROP TABLE IF EXISTS fdw.jdd_pnrun_data_2018 ;
@@ -293,7 +293,7 @@ CREATE TABLE fdw.jdd_pnrun_data_2018 (
 ) ;
 
 COPY fdw.jdd_pnrun_data_2018 FROM '/tmp/JDD_pnrun_data_2018.csv'
-HEADER CSV DELIMITER ',' ; 	
+HEADER CSV DELIMITER ',' ;
 
 
 -- 2.1 cadre
@@ -311,10 +311,10 @@ SELECT
 	'76EFAEAB-7FA6-70A1-E053-2614A8C07E17' AS cadre_uuid, -- ce champ est fourni par l'application nationale de métadonnées où il s'intitule "Identifiant du cadre d'acquisition"
 	'données de toto' AS libelle, -- nom défini par l'importateur, correspondant au champ "Libellé du cadre d'acquisition" de l'application nationale
 	'données de toto récoltées par jour de pluie' AS description, -- nom défini par l'importateur, correspondant au champ "Description" de l'application nationale
-	'[	
-		{"role": "Maître d''ouvrage", 
-		"id_organisme": 999}, 
-		{"role": "Maître d''oeuvre", 
+	'[
+		{"role": "Maître d''ouvrage",
+		"id_organisme": 999},
+		{"role": "Maître d''oeuvre",
 		"id_organisme": 999}
 	]'::jsonb AS ayants_droit,
 		-- Valeurs possibles : Maître d''ouvrage, Maître d''oeuvre, Autre...
@@ -331,7 +331,7 @@ WHERE NOT EXISTS (SELECT cadre_id FROM occtax.cadre WHERE cadre_id = '13407');
 
 INSERT INTO occtax.cadre
     (cadre_id, cadre_uuid, libelle, description, ayants_droit, date_lancement, date_cloture)
-SELECT 
+SELECT
 	cadre_id,
 	cadre_uuid,
 	libelle,
@@ -363,11 +363,11 @@ SELECT
 	'Inventaire de la Flore patrimoniale dans le Coeur du Parc national réalisé en 2018' AS jdd_description,-- nom défini par l'importateur, correspondant au champ "Description" de l'application nationale. Le nom doit être le plus intelligible possible possible pour un utilisateur extérieur. Il doit notamment préciser la période temporelle couverte par les données, en particulier pour permettre de différencier différents jeux de données successifs d'un même cadre d'acquisition.
 	'76EFAEAB-7FA7-70A1-E053-2614A8C07E17' AS jdd_metadonnee_dee_id,-- ce champ est fourni par l'application nationale de métadonnées où il s'intitule "Identifiant SINP du jeu de données :"
  	'13407' AS jdd_cadre, -- ce champ est fourni par l'application nationale de métadonnées où il s'intitule "Identifiant du cadre d'acquisition" (fiche cadre d'acquisition). C’est une clef étrangère vers cadre.cadre_id
-	'[	
-		{"role": "Maître d''ouvrage", 
+	'[
+		{"role": "Maître d''ouvrage",
 		"id_organisme": 999
 		},
-		{"role": "Maître d''oeuvre", 
+		{"role": "Maître d''oeuvre",
 		"id_organisme": 999
 		}
 	]'::jsonb AS ayants_droit,
@@ -378,7 +378,7 @@ WHERE NOT EXISTS (SELECT jdd_id FROM occtax.jdd WHERE jdd_id = '99999');
 
 INSERT INTO occtax.jdd
     (jdd_id, jdd_code, jdd_description, jdd_metadonnee_dee_id, jdd_cadre, ayants_droit, jdd_libelle, date_minimum_de_diffusion)
-SELECT 
+SELECT
 	jdd_id,
 	jdd_code,
 	jdd_description,
@@ -421,7 +421,7 @@ CREATE TABLE fdw.pnrun_data_2018_observations (
 	datefin	text, --dateFin
 	x	text, -- à mettre en commentaire si coordonnées en wkt
 	y	text, -- à mettre en commentaire si coordonnées en wkt
---	wkt text	
+--	wkt text
 	natobjgeo	text, --natObjGeo
 	precisgeo	text, --precisGeo
 	altmoy	text, --altMoy
@@ -444,7 +444,7 @@ CREATE TABLE fdw.pnrun_data_2018_observations (
 ) ;
 
 COPY fdw.pnrun_data_2018_observations FROM '/tmp/observations.csv'
-HEADER CSV DELIMITER ',' ; 
+HEADER CSV DELIMITER ',' ;
 -- Le délimiteur ',' peut parfois poser soucis s’il est présent dans les champs. Essayer alors un autre délimiteur en recourant à un caractère peu commun  (par exemple '$').
 
 -- Création d’une clef primaire :
@@ -454,27 +454,27 @@ ALTER TABLE fdw.pnrun_data_2018_observations ADD CONSTRAINT pk_pnrun_data_2018_o
 
 -- SELECT * FROM fdw.pnrun_data_2018_observations ;
 
------------------------------------- 
+------------------------------------
 -- 4 - import des autres tables éventuelles : obs complémentaires, tables pivots, table taxref_local (cf modèle proposé si nécessaire)...
 
------------------------------------- 
+------------------------------------
 -- 5 - import des autres tables éventuelles : obs complémentaires, tables pivots, table taxref_local (cf modèle proposé si nécessaire)...
 
------------------------------------- 
--- 6 - modifications éventuelles d’erreurs détectées et confirmées par le producteur 
+------------------------------------
+-- 6 - modifications éventuelles d’erreurs détectées et confirmées par le producteur
 --		– Il peut s’agir de mettre à jour (UPDATE) certains champs erronés.
 
------------------------------------- 
+------------------------------------
 -- 7 - Analyse du jeu de données à partir de la fonction jdd_analyse
 -- La fonction permet de calculer et stocker les valeurs uniques de chaque champ dans la table fdw.jdd_analyse
 -- Le résultat de la vue fdw.v_jdd_analyse peut ensuite être utilisé dans le rapport d'import (fichier « description_donnees_source » annexé au rapport d’import) et pour faciliter le formatage des données
 
 -- Nettoyage du jdd : suppression des espaces en bout de chaîne et remplacement des valeurs '' par des valeurs NULL
-SELECT divers.nettoyage_valeurs_null_et_espaces('pnrun_data_2018_observations') ; 
+SELECT divers.nettoyage_valeurs_null_et_espaces('pnrun_data_2018_observations') ;
 
-SELECT divers.analyse_jdd ('pnrun_data_2018_observations', 100) ; -- évolution de la fonction : 
+SELECT divers.analyse_jdd ('pnrun_data_2018_observations', 100) ; -- évolution de la fonction :
 -- le 1er argument est le nom de la table à analyser, qui doit être dans le schéma fdw. Le 2ème argument correspond au nombre maximum de valeurs différentes que l'on souhaite afficher dans l'analyse d'un champ
--- exemple avec 100 valeurs uniques listés 
+-- exemple avec 100 valeurs uniques listés
 SELECT * FROM divers.v_jdd_analyse ;
 
 
@@ -534,7 +534,7 @@ SELECT
 	'Reptiles', -- group2_inpn
 	nextval('taxon.taxref_local_cd_nom_seq'::regclass),
 	NULL,
-	(nextval('taxon.taxref_local_cd_nom_seq'::regclass) +1), 
+	(nextval('taxon.taxref_local_cd_nom_seq'::regclass) +1),
 	'ES',
 	'Tupinambis merianae',
 	'Duméril & Bibron, 1839',
@@ -551,7 +551,7 @@ SELECT
 WHERE NOT EXISTS (SELECT lb_nom FROM taxon.taxref_local WHERE lb_nom = 'Tupinambis merianae');
 
 -- répéter cet INSERT autant de fois qu'il y a de nouveaux taxons
--- sinon créer un fichier avec la structure du Taxref contenant les nouveaux taxons et l'importer 
+-- sinon créer un fichier avec la structure du Taxref contenant les nouveaux taxons et l'importer
 
 -- ATTENTION:  il faut compléter le script avec un CASE pour les observations sans cd_nom à l'import de la table fdw.pnrun_data_2018_observations (cf III - 2 - exemple mis en commentaire)
 --> ajouter autant de cas que de nouveaux taxons dans taxref_local
@@ -559,15 +559,15 @@ WHERE NOT EXISTS (SELECT lb_nom FROM taxon.taxref_local WHERE lb_nom = 'Tupinamb
 
 -- Ajout d'une ligne dans t_complement, nécessaire pour que le taxon ressorte dans les filtres de recherche sur Borbonica
 INSERT INTO t_complement (cd_nom_fk, statut, endemicite, invasibilite) -- on ne renseigne pas les autres champs de la table relatifs à la menace, à la protection... car normalement tous les taxons menacés ou protégés figurent déjà dans Taxref
-SELECT 
+SELECT
 	(SELECT cd_nom FROM taxref_local ORDER BY cd_nom ASC limit 1) AS cd_nom_fk, -- correspond au dernier cd_nom ajouté dans taxref_local. En cas d'ajout multiple de taxons, récupérer les cd_nom dans taxref_local et les renseigner à la main
 	'E' AS statut, -- Valeurs possibles : E = exotique | I = Indigène | ND = Non documenté (ex : cryptogène, ou tous les taxons pour lesquels on n'a pas d'info)
 	NULL AS endemicite, -- Valeurs possibles : E = endémique Réunion | SE = endémique Mascareignes | NULL
 	'ND' AS invasibilite -- Valeurs possibles : E = Envahissant | PE = Potentiellement envahissant | ND = Exotique sans caractère invasif documenté | NULL
 ON CONFLICT DO NOTHING ;
 
--- Vérification 
-SELECT * FROM t_complement 
+-- Vérification
+SELECT * FROM t_complement
 WHERE cd_nom_fk IN (SELECT cd_nom FROM taxref_local ORDER BY cd_nom ASC limit 1) ;
 
 
@@ -596,12 +596,12 @@ REFRESH MATERIALIZED VIEW taxref_fts; -- taxref_fts
 -- SELECT count(*) FROM observation WHERE (jdd_id = '99999');
 -- DELETE FROM occtax.observation WHERE (jdd_id = '99999');
 
------------------------------------- 
+------------------------------------
 -- 2- import dans la table occtax.observation
 
 -- On vérifie avant le nombre de nouvelles lignes attendues à la fin
 -- SELECT count(*) FROM fdw.pnrun_data_2018_observations
---WHERE idorigine NOT IN ('x') -- On peut dans certains cas choisir d’écarter lors de l’import certaines données, par exemple parce qu’il s’agit de doublons ou de données signalées invalides par le producteur ; 
+--WHERE idorigine NOT IN ('x') -- On peut dans certains cas choisir d’écarter lors de l’import certaines données, par exemple parce qu’il s’agit de doublons ou de données signalées invalides par le producteur ;
 
 SELECT Setval('occtax.observation_cle_obs_seq', (SELECT max(cle_obs) FROM occtax.observation ) );
 
@@ -636,7 +636,7 @@ INSERT INTO occtax.observation
 	dee_floutage,
 	diffusion_niveau_precision,
 	ds_publique,
-	identifiant_origine, 
+	identifiant_origine,
 	jdd_code,
 	jdd_id,
 	jdd_metadonnee_dee_id,
@@ -650,8 +650,6 @@ INSERT INTO occtax.observation
 	sensi_niveau,
 	sensi_referentiel,
 	sensi_version_referentiel,
-	validite_niveau,
-	validite_date_validation,
 	descriptif_sujet,
 	donnee_complementaire,
 	precision_geometrie,
@@ -663,47 +661,47 @@ INSERT INTO occtax.observation
 SELECT
 		-- identifiants
 		nextval('occtax.observation_cle_obs_seq'::regclass) AS cle_obs,
-		CASE 
-			WHEN loip.identifiant_permanent IS NOT NULL THEN loip.identifiant_permanent 
-			ELSE CAST(uuid_generate_v4() AS text) 
+		CASE
+			WHEN loip.identifiant_permanent IS NOT NULL THEN loip.identifiant_permanent
+			ELSE CAST(uuid_generate_v4() AS text)
 		END AS identifiant_permanent, -- On a vérifié lors de l'import des sources que la table importée dispose bien de valeurs uniques et pérennes (clef primaire)
-		
-		CASE	
+
+		CASE
 			WHEN s.statobs = 'Présent' THEN 'Pr'
-			WHEN s.statobs = 'Non Observé' THEN 'No'			
+			WHEN s.statobs = 'Non Observé' THEN 'No'
 			ELSE 'No' -- 'Pr' au choix...
 		END AS statut_observation,
 
         -- taxons
 		s.cdnom::bigint AS cd_nom,
 		-- CASE  --> ajouter autant de cas que de nouveaux taxons dans taxref_local
-			-- WHEN s.cd_nom is NULL THEN (SELECT cd_nom FROM taxref_local WHERE lb_nom = 'Tupinambis merianae' ) 
+			-- WHEN s.cd_nom is NULL THEN (SELECT cd_nom FROM taxref_local WHERE lb_nom = 'Tupinambis merianae' )
 			-- ELSE s.cd_nom::bigint
 		-- END AS cd_nom,
 		--s.cdnom::bigint AS cd_ref,
 		(SELECT cd_ref FROM taxon.taxref WHERE cd_nom = s.cdnom::bigint) AS cd_ref, -- si le cdref n'est pas rempli
 		-- CASE  --> ajouter autant de cas que de nouveaux taxons dans taxref_local
-			-- WHEN s.cd_nom is NULL THEN (SELECT cd_nom FROM taxref_local WHERE lb_nom = 'Tupinambis merianae' ) 
+			-- WHEN s.cd_nom is NULL THEN (SELECT cd_nom FROM taxref_local WHERE lb_nom = 'Tupinambis merianae' )
 			-- ELSE s.cd_ref::bigint
 		-- END AS cd_ref,
-		
+
 		-- Faire attention que les cd_ref soient valides - cf script ci-dessus (II - 1)
-				
+
 		s.cdnom::bigint AS cd_nom_cite,
-		
+
 		'12.0' AS version_taxref, -- Adapter si besoin en fonction de la version mise en œuvre dans Borbonica (une nouvelle version sortie chaque année)
 		s.nomcite AS nom_cite,
 
-        -- denombrement 
+        -- denombrement
 		-- "non dénombrement" avec présence => denombrement_min = denombrement_max = objet_denombrement = type_denombrement = NULL
 		s.denbrmin::INTEGER AS denombrement_min,
-		
-		CASE	
+
+		CASE
 			WHEN (TRIM(s.denbrmax) is NULL and TRIM(s.denbrmin) is not NULL) THEN s.denbrmin::INTEGER
 			ELSE s.denbrmax::INTEGER
 		END AS denombrement_max,
-		
-		CASE	
+
+		CASE
 			WHEN trim(s.objdenbr) = 'Colonie' THEN 'COL'
 			WHEN trim(s.objdenbr) = 'Couple' THEN 'CPL'
 			WHEN trim(s.objdenbr) = 'Hampe florale' THEN 'HAM'
@@ -716,7 +714,7 @@ SELECT
 			WHEN trim(s.objdenbr) = 'Touffe' THEN 'TOUF'
 			ELSE 'NSP'
 		END AS objet_denombrement,
-		CASE	
+		CASE
 			WHEN trim(s.typdenbr) = 'Calculé' THEN 'Ca'
 			WHEN trim(s.typdenbr) = 'Estimé' THEN 'Es'
 			WHEN trim(s.typdenbr) = 'Compté' THEN 'Co'
@@ -726,7 +724,7 @@ SELECT
 
         -- commentaires -- à adapter !!!
 	-- On doit s'efforcer d'importer les informations de l'ensemble des champs du jdd source, sans perte, quitte à les intégrer dans les champs commentaires si aucun autre champ ne permet de le faire. Une solution intéressante consiste également à utiliser les champs attributs additionnels si besoin (voir plus bas).
-		concat_ws(' - '::TEXT, TRIM(s.comment), 
+		concat_ws(' - '::TEXT, TRIM(s.comment),
 				CASE  -- exemple de ce qui peut être ajouté
 					WHEN (s.denbrmax is NULL and s.denbrmin::INTEGER > 999)  THEN 'dénombrement minimum - colonie'
 					ELSE NULL
@@ -734,24 +732,24 @@ SELECT
 
         -- dates
 		-- bien vérifier les formats -> adapter le case en fonction de la saisie
-		CASE	
+		CASE
 			WHEN s.datedebut = '????' THEN '01/01/2011'::DATE -- doit être complété en fonction des jeux de données
 			ELSE s.datedebut::DATE
 		END AS date_debut,
-		CASE	
+		CASE
 			WHEN s.datefin = '????' THEN '31/12/2019'::DATE
 			ELSE s.datefin::DATE
 		END AS date_fin,
 
-		NULL AS heure_debut,	
+		NULL AS heure_debut,
 		NULL AS heure_fin,
 --		NULL::time with time zone AS heure_debut,
 --		NULL::time with time zone AS heure_fin,
 		NULL as date_determination,
-		
+
 	-- dates de modifications & transformation
-		CASE WHEN loip.identifiant_permanent IS NOT NULL THEN loip.dee_date_derniere_modification 
-			ELSE now() 
+		CASE WHEN loip.identifiant_permanent IS NOT NULL THEN loip.dee_date_derniere_modification
+			ELSE now()
 		END AS dee_date_derniere_modification,
 		CASE WHEN loip.dee_date_transformation IS NOT NULL THEN loip.dee_date_transformation
 			ELSE now()
@@ -760,21 +758,21 @@ SELECT
 
 	-- altitudes -- ces éléments sont recalculés plus bas via le MNT pour être stockés dans des attributs additionnels. Il s’agit ici de stocker les altitudes éventuellement fournies par le producteur
 		NULL as altitude_min,
-		CASE	
+		CASE
 			WHEN s.altmoy is NULL then NULL
 			ELSE s.altmoy::NUMERIC
 			-- ELSE regexp_replace( s.altmoy, ',', '.')::NUMERIC -- au cas où le séparateur décimal est ","
-		END AS altitude_moy,		
+		END AS altitude_moy,
 		NULL as altitude_max,
 
 	-- profondeurs
 		NULL AS profondeur_min,
 		NULL AS profondeur_moy,
 		NULL AS profondeur_max,
-		
+
 	-- diffusion_niveau_precision, -- n'utiliser que 'maille 2 km' ou 'précise' dans le modèle de saisie
-		CASE			
---			WHEN trim(s.difnivprec) = 'tout' THEN '0' 
+		CASE
+--			WHEN trim(s.difnivprec) = 'tout' THEN '0'
 --			WHEN trim(s.difnivprec) = 'commune' THEN '1'
 --			WHEN trim(s.difnivprec) = 'maille 10 km' THEN '2'
 			WHEN trim(s.difnivprec) = 'maille 2 km' THEN 'm02'
@@ -783,7 +781,7 @@ SELECT
 			WHEN trim(s.difnivprec) = 'précise' THEN '5'
 			ELSE '5'
 		END AS diffusion_niveau_precision,
-		
+
 	-- ds_publique
 		CASE
 			WHEN trim(s.dspublique) = 'Publique' THEN 'Pu'
@@ -793,29 +791,29 @@ SELECT
 			WHEN trim(s.dspublique) = 'Ne sait pas' THEN 'NSP'
 			ELSE 'NSP'
 		END AS ds_publique,
-		
+
 	-- idorigine
 		s.idorigine AS identifiant_origine,
-		
+
 	-- JDD : on reprend ici les éléments déjà utilisés pour renseigner la table jdd
 		j.jdd_code AS jdd_code,
 		j.jdd_id AS jdd_id,
 		j.jdd_metadonnee_dee_id AS jdd_metadonnee_dee_id,
 		NULL AS jdd_source_id,
-		
-	--producteur-gestionnaire - orgGestDat 
+
+	--producteur-gestionnaire - orgGestDat
 		'Parc régional de La Réunion' AS organisme_gestionnaire_donnees,
-	
+
 	--mise en base SINP
 		-- 'DEAL974' AS org_transformation,
 		'Parc national de La Réunion' AS org_transformation,
-		
-	--sources	
+
+	--sources
         CASE
             WHEN LOWER(s.statsource) = 'terrain' THEN 'Te'
             WHEN LOWER(s.statsource) = 'collection' THEN 'Co'
             WHEN LOWER(s.statsource) = 'littérature' THEN 'Li'
-            WHEN LOWER(s.statsource) = 'ne sait pas' THEN 'NSP' 
+            WHEN LOWER(s.statsource) = 'ne sait pas' THEN 'NSP'
             ELSE null
         END AS statut_source,
 
@@ -829,11 +827,6 @@ SELECT
 		'http://www.naturefrance.fr/la-reunion/referentiel-de-sensibilite' AS sensi_referentiel,
 		'1.4.0' AS sensi_version_referentiel, -- voir occtax.sensibilite_referentiel
 
-
-	-- validation : remplissage provisoire à ce stade car une fonction spécifique calcul_niveau_validation la calcule une fois l'import réalisé (cf. plus bas)
-		'6' AS validite_niveau, -- Si un niveau de validation est indiqué par le producteur ou la tête de réseau, il doit être précisé ici et sera utilisé plus bas dans le script (cf. partie 9 relative à la validation). Sinon, laisser 6 par défaut.
-		now()::DATE AS validite_date_validation, -- Si une date de validation est indiquée par le producteur ou la tête de réseau, elle doit être précisée ici et sera utilisée plus bas dans le script (cf. partie 9 relative à la validation). Sinon, laisser now() par défaut.
-		
 	-- descriptif du sujet
 		json_build_array (json_build_object(
 
@@ -880,7 +873,7 @@ SELECT
 			ELSE '1' -- Non renseigné
 		END,
 
-		-- NATURALITE        
+		-- NATURALITE
 			'occ_naturalite',
 		CASE
 			WHEN trim(s.ocnat) = 'Inconnu' THEN '0'
@@ -890,7 +883,7 @@ SELECT
 			WHEN trim(s.ocnat) = 'Féral' THEN '4'
 			WHEN trim(s.ocnat) = 'Subspontané' THEN '5'
 			ELSE '0' -- inconnu
-		END, 
+		END,
 
 		-- SEXE
 			'occ_sexe',
@@ -906,7 +899,7 @@ SELECT
 		END,
 
 		-- STADE DE VIE
-			'occ_stade_de_vie', 
+			'occ_stade_de_vie',
 		CASE
 			WHEN trim(s.ocstade) = 'Inconnu' THEN '0'
 			WHEN trim(s.ocstade) = 'Indéterminé' THEN '1'
@@ -921,17 +914,17 @@ SELECT
 			ELSE '0' -- inconnu
 		END,
 
-		-- DENOMBREMENT DETAILLE 
+		-- DENOMBREMENT DETAILLE
 			'occ_denombrement_min', s.denbrmin::INTEGER,
 
-			'occ_denombrement_max', 
-		CASE	
+			'occ_denombrement_max',
+		CASE
 			WHEN (TRIM(s.denbrmax) is NULL and TRIM(s.denbrmin) is not NULL) THEN s.denbrmin::INTEGER
 			ELSE s.denbrmax::INTEGER
 		END,
 
-			'occ_objet_denombrement', 
-		CASE	
+			'occ_objet_denombrement',
+		CASE
 			WHEN trim(s.objdenbr) = 'Colonie' THEN 'COL'
 			WHEN trim(s.objdenbr) = 'Couple' THEN 'CPL'
 			WHEN trim(s.objdenbr) = 'Hampe florale' THEN 'HAM'
@@ -946,8 +939,8 @@ SELECT
 			ELSE 'NSP'
 		END,
 
-			'occ_type_denombrement', 
-		CASE	
+			'occ_type_denombrement',
+		CASE
 			WHEN trim(s.typdenbr) = 'Calculé' THEN 'Ca'
 			WHEN trim(s.typdenbr) = 'Estimé' THEN 'Es'
 			WHEN trim(s.typdenbr) = 'Compté' THEN 'Co'
@@ -985,7 +978,7 @@ SELECT
 			WHEN trim(s.preuveoui) = 'Non' THEN '2'
 			WHEN trim(s.preuveoui) = 'NonAcquise' THEN '3'
 			ELSE '0' -- NSP
-		END, 
+		END,
 
 		-- PREUVE NUM
 			'preuve_numerique', NULL,
@@ -993,10 +986,10 @@ SELECT
 		-- PREUVE NON NUM
 			'preuve_non_numerique', NULL,
 
-		-- CONTEXTE         
+		-- CONTEXTE
 			'obs_contexte', TRIM(s.obsctx),
 
-		-- DESCRIPTION      
+		-- DESCRIPTION
 			'obs_description', TRIM(s.obsdescr),
 
 		--  DETERMINATION
@@ -1008,18 +1001,18 @@ SELECT
 		NULL AS donnee_complementaire,	-- ce champ peut éventuellement être utilisé pour stocker d’autres informations non prévues au standard, mais il vaut mieux y préférer l’utilisation de la table attribut_additionnel
 
 		-- precision géométrie
-		s.precision::INTEGER AS precision_geometrie,			
-		
+		s.precision::INTEGER AS precision_geometrie,
+
 		-- nature géométrie
 		CASE
 			WHEN LOWER(s.natobjgeo) = 'stationnel' THEN 'St'
 			WHEN LOWER(s.natobjgeo) = 'inventoriel' THEN 'In'
 			WHEN LOWER(s.natobjgeo) = 'ne sait pas' THEN 'NSP'
 			ELSE 'NSP'
-		END  AS nature_objet_geo, 
+		END  AS nature_objet_geo,
 
 		-- TRIM(s.natobjgeo) IS NOT NULL THEN TRIM(s.natobjgeo), -si saisie 'St', 'In' et 'NSP'
-	
+
 		-- ATTENTION : pour les géométries => le "." est le séparateur décimal et non la ","
 		-- geom -> xy (dans les cas où la géométrie des points est indiquée sous forme de coordonnées XY)
 		CASE
@@ -1031,31 +1024,31 @@ SELECT
 
 		-- geom -> wkt (dans les cas où la géométrie des points est indiquée sous forme de WKT)
 		-- CASE
-		-- WHEN wkt IS NOT NULL 
+		-- WHEN wkt IS NOT NULL
 			-- THEN ST_SetSrid(ST_GeomFromText(s.wkt, 2975), 2975)
 			-- -- THEN ST_Transform(ST_GeomFromText(s.wkt, 4326),2975) --  WGS84 (lon/lat) (GPS) -> RGR92 utm40s
 			-- -- THEN ST_SetSrid(ST_GeomFromText((regexp_replace((regexp_replace( s.wkt, ',', '.')), ',', '.')), 2975), 2975) -- si ","
 			-- ELSE NULL
 		-- END AS geom,
-		
+
 		-- odata : champ permettant éventuellement de stocker de manière provisoire des informations utiles à l’import, qui ne seront pas diffusées ensuite
 		NULL AS odata,
-		
+
 		'Parc national de La Réunion' AS organisme_standard
 		-- 'DEAL974' AS organisme_standard
 
-		
+
 FROM
 
--- table source 
+-- table source
 fdw.pnrun_data_2018_observations  AS s
 
--- table de(s) jdd 
+-- table de(s) jdd
 INNER JOIN occtax.jdd j ON j.jdd_id = s.jdd_id
 
 -- jointure pour récupérer les identifiants permanents si déjà créés lors d'un import passé
-LEFT JOIN occtax.lien_observation_identifiant_permanent AS loip ON loip.jdd_id IN ('99999')  
-AND loip.identifiant_origine = s.idorigine::TEXT 
+LEFT JOIN occtax.lien_observation_identifiant_permanent AS loip ON loip.jdd_id IN ('99999')
+AND loip.identifiant_origine = s.idorigine::TEXT
 -- s'il y a plusieurs jdd ajouter :
 -- AND loip.jdd_id = s.jdd_id -- (ou j.jdd_id)
 
@@ -1070,7 +1063,7 @@ WHERE TRUE  ; -- On peut éventuellement ajouter ici des filtres pour écarter l
 SELECT count(*) FROM observation WHERE jdd_id IN ('99999')  ;
 
 
------------------------------------- 
+------------------------------------
 -- 3- Vidage puis remplissage de lien_observation_identifiant_permanent pour garder en mémoire les identifiants permanents en cas d'un réimport futur
 
 DELETE FROM occtax.lien_observation_identifiant_permanent
@@ -1080,17 +1073,17 @@ INSERT INTO occtax.lien_observation_identifiant_permanent
 (jdd_id, identifiant_origine, identifiant_permanent, dee_date_derniere_modification, dee_date_transformation)
 SELECT o.jdd_id, o.identifiant_origine, o.identifiant_permanent, o.dee_date_derniere_modification, o.dee_date_transformation
 FROM occtax.observation o
-WHERE jdd_id IN ('99999') 
+WHERE jdd_id IN ('99999')
 ORDER BY o.cle_obs
 ;
 
 -- Vérification
-SELECT * FROM occtax.lien_observation_identifiant_permanent 
+SELECT * FROM occtax.lien_observation_identifiant_permanent
 WHERE jdd_id IN ('99999');
 
 
------------------------------------- 
--- 4-  Renseignement des personnes associées aux observations (observateurs, déterminateurs)  
+------------------------------------
+-- 4-  Renseignement des personnes associées aux observations (observateurs, déterminateurs)
 --"role_personne";"Det";"Déterminateur"
 --"role_personne";"Obs";"Observateur"
 -- NB : les validateurs sont pas traités ici ; si les données sont déjà validées --> cf 9.3 -- les déterminateurs sont traités comme les observateurs
@@ -1098,7 +1091,7 @@ WHERE jdd_id IN ('99999');
 -- 4.0 vérifications préalables
 
 -- Couples observations/personnes déjà renseignées pour ce jeu de données :
-SELECT count(*) FROM occtax.observation_personne LEFT JOIN occtax.observation USING (cle_obs) 
+SELECT count(*) FROM occtax.observation_personne LEFT JOIN occtax.observation USING (cle_obs)
 WHERE jdd_id IN ('99999');
 
 -- recherche de doublons dans occtax.personne
@@ -1110,11 +1103,11 @@ WHERE trim(lower(unaccent(tab1.identite)))=trim(lower(unaccent(tab2.identite)))
 	AND tab1.id_organisme=tab2.id_organisme
 --	AND tab1.mail=tab2.mail
 	AND tab1.id_personne<>tab2.id_personne
-    AND tab1.id_personne=(SELECT MAX(id_personne) FROM occtax.personne tab 
-    WHERE tab.id_personne=tab1.id_personne)	
+    AND tab1.id_personne=(SELECT MAX(id_personne) FROM occtax.personne tab
+    WHERE tab.id_personne=tab1.id_personne)
 ORDER BY tab1.id_personne
-	
-	
+
+
 -- ATTENTION : bien gérer dans son script pour créer identite_personne
 -- "Si la personne n'est pas connue (non mentionnée dans la source) : noter INCONNU en lieu et place de NOM Prénom."
 -- => seule identité est "normée"
@@ -1165,7 +1158,7 @@ VALUES (
 	NULL
 	)
 ON CONFLICT DO NOTHING;
-	
+
 -- 4.2 table personne
 
 --> I 1.2
@@ -1176,7 +1169,7 @@ ON CONFLICT DO NOTHING;
 SELECT b.id_organisme, a.nom
 FROM fdw.pnrun_data_2018_acteurs AS a , occtax.organisme AS b
 WHERE LOWER(TRIM(b.nom_organisme)) = LOWER(TRIM(a.orgobs))
--- ou 
+-- ou
 SELECT  a.nom, a.orgobs, b.nom_organisme
 FROM fdw.pnrun_data_2018_acteurs AS a , occtax.organisme AS b
 WHERE b.id_organisme = a.id_organisme::integer
@@ -1195,10 +1188,10 @@ SELECT DISTINCT
 		WHEN o.prenom is NULL THEN 'Inconnu'
 		ELSE INITCAP(TRIM(o.prenom))
 	END AS prenom,
-	UPPER(TRIM(o.nom)) AS nom, 
+	UPPER(TRIM(o.nom)) AS nom,
 	CASE
 		WHEN TRIM(o.anonyme) = 'non' THEN FALSE
-		WHEN TRIM(o.anonyme) = 'oui' THEN TRUE		
+		WHEN TRIM(o.anonyme) = 'oui' THEN TRUE
 		ELSE TRUE
 	END AS anonymiser, -- Vérifier si nécessaire avec le producteur s’il souhaite que le nom des observateurs soit anonymisé pour le grand public et les utilisateurs connectés
 	o.id_organisme::INTEGER AS id_organisme
@@ -1217,8 +1210,8 @@ ON CONFLICT DO NOTHING
 
 INSERT INTO occtax.observation_personne (cle_obs, id_personne, role_personne)
 SELECT DISTINCT
-    o.cle_obs, 
-    p.id_personne, 
+    o.cle_obs,
+    p.id_personne,
     'Obs' AS role_personne
 FROM occtax.observation AS o
 INNER JOIN fdw.pnrun_data_2018_observations AS t ON t.idorigine = o.identifiant_origine
@@ -1248,15 +1241,15 @@ from occtax.observation as o
 LEFT JOIN occtax.observation_personne as p USING (cle_obs)
 where  o.jdd_id = '99999'
 group by o.identifiant_origine
-having count (o.identifiant_origine) > 1 
+having count (o.identifiant_origine) > 1
 ;
 
 --observateur_2
 
 INSERT INTO occtax.observation_personne (cle_obs, id_personne, role_personne)
 SELECT DISTINCT
-    o.cle_obs, 
-    p.id_personne, 
+    o.cle_obs,
+    p.id_personne,
     'Obs' AS role_personne
 FROM occtax.observation AS o
 INNER JOIN fdw.pnrun_data_2018_observations AS t ON t.idorigine = o.identifiant_origine
@@ -1271,8 +1264,8 @@ ON CONFLICT DO NOTHING
 
 INSERT INTO occtax.observation_personne (cle_obs, id_personne, role_personne)
 SELECT DISTINCT
-    o.cle_obs, 
-    p.id_personne, 
+    o.cle_obs,
+    p.id_personne,
     'Obs' AS role_personne
 FROM occtax.observation AS o
 INNER JOIN fdw.pnrun_data_2018_observations AS t ON t.idorigine = o.identifiant_origine
@@ -1285,22 +1278,22 @@ ON CONFLICT DO NOTHING
 
 
 -- Déterminateurs
--- Si des déterminateurs sont précisés en plus des observateurs, reprendre les étapes ci-dessus puis lors de l’insertion dans la table observation_personne, remplacer 'Obs' par 'Det' 
+-- Si des déterminateurs sont précisés en plus des observateurs, reprendre les étapes ci-dessus puis lors de l’insertion dans la table observation_personne, remplacer 'Obs' par 'Det'
 -- ou les différencier directement dans le script ci-dessus :
 -- exemple pour différencier observateur (Obs) et déterminateur (Det) :
     -- CASE
         -- WHEN nomdechamps = 'determinateur' THEN 'Det'
         -- ELSE 'Obs'
-    -- END AS role_personne 
+    -- END AS role_personne
 
 
--- Validateur 
+-- Validateur
 -- si les données sont déjà validées --> cf 9.3  -> gérés dans occtax.validation_observation
 
------------------------------------- 
+------------------------------------
 -- 5- rattachement géographique
 
--- Rattachement manuel (pour mémoire) : lorsque certaines observations ne sont pas géolocalisées mais qu’elles disposent d’une entité de rattachement (par exemple la commune ou le département), une insertion manuelle dans la table occtax.localisation_commune / occtax.localisation_departement peut être nécessaire. 
+-- Rattachement manuel (pour mémoire) : lorsque certaines observations ne sont pas géolocalisées mais qu’elles disposent d’une entité de rattachement (par exemple la commune ou le département), une insertion manuelle dans la table occtax.localisation_commune / occtax.localisation_departement peut être nécessaire.
 
 -- Attention, le modèle de saisie ne permet pas cette possibilité=> le modifier à la demande si nécessaire pour des données historiques
 
@@ -1308,7 +1301,7 @@ ON CONFLICT DO NOTHING
 
 -- Exemple de rattachement au département, s'il n'y a pas de coordonnées
 -- INSERT INTO occtax.localisation_departement (cle_obs, code_departement, type_info_geo)
--- SELECT  o.cle_obs, 
+-- SELECT  o.cle_obs,
 -- '974', -- La Réunion ôté
 -- '1'  -- information de géoréférencement et pas de rattachement
 -- FROM dw.pnrun_data_2018_observations AS t
@@ -1347,7 +1340,7 @@ LEFT JOIN occtax.observation o USING (cle_obs)
 WHERE o.jdd_id IN ('99999');
 
 
------------------------------------- 
+------------------------------------
 -- 6- Enrichissement de la donnée avec des paramètres calculés dans Borbonica
 -- Ces paramètres peuvent être utiles par exemple pour la phase de validation automatique ou encore pour générer des statistiques globales sur les données. On utilise pour cela la table attribut_additionnel
 -- Ajout de l'altitude calculée par le MNT à 10 m
@@ -1357,7 +1350,7 @@ DELETE FROM occtax.attribut_additionnel a
 WHERE cle_obs IN (SELECT cle_obs FROM occtax.observation WHERE jdd_id IN ('99999'))
 AND a.nom='altitude_mnt'
 ;
--- Puis on insère										  
+-- Puis on insère
 INSERT INTO occtax.attribut_additionnel(cle_obs, nom, definition, valeur, unite, thematique, type)
 SELECT  cle_obs,
 		'altitude_mnt' AS nom,
@@ -1384,12 +1377,12 @@ DELETE FROM occtax.attribut_additionnel a
 WHERE cle_obs IN (SELECT cle_obs FROM occtax.observation WHERE jdd_id IN ('99999'))
 AND a.nom='occupation_sol_stoc';
 
--- Puis on insère										  
+-- Puis on insère
 INSERT INTO occtax.attribut_additionnel(cle_obs, nom, definition, valeur, unite, thematique, type)
 SELECT  cle_obs,
 		'occupation_sol_stoc' AS nom,
 		'Occupation du sol déduite à partir de la table "STOC" oiseaux_habitat' AS definition,
-		min(h.id::INTEGER) AS valeur, 
+		min(h.id::INTEGER) AS valeur,
 		NULL AS unite,
 		'occupation du sol' AS thematique,
 		'QUAL' AS type
@@ -1408,7 +1401,7 @@ WHERE cle_obs IN (SELECT cle_obs FROM occtax.observation WHERE jdd_id IN ('99999
 AND a.nom='occupation_sol_stoc';
 
 
------------------------------------- 
+------------------------------------
 -- 7- Validation des données
 -- 7.1 On vérifie tout d'abord la cohérence et la conformité des données (validation sur la forme) en lançant la fonction de contrôle
 -- Cette fonction lance une batterie de tests types (script spécifique commun à tous les jeux de données)
@@ -1468,14 +1461,16 @@ INSERT INTO occtax.validation_observation
   procedure,
   proc_ref,
   comm_val)
-SELECT 
+SELECT
 nextval('occtax.validation_observation_id_validation_seq'::regclass) AS id_validation,
 o.identifiant_permanent AS identifiant_permanent,
-o.validite_date_validation AS date_ctrl, -- Si le niveau de validation a été utilisé antérieurement lors du remplissage de la table occtax.observation plus haut pour le champ date_ctrl. Sinon, il faut renseigner une valeur fixe selon les indications de validation fournies par la tête de réseau ou le producteur pour ce jeu de données.
-o.validite_niveau AS niv_val,
+'6' AS validite_niveau, -- Si un niveau de validation est indiqué par le producteur ou la tête de réseau, il doit être précisé ici et sera utilisé plus bas dans le script (cf. partie 9 relative à la validation). Sinon, laisser 6 par défaut.
+now()::DATE AS validite_date_validation, -- Si une date de validation est indiquée par le producteur ou la tête de réseau, elle doit être précisée ici et sera utilisée plus bas dans le script (cf. partie 9 relative à la validation). Sinon, laisser now() par défaut.
+
+
 'M' AS typ_val, -- M = validation manuelle
-'2' AS ech_val, -- Echelle de validation régionale (par les têtes de réseau). 
--- S’il s’agit d’une validation par le producteur, indiquer '1' 
+'2' AS ech_val, -- Echelle de validation régionale (par les têtes de réseau).
+-- S’il s’agit d’une validation par le producteur, indiquer '1'
 -- S’il s’agit d’une validation nationale, indiquer '3'  --> fichiers du MNHN par ex
 '1' AS peri_val, --convenu '1' (=périmètre minimal) avec les têtes de réseau (on ne valide à ce stade que l'occurrence de tel taxon, à tel endroit, à telle date)
 (SELECT id_personne FROM occtax.personne WHERE(LOWER(identite) = 'sanchez mickaël' and id_organisme = 41)) AS validateur, -- le nom du validateur doit être adapté ici
@@ -1505,40 +1500,44 @@ SELECT occtax.calcul_niveau_validation(
 -- 7.4 quelques vérifications : il s’agit de vérifier la bonne application de la validation automatique, et d’en assurer une synthèse pour intégration au rapport d’import et transmission au producteur
 
 -- Calcul de statistiques
-SELECT nn.code AS niveau_validite, 
-nn.valeur AS niveau_validite, 
-nt.valeur AS type_validite,
-count(DISTINCT o.cle_obs) AS nb_obs
-FROM (SELECT code, valeur FROM occtax.nomenclature WHERE champ='validite_niveau')nn
-LEFT JOIN occtax.observation o ON nn.code=COALESCE(o.validite_niveau, '6')
-LEFT JOIN occtax.validation_observation v ON v.identifiant_permanent=o.identifiant_permanent AND v.ech_val='2'  -- si on ne veut que les validations de niveau régional
-LEFT JOIN (SELECT code, valeur FROM occtax.nomenclature WHERE champ='type_validation')nt ON nt.code=COALESCE(v.typ_val,'A')
-WHERE o.jdd_id IN ('99999')
-GROUP BY nn.code, nn.valeur, nt.valeur
-ORDER BY nn.code ;
+SELECT
+    niv_val AS niveau_validite,
+    (SELECT valeur FROM occtax.nomenclature WHERE champ='validite_niveau' AND code = niv_val) AS niveau_validite_libelle,
+    (SELECT valeur FROM occtax.nomenclature WHERE champ='type_validation' AND code = typ_val) AS type_validite,
+    count(DISTINCT v.identifiant_permanent) AS nb_obs
+FROM
+    occtax.validation_observation AS v
+WHERE v.ech_val = '2'
+AND identifiant_permanent IN (
+	SELECT identifiant_permanent FROM occtax.observation WHERE jdd_id IN ('99999')
+)
+GROUP BY niv_val, typ_val
+ORDER BY niv_val
+;
+
 
 -- Détail des critères de validation automatique utilisés sur le jdd
-SELECT n.valeur AS niveau_validite, 
+SELECT n.valeur AS niveau_validite,
 	string_agg(DISTINCT t.lb_nom, ', ' ORDER BY t.lb_nom) AS taxons_concernes,
 	v.comm_val,
 	count(o.cle_obs) AS nb_obs,
 	(count(o.cle_obs)::NUMERIC (8,1)/(SELECT count(cle_obs) FROM occtax.observation WHERE o.jdd_id IN ('99999'))::NUMERIC (8,1))::NUMERIC (4,3) AS pourcentage -- attention au nb de données du jdd si > 1 000 000 ne fonctionne pas !
 FROM occtax.observation o
-LEFT JOIN occtax.validation_observation v USING(identifiant_permanent)	
-LEFT JOIN occtax.nomenclature n ON n.code=v.niv_val AND champ='niv_val_auto'	
-LEFT JOIN taxon.taxref_valide t USING (cd_ref)					
+LEFT JOIN occtax.validation_observation v USING(identifiant_permanent)
+LEFT JOIN occtax.nomenclature n ON n.code=v.niv_val AND champ='niv_val_auto'
+LEFT JOIN taxon.taxref_valide t USING (cd_ref)
 WHERE o.jdd_id IN ('99999') AND ech_val='2' and typ_val='A'
 GROUP BY n.valeur, v.niv_val, v.comm_val, o.jdd_id
 ORDER BY v.niv_val, v.comm_val ;
 
 
------------------------------------- 
+------------------------------------
 -- 8- Mise à jour des critères de sensibilité et de diffusion
 -- 8.1 Mise à jour des critères de sensibilité
 
 -- La fonction occtax.calcul_niveau_sensibilite calcule automatiquement dans la table occtax.observation les informations liées à la sensibilité des données. Ces informations sont issues de la table critere_sensibilite, elle-même découlant du référentiel de données sensibles téléchargeable à l’adresse suivante, pour information : http://www.naturefrance.fr/la-reunion/referentiel-de-sensibilite
 
-SELECT occtax.calcul_niveau_sensibilite( 
+SELECT occtax.calcul_niveau_sensibilite(
 	ARRAY['99999'],
 	FALSE -- pas une simulation
 );
@@ -1584,31 +1583,34 @@ ORDER BY tax.lb_nom, tax.nom_vern ;
 
 -- 8.2 Mise à jour des critères de diffusion
 
--- Vue qui calcule la sensibilité des données pour contrôler leur diffusion
-REFRESH MATERIALIZED VIEW occtax.observation_diffusion;
 -- Vue qui rassemble à plat dans une seule entité la plupart des informations sur les observations, utilisée ensuite pour la diffusion des données sur www.borbonica.re
 REFRESH MATERIALIZED VIEW occtax.vm_observation;
 
 -- Vérification : niveau de diffusion appliqués aux données du jeu de données
-SELECT 
-	diffusion AS code_diffusion, 
-	CASE 
-		WHEN diffusion::TEXT ILIKE '%g%' THEN 'Diffusion grand public avec géométrie précise'
-		WHEN diffusion::TEXT ILIKE '%m02%' THEN 'Diffusion grand public à la maille de 2 km'
-		WHEN diffusion::TEXT ILIKE '%c%' THEN 'Diffusion grand public à la commune'
-		WHEN diffusion::TEXT ILIKE '%m10%' THEN 'Diffusion grand public à la maille de 10 km'
-		WHEN diffusion::TEXT ILIKE 'd%' THEN 'Diffusion grand public au département'
-		WHEN diffusion is NULL THEN 'Pas de diffusion grand public'	
+WITH od AS (
+	SELECT
+	o.cle_obs,
+	occtax.calcul_diffusion(o.sensi_niveau, o.ds_publique, o.diffusion_niveau_precision) AS diffusion
+	FROM occtax.observation AS o
+	WHERE o.jdd_id in ('99999')
+)
+SELECT
+	od.diffusion AS code_diffusion,
+	CASE
+		WHEN od.diffusion::TEXT ILIKE '%g%' THEN 'Diffusion grand public avec géométrie précise'
+		WHEN od.diffusion::TEXT ILIKE '%m02%' THEN 'Diffusion grand public à la maille de 2 km'
+		WHEN od.diffusion::TEXT ILIKE '%c%' THEN 'Diffusion grand public à la commune'
+		WHEN od.diffusion::TEXT ILIKE '%m10%' THEN 'Diffusion grand public à la maille de 10 km'
+		WHEN od.diffusion::TEXT ILIKE 'd%' THEN 'Diffusion grand public au département'
+		WHEN od.diffusion is NULL THEN 'Pas de diffusion grand public'
 	END AS libelle_diffusion,
-	count(o.cle_obs) AS nb_obs
-FROM occtax.observation_diffusion od
-INNER JOIN occtax.observation o USING (cle_obs)
-WHERE o.jdd_id in ('99999')
+	count(od.cle_obs) AS nb_obs
+FROM od
 GROUP BY diffusion
 ORDER BY diffusion ;
 
 
------------------------------------- 
+------------------------------------
 -- 9 Métadonnées sur l'action d'import (table jdd_import)
 
 -- S’assurer avant que les organismes soient bien importés (=> 4.1 table organisme)
@@ -1620,9 +1622,9 @@ ORDER BY diffusion ;
 
 -- Si l’acteur n’est pas déjà renseigné dans la table gestion.acteur, il faut l’y rajouter selon le script suivant :
 SELECT Setval('gestion.acteur_id_acteur_seq', (SELECT max(id_acteur) FROM gestion.acteur) );
-INSERT INTO gestion.acteur 
-	(id_acteur, nom, prenom, civilite, tel_1, tel_2, courriel, fonction, id_organisme, remarque, bulletin_information, service, date_maj, en_poste) 
-VALUES 
+INSERT INTO gestion.acteur
+	(id_acteur, nom, prenom, civilite, tel_1, tel_2, courriel, fonction, id_organisme, remarque, bulletin_information, service, date_maj, en_poste)
+VALUES
 	(
 	nextval('gestion.acteur_id_acteur_seq'::regclass),
 	'XXX',
@@ -1639,12 +1641,12 @@ VALUES
 	now(),
 	TRUE -- ou FALSE
 	)
-ON CONFLICT DO NOTHING;	
+ON CONFLICT DO NOTHING;
 
-	
+
 -- 9.2 jdd_import
 
-SELECT Setval('occtax.jdd_import_id_import_seq', (SELECT max(id_import) FROM occtax.jdd_import ) );	
+SELECT Setval('occtax.jdd_import_id_import_seq', (SELECT max(id_import) FROM occtax.jdd_import ) );
 INSERT INTO jdd_import (
 	jdd_id,
 	date_reception,
@@ -1658,8 +1660,8 @@ INSERT INTO jdd_import (
 	acteur_referent,
 	acteur_importateur
 	)
-SELECT 
-	'99999' AS jdd_id, 
+SELECT
+	'99999' AS jdd_id,
 	'2019-09-13'::DATE AS date_reception, -- A compléter en fonction de la date de réception des données (ie la date à laquelle les derniers éléments nécessaires à l’import ont été transmis par le producteur)
 	now()::date AS date_import,
 	(SELECT count(idorigine) FROM fdw.pnrun_data_2018_observations) AS nb_donnees_source,-- attention s'il y a plusieurs jdd il faut filtrer par JDD
@@ -1678,20 +1680,20 @@ WHERE jdd_id IN ('99999')
 SELECT * FROM occtax.jdd_import WHERE jdd_id in ('99999') ;
 
 -- Requête permettant d’obtenir les caractéristiques principales de l’import, utiles ensuite pour renseigner le rapport d’import :
-SELECT 	id_import, 
-		i.libelle AS libelle_import, 
-		jdd.jdd_cadre, 
-		CONCAT('https://inpn.mnhn.fr/mtd/cadre/export/xml/GetRecordById?id=', jdd.jdd_cadre) AS fiche_ca, 
-		-- CONCAT('https://inpn.mnhn.fr/espece/cadre/', jdd.jdd_cadre) AS fiche_ca, -- URL publique de la fiche une fois qu’elle a également été intégrée au SINP national		
-		i.jdd_id, 
-		jdd.jdd_code, 
-		jdd.jdd_description, 
+SELECT 	id_import,
+		i.libelle AS libelle_import,
+		jdd.jdd_cadre,
+		CONCAT('https://inpn.mnhn.fr/mtd/cadre/export/xml/GetRecordById?id=', jdd.jdd_cadre) AS fiche_ca,
+		-- CONCAT('https://inpn.mnhn.fr/espece/cadre/', jdd.jdd_cadre) AS fiche_ca, -- URL publique de la fiche une fois qu’elle a également été intégrée au SINP national
+		i.jdd_id,
+		jdd.jdd_code,
+		jdd.jdd_description,
 		CONCAT('https://inpn.mnhn.fr/mtd/cadre/jdd/export/xml/GetRecordById?id=', jdd.jdd_metadonnee_dee_id) AS fiche_jdd,
 		-- CONCAT('https://inpn.mnhn.fr/espece/jeudonnees/', jdd.jdd_id) AS fiche_jdd, -- URL publique de la fiche une fois qu’elle a également été intégrée au SINP national
-		i.date_reception, 
-		i.date_import, 
+		i.date_reception,
+		i.date_import,
 		referent.prenom || ' ' || referent.nom AS referent,
-		importateur.prenom || ' ' || importateur.nom AS importateur, 
+		importateur.prenom || ' ' || importateur.nom AS importateur,
 		i.remarque
 FROM occtax.jdd_import i
 LEFT JOIN occtax.jdd USING (jdd_id)
@@ -1705,32 +1707,32 @@ ORDER BY jdd_id;
 -- PARTIE IV : Création d’une demande d’accès aux données importées
 ------------------------------
 
------------------------------------- 
+------------------------------------
 -- 1. Import dans la table organisme
 -- Import dans la table organisme
 -- on vérifie si l'organisme y figure déjà, et si non on le rajoute
 SELECT * FROM occtax.organisme WHERE nom_organisme='zzz';
--- 
--- cf partie I 2 + II 4.1 -> voir si les organismes ont été importés 
+--
+-- cf partie I 2 + II 4.1 -> voir si les organismes ont été importés
 
------------------------------------- 
+------------------------------------
 -- 2. Import dans la table acteur
 -- on vérifie au préalable si l'acteur y figure déjà, et si non on le rajoute
 
 -- si import Cf partie III 10.1 acteur
 
 
------------------------------------- 
+------------------------------------
 -- 3. Création de l'utilisateur via l'interface d'administration de Lizmap
 
 -- créer l'utilisateur via l'interface d'administration de Lizmap -> admin -> utilisateurs -> créer
 -- mdp pour le profil  XXX - x@y.fr
--- 
+--
 -- On peut prendre comme règle pour les utilisateurs de concaténer la première lettre du prénom avec le nom, par exemple mdouchin pour Michaël Douchin.
 -- Le placer ensuite dans un profil avec droits de voir les données brutes (en l'occurrence : en plus de users, groupe par défaut, il faut le placer dans le groupe naturaliz_profil_1)
 
 
------------------------------------- 
+------------------------------------
 -- 4. Import dans la table demande
 
 -- critère additionnel "dynamique" - ex pour le PNRun
@@ -1740,16 +1742,16 @@ SELECT Setval('gestion.demande_id_seq', (SELECT max(id) FROM gestion.demande) );
 INSERT INTO demande (
 	usr_login,
 	id_acteur,
-	id_organisme, 
-	motif, 
-	type_demande, 
-	date_demande, 
+	id_organisme,
+	motif,
+	type_demande,
+	date_demande,
 	commentaire,
-	date_validite_min, 
-	date_validite_max, 
-	cd_ref, 
-	group1_inpn, 
-	group2_inpn, 
+	date_validite_min,
+	date_validite_max,
+	cd_ref,
+	group1_inpn,
+	group2_inpn,
 	libelle_geom,
 	validite_niveau,
 	geom,
@@ -1758,22 +1760,22 @@ INSERT INTO demande (
 	detail_decision,
 	critere_additionnel
 	)
-SELECT 
+SELECT
     'pnrun_plus' AS usr_login,
     (SELECT id_acteur FROM acteur WHERE courriel = 'jean-cyrille.notter@reunion-parcnational.fr') AS id_acteur,
     (SELECT id_organisme FROM organisme WHERE nom_organisme ILIKE 'Parc national de La Réunion') AS id_organisme,
     'Accès du producteur aux données qu''il a fournies' AS motif,
-    'AP' AS type_demande, 
+    'AP' AS type_demande,
     now()::date AS date_demande,
     'Accès du producteur à ses propres données' AS commentaire,
     now()::date AS date_validite_min,
     now() + '2 year'::interval AS date_validite_max,
     NULL AS cd_ref,
     NULL AS group1_inpn,
-    NULL AS group2_inpn, 
-    'Département de La Réunion sans ZEE' AS libelle_geom, 
+    NULL AS group2_inpn,
+    'Département de La Réunion sans ZEE' AS libelle_geom,
     ARRAY['1', '2', '3', '4', '5', '6'] AS 	validite_niveau, -- {1,2,3,4,5,6}
-    (SELECT geom FROM sig.departement WHERE code_departement='974') AS geom,	
+    (SELECT geom FROM sig.departement WHERE code_departement='974') AS geom,
 	FALSE AS motif_anonyme,
 	'Acceptée' AS statut,
 	'Accès systématique d''un producteur à ses données' AS detail_decision,
@@ -1797,7 +1799,7 @@ ON CONFLICT DO NOTHING
 -- "PS" => "Publication scientifique"
 -- "SC" => "Sensibilisation et communication"
 
------------------------------------- 
+------------------------------------
 -- Vérification
 SELECT *
 FROM gestion.demande
@@ -1831,7 +1833,7 @@ DROP TABLE fdw.pnrun_data_2018_acteurs ;
 ------------------------------------
 -- S'il n'y a qu'un JDD prendre le jdd_code pour "nom_jdd", sinon, donner un nom au lot
 ------------------------------------
--- NB préparation des fdw afin de pouvoir voir certaines données en "prod" du serveur de "dev" 
+-- NB préparation des fdw afin de pouvoir voir certaines données en "prod" du serveur de "dev"
 
 -- ----------------	SERVER bdd_dev
 -- IMPORT FOREIGN SCHEMA occtax
@@ -1845,20 +1847,20 @@ DROP TABLE fdw.pnrun_data_2018_acteurs ;
 -------------------------------------
 --> A FAIRE A L'IMPORT EN DEV SUR LA BASE DE PROD (droits postgres)
 -------------------------------------
--- s'il n'y a qu'un JDD 
+-- s'il n'y a qu'un JDD
 UPDATE divers.suivi_imports
 SET date_import_dev = (SELECT date_import from occtax_dev.jdd_import where jdd_id = '99999')
 WHERE nom_jdd = 'pnrun_data_2018';
--- s'il y a plusieurs JDD, en choisir un pour la rqt de la date_import 
+-- s'il y a plusieurs JDD, en choisir un pour la rqt de la date_import
 
 -------------------------------------
 --> A FAIRE A L'IMPORT EN PROD SUR LA BASE DE PROD
 -------------------------------------
--- s'il n'y a qu'un JDD 
+-- s'il n'y a qu'un JDD
 UPDATE divers.suivi_imports
 SET date_import_prod = (SELECT date_import from occtax.jdd_import where jdd_id = '99999')
-WHERE jdd_id ='99999'; 
--- s'il y a plusieurs JDD, en choisir un pour la rqt de la date_import 
+WHERE jdd_id ='99999';
+-- s'il y a plusieurs JDD, en choisir un pour la rqt de la date_import
 
 END ;
 COMMIT;

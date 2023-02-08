@@ -91,17 +91,6 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
                 )
             ),
 
-            // Need to join the v_observation_champs_validation view to get updated validation
-            // we do not use validation_observation because the trigger should update observation accordingly
-            // for ech_val = '2'
-            'occtax.v_observation_champs_validation' => array(
-                'alias' => 'oo',
-                'required' => False,
-                'join' => ' JOIN ',
-                'joinClause' => "
-                    ON oo.identifiant_permanent = o.identifiant_permanent ",
-                'returnFields' => array(),
-            ),
         );
 
         // Get local configuration (application name, projects name, list of fields, etc.)
@@ -125,7 +114,7 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
 
         // Get t_group_categorie lowered and unaccentuated names
         $tpl_categories = $this->getGroupNormalizedCategories();
-        $this->tplFields['groupe'] = $tpl_categories . $this->tplFields['groupe'];
+        $this->tplFields['groupe'] = $tpl_categories.$this->tplFields['groupe'];
 
         parent::__construct($token, $params, $demande, $login);
 

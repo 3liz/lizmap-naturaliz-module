@@ -83,7 +83,7 @@ COMMENT ON COLUMN gestion.demande.group1_inpn IS 'Noms des groupes INPN de type 
 COMMENT ON COLUMN gestion.demande.group2_inpn IS 'Noms des groupes INPN de type 2. Clé étrangère vers table taxon.t_group_categorie.groupe_nom';
 COMMENT ON COLUMN gestion.demande.date_creation IS 'Date de création de la ligne dans la table (automatique si aucune valeur passée)';
 COMMENT ON COLUMN gestion.demande.libelle_geom IS 'Description littérale de la zone géographique sur laquelle porte la demande';
-COMMENT ON COLUMN gestion.demande.validite_niveau IS 'Liste de niveaux de validité accessible à la personne, sous la forme d''un tableau.';
+COMMENT ON COLUMN gestion.demande.validite_niveau IS 'Liste de niveaux de validité accessible à la personne, sous la forme d''un tableau. Cela filtre le champ vm_observation.niv_val_regionale';
 COMMENT ON COLUMN gestion.demande.geom IS 'Géométrie dans laquelle restreindre les observations consultables. On fait une intersection entre les observation et cette géométrie.';
 COMMENT ON COLUMN gestion.demande.statut IS 'Etat d''avancement de la demande d''accès aux données : A traiter, Acceptée ou Refusée';
 COMMENT ON COLUMN gestion.demande.detail_decision IS 'Détail de la décision pour cette demande';
@@ -250,6 +250,3 @@ DROP INDEX IF EXISTS demande_id_acteur_idx;
 CREATE INDEX ON gestion.demande (id_acteur);
 DROP INDEX IF EXISTS demande_geom_idx;
 CREATE INDEX ON gestion.demande USING GIST (geom);
-
-
-
