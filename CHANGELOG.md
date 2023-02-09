@@ -2,15 +2,36 @@
 
 ## Unreleased
 
+## 2.14.0
+
 ### Changed
+
+* Validation
+  * Export et fiche observation: ajout de la possibilité de visualiser les données
+  pour les échelles producteur, régionales et nationales via les champs
+  `ajouter niv_val_producteur, date_ctrl_producteur, validateur_producteur`,
+  `niv_val_regionale, date_ctrl_regionale, validateur_regionale`,
+  `niv_val_nationale, date_ctrl_nationale, producteur_nationale`
+  * Modification de la table `occtax.observation`
+    * Suppression de l'utilisation des champs `validite_niveau, validite_date_validation`
+    * Suppression du "trigger" PostgreSQL sur la modification de ces champs
+    depuis la modification du contenu de la table `occtax.validation_observation`
+  * Modification de la vue matérialisée `occtax.vm_observation`:
+    * ajout de 3 champs JSON
+    `validation_producteur, validation_regionale, validation_nationale`
+    * ajout des champs `niv_val_producteur, niv_val_regionale, niv_val_nationale`  pour faciliter
+    les requêtes et les filtres dans l'application (demandes, filtre pour le grand public, filtre par formulaire)
+  * Suppression de la vue matérialisée `occtax.observation_diffusion` et remplacement par la fonction
+    `occtax.calcul_diffusion(sensi_niveau text, ds_publique text, diffusion_niveau_precision text)`
+    pour faciliter les rafraîchissements (plus besoin de rafraîchir `occtax.observation_diffusion`)
+
+### Fixed
 
 * Import CSV : suppression des critères de contrainte NON NULL pour les champs
   `denombrement_min` et `denombrement_max`. On peut maintenant importer des données
   sans information de dénombrement si `objet_denombrement` vaut 'NSP'
-
-### Fixed
-
-* configurateur du module taxon pour lizmap 3.6, qui l'assignait par erreur à l'admin, au niveau des urls
+* Installateurs : correction du configurateur du module `taxon` pour Lizmap Web Client 3.6,
+  qui l'assignait par erreur à l'admin, au niveau des urls
 
 
 ## 2.13.3 - 2022-12-13

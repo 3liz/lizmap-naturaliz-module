@@ -1,3 +1,14 @@
+-- Suppression d'une règle inutile sur les dénombrements non null
+DELETE FROM occtax.critere_conformite
+WHERE code IN ('obs_denombrement_min_not_null', 'obs_denombrement_max_not_null')
+AND type_critere = 'not_null'
+;
+-- Suppression des règles sur le niveau de validite et la date de contrôle
+-- cela sera ajouté dans un 2ème temps
+DELETE FROM occtax.critere_conformite
+WHERE code IN ('obs_validite_niveau_format', 'obs_validite_niveau_valide');
+
+
 -- Fonction pour calculer la diffusion des données
 DROP FUNCTION IF EXISTS occtax.calcul_diffusion(text, text, text) CASCADE;
 CREATE OR REPLACE FUNCTION occtax.calcul_diffusion(sensi_niveau text, ds_publique text, diffusion_niveau_precision text)
@@ -1069,7 +1080,3 @@ GROUP BY o.cd_ref, t.lb_nom, t.nom_vern, t.group2_inpn, t.{$colonne_locale}, t.r
 ORDER BY count(o.cle_obs) DESC ;
 
 COMMENT ON MATERIALIZED VIEW stats.liste_taxons_observes IS 'Liste des taxons faisant l''objet d''au moins une observation dans Borbonica et statuts associés' ;
-
-
-DELETE FROM occtax.critere_conformite
-WHERE code IN ('obs_validite_niveau_format', 'obs_validite_niveau_valide');
