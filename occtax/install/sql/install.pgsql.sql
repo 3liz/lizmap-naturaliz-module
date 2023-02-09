@@ -299,6 +299,33 @@ COMMENT ON COLUMN occtax.observation_personne.id_personne IS 'Identifiant de la 
 COMMENT ON COLUMN occtax.observation_personne.role_personne IS 'Rôle de la personne. Voir nomenclature.';
 
 
+-- Vue pour exploiter les personnes
+CREATE VIEW occtax.v_personne AS
+SELECT
+p.id_personne,
+p.prenom, p.nom, p.anonymiser,
+CASE
+    WHEN p.anonymiser IS TRUE THEN 'ANONYME' ELSE p.identite
+END AS identite,
+CASE
+    WHEN p.anonymiser IS TRUE THEN '' ELSE p.mail
+END AS mail,
+CASE
+    WHEN p.anonymiser IS TRUE OR lower(p.identite) = lower(nom_organisme) THEN NULL ELSE Coalesce(nom_organisme, 'INCONNU')
+END AS organisme,
+p.identite AS identite_non_floutee,
+p.mail AS mail_non_floute,
+Coalesce(nom_organisme, 'INCONNU') AS organisme_non_floute,
+concat(p.identite, ' (', Coalesce(nom_organisme, 'INCONNU'), ')') AS identite_complete_non_floutee
+FROM occtax.personne p
+INNER JOIN occtax.organisme o
+    ON o.id_organisme = p.id_organisme
+;
+
+COMMENT ON VIEW occtax.v_personne
+IS 'Vue qui simplifie l''utilisation des données de la table personne';
+
+
 -- Table localisation_commune
 CREATE TABLE occtax.localisation_commune (
     cle_obs bigint NOT NULL,

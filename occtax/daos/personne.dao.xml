@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dao xmlns="http://jelix.org/ns/dao/1.0">
+    <datasources>
+        <primarytable name="v_personne" realname="v_personne" primarykey="id_personne" />
+    </datasources>
+    <record>
+        <property name="id_personne" fieldname="id_personne" datatype="integer" required="true"/>
+        <property name="prenom" fieldname="prenom" datatype="text" required="false"/>
+        <property name="nom" fieldname="nom" datatype="text" required="false"/>
+        <property name="anonymiser" fieldname="anonymiser" datatype="boolean" required="false"/>
+        <property name="identite" fieldname="identite" datatype="text" required="false"/>
+        <property name="mail" fieldname="mail" datatype="text" required="false"/>
+        <property name="organisme" fieldname="organisme" datatype="text" required="false"/>
+        <property name="identite_non_floutee" fieldname="identite_non_floutee" datatype="text" required="false"/>
+        <property name="mail_non_floute" fieldname="mail_non_floute" datatype="text" required="false"/>
+        <property name="organisme_non_floute" fieldname="organisme_non_floute" datatype="text" required="false"/>
+        <property name="identite_complete_non_floutee" fieldname="identite_complete_non_floutee" datatype="text" required="false" />
+    </record>
+    <factory>
+        <method name="getPersonnes" type="select">
+            <conditions logic="and">
+                <neq property="id_personne" value="-1"/>
+            </conditions>
+            <order>
+                <orderitem property="identite_complete_non_floutee" way="asc" />
+            </order>
+        </method>
+    </factory>
+</dao>

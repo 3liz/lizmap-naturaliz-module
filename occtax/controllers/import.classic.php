@@ -21,17 +21,17 @@ class importCtrl extends jController
     {
         $rep = $this->getResponse('binary');
 
-        $fichier = jApp::getModulePath('occtax') . 'install/config/import_observations_csv_template.csv';
+        $fichier = jApp::getModulePath('occtax').'install/config/import_observations_csv_template.csv';
         $nom_fichier = 'observations_exemple.csv';
         $mime = 'text/csv';
 
         $ressource = $this->param('ressource', 'csv');
         if ($ressource == 'pdf') {
-            $fichier = jApp::getModulePath('occtax') . 'install/config/Occurrences_de_taxon-v1_2_1_FINALE.pdf';
+            $fichier = jApp::getModulePath('occtax').'install/config/Occurrences_de_taxon-v1_2_1_FINALE.pdf';
             $nom_fichier = 'Occurrences_de_taxon-v1_2_1_FINALE.pdf';
             $mime = 'application/pdf';
         } elseif ($ressource == 'nomenclature') {
-            $fichier = jApp::getModulePath('occtax') . 'install/config/occtax_nomenclature.xlsx';
+            $fichier = jApp::getModulePath('occtax').'install/config/occtax_nomenclature.xlsx';
             $nom_fichier = 'occtax_nomenclature.xlsx';
             $mime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
         }
@@ -94,7 +94,7 @@ class importCtrl extends jController
         // Get the CSV file content
         $time = time();
         $csv_target_directory = jApp::varPath('uploads/');
-        $csv_target_filename = $time . '_'. $_FILES['observation_csv']['name'];
+        $csv_target_filename = $time.'_'.$_FILES['observation_csv']['name'];
         $save_file = $form->saveFile('observation_csv', $csv_target_directory, $csv_target_filename);
         if (!$save_file) {
             $return['messages'][] = 'Erreur d\'envoi du fichier CSV';
@@ -235,7 +235,7 @@ class importCtrl extends jController
         }
         if (count($empty_required_data) > 0) {
             $import->clean();
-            $return['messages'][] = $message . implode(', ', $empty_required_data);
+            $return['messages'][] = $message.implode(', ', $empty_required_data);
             $rep->data = $return;
             return $rep;
         }
@@ -286,10 +286,10 @@ class importCtrl extends jController
             $import->clean();
             $message = '';
             if ($check_duplicate[0]->duplicate_count > 0) {
-                $message .= $check_duplicate[0]->duplicate_count . " données du CSV sont déjà dans la base pour le JDD " . $jdd_uid . '.';
+                $message .= $check_duplicate[0]->duplicate_count." données du CSV sont déjà dans la base pour le JDD ".$jdd_uid.'.';
             }
             if ($check_duplicate_all[0]->duplicate_count > 0) {
-                $message .= $check_duplicate_all[0]->duplicate_count . " données du CSV sont déjà dans la base pour d'autres JDD.";
+                $message .= $check_duplicate_all[0]->duplicate_count." données du CSV sont déjà dans la base pour d'autres JDD.";
             }
 
             $return['messages'][] = $message;
@@ -297,6 +297,15 @@ class importCtrl extends jController
             $return['data']['duplicate_ids'] = $check_duplicate[0]->duplicate_ids;
             $return['data']['duplicate_count_all'] = $check_duplicate_all[0]->duplicate_count;
             $return['data']['duplicate_ids_all'] = $check_duplicate_all[0]->duplicate_ids;
+            $rep->data = $return;
+            return $rep;
+        }
+
+        // Check the given validator
+        $validateur = $form->getData('validateur');
+        if (empty($validateur)) {
+            $import->clean();
+            $return['messages'][] = 'Le validateur doit être défini, même si aucun niveau de validité n\'est fourni.';
             $rep->data = $return;
             return $rep;
         }
@@ -334,7 +343,7 @@ class importCtrl extends jController
         $import_other_data = $import->addImportedObservationPostData(
             $login, $jdd_uid, $default_email,
             trim($libelle_import), $date_reception, trim($remarque_import),
-            $user_email
+            $user_email, $validateur
         );
         if (!$import_other_data) {
             // Delete already imported data
@@ -350,7 +359,7 @@ class importCtrl extends jController
         $return['status_import'] = 1;
         $return['data']['observations'] = $import_observation;
         $return['data']['other'] = $import_other_data;
-        $return['messages'][] = "Les observations ont été importées dans la base. Elle seront activée par l'administrateur.";
+        $return['messages'][] = "Les observations ont été importées dans la base. Elle seront activées prochainement par l'administrateur.";
 
         // Clean
         jForms::destroy("occtax~import");

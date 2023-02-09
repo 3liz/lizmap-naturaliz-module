@@ -68,6 +68,11 @@ class occtaxImport
         'sensi_referentiel',
         'sensi_version_referentiel',
 
+        'validation_niv_val',
+        'validation_date_ctrl',
+        'validation_ech_val',
+        'validation_typ_val',
+
         'longitude',
         'latitude',
         'precision_geometrie',
@@ -101,6 +106,9 @@ class occtaxImport
 
     // CSV parsed data
     protected $data;
+
+    // CSV header columns
+    protected $header;
 
     // Login
     protected $login;
@@ -514,11 +522,11 @@ class occtaxImport
      * Import the CSV imported data in the database
      * observation table
      *
-     * @param string $login The authenticated user login.
-     * @param string $jdd_uid JDD UUID.
-     * @param string $organisme_gestionnaire_donnees Organisme gestionnaire de données
-     * @param string $org_transformation Organisme de transformation
-     * @param string $organisme_standard Organisme de standardisation
+     * @param string  $login The authenticated user login.
+     * @param string  $jdd_uid JDD UUID.
+     * @param string  $organisme_gestionnaire_donnees Organisme gestionnaire de données
+     * @param string  $org_transformation Organisme de transformation
+     * @param string  $organisme_standard Organisme de standardisation
      *
      * @return boolean $status The status of the import.
      */
@@ -553,20 +561,21 @@ class occtaxImport
      * Add the other data from the previously imported
      * csv data: lien, organisme, personne, spatial relationships
      *
-     * @param string $login The authenticated user login.
-     * @param string $jdd_uid JDD UUID.
-     * @param string $default_email Default email for newly created persons.
-     * @param string $libelle_import Libellé de l'import
-     * @param string $date_reception Date de réception des données
-     * @param string $remarque_import Remarques sur l'import
-     * @param string $user_email Email de l'importateur connecté
+     * @param string  $login The authenticated user login.
+     * @param string  $jdd_uid JDD UUID.
+     * @param string  $default_email Default email for newly created persons.
+     * @param string  $libelle_import Libellé de l'import
+     * @param string  $date_reception Date de réception des données
+     * @param string  $remarque_import Remarques sur l'import
+     * @param string  $user_email Email de l'importateur connecté
+     * @param integer $validateur Identifiant de la personne validateur (id_personne)
      *
      * @return boolean $status The status of the import.
      */
     public function addImportedObservationPostData(
         $login, $jdd_uid, $default_email,
         $libelle_import, $date_reception, $remarque_import,
-        $user_email
+        $user_email, $validateur
     ) {
         // Import dans les tables liées à observation
         $sql = ' SELECT import_report';
@@ -574,14 +583,14 @@ class occtaxImport
             $1,
             $2, $3, $4,
             $5, $6, $7,
-            $8
+            $8, $9
         )';
         $params = array(
             $this->temporary_table.'_target',
             $login, $jdd_uid,
             $default_email,
             $libelle_import, $date_reception, $remarque_import,
-            $user_email
+            $user_email, $validateur,
         );
         $import_other = $this->query($sql, $params);
         if (!is_array($import_other)) {

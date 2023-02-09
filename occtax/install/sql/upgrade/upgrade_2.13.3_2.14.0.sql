@@ -1080,3 +1080,18 @@ GROUP BY o.cd_ref, t.lb_nom, t.nom_vern, t.group2_inpn, t.{$colonne_locale}, t.r
 ORDER BY count(o.cle_obs) DESC ;
 
 COMMENT ON MATERIALIZED VIEW stats.liste_taxons_observes IS 'Liste des taxons faisant l''objet d''au moins une observation dans Borbonica et statuts associés' ;
+
+
+-- modification des règles d'import
+DELETE FROM occtax.critere_conformite WHERE code = 'obs_validite_date_validation_format';
+INSERT INTO occtax.critere_conformite (code, libelle, description, condition, type_critere)
+VALUES
+('obs_validite_niv_val_format', 'Le format de <b>validation_niv_val</b> est incorrect. Attendu: entier', NULL, $$occtax.is_given_type(validation_niv_val, 'integer')$$, 'format'),
+('obs_validite_ech_val_format', 'Le format de <b>validation_ech_val</b> est incorrect. Attendu: entier', NULL, $$occtax.is_given_type(validation_ech_val, 'integer')$$, 'format'),
+('obs_validite_date_ctrl_format', 'Le format de <b>validation_date_ctrl</b> est incorrect. Attendu: date', NULL, $$occtax.is_given_type(validation_date_ctrl, 'date')$$, 'format'),
+
+('obs_validation_niv_val_valide', 'La valeur de <b>validation_niv_val</b> n''est pas conforme', 'Le champ <b>validation_niv_val</b> peut seulement prendre les valeurs suivantes: 1, 2, 3, 4, 5, 6', $$( validation_niv_val IN ( '1', '2', '3', '4', '5', '6' ) )$$, 'conforme'),
+('obs_validation_ech_val_valide', 'La valeur de <b>validation_ech_val</b> n''est pas conforme', 'Le champ <b>validation_ech_val</b> peut seulement prendre les valeurs suivantes: 1, 2, 3', $$( validation_ech_val IN ( '1', '2', '3' ) )$$, 'conforme'),
+('obs_validation_typ_val_valide', 'La valeur de <b>validation_typ_val</b> n''est pas conforme', 'Le champ <b>validation_typ_val</b> peut seulement prendre les valeurs suivantes: A, M, C', $$( validation_typ_val IN ( 'A', 'M', 'C' ) )$$, 'conforme')
+ON CONFLICT ON CONSTRAINT critere_conformite_unique_code DO NOTHING
+;

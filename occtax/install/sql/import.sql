@@ -342,7 +342,9 @@ VALUES
 ('obs_profondeur_max_format', 'Le format de <b>profondeur_max</b> est incorrect. Attendu: numérique' , $$occtax.is_given_type(profondeur_max, 'real')$$, 'format'),
 ('obs_profondeur_moy_format', 'Le format de <b>profondeur_moy</b> est incorrect. Attendu: numérique' , $$occtax.is_given_type(profondeur_moy, 'real')$$, 'format'),
 ('obs_sensi_date_attribution_format', 'Le format de <b>sensi_date_attribution</b> est incorrect. Attendu: date JJ/MM/AAAA' , $$occtax.is_given_type(sensi_date_attribution, 'date')$$, 'format'),
-('obs_validite_date_validation_format', 'Le format de <b>validite_date_validation</b> est incorrect. Attendu: date' , $$occtax.is_given_type(validite_date_validation, 'date')$$, 'format'),
+('obs_validite_niv_val_format', 'Le format de <b>validation_niv_val</b> est incorrect. Attendu: entier' , $$occtax.is_given_type(validation_niv_val, 'integer')$$, 'format'),
+('obs_validite_ech_val_format', 'Le format de <b>validation_ech_val</b> est incorrect. Attendu: entier' , $$occtax.is_given_type(validation_ech_val, 'integer')$$, 'format'),
+('obs_validite_date_ctrl_format', 'Le format de <b>validation_date_ctrl</b> est incorrect. Attendu: date' , $$occtax.is_given_type(validation_date_ctrl, 'date')$$, 'format'),
 ('obs_longitude_format', 'Le format de <b>longitude</b> est incorrect. Attendu: numérique' , $$occtax.is_given_type(longitude, 'real')$$, 'format'),
 ('obs_latitude_format', 'Le format de <b>latitude</b> est incorrect. Attendu: numérique' , $$occtax.is_given_type(latitude, 'real')$$, 'format'),
 ('obs_precision_geometrie_format', 'Le format de <b>precision_geometrie</b> est incorrect. Attendu: entier' , $$occtax.is_given_type(precision_geometrie, 'integer')$$, 'format')
@@ -395,6 +397,11 @@ VALUES
 ('obs_sensi_niveau_valide', 'La valeur de <b>sensi_niveau</b> n''est pas conforme', 'Le champ <b>sensi_niveau</b> peut seulement prendre les valeurs suivantes: 0, 1, 2, 3, 4, 5, m01 ou m02', $$( sensi_niveau IN ( '0', '1', '2', '3', '4', '5', 'm01', 'm02' ) )$$, 'conforme'),
 ('obs_sensi_referentiel_valide', 'La valeur de <b>sensi_referentiel</b> n''est pas conforme', '', $$( ( sensi_niveau != '0' AND sensi_referentiel IS NOT NULL) OR sensi_niveau = '0' )$$, 'conforme'),
 ('obs_sensi_version_referentiel_valide', 'La valeur de <b>sensi_version_referentiel</b> n''est pas conforme', 'Le champ <b>sensi_version_referentiel</b> doit être renseigné si le champ <b>sensi_niveau</b> est différent de 0', $$( ( sensi_niveau != '0' AND sensi_version_referentiel IS NOT NULL) OR sensi_niveau = '0' )$$, 'conforme'),
+
+('obs_validation_niv_val_valide', 'La valeur de <b>validation_niv_val</b> n''est pas conforme', 'Le champ <b>validation_niv_val</b> peut seulement prendre les valeurs suivantes: 1, 2, 3, 4, 5, 6', $$( validation_niv_val IN ( '1', '2', '3', '4', '5', '6' ) )$$, 'conforme'),
+('obs_validation_ech_val_valide', 'La valeur de <b>validation_ech_val</b> n''est pas conforme', 'Le champ <b>validation_ech_val</b> peut seulement prendre les valeurs suivantes: 1, 2, 3', $$( validation_ech_val IN ( '1', '2', '3' ) )$$, 'conforme'),
+('obs_validation_typ_val_valide', 'La valeur de <b>validation_typ_val</b> n''est pas conforme', 'Le champ <b>validation_typ_val</b> peut seulement prendre les valeurs suivantes: A, M, C', $$( validation_typ_val IN ( 'A', 'M', 'C' ) )$$, 'conforme'),
+
 ('obs_version_taxref_valide', 'La valeur de <b>version_taxref</b> n''est pas conforme', 'La version du TAXREF <b>version_taxref</b> doit être renseignée si le <b>cd_nom</b> est positif', $$(cd_nom IS NULL OR ( cd_nom IS NOT NULL AND cd_nom::integer > 0 AND version_taxref IS NOT NULL) OR ( cd_nom IS NOT NULL AND cd_nom::integer < 0 ))$$, 'conforme'),
 ('obs_observateurs_valide', 'La valeur de <b>observateurs</b> n''est pas conforme', 'Le champ <b>observateurs</b> doit être du type: NOM Prénom (Organisme 1), AUTRE-NOM Prénoms-Composé (Organisme 2), INCONNU (Indépendant)', $$(occtax.is_valid_identite_multiple(observateurs))$$, 'conforme'),
 ('obs_determinateurs_valide', 'La valeur de <b>determinateurs</b> n''est pas conforme', 'Le champ <b>determinateurs</b> doit être rempli si le cd_nom est rempli', $$(cd_nom IS NULL OR ( cd_nom IS NOT NULL AND determinateurs IS NOT NULL))$$, 'conforme'),
@@ -685,8 +692,8 @@ BEGIN
         s.profondeur_moy::real,
         s.profondeur_max::real,
 
-        NULL AS dee_floutage,
-        NULL AS diffusion_niveau_precision,
+        s.dee_floutage AS dee_floutage,
+        s.diffusion_niveau_precision AS diffusion_niveau_precision,
         s.ds_publique,
 
         j.jdd_code,
@@ -782,11 +789,13 @@ DROP FUNCTION IF EXISTS occtax.import_observations_post_data(regclass, text, tex
 DROP FUNCTION IF EXISTS occtax.import_observations_post_data(regclass, text, text, text);
 DROP FUNCTION IF EXISTS occtax.import_observations_post_data(regclass, text, text, text, text, date, text);
 DROP FUNCTION IF EXISTS occtax.import_observations_post_data(regclass, text, text, text, text, date, text, text);
+DROP FUNCTION IF EXISTS occtax.import_observations_post_data(regclass, text, text, text, text, date, text, text, integer);
 CREATE OR REPLACE FUNCTION occtax.import_observations_post_data(
     _table_temporaire regclass,
     _import_login text, _jdd_uid text, _default_email text,
     _libelle_import text, _date_reception date, _remarque_import text,
-    _import_user_email text
+    _import_user_email text,
+    _validateur integer
 )
 RETURNS TABLE (
     import_report json
@@ -820,8 +829,8 @@ BEGIN
         FROM occtax.observation o
         WHERE True
             AND o.jdd_id IN (''%1$s'')
-            AND odata->>''import_temp_table'' = ''%2$s''
-            AND odata->>''import_login'' = ''%3$s''
+            AND o.odata->>''import_temp_table'' = ''%2$s''
+            AND o.odata->>''import_login'' = ''%3$s''
         ON CONFLICT ON CONSTRAINT lien_observation_identifiant__jdd_id_identifiant_origine_id_key
         DO NOTHING
         RETURNING identifiant_origine
@@ -938,13 +947,13 @@ BEGIN
             WITH source AS (
                 SELECT
                 cle_obs,
-                odata->>''%1$s'' AS odata_%1$s,
+                o.odata->>''%1$s'' AS odata_%1$s,
                 trim(%1$s) AS %2$s, rn
                 FROM
                 occtax.observation AS o,
-                regexp_split_to_table(odata->>''%1$s'', '','')  WITH ORDINALITY x(%1$s, rn)
+                regexp_split_to_table(o.odata->>''%1$s'', '','')  WITH ORDINALITY x(%1$s, rn)
                 WHERE True
-                AND odata->>''%1$s'' IS NOT NULL
+                AND o.odata->>''%1$s'' IS NOT NULL
                 AND o.jdd_metadonnee_dee_id = ''%3$s''
                 ORDER BY o.cle_obs, rn
             )
@@ -985,6 +994,57 @@ BEGIN
     -- RAISE NOTICE '%', sql_text;
     EXECUTE sql_text INTO _nb_lignes;
     _result_information := _result_information || jsonb_build_object('update_spatial', _nb_lignes);
+
+    -- Informations de validation
+    sql_template := $$
+        WITH ins AS (
+            INSERT INTO occtax.validation_observation (
+                identifiant_permanent,
+                date_ctrl,
+                niv_val,
+                typ_val,
+                ech_val,
+                peri_val,
+                validateur,
+                "procedure",
+                proc_vers,
+                proc_ref,
+                comm_val
+            )
+            SELECT
+                o.identifiant_permanent,
+                Coalesce(s.validation_date_ctrl::date, now()::date) AS date_ctrl,
+                Coalesce(NuLLif(s.validation_niv_val::text, ''), '6') AS niv_val,
+                Coalesce(Nullif(s.validation_typ_val::text, ''), 'M') AS typ_val,
+                Coalesce(Nullif(s.validation_ech_val::text, ''), '2') AS ech_val,
+                '1' AS peri_val,
+                %1$s AS validateur,
+                (SELECT "procedure" FROM occtax.validation_procedure ORDER BY id DESC LIMIT 1) AS "procedure",
+                (SELECT proc_vers FROM occtax.validation_procedure ORDER BY id DESC LIMIT 1) AS proc_vers,
+                (SELECT proc_ref FROM occtax.validation_procedure ORDER BY id DESC LIMIT 1) AS proc_ref,
+                'Données validées pendant l''import CSV du ' || now()::date::text
+            FROM occtax.observation AS o
+            INNER JOIN "%2$s" AS s
+                ON o.identifiant_origine = s.identifiant_origine::text
+            WHERE True
+                AND o.odata->>'import_temp_table' = '%2$s'
+                AND o.jdd_id IN ('%3$s')
+                AND o.odata->>'import_login' = '%4$s'
+            ON CONFLICT ON CONSTRAINT validation_observation_identifiant_permanent_ech_val_unique
+            DO NOTHING
+		    RETURNING identifiant_permanent
+        ) SELECT count(*) AS nb FROM ins
+    $$;
+    sql_text := format(sql_template,
+        _validateur,
+        _table_temporaire,
+        _jdd_id,
+        _import_login
+    );
+    -- RAISE NOTICE '-- nettoyage';
+    -- RAISE NOTICE '%', sql_text;
+    EXECUTE sql_text INTO _nb_lignes;
+    _result_information := _result_information || jsonb_build_object('validation', _nb_lignes);
 
 
     -- Log d'import: table occtax.jdd_import
@@ -1077,8 +1137,8 @@ COST 100
 ;
 
 
-COMMENT ON FUNCTION occtax.import_observations_post_data(regclass, text, text, text, text, date, text, text)
-IS 'Importe les données complémentaires (observateurs, liens spatiaux, etc.)
+COMMENT ON FUNCTION occtax.import_observations_post_data(regclass, text, text, text, text, date, text, text, integer)
+IS 'Importe les données complémentaires (observateurs, liens spatiaux, validation, etc.)
 sur les observations contenues dans la table fournie en paramètre'
 ;
 
@@ -1364,29 +1424,52 @@ BEGIN
         layer_table
         );
 	ELSEIF action_name = 'delete_jdd_observations' THEN
-        datasource:= format('
-		WITH delete_obs AS (
+        -- On ne peut pas utiliser SELECT query_to_geojson(datasource)
+        -- car le DELETE doit être au plus haut niveau
+        -- TODO: faire une fonction qui supprime les données d'un JDD ?
+        -- Ici, feature_id représente le jdd_id
+        WITH
+        delete_obs AS (
             DELETE
             FROM occtax.observation
             WHERE jdd_metadonnee_dee_id IN (
                 SELECT jdd_metadonnee_dee_id
                 FROM occtax.jdd
-                WHERE jdd_id::text = %1$s::text
+                WHERE jdd_id::text = feature_id::text
             )
-		),
+            RETURNING cle_obs
+        ),
         jdd_source AS (
             SELECT *
             FROM occtax.jdd
-            WHERE jdd_id::text = %1$s::text
+            WHERE jdd_id::text = feature_id::text
+        ),
+        inputs AS (
+            SELECT
+            1 AS id,
+            'Les ' || count(d.cle_obs) || ' observations du JDD "' || max(j.jdd_code) ||'" ont bien été supprimées' AS message,
+            NULL AS geom
+                FROM delete_obs AS d, jdd_source AS j
+            GROUP BY id
+        ),
+        features AS (
+        SELECT jsonb_build_object(
+            'type',       'Feature',
+            'id',         id,
+            'geometry',   ST_AsGeoJSON(ST_Transform(geom, 4326))::jsonb,
+            'properties', to_jsonb(inputs) - 'geom'
+        ) AS feature
+        FROM inputs
         )
-        SELECT
-        1 AS id,
-        ''Les observations du JDD "'' || j.jdd_code ||''" ont bien été supprimées'' AS message,
-        NULL AS geom
-		FROM delete_obs AS d, jdd_source AS j
-        ',
-        feature_id
-        );
+        SELECT jsonb_build_object(
+            'type',  'FeatureCollection',
+            'features', jsonb_agg(features.feature)
+        )::json
+        INTO ajson
+        FROM features
+        ;
+        RETURN ajson;
+
 	ELSEIF action_name = 'refresh_materialized_views' THEN
         datasource:= '
 		WITH refresh_views AS (

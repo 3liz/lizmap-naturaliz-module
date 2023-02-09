@@ -48,6 +48,14 @@
         <help locale="occtax~import.input.remarque_import.help"/>
     </textarea>
 
+    <menulist ref="validateur" required="false">
+        <label locale="occtax~import.input.validateur"/>
+        <datasource dao="occtax~personne" profile="naturaliz_virtual_profile"
+            method="getPersonnes" labelproperty="identite_complete_non_floutee" valueproperty="id_personne"/>
+        <help locale="occtax~import.input.validateur.help"/>
+        <hint locale="occtax~import.input.validateur.help"/>
+    </menulist>
+
 
 </group>
 

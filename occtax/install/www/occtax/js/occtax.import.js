@@ -22,9 +22,45 @@ lizMap.events.on({
             });
         }
 
+        /**
+         * Copy the inner text of a given HTML element
+         *
+         * @param {HTMLElement} element The element to copy content from.
+         */
+        function copyElementText(element) {
+
+            // Get element inner text
+            let textToCopy = element.innerText;
+
+            // Create a fake input element
+            let myTemporaryInputElement = document.createElement("input");
+            myTemporaryInputElement.type = "text";
+            myTemporaryInputElement.value = textToCopy;
+            document.body.appendChild(myTemporaryInputElement);
+
+            // Copy the fake element content
+            myTemporaryInputElement.select();
+            document.execCommand("Copy");
+
+            // Remove the fake element
+            document.body.removeChild(myTemporaryInputElement);
+
+            // Add a success message
+            OccTax.addTimedMessage(
+                'import-naturaliz',
+                'Les identifiants ont bien été copiés dans le presse-papier !',
+                'info',
+                2000,
+                true
+            );
+        }
+        OccTax.copyElementText = function (element) {
+            return copyElementText(element);
+        }
+
         // Handle form submit
         // First set the check_or_import input data depending on the clicked button
-        $('#jforms_occtax_import input[type="submit"]').on('click', function(){
+        $('#jforms_occtax_import input[type="submit"]').on('click', function () {
             let action_input = $('#jforms_occtax_import input[name="check_or_import"]');
             action_input.val(this.name);
         });
@@ -74,14 +110,14 @@ lizMap.events.on({
                     && response.data.conforme.length == 0
                 ) {
                     $('#import_message')
-                    .html("✅ Aucune erreur n'a été détectée. Vos données sont valides !")
-                    .css('color', 'green')
-                    ;
+                        .html("✅ Aucune erreur n'a été détectée. Vos données sont valides !")
+                        .css('color', 'green')
+                        ;
                 } else {
                     $('#import_message')
-                    .html("❗Des erreurs ont été détectées dans votre jeu de données !")
-                    .css('color', 'red')
-                    ;
+                        .html("❗Des erreurs ont été détectées dans votre jeu de données !")
+                        .css('color', 'red')
+                        ;
                 }
 
                 for (var c in type_conformites) {
@@ -93,9 +129,19 @@ lizMap.events.on({
                         var error_line = lines[e];
                         var intitule = (error_line.description !== null && error_line.description != '') ? error_line.description : error_line.libelle;
                         html += '<tr title="' + intitule + '">';
-                        html += '<td>' + intitule + '</td>';
-                        html += '<td>' + error_line['nb_lines'] + '</td>';
-                        html += '<td>' + error_line['ids_text'] + '</td>';
+                        html += '  <td>' + intitule + '</td>';
+                        html += '  <td>' + error_line['nb_lines'] + '</td>';
+                        let ids = error_line['ids_text'].split(', ');
+                        let displayedIds = ids.join(', ');
+                        let maxNumber = 5;
+                        if (ids.length > maxNumber) {
+                            displayedIds = ids.slice(0, maxNumber).join(', ') + ' [...]';
+                        }
+
+                        html += '  <td>' + displayedIds;
+                        html += '    <span style="display:none;">' + error_line['ids_text'] + '</span>';
+                        html += '    <button class="copy-content btn btn-mini" onclick="OccTax.copyElementText(this.previousElementSibling);" title="Copier les identifiants concernés">copier</button>';
+                        html += '  </td>';
                         html += '</tr>';
                     }
                     $('#import_conformite_' + type_conformite).html(table_header + html);
@@ -131,9 +177,9 @@ lizMap.events.on({
                         var msg = response.messages.join('</br>');
                         OccTax.addTimedMessage('import-naturaliz', msg, status_import, 30000, true);
                         $('#import_message_resultat')
-                        .html("❗" + msg)
-                        .css('color', 'red')
-                        ;
+                            .html("❗" + msg)
+                            .css('color', 'red')
+                            ;
 
                     } else {
                         // Empty data in the error table
@@ -159,9 +205,9 @@ lizMap.events.on({
                         }
                         OccTax.addTimedMessage('import-naturaliz', msg, status_import, 30000, true);
                         $('#import_message_resultat')
-                        .html("✅ " + msg)
-                        .css('color', 'green')
-                        ;
+                            .html("✅ " + msg)
+                            .css('color', 'green')
+                            ;
                     }
 
                     return false;
