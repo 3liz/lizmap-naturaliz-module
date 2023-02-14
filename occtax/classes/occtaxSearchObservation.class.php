@@ -213,9 +213,31 @@ class occtaxSearchObservation extends occtaxSearch {
             )
         ),
 
-        'validite_niveau' => array (
+        'niv_val_producteur' => array (
             'table' => 'occtax.vm_observation',
-            'clause' => " AND niv_val_regionale IN ( @ )",
+            'clause' => " AND o.niv_val_producteur IN ( @ )",
+            'type' => 'string',
+            'label'=> array(
+                'dao'=>'occtax~nomenclature',
+                'method'=>'getValiditeNiveau',
+                'column'=>'valeur',
+                'html'=>'<span class="niv_val n{$item->code}">{$item->valeur}</span>'
+            )
+        ),
+        'niv_val_regionale' => array (
+            'table' => 'occtax.vm_observation',
+            'clause' => " AND o.niv_val_regionale IN ( @ )",
+            'type' => 'string',
+            'label'=> array(
+                'dao'=>'occtax~nomenclature',
+                'method'=>'getValiditeNiveau',
+                'column'=>'valeur',
+                'html'=>'<span class="niv_val n{$item->code}">{$item->valeur}</span>'
+            )
+        ),
+        'niv_val_nationale' => array (
+            'table' => 'occtax.vm_observation',
+            'clause' => " AND o.niv_val_nationale IN ( @ )",
             'type' => 'string',
             'label'=> array(
                 'dao'=>'occtax~nomenclature',
@@ -452,7 +474,8 @@ class occtaxSearchObservation extends occtaxSearch {
 
                     ),
                 );
-                $this->queryFilters['validite_niveau']['table'] = 'occtax.v_validation_regionale';
+                $this->queryFilters['niv_val_regionale']['table'] = 'occtax.v_validation_regionale';
+                $this->queryFilters['niv_val_regionale']['clause'] = " AND oo.niv_val_regionale IN ( @ )";
 
             }
 

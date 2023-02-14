@@ -82,6 +82,7 @@ class occtaxSearchObservationExtent extends occtaxSearchObservation {
                 "o.menace_nationale" => Null,
                 "o.menace_monde" => Null,
                 "o.protection" => Null,
+                "ST_Centroid(o.geom) AS geom" => NULL,
             )
         )
 

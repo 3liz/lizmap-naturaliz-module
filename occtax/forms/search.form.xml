@@ -220,11 +220,23 @@
     </input>
 -->
 
-        <listbox multiple="true" ref="validite_niveau">
-            <label locale="occtax~search.input.validite_niveau"/>
-            <datasource dao="occtax~nomenclature" profile="naturaliz_virtual_profile" method="findByChamp" criteria="validite_niveau" labelproperty="valeur" valueproperty="code"/>
-            <hint locale="occtax~search.input.validite_niveau.help"/>
-        </listbox>
+    <listbox multiple="true" ref="niv_val_producteur">
+        <label locale="occtax~search.input.niv_val_producteur"/>
+        <datasource dao="occtax~nomenclature" profile="naturaliz_virtual_profile" method="findByChamp" criteria="validite_niveau" labelproperty="valeur" valueproperty="code"/>
+        <hint locale="occtax~search.input.niv_val_producteur.help"/>
+    </listbox>
+
+    <listbox multiple="true" ref="niv_val_regionale">
+        <label locale="occtax~search.input.niv_val_regionale"/>
+        <datasource dao="occtax~nomenclature" profile="naturaliz_virtual_profile" method="findByChamp" criteria="validite_niveau" labelproperty="valeur" valueproperty="code"/>
+        <hint locale="occtax~search.input.niv_val_regionale.help"/>
+    </listbox>
+
+    <listbox multiple="true" ref="niv_val_nationale">
+        <label locale="occtax~search.input.niv_val_nationale"/>
+        <datasource dao="occtax~nomenclature" profile="naturaliz_virtual_profile" method="findByChamp" criteria="validite_niveau" labelproperty="valeur" valueproperty="code"/>
+        <hint locale="occtax~search.input.niv_val_nationale.help"/>
+    </listbox>
 
     </group>
 

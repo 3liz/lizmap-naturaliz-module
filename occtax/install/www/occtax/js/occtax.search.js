@@ -2161,7 +2161,8 @@ OccTax.events.on({
                 'type_en',
                 'nom_valide',
                 'geom',
-                'jdd_id', 'validite_niveau', 'observateur',
+                'jdd_id', 'observateur',
+                'niv_val_producteur', 'niv_val_regionale', 'niv_val_nationale',
                 'type_en',
                 'date_min', 'date_max',
                 'panier_validation',
@@ -4135,7 +4136,9 @@ OccTax.events.on({
             'statut',
             'invasibilite',
             'habitat',
-            'validite_niveau',
+            'niv_val_producteur',
+            'niv_val_regionale',
+            'niv_val_nationale'
         ];
         for (k in inlineSelectSources) {
             let key = inlineSelectSources[k];

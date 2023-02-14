@@ -116,8 +116,10 @@
    <label locale="occtax_admin~admin.form.validite_niveaux_grand_public.label" />
   </input>
 
-  <input ref="search_form_validation_echelle" type="string" defaultvalue="2">
-   <label locale="occtax_admin~admin.form.search_form_validation_echelle.label" />
+  <input ref="search_form_echelles_validation" type="string" defaultvalue="2">
+    <label locale="occtax_admin~admin.form.search_form_echelles_validation.label" />
+    <hint locale="occtax_admin~admin.form.search_form_echelles_validation.help"/>
+    <help locale="occtax_admin~admin.form.search_form_echelles_validation.help"/>
   </input>
 
   <input ref="maxAreaQuery" type="integer" defaultvalue="-1">

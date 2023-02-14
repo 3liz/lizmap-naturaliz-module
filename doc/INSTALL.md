@@ -92,7 +92,7 @@ Les modules Naturaliz lisent dans le fichier **lizmap/var/config/naturaliz.ini.p
 * La **liste des champs à afficher ou à exporter** dans la fiche d'observation (détail) et l'export en CSV ou WFS: **observation_card_fields**, **observation_card_fields_unsensitive**, **observation_card_children**, **observation_exported_fields** **observation_exported_fields_unsensitive**, **observation_exported_children**
 * L'ordre d'affichage des items dans la barre de menu de gauche: **menuOrder**. Par exemple `menuOrder=home, occtax-presentation, switcher, occtax, dataviz, print, measure, permaLink, occtax-legal, taxon, metadata`
 * liste des menaces à afficher respectivement dans le formulaire de recherche, l'icône menace à côté du nom de taxon, et dans le tableau des statistiques des taxons `search_form_menace_fields`, `taxon_detail_menace` et `taxon_table_menace_fields`
-* Échelle de validation sur laquelle faire la recherche: **search_form_validation_echelle**. Une valeur entre '1' (producteur), '2' (régionale), et '3' (nationale). Par exemple `search_form_validation_echelle="2"`
+* Échelle de validation sur laquelle faire la recherche: **search_form_echelles_validation**. Une valeur entre '1' (producteur), '2' (régionale), et '3' (nationale). Par exemple `search_form_echelles_validation="1,2"`
 * utilisateur PostgreSQL avec accès en lecture seule: **dbuser_readonly**. Par exemple `dbuser_readonly=naturaliz`
 * utilisateur PostgreSQL avec propriété sur les objets: **dbuser_owner**. Par exemple `dbuser_owner=lizmap`
 * Échelle maximum où zoomer avec le bouton de zoom par observation: **maximum_observation_scale**. Par exemple `maximum_observation_scale=24000`
@@ -198,8 +198,8 @@ taxon_detail_nom_menace=menace_nationale
 ; liste des champs menaces à afficher dans le formulaire de recherche
 search_form_menace_fields=menace_nationale, menace_monde
 
-; échelle de validation sur laquelle faire la recherche
-search_form_validation_echelle="2"
+; échelles de validation sur laquelle faire la recherche
+search_form_echelles_validation="2,3"
 
 ; ordre des items de menu Lizmap (barre de menu de gauche)
 menuOrder=home, occtax-presentation, switcher, occtax, dataviz, print, measure, permaLink, occtax-legal, taxon, metadata

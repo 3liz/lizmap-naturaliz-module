@@ -76,8 +76,8 @@ taxon_detail_nom_menace=menace_nationale
 ; liste des champs menaces à afficher dans le formulaire de recherche
 search_form_menace_fields=menace_nationale, menace_monde
 
-; échelle de validation sur laquelle faire la recherche
-search_form_validation_echelle="2"
+; échelles de validation sur laquelle faire la recherche
+search_form_echelles_validation="1,2,3"
 
 ; ordre des items de menu Lizmap (barre de menu de gauche)
 menuOrder=home, occtax-presentation, switcher, occtax, dataviz, print, measure, permaLink, occtax-legal, taxon, metadata

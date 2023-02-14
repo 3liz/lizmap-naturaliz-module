@@ -80,15 +80,13 @@ class occtaxDockableListener extends jEventListener{
                 if (!jAcl2::check("requete.observateur.observation")) {
                     $form->deactivate( 'observateur' );
                 }
-                if (!jAcl2::check("visualisation.donnees.brutes")) {
-                    $form->deactivate( 'validite_niveau' );
-                }
+
                 // Remove validation basket field
                 if (!jAcl2::check("validation.online.access")) {
                     $form->deactivate( 'panier_validation' );
                 }
 
-                // Remove form fields by config
+                // Menace - Remove form fields by config
                 $search_form_menace_fields = $ini->getValue('search_form_menace_fields', 'naturaliz');
                 if (empty($search_form_menace_fields)) {
                     $search_form_menace_fields = 'menace_nationale, menace_monde';
@@ -98,6 +96,30 @@ class occtaxDockableListener extends jEventListener{
                 foreach ($all_menace as $menace) {
                     if (!in_array($menace, $menace_fields)) {
                         $form->deactivate($menace);
+                    }
+                }
+
+                // Validation (échelles) - Remove form fields by config
+                $search_form_echelles_validation = $ini->getValue('search_form_echelles_validation', 'naturaliz');
+                if (empty($search_form_echelles_validation)) {
+                    $search_form_echelles_validation = '2';
+                }
+                $validation_scales = array_map('trim', explode(',', $search_form_echelles_validation));
+                $all_scales = array(
+                    '1' => 'producteur',
+                    '2' => 'regionale',
+                    '3' => 'nationale',
+                );
+                foreach ($all_scales as $code=>$scale) {
+                    // Deactivate for unauthenticated users
+                    if (!jAcl2::check("visualisation.donnees.brutes")) {
+                        $form->deactivate( 'niv_val_'.$scale);
+                        continue;
+                    }
+
+                    // Deactivate if not found in the configuration
+                    if (!in_array($code, $validation_scales)) {
+                        $form->deactivate('niv_val_'.$scale);
                     }
                 }
 
