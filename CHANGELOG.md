@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## 2.14.1
+
+### Changed
+
+* Import CSV en ligne - Ajout des champs pour la validation:
+  `validation_niv_val, validation_ech_val, validation_date_ctrl, validation_typ_val`
+* Recherche - Affichage/masquage des 3 champs de validation (1 par échelle: producteur, régionale, nationale)
+  selon la configuration enregistrée via l'interface d'administration
+
 ## 2.14.0
 
 ### Changed
