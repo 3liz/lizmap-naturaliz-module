@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 2.14.2
+
+### Changed
+
+* Installation - Correction d'un bug lors de la réapplication des droits
+  sur les objets de la base.
+
 ## 2.14.1
 
 ### Changed

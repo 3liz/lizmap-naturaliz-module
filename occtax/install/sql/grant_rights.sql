@@ -1,4 +1,3 @@
-BEGIN;
 
 -- Ajout des droits sur les objets de la base pour naturaliz
 GRANT CONNECT ON DATABASE {$DBNAME} TO "{$DBUSER_READONLY}";
@@ -33,5 +32,3 @@ TO "{$DBUSER_READONLY}";
 -- Droits pour l'ajout et la modification dans taxon.medias
 -- cache des photographies de l'API INPN
 GRANT SELECT, INSERT, UPDATE ON TABLE taxon.medias TO "{$DBUSER_READONLY}";
-
-COMMIT;

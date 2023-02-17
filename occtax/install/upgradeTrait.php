@@ -31,10 +31,10 @@ trait upgradeTrait
         if (array_key_exists('naturaliz', $ini) && array_key_exists('liste_rangs', $ini['naturaliz'])) {
             $liste_rangs = $ini['naturaliz']['liste_rangs'];
         }
-        $liste_rangs = "'" . implode(
+        $liste_rangs = "'".implode(
             "', '",
             array_map('trim', explode(',', $liste_rangs))
-        ) . "'";
+        )."'";
 
         // Read SQL template file
         $sqlTpl = jFile::read($sqlPath);
