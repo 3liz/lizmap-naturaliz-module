@@ -340,16 +340,80 @@ Dans ce cas, la diffusion est utilisée dans les situations suivantes :
 
 ## Gestion de la validité scientifique des données
 
+### Stockage des données de validation
+
+Les niveaux de validité des données sont stockés dans la table `occtax.validation_observation`.
+Chaque observation peut avoir au maximum trois niveaux de validité, correspondant
+aux trois échelles de validation: producteur (1), régionale (2) et nationale (3).
+
+### Accès aux observations selon le niveau de validité
+
 Le grand public (personnes non connectées à l'application) ne doivent pas pouvoir visualiser certaines observations.
+
 Pour cela, il existe la variable de configuration `validite_niveaux_grand_public` modifiable
-depuis l'interface d'administration, menu **Occtax**.
+depuis l'interface d'administration, menu **Occtax**. Elle s'appuie sur le **niveau de validation régionale**
+(pas sur la validation par le producteur ni le niveau national).
 
 Par défaut, les personnes non connectées ne peuvent visualiser que les données
 dont le niveau de validation est 1 ou 2.
 
-* Voir un exemple d'ajout de critères et de calcul de validation automatique :
-`doc/validation/validation_calcul_validation_sensibilite_via_ajout_de_criteres.sql`
+### Les différents outils de gestion de la validité
 
+L'attribution des niveaux de validation sur les observations peut se faire de plusieurs façons :
+
+* lors de l'**import de données** par les administrateurs ou via le module d'import CSV
+* par les **validateurs scientifiques** via l'interface web et l'outil de validation en ligne.
+* par l'outil SQL d'attribution automatique de validité selon des critères sur les données
+
+#### Valider les données lors de l'import
+
+Les imports peuvent être faits
+
+* soit **manuellement via des scripts** (SQL, FME, etc.)
+* soit via l'outil d'**import des données en ligne**
+
+
+
+#### Validation automatique des données
+
+Un ensemble de fonctions et de tables peuvent être utilisés pour **attribuer automatiquement un niveau de validité**
+selon les caractéristiques de chaque observation.
+
+Cet outil s'appuie sur des filtres SQL stockés dans la table `occtax.critere_validation`.
+Un [script SQL d'exemple](`doc/validation/validation_calcul_validation_sensibilite_via_ajout_de_criteres.sql`)
+montre comment exploiter cette possibilité.
+
+#### Validation en ligne par les validateurs scientifiques
+
+L'application permet à certains utilisateurs connectés d'être déclarés en tant que **validateurs**. Cela leur permet de **modifier les données de validation régionale** pour
+certains observations. Pour cela, elles ont accès :
+
+* à un système de **panier de validation** qui leur permet de stocker des identifiants d'observation à traiter par lot.
+  * il peut ajouter toutes les observations issues d'un résultat d'une recherche
+    dans son panier
+  * il peut ajouter ou retirer une observation du panier
+  * il peut ensuite modifier les données de validation via un formulaire pour
+  l'ensemble des observations du panier.
+* à **la modification des données d'une observation** via le panneau de validation
+  qui s'affiche lorsque l'utilisateur clique sur le niveau de validité depuis la fiche
+  d'une observation ou le tableau de résultat listant les observations
+
+Pour **activer cet outil** pour une personne il faut :
+
+* créer un **nouvel utilisateur** spécifique dans l'application Lizmap pour le validateur via l'interface d'administration.
+* placer cet utilisateur dans le groupe `naturaliz_validateurs`
+* créer une **demande d'accès** dans la table `gestion.demande` pour **filtrer** sur quelles observations on souhaite permettre la validation scientifique des données pour cet utilisateur.
+* Cette demande doit avoir des **caractéristiques particulières**, en plus du filtre qu'elle implique :
+    * le champ `usr_login` doit contenir le `login` de l'utilisateur Lizmap créé précédemment.
+    * le champ `type_demande` doit prendre la valeur `VA`
+    * le champ `id_validateur` doit renseigner l'identifiant d'une personne de la table `occtax.personne` qui correpond au validateur.
+
+#### Activation après modification des niveaux de validité
+
+Une fois les données de validité des observations modifiées par le validateur via les outils en ligne,
+l'administrateur doit **rafraîchir la vue matérialisée** `occtax.vm_observation` pour que ces données de validation soient accessibles aux autres utilisateurs.
+
+## Divers
 
 ### Gestion de la localisation spatiale
 
