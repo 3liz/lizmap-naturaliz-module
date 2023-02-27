@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Changed
+
+* Increase required lizmap max version to 3.7
+
 ## 2.14.2
 
 ### Changed
