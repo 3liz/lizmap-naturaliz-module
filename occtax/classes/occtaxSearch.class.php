@@ -703,8 +703,8 @@ class occtaxSearch {
                 return $sql;
             }
             // Add filter
-            $sql.= " AND o.identifiant_permanent IN (
-                SELECT identifiant_permanent FROM occtax.validation_panier WHERE usr_login = ".$cnx->quote($this->login)."
+            $sql.= " AND o.id_sinp_occtax IN (
+                SELECT id_sinp_occtax FROM occtax.validation_panier WHERE usr_login = ".$cnx->quote($this->login)."
             )";
         }
 

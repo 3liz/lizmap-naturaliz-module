@@ -27,8 +27,9 @@ class importCtrl extends jController
 
         $ressource = $this->param('ressource', 'csv');
         if ($ressource == 'pdf') {
-            $fichier = jApp::getModulePath('occtax').'install/config/Occurrences_de_taxon-v1_2_1_FINALE.pdf';
-            $nom_fichier = 'Occurrences_de_taxon-v1_2_1_FINALE.pdf';
+            // $nom_fichier = 'Occurrences_de_taxon-v1_2_1_FINALE.pdf';
+            $nom_fichier = 'OccTax_v2_COMPLET.pdf';
+            $fichier = jApp::getModulePath('occtax').'install/config/'.$nom_fichier;
             $mime = 'application/pdf';
         } elseif ($ressource == 'nomenclature') {
             $fichier = jApp::getModulePath('occtax').'install/config/occtax_nomenclature.xlsx';
@@ -317,13 +318,9 @@ class importCtrl extends jController
         if (array_key_exists('naturaliz', $ini) && array_key_exists('org_transformation', $ini['naturaliz'])) {
             $org_transformation = $ini['naturaliz']['org_transformation'];
         }
-        $organisme_standard = 'Inconnu';
-        if (array_key_exists('naturaliz', $ini) && array_key_exists('organisme_standard', $ini['naturaliz'])) {
-            $organisme_standard = $ini['naturaliz']['organisme_standard'];
-        }
         $import_observation = $import->importCsvIntoObservation(
             $login, $jdd_uid,
-            $organisme_gestionnaire_donnees, $org_transformation, $organisme_standard
+            $organisme_gestionnaire_donnees, $org_transformation
         );
         if (!$import_observation) {
             // Delete already imported data

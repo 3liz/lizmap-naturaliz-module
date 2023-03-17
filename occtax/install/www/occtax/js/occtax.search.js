@@ -1993,8 +1993,8 @@ OccTax.events.on({
                     html += '<div id="validation-detail-container"  class="menu-content">';
                     html += '<table class="table table-condensed table-striped">';
                     // ID
-                    html += '<tr><th>' + naturalizLocales['input.identifiant_permanent'] + '</th>';
-                    html += '<td>' + oval['identifiant_permanent'] + '</td></tr>';
+                    html += '<tr><th>' + naturalizLocales['input.id_sinp_occtax'] + '</th>';
+                    html += '<td>' + oval['id_sinp_occtax'] + '</td></tr>';
                     // Type de validation
                     html += '<tr><th title="' + naturalizLocales['input.typ_val.help'] + '">' + naturalizLocales['input.typ_val'] + '</th>';
                     html += '<td>' + (typ_val != '-' ? occtax_nomenclature['typ_val|' + typ_val] : '-') + '</td></tr>';
@@ -2047,7 +2047,7 @@ OccTax.events.on({
                         // Validation basket action button
                         html += '<tr><th>' + naturalizLocales['validation_basket.actionbar.title'] + '</th>';
                         html += '<td>';
-                        html += '<button value="' + p_action + '@' + oval['identifiant_permanent'] + '" class="occtax_validation_button btn btn-primary btn-mini"';
+                        html += '<button value="' + p_action + '@' + oval['id_sinp_occtax'] + '" class="occtax_validation_button btn btn-primary btn-mini"';
                         html += ' title="' + naturalizLocales['button.validation_basket.' + p_action + '.help'] + '">';
                         html += naturalizLocales['button.validation_basket.' + p_action + '.title'] + '</button>';
                         html += '</td></tr>';

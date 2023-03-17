@@ -22,7 +22,7 @@ class occtaxImport
 
     // All possible fields
     protected $target_fields = array(
-        'identifiant_permanent',
+        'id_sinp_occtax',
         'statut_observation',
 
         'cd_nom',
@@ -56,13 +56,12 @@ class occtaxImport
         'dee_floutage',
         'diffusion_niveau_precision',
         'ds_publique',
-        'identifiant_origine',
+        'id_origine',
 
         'jdd_id',
         'statut_source',
         'reference_biblio',
 
-        'sensible',
         'sensi_date_attribution',
         'sensi_niveau',
         'sensi_referentiel',
@@ -83,7 +82,7 @@ class occtaxImport
 
     // Mandatory fields
     protected $mandatory_fields = array(
-        'identifiant_origine',
+        'id_origine',
         'cd_nom',
         'nom_cite',
         'version_taxref',
@@ -92,7 +91,6 @@ class occtaxImport
         'statut_observation',
         'ds_publique',
         'statut_source',
-        'sensible',
         'longitude',
         'latitude',
         'nature_objet_geo',
@@ -526,24 +524,23 @@ class occtaxImport
      * @param string  $jdd_uid JDD UUID.
      * @param string  $organisme_gestionnaire_donnees Organisme gestionnaire de données
      * @param string  $org_transformation Organisme de transformation
-     * @param string  $organisme_standard Organisme de standardisation
      *
      * @return boolean $status The status of the import.
      */
     public function importCsvIntoObservation($login, $jdd_uid,
-        $organisme_gestionnaire_donnees, $org_transformation, $organisme_standard
+        $organisme_gestionnaire_donnees, $org_transformation
     ) {
         // Import dans la table observation
         $sql = ' SELECT count(*) AS nb';
         $sql .= ' FROM occtax.import_observations_depuis_table_temporaire(
             $1,
             $2, $3,
-            $4, $5, $6
+            $4, $5
         )';
         $params = array(
             $this->temporary_table.'_target',
             $login, $jdd_uid,
-            $organisme_gestionnaire_donnees, $org_transformation, $organisme_standard
+            $organisme_gestionnaire_donnees, $org_transformation
         );
         $import_observation = $this->query($sql, $params);
         if (!is_array($import_observation)) {
@@ -680,7 +677,7 @@ class occtaxImport
      *     'jdd_code' => 'Suivi des gîtes à chiroptères de Martinique (PNRM, SFEPM 2015-2022)',
      *     'jdd_libelle' => 'Suivi gîtes chiroptères Martinique',
      *     'jdd_description' => 'Suivi terrain sur 53 gîtes localisés sur toute la Martinique, détermination des espèces présentes et comptage des effectifs',
-     *     'jdd_metadonnee_dee_id' => '93733D7D-A447-70EE-E053-5014A8C03C91',
+     *     'id_sinp_jdd' => '93733D7D-A447-70EE-E053-5014A8C03C91',
      *     'jdd_cadre' => '25856',
      *     'ayants_droit' => '',
      *     'date_minimum_de_diffusion' => '',
@@ -730,7 +727,7 @@ class occtaxImport
             $sql .= ' FROM occtax.jdd AS j';
             $sql .= ' LEFT JOIN occtax.cadre AS c';
             $sql .= '     ON j.jdd_cadre = c.cadre_id';
-            $sql .= ' WHERE jdd_metadonnee_dee_id = $1';
+            $sql .= ' WHERE id_sinp_jdd = $1';
             $sql .= ' LIMIT 1';
             $params = array($jddUid);
             $data = $this->query($sql, $params);

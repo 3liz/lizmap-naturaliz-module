@@ -6,7 +6,7 @@
     <record>
         <property name="id" fieldname="id" datatype="integer" required="true"/>
         <property name="user_login" fieldname="user_login" datatype="text" required="true"/>
-        <property name="identifiant_permanent" fieldname="identifiant_permanent" datatype="text" required="true"/>
+        <property name="id_sinp_occtax" fieldname="id_sinp_occtax" datatype="text" required="true"/>
         <!--<property name="" fieldname="" datatype="string/int/float/date"
         required="yes" maxlength="" minlength="" regexp="" sequence=""
         updatepattern="" insertpattern="" selectpattern=""/>-->

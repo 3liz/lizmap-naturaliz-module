@@ -68,23 +68,23 @@ class validationCtrl extends jController {
 
 
         // Get identifiant permanent
-        $identifiant_permanent = $this->param('identifiant_permanent', '-1');
-        if (!$validation->isValidUuid($identifiant_permanent)) {
-            $identifiant_permanent = null;
+        $id_sinp_occtax = $this->param('id_sinp_occtax', '-1');
+        if (!$validation->isValidUuid($id_sinp_occtax)) {
+            $id_sinp_occtax = null;
         }
 
         // Add or remove a single observation in/from the basket
         if (in_array($action, array('add', 'remove'))) {
-            if (empty($identifiant_permanent)) {
+            if (empty($id_sinp_occtax)) {
                 $status = 'error';
                 $message = jLocale::get("validation.error.wrong.observation.id");
             } else {
 
                 if ($action == 'add') {
-                    $data = $validation->addObservationToBasket($identifiant_permanent);
+                    $data = $validation->addObservationToBasket($id_sinp_occtax);
                     $message = jLocale::get("validation.add.observation.to.basket.success");
                 } else {
-                    $data = $validation->removeObservationFromBasket($identifiant_permanent);
+                    $data = $validation->removeObservationFromBasket($id_sinp_occtax);
                     $message = jLocale::get("validation.remove.observation.from.basket.success");
                 }
             }
@@ -123,7 +123,7 @@ class validationCtrl extends jController {
         }
 
         // Validate all the basket or a single observation
-        // We check the given $identifiant_permanent to know which action to run
+        // We check the given $id_sinp_occtax to know which action to run
         elseif ($action == 'validate') {
             $check = true;
             $check_message = array();
@@ -166,12 +166,12 @@ class validationCtrl extends jController {
             // Return error message or run the validation method from class
             if (!$check) {
                 $message = jLocale::get('validation.form.validation.input.error');
-                $message.= '<ul><li>' . implode('</li><li>', $check_message).'</li></ul>';
+                $message.= '<ul><li>'.implode('</li><li>', $check_message).'</li></ul>';
                 $data = null;
                 $status = 'error';
             } else {
                 $input_params = array(
-                    $niv_val, $producteur, $date_contact, $comm_val, $nom_retenu, $identifiant_permanent
+                    $niv_val, $producteur, $date_contact, $comm_val, $nom_retenu, $id_sinp_occtax
                 );
                 $data = $validation->validateObservations($input_params);
                 // Attention, dans le cas d'un UPDATE (car une ligne existait déjà pour ces observations)
@@ -185,8 +185,8 @@ class validationCtrl extends jController {
                     $message = jLocale::get('validation.validate.validation.basket.success');
                 }
                 // For single observation, get the data so that the JS has the observation id (cle_obs)
-                if (is_array($data) && !empty($identifiant_permanent) && $validation->isValidUuid($identifiant_permanent)) {
-                    $data = $validation->getObservationValidity($identifiant_permanent, 'identifiant_permanent');
+                if (is_array($data) && !empty($id_sinp_occtax) && $validation->isValidUuid($id_sinp_occtax)) {
+                    $data = $validation->getObservationValidity($id_sinp_occtax, 'id_sinp_occtax');
                     $message = jLocale::get('validation.button.validate.observation.success');
                 }
 

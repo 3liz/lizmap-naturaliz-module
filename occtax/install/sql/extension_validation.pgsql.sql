@@ -10,7 +10,7 @@ DROP FUNCTION IF EXISTS occtax.occtax_update_sensibilite_observations( text,  TE
 DROP TABLE IF EXISTS occtax.validation_observation CASCADE;
 CREATE TABLE occtax.validation_observation (
     id_validation serial,
-    identifiant_permanent text,
+    id_sinp_occtax text,
     date_ctrl date NOT NULL,
     niv_val text NOT NULL,
     typ_val text NOT NULL,
@@ -30,13 +30,13 @@ CREATE TABLE occtax.validation_observation (
     CONSTRAINT validation_observation_ech_val_ok CHECK (ech_val IN ( '1', '2', '3') )
 );
 ALTER TABLE occtax.validation_observation ADD PRIMARY KEY (id_validation);
--- Contrainte d''unicité sur le couple identifiant_permanent, ech_val : une seule validation nationale, régionale ou producteur (donc au max 3)
-ALTER TABLE occtax.validation_observation ADD CONSTRAINT validation_observation_identifiant_permanent_ech_val_unique UNIQUE (identifiant_permanent, ech_val);
+-- Contrainte d''unicité sur le couple id_sinp_occtax, ech_val : une seule validation nationale, régionale ou producteur (donc au max 3)
+ALTER TABLE occtax.validation_observation ADD CONSTRAINT validation_observation_id_sinp_occtax_ech_val_unique UNIQUE (id_sinp_occtax, ech_val);
 
 -- PAS DE CONTRAINTE de clés étrangère sur la table observation, car on veut pouvoir supprimer des observations,
 -- mais conserver les données dans occtax.validation_observation (l'identifiant permanent sera valide)
--- ALTER TABLE occtax.validation_observation ADD CONSTRAINT validation_observation_identifiant_permanent_fk FOREIGN KEY (identifiant_permanent)
--- REFERENCES occtax.observation (identifiant_permanent)
+-- ALTER TABLE occtax.validation_observation ADD CONSTRAINT validation_observation_id_sinp_occtax_fk FOREIGN KEY (id_sinp_occtax)
+-- REFERENCES occtax.observation (id_sinp_occtax)
 -- ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 ALTER TABLE occtax.validation_observation ADD CONSTRAINT validation_observation_validateur_fkey
@@ -254,11 +254,11 @@ BEGIN
     END IF;
 
     -- Table pour stocker les niveaux calculés
-    -- (plusieurs lignes possibles par identifiant_permanent si condition remplie pour plusieurs critères)
+    -- (plusieurs lignes possibles par id_sinp_occtax si condition remplie pour plusieurs critères)
     DROP TABLE IF EXISTS occtax.niveau_par_observation;
     CREATE TABLE occtax.niveau_par_observation (
         id_critere integer NOT NULL,
-        identifiant_permanent text NOT NULL,
+        id_sinp_occtax text NOT NULL,
         niveau text NOT NULL,
         contexte text NOT NULL,
         note INTEGER NOT NULL
@@ -281,10 +281,10 @@ BEGIN
     LOOP
         sql_template := '
         INSERT INTO occtax.niveau_par_observation
-        (id_critere, identifiant_permanent, niveau, contexte, note)
+        (id_critere, id_sinp_occtax, niveau, contexte, note)
         SELECT
             %s AS id_critere,
-            o.identifiant_permanent,
+            o.id_sinp_occtax,
             ''%s'' AS niveau,
             ''%s'' AS contexte,
             (''%s''::json->>''%s'')::integer AS note
@@ -346,10 +346,10 @@ BEGIN
     -- La note permet de dire qui gagne via le DISTINCT ON et le ORDER BY
     DROP TABLE IF EXISTS occtax.niveau_par_observation_final;
     CREATE TABLE occtax.niveau_par_observation_final AS
-    SELECT DISTINCT ON (identifiant_permanent) niveau, identifiant_permanent, id_critere, contexte
+    SELECT DISTINCT ON (id_sinp_occtax) niveau, id_sinp_occtax, id_critere, contexte
     FROM occtax.niveau_par_observation
     WHERE contexte = p_contexte
-    ORDER BY identifiant_permanent, note;
+    ORDER BY id_sinp_occtax, note;
 
     RETURN 1;
 
@@ -393,7 +393,7 @@ BEGIN
         sql_template := '
         INSERT INTO occtax.validation_observation AS vo
         (
-            identifiant_permanent,
+            id_sinp_occtax,
             date_ctrl,
             niv_val,
             typ_val,
@@ -406,7 +406,7 @@ BEGIN
             proc_ref
         )
         SELECT
-            t.identifiant_permanent,
+            t.id_sinp_occtax,
             now(),
             t.niveau,
             ''A'',  -- automatique
@@ -430,14 +430,14 @@ BEGIN
         ) AS p
         WHERE True
         AND t.contexte = ''validation''
-        AND t.identifiant_permanent = identifiant_permanent
+        AND t.id_sinp_occtax = id_sinp_occtax
         -- on écarte les données d absence qui ne peuvent être validées automatiquement
-        AND t.identifiant_permanent NOT IN (
-            SELECT identifiant_permanent
+        AND t.id_sinp_occtax NOT IN (
+            SELECT id_sinp_occtax
             FROM occtax.observation
             WHERE statut_observation = ''No''
         )
-        ON CONFLICT ON CONSTRAINT validation_observation_identifiant_permanent_ech_val_unique
+        ON CONFLICT ON CONSTRAINT validation_observation_id_sinp_occtax_ech_val_unique
         DO UPDATE
         SET (
             date_ctrl,
@@ -472,7 +472,7 @@ BEGIN
         USING p_validateur, procedure_ref_record."procedure", procedure_ref_record.proc_vers, procedure_ref_record.proc_ref;
     END IF;
 
-    -- On supprime les lignes dans validation_observation pour ech_val = '2' et identifiant_permanent NOT IN
+    -- On supprime les lignes dans validation_observation pour ech_val = '2' et id_sinp_occtax NOT IN
     -- qui ne correspondent pas au critère et qui ne sont pas manuelles
     -- on a bien ajouté le WHERE AND vo.typ_val NOT IN (''M'', ''C'')
     -- pour ne surtout pas supprimer les validations manuelles ou combinées via notre outil auto
@@ -482,8 +482,8 @@ BEGIN
         WHERE TRUE
         AND ech_val = ''2''
         AND vo.typ_val NOT IN (''M'', ''C'')
-        AND identifiant_permanent NOT IN (
-            SELECT identifiant_permanent
+        AND id_sinp_occtax NOT IN (
+            SELECT id_sinp_occtax
             FROM occtax.niveau_par_observation_final AS t
             WHERE contexte = ''validation''
         )
@@ -492,8 +492,8 @@ BEGIN
         -- on doit ajouter le filtre jdd_id si non NULL
         IF p_jdd_id IS NOT NULL THEN
             sql_template :=  '
-            AND identifiant_permanent IN (
-                SELECT identifiant_permanent
+            AND id_sinp_occtax IN (
+                SELECT id_sinp_occtax
                 FROM occtax.observation
                 WHERE jdd_id = ANY ( ''%s''::TEXT[] )
             )
@@ -561,7 +561,7 @@ BEGIN
         ) AS p
         WHERE True
         AND contexte = ''sensibilite''
-        AND t.identifiant_permanent = o.identifiant_permanent
+        AND t.id_sinp_occtax = o.id_sinp_occtax
         ';
         sql_text := format(sql_template);
 
@@ -593,8 +593,8 @@ BEGIN
         ) AS p
         WHERE True
         -- AND o.sensi_referentiel = p.sensi_referentiel
-        AND o.identifiant_permanent NOT IN(
-            SELECT identifiant_permanent
+        AND o.id_sinp_occtax NOT IN(
+            SELECT id_sinp_occtax
             FROM occtax.niveau_par_observation_final
             WHERE contexte = ''sensibilite''
         )
@@ -702,7 +702,7 @@ CREATE OR REPLACE FUNCTION occtax.update_observation_validation() RETURNS TRIGGE
                 )
                 INSERT INTO occtax.validation_observation
                 (
-                    identifiant_permanent,
+                    id_sinp_occtax,
                     date_ctrl,
                     niv_val,
                     typ_val,
@@ -717,7 +717,7 @@ CREATE OR REPLACE FUNCTION occtax.update_observation_validation() RETURNS TRIGGE
                     comm_val
                 )
                 SELECT
-                    NEW.identifiant_permanent,
+                    NEW.id_sinp_occtax,
                     now()::date,
                     NEW.niv_val,
                     'M', -- insert donc la validation est manuelle
@@ -796,7 +796,7 @@ CREATE OR REPLACE FUNCTION occtax.update_observation_validation() RETURNS TRIGGE
                 ) AS p
                 WHERE TRUE
                 AND vo.id_validation = NEW.id_validation
-                AND vo.identifiant_permanent = NEW.identifiant_permanent
+                AND vo.id_sinp_occtax = NEW.id_sinp_occtax
                 ;
             END IF;
 
@@ -813,20 +813,20 @@ $$ LANGUAGE plpgsql;
 CREATE TABLE occtax.validation_panier (
     id serial NOT NULL PRIMARY KEY,
     usr_login character varying NOT NULL,
-    identifiant_permanent text NOT NULL
+    id_sinp_occtax text NOT NULL
 );
 
-ALTER TABLE occtax.validation_panier ADD CONSTRAINT validation_panier_usr_login_identifiant_permanent_key UNIQUE (usr_login, identifiant_permanent);
+ALTER TABLE occtax.validation_panier ADD CONSTRAINT validation_panier_usr_login_id_sinp_occtax_key UNIQUE (usr_login, id_sinp_occtax);
 
 COMMENT ON TABLE occtax.validation_panier IS 'Panier d''observations retenues pour appliquer des actions en masse. Par exemple pour la validation scientifique manuelle.';
 COMMENT ON COLUMN occtax.validation_panier.id IS 'Identifiant auto-incrémenté unique, clé primaire.';
 COMMENT ON COLUMN occtax.validation_panier.usr_login IS 'Login de l''utilisateur qui fait la validation en ligne.';
-COMMENT ON COLUMN occtax.validation_panier.identifiant_permanent IS 'Identifiant permanent de l''observation mise dans le panier.';
+COMMENT ON COLUMN occtax.validation_panier.id_sinp_occtax IS 'Identifiant permanent de l''observation mise dans le panier.';
 
 -- Vue pour récupérer seulement la validation au niveau régional pour les observations
 CREATE OR REPLACE VIEW occtax.v_validation_regionale AS
 SELECT
-identifiant_permanent,
+id_sinp_occtax,
 niv_val AS niv_val_regionale, date_ctrl AS date_ctrl_regionale
 FROM occtax.validation_observation
 WHERE ech_val = '2'

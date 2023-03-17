@@ -51,7 +51,7 @@ SELECT o.cle_obs, ds.*
 FROM v_observation_validation_test o
 JOIN LATERAL jsonb_to_recordset(o.descriptif_sujet) ds(
     obs_methode text, occ_etat_biologique text, occ_naturalite text, occ_sexe text, occ_stade_de_vie text,
-    occ_statut_biogeographique text, occ_statut_biologique text, preuve_existante text, preuve_numerique text,
+    occ_statut_biogeographique text, occ_statut_biologique text, preuve_existante text, url_preuve_numerique text,
     preuve_non_numerique text, obs_contexte text, obs_description text, occ_methode_determination text,
     occ_denombrement_min text, occ_denombrement_max text, occ_objet_denombrement text, occ_type_denombrement text
 ) ON TRUE
@@ -74,7 +74,7 @@ GRANT SELECT, INSERT, UPDATE ON occtax.validation_observation TO validation_acme
 -- Nécessaire à cause du trigger occtax.update_observation_set_validation_fields()
 -- ON donne ce qui est strictement nécessaire, pas plus
 GRANT
-    SELECT (cle_obs, identifiant_permanent, validite_niveau, validite_date_validation),
+    SELECT (cle_obs, id_sinp_occtax, validite_niveau, validite_date_validation),
     UPDATE (validite_niveau, validite_date_validation)
 ON occtax.observation TO validation_acme
 ;

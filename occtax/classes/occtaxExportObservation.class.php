@@ -24,7 +24,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
 
         'principal' => array(
             'cle_obs' => "Integer",
-            'identifiant_permanent' => "String",
+            'id_sinp_occtax' => "String",
             'statut_observation' => "String",
 
             // taxon
@@ -73,17 +73,14 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             'dee_floutage' => "String",
             'diffusion_niveau_precision' => "String",
             'ds_publique' => "String",
-            'identifiant_origine' => "String",
+            'id_origine' => "String",
             'jdd_code' => "String",
             'jdd_id' => "String",
-            'jdd_metadonnee_dee_id' => "String",
-            'jdd_source_id' => "String",
-            'organisme_standard' => "String",
+            'id_sinp_jdd' => "String",
             'organisme_gestionnaire_donnees' => "String",
             'org_transformation' => "String",
             'statut_source' => "String",
             'reference_biblio' => "String",
-            'sensible' => "String",
             'sensi_date_attribution' => "String",
             'sensi_niveau' => "String",
             'sensi_referentiel' => "String",
@@ -212,7 +209,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             'joinClause' => '',
             'returnFields' => array(
                 'o.cle_obs' => Null, // Null signifie qu'on ne fait pas de GROUP BY pour ce champ
-                'o.identifiant_permanent'=> Null,
+                'o.id_sinp_occtax'=> Null,
                 'o.statut_observation'=> Null,
 
                 // taxon
@@ -261,17 +258,14 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 'o.dee_floutage' => Null,
                 'o.diffusion_niveau_precision' => Null,
                 'o.ds_publique' => Null,
-                'o.identifiant_origine' => Null,
+                'o.id_origine' => Null,
                 'o.jdd_code' => Null,
                 'o.jdd_id' => Null,
-                'o.jdd_metadonnee_dee_id' => Null,
-                'o.jdd_source_id' => Null,
+                'o.id_sinp_jdd' => Null,
                 'o.organisme_gestionnaire_donnees' => Null,
-                'o.organisme_standard' => Null,
                 'o.org_transformation' => Null,
                 'o.statut_source' => Null,
                 'o.reference_biblio' => Null,
-                'o.sensible' => Null,
                 'o.sensi_date_attribution' => Null,
                 'o.sensi_niveau' => Null,
                 'o.sensi_referentiel' => Null,
@@ -651,8 +645,8 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 if($el == 'descriptif_sujet'){
                     $champ = "
                     trim(translate(replace(replace(replace(replace((jsonb_pretty(array_to_json(array_agg(json_build_object(
-                        'obs_methode',
-                        dict->>(concat('obs_methode', '_', obs_methode)) ,
+                        'obs_technique',
+                        dict->>(concat('obs_technique', '_', obs_technique)) ,
 
                         'occ_denombrement_min',
                         occ_denombrement_min,
@@ -684,11 +678,14 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                         'occ_statut_biologique',
                         dict->>(concat('occ_statut_biologique', '_', occ_statut_biologique)),
 
+                        'occ_comportement',
+                        dict->>(concat('occ_comportement', '_', occ_comportement)),
+
                         'preuve_existante',
                         dict->>(concat('preuve_existante', '_', preuve_existante)),
 
-                        'preuve_numerique',
-                        preuve_numerique,
+                        'url_preuve_numerique',
+                        url_preuve_numerique,
 
                         'preuve_non_numerique',
                         preuve_non_numerique,
@@ -719,7 +716,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 FROM source As lg
                 LEFT JOIN LATERAL
                 jsonb_to_recordset(lg.descriptif_sujet::jsonb) AS (
-                    obs_methode text,
+                    obs_technique text,
                     occ_denombrement_min text,
                     occ_denombrement_max text,
                     occ_type_denombrement text,
@@ -730,8 +727,9 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                     occ_stade_de_vie text,
                     occ_statut_biogeographique text,
                     occ_statut_biologique text,
+                    occ_comportement text,
                     preuve_existante text,
-                    preuve_numerique text,
+                    url_preuve_numerique text,
                     preuve_non_numerique text,
                     obs_contexte text,
                     obs_description text,
@@ -873,8 +871,8 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 if($el == 'descriptif_sujet'){
                     $champ = "
                     trim(translate(replace(replace(replace(replace((jsonb_pretty(array_to_json(array_agg(json_build_object(
-                        'obs_methode',
-                        dict->>(concat('obs_methode', '_', obs_methode)) ,
+                        'obs_technique',
+                        dict->>(concat('obs_technique', '_', obs_technique)) ,
 
                         'occ_denombrement_min',
                         occ_denombrement_min,
@@ -906,11 +904,14 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                         'occ_statut_biologique',
                         dict->>(concat('occ_statut_biologique', '_', occ_statut_biologique)),
 
+                        'occ_comportement',
+                        dict->>(concat('occ_comportement', '_', occ_comportement)),
+
                         'preuve_existante',
                         dict->>(concat('preuve_existante', '_', preuve_existante)),
 
-                        'preuve_numerique',
-                        preuve_numerique,
+                        'url_preuve_numerique',
+                        url_preuve_numerique,
 
                         'preuve_non_numerique',
                         preuve_non_numerique,
@@ -945,7 +946,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
         FROM source
         LEFT JOIN LATERAL
         jsonb_to_recordset(source.descriptif_sujet::jsonb) AS (
-            obs_methode text,
+            obs_technique text,
             occ_denombrement_min text,
             occ_denombrement_max text,
             occ_type_denombrement text,
@@ -956,8 +957,9 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             occ_stade_de_vie text,
             occ_statut_biogeographique text,
             occ_statut_biologique text,
+            occ_comportement text,
             preuve_existante text,
-            preuve_numerique text,
+            url_preuve_numerique text,
             preuve_non_numerique text,
             obs_contexte text,
             obs_description text,

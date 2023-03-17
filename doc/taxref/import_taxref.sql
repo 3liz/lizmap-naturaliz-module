@@ -1455,7 +1455,7 @@ COPY (
                                 count(cle_obs) AS nb_obs
                 FROM observation AS ob
                 INNER JOIN occtax.validation_observation AS vo
-                        ON ech_val = '2' AND vo.identifiant_permanent = ob.identifiant_permanent
+                        ON ech_val = '2' AND vo.id_sinp_occtax = ob.id_sinp_occtax
                 WHERE vo.niv_val IN ('1', '2') AND ob.statut_observation = 'Pr'
                 GROUP BY cd_ref
 

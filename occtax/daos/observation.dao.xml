@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dao xmlns="http://jelix.org/ns/dao/1.0">
     <datasources>
-        <primarytable name="observation" realname="observation" primarykey="identifiant_permanent" />
+        <primarytable name="observation" realname="observation" primarykey="id_sinp_occtax" />
     </datasources>
     <record>
-        <property name="identifiant_permanent" fieldname="identifiant_permanent" datatype="text" required="true"/>
+        <property name="id_sinp_occtax" fieldname="id_sinp_occtax" datatype="text" required="true"/>
         <property name="statut_observation" fieldname="statut_observation" datatype="text" required="true"/>
         <property name="cd_nom" fieldname="cd_nom" datatype="int"/>
         <property name="cd_ref" fieldname="cd_ref" datatype="int"/>
@@ -17,9 +17,8 @@
         <property name="jdd_id" fieldname="jdd_id" datatype="text"/>
         <property name="jdd_code" fieldname="jdd_code" datatype="text"/>
         <property name="ds_publique" fieldname="ds_publique" datatype="text" required="true"/>
-        <property name="identifiant_origine" fieldname="identifiant_origine" datatype="text"/>
+        <property name="id_origine" fieldname="id_origine" datatype="text"/>
         <property name="code_idcnp" fieldname="code_idcnp" datatype="text" required="true"/>
-        <property name="sensible" fieldname="sensible" datatype="text" required="true"/>
         <property name="nom_cite" fieldname="nom_cite" datatype="text" required="true"/>
         <property name="reference_biblio" fieldname="reference_biblio" datatype="text"/>
         <!--<property name="" fieldname="" datatype="string/int/float/date"

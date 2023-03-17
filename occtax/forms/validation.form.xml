@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form xmlns="http://jelix.org/ns/forms/1.1" allowAnyOrigin="true">
 
-    <hidden ref="identifiant_permanent"/>
+    <hidden ref="id_sinp_occtax"/>
 
 <!--
     <input ref="niv_val" type="integer" minvalue="1" maxvalue="6">

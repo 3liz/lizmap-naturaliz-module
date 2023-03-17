@@ -66,7 +66,7 @@ lizMap.events.on({
             var id = $(this).val();
             var vparams = [
                 'niv_val', 'producteur', 'date_contact', 'comm_val', 'nom_retenu',
-                'identifiant_permanent'
+                'id_sinp_occtax'
             ];
 
             // Reset previous form content
@@ -158,7 +158,7 @@ lizMap.events.on({
 
             var vparams = [
                 'niv_val', 'producteur', 'date_contact', 'comm_val', 'nom_retenu',
-                'identifiant_permanent'
+                'id_sinp_occtax'
             ];
             for (var v in vparams) {
                 var key = vparams[v];
@@ -195,7 +195,7 @@ lizMap.events.on({
             var nb = $('span#validation_basket_counter').html();
             confirm_msg += nl + nl + naturalizLocales['button.validation_basket.validate.confirm'].replace('%s', nb)
             // Message pour une observation
-            var ident = params['identifiant_permanent'];
+            var ident = params['id_sinp_occtax'];
             if (ident) {
                 confirm_msg = naturalizLocales['button.validate.observation.confirm.title'].toUpperCase();
                 confirm_msg += nl + nl + naturalizLocales['button.validate.observation.confirm'];
@@ -269,7 +269,7 @@ lizMap.events.on({
 
             var params = {
                 'validation_action': action,
-                'identifiant_permanent': uid
+                'id_sinp_occtax': uid
             };
 
             // Ask confirmation for delete or empty

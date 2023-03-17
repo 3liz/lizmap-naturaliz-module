@@ -260,7 +260,7 @@ BEGIN
                 %s AS id_critere, %s AS code,
                 %s AS libelle, %s AS description, %s AS condition,
                 count(o.temporary_id) AS nb_lines,
-                array_agg(o.identifiant_origine::text) AS ids
+                array_agg(o.id_origine::text) AS ids
             FROM %s AS o
             ';
             sql_text := format(
@@ -325,7 +325,7 @@ TRUNCATE TABLE occtax.critere_conformite RESTART IDENTITY;
 -- Ajout des contraintes sur les types de champs attendus: format, non null, occtax
 INSERT INTO occtax.critere_conformite (code, libelle, condition, type_critere)
 VALUES
-('obs_identifiant_permanent_format', 'Le format de <b>identifiant_permanent</b> est incorrect. Attendu: uuid' , $$occtax.is_given_type(identifiant_permanent, 'uuid')$$, 'format'),
+('obs_id_sinp_occtax_format', 'Le format de <b>id_sinp_occtax</b> est incorrect. Attendu: uuid' , $$occtax.is_given_type(id_sinp_occtax, 'uuid')$$, 'format'),
 ('obs_cd_nom_format', 'Le format de <b>cd_nom</b> est incorrect. Attendu: entier' , $$occtax.is_given_type(cd_nom, 'integer')$$, 'format'),
 ('obs_cd_ref_format', 'Le format de <b>cd_ref</b> est incorrect. Attendu: entier' , $$occtax.is_given_type(cd_ref, 'integer')$$, 'format'),
 ('obs_denombrement_min_format', 'Le format de <b>denombrement_min</b> est incorrect. Attendu: entier' , $$occtax.is_given_type(denombrement_min, 'integer')$$, 'format'),
@@ -363,9 +363,8 @@ VALUES
 ('obs_date_debut_not_null', 'La valeur de <b>date_debut</b> est vide', $$date_debut IS NOT NULL$$, 'not_null'),
 ('obs_date_fin_not_null', 'La valeur de <b>date_fin</b> est vide', $$date_fin IS NOT NULL$$, 'not_null'),
 ('obs_ds_publique_not_null', 'La valeur de <b>ds_publique</b> est vide', $$ds_publique IS NOT NULL$$, 'not_null'),
-('obs_identifiant_origine_not_null', 'La valeur de <b>identifiant_origine</b> est vide', $$identifiant_origine IS NOT NULL$$, 'not_null'),
+('obs_id_origine_not_null', 'La valeur de <b>id_origine</b> est vide', $$id_origine IS NOT NULL$$, 'not_null'),
 ('obs_statut_source_not_null', 'La valeur de <b>statut_source</b> est vide', $$statut_source IS NOT NULL$$, 'not_null'),
-('obs_sensible_not_null', 'La valeur de <b>sensible</b> est vide', $$sensible IS NOT NULL$$, 'not_null'),
 ('obs_sensi_niveau_not_null', 'La valeur de <b>sensi_niveau</b> est vide', $$sensi_niveau IS NOT NULL$$, 'not_null'),
 ('obs_longitude_not_null', 'La valeur de <b>longitude</b> est vide', $$longitude IS NOT NULL$$, 'not_null'),
 ('obs_latitude_not_null', 'La valeur de <b>latitude</b> est vide', $$latitude IS NOT NULL$$, 'not_null'),
@@ -444,7 +443,7 @@ BEGIN
     -- Get ids of observation already in occtax.observation
     sql_template := '
     WITH source AS (
-        SELECT DISTINCT t.identifiant_origine
+        SELECT DISTINCT t.id_origine
         FROM "%1$s" AS t
         INNER JOIN occtax.observation AS o
         ON (
@@ -481,11 +480,11 @@ BEGIN
     -- Else check against the observation with the given JDD UID
     IF _check_inside_this_jdd IS TRUE THEN
         sql_template := '
-            AND o.jdd_metadonnee_dee_id = ''%1$s''
+            AND o.id_sinp_jdd = ''%1$s''
         ';
     ELSE
         sql_template := '
-            AND o.jdd_metadonnee_dee_id != ''%1$s''
+            AND o.id_sinp_jdd != ''%1$s''
         ';
     END IF;
     sql_text = sql_text || format(sql_template,
@@ -496,8 +495,8 @@ BEGIN
     sql_text =  sql_text || '
     )
     SELECT
-        count(identifiant_origine)::integer AS duplicate_count,
-        string_agg(identifiant_origine::text, '', '' ORDER BY identifiant_origine) AS duplicate_ids
+        count(id_origine)::integer AS duplicate_count,
+        string_agg(id_origine::text, '', '' ORDER BY id_origine) AS duplicate_ids
     FROM source
     '
     ;
@@ -530,17 +529,17 @@ date_fin, heure_fin, geom.'
 -- Fonction d'import des données d'observation depuis la table temporaire vers occtax.observation
 DROP FUNCTION IF EXISTS occtax.import_observations_depuis_table_temporaire(regclass, text, text, text);
 DROP FUNCTION IF EXISTS occtax.import_observations_depuis_table_temporaire(regclass, text, text, text, text, text);
+DROP FUNCTION IF EXISTS occtax.import_observations_depuis_table_temporaire(regclass, text, text, text, text);
 CREATE OR REPLACE FUNCTION occtax.import_observations_depuis_table_temporaire(
     _table_temporaire regclass,
     _import_login text,
     _jdd_uid text,
     _organisme_gestionnaire_donnees text,
-    _org_transformation text,
-    _organisme_standard text
+    _org_transformation text
 )
 RETURNS TABLE (
     cle_obs bigint,
-    identifiant_permanent text
+    id_sinp_occtax text
 ) AS
 $BODY$
 DECLARE
@@ -551,7 +550,7 @@ DECLARE
 BEGIN
     -- Get jdd_id from uid
     SELECT jdd_id INTO _jdd_id
-    FROM occtax.jdd WHERE jdd_metadonnee_dee_id = _jdd_uid
+    FROM occtax.jdd WHERE id_sinp_jdd = _jdd_uid
     ;
 
     -- Get observation table SRID
@@ -569,8 +568,8 @@ BEGIN
     INSERT INTO occtax.observation
     (
         cle_obs,
-        identifiant_permanent,
-        identifiant_origine,
+        id_sinp_occtax,
+        id_origine,
 
         statut_observation,
         cd_nom,
@@ -608,15 +607,13 @@ BEGIN
 
         jdd_code,
         jdd_id,
-        jdd_metadonnee_dee_id,
-        jdd_source_id,
+        id_sinp_jdd,
 
         organisme_gestionnaire_donnees,
         org_transformation,
         statut_source,
         reference_biblio,
 
-        sensible,
         sensi_date_attribution,
         sensi_niveau,
         sensi_referentiel,
@@ -629,25 +626,22 @@ BEGIN
         nature_objet_geo,
         geom,
 
-        odata,
-
-        organisme_standard
+        odata
     )
     WITH info_jdd AS (
-        SELECT * FROM occtax.jdd WHERE jdd_metadonnee_dee_id = ''%1$s''
+        SELECT * FROM occtax.jdd WHERE id_sinp_jdd = ''%1$s''
     ),
     organisme_responsable AS (
         SELECT
         $$%2$s$$ AS organisme_gestionnaire_donnees,
-        $$%3$s$$ AS org_transformation,
-        $$%4$s$$ AS organisme_standard
+        $$%3$s$$ AS org_transformation
     ),
     source_sans_doublon AS (
         SELECT csv.*
-        FROM "%6$s" AS csv, info_jdd AS j
+        FROM "%5$s" AS csv, info_jdd AS j
         WHERE True
-        AND csv.identifiant_origine NOT IN
-		(	SELECT o.identifiant_origine
+        AND csv.id_origine NOT IN
+		(	SELECT o.id_origine
 			FROM occtax.observation AS o
 			WHERE True
 			AND jdd_id = j.jdd_id
@@ -657,10 +651,10 @@ BEGIN
         nextval(''occtax.observation_cle_obs_seq''::regclass) AS cle_obs,
         -- C''est la plateforme régionale qui définit les id permanents
         CASE
-            WHEN loip.identifiant_permanent IS NOT NULL THEN loip.identifiant_permanent
+            WHEN loip.id_sinp_occtax IS NOT NULL THEN loip.id_sinp_occtax
             ELSE CAST(uuid_generate_v4() AS text)
-        END AS identifiant_permanent,
-        s.identifiant_origine,
+        END AS id_sinp_occtax,
+        s.id_origine,
 
         s.statut_observation,
         s.cd_nom::bigint,
@@ -698,8 +692,7 @@ BEGIN
 
         j.jdd_code,
         j.jdd_id,
-        j.jdd_metadonnee_dee_id,
-        NULL AS jdd_source_id,
+        j.id_sinp_jdd,
 
         org.organisme_gestionnaire_donnees AS organisme_gestionnaire_donnees,
         org.org_transformation AS org_transformation,
@@ -707,7 +700,6 @@ BEGIN
         s.statut_source,
         s.reference_biblio,
 
-        s.sensible,
         s.sensi_date_attribution::date,
         s.sensi_niveau::text,
         s.sensi_referentiel,
@@ -721,20 +713,18 @@ BEGIN
         ST_Transform(
             ST_SetSRID(
                 ST_MakePoint(s.longitude::real, s.latitude::real),
-                %8$s
+                %7$s
             ),
-            %8$s
+            %7$s
         ) AS geom,
 
         json_build_object(
             ''observateurs'', s.observateurs,
             ''determinateurs'', s.determinateurs,
-            ''import_login'', ''%5$s'',
-            ''import_temp_table'', ''%6$s'',
+            ''import_login'', ''%4$s'',
+            ''import_temp_table'', ''%5$s'',
             ''import_time'', now()::timestamp(0)
-        ) AS odata,
-
-        org.organisme_standard AS organisme_standard
+        ) AS odata
 
     FROM
         info_jdd AS j,
@@ -742,17 +732,16 @@ BEGIN
         source_sans_doublon AS s
         -- jointure pour récupérer les identifiants permanents si déjà créés lors d''un import passé
         LEFT JOIN occtax.lien_observation_identifiant_permanent AS loip
-            ON loip.jdd_id = ''%7$s''
-            AND loip.identifiant_origine = s.identifiant_origine::TEXT
+            ON loip.jdd_id = ''%6$s''
+            AND loip.id_origine = s.id_origine::TEXT
 
     ON CONFLICT DO NOTHING
-    RETURNING cle_obs, identifiant_permanent
+    RETURNING cle_obs, id_sinp_occtax
     ';
     sql_text := format(sql_template,
         _jdd_uid,
         _organisme_gestionnaire_donnees,
         _org_transformation,
-        _organisme_standard,
         _import_login,
         _table_temporaire,
         _jdd_id,
@@ -770,7 +759,7 @@ COST 100
 ;
 
 
-COMMENT ON FUNCTION occtax.import_observations_depuis_table_temporaire(regclass, text, text, text, text, text)
+COMMENT ON FUNCTION occtax.import_observations_depuis_table_temporaire(regclass, text, text, text, text)
 IS 'Importe les observations contenues dans la table fournie en paramètre pour le JDD fourni et les organismes (gestionnaire, transformation et standardisation)'
 ;
 
@@ -816,7 +805,7 @@ BEGIN
     -- Get jdd_id from uid
     SELECT jdd_id
     INTO _jdd_id
-    FROM occtax.jdd WHERE jdd_metadonnee_dee_id = _jdd_uid
+    FROM occtax.jdd WHERE id_sinp_jdd = _jdd_uid
     ;
 
     -- table occtax.lien_observation_identifiant_permanent
@@ -824,16 +813,16 @@ BEGIN
     sql_template := '
     WITH ins AS (
         INSERT INTO occtax.lien_observation_identifiant_permanent
-        (jdd_id, identifiant_origine, identifiant_permanent, dee_date_derniere_modification, dee_date_transformation)
-        SELECT o.jdd_id, o.identifiant_origine, o.identifiant_permanent, o.dee_date_derniere_modification, o.dee_date_transformation
+        (jdd_id, id_origine, id_sinp_occtax, dee_date_derniere_modification, dee_date_transformation)
+        SELECT o.jdd_id, o.id_origine, o.id_sinp_occtax, o.dee_date_derniere_modification, o.dee_date_transformation
         FROM occtax.observation o
         WHERE True
             AND o.jdd_id IN (''%1$s'')
             AND o.odata->>''import_temp_table'' = ''%2$s''
             AND o.odata->>''import_login'' = ''%3$s''
-        ON CONFLICT ON CONSTRAINT lien_observation_identifiant__jdd_id_identifiant_origine_id_key
+        ON CONFLICT ON CONSTRAINT lien_observation_id_sinp_occtax_jdd_id_id_origine_id_key
         DO NOTHING
-        RETURNING identifiant_origine
+        RETURNING id_origine
     ) SELECT count(*) AS nb FROM ins
     ;
     ';
@@ -954,7 +943,7 @@ BEGIN
                 regexp_split_to_table(o.odata->>''%1$s'', '','')  WITH ORDINALITY x(%1$s, rn)
                 WHERE True
                 AND o.odata->>''%1$s'' IS NOT NULL
-                AND o.jdd_metadonnee_dee_id = ''%3$s''
+                AND o.id_sinp_jdd = ''%3$s''
                 ORDER BY o.cle_obs, rn
             )
             SELECT
@@ -999,7 +988,7 @@ BEGIN
     sql_template := $$
         WITH ins AS (
             INSERT INTO occtax.validation_observation (
-                identifiant_permanent,
+                id_sinp_occtax,
                 date_ctrl,
                 niv_val,
                 typ_val,
@@ -1012,7 +1001,7 @@ BEGIN
                 comm_val
             )
             SELECT
-                o.identifiant_permanent,
+                o.id_sinp_occtax,
                 Coalesce(s.validation_date_ctrl::date, now()::date) AS date_ctrl,
                 Coalesce(NuLLif(s.validation_niv_val::text, ''), '6') AS niv_val,
                 Coalesce(Nullif(s.validation_typ_val::text, ''), 'M') AS typ_val,
@@ -1025,14 +1014,14 @@ BEGIN
                 'Données validées pendant l''import CSV du ' || now()::date::text
             FROM occtax.observation AS o
             INNER JOIN "%2$s" AS s
-                ON o.identifiant_origine = s.identifiant_origine::text
+                ON o.id_origine = s.id_origine::text
             WHERE True
                 AND o.odata->>'import_temp_table' = '%2$s'
                 AND o.jdd_id IN ('%3$s')
                 AND o.odata->>'import_login' = '%4$s'
-            ON CONFLICT ON CONSTRAINT validation_observation_identifiant_permanent_ech_val_unique
+            ON CONFLICT ON CONSTRAINT validation_observation_id_sinp_occtax_ech_val_unique
             DO NOTHING
-		    RETURNING identifiant_permanent
+		    RETURNING id_sinp_occtax
         ) SELECT count(*) AS nb FROM ins
     $$;
     sql_text := format(sql_template,
@@ -1158,7 +1147,7 @@ BEGIN
     -- Get jdd_id from uid
     SELECT jdd_id
     INTO _jdd_id
-    FROM occtax.jdd WHERE jdd_metadonnee_dee_id = _jdd_uid
+    FROM occtax.jdd WHERE id_sinp_jdd = _jdd_uid
     ;
 
     -- Nettoyage
@@ -1202,8 +1191,8 @@ BEGIN
         SELECT cle_obs FROM occtax.observation
         WHERE jdd_id = _jdd_id AND odata->>'import_temp_table' = _table_temporaire::text
     );
-    DELETE FROM occtax.lien_observation_identifiant_permanent WHERE identifiant_permanent IN (
-        SELECT identifiant_permanent FROM occtax.observation
+    DELETE FROM occtax.lien_observation_identifiant_permanent WHERE id_sinp_occtax IN (
+        SELECT id_sinp_occtax FROM occtax.observation
         WHERE jdd_id = _jdd_id AND odata->>'import_temp_table' = _table_temporaire::text
     );
     DELETE FROM occtax.observation
@@ -1227,14 +1216,14 @@ CREATE OR REPLACE VIEW occtax.v_import_web_liste AS
 SELECT
     row_number() OVER() AS id,
     (odata->>'import_time')::timestamp(0) AS date_import,
-    jdd_metadonnee_dee_id AS jdd,
+    id_sinp_jdd AS jdd,
     count(cle_obs) AS nombre_observations,
     odata->>'import_temp_table' AS code_import,
     odata->>'import_login' AS login_import,
     ST_Buffer(ST_ConvexHull(ST_Collect(ST_Centroid(geom))), 1)::geometry(POLYGON, {$SRID}) AS geom
 FROM occtax.observation
 WHERE odata ? 'import_login' AND odata ? 'import_time'
-GROUP BY odata, jdd_metadonnee_dee_id
+GROUP BY odata, id_sinp_jdd
 ORDER BY date_import, code_import, login_import;
 ;
 
@@ -1246,15 +1235,15 @@ IS 'Vue utile pour lister les imports effectués par les utilisateurs depuis l''
 DROP VIEW IF EXISTS occtax.v_import_web_observations;
 CREATE OR REPLACE VIEW occtax.v_import_web_observations AS
 SELECT
-o.cle_obs, o.identifiant_origine, o.identifiant_permanent,
+o.cle_obs, o.id_origine, o.id_sinp_occtax,
 cd_nom, nom_cite, cd_ref,
 denombrement_min, denombrement_max, objet_denombrement, type_denombrement,
 commentaire,
 date_debut, date_fin, heure_debut, heure_fin, date_determination,
 dee_floutage, diffusion_niveau_precision, ds_publique,
-jdd_metadonnee_dee_id,
+id_sinp_jdd,
 statut_source, reference_biblio,
-sensible, sensi_date_attribution, sensi_niveau, sensi_referentiel, sensi_version_referentiel,
+sensi_date_attribution, sensi_niveau, sensi_referentiel, sensi_version_referentiel,
 precision_geometrie, nature_objet_geo,
 (ST_Centroid(geom))::geometry(point, {$SRID}) AS geom,
 (odata->>'import_time')::timestamp(0) AS date_import,
@@ -1263,7 +1252,7 @@ odata->>'import_login' AS login_import
 
 FROM occtax.observation AS o
 WHERE odata ? 'import_login' AND odata ? 'import_time'
-ORDER BY jdd_metadonnee_dee_id, date_import, code_import, login_import;
+ORDER BY id_sinp_jdd, date_import, code_import, login_import;
 ;
 
 COMMENT ON VIEW occtax.v_import_web_observations
@@ -1287,7 +1276,7 @@ BEGIN
     SELECT jdd_id
     INTO _jdd_id
     FROM occtax.jdd
-    WHERE jdd_metadonnee_dee_id = _jdd_uid
+    WHERE id_sinp_jdd = _jdd_uid
     ;
 
     IF _jdd_id IS NULL THEN
@@ -1432,8 +1421,8 @@ BEGIN
         delete_obs AS (
             DELETE
             FROM occtax.observation
-            WHERE jdd_metadonnee_dee_id IN (
-                SELECT jdd_metadonnee_dee_id
+            WHERE id_sinp_jdd IN (
+                SELECT id_sinp_jdd
                 FROM occtax.jdd
                 WHERE jdd_id::text = feature_id::text
             )

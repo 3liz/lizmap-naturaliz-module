@@ -18,7 +18,7 @@ xmlelement(
                     dsi->'occ_denombrement_max' AS "cont:occDenombrementMax",
                     dsi->'occ_type_denombrement' AS "cont:occTypeDenombrement",
                     dsi->'occ_objet_denombrement' AS "cont:occObjetDenombrement",
-                    dsi->'obs_methode' AS "cont:obsMethode",
+                    dsi->'obs_technique' AS "cont:obsTechnique",
                     dsi->'obs_contexte' AS "cont:obsContexte",
                     dsi->'occ_naturalite' AS "cont:occNaturalite",
                     dsi->'obs_description' AS "cont:obsDescription",
@@ -27,9 +27,10 @@ xmlelement(
                     dsi->'occ_statut_biologique' AS "cont:occStatutBiologique",
                     dsi->'occ_statut_biogeographique' AS "cont:occStatutBiogeographique",
                     dsi->'occ_methode_determination' AS "cont:occMethodeDetermination",
+                    dsi->'occ_comportement' AS "cont:occComportement",
                     dsi->'preuve_existante' AS "cont:preuveExistante",
                     dsi->'preuve_non_numerique' as "cont:preuveNonNumerique",
-                    dsi->'preuve_numerique' AS "cont:preuveNumerique"
+                    dsi->'url_preuve_numerique' AS "cont:urlPreuveNumerique"
                 )
             )::text, ''
         )  FILTER (WHERE dsi->'occ_sexe' IS NOT NULL))::xml
@@ -129,8 +130,7 @@ xmlelement(
                     o.sensi_version_referentiel AS "cont:sensiVersionReferentiel",
                     o.sensi_referentiel AS "cont:sensiReferentiel",
                     o.sensi_niveau AS "cont:sensiNiveau",
-                    o.sensi_date_attribution AS "cont:sensiDateAttribution",
-                    o.sensible AS "cont:sensible"
+                    o.sensi_date_attribution AS "cont:sensiDateAttribution"
                 ),
                 XMLELEMENT(
                     name "cont:orgTransformation",
@@ -152,8 +152,7 @@ xmlelement(
                 ),
 
                 xmlforest (
-                    o.jdd_source_id as "cont:jddSourceId",
-                    o.jdd_metadonnee_dee_id AS "cont:jddMetadonneeDEEId",
+                    o.id_sinp_jdd AS "cont:idSINPJdd",
                     o.ds_publique AS "cont:dSPublique",
                     o.diffusion_niveau_precision AS "cont:diffusionNiveauPrecision",
                     o.dee_floutage AS "cont:dEEFloutage",
@@ -188,16 +187,6 @@ xmlelement(
         o.commentaire
     ),
 
--- organisme standard
-    XMLELEMENT(
-        name "cont:organismeStandard",
-        XMLELEMENT(
-            NAME "cont:OrganismeType",
-            XMLFOREST(
-                o.organisme_standard AS "cont:nomOrganisme"
-            )
-        )
-    ),
 
 -- Validateurs
     XMLELEMENT(
@@ -364,7 +353,7 @@ xmlelement(
         xmlforest(
             o.nom_cite as "cont:nomCite",
             o.statut_observation as "cont:statutObservation",
-            o.identifiant_permanent as "cont:identifiantPermanent"
+            o.id_sinp_occtax as "cont:idSINPOccTax"
         )
     )
 
@@ -405,5 +394,3 @@ SELECT
 FROM observations
 
 --)  TO {$path};
-
-

@@ -210,7 +210,7 @@ agg_determinateur AS (
 -- validation
 validation_producteur AS (
     SELECT
-        identifiant_permanent,
+        id_sinp_occtax,
         Coalesce(niv_val, '6') AS niv_val,
         date_ctrl AS date_ctrl,
         concat(
@@ -225,7 +225,7 @@ validation_producteur AS (
 ),
 validation_regionale AS (
     SELECT
-        identifiant_permanent,
+        id_sinp_occtax,
         Coalesce(niv_val, '6') AS niv_val,
         date_ctrl AS date_ctrl,
         concat(
@@ -240,7 +240,7 @@ validation_regionale AS (
 ),
 validation_nationale AS (
     SELECT
-        identifiant_permanent,
+        id_sinp_occtax,
         Coalesce(niv_val, '6') AS niv_val,
         date_ctrl AS date_ctrl,
         concat(
@@ -256,7 +256,7 @@ validation_nationale AS (
 
 SELECT
 o.cle_obs,
-o.identifiant_permanent,
+o.id_sinp_occtax,
 o.statut_observation,
 o.cd_nom,
 o.cd_ref,
@@ -289,17 +289,14 @@ o.dee_date_transformation,
 o.dee_floutage,
 o.diffusion_niveau_precision,
 o.ds_publique,
-o.identifiant_origine,
+o.id_origine,
 o.jdd_code,
 o.jdd_id,
-o.jdd_metadonnee_dee_id,
-o.jdd_source_id,
+o.id_sinp_jdd,
 o.organisme_gestionnaire_donnees,
-o.organisme_standard,
 o.org_transformation,
 o.statut_source,
 o.reference_biblio,
-o.sensible,
 o.sensi_date_attribution,
 o.sensi_niveau,
 o.sensi_referentiel,
@@ -330,6 +327,7 @@ val_n.niv_val AS niv_val_nationale,
 
 o.precision_geometrie,
 o.nature_objet_geo,
+o.nom_lieu,
 o.geom,
 CASE
     WHEN o.geom IS NOT NULL THEN
@@ -376,9 +374,9 @@ pdet.determinateur, pdet.determinateur_non_floute
 FROM      occtax."observation"  AS o
 INNER JOIN occtax."jdd" ON jdd.jdd_id = o.jdd_id
 LEFT JOIN agg_observateur   AS pobs  ON pobs.cle_obs = o.cle_obs
-LEFT JOIN validation_producteur AS val_p ON val_p.identifiant_permanent = o.identifiant_permanent
-LEFT JOIN validation_regionale AS val_r ON val_r.identifiant_permanent = o.identifiant_permanent
-LEFT JOIN validation_nationale AS val_n ON val_n.identifiant_permanent = o.identifiant_permanent
+LEFT JOIN validation_producteur AS val_p ON val_p.id_sinp_occtax = o.id_sinp_occtax
+LEFT JOIN validation_regionale AS val_r ON val_r.id_sinp_occtax = o.id_sinp_occtax
+LEFT JOIN validation_nationale AS val_n ON val_n.id_sinp_occtax = o.id_sinp_occtax
 LEFT JOIN agg_determinateur AS pdet  ON pdet.cle_obs = o.cle_obs
 LEFT JOIN agg_m01 AS lm01  ON lm01.cle_obs = o.cle_obs
 LEFT JOIN agg_m02 AS lm02  ON lm02.cle_obs = o.cle_obs
@@ -411,7 +409,7 @@ FROM occtax.v_vm_observation
 ;
 
 CREATE INDEX vm_observation_cle_obs_idx ON occtax.vm_observation (cle_obs);
-CREATE INDEX vm_observation_identifiant_permanent_idx ON occtax.vm_observation (identifiant_permanent);
+CREATE INDEX vm_observation_id_sinp_occtax_idx ON occtax.vm_observation (id_sinp_occtax);
 CREATE INDEX vm_observation_geom_idx ON occtax.vm_observation USING GIST (geom);
 CREATE INDEX vm_observation_cd_ref_idx ON occtax.vm_observation (cd_ref);
 CREATE INDEX vm_observation_cd_nom_idx ON occtax.vm_observation (cd_nom);
@@ -663,7 +661,7 @@ SELECT
     niv_val AS niveau_validite,
     (SELECT valeur FROM occtax.nomenclature WHERE champ='validite_niveau' AND code = niv_val) AS niveau_validite_libelle,
     (SELECT valeur FROM occtax.nomenclature WHERE champ='type_validation' AND code = typ_val) AS type_validite,
-    count(DISTINCT v.identifiant_permanent) AS nb_obs
+    count(DISTINCT v.id_sinp_occtax) AS nb_obs
 FROM
     occtax.validation_observation AS v
 WHERE v.ech_val = '2'
@@ -950,7 +948,7 @@ SELECT jdd.jdd_code,
     i.date_obs_min,
     i.date_obs_max,
     CONCAT('https://inpn.mnhn.fr/mtd/cadre/export/xml/GetRecordById?id=', jdd.jdd_cadre) AS fiche_md_cadre_acquisition,
-    CONCAT('https://inpn.mnhn.fr/mtd/cadre/jdd/export/xml/GetRecordById?id=', jdd.jdd_metadonnee_dee_id) AS fiche_md_jdd
+    CONCAT('https://inpn.mnhn.fr/mtd/cadre/jdd/export/xml/GetRecordById?id=', jdd.id_sinp_jdd) AS fiche_md_jdd
 FROM occtax.jdd
 LEFT JOIN groupes ON jdd.jdd_id=groupes.jdd_id
 LEFT JOIN milieux ON jdd.jdd_id=milieux.jdd_id
@@ -960,7 +958,7 @@ JOIN (SELECT jdd_id, max(id_import) AS id_import, max(date_import) AS date_impor
 LEFT JOIN occtax.jdd_import i ON imax.jdd_id=i.jdd_id
 LEFT JOIN occtax.organisme o ON r.id_organisme::INTEGER=o.id_organisme
 WHERE imax.id_import=i.id_import
-GROUP BY jdd_cadre, jdd.jdd_code, jdd.jdd_description, jdd.jdd_metadonnee_dee_id,
+GROUP BY jdd_cadre, jdd.jdd_code, jdd.jdd_description, jdd.id_sinp_jdd,
     i.date_reception, imin.date_import, imax.date_import, i.nb_donnees_source, i.nb_donnees_import,
     i.date_obs_min, i.date_obs_max
 ORDER BY imin.date_import

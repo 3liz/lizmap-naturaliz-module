@@ -48,7 +48,7 @@ FROM source
 -- Table principale des observations
 CREATE TABLE occtax.observation (
     cle_obs bigserial NOT NULL PRIMARY KEY,
-    identifiant_permanent text NOT NULL,
+    id_sinp_occtax text NOT NULL,
     statut_observation text NOT NULL,
     cd_nom bigint,
     cd_ref bigint,
@@ -82,18 +82,15 @@ CREATE TABLE occtax.observation (
     dee_floutage text,
     diffusion_niveau_precision text,
     ds_publique text NOT NULL,
-    identifiant_origine text,
+    id_origine text,
     jdd_code text,
     jdd_id text,
-    jdd_metadonnee_dee_id text NOT NULL,
-    jdd_source_id text,
+    id_sinp_jdd text NOT NULL,
     organisme_gestionnaire_donnees text NOT NULL,
     org_transformation text NOT NULL,
-    organisme_standard text,
 
     statut_source text NOT NULL,
     reference_biblio text,
-    sensible text NOT NULL DEFAULT 0,
     sensi_date_attribution timestamp with time zone,
     sensi_niveau text NOT NULL DEFAULT 0,
     sensi_referentiel text,
@@ -101,6 +98,7 @@ CREATE TABLE occtax.observation (
 
     precision_geometrie integer,
     nature_objet_geo text,
+    nom_lieu text,
 
     descriptif_sujet jsonb,
 
@@ -144,8 +142,6 @@ COMMENT ON COLUMN occtax.observation.statut_source IS 'Indique si la DS de l’o
 
 COMMENT ON COLUMN occtax.observation.reference_biblio IS 'Référence de la source de l’observation lorsque celle-ci est de type « Littérature », au format ISO690 La référence bibliographique doit concerner l''observation même et non uniquement le taxon ou le protocole.';
 
-COMMENT ON COLUMN occtax.observation.sensible IS 'Indique si l''observation est sensible d''après les principes du SINP (cf : GT Donnée Sensible). Cet attribut est voué à disparaître pour la prochaine version du standard, l''attribut "sensibilite" permettant de porter une information plus complète et précise.';
-
 COMMENT ON COLUMN occtax.observation.sensi_date_attribution IS 'Date à laquelle on a attribué un niveau de sensibilité à la donnée. C''est également la date à laquelle on a consulté le référentiel de sensibilité associé. Cet attribut est OBLIGATOIRE CONDITIONNEL : il DOIT être rempli si un niveau de sensibilité autre que celui par défaut a été renseigné dans l''attribut "sensibilite", et si "sensible" est différent de "0';
 
 COMMENT ON COLUMN occtax.observation.sensi_niveau IS 'Indique si l''observation ou le regroupement est sensible d''après les principes du SINP et à quel degré. La manière de déterminer la sensibilité est définie dans le guide technique des données sensibles disponible sur la plate-forme naturefrance. Règles : Sans consultation de référentiel de sensibilité, le niveau est par défaut est 0 : DEE non sensible. La sensibilité d''une et une seule DEE d''un regroupement entraîne le même niveau de sensibilité pour le regroupement et pour toutes les observations de ce regroupement.';
@@ -156,15 +152,13 @@ COMMENT ON COLUMN occtax.observation.sensi_version_referentiel IS 'Version du r�
 
 COMMENT ON COLUMN occtax.observation.jdd_id IS 'Identifiant pour la collection ou le jeu de données source d''où provient l''enregistrement. Un regroupement peut ne pas avoir existé dans le jeu de données source, et en conséquence, ne saurait avoir de jddId.';
 
-COMMENT ON COLUMN occtax.observation.jdd_metadonnee_dee_id IS 'Identifiant permanent et unique de la fiche métadonnées du jeu de données auquel appartient la donnée. Cet identifiant est attribué par la plateforme';
-
-COMMENT ON COLUMN occtax.observation.jdd_source_id IS 'Il peut arriver qu''on réutilise une donnée en provenance d''un autre jeu de données DEE déjà existant au sein du SINP. Cet attribut contient l''identifiant SINP du jeu de données qui est réutilisé.';
+COMMENT ON COLUMN occtax.observation.id_sinp_jdd IS 'Identifiant permanent et unique de la fiche métadonnées du jeu de données auquel appartient la donnée. Cet identifiant est attribué par la plateforme';
 
 COMMENT ON COLUMN occtax.observation.jdd_code IS 'Nom, acronyme, ou code de la collection du jeu de données dont provient la donnée source. Exemples : "BDMAP", "FLORA", "BDN".';
 
-COMMENT ON COLUMN occtax.observation.identifiant_origine IS 'Identifiant unique de la Donnée Source de l’observation dans la base de données du producteur où est stockée et initialement gérée la Donnée Source. La DS est caractérisée par jddId et/ou jddCode,. L''identifiant ne doit pas être la clé primaire technique, susceptible de varier selon les choix de gestion de l''outil de stockage.';
+COMMENT ON COLUMN occtax.observation.id_origine IS 'Identifiant unique de la Donnée Source de l’observation dans la base de données du producteur où est stockée et initialement gérée la Donnée Source. La DS est caractérisée par jddId et/ou jddCode,. L''identifiant ne doit pas être la clé primaire technique, susceptible de varier selon les choix de gestion de l''outil de stockage.';
 
-COMMENT ON COLUMN occtax.observation.identifiant_permanent IS 'Identifiant unique et pérenne de la Donnée Elémentaire d’Echange de l''observation dans le SINP attribué par la plate-forme régionale ou thématique. On se réfèrera au document sur les identifiants permanents présents sur la plate-forme NatureFrance : http://www.naturefrance.fr/sites/default/files/fichiers/ressources/pdf/sinp_identifiantpermanent.pdf';
+COMMENT ON COLUMN occtax.observation.id_sinp_occtax IS 'Identifiant unique et pérenne de la Donnée Elémentaire d’Echange de l''observation dans le SINP attribué par la plate-forme régionale ou thématique. On se réfèrera au document sur les identifiants permanents présents sur la plate-forme NatureFrance : http://www.naturefrance.fr/sites/default/files/fichiers/ressources/pdf/sinp_identifiantpermanent.pdf';
 
 COMMENT ON COLUMN occtax.observation.ds_publique IS 'Indique explicitement si la DS de la DEE est publique ou privée. Ce champ définit uniquement les droits nécessaires et suffisants des DS pour produire une DEE : l’attribut DSPublique ne doit être utilisé que pour indiquer si la DEE résultante est susceptible d’être floutée et ne doit pas être utilisé pour d’autres interprétations.';
 
@@ -229,6 +223,8 @@ COMMENT ON COLUMN occtax.observation.profondeur_max IS 'Profondeur Maximale de l
 COMMENT ON COLUMN occtax.observation.precision_geometrie IS 'Estimation en mètre d’une zone tampon autour de l’objet géographique. Cette précision peut inclure la précision du moyen technique d’acquisition des coordonnées (GPS,...) et/ou du protocole naturaliste.
 Ce champ ne peut pas être utilisé pour flouter la donnée.';
 
+COMMENT ON COLUMN occtax.observation.nom_lieu IS 'Nom du lieu ou de la station où a été effectuée l''observation. ATTENTION : cet attribut ne pourra pas être flouté !';
+
 COMMENT ON COLUMN occtax.observation.nature_objet_geo IS 'Nature de la localisation transmise
 Si la couche SIG ou un point (champs x,y) sont échangés alors ce champ doit être renseigné.';
 
@@ -236,13 +232,11 @@ COMMENT ON COLUMN occtax.observation.dee_date_derniere_modification IS 'Date de 
 
 COMMENT ON COLUMN occtax.observation.dee_date_transformation IS 'Date de transformation de la donnée source (DSP ou DSR) en donnée élémentaire d''échange (DEE).';
 
-COMMENT ON COLUMN occtax.observation.dee_floutage IS 'Indique si un floutage a été effectué lors de la transformation en DEE. Cela ne concerne que des données d''origine privée.';
+COMMENT ON COLUMN occtax.observation.dee_floutage IS 'Indique si un floutage a été effectué avant (par le producteur) ou lors de la transformation en DEE. Cela ne concerne que des données d''origine privée.';
 
 COMMENT ON COLUMN occtax.observation.organisme_gestionnaire_donnees IS 'Nom de l’organisme qui détient la Donnée Source (DS) de la DEE et qui en a la responsabilité. Si plusieurs organismes sont nécessaires, les séparer par des virgules.';
 
 COMMENT ON COLUMN occtax.observation.org_transformation IS 'Nom de l''organisme ayant créé la DEE finale (plate-forme ou organisme mandaté par elle). Autant que possible, on utilisera des noms issus de l''annuaire du SINP lorsqu''il sera publié.';
-
-COMMENT ON COLUMN occtax.observation.organisme_standard IS 'Nom(s) de(s) organisme(s) qui ont participés à la standardisation de la DS en DEE (codage, formatage, recherche des données obligatoires).';
 
 COMMENT ON COLUMN occtax.observation.geom IS 'Géométrie de l''objet. Il peut être de type Point, Polygone ou Polyligne ou Multi, mais pas complexe (pas de mélange des types)';
 
@@ -604,7 +598,7 @@ CREATE TABLE occtax.jdd (
     jdd_code text NOT NULL,
     jdd_libelle text,
     jdd_description text,
-    jdd_metadonnee_dee_id text NOT NULL,
+    id_sinp_jdd text NOT NULL,
     jdd_cadre text,
     ayants_droit jsonb,
     date_minimum_de_diffusion date
@@ -615,7 +609,7 @@ COMMENT ON COLUMN occtax.jdd.jdd_id IS 'Un identifiant pour la collection ou le 
 COMMENT ON COLUMN occtax.jdd.jdd_code IS 'Le nom, l’acronyme, le code ou l’initiale identifiant la collection ou le jeu de données dont l’enregistrement de la Donnée Source provient. Exemple « INPN », « Silène », « BDMAP »';
 COMMENT ON COLUMN occtax.jdd.jdd_libelle IS 'Libellé court et intelligible du jeu de données';
 COMMENT ON COLUMN occtax.jdd.jdd_description IS 'Description du jeu de données';
-COMMENT ON COLUMN occtax.jdd.jdd_metadonnee_dee_id IS 'Identifiant permanent et unique de la fiche métadonnées du jeu de données auquel appartient la donnée. Cet identifiant est attribué par la plateforme';
+COMMENT ON COLUMN occtax.jdd.id_sinp_jdd IS 'Identifiant permanent et unique de la fiche métadonnées du jeu de données auquel appartient la donnée. Cet identifiant est attribué par la plateforme';
 COMMENT ON COLUMN occtax.jdd.jdd_cadre IS 'Cadre d''acquisition qui permet de regrouper des jdd de même producteur. Ex: on peut avoir un jdd_id par annee pour le même cadre d''acquisition';
 COMMENT ON COLUMN occtax.jdd.ayants_droit IS 'Liste et rôle des structures ayant des droits sur le jeu de données, et rôle concerné (ex : financeur, maître d''oeuvre...). Stocker les structures via leur id_organisme';
 COMMENT ON COLUMN occtax.jdd.date_minimum_de_diffusion IS 'Pour les données de recherche, les producteurs peuvent attendre que la publication scientifique soit publiée avant de diffuser les données. Cette date est utilisée dans le requête de création de la vue matérialisée occtax.vm_observation pour ne pas prendre en compte les données dont la date minimum n''est pas atteinte';
@@ -624,8 +618,8 @@ COMMENT ON COLUMN occtax.jdd.date_minimum_de_diffusion IS 'Pour les données de 
 -- utilisée pour ne pas perdre les enregistrements permanents lors d'un réimport et écrasement de données d'un même jdd
 CREATE TABLE occtax.lien_observation_identifiant_permanent (
     jdd_id text NOT NULL,
-    identifiant_origine text NOT NULL,
-    identifiant_permanent text NOT NULL,
+    id_origine text NOT NULL,
+    id_sinp_occtax text NOT NULL,
     dee_date_derniere_modification timestamp with time zone,
     dee_date_transformation timestamp with time zone
 );
@@ -634,14 +628,14 @@ COMMENT ON TABLE occtax.lien_observation_identifiant_permanent IS 'Table utilis�
 
 COMMENT ON COLUMN occtax.lien_observation_identifiant_permanent.jdd_id IS 'Identifiant du jeu de données';
 
-COMMENT ON COLUMN occtax.lien_observation_identifiant_permanent.identifiant_origine IS 'Identifiant d''origine de la données';
+COMMENT ON COLUMN occtax.lien_observation_identifiant_permanent.id_origine IS 'Identifiant d''origine de la données';
 
 COMMENT ON COLUMN occtax.lien_observation_identifiant_permanent.dee_date_derniere_modification IS 'Date de dernière modification de la donnée élémentaire d''échange. Postérieure à la date de transformation en DEE, égale dans le cas de l''absence de modification.';
 
 COMMENT ON COLUMN occtax.lien_observation_identifiant_permanent.dee_date_transformation IS 'Date de transformation de la donnée source (DSP ou DSR) en donnée élémentaire d''échange (DEE).';
 
 ALTER TABLE occtax.lien_observation_identifiant_permanent
-ADD CONSTRAINT lien_observation_identifiant__jdd_id_identifiant_origine_id_key UNIQUE (jdd_id, identifiant_origine, identifiant_permanent);
+ADD CONSTRAINT lien_observation_id_sinp_occtax_jdd_id_id_origine_id_key UNIQUE (jdd_id, id_origine, id_sinp_occtax);
 
 
 -- Table organisme
@@ -838,7 +832,7 @@ CREATE INDEX ON occtax.habitat (code_habitat_parent);
 
 CREATE INDEX ON occtax.jdd (jdd_code);
 
-CREATE INDEX ON occtax.lien_observation_identifiant_permanent (jdd_id, identifiant_origine);
+CREATE INDEX ON occtax.lien_observation_identifiant_permanent (jdd_id, id_origine);
 
 CREATE INDEX ON occtax.jdd_correspondance_taxon (jdd_id);
 

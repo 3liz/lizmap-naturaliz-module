@@ -10,9 +10,9 @@
             <span style="display:none;">{if array_key_exists('geojson', $data)}{$data['geojson']}{/if}</span>
         </span>
         {if $in_basket}
-        <button value="remove@{$data['identifiant_permanent']}" class="occtax_validation_button btn btn-mini pull-right" tooltip="{@validation.button.validation_basket.remove.help@}">{@validation.button.validation_basket.remove.title@}</button>
+        <button value="remove@{$data['id_sinp_occtax']}" class="occtax_validation_button btn btn-mini pull-right" tooltip="{@validation.button.validation_basket.remove.help@}">{@validation.button.validation_basket.remove.title@}</button>
         {else}
-        <button value="add@{$data['identifiant_permanent']}" class="occtax_validation_button btn btn-mini pull-right" tooltip="{@validation.button.validation_basket.add.help@}">{@validation.button.validation_basket.add.title@}</button>
+        <button value="add@{$data['id_sinp_occtax']}" class="occtax_validation_button btn btn-mini pull-right" tooltip="{@validation.button.validation_basket.add.help@}">{@validation.button.validation_basket.add.title@}</button>
         {/if}
 
     </center>
@@ -28,11 +28,11 @@
         </tr>
         {/if}
 
-        {if array_key_exists('identifiant_permanent', $data)}
+        {if array_key_exists('id_sinp_occtax', $data)}
         <tr>
         <tr>
-            <th>{@occtax~observation.output.identifiant_permanent@}</th>
-            <td>{$data['identifiant_permanent']}</td>
+            <th>{@occtax~observation.output.id_sinp_occtax@}</th>
+            <td>{$data['id_sinp_occtax']}</td>
         </tr>
         {/if}
 
@@ -599,10 +599,10 @@ Pas d'individu décrit
         </tr>
         {/if}
 
-        {if array_key_exists('identifiant_origine', $data)}
+        {if array_key_exists('id_origine', $data)}
         <tr>
-            <th>{@occtax~observation.output.identifiant_origine@}</th>
-            <td>{$data['identifiant_origine']}</td>
+            <th>{@occtax~observation.output.id_origine@}</th>
+            <td>{$data['id_origine']}</td>
         </tr>
         {/if}
 
@@ -625,21 +625,14 @@ Pas d'individu décrit
         </tr>
         {/if}
 
-        {if array_key_exists('jdd_metadonnee_dee_id', $data)}
+        {if array_key_exists('id_sinp_jdd', $data)}
         <tr>
-            <th>{@occtax~observation.output.jdd_metadonnee_dee_id@}</th>
+            <th>{@occtax~observation.output.id_sinp_jdd@}</th>
             {if array_key_exists('jdd_id', $data)}
-            <td><a href="#" class="getMetadata jdd_id_{$data['jdd_id']}">{$data['jdd_metadonnee_dee_id']}</a></td>
+            <td><a href="#" class="getMetadata jdd_id_{$data['jdd_id']}">{$data['id_sinp_jdd']}</a></td>
             {else}
-            <td>{$data['jdd_metadonnee_dee_id']}</td>
+            <td>{$data['id_sinp_jdd']}</td>
             {/if}
-        </tr>
-        {/if}
-
-        {if array_key_exists('jdd_source_id', $data)}
-        <tr>
-            <th>{@occtax~observation.output.jdd_source_id@}</th>
-            <td>{$data['jdd_source_id']}</td>
         </tr>
         {/if}
 
@@ -649,17 +642,11 @@ Pas d'individu décrit
             {if array_key_exists('jdd_id', $data)}
             <td><a href="#" class="getMetadata cadre_id_{$data['jdd_cadre']}">{$data['jdd_cadre']}</a></td>
             {else}
-            <td>{$data['jdd_metadonnee_dee_id']}</td>
+            <td>{$data['id_sinp_jdd']}</td>
             {/if}
         </tr>
         {/if}
 
-        {if array_key_exists('organisme_standard', $data)}
-        <tr>
-            <th>{@occtax~observation.output.organisme_standard@}</th>
-            <td>{$data['organisme_standard']}</td>
-        </tr>
-        {/if}
 
         {if array_key_exists('organisme_gestionnaire_donnees', $data)}
         <tr>
@@ -693,20 +680,6 @@ Pas d'individu décrit
         <tr>
             <th>{@occtax~observation.output.reference_biblio@}</th>
             <td>{$data['reference_biblio']}</td>
-        </tr>
-        {/if}
-
-        {if array_key_exists('sensible', $data)}
-        <tr>
-            <th>{@occtax~observation.output.sensible@}</th>
-            <td>
-                {if array_key_exists('sensible' . '|' . $data['sensible'], $nomenclature) }
-                {assign $k = 'sensible' . '|' . $data['sensible']}
-                {$nomenclature[$k]}
-                {else}
-                {$data['sensible']}
-                {/if}
-            </td>
         </tr>
         {/if}
 

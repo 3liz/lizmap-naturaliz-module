@@ -143,20 +143,20 @@
    <label locale="occtax_admin~admin.form.legend_max_radius.label" />
   </input>
 
-  <textarea ref="observation_card_fields" defaultvalue="cle_obs, identifiant_permanent, statut_observation, nom_cite, denombrement_min, denombrement_max, objet_denombrement, commentaire, date_debut, date_fin, date_determination, ds_publique, jdd_metadonnee_dee_id, organisme_gestionnaire_donnees, statut_source, sensi_niveau, observateur, determinateur, validateur, descriptif_sujet, obs_methode, occ_denombrement_min, occ_denombrement_max, occ_type_denombrement, occ_objet_denombrement, occ_etat_biologique, occ_naturalite, occ_sexe, occ_stade_de_vie, occ_statut_biologique, obs_contexte, obs_description, occ_methode_determination, niv_val_regionale, date_ctrl_regionale, precision_geometrie">
+  <textarea ref="observation_card_fields" defaultvalue="cle_obs, id_sinp_occtax, statut_observation, nom_cite, denombrement_min, denombrement_max, objet_denombrement, commentaire, date_debut, date_fin, date_determination, ds_publique, id_sinp_jdd, organisme_gestionnaire_donnees, statut_source, sensi_niveau, observateur, determinateur, validateur, descriptif_sujet, obs_technique, occ_denombrement_min, occ_denombrement_max, occ_type_denombrement, occ_objet_denombrement, occ_etat_biologique, occ_naturalite, occ_sexe, occ_stade_de_vie, occ_statut_biologique, obs_contexte, obs_description, occ_methode_determination, occ_comportement, niv_val_regionale, date_ctrl_regionale, precision_geometrie">
    <label locale="occtax_admin~admin.form.observation_card_fields.label" />
   </textarea>
-  <textarea ref="observation_card_fields_unsensitive" defaultvalue="cle_obs, identifiant_permanent, statut_source, nom_cite, date_debut, date_fin, organisme_gestionnaire_donnees, source_objet, code_commune, code_departement, code_maille_10">
+  <textarea ref="observation_card_fields_unsensitive" defaultvalue="cle_obs, id_sinp_occtax, statut_source, nom_cite, date_debut, date_fin, organisme_gestionnaire_donnees, source_objet, code_commune, code_departement, code_maille_10">
    <label locale="occtax_admin~admin.form.observation_card_fields_unsensitive.label" />
   </textarea>
   <textarea ref="observation_card_children" defaultvalue="commune, maille_01, maille_02, maille_10, espace_naturel, masse_eau, habitat, departement">
    <label locale="occtax_admin~admin.form.observation_card_children.label" />
   </textarea>
-  <textarea ref="observation_exported_fields" defaultvalue="cle_obs, identifiant_permanent, identifiant_origine, statut_observation, cd_nom, cd_ref, version_taxref, nom_cite, nom_valide, nom_vern, group1_inpn, group2_inpn, denombrement_min, denombrement_max, type_denombrement, objet_denombrement, commentaire, date_debut, heure_debut, date_fin, heure_fin, altitude_moy, profondeur_moy, date_determination, ds_publique, jdd_metadonnee_dee_id, dee_date_derniere_modification, jdd_code, reference_biblio, organisme_gestionnaire_donnees, statut_source, sensi_niveau, observateur, determinateur, validateur, descriptif_sujet, niv_val_regionale, date_ctrl_regionale, precision_geometrie, nature_objet_geo, wkt">
+  <textarea ref="observation_exported_fields" defaultvalue="cle_obs, id_sinp_occtax, id_origine, statut_observation, cd_nom, cd_ref, version_taxref, nom_cite, nom_valide, nom_vern, group1_inpn, group2_inpn, denombrement_min, denombrement_max, type_denombrement, objet_denombrement, commentaire, date_debut, heure_debut, date_fin, heure_fin, altitude_moy, profondeur_moy, date_determination, ds_publique, id_sinp_jdd, dee_date_derniere_modification, jdd_code, reference_biblio, organisme_gestionnaire_donnees, statut_source, sensi_niveau, observateur, determinateur, validateur, descriptif_sujet, niv_val_regionale, date_ctrl_regionale, precision_geometrie, nature_objet_geo, wkt">
    <label locale="occtax_admin~admin.form.observation_exported_fields.label" />
   </textarea>
 
-  <textarea ref="observation_exported_fields_unsensitive" defaultvalue="cle_obs, identifiant_permanent, statut_source, nom_cite, date_debut, date_fin, organisme_gestionnaire_donnees, source_objet, code_commune, code_departement, code_maille_10, wkt">
+  <textarea ref="observation_exported_fields_unsensitive" defaultvalue="cle_obs, id_sinp_occtax, statut_source, nom_cite, date_debut, date_fin, organisme_gestionnaire_donnees, source_objet, code_commune, code_departement, code_maille_10, wkt">
    <label locale="occtax_admin~admin.form.observation_exported_fields_unsensitive.label" />
   </textarea>
 
@@ -185,10 +185,6 @@
 
   <input ref="org_transformation" type="string" defaultvalue="Inconnu">
    <label locale="occtax_admin~admin.form.import_csv.org_transformation.label" />
-  </input>
-
-  <input ref="organisme_standard" type="string" defaultvalue="Inconnu">
-   <label locale="occtax_admin~admin.form.import_csv.organisme_standard.label" />
   </input>
 
   <input ref="default_email" type="string" defaultvalue="inconnu@acme.org">

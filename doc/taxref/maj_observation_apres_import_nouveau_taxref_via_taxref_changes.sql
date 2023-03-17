@@ -75,7 +75,7 @@ AND o.cle_obs IN ( SELECT DISTINCT c.cle_obs FROM fdw.observation_chg_taxon_cd_n
 
 -- Metre à jour le CD_REF pour les observations concernées par un CD_NOM qui a changé de CD_REF
 -- TEST
-SELECT o.cle_obs, o.cd_nom, o.cd_ref, valeur_init, valeur_final, o.identifiant_origine, o.jdd_id
+SELECT o.cle_obs, o.cd_nom, o.cd_ref, valeur_init, valeur_final, o.id_origine, o.jdd_id
 FROM occtax.observation o,
 fdw.taxref_changes tc
 WHERE TRUE
@@ -183,14 +183,14 @@ WHERE o.cle_obs=maj.cle_obs
 -- TODO : il est plus judicieux de garder les obs concernées et de les mettre en douteuses si besoin. Mettre une nouvelle ligne dans taxref_local si besoin
 CREATE TABLE IF NOT EXISTS occtax.observation_retrait_taxon_cas_3 (
     cle_obs bigint NOT NULL,
-    identifiant_permanent text NOT NULL,
+    id_sinp_occtax text NOT NULL,
     cd_nom bigint NOT NULL,
     cd_ref bigint NOT NULL,
     jdd_id text NOT NULL,
-    identifiant_origine text NOT NULL
+    id_origine text NOT NULL
 );
 INSERT INTO occtax.observation_retrait_taxon_cas_3
-SELECT o.cle_obs, o.identifiant_permanent, o.cd_nom, o.cd_ref, o.jdd_id, o.identifiant_origine
+SELECT o.cle_obs, o.id_sinp_occtax, o.cd_nom, o.cd_ref, o.jdd_id, o.id_origine
 FROM occtax.observation o,
 fdw.taxref_changes AS tc
 LEFT JOIN fdw.cd_nom_disparus d ON d.cd_nom = tc.cd_nom
@@ -204,8 +204,8 @@ AND o.cd_nom::text = tc.cd_nom
 -- Supprimer les observation de occtax.observation concernées par ces modifications de cas 3
 DELETE FROM occtax.observation
 WHERE TRUE
-AND identifiant_permanent IN (
-    SELECT DISTINCT identifiant_permanent FROM occtax.observation_retrait_taxon_cas_3
+AND id_sinp_occtax IN (
+    SELECT DISTINCT id_sinp_occtax FROM occtax.observation_retrait_taxon_cas_3
 )
 ;
 

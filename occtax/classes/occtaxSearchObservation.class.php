@@ -19,7 +19,7 @@ class occtaxSearchObservation extends occtaxSearch {
     protected $returnFields = array(
         'cle_obs',
         'date_debut',
-        'identifiant_permanent',
+        'id_sinp_occtax',
         'date_debut_buttons',
         'lien_nom_valide',
         'geojson',
@@ -81,7 +81,7 @@ class occtaxSearchObservation extends occtaxSearch {
             'joinClause' => '',
             'returnFields' => array(
                 'o.cle_obs'=> Null,
-                'o.identifiant_permanent'=> Null,
+                'o.id_sinp_occtax'=> Null,
                 'o.lb_nom_valide' => Null,
                 'o.cd_nom' => Null,
                 'o.cd_ref' => Null,
@@ -423,10 +423,10 @@ class occtaxSearchObservation extends occtaxSearch {
                     //'multi' => False,
                     'join' => ' LEFT JOIN ',
                     'joinClause' => "
-                        ON vp.identifiant_permanent = o.identifiant_permanent
+                        ON vp.id_sinp_occtax = o.id_sinp_occtax
                         AND vp.usr_login = '".$this->login."' ",
                     'returnFields' => array(
-                        "vp.identifiant_permanent AS in_panier"=> Null,
+                        "vp.id_sinp_occtax AS in_panier"=> Null,
                     ),
                 );
 
@@ -434,7 +434,7 @@ class occtaxSearchObservation extends occtaxSearch {
                 if (array_key_exists('date_debut_buttons', $this->tplFields)) {
                     $this->tplFields['date_debut_buttons'] .= '
                         {if !empty($line->in_panier)}{assign $action="remove"}{else}{assign $action="add"}{/if}
-                        <a class="occtax_validation_button datatable" href="#{$action}@{$line->identifiant_permanent}" title="{@occtax~validation.button.validation_basket.$action.help@}"><i class="icon-star{if empty($line->in_panier)}-empty{/if}"></i></a>
+                        <a class="occtax_validation_button datatable" href="#{$action}@{$line->id_sinp_occtax}" title="{@occtax~validation.button.validation_basket.$action.help@}"><i class="icon-star{if empty($line->in_panier)}-empty{/if}"></i></a>
                     ';
                 }
 
@@ -452,7 +452,7 @@ class occtaxSearchObservation extends occtaxSearch {
                     'required' => True,
                     'join' => ' LEFT JOIN ',
                     'joinClause' => "
-                        ON oo.identifiant_permanent = o.identifiant_permanent ",
+                        ON oo.id_sinp_occtax = o.id_sinp_occtax ",
                     'returnFields' => array(
                         'oo.niv_val_regionale' => Null,
                         'oo.date_ctrl_regionale' => Null,
@@ -467,7 +467,7 @@ class occtaxSearchObservation extends occtaxSearch {
                                 END
                             ) AS validateur
                             FROM occtax.v_validateurs AS ovv
-                            WHERE ech_val = '2' AND ovv.identifiant_permanent = oo.identifiant_permanent
+                            WHERE ech_val = '2' AND ovv.id_sinp_occtax = oo.id_sinp_occtax
                             LIMIT 1
 
                         ) AS validateur_regionale" => Null,

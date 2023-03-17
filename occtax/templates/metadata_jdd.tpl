@@ -9,7 +9,7 @@
         </tr>
         <tr>
             <th>{@metadata.input.jdd.metadonnee_dee_id.title@}</th>
-            <td>{$jdd->jdd_metadonnee_dee_id}</td>
+            <td>{$jdd->id_sinp_jdd}</td>
         </tr>
         <tr>
             <th>{@metadata.input.jdd.libelle.title@}</th>

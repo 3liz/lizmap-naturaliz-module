@@ -116,7 +116,7 @@ DELETE FROM divers.controle_coherence_conformite ;
 -- b/ remplissage des valeurs uniques depuis la table testée
 
 WITH o AS (
-        SELECT  o.jdd_id,o.jdd_code, o.cle_obs, o.identifiant_origine, o.nom_cite, o.cd_nom, o.ds_publique, o.diffusion_niveau_precision, tc.cd_nom AS cd_nom_taxref, tc.cd_ref, t.nom_valide, t.reu, t.habitat, CONCAT(t.habitat, ' - ', h.valeur) AS habitat_decode,
+        SELECT  o.jdd_id,o.jdd_code, o.cle_obs, o.id_origine, o.nom_cite, o.cd_nom, o.ds_publique, o.diffusion_niveau_precision, tc.cd_nom AS cd_nom_taxref, tc.cd_ref, t.nom_valide, t.reu, t.habitat, CONCAT(t.habitat, ' - ', h.valeur) AS habitat_decode,
         o.geom, lc.code_commune, ltm.geom AS sur_terre, min(r.larg_pb_th) AS en_riviere, zee.geom AS dans_zee,
                 COALESCE(altitude_min, altitude_moy,altitude_max) AS altitude, profondeur_min
         FROM occtax.observation o
@@ -128,7 +128,7 @@ WITH o AS (
         LEFT JOIN sig.zone_economique_exclusive zee ON st_intersects(zee.geom, o.geom)
         LEFT JOIN occtax.localisation_commune lc ON lc.cle_obs = o.cle_obs
         WHERE o.jdd_id = ANY ($1)
-        GROUP BY o.jdd_id,o.jdd_code, o.cle_obs, o.identifiant_origine, o.nom_cite, o.cd_nom, o.ds_publique, o.diffusion_niveau_precision, tc.cd_nom, tc.cd_ref, t.nom_valide,t.reu, t.habitat, o.geom, lc.code_commune, ltm.geom, zee.geom,
+        GROUP BY o.jdd_id,o.jdd_code, o.cle_obs, o.id_origine, o.nom_cite, o.cd_nom, o.ds_publique, o.diffusion_niveau_precision, tc.cd_nom, tc.cd_ref, t.nom_valide,t.reu, t.habitat, o.geom, lc.code_commune, ltm.geom, zee.geom,
                 COALESCE(altitude_min, altitude_moy,altitude_max), profondeur_min, t.habitat, h.valeur
             )
 
@@ -231,7 +231,7 @@ WITH o AS (
                                    COALESCE(lme.type_info_geo,''),
                                    COALESCE(len.type_info_geo,''),
                                    COALESCE(ld.type_info_geo,'')) ILIKE '%1%') -- Plusieurs géométries de référence dont géom précise
-    GROUP BY o.cle_obs, o.geom, o.jdd_code, o.jdd_id, o.identifiant_origine
+    GROUP BY o.cle_obs, o.geom, o.jdd_code, o.jdd_id, o.id_origine
     ORDER BY cle_obs
 
     ), test_46 AS (
@@ -307,8 +307,8 @@ WITH o AS (
     )
 
 INSERT INTO divers.controle_coherence_conformite
-(jdd_id, jdd_code, cle_obs, identifiant_origine, wkt, libelle_test, description_anomalie, date_analyse, nom_cite, nom_valide, reu, habitat )
-SELECT o.jdd_id, o.jdd_code, l.cle_obs, o.identifiant_origine, st_AsEWKT(o.geom), l.libelle_test, l.description_anomalie, now()::TIMESTAMP WITH TIME ZONE, o.nom_cite, o.nom_valide, o.reu, o.habitat_decode
+(jdd_id, jdd_code, cle_obs, id_origine, wkt, libelle_test, description_anomalie, date_analyse, nom_cite, nom_valide, reu, habitat )
+SELECT o.jdd_id, o.jdd_code, l.cle_obs, o.id_origine, st_AsEWKT(o.geom), l.libelle_test, l.description_anomalie, now()::TIMESTAMP WITH TIME ZONE, o.nom_cite, o.nom_valide, o.reu, o.habitat_decode
 FROM liste l
 LEFT JOIN o USING(cle_obs)
 ORDER BY l.libelle_test, o.cle_obs
@@ -362,8 +362,8 @@ BEGIN
                 o.jdd_code,
                 o.organisme_gestionnaire_donnees,
                 o.jdd_id,
-                o.identifiant_origine,
-                o.identifiant_permanent,
+                o.id_origine,
+                o.id_sinp_occtax,
                 COALESCE(o.geom, m02.geom, m10.geom) AS geom, -- on prend la géométrie de l''objet et à défaut celle de la maille la plus précise
                 o.date_debut,
                 o.cd_ref,
@@ -392,7 +392,7 @@ BEGIN
         LEFT JOIN occtax.jdd_import i ON o.jdd_id=i.jdd_id
         LEFT JOIN occtax.v_descriptif_sujet_decodee ds ON ds.cle_obs = o.cle_obs
         WHERE (op.role_personne=''Obs'' OR op.role_personne IS NULL)
-        GROUP BY o.cle_obs, o.jdd_code, o.jdd_id, o.identifiant_origine, COALESCE(o.geom, m02.geom, m10.geom), o.date_debut, o.cd_ref, o.organisme_gestionnaire_donnees, o.denombrement_min
+        GROUP BY o.cle_obs, o.jdd_code, o.jdd_id, o.id_origine, COALESCE(o.geom, m02.geom, m10.geom), o.date_debut, o.cd_ref, o.organisme_gestionnaire_donnees, o.denombrement_min
             )
 
     -- Table(s) qu''on souhaite tester
@@ -425,10 +425,10 @@ BEGIN
 
             s.cle_obs AS cle_obs_source,
             c.cle_obs AS cle_obs_cible,
-            s.identifiant_origine AS identifiant_origine_source,
-            c.identifiant_origine AS identifiant_origine_cible,
-            s.identifiant_permanent AS identifiant_permanent_source,
-            c.identifiant_permanent AS identifiant_permanent_cible,
+            s.id_origine AS id_origine_source,
+            c.id_origine AS id_origine_cible,
+            s.id_sinp_occtax AS id_sinp_occtax_source,
+            c.id_sinp_occtax AS id_sinp_occtax_cible,
             st_distance(s.geom, c.geom)::NUMERIC(10,1) AS distance_geom_m,
             t.group2_inpn,
             t.nom_valide,
@@ -479,9 +479,9 @@ BEGIN
     END IF ;
 
     sql_group_by = '
-    GROUP BY    s.jdd_code, c.jdd_code, s.jdd_id, c.jdd_id, s.cle_obs, c.cle_obs, c.identifiant_origine, s.identifiant_origine, s.identifiant_permanent, c.identifiant_permanent, c.organisme_gestionnaire_donnees, s.organisme_gestionnaire_donnees,
+    GROUP BY    s.jdd_code, c.jdd_code, s.jdd_id, c.jdd_id, s.cle_obs, c.cle_obs, c.id_origine, s.id_origine, s.id_sinp_occtax, c.id_sinp_occtax, c.organisme_gestionnaire_donnees, s.organisme_gestionnaire_donnees,
     c.date_debut, t.nom_valide, t.group2_inpn, t.nom_vern, c.observateurs, s.observateurs, c.dernier_import, s.dernier_import, c.dee_date_derniere_modification, s.dee_date_derniere_modification, s.denombrement_min, c.denombrement_min, s.geom, c.geom, s.detail_individus, c.detail_individus
-    ORDER BY s.identifiant_origine, c.identifiant_origine, st_distance(s.geom, c.geom)::NUMERIC(10,1) --  Finalement, on trie par id pour pouvoir mieux gérer les triplons, étant donné que de toutes façons on définit une distance max en paramètre dans la fonction.
+    ORDER BY s.id_origine, c.id_origine, st_distance(s.geom, c.geom)::NUMERIC(10,1) --  Finalement, on trie par id pour pouvoir mieux gérer les triplons, étant donné que de toutes façons on définit une distance max en paramètre dans la fonction.
     ' ;
 
     -- il est ensuite nécessaire de distinguer les cas : pour les doublons internes strictement identiques on regroupe les obs, pour les doublons externes ou les doublons internes non strictement identiques on garde des paires d'observation
@@ -490,7 +490,7 @@ BEGIN
             '
                 )
             --Insertion
-            INSERT INTO divers.controle_doublons(jdd_code, jdd_id, organisme_gestionnaire_donnees, cle_obs, identifiant_origine, identifiant_permanent, nb_obs, distance_geom_m, group2_inpn, nom_valide, nom_vern, date_debut, observateurs, denombrement_total, detail_individus, dernier_import, dee_date_derniere_modification)
+            INSERT INTO divers.controle_doublons(jdd_code, jdd_id, organisme_gestionnaire_donnees, cle_obs, id_origine, id_sinp_occtax, nb_obs, distance_geom_m, group2_inpn, nom_valide, nom_vern, date_debut, observateurs, denombrement_total, detail_individus, dernier_import, dee_date_derniere_modification)
 
             -- On prend déjà les obs a priori complétement identiques
             SELECT jdd_code, jdd_id, organisme_gestionnaire_donnees,
@@ -501,16 +501,16 @@ BEGIN
                 )AS cle_obs,
 
             CONCAT(
-                string_agg(DISTINCT identifiant_origine_source, '', '' ORDER BY identifiant_origine_source),
+                string_agg(DISTINCT id_origine_source, '', '' ORDER BY id_origine_source),
                 '', '',
-                string_agg(DISTINCT identifiant_origine_cible, '','' ORDER BY identifiant_origine_cible)
-                )AS identifiant_origine,
+                string_agg(DISTINCT id_origine_cible, '','' ORDER BY id_origine_cible)
+                )AS id_origine,
 
             CONCAT(
-                string_agg(DISTINCT identifiant_permanent_source, '', '' ORDER BY identifiant_permanent_source),
+                string_agg(DISTINCT id_sinp_occtax_source, '', '' ORDER BY id_sinp_occtax_source),
                 '', '',
-                string_agg(DISTINCT identifiant_permanent_cible, '','' ORDER BY identifiant_permanent_cible)
-                )AS identifiant_permanent,
+                string_agg(DISTINCT id_sinp_occtax_cible, '','' ORDER BY id_sinp_occtax_cible)
+                )AS id_sinp_occtax,
             COUNT(DISTINCT cle_obs_cible) + COUNT(DISTINCT cle_obs_source) AS nb_obs,
             distance_geom_m, group2_inpn, nom_valide, nom_vern, date_debut, observateurs, denombrement_total, detail_individus, dernier_import, dee_date_derniere_modification
 
@@ -523,32 +523,32 @@ BEGIN
             UNION
             SELECT jdd_code, jdd_id, organisme_gestionnaire_donnees,
             CONCAT(cle_obs_source, '' | '', cle_obs_cible) AS cle_obs,
-            CONCAT(identifiant_origine_source, '' | '', identifiant_origine_cible) AS identifiant_origine,
-            CONCAT(identifiant_permanent_source, '' | '', identifiant_permanent_cible) AS identifiant_permanent,
+            CONCAT(id_origine_source, '' | '', id_origine_cible) AS id_origine,
+            CONCAT(id_sinp_occtax_source, '' | '', id_sinp_occtax_cible) AS id_sinp_occtax,
             2 AS nb_obs,
             distance_geom_m, group2_inpn, nom_valide, nom_vern, date_debut, observateurs, denombrement_total, detail_individus, dernier_import, dee_date_derniere_modification
 
             FROM liste_doublons_brute
             WHERE NOT(observateurs ILIKE ''Même%%'' AND denombrement_total ILIKE ''Même%%'' AND detail_individus ILIKE ''Même%%'')
 
-            ORDER BY identifiant_origine
+            ORDER BY id_origine
             ';
         ELSE sql_insert =
             '
             )
             --Insertion
-            INSERT INTO divers.controle_doublons(jdd_code, jdd_id, organisme_gestionnaire_donnees, cle_obs, identifiant_origine, identifiant_permanent, nb_obs, distance_geom_m, group2_inpn, nom_valide, nom_vern, date_debut, observateurs, denombrement_total, detail_individus, dernier_import, dee_date_derniere_modification)
+            INSERT INTO divers.controle_doublons(jdd_code, jdd_id, organisme_gestionnaire_donnees, cle_obs, id_origine, id_sinp_occtax, nb_obs, distance_geom_m, group2_inpn, nom_valide, nom_vern, date_debut, observateurs, denombrement_total, detail_individus, dernier_import, dee_date_derniere_modification)
 
             SELECT jdd_code, jdd_id, organisme_gestionnaire_donnees,
             CONCAT(cle_obs_source, '' | '', cle_obs_cible) AS cle_obs,
-            CONCAT(identifiant_origine_source, '' | '', identifiant_origine_cible) AS identifiant_origine,
-            CONCAT(identifiant_permanent_source, '' | '', identifiant_permanent_cible) AS identifiant_permanent,
+            CONCAT(id_origine_source, '' | '', id_origine_cible) AS id_origine,
+            CONCAT(id_sinp_occtax_source, '' | '', id_sinp_occtax_cible) AS id_sinp_occtax,
             2 AS nb_obs,
             distance_geom_m, group2_inpn, nom_valide, nom_vern, date_debut, observateurs, denombrement_total, detail_individus,  dernier_import, dee_date_derniere_modification
 
             FROM liste_doublons_brute
 
-            ORDER BY identifiant_origine_source, identifiant_origine_cible
+            ORDER BY id_origine_source, id_origine_cible
             ';
     END IF;
 
@@ -649,7 +649,7 @@ CREATE TABLE divers.controle_coherence_conformite (
     jdd_id text NOT NULL,
     jdd_code text,
     cle_obs integer NOT NULL,
-    identifiant_origine text,
+    id_origine text,
     wkt text,
     libelle_test text NOT NULL,
     description_anomalie text,
@@ -690,10 +690,10 @@ COMMENT ON COLUMN divers.controle_coherence_conformite.cle_obs IS 'cle_obs de l'
 
 
 --
--- Name: COLUMN controle_coherence_conformite.identifiant_origine; Type: COMMENT; Schema: divers; Owner: -
+-- Name: COLUMN controle_coherence_conformite.id_origine; Type: COMMENT; Schema: divers; Owner: -
 --
 
-COMMENT ON COLUMN divers.controle_coherence_conformite.identifiant_origine IS 'identifiant_origine de l''observation';
+COMMENT ON COLUMN divers.controle_coherence_conformite.id_origine IS 'id_origine de l''observation';
 
 
 --
@@ -754,8 +754,8 @@ CREATE TABLE divers.controle_doublons (
     jdd_id text,
     organisme_gestionnaire_donnees text,
     cle_obs text,
-    identifiant_origine text,
-    identifiant_permanent text,
+    id_origine text,
+    id_sinp_occtax text,
     nb_obs integer,
     distance_geom_m numeric,
     group2_inpn text,
@@ -902,7 +902,7 @@ ALTER SEQUENCE divers.jdd_analyse_id_seq OWNED BY divers.jdd_analyse.id;
 
 CREATE TABLE divers.observation_doublon (
     cle_obs bigint NOT NULL,
-    identifiant_permanent text NOT NULL,
+    id_sinp_occtax text NOT NULL,
     statut_observation text NOT NULL,
     cd_nom bigint,
     cd_ref bigint,
@@ -930,16 +930,14 @@ CREATE TABLE divers.observation_doublon (
     dee_floutage text,
     diffusion_niveau_precision text,
     ds_publique text NOT NULL,
-    identifiant_origine text,
+    id_origine text,
     jdd_code text,
     jdd_id text,
-    jdd_metadonnee_dee_id text NOT NULL,
-    jdd_source_id text,
+    id_sinp_jdd text NOT NULL,
     organisme_gestionnaire_donnees text NOT NULL,
     org_transformation text NOT NULL,
     statut_source text NOT NULL,
     reference_biblio text,
-    sensible text DEFAULT 0 NOT NULL,
     sensi_date_attribution timestamp with time zone,
     sensi_niveau text DEFAULT 0 NOT NULL,
     sensi_referentiel text,
@@ -950,8 +948,7 @@ CREATE TABLE divers.observation_doublon (
     donnee_complementaire jsonb,
     geom public.geometry(Geometry,2975),
     odata jsonb,
-    organisme_standard text,
-    identifiant_permanent_donnee_conservee text NOT NULL,
+    id_sinp_occtax_donnee_conservee text NOT NULL,
     date_deplacement timestamp with time zone DEFAULT now() NOT NULL,
     cd_nom_cite bigint
 );
@@ -965,10 +962,10 @@ COMMENT ON TABLE divers.observation_doublon IS 'Table stockant les doublons éca
 
 
 --
--- Name: COLUMN observation_doublon.identifiant_permanent_donnee_conservee; Type: COMMENT; Schema: divers; Owner: -
+-- Name: COLUMN observation_doublon.id_sinp_occtax_donnee_conservee; Type: COMMENT; Schema: divers; Owner: -
 --
 
-COMMENT ON COLUMN divers.observation_doublon.identifiant_permanent_donnee_conservee IS 'Identifiant permanent de la donnée associée qui est conservée dans la table occtax.observation';
+COMMENT ON COLUMN divers.observation_doublon.id_sinp_occtax_donnee_conservee IS 'Identifiant permanent de la donnée associée qui est conservée dans la table occtax.observation';
 
 
 --
@@ -991,7 +988,7 @@ COMMENT ON COLUMN divers.observation_doublon.cd_nom_cite IS 'Code du taxon « cd
 
 CREATE TABLE divers.observation_hors_zee (
     cle_obs bigint,
-    identifiant_permanent text,
+    id_sinp_occtax text,
     statut_observation text,
     cd_nom bigint,
     cd_ref bigint,
@@ -1019,16 +1016,14 @@ CREATE TABLE divers.observation_hors_zee (
     dee_floutage text,
     diffusion_niveau_precision text,
     ds_publique text,
-    identifiant_origine text,
+    id_origine text,
     jdd_code text,
     jdd_id text,
-    jdd_metadonnee_dee_id text,
-    jdd_source_id text,
+    id_sinp_jdd text,
     organisme_gestionnaire_donnees text,
     org_transformation text,
     statut_source text,
     reference_biblio text,
-    sensible text,
     sensi_date_attribution timestamp with time zone,
     sensi_niveau text,
     sensi_referentiel text,
@@ -1039,7 +1034,6 @@ CREATE TABLE divers.observation_hors_zee (
     donnee_complementaire jsonb,
     geom public.geometry(Geometry,2975),
     odata jsonb,
-    organisme_standard text,
     cd_nom_cite bigint
 );
 
@@ -1170,7 +1164,7 @@ CREATE VIEW divers.v_doublons_par_jdd_code AS
     string_agg(DISTINCT o.jdd_code, ' | '::text ORDER BY o.jdd_code) AS jdd_code_donnees_conservees,
     count(DISTINCT d.cle_obs) AS nb_doublons
    FROM (divers.observation_doublon d
-     LEFT JOIN occtax.observation o ON ((o.identifiant_permanent = d.identifiant_permanent_donnee_conservee)))
+     LEFT JOIN occtax.observation o ON ((o.id_sinp_occtax = d.id_sinp_occtax_donnee_conservee)))
   GROUP BY d.jdd_code
   ORDER BY d.jdd_code;
 
@@ -1399,7 +1393,7 @@ ALTER TABLE ONLY divers.jdd_analyse
 --
 
 ALTER TABLE ONLY divers.observation_doublon
-    ADD CONSTRAINT observation_pkey PRIMARY KEY (identifiant_permanent, identifiant_permanent_donnee_conservee);
+    ADD CONSTRAINT observation_pkey PRIMARY KEY (id_sinp_occtax, id_sinp_occtax_donnee_conservee);
 
 
 --

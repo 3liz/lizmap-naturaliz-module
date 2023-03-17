@@ -100,32 +100,32 @@ INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('occ_
 INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('occ_statut_biologique', '12', 'Sédentaire', 'Sédentaire : Individu demeurant à un seul emplacement, ou restant toute l''année dans sa région d''origine, même s''il effectue des déplacements locaux.');
 
 
-INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_methode', '0', 'Vu', 'Observation directe d''un individu vivant.');
-INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_methode', '1', 'Entendu', 'Observation acoustique d''un individu vivant.');
-INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_methode', '2', 'Coquilles d''œuf', 'Observation indirecte via coquilles d''œuf.');
-INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_methode', '3', 'Ultrasons', 'Observation acoustique indirecte d''un individu vivant avec matériel spécifique permettant de transduire des ultrasons en sons perceptibles par un humain.');
-INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_methode', '4', 'Empreintes', 'Observation indirecte via empreintes.');
-INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_methode', '5', 'Exuvie', 'Observation indirecte : une exuvie.');
-INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_methode', '6', 'Fèces/Guano/Epreintes', 'Observation indirecte par les excréments');
-INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_methode', '7', 'Mues', 'Observation indirecte par des plumes, poils, phanères, peau, bois... issus d''une mue.');
-INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_methode', '8', 'Nid/Gîte', 'Observation indirecte par présence d''un nid ou d''un gîte non occupé au moment de l''observation.');
-INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_methode', '9', 'Pelote de réjection', 'Identifie l''espèce ayant produit la pelote de réjection.');
-INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_methode', '10', 'Restes dans pelote de réjection', 'Identifie l''espèce à laquelle appartiennent les restes retrouvés dans la pelote de réjection (os ou exosquelettes, par exemple).');
-INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_methode', '11', 'Poils/plumes/phanères', 'Observation indirecte de l''espèce par ses poils, plumes ou phanères, non nécessairement issus d''une mue.');
-INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_methode', '12', 'Restes de repas', 'Observation indirecte par le biais de restes de l''alimentation de l''individu.');
-INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_methode', '13', 'Spore', 'Identification d''un individu ou groupe d''individus d''un taxon par l''observation de spores, corpuscules unicellulaires ou pluricellulaires pouvant donner naissance sans fécondation à un nouvel individu. Chez les végétaux, corpuscules reproducteurs donnant des prothalles rudimentaires mâles et femelles (correspondant respectivement aux grains de pollen et au sac embryonnaire), dont les produits sont les gamètes.');
-INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_methode', '14', 'Pollen', 'Observation indirecte d''un individu ou groupe d''individus d''un taxon par l''observation de pollen, poussière très fine produite dans les loges des anthères et dont chaque grain microscopique est un utricule ou petit sac membraneux contenant le fluide fécondant (d''apr. Bouillet 1859).');
-INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_methode', '15', 'Oosphère', 'Observation indirecte. Cellule sexuelle femelle chez les végétaux qui, après sa fécondation, devient l''oeuf.');
-INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_methode', '16', 'Ovule', 'Observation indirecte. Organe contenant le gamète femelle. Macrosporange des spermaphytes.');
-INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_methode', '17', 'Fleur', 'Identification d''un individu ou groupe d''individus d''un taxon par l''observation  de fleurs. La fleur correspond à un ensemble de feuilles modifiées, en enveloppe florale et en organe sexuel, disposées sur un réceptacle. Un pédoncule la relie à la tige. (ex : chaton).');
-INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_methode', '18', 'Feuille', 'Identification d''un individu ou groupe d''individus d''un taxon par l''observation  de feuilles. Organe aérien très important dans la nutrition de la plante, lieu de la photosynthèse qui aboutit à des composés organiques (sucres, protéines) formant la sève.');
-INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_methode', '19', 'ADN environnemental', 'Séquence ADN trouvée dans un prélèvement environnemental (eau ou sol).');
-INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_methode', '20', 'Autre', 'Pour tout cas qui ne rentrerait pas dans la présente liste. Le nombre d''apparitions permettra de faire évoluer la nomenclature.');
-INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_methode', '21', 'Inconnu', 'Inconnu : La méthode n''est pas mentionnée dans les documents de l''observateur (bibliographie par exemple).');
-INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_methode', '22', 'Mine', 'Galerie forée dans l''épaisseur d''une feuille, entre l''épiderme supérieur et l''épiderme inférieur par des larves');
-INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_methode', '23', 'Galerie/terrier', 'Galerie forée dans le bois, les racines ou les tiges, par des larves (Lépidoptères, Coléoptères, Diptères) ou creusée dans la terre (micro-mammifères, mammifères... ).');
-INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_methode', '24', 'Oothèque', 'Membrane-coque qui protège la ponte de certains insectes et certains mollusques.');
-INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_methode', '25', 'Vu et entendu', 'Vu et entendu : l''occurrence a à la fois été vue et entendue.');
+INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_technique', '0', 'Vu', 'Observation directe d''un individu vivant.');
+INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_technique', '1', 'Entendu', 'Observation acoustique d''un individu vivant.');
+INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_technique', '2', 'Coquilles d''œuf', 'Observation indirecte via coquilles d''œuf.');
+INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_technique', '3', 'Ultrasons', 'Observation acoustique indirecte d''un individu vivant avec matériel spécifique permettant de transduire des ultrasons en sons perceptibles par un humain.');
+INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_technique', '4', 'Empreintes', 'Observation indirecte via empreintes.');
+INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_technique', '5', 'Exuvie', 'Observation indirecte : une exuvie.');
+INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_technique', '6', 'Fèces/Guano/Epreintes', 'Observation indirecte par les excréments');
+INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_technique', '7', 'Mues', 'Observation indirecte par des plumes, poils, phanères, peau, bois... issus d''une mue.');
+INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_technique', '8', 'Nid/Gîte', 'Observation indirecte par présence d''un nid ou d''un gîte non occupé au moment de l''observation.');
+INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_technique', '9', 'Pelote de réjection', 'Identifie l''espèce ayant produit la pelote de réjection.');
+INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_technique', '10', 'Restes dans pelote de réjection', 'Identifie l''espèce à laquelle appartiennent les restes retrouvés dans la pelote de réjection (os ou exosquelettes, par exemple).');
+INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_technique', '11', 'Poils/plumes/phanères', 'Observation indirecte de l''espèce par ses poils, plumes ou phanères, non nécessairement issus d''une mue.');
+INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_technique', '12', 'Restes de repas', 'Observation indirecte par le biais de restes de l''alimentation de l''individu.');
+INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_technique', '13', 'Spore', 'Identification d''un individu ou groupe d''individus d''un taxon par l''observation de spores, corpuscules unicellulaires ou pluricellulaires pouvant donner naissance sans fécondation à un nouvel individu. Chez les végétaux, corpuscules reproducteurs donnant des prothalles rudimentaires mâles et femelles (correspondant respectivement aux grains de pollen et au sac embryonnaire), dont les produits sont les gamètes.');
+INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_technique', '14', 'Pollen', 'Observation indirecte d''un individu ou groupe d''individus d''un taxon par l''observation de pollen, poussière très fine produite dans les loges des anthères et dont chaque grain microscopique est un utricule ou petit sac membraneux contenant le fluide fécondant (d''apr. Bouillet 1859).');
+INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_technique', '15', 'Oosphère', 'Observation indirecte. Cellule sexuelle femelle chez les végétaux qui, après sa fécondation, devient l''oeuf.');
+INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_technique', '16', 'Ovule', 'Observation indirecte. Organe contenant le gamète femelle. Macrosporange des spermaphytes.');
+INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_technique', '17', 'Fleur', 'Identification d''un individu ou groupe d''individus d''un taxon par l''observation  de fleurs. La fleur correspond à un ensemble de feuilles modifiées, en enveloppe florale et en organe sexuel, disposées sur un réceptacle. Un pédoncule la relie à la tige. (ex : chaton).');
+INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_technique', '18', 'Feuille', 'Identification d''un individu ou groupe d''individus d''un taxon par l''observation  de feuilles. Organe aérien très important dans la nutrition de la plante, lieu de la photosynthèse qui aboutit à des composés organiques (sucres, protéines) formant la sève.');
+INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_technique', '19', 'ADN environnemental', 'Séquence ADN trouvée dans un prélèvement environnemental (eau ou sol).');
+INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_technique', '20', 'Autre', 'Pour tout cas qui ne rentrerait pas dans la présente liste. Le nombre d''apparitions permettra de faire évoluer la nomenclature.');
+INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_technique', '21', 'Inconnu', 'Inconnu : La méthode n''est pas mentionnée dans les documents de l''observateur (bibliographie par exemple).');
+INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_technique', '22', 'Mine', 'Galerie forée dans l''épaisseur d''une feuille, entre l''épiderme supérieur et l''épiderme inférieur par des larves');
+INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_technique', '23', 'Galerie/terrier', 'Observation indirecte : Galerie forée dans le bois, les racines ou les tiges, par des larves (Lépidoptères, Coléoptères, Diptères) ou creusée dans la terre (micro-mammifères, mammifères... ).');
+INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_technique', '24', 'Oothèque', 'Membrane-coque qui protège la ponte de certains insectes et certains mollusques.');
+INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('obs_technique', '25', 'Vu et entendu', 'Vu et entendu : l''occurrence a à la fois été vue et entendue.');
 
 
 INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('preuve_existante', '0', 'Inconnu', 'Indique que la personne ayant fourni la donnée ignore s''il existe une preuve, ou qu''il est indiqué dans la donnée qu''il y a eu une preuve qui a pu servir pour la détermination, sans moyen de le vérifier.');
@@ -148,10 +148,6 @@ UPDATE occtax.nomenclature SET valeur = 'Floutage au département' WHERE champ =
 UPDATE occtax.nomenclature SET valeur = 'Aucune diffusion' WHERE champ = 'sensi_niveau' AND code = '4';
 INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('sensi_niveau', 'm02', 'Floutage à la maille 2 x 2 km', 'Département et maille 2 x 2 km');
 INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('sensi_niveau', 'm01', 'Floutage à la maille 1 x 1 km', 'Département, maille 2 x 2 km et maille 1 x 1 km');
-
-
-INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('sensible', 'NON', 'Non', 'Indique que la donnée n''est pas sensible (par défaut, équivalent au niveau "0" des niveaux de sensibilité).');
-INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('sensible', 'OUI', 'Oui', 'Indique que la donnée est sensible.');
 
 
 INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('statut_observation', 'No', 'Non observé', 'Non Observé : L''observateur n''a pas détecté un taxon particulier, recherché suivant le protocole adéquat à la localisation et à la date de l''observation. Le taxon peut être présent et non vu, temporairement absent, ou réellement absent.');
@@ -242,8 +238,8 @@ INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('natu
 INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('nature_objet_geo', 'St', 'Stationnel', 'Stationnel : Le taxon observé est présent sur l’ensemble de l’objet géographique');
 
 
-INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('dee_floutage', 'NON', 'Non', 'Non : indique qu''aucun floutage n''a eu lieu.');
-INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('dee_floutage', 'OUI', 'Oui', 'Oui : indique qu''un floutage a eu lieu.');
+INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('dee_floutage', 'NON', 'Non', 'Indique qu''aucun floutage n''a eu lieu. Donnée non floutée, fournie précise par le producteur.');
+INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('dee_floutage', 'OUI', 'Oui', 'Indique qu''un floutage a eu lieu. Floutage effectué par le producteur avant envoi vers le SINP (une plateforme du SINP).');
 
 
 INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('diffusion_niveau_precision', '0', 'Standard', 'Diffusion standard : à la maille, à la ZNIEFF, à la commune, à l’espace protégé (statut par défaut).');
@@ -351,3 +347,52 @@ INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('occ_
 INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('occ_type_denombrement', 'Co', 'Compté', 'Compté : Dénombrement par énumération des individus');
 INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('occ_type_denombrement', 'Es', 'Estimé', 'Estimé : Dénombrement qualifié d’estimé lorsque le produit concerné n''a fait l''objet d''aucune action de détermination de cette valeur du paramètre par le biais d''une technique de mesure.');
 INSERT INTO occtax.nomenclature (champ, code, valeur, description) VALUES ('occ_type_denombrement', 'NSP', 'Ne sait pas', 'Ne sait Pas : La méthode de dénombrement n’est pas connue');
+
+-- Pour la V2
+INSERT INTO occtax.nomenclature
+(champ, code, valeur, description)
+VALUES
+('dee_floutage', 'NSP', 'Ne sait pas', $$On ignore si un floutage a eu lieu$$),
+
+('obs_technique', '26', 'Contact olfactif', $$Contact olfactif : l'occurrence a été sentie sur le lieu d'observation$$),
+('obs_technique', '27', 'Empreinte et fèces', $$Empreinte et fèces$$),
+
+('occ_comportement', '0', 'Inconnu', $$Inconnu: le statut biologique de l'individu n'est pas connu$$),
+('occ_comportement', '1', 'Non renseigné', $$Non renseigné: le statut biologique de l'individu n'a pas été renseigné$$),
+('occ_comportement', '2', 'Echouage', $$Echouage: l'individu tente de s'échouer ou vient de s'échouer sur le rivage$$),
+('occ_comportement', '3', 'Dortoir', $$Dortoir: individus se regroupant dans une zone définie pour y passer la nuit ou la journée$$),
+('occ_comportement', '4', 'Migration', $$Migration: l'individu (ou groupe d'individus) est en migration active$$),
+('occ_comportement', '5', 'Toile', $$Construction de toile: l'individu construit sa toile$$),
+('occ_comportement', '6', 'Halte migratoire', $$Halte migratoire: indique que l'individu procède à une halte au cours de sa migration, et a été découvert sur sa zone de halte$$),
+('occ_comportement', '7', 'Swarming', $$Swarming: Indique que l'individu a un comportement de swarming : il se regroupe avec d'autres individus de taille similaire$$),
+('occ_comportement', '8', 'Chasse / alimentation', $$Chasse / alimentation: Indique que l'individu est sur une zone qui lui permet de chasser ou de s'alimenter$$),
+('occ_comportement', '9', 'Hivernage', $$Hivernage: l'individu hiverne (modification de son comportement liée à l'hiver pouvant par exemple comporter un
+changement de lieu, d'alimentation, de production de sève ou de graisse...)$$),
+('occ_comportement', '10', 'Passage en vol', $$Passage en vol : Indique que l'individu est de passage et en vol.$$),
+('occ_comportement', '11', 'Erratique', $$Erratique : Individu d'une ou de populations d'un taxon qui ne se trouve, actuellement, que de manière occasionnelle dans les
+limites d’une région. Il a été retenu comme seuil, une absence de 80% d'un laps de temps donné (année, saisons...)$$),
+('occ_comportement', '12', 'Sédentaire', $$Sédentaire : Individu demeurant à un seul emplacement, ou restant toute l'année dans sa région d'origine, même s'il effectue
+des déplacements locaux$$),
+('occ_comportement', '13', 'Estivage', $$Estivage : l'individu estive (modification de son comportement liée à l'été pouvant par exemple comporter un changement de
+lieu, d'alimentation, de production de sève ou de graisse...)$$),
+('occ_comportement', '14', 'Nourrissage jeunes', $$Nourrissage des jeune$$),
+('occ_comportement', '15', 'Posé', $$Posé : Individu(s) posé(s)$$),
+('occ_comportement', '16', 'Déplacement', $$Déplacement : Individu(s) en déplacement$$),
+('occ_comportement', '17', 'Repos', $$Repos$$),
+('occ_comportement', '18', 'Chant', $$Chant$$),
+('occ_comportement', '19', 'Accouplement', $$Accouplement$$),
+('occ_comportement', '20', 'Coeur copulatoire', $$Coeur copulatoire$$),
+('occ_comportement', '21', 'Tandem', $$Tandem$$),
+('occ_comportement', '22', 'Territorial', $$Territorial$$),
+('occ_comportement', '23', 'Pond', $$Pond$$),
+
+('occ_stade_de_vie', '27', 'Fruit', $$Fruit : L'individu est sous forme de fruit$$),
+
+('occ_statut_biologique', '13', 'Végétatif', $$L'individu est au stade végétatif$$),
+
+('type_aa', 'NSP', 'Ne sait pas', 'Le type du paramètre est inconnu'),
+
+('typ_val', 'NSP', 'Ne sait pas', 'Le type de validation effectué n''est pas connu')
+
+ON CONFLICT ON CONSTRAINT nomenclature_pkey DO NOTHING
+;

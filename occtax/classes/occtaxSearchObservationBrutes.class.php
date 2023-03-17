@@ -24,7 +24,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
 
         'principal' => array(
             'cle_obs' => "Integer",
-            'identifiant_permanent' => "String",
+            'id_sinp_occtax' => "String",
             'statut_observation' => "String",
 
             // taxon
@@ -73,17 +73,14 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
             'dee_floutage' => "String",
             'diffusion_niveau_precision' => "String",
             'ds_publique' => "String",
-            'identifiant_origine' => "String",
+            'id_origine' => "String",
             'jdd_code' => "String",
             'jdd_id' => "String",
-            'jdd_metadonnee_dee_id' => "String",
-            'jdd_source_id' => "String",
-            'organisme_standard' => "String",
+            'id_sinp_jdd' => "String",
             'organisme_gestionnaire_donnees' => "String",
             'org_transformation' => "String",
             'statut_source' => "String",
             'reference_biblio' => "String",
-            'sensible' => "String",
             'sensi_date_attribution' => "String",
             'sensi_niveau' => "String",
             'sensi_referentiel' => "String",
@@ -197,7 +194,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
             'joinClause' => '',
             'returnFields' => array(
                 'o.cle_obs' => Null, // Null mean there wil be no GROUP BY for the field
-                'o.identifiant_permanent'=> Null,
+                'o.id_sinp_occtax'=> Null,
                 'o.statut_observation'=> Null,
 
                 // taxon
@@ -246,17 +243,14 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
                 'o.dee_floutage' => Null,
                 'o.diffusion_niveau_precision' => Null,
                 'o.ds_publique'=> Null,
-                'o.identifiant_origine'=> Null,
+                'o.id_origine'=> Null,
                 'o.jdd_code'=> Null,
                 'o.jdd_id'=> Null,
-                'o.jdd_metadonnee_dee_id'=> Null,
-                'o.jdd_source_id'=> Null,
+                'o.id_sinp_jdd'=> Null,
                 'o.organisme_gestionnaire_donnees' => Null,
-                'o.organisme_standard' => Null,
                 'o.org_transformation' => Null,
                 'o.statut_source' => Null,
                 'o.reference_biblio'=> Null,
-                'o.sensible' => Null,
                 'o.sensi_date_attribution' => Null,
                 'o.sensi_niveau' => Null,
                 'o.sensi_referentiel' => Null,

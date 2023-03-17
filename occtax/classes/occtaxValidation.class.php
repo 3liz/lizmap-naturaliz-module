@@ -124,11 +124,11 @@ class occtaxValidation {
 
     public function getObservationValidity($id_obs=-1, $id_column='cle_obs') {
         // validate parameters
-        if (!in_array($id_column, array('cle_obs', 'identifiant_permanent'))) {
+        if (!in_array($id_column, array('cle_obs', 'id_sinp_occtax'))) {
             $id_obs = -1;
             $id_column = 'cle_obs';
         }
-        if ($id_column == 'identifiant_permanent' && !$this->isValidUuid($id_obs)) {
+        if ($id_column == 'id_sinp_occtax' && !$this->isValidUuid($id_obs)) {
             $id_obs = -1;
             $id_column = 'cle_obs';
         }
@@ -136,7 +136,7 @@ class occtaxValidation {
         $sql = "
             SELECT
             o.cle_obs,
-            o.identifiant_permanent,
+            o.id_sinp_occtax,
             vo.date_ctrl,
             vo.niv_val,
             vo.typ_val,
@@ -160,7 +160,7 @@ class occtaxValidation {
                 JOIN occtax.personne p
                     ON p.id_personne = vop.validateur
                 WHERE True
-                AND vop.identifiant_permanent = o.identifiant_permanent
+                AND vop.id_sinp_occtax = o.id_sinp_occtax
                 AND vop.ech_val = '1'
                 LIMIT 1
             ) AS validation_producteur,
@@ -174,22 +174,22 @@ class occtaxValidation {
                 JOIN occtax.personne p
                     ON p.id_personne = von.validateur
                 WHERE True
-                AND von.identifiant_permanent = o.identifiant_permanent
+                AND von.id_sinp_occtax = o.id_sinp_occtax
                 AND von.ech_val = '3'
                 LIMIT 1
             ) AS validation_nationale
             FROM occtax.vm_observation AS o
             LEFT JOIN occtax.validation_observation AS vo
-                ON o.identifiant_permanent = vo.identifiant_permanent
+                ON o.id_sinp_occtax = vo.id_sinp_occtax
                 AND vo.ech_val = '2'
             LEFT JOIN occtax.validation_panier AS vp
-                ON o.identifiant_permanent = vp.identifiant_permanent
+                ON o.id_sinp_occtax = vp.id_sinp_occtax
             WHERE True
         ";
         if ($id_column == 'cle_obs') {
             $sql.= " AND cle_obs = $1";
         } else {
-            $sql.= " AND o.identifiant_permanent = $1";
+            $sql.= " AND o.id_sinp_occtax = $1";
         }
 
         $sql.= $this->demande_filter;
@@ -220,9 +220,9 @@ class occtaxValidation {
         // TODO: Check the observation can be seen by the authenticated user !
         // Add observation to the basket
         $cnx = jDb::getConnection();
-        $sql = " INSERT INTO occtax.validation_panier (usr_login, identifiant_permanent)";
+        $sql = " INSERT INTO occtax.validation_panier (usr_login, id_sinp_occtax)";
         $sql.= " VALUES ($1::text, $2)";
-        $sql.= " ON CONFLICT ON CONSTRAINT validation_panier_usr_login_identifiant_permanent_key";
+        $sql.= " ON CONFLICT ON CONSTRAINT validation_panier_usr_login_id_sinp_occtax_key";
         $sql.= " DO NOTHING";
         $sql.= " RETURNING id";
         $params = array(
@@ -239,7 +239,7 @@ class occtaxValidation {
         $sql = " DELETE FROM occtax.validation_panier";
         $sql.= " WHERE True";
         $sql.= " AND usr_login = $1::text";
-        $sql.= " AND identifiant_permanent = $2";
+        $sql.= " AND id_sinp_occtax = $2";
         $sql.= " RETURNING id";
         $params = array(
             $this->login,
@@ -258,10 +258,10 @@ class occtaxValidation {
             $this->login
         );
 
-        // Check if identifiant_permanent is given
-        $identifiant_permanent = $input_params[5];
-        if (!$this->isValidUuid($identifiant_permanent)) {
-            // Get rid of useless identifiant_permanent in params
+        // Check if id_sinp_occtax is given
+        $id_sinp_occtax = $input_params[5];
+        if (!$this->isValidUuid($id_sinp_occtax)) {
+            // Get rid of useless id_sinp_occtax in params
             array_pop($input_params);
         }
         $params = array_merge($user_params, $input_params);
@@ -270,12 +270,12 @@ class occtaxValidation {
         // We use an UPSERT
         $cnx = jDb::getConnection();
         // Uid est donné: on a un identifiant permanent: on valide cette observation
-        if (!empty($identifiant_permanent) && $this->isValidUuid($identifiant_permanent)) {
+        if (!empty($id_sinp_occtax) && $this->isValidUuid($id_sinp_occtax)) {
             $sql = " WITH panier AS (";
-            $sql.= "    SELECT o.cle_obs, o.identifiant_permanent, $1::text";
+            $sql.= "    SELECT o.cle_obs, o.id_sinp_occtax, $1::text";
             $sql.= "    FROM occtax.vm_observation AS o";
             $sql.= "    WHERE True";
-            $sql.= "    AND o.identifiant_permanent = $7";
+            $sql.= "    AND o.id_sinp_occtax = $7";
             // Chercher dans les demandes
             $sql.= $this->demande_filter;
             $sql.= " ) ";
@@ -285,8 +285,8 @@ class occtaxValidation {
             $sql = " WITH panier AS (";
             $sql.= "    SELECT vp.*, valo.typ_val, valo.comm_val";
             $sql.= "    FROM occtax.validation_panier AS vp";
-            $sql.= "    JOIN occtax.vm_observation AS o USING (identifiant_permanent)";
-            $sql.= "    LEFT JOIN occtax.validation_observation AS valo USING (identifiant_permanent)";
+            $sql.= "    JOIN occtax.vm_observation AS o USING (id_sinp_occtax)";
+            $sql.= "    LEFT JOIN occtax.validation_observation AS valo USING (id_sinp_occtax)";
             $sql.= "    WHERE True";
             $sql.= "    AND valo.ech_val = '2'";
             $sql.= "    AND vp.usr_login = $1::text";
@@ -298,7 +298,7 @@ class occtaxValidation {
 
         $sql.= " INSERT INTO occtax.validation_observation AS vo";
         $sql.= " (";
-        $sql.= "    identifiant_permanent,";
+        $sql.= "    id_sinp_occtax,";
         $sql.= "    date_ctrl,";
         $sql.= "    typ_val,";
         $sql.= "    ech_val,";
@@ -318,7 +318,7 @@ class occtaxValidation {
         $sql.= " )";
 
         $sql.= " SELECT";
-        $sql.= "    pa.identifiant_permanent,";
+        $sql.= "    pa.id_sinp_occtax,";
         $sql.= "    now(),";
         $sql.= "    'M',";
         $sql.= "    '2',";
@@ -359,7 +359,7 @@ class occtaxValidation {
         $sql.= " WHERE True";
 
         // Si conflict, cad si une ligne existe déjà on modifie les données
-        $sql.= " ON CONFLICT ON CONSTRAINT validation_observation_identifiant_permanent_ech_val_unique";
+        $sql.= " ON CONFLICT ON CONSTRAINT validation_observation_id_sinp_occtax_ech_val_unique";
         $sql.= " DO ";
         $sql.= " UPDATE";
         $sql.= " SET (";
@@ -433,11 +433,11 @@ class occtaxValidation {
         $sql = " WITH s AS (";
         $sql.= $sql_search;
         $sql.= " )";
-        $sql.= " INSERT INTO occtax.validation_panier (usr_login, identifiant_permanent)";
-        $sql.= " SELECT $1::text, s.identifiant_permanent";
+        $sql.= " INSERT INTO occtax.validation_panier (usr_login, id_sinp_occtax)";
+        $sql.= " SELECT $1::text, s.id_sinp_occtax";
         $sql.= " FROM s";
         $sql.= " WHERE True";
-        $sql.= " ON CONFLICT ON CONSTRAINT validation_panier_usr_login_identifiant_permanent_key";
+        $sql.= " ON CONFLICT ON CONSTRAINT validation_panier_usr_login_id_sinp_occtax_key";
         $sql.= " DO NOTHING";
         $sql.= " RETURNING id";
         $params = array(

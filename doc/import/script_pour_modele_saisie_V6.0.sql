@@ -283,7 +283,7 @@ CREATE TABLE fdw.jdd_pnrun_data_2018 (
 	jdd_id	text,
 	jdd_code	text,
 	jdd_description	text,
-	jdd_metadonnee_dee_id	text,
+	id_sinp_jdd	text,
 	jdd_libelle	text,
 	date_minimum_de_diffusion	text,
 	m_ouvrage	text,
@@ -350,18 +350,18 @@ FROM fdw.ca_pnrun_data_2018;
 
 
 -- 2.2 jdd
--- pour le jdd_metadonnee_dee_id et jdd_id, les récupérer sur l'application nationale de gestion des métadonnées
+-- pour le id_sinp_jdd et jdd_id, les récupérer sur l'application nationale de gestion des métadonnées
 -- https://inpn.mnhn.fr/mtd/ qu'il faut remplir au préalable.
 -- Chaque jeu de données doit être associé à une fiche de métadonnées de jdd spécifique, et une
 -- fiche de cadre d'acquisition qui peut être partagée avec d'autres jdd)
 
 INSERT INTO occtax.jdd
-    (jdd_id, jdd_code, jdd_description, jdd_metadonnee_dee_id, jdd_cadre, ayants_droit, jdd_libelle, date_minimum_de_diffusion)
+    (jdd_id, jdd_code, jdd_description, id_sinp_jdd, jdd_cadre, ayants_droit, jdd_libelle, date_minimum_de_diffusion)
 SELECT
   	'99999' AS jdd_id,-- ce champ est fourni par l'application nationale de métadonnées où il s'intitule "ID"
   	'pnrun_data_2018' AS jdd_code,-- nom défini par l'importateur, correspondant au champ "Libellé court" de l'application nationale. Le nom du jeu de données doit être suffisamment explicite en transcrivant la thématique et/ou le nom du producteur et/ou la date d'export - ajouter date et producteur si besoin
 	'Inventaire de la Flore patrimoniale dans le Coeur du Parc national réalisé en 2018' AS jdd_description,-- nom défini par l'importateur, correspondant au champ "Description" de l'application nationale. Le nom doit être le plus intelligible possible possible pour un utilisateur extérieur. Il doit notamment préciser la période temporelle couverte par les données, en particulier pour permettre de différencier différents jeux de données successifs d'un même cadre d'acquisition.
-	'76EFAEAB-7FA7-70A1-E053-2614A8C07E17' AS jdd_metadonnee_dee_id,-- ce champ est fourni par l'application nationale de métadonnées où il s'intitule "Identifiant SINP du jeu de données :"
+	'76EFAEAB-7FA7-70A1-E053-2614A8C07E17' AS id_sinp_jdd,-- ce champ est fourni par l'application nationale de métadonnées où il s'intitule "Identifiant SINP du jeu de données :"
  	'13407' AS jdd_cadre, -- ce champ est fourni par l'application nationale de métadonnées où il s'intitule "Identifiant du cadre d'acquisition" (fiche cadre d'acquisition). C’est une clef étrangère vers cadre.cadre_id
 	'[
 		{"role": "Maître d''ouvrage",
@@ -377,12 +377,12 @@ WHERE NOT EXISTS (SELECT jdd_id FROM occtax.jdd WHERE jdd_id = '99999');
 
 
 INSERT INTO occtax.jdd
-    (jdd_id, jdd_code, jdd_description, jdd_metadonnee_dee_id, jdd_cadre, ayants_droit, jdd_libelle, date_minimum_de_diffusion)
+    (jdd_id, jdd_code, jdd_description, id_sinp_jdd, jdd_cadre, ayants_droit, jdd_libelle, date_minimum_de_diffusion)
 SELECT
 	jdd_id,
 	jdd_code,
 	jdd_description,
-	jdd_metadonnee_dee_id,
+	id_sinp_jdd,
 	jdd_cadre,
 	json_build_array(
 		json_build_object(
@@ -608,7 +608,7 @@ SELECT Setval('occtax.observation_cle_obs_seq', (SELECT max(cle_obs) FROM occtax
 INSERT INTO occtax.observation
 (
 	cle_obs,
-	identifiant_permanent,
+	id_sinp_occtax,
 	statut_observation,
 	cd_nom,
 	cd_ref,
@@ -636,16 +636,14 @@ INSERT INTO occtax.observation
 	dee_floutage,
 	diffusion_niveau_precision,
 	ds_publique,
-	identifiant_origine,
+	id_origine,
 	jdd_code,
 	jdd_id,
-	jdd_metadonnee_dee_id,
-	jdd_source_id,
+	id_sinp_jdd,
 	organisme_gestionnaire_donnees,
 	org_transformation,
 	statut_source,
 	reference_biblio,
-	sensible,
 	sensi_date_attribution,
 	sensi_niveau,
 	sensi_referentiel,
@@ -655,16 +653,15 @@ INSERT INTO occtax.observation
 	precision_geometrie,
 	nature_objet_geo,
 	geom,
-	odata,
-	organisme_standard
+	odata
 )
 SELECT
 		-- identifiants
 		nextval('occtax.observation_cle_obs_seq'::regclass) AS cle_obs,
 		CASE
-			WHEN loip.identifiant_permanent IS NOT NULL THEN loip.identifiant_permanent
+			WHEN loip.id_sinp_occtax IS NOT NULL THEN loip.id_sinp_occtax
 			ELSE CAST(uuid_generate_v4() AS text)
-		END AS identifiant_permanent, -- On a vérifié lors de l'import des sources que la table importée dispose bien de valeurs uniques et pérennes (clef primaire)
+		END AS id_sinp_occtax, -- On a vérifié lors de l'import des sources que la table importée dispose bien de valeurs uniques et pérennes (clef primaire)
 
 		CASE
 			WHEN s.statobs = 'Présent' THEN 'Pr'
@@ -748,7 +745,7 @@ SELECT
 		NULL as date_determination,
 
 	-- dates de modifications & transformation
-		CASE WHEN loip.identifiant_permanent IS NOT NULL THEN loip.dee_date_derniere_modification
+		CASE WHEN loip.id_sinp_occtax IS NOT NULL THEN loip.dee_date_derniere_modification
 			ELSE now()
 		END AS dee_date_derniere_modification,
 		CASE WHEN loip.dee_date_transformation IS NOT NULL THEN loip.dee_date_transformation
@@ -793,13 +790,12 @@ SELECT
 		END AS ds_publique,
 
 	-- idorigine
-		s.idorigine AS identifiant_origine,
+		s.idorigine AS id_origine,
 
 	-- JDD : on reprend ici les éléments déjà utilisés pour renseigner la table jdd
 		j.jdd_code AS jdd_code,
 		j.jdd_id AS jdd_id,
-		j.jdd_metadonnee_dee_id AS jdd_metadonnee_dee_id,
-		NULL AS jdd_source_id,
+		j.id_sinp_jdd AS id_sinp_jdd,
 
 	--producteur-gestionnaire - orgGestDat
 		'Parc régional de La Réunion' AS organisme_gestionnaire_donnees,
@@ -821,7 +817,6 @@ SELECT
 		TRIM(s.refbiblio) AS reference_biblio,
 
 	-- sensibilite : remplissage provisoire à ce stade car une fonction spécifique la calcule une fois l'import réalisé (cf. plus bas)
-		'NON' AS sensible,
 		now()::timestamp with time zone AS sensi_date_attribution,
 		'm02' AS sensi_niveau,
 		'http://www.naturefrance.fr/la-reunion/referentiel-de-sensibilite' AS sensi_referentiel,
@@ -831,7 +826,7 @@ SELECT
 		json_build_array (json_build_object(
 
 		-- MÉTHODE D'OBSERVATION
-			'obs_methode',
+			'obs_technique',
 		CASE
 			WHEN trim(s.obsmeth) = 'Vu' THEN '0'
 			WHEN trim(s.obsmeth) = 'Entendu' THEN '1'
@@ -981,7 +976,7 @@ SELECT
 		END,
 
 		-- PREUVE NUM
-			'preuve_numerique', NULL,
+			'url_preuve_numerique', NULL,
 
 		-- PREUVE NON NUM
 			'preuve_non_numerique', NULL,
@@ -1032,10 +1027,7 @@ SELECT
 		-- END AS geom,
 
 		-- odata : champ permettant éventuellement de stocker de manière provisoire des informations utiles à l’import, qui ne seront pas diffusées ensuite
-		NULL AS odata,
-
-		'Parc national de La Réunion' AS organisme_standard
-		-- 'DEAL974' AS organisme_standard
+		NULL AS odata
 
 
 FROM
@@ -1048,7 +1040,7 @@ INNER JOIN occtax.jdd j ON j.jdd_id = s.jdd_id
 
 -- jointure pour récupérer les identifiants permanents si déjà créés lors d'un import passé
 LEFT JOIN occtax.lien_observation_identifiant_permanent AS loip ON loip.jdd_id IN ('99999')
-AND loip.identifiant_origine = s.idorigine::TEXT
+AND loip.id_origine = s.idorigine::TEXT
 -- s'il y a plusieurs jdd ajouter :
 -- AND loip.jdd_id = s.jdd_id -- (ou j.jdd_id)
 
@@ -1070,8 +1062,8 @@ DELETE FROM occtax.lien_observation_identifiant_permanent
 WHERE jdd_id IN ('99999')   ;
 
 INSERT INTO occtax.lien_observation_identifiant_permanent
-(jdd_id, identifiant_origine, identifiant_permanent, dee_date_derniere_modification, dee_date_transformation)
-SELECT o.jdd_id, o.identifiant_origine, o.identifiant_permanent, o.dee_date_derniere_modification, o.dee_date_transformation
+(jdd_id, id_origine, id_sinp_occtax, dee_date_derniere_modification, dee_date_transformation)
+SELECT o.jdd_id, o.id_origine, o.id_sinp_occtax, o.dee_date_derniere_modification, o.dee_date_transformation
 FROM occtax.observation o
 WHERE jdd_id IN ('99999')
 ORDER BY o.cle_obs
@@ -1214,7 +1206,7 @@ SELECT DISTINCT
     p.id_personne,
     'Obs' AS role_personne
 FROM occtax.observation AS o
-INNER JOIN fdw.pnrun_data_2018_observations AS t ON t.idorigine = o.identifiant_origine
+INNER JOIN fdw.pnrun_data_2018_observations AS t ON t.idorigine = o.id_origine
 -- s'il y a plusieurs jdd ajouter :
 -- AND t.jdd_id = o.jdd_id
 INNER JOIN fdw.pnrun_data_2018_acteurs AS op ON LOWER(op.identite) = LOWER(t.observateur_1)
@@ -1236,12 +1228,12 @@ ORDER BY o.cle_obs, op.id_personne ;
 -- On vérifie qu'une observation n'a pas plusieurs observateurs à ce stade => si c'est le cas l'observateur n'est pas défini de manière unique entre le fichier d'observation et la table occtax.personne
 --> c'est le cas si dans le fichier des observateurs fourni par le producteur, une "identité" peut être rattachée à plusieurs organismes. Dans ce cas il faut que dans le fichier d'observation cette différence puisse se faire => identité+organisme apparaissent
 
-Select o.identifiant_origine, count (o.identifiant_origine) AS nb_obs
+Select o.id_origine, count (o.id_origine) AS nb_obs
 from occtax.observation as o
 LEFT JOIN occtax.observation_personne as p USING (cle_obs)
 where  o.jdd_id = '99999'
-group by o.identifiant_origine
-having count (o.identifiant_origine) > 1
+group by o.id_origine
+having count (o.id_origine) > 1
 ;
 
 --observateur_2
@@ -1252,7 +1244,7 @@ SELECT DISTINCT
     p.id_personne,
     'Obs' AS role_personne
 FROM occtax.observation AS o
-INNER JOIN fdw.pnrun_data_2018_observations AS t ON t.idorigine = o.identifiant_origine
+INNER JOIN fdw.pnrun_data_2018_observations AS t ON t.idorigine = o.id_origine
 INNER JOIN fdw.pnrun_data_2018_acteurs AS op ON LOWER(op.identite) = LOWER(t.observateur_2)
 INNER JOIN occtax.personne AS p ON unaccent(p.identite) = unaccent(TRIM(op.identite)) AND p.id_organisme = op.id_organisme::INTEGER
 WHERE True
@@ -1268,7 +1260,7 @@ SELECT DISTINCT
     p.id_personne,
     'Obs' AS role_personne
 FROM occtax.observation AS o
-INNER JOIN fdw.pnrun_data_2018_observations AS t ON t.idorigine = o.identifiant_origine
+INNER JOIN fdw.pnrun_data_2018_observations AS t ON t.idorigine = o.id_origine
 INNER JOIN fdw.pnrun_data_2018_acteurs AS op ON LOWER(op.identite) = LOWER(t.observateur_3)
 INNER JOIN occtax.personne AS p ON unaccent(p.identite) = unaccent(TRIM(op.identite)) AND p.id_organisme = op.id_organisme::INTEGER
 WHERE True
@@ -1305,7 +1297,7 @@ ON CONFLICT DO NOTHING
 -- '974', -- La Réunion ôté
 -- '1'  -- information de géoréférencement et pas de rattachement
 -- FROM dw.pnrun_data_2018_observations AS t
--- JOIN occtax.observation o ON t.idorigine=o.identifiant_origine
+-- JOIN occtax.observation o ON t.idorigine=o.id_origine
 -- WHERE t.precisgeo = 'rattachement La Réunion' ; --> si une colonne precisgeo par exemple a été ajoutée pour les données sensible sans coordonnées
 
 -- Rattachement automatique : la fonction occtax.occtax_update_spatial_relationships permet de valaduler automatiquement les observations géolocalisaées aux entités géographiques de référence (mailles, communes, masses d’eau, espaces naturels). Elle est à lancer systématiquement.
@@ -1412,7 +1404,7 @@ SELECT * FROM divers.controle_coherence_conformite ;
 
 
 -- Export pour vérification
-SELECT c.jdd_code, c.cle_obs, c.identifiant_origine, c.libelle_test, c.description_anomalie, c.nom_cite, t.nom_valide, t.nom_vern, t.group2_inpn, CONCAT(t.reu, ' - ', st.valeur) AS reu, c.habitat AS habitat_taxref, c.wkt
+SELECT c.jdd_code, c.cle_obs, c.id_origine, c.libelle_test, c.description_anomalie, c.nom_cite, t.nom_valide, t.nom_vern, t.group2_inpn, CONCAT(t.reu, ' - ', st.valeur) AS reu, c.habitat AS habitat_taxref, c.wkt
 FROM divers.controle_coherence_conformite c
 LEFT JOIN occtax.observation o USING(cle_obs)
 LEFT JOIN taxref t USING (cd_nom)
@@ -1448,7 +1440,7 @@ SELECT Setval('occtax.validation_observation_id_validation_seq', (SELECT max(id_
 
 INSERT INTO occtax.validation_observation
 ( id_validation,
-  identifiant_permanent,
+  id_sinp_occtax,
   date_ctrl,
   niv_val,
   typ_val,
@@ -1463,7 +1455,7 @@ INSERT INTO occtax.validation_observation
   comm_val)
 SELECT
 nextval('occtax.validation_observation_id_validation_seq'::regclass) AS id_validation,
-o.identifiant_permanent AS identifiant_permanent,
+o.id_sinp_occtax AS id_sinp_occtax,
 '6' AS validite_niveau, -- Si un niveau de validation est indiqué par le producteur ou la tête de réseau, il doit être précisé ici et sera utilisé plus bas dans le script (cf. partie 9 relative à la validation). Sinon, laisser 6 par défaut.
 now()::DATE AS validite_date_validation, -- Si une date de validation est indiquée par le producteur ou la tête de réseau, elle doit être précisée ici et sera utilisée plus bas dans le script (cf. partie 9 relative à la validation). Sinon, laisser now() par défaut.
 
@@ -1481,7 +1473,7 @@ NULL AS date_contact,
 (SELECT proc_ref FROM validation_procedure ORDER BY id DESC LIMIT 1) AS proc_ref,
 'Données validées avant import dans Borbonica par xxxxxxxxxxxxxxxx' AS comm_val -- Commentaire éventuel
 FROM occtax.observation AS o
-INNER JOIN fdw.pnrun_data_2018_observations AS t ON t.idorigine = o.identifiant_origine
+INNER JOIN fdw.pnrun_data_2018_observations AS t ON t.idorigine = o.id_origine
 WHERE o.jdd_id IN ('99999')
 ON CONFLICT DO NOTHING
 ;
@@ -1504,12 +1496,12 @@ SELECT
     niv_val AS niveau_validite,
     (SELECT valeur FROM occtax.nomenclature WHERE champ='validite_niveau' AND code = niv_val) AS niveau_validite_libelle,
     (SELECT valeur FROM occtax.nomenclature WHERE champ='type_validation' AND code = typ_val) AS type_validite,
-    count(DISTINCT v.identifiant_permanent) AS nb_obs
+    count(DISTINCT v.id_sinp_occtax) AS nb_obs
 FROM
     occtax.validation_observation AS v
 WHERE v.ech_val = '2'
-AND identifiant_permanent IN (
-	SELECT identifiant_permanent FROM occtax.observation WHERE jdd_id IN ('99999')
+AND id_sinp_occtax IN (
+	SELECT id_sinp_occtax FROM occtax.observation WHERE jdd_id IN ('99999')
 )
 GROUP BY niv_val, typ_val
 ORDER BY niv_val
@@ -1523,7 +1515,7 @@ SELECT n.valeur AS niveau_validite,
 	count(o.cle_obs) AS nb_obs,
 	(count(o.cle_obs)::NUMERIC (8,1)/(SELECT count(cle_obs) FROM occtax.observation WHERE o.jdd_id IN ('99999'))::NUMERIC (8,1))::NUMERIC (4,3) AS pourcentage -- attention au nb de données du jdd si > 1 000 000 ne fonctionne pas !
 FROM occtax.observation o
-LEFT JOIN occtax.validation_observation v USING(identifiant_permanent)
+LEFT JOIN occtax.validation_observation v USING(id_sinp_occtax)
 LEFT JOIN occtax.nomenclature n ON n.code=v.niv_val AND champ='niv_val_auto'
 LEFT JOIN taxon.taxref_valide t USING (cd_ref)
 WHERE o.jdd_id IN ('99999') AND ech_val='2' and typ_val='A'
@@ -1544,7 +1536,7 @@ SELECT occtax.calcul_niveau_sensibilite(
 -- Par défaut, pour les groupes taxonomiques non encore traités par le référentiel de données sensibles, on met ensuite une sensibilité de niveau m02 par mesure de sécurité (à terme, tous les groupes taxonomiques seront traités)
 
 UPDATE occtax.observation o
-SET	sensible='OUI',
+SET
 	sensi_date_attribution=now()::timestamp with time zone,
 	sensi_niveau='m02',
 	sensi_referentiel=(SELECT description FROM sensibilite_referentiel ORDER BY sensi_version_referentiel DESC LIMIT 1),
@@ -1688,7 +1680,7 @@ SELECT 	id_import,
 		i.jdd_id,
 		jdd.jdd_code,
 		jdd.jdd_description,
-		CONCAT('https://inpn.mnhn.fr/mtd/cadre/jdd/export/xml/GetRecordById?id=', jdd.jdd_metadonnee_dee_id) AS fiche_jdd,
+		CONCAT('https://inpn.mnhn.fr/mtd/cadre/jdd/export/xml/GetRecordById?id=', jdd.id_sinp_jdd) AS fiche_jdd,
 		-- CONCAT('https://inpn.mnhn.fr/espece/jeudonnees/', jdd.jdd_id) AS fiche_jdd, -- URL publique de la fiche une fois qu’elle a également été intégrée au SINP national
 		i.date_reception,
 		i.date_import,

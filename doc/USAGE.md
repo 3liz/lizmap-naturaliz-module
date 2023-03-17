@@ -39,7 +39,7 @@ puis de lancer :
 
 Pour que l'utilisateur en ligne puisse réaliser l'**import** des données dans la base,
 il est nécessaire que le jeu de données
-soit au préalable ajouté dans la table `occtax.jdd`, avec la bonne valeur dans le champ `jdd_metadonnee_dee_id`.
+soit au préalable ajouté dans la table `occtax.jdd`, avec la bonne valeur dans le champ `id_sinp_jdd`.
 
 Le fichier CSV doit correspondre à un modèle bien spécifique, avec une liste minimale de champs, nommés correctement.
 Un fichier CSV exemple est disponible dans les sources et peut être téléchargé depuis le formulaire.
@@ -440,9 +440,9 @@ SELECT occtax_update_spatial_relationships(
 
 ### Identifiants permanents
 
-La table `occtax.lien_observation_identifiant_permanent` contient pour chaque jeu de donnée le lien
-entre l'identifiant unique `identifiant_permanent` créé par la plateforme régionale
-et l'identifiant d'origine `identifiant_origine` provenant de la donnée source.
+La table `occtax.lien_observation_id_sinp_occtax` contient pour chaque jeu de donnée le lien
+entre l'identifiant unique `id_sinp_occtax` créé par la plateforme régionale
+et l'identifiant d'origine `id_origine` provenant de la donnée source.
 
 
 * Données source (l'identifiant d'origine est ici le champ id) :
@@ -453,15 +453,15 @@ et l'identifiant d'origine `identifiant_origine` provenant de la donnée source.
 
 
 * table `occtax.observation` :
-  | cle_obs | identifiant_permanent | identifiant_origine | jdd_id |
+  | cle_obs | id_sinp_occtax        | id_origine          | jdd_id |
   |---------|-----------------------|---------------------|--------|
   | 34      | AABB-CCERER           | 1                   | pnrun  |
   | 45      | FFGSDSGF-HHFDH        | 2                   | pnrun  |
 
 
-* table `occtax.lien_observation_identifiant_permanent` :
+* table `occtax.lien_observation_id_sinp_occtax` :
 
-  | jdd_id | identifiant_origine | identifiant_permanent |
+  | jdd_id | id_origine          | id_sinp_occtax        |
   |--------|---------------------|-----------------------|
   | pnrun  | 1                   | AABB-CCERER           |
   | pnrun  | 2                   | FFGSDSGF-HHFDH        |
@@ -469,14 +469,14 @@ et l'identifiant d'origine `identifiant_origine` provenant de la donnée source.
 
 Quand on supprime toutes les données d'un JDD avant réimport :
 
-* on crée un `identifiant_permanent` seulement pour celles qui n'en ont pas (on se base sur l'identifiant du jdd source
-  comme `identifiant_origine` et sur la table `lien_observation_identifiant_permanent` )
+* on crée un `id_sinp_occtax` seulement pour celles qui n'en ont pas (on se base sur l'identifiant du jdd source
+  comme `id_origine` et sur la table `lien_observation_id_sinp_occtax` )
 * toutes les données du jeu source déjà importée, qui avaient été modifiée entre 2 imports,
   vont bien être réimportées avec leurs données à jour
 * on modifie le `cle_obs` de notre bdd, et donc si c'est utilisé par d'autre bdd (qui importent nos données)
-  alors elles peuvent perdre le lien ! Ces bdd de destination doivent donc se baser sur l'`identifiant_permanent`
+  alors elles peuvent perdre le lien ! Ces bdd de destination doivent donc se baser sur l'`id_sinp_occtax`
   et sur le champ `cle_obs` (qui rentre dans leur identifiant d'origine) pour faire la correspondance.
-  Notre champ `identifiant_permanent` est donc enregistré dans leur champ `identifiant_origine`
+  Notre champ `id_sinp_occtax` est donc enregistré dans leur champ `id_origine`
   (pour les données provenant de notre bdd dans leur bdd)
 
 
@@ -681,10 +681,10 @@ La liste des champs exportés est définie dans le fichier de configuration loca
 
 ```ini
 ; liste blanche des champs à exporter
-observation_exported_fields=cle_obs, identifiant_permanent, identifiant_origine, statut_observation, cd_nom, cd_ref, version_taxref, nom_cite, nom_valide, nom_vern, group1_inpn, group2_inpn, denombrement_min, denombrement_max, type_denombrement, objet_denombrement, commentaire, date_debut, heure_debut, date_fin, heure_fin, altitude_moy, profondeur_moy, date_determination, ds_publique, jdd_metadonnee_dee_id, dee_date_derniere_modification, jdd_code, reference_biblio, organisme_gestionnaire_donnees, statut_source, sensi_niveau, observateur, determinateur, validateur, descriptif_sujet, niv_val_regionale, date_ctrl_regionale, validateur_regionale, precision_geometrie, nature_objet_geo, wkt
+observation_exported_fields=cle_obs, id_sinp_occtax, id_origine, statut_observation, cd_nom, cd_ref, version_taxref, nom_cite, nom_valide, nom_vern, group1_inpn, group2_inpn, denombrement_min, denombrement_max, type_denombrement, objet_denombrement, commentaire, date_debut, heure_debut, date_fin, heure_fin, altitude_moy, profondeur_moy, date_determination, ds_publique, id_sinp_jdd, dee_date_derniere_modification, jdd_code, reference_biblio, organisme_gestionnaire_donnees, statut_source, sensi_niveau, observateur, determinateur, validateur, descriptif_sujet, niv_val_regionale, date_ctrl_regionale, validateur_regionale, precision_geometrie, nature_objet_geo, wkt
 
 ; liste blanche des champs à exporter pour le grand public
-observation_exported_fields_unsensitive=cle_obs, identifiant_permanent, statut_source, nom_cite, date_debut, date_fin, organisme_gestionnaire_donnees, source_objet, code_commune, code_departement, code_maille_10, wkt
+observation_exported_fields_unsensitive=cle_obs, id_sinp_occtax, statut_source, nom_cite, date_debut, date_fin, organisme_gestionnaire_donnees, source_objet, code_commune, code_departement, code_maille_10, wkt
 
 ; liste blanche des données filles à exporter
 ;observation_exported_children=commune, departement, maille_02, maille_10, espace_naturel, masse_eau, habitat, attribut_additionnel
@@ -716,10 +716,10 @@ ainsi que les données rattachées, sont définis dans le fichier de configurati
 
 ```ini
 ; liste blanche des champs à afficher dans la fiche d'observation
-observation_card_fields=cle_obs,statut_observation, nom_cite, denombrement_min, denombrement_max, objet_denombrement, commentaire, date_debut, date_fin, date_determination, ds_publique, jdd_metadonnee_dee_id, organisme_gestionnaire_donnees, statut_source, sensi_niveau, observateur, determinateur, validateur, descriptif_sujet, obs_methode, occ_denombrement_min, occ_denombrement_max, occ_type_denombrement, occ_objet_denombrement, occ_etat_biologique, occ_naturalite, occ_sexe, occ_stade_de_vie, occ_statut_biologique, obs_contexte, obs_description, occ_methode_determination,  niv_val_regionale, date_ctrl_regionale, validateur_regionale, precision_geometrie
+observation_card_fields=cle_obs,statut_observation, nom_cite, denombrement_min, denombrement_max, objet_denombrement, commentaire, date_debut, date_fin, date_determination, ds_publique, id_sinp_jdd, organisme_gestionnaire_donnees, statut_source, sensi_niveau, observateur, determinateur, validateur, descriptif_sujet, obs_technique, occ_denombrement_min, occ_denombrement_max, occ_type_denombrement, occ_objet_denombrement, occ_etat_biologique, occ_naturalite, occ_sexe, occ_stade_de_vie, occ_statut_biologique, obs_contexte, obs_description, occ_methode_determination, occ_comportement, niv_val_regionale, date_ctrl_regionale, validateur_regionale, precision_geometrie
 
 ; liste blanche des champs à afficher pour le grand public dans la fiche
-observation_card_fields_unsensitive=cle_obs, identifiant_permanent, statut_source, nom_cite, date_debut, date_fin, organisme_gestionnaire_donnees, source_objet, code_commune, code_departement, code_maille_10
+observation_card_fields_unsensitive=cle_obs, id_sinp_occtax, statut_source, nom_cite, date_debut, date_fin, organisme_gestionnaire_donnees, source_objet, code_commune, code_departement, code_maille_10
 
 ; liste blanche des données filles à afficher dans la fiche
 ;observation_card_children=commune, departement, maille_02, maille_10, espace_naturel, masse_eau, habitat, attribut_additionnel

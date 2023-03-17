@@ -144,11 +144,11 @@ class observationCtrl extends jController {
         $cnx = jDb::getConnection('naturaliz_virtual_profile');
         $reqnom = $cnx->query($sqlnom);
         foreach($reqnom as $nom){
-            $nomenclature[$nom->champ . '|' . $nom->code] = $nom->valeur;
+            $nomenclature[$nom->champ.'|'.$nom->code] = $nom->valeur;
         }
         $daot = jDao::get('taxon~t_nomenclature', 'naturaliz_virtual_profile');
         foreach($daot->findAll() as $nom){
-            $nomenclature[$nom->champ . '|' . $nom->code] = $nom->valeur;
+            $nomenclature[$nom->champ.'|'.$nom->code] = $nom->valeur;
         }
 
         $tpl->assign('observation_card_fields', $observation_card_fields);
@@ -157,12 +157,12 @@ class observationCtrl extends jController {
         // Get validation status
         $in_basket = false;
         if ($login && jAcl2::check('validation.online.access')) {
-            $sql = " SELECT identifiant_permanent FROM occtax.validation_panier";
+            $sql = " SELECT id_sinp_occtax FROM occtax.validation_panier";
             $sql.= " WHERE True";
             $sql.= " AND usr_login = ";
             $sql.= $cnx->quote($login);
-            $sql.= " AND identifiant_permanent = ";
-            $sql.= $cnx->quote($data['identifiant_permanent']);
+            $sql.= " AND id_sinp_occtax = ";
+            $sql.= $cnx->quote($data['id_sinp_occtax']);
             $req = $cnx->query($sql);
             foreach($req as $item){
                 $in_basket = true;
