@@ -4,6 +4,9 @@
 
 ### Changed
 
+## 2.14.3
+
+* Recherche - Suppression du filtre "interne" par niveau de validité pour le grand public
 * Increase required lizmap max version to 3.7
 
 ## 2.14.2

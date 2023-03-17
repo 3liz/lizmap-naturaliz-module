@@ -544,10 +544,12 @@ class occtaxSearchObservation extends occtaxSearch {
             }
         }
 
-        // Show only validated data for unlogged users
-        if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
-            $sql.= " AND niv_val_regionale IN ( ".$this->validite_niveaux_grand_public." ) ";
-        }
+        // Show only validated data for unauthenticated users ("grand public")
+        // Désactivé pour passage en OpenData en mars 2023 : le public doit pouvoir
+        // avoir accès à toutes les données
+        // if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
+        //     $sql.= " AND niv_val_regionale IN ( ".$this->validite_niveaux_grand_public." ) ";
+        // }
 
         return $sql;
 

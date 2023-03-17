@@ -357,6 +357,8 @@ depuis l'interface d'administration, menu **Occtax**. Elle s'appuie sur le **niv
 Par défaut, les personnes non connectées ne peuvent visualiser que les données
 dont le niveau de validation est 1 ou 2.
 
+**CE CRITERE N'EST PLUS PRIS EN COMPTE DEPUIS mars 2023 CAR TOUTES LES DONNÉES DOIVENT POUVOIR ÊTRE VISUALISÉES PAR LE GRAND PUBLIC**
+
 ### Les différents outils de gestion de la validité
 
 L'attribution des niveaux de validation sur les observations peut se faire de plusieurs façons :

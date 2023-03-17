@@ -100,11 +100,13 @@ class occtaxSearch {
             return false;
 
         // Niveaux de validité des observations accessibles au grand public
-        $vniv = $ini->getValue('validite_niveaux_grand_public', 'naturaliz');
-        if( !$vniv )
-            $vniv = '1';
-        $vniv = implode( ', ', array_map(function($item){return $this->myquote($item);}, explode(',', $vniv)));
-        $this->validite_niveaux_grand_public = $vniv;
+        // Désactivé pour passage en OpenData en mars 2023 : le public doit pouvoir
+        // avoir accès à toutes les données
+        // $vniv = $ini->getValue('validite_niveaux_grand_public', 'naturaliz');
+        // if( !$vniv )
+        //     $vniv = '1';
+        // $vniv = implode( ', ', array_map(function($item){return $this->myquote($item);}, explode(',', $vniv)));
+        // $this->validite_niveaux_grand_public = $vniv;
 
         // Build SQL query
         $this->setSql();

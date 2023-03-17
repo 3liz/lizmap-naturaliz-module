@@ -360,7 +360,9 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $login = $this->login;
         if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
             $sql.= " AND foo.diffusion ? 'c' ";
-            $sql.= " AND foo.niv_val_regionale IN ( ".$this->validite_niveaux_grand_public." )";
+            // Désactivé pour passage en OpenData en mars 2023 : le public doit pouvoir
+            // avoir accès à toutes les données
+            // $sql.= " AND foo.niv_val_regionale IN ( ".$this->validite_niveaux_grand_public." )";
         }
 //jLog::log($sql);
         if( $response == 'sql' )
@@ -385,7 +387,9 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $login = $this->login;
         if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
             $sql.= " AND foo.diffusion ? 'd' ";
-            $sql.= " AND foo.niv_val_regionale IN ( ".$this->validite_niveaux_grand_public." )";
+            // Désactivé pour passage en OpenData en mars 2023 : le public doit pouvoir
+            // avoir accès à toutes les données
+            // $sql.= " AND foo.niv_val_regionale IN ( ".$this->validite_niveaux_grand_public." )";
         }
 
         if( $response == 'sql' )
@@ -410,7 +414,9 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $login = $this->login;
         if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
             $sql.= " AND foo.diffusion ? 'm10' ";
-            $sql.= " AND foo.niv_val_regionale IN ( ".$this->validite_niveaux_grand_public." )";
+            // Désactivé pour passage en OpenData en mars 2023 : le public doit pouvoir
+            // avoir accès à toutes les données
+            // $sql.= " AND foo.niv_val_regionale IN ( ".$this->validite_niveaux_grand_public." )";
         }
 
         if( $response == 'sql' )
@@ -435,7 +441,9 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $login = $this->login;
         if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
             $sql.= " AND ( foo.diffusion ? 'm05' )";
-            $sql.= " AND foo.niv_val_regionale IN ( ".$this->validite_niveaux_grand_public." )";
+            // Désactivé pour passage en OpenData en mars 2023 : le public doit pouvoir
+            // avoir accès à toutes les données
+            // $sql.= " AND foo.niv_val_regionale IN ( ".$this->validite_niveaux_grand_public." )";
         }
 
         if( $response == 'sql' )
@@ -460,7 +468,9 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $login = $this->login;
         if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
             $sql.= " AND ( foo.diffusion ? 'm02' )";
-            $sql.= " AND foo.niv_val_regionale IN ( ".$this->validite_niveaux_grand_public." )";
+            // Désactivé pour passage en OpenData en mars 2023 : le public doit pouvoir
+            // avoir accès à toutes les données
+            // $sql.= " AND foo.niv_val_regionale IN ( ".$this->validite_niveaux_grand_public." )";
         }
 
         if( $response == 'sql' )
@@ -485,7 +495,9 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $login = $this->login;
         if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
             $sql.= " AND ( foo.diffusion ? 'm01' )";
-            $sql.= " AND foo.niv_val_regionale IN ( ".$this->validite_niveaux_grand_public." )";
+            // Désactivé pour passage en OpenData en mars 2023 : le public doit pouvoir
+            // avoir accès à toutes les données
+            // $sql.= " AND foo.niv_val_regionale IN ( ".$this->validite_niveaux_grand_public." )";
         }
 
         if( $response == 'sql' )
@@ -510,7 +522,9 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $login = $this->login;
         if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
             $sql.= " AND foo.diffusion ? 'e' ";
-            $sql.= " AND foo.niv_val_regionale IN ( ".$this->validite_niveaux_grand_public." )";
+            // Désactivé pour passage en OpenData en mars 2023 : le public doit pouvoir
+            // avoir accès à toutes les données
+            // $sql.= " AND foo.niv_val_regionale IN ( ".$this->validite_niveaux_grand_public." )";
         }
 
         if( $response == 'sql' )
@@ -535,7 +549,9 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         $login = $this->login;
         if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
             $sql.= " AND foo.diffusion ? 'e' ";
-            $sql.= " AND foo.niv_val_regionale IN ( ".$this->validite_niveaux_grand_public." )";
+            // Désactivé pour passage en OpenData en mars 2023 : le public doit pouvoir
+            // avoir accès à toutes les données
+            // $sql.= " AND foo.niv_val_regionale IN ( ".$this->validite_niveaux_grand_public." )";
         }
 
         if( $response == 'sql' )

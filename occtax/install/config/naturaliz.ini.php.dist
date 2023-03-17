@@ -25,6 +25,8 @@ liste_rangs="FM, GN, AGES, ES, SSES, NAT, VAR, SVAR, FO, SSFO, RACE, CAR, AB"
 mailles_a_utiliser=maille_02,maille_10
 
 ; liste de niveaux de validite à restreindre pour le grand public
+; Désactivé pour passage en OpenData en mars 2023 : le public doit pouvoir
+; avoir accès à toutes les données
 validite_niveaux_grand_public=1,2
 
 ; taille maximum en m2 des polygones dessinés pour rechercher des observations
