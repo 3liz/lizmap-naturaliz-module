@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 2.15.1 - 2023-03-29
+
+### Fixed
+
+* Installateur - suppression de la fonction PHP str_contains pour rester
+  compatible avec PHP 7
+
 ## 2.15.0 - 2023-03-29
 
 ### Changed

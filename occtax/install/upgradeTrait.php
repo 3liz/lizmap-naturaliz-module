@@ -49,7 +49,7 @@ trait upgradeTrait
             'liste_rangs'=>$liste_rangs
         );
         foreach ($variables as $variable=>$value) {
-            if (str_contains($sql, '{$'.$variable.'}')) {
+            if (strpos($sql, '{$'.$variable.'}') !== false) {
                 $sql = str_replace(
                     '{$'.$variable.'}',
                     $value,
