@@ -54,11 +54,11 @@
         <ymax>-73.24110108926210216</ymax>
       </extent>
       <id>export_observation_token20161116165941664</id>
-      <datasource>dbname='naturaliz-reunion' host=localhost port=5433 user='mdouchin' password='tation' sslmode=disable key='cle_obs' estimatedmetadata=true table="(SELECT o.cle_obs, o.identifiant_permanent, o.statut_observation,
+      <datasource>dbname='naturaliz-reunion' host=localhost port=5433 user='mdouchin' password='tation' sslmode=disable key='cle_obs' estimatedmetadata=true table="(SELECT o.cle_obs, o.id_sinp_occtax, o.statut_observation,
 CASE WHEN o.cd_nom > 0 THEN o.cd_nom ELSE NULL END AS cd_nom, CASE WHEN o.cd_ref > 0 THEN o.cd_ref ELSE NULL END AS cd_ref, o.version_taxref, o.nom_cite,
 o.denombrement_min, o.denombrement_max, o.objet_denombrement, o.type_denombrement, o.commentaire,
 to_char( date_debut, 'YYYY-MM-DD') AS date_debut, to_char( heure_debut::time, 'HH24:MI') AS heure_debut, to_char( date_fin, 'YYYY-MM-DD') AS date_fin, to_char( heure_fin::time, 'HH24:MI') AS heure_fin, to_char( date_determination, 'YYYY-MM-DD') AS date_determination,
-o.altitude_min, o.altitude_moy, o.altitude_max, o.profondeur_min, o.profondeur_moy, o.profondeur_max, o.code_idcnp_dispositif, o.dee_date_derniere_modification, o.dee_date_transformation, o.dee_floutage, o.diffusion_niveau_precision, o.ds_publique, o.identifiant_origine, o.jdd_code, o.jdd_id, o.jdd_metadonnee_dee_id, o.jdd_source_id, o.organisme_gestionnaire_donnees, o.org_transformation, o.statut_source, o.reference_biblio, o.sensible, o.sensi_date_attribution, o.sensi_niveau, o.sensi_referentiel, o.sensi_version_referentiel,
+o.altitude_min, o.altitude_moy, o.altitude_max, o.profondeur_min, o.profondeur_moy, o.profondeur_max, o.code_idcnp_dispositif, o.dee_date_derniere_modification, o.dee_date_transformation, o.dee_floutage, o.diffusion_niveau_precision, o.ds_publique, o.id_origine, o.jdd_code, o.jdd_id, o.id_sinp_jdd, o.organisme_gestionnaire_donnees, o.org_transformation, o.statut_source, o.reference_biblio, o.sensi_date_attribution, o.sensi_niveau, o.sensi_referentiel, o.sensi_version_referentiel,
 o.precision_geometrie, o.nature_objet_geo, ST_Transform(o.geom, 4326) AS geom,
 string_agg( DISTINCT concat( pobs.identite, ' (' || pobs.organisme|| ')' ), ', ' ) AS observateur,
 string_agg( DISTINCT concat( pval.identite, ' (' || pval.organisme|| ')' ), ', ' ) AS validateur,
@@ -77,7 +77,7 @@ string_agg( DISTINCT concat( pdet.identite, ' (' || pdet.organisme|| ')' ), ', '
  WHERE 2>1   AND ( date_debut >= '2000-01-01'::timestamp OR date_fin >= '2000-01-01'::timestamp )
   AND ( date_debut &lt;= '2016-11-16'::timestamp OR date_fin &lt;= '2016-11-16'::timestamp )
  AND o.cd_nom NOT IN (SELECT cd_nom FROM taxon.taxon_sensible)
- GROUP BY o.cle_obs, o.identifiant_permanent, o.statut_observation, o.cd_nom, o.cd_ref, o.version_taxref, o.nom_cite, o.denombrement_min, o.denombrement_max, o.objet_denombrement, o.type_denombrement, o.commentaire, o.date_debut, o.heure_debut, o.date_fin, o.heure_fin, o.date_determination, o.altitude_min, o.altitude_moy, o.altitude_max, o.profondeur_min, o.profondeur_moy, o.profondeur_max, o.code_idcnp_dispositif, o.dee_date_derniere_modification, o.dee_date_transformation, o.dee_floutage, o.diffusion_niveau_precision, o.ds_publique, o.identifiant_origine, o.jdd_code, o.jdd_id, o.jdd_metadonnee_dee_id, o.jdd_source_id, o.organisme_gestionnaire_donnees, o.org_transformation, o.statut_source, o.reference_biblio, o.sensible, o.sensi_date_attribution, o.sensi_niveau, o.sensi_referentiel, o.sensi_version_referentiel, o.precision_geometrie, o.nature_objet_geo, o.geom
+ GROUP BY o.cle_obs, o.id_sinp_occtax, o.statut_observation, o.cd_nom, o.cd_ref, o.version_taxref, o.nom_cite, o.denombrement_min, o.denombrement_max, o.objet_denombrement, o.type_denombrement, o.commentaire, o.date_debut, o.heure_debut, o.date_fin, o.heure_fin, o.date_determination, o.altitude_min, o.altitude_moy, o.altitude_max, o.profondeur_min, o.profondeur_moy, o.profondeur_max, o.code_idcnp_dispositif, o.dee_date_derniere_modification, o.dee_date_transformation, o.dee_floutage, o.diffusion_niveau_precision, o.ds_publique, o.id_origine, o.jdd_code, o.jdd_id, o.id_sinp_jdd, o.organisme_gestionnaire_donnees, o.org_transformation, o.statut_source, o.reference_biblio, o.sensi_date_attribution, o.sensi_niveau, o.sensi_referentiel, o.sensi_version_referentiel, o.precision_geometrie, o.nature_objet_geo, o.geom
 
 )" (geom) sql=</datasource>
       <keywordList>
@@ -108,7 +108,7 @@ string_agg( DISTINCT concat( pdet.identite, ' (' || pdet.organisme|| ')' ), ', '
         <edittype widgetv2type="TextEdit" name="cle_obs">
           <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="identifiant_permanent">
+        <edittype widgetv2type="TextEdit" name="id_sinp_occtax">
           <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="statut_observation">
@@ -192,7 +192,7 @@ string_agg( DISTINCT concat( pdet.identite, ' (' || pdet.organisme|| ')' ), ', '
         <edittype widgetv2type="TextEdit" name="ds_publique">
           <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="identifiant_origine">
+        <edittype widgetv2type="TextEdit" name="id_origine">
           <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="jdd_code">
@@ -201,10 +201,7 @@ string_agg( DISTINCT concat( pdet.identite, ' (' || pdet.organisme|| ')' ), ', '
         <edittype widgetv2type="TextEdit" name="jdd_id">
           <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="jdd_metadonnee_dee_id">
-          <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="jdd_source_id">
+        <edittype widgetv2type="TextEdit" name="id_sinp_jdd">
           <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="organisme_gestionnaire_donnees">
@@ -217,9 +214,6 @@ string_agg( DISTINCT concat( pdet.identite, ' (' || pdet.organisme|| ')' ), ', '
           <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="reference_biblio">
-          <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
-        </edittype>
-        <edittype widgetv2type="TextEdit" name="sensible">
           <widgetv2config IsMultiline="0" fieldEditable="1" UseHtml="0" labelOnTop="0"/>
         </edittype>
         <edittype widgetv2type="TextEdit" name="sensi_date_attribution">
@@ -282,7 +276,7 @@ string_agg( DISTINCT concat( pdet.identite, ' (' || pdet.organisme|| ')' ), ', '
       <blendMode>0</blendMode>
       <featureBlendMode>0</featureBlendMode>
       <layerTransparency>0</layerTransparency>
-      <displayfield>identifiant_permanent</displayfield>
+      <displayfield>id_sinp_occtax</displayfield>
       <label>0</label>
       <labelattributes>
         <label fieldname="" text="Étiquette"/>

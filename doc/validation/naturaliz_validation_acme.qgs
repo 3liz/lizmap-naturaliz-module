@@ -1416,8 +1416,8 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="Hidden" name="cle_obs">
           <widgetv2config fieldEditable="1" constraint="" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="ValueRelation" name="obs_methode">
-          <widgetv2config OrderByValue="1" AllowNull="0" FilterExpression=" &quot;champ&quot; = 'obs_methode' " UseCompleter="0" fieldEditable="1" Key="code" constraint="" Layer="nomenclature20171206180403796" Value="valeur" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
+        <edittype widgetv2type="ValueRelation" name="obs_technique">
+          <widgetv2config OrderByValue="1" AllowNull="0" FilterExpression=" &quot;champ&quot; = 'obs_technique' " UseCompleter="0" fieldEditable="1" Key="code" constraint="" Layer="nomenclature20171206180403796" Value="valeur" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
         </edittype>
         <edittype widgetv2type="ValueRelation" name="occ_etat_biologique">
           <widgetv2config OrderByValue="1" AllowNull="0" FilterExpression=" &quot;champ&quot; =  'occ_etat_biologique' " UseCompleter="0" fieldEditable="1" Key="code" constraint="" Layer="nomenclature20171206180403796" Value="valeur" labelOnTop="0" constraintDescription="" AllowMulti="0" notNull="0"/>
@@ -1459,7 +1459,7 @@ def my_form_open(dialog, layer, feature):
       <annotationform>.</annotationform>
       <aliases>
         <alias field="cle_obs" index="0" name=""/>
-        <alias field="obs_methode" index="1" name="Méthode d'observation"/>
+        <alias field="obs_technique" index="1" name="Méthode d'observation"/>
         <alias field="occ_etat_biologique" index="2" name="Etat biologique"/>
         <alias field="occ_naturalite" index="3" name="Naturalité"/>
         <alias field="occ_sexe" index="4" name="Sexe"/>
@@ -1479,7 +1479,7 @@ def my_form_open(dialog, layer, feature):
       <attributetableconfig actionWidgetStyle="dropDown" sortExpression="" sortOrder="0">
         <columns>
           <column width="-1" hidden="0" type="field" name="cle_obs"/>
-          <column width="-1" hidden="0" type="field" name="obs_methode"/>
+          <column width="-1" hidden="0" type="field" name="obs_technique"/>
           <column width="-1" hidden="0" type="field" name="occ_etat_biologique"/>
           <column width="-1" hidden="0" type="field" name="occ_naturalite"/>
           <column width="-1" hidden="0" type="field" name="occ_sexe"/>
@@ -1520,7 +1520,7 @@ def my_form_open(dialog, layer, feature):
       <attributeEditorForm>
         <attributeEditorContainer showLabel="1" visibilityExpressionEnabled="0" visibilityExpression="" name="Descriptif" groupBox="0" columnCount="2">
           <attributeEditorField showLabel="1" index="2" name="occ_etat_biologique"/>
-          <attributeEditorField showLabel="1" index="1" name="obs_methode"/>
+          <attributeEditorField showLabel="1" index="1" name="obs_technique"/>
           <attributeEditorField showLabel="1" index="4" name="occ_sexe"/>
           <attributeEditorField showLabel="1" index="13" name="occ_methode_determination"/>
           <attributeEditorField showLabel="1" index="5" name="occ_stade_de_vie"/>
@@ -1541,7 +1541,7 @@ def my_form_open(dialog, layer, feature):
       </conditionalstyles>
       <defaults>
         <default field="cle_obs" expression=""/>
-        <default field="obs_methode" expression=""/>
+        <default field="obs_technique" expression=""/>
         <default field="occ_etat_biologique" expression=""/>
         <default field="occ_naturalite" expression=""/>
         <default field="occ_sexe" expression=""/>
@@ -1595,7 +1595,7 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="TextEdit" name="cle_obs">
           <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="identifiant_permanent">
+        <edittype widgetv2type="TextEdit" name="id_sinp_occtax">
           <widgetv2config IsMultiline="0" fieldEditable="1" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="ValueRelation" name="statut_observation">
@@ -1694,7 +1694,7 @@ def my_form_open(dialog, layer, feature):
         <edittype widgetv2type="TextEdit" name="jdd_id">
           <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
-        <edittype widgetv2type="TextEdit" name="jdd_metadonnee_dee_id">
+        <edittype widgetv2type="TextEdit" name="id_sinp_jdd">
           <widgetv2config IsMultiline="0" fieldEditable="0" constraint="" UseHtml="0" labelOnTop="0" constraintDescription="" notNull="0"/>
         </edittype>
         <edittype widgetv2type="ValueRelation" name="statut_source">
@@ -2242,7 +2242,7 @@ def my_form_open(dialog, layer, feature):
       <annotationform>.</annotationform>
       <aliases>
         <alias field="cle_obs" index="0" name="Identifiant"/>
-        <alias field="identifiant_permanent" index="1" name=""/>
+        <alias field="id_sinp_occtax" index="1" name=""/>
         <alias field="statut_observation" index="2" name="Statut d'observation"/>
         <alias field="cd_nom" index="3" name="CDNOM (Taxref)"/>
         <alias field="cd_ref" index="4" name="CDREF"/>
@@ -2275,7 +2275,7 @@ def my_form_open(dialog, layer, feature):
         <alias field="dee_date_derniere_modification" index="31" name="Date de dernière modification"/>
         <alias field="jdd_code" index="32" name="Code du jeu de données"/>
         <alias field="jdd_id" index="33" name="JDD id"/>
-        <alias field="jdd_metadonnee_dee_id" index="34" name="Fiche de métadonnée"/>
+        <alias field="id_sinp_jdd" index="34" name="Fiche de métadonnée"/>
         <alias field="statut_source" index="35" name="Source"/>
         <alias field="reference_biblio" index="36" name="Référence biblio"/>
         <alias field="ds_publique" index="37" name="Origine"/>
@@ -2331,7 +2331,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="dee_date_derniere_modification"/>
           <column width="-1" hidden="0" type="field" name="jdd_code"/>
           <column width="-1" hidden="0" type="field" name="jdd_id"/>
-          <column width="-1" hidden="0" type="field" name="jdd_metadonnee_dee_id"/>
+          <column width="-1" hidden="0" type="field" name="id_sinp_jdd"/>
           <column width="-1" hidden="0" type="field" name="statut_source"/>
           <column width="-1" hidden="0" type="field" name="reference_biblio"/>
           <column width="-1" hidden="0" type="field" name="ds_publique"/>
@@ -2352,7 +2352,7 @@ def my_form_open(dialog, layer, feature):
           <column width="-1" hidden="0" type="field" name="comm_val"/>
           <column width="-1" hidden="1" type="actions"/>
           <column width="-1" hidden="0" type="field" name="webcdnom"/>
-          <column width="-1" hidden="0" type="field" name="identifiant_permanent"/>
+          <column width="-1" hidden="0" type="field" name="id_sinp_occtax"/>
           <column width="-1" hidden="0" type="field" name="ordre"/>
           <column width="-1" hidden="0" type="field" name="famille"/>
           <column width="-1" hidden="0" type="field" name="identite_observateur"/>
@@ -2465,7 +2465,7 @@ def my_form_open(dialog, layer, feature):
       </conditionalstyles>
       <defaults>
         <default field="cle_obs" expression=""/>
-        <default field="identifiant_permanent" expression=""/>
+        <default field="id_sinp_occtax" expression=""/>
         <default field="statut_observation" expression=""/>
         <default field="cd_nom" expression=""/>
         <default field="cd_ref" expression=""/>
@@ -2498,7 +2498,7 @@ def my_form_open(dialog, layer, feature):
         <default field="dee_date_derniere_modification" expression=""/>
         <default field="jdd_code" expression=""/>
         <default field="jdd_id" expression=""/>
-        <default field="jdd_metadonnee_dee_id" expression=""/>
+        <default field="id_sinp_jdd" expression=""/>
         <default field="statut_source" expression=""/>
         <default field="reference_biblio" expression=""/>
         <default field="ds_publique" expression=""/>
