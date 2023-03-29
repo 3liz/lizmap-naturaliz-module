@@ -19,9 +19,9 @@ trait upgradeTrait
     {
         // Parse naturaliz ini file and get needed values
         $ini = parse_ini_file($localConfig, true);
-        $srid = '2975';
+        $SRID = '2975';
         if (array_key_exists('naturaliz', $ini) && array_key_exists('srid', $ini['naturaliz'])) {
-            $srid = $ini['naturaliz']['srid'];
+            $SRID = $ini['naturaliz']['srid'];
         }
         $colonne_locale = 'reu';
         if (array_key_exists('naturaliz', $ini) && array_key_exists('colonne_locale', $ini['naturaliz'])) {
@@ -37,14 +37,26 @@ trait upgradeTrait
         )."'";
 
         // Read SQL template file
-        $sqlTpl = jFile::read($sqlPath);
+        $sql = jFile::read($sqlPath);
 
-        // Assign template variables
-        $tpl = new jTpl();
-        $tpl->assign('SRID', $srid); // CAREFUL, SRID variable must be UPPERCASE
-        $tpl->assign('colonne_locale', $colonne_locale);
-        $tpl->assign('liste_rangs', $liste_rangs);
-        $sql = $tpl->fetchFromString($sqlTpl, 'text');
+        // Do not use Jelix template as it searches for {$variable} or {if}
+        // For example, this syntaxe breaks the template :
+        // {"4": 1, "3": 2, "2": 3, "1": 4, "m02": 5, "m01": 6, "0": 7}
+        // in function occtax.calcul_niveau_par_condition
+        $variables = array(
+            'SRID' => $SRID,
+            'colonne_locale' => $colonne_locale,
+            'liste_rangs'=>$liste_rangs
+        );
+        foreach ($variables as $variable=>$value) {
+            if (str_contains($sql, '{$'.$variable.'}')) {
+                $sql = str_replace(
+                    '{$'.$variable.'}',
+                    $value,
+                    $sql
+                );
+            }
+        }
 
         // Run SQL query
         $db->exec($sql);

@@ -2,9 +2,15 @@
 
 ## Unreleased
 
+## 2.15.0 - 2023-03-29
+
 ### Changed
 
+* Standard - Passage au standard Occurrence de Taxons 2.0
+
 ## 2.14.3 - 2023-03-17
+
+### Changed
 
 * Recherche - Suppression du filtre "interne" par niveau de validité pour le grand public
 * Increase required lizmap max version to 3.7
@@ -13,7 +19,7 @@
 
 ### Changed
 
-* Installation - Correction d'un bug lors de la réapplication des droits
+* Installation - Correction d'un bug lors de la ré-application des droits
   sur les objets de la base.
 
 ## 2.14.1

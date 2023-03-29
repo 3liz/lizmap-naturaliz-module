@@ -26,24 +26,26 @@ class occtaxModuleUpgrader_2_14_0__2_14_1 extends jInstallerModule //\Jelix\Inst
     //function install(\Jelix\Installer\Module\API\InstallHelpers $helpers)
     function install()
     {
-        // Get path
-        // $sqlDirPath = $this->getPath() . 'install/sql/';
-        $sqlDirPath = $this->path.'install/sql/';
+        if ($this->firstDbExec()) {
+            // Get path
+            // $sqlDirPath = $this->getPath() . 'install/sql/';
+            $sqlDirPath = $this->path.'install/sql/';
 
-        // Get database connection
-        // $helpers->database()->useDbProfile('jauth_super');
-        // $db = $helpers->database()->dbConnection();
-        $this->useDbProfile('jauth_super');
-        $db = $this->dbConnection(); // A PLACER TOUJOURS DERRIERE $this->useDbProfile('jauth_super');
+            // Get database connection
+            // $helpers->database()->useDbProfile('jauth_super');
+            // $db = $helpers->database()->dbConnection();
+            $this->useDbProfile('jauth_super');
+            $db = $this->dbConnection(); // A PLACER TOUJOURS DERRIERE $this->useDbProfile('jauth_super');
 
-        // Naturaliz specific config file
-        // $localConfig = jApp::varConfigPath('naturaliz.ini.php');
-        $localConfig = jApp::configPath('naturaliz.ini.php');
+            // Naturaliz specific config file
+            // $localConfig = jApp::varConfigPath('naturaliz.ini.php');
+            $localConfig = jApp::configPath('naturaliz.ini.php');
 
-        // Upgrade structure
-        $this->upgradeDatabaseStructure($localConfig, $db, $sqlDirPath.$this->sqlUpgradeFile);
+            // Upgrade structure
+            $this->upgradeDatabaseStructure($localConfig, $db, $sqlDirPath.$this->sqlUpgradeFile);
 
-        // Grant rights
-        $this->grantRightsToDatabaseObjects($localConfig, $db, $sqlDirPath.$this->sqlGrantFile);
+            // Grant rights
+            $this->grantRightsToDatabaseObjects($localConfig, $db, $sqlDirPath.$this->sqlGrantFile);
+        }
     }
 }

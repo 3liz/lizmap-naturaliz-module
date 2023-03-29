@@ -9,7 +9,7 @@
  * @link      http://3liz.com
  * @license    All rights reserved
  */
-require_once(__DIR__ . '/upgradeTrait.php');
+require_once(__DIR__.'/upgradeTrait.php');
 class occtaxModuleUpgrader_2_13_1__2_13_2 extends jInstallerModule //\Jelix\Installer\Module\Installer
 {
     use upgradeTrait;
@@ -26,24 +26,26 @@ class occtaxModuleUpgrader_2_13_1__2_13_2 extends jInstallerModule //\Jelix\Inst
     //function install(\Jelix\Installer\Module\API\InstallHelpers $helpers)
     function install()
     {
-        // Get path
-        // $sqlDirPath = $this->getPath() . 'install/sql/';
-        $sqlDirPath = $this->path . 'install/sql/';
+        if ($this->firstDbExec()) {
+            // Get path
+            // $sqlDirPath = $this->getPath() . 'install/sql/';
+            $sqlDirPath = $this->path.'install/sql/';
 
-        // Get database connection
-        // $helpers->database()->useDbProfile('jauth_super');
-        // $db = $helpers->database()->dbConnection();
-        $this->useDbProfile('jauth_super');
-        $db = $this->dbConnection(); // A PLACER TOUJOURS DERRIERE $this->useDbProfile('jauth_super');
+            // Get database connection
+            // $helpers->database()->useDbProfile('jauth_super');
+            // $db = $helpers->database()->dbConnection();
+            $this->useDbProfile('jauth_super');
+            $db = $this->dbConnection(); // A PLACER TOUJOURS DERRIERE $this->useDbProfile('jauth_super');
 
-        // Naturaliz specific config file
-        // $localConfig = jApp::varConfigPath('naturaliz.ini.php');
-        $localConfig = jApp::configPath('naturaliz.ini.php');
+            // Naturaliz specific config file
+            // $localConfig = jApp::varConfigPath('naturaliz.ini.php');
+            $localConfig = jApp::configPath('naturaliz.ini.php');
 
-        // Upgrade structure
-        $this->upgradeDatabaseStructure($localConfig, $db, $sqlDirPath . $this->sqlUpgradeFile);
+            // Upgrade structure
+            $this->upgradeDatabaseStructure($localConfig, $db, $sqlDirPath.$this->sqlUpgradeFile);
 
-        // Grant rights
-        $this->grantRightsToDatabaseObjects($localConfig, $db, $sqlDirPath . $this->sqlGrantFile);
+            // Grant rights
+            $this->grantRightsToDatabaseObjects($localConfig, $db, $sqlDirPath.$this->sqlGrantFile);
+        }
     }
 }
