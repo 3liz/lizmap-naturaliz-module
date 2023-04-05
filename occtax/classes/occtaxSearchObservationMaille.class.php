@@ -135,6 +135,16 @@ class occtaxSearchObservationMaille extends occtaxSearchObservation {
 
     }
 
+
+    /**
+     * We must override this method here to avoid aggregate errors
+     *
+     */
+    protected function setReturnedGeometryFields()
+    {
+    }
+
+
     protected function setWhereClause(){
         $sql = parent::setWhereClause();
 

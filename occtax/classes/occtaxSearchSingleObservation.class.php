@@ -37,13 +37,14 @@ class occtaxSearchSingleObservation extends occtaxSearchObservationBrutes {
         );
 
         parent::__construct($token, $params, $demande, $login);
-
     }
 
     public function getExportedFields( $topic, $format='name' ) {
         $exported_fields = parent::getExportedFields($topic, $format);
         if ($topic == 'principal') {
+            // On ajoute les champs cachés qu'on souhaite mettre à disposition du JS
             $exported_fields[] = 'geojson';
+            $exported_fields[] = 'type_diffusion';
         }
         return $exported_fields;
     }

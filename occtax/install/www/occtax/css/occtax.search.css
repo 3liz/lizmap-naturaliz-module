@@ -738,3 +738,20 @@ Message en haut de la carte*/
 #import div.menu-content table tr th{
   font-size: 11px;
 }
+
+
+/* Zoom sur l'observation depuis le tableau de résultat */
+a.zoomToObservation {
+  padding: 0px 0px 2px 1px;
+  border: 2px solid blue;
+  border-radius: 5px;
+}
+a.zoomToObservation.precise {
+  border-color: blue;
+}
+a.zoomToObservation.floutage {
+  border-color: darkred;
+}
+a.zoomToObservation.vide {
+  border-color: orange;
+}

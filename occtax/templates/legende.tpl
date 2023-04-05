@@ -40,7 +40,7 @@
         </table>
         </div>
 
-        {ifacl2 "visualisation.donnees.brutes"}
+        <!-- {ifacl2 "visualisation.donnees.brutes"} -->
         <div id="occtax-legend-observation-menace" class="occtax-legend-classes" style="display:none;">
         <h4>{@occtax~search.legende.observation.menace.title@}</h4>
         <table class="occtax-legend-table">
@@ -108,6 +108,6 @@
             </tr>
         </table>
         </div>
-        {/ifacl2}
+        <!-- {/ifacl2} -->
     </div>
 </div>

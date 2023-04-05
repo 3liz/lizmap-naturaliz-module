@@ -413,7 +413,7 @@ OccTax.events.on({
                 taxonUrl = taxonUrl.replace('/autocomplete', '/getTaxonData');
                 taxonUrl += '?cd_nom=' + cd_nom;
                 requestTaxonData(taxonUrl, 5000).then(function (taxonData) {
-                    console.log(taxonData);
+                    // console.log(taxonData);
                     aCallback(taxonData);
 
                 }, function (Error) {
@@ -1099,15 +1099,6 @@ OccTax.events.on({
                                     tData.data.push(r);
                                 }
 
-                                // Set number of taxons in description
-                                var dhtml = $('#occtax_search_description_content').html();
-                                $('#occtax_search_description_content').html(
-                                    dhtml.replace(
-                                        '<span style="display:none">nb_taxon',
-                                        '<span> / ' + results.recordsTotal.toLocaleString()
-                                    )
-                                );
-
                             } else {
                                 if (results.msg.length != 0)
                                     lizMap.addMessage(results.msg.join('<br/>'), 'error', true).attr('id', 'occtax-highlight-message');
@@ -1353,11 +1344,26 @@ OccTax.events.on({
 
                                 // Event to set the features for observation
                                 OccTax.events.triggerEvent('observationdatareceived', { 'results': results });
+
                                 // Refresh map
                                 OccTax.refreshFeatures('observation');
                                 $('#occtax-highlight-message').remove();
-                                var msg = recordsTotal.toLocaleString() + ' observations visibles sur cette emprise';
+                                let msg = recordsTotal.toLocaleString() + ' observations visibles sur cette emprise';
+                                nbWithoutGeometry = 0;
+                                var fields = results['fields'];
+                                if (fields) {
+                                    var geoIdx = fields['return'].indexOf('geojson');
+                                    for (var i = 0, len = results.data.length; i < len; i++) {
+                                        if (!results.data[i][geoIdx]) {
+                                            nbWithoutGeometry++;
+                                        }
+                                    }
+                                    if (nbWithoutGeometry > 0) {
+                                        msg += ` (dont ${nbWithoutGeometry} sans position précise : floutée ou inconnue)`;
+                                    }
+                                }
                                 lizMap.addMessage(msg, 'info', true).attr('id', 'occtax-highlight-message');
+                                // OccTax.addTimedMessage('occtax-highlight-message', msg, 'info', 000, true);
                             }
                         );
                     } else {
@@ -1506,8 +1512,18 @@ OccTax.events.on({
                     var tr = $(this);
                     setTimeoutConst = setTimeout(function () {
                         var d = $('#' + tableId + '').DataTable().row(tr).data();
+                        let zoomLink = tr.find('a.zoomToObservation');
+                        let type_diffusion = 'floutage';
+                        if (zoomLink.hasClass('precise')) {type_diffusion = 'precise';}
+                        if (zoomLink.hasClass('vide')) {type_diffusion = 'vide';}
+                        if (zoomLink.hasClass('floutage')) {type_diffusion = 'floutage';}
+                        var temp_layer = OccTax.layers['observationTempLayer'];
+                        temp_layer.destroyFeatures();
                         if (d) {
-                            displayObservationGeom(d['geojson'], true);
+                            geojson = d['geojson'];
+                            if(geojson && geojson != 'null') {
+                                displayObservationGeom(geojson, type_diffusion, true);
+                            }
                         }
                     }, delay);
                 }, function () {
@@ -1533,7 +1549,11 @@ OccTax.events.on({
                     var tr = $($(this).parents('tr')[0]);
                     var d = $('#' + tableId + '').DataTable().row(tr).data();
                     if (d) {
-                        zoomToObservation(d['geojson']);
+                        let type_diffusion = 'floutage';
+                        if ($(this).hasClass('precise')) {type_diffusion = 'precise';}
+                        if ($(this).hasClass('vide')) {type_diffusion = 'vide';}
+                        if ($(this).hasClass('floutage')) {type_diffusion = 'floutage';}
+                        zoomToObservation(d['geojson'], type_diffusion);
                     }
                     return false;
                 });
@@ -1736,7 +1756,16 @@ OccTax.events.on({
         }
 
         // Display the precise observation geometry on the map
-        function displayObservationGeom(geojson, empty_layer) {
+        function displayObservationGeom(geojson, type_diffusion, empty_layer) {
+            var temp_layer = OccTax.layers['observationTempLayer'];
+            if (empty_layer) {
+                temp_layer.destroyFeatures();
+            }
+            if (!geojson || geojson == 'null') {
+                $('#occtax-message').remove();
+                OccTax.addTimedMessage('occtax-message', "Cette observation n'a pas de géométrie précise", 'info', 5000, true);
+                return;
+            }
             var ok = checkConnection();
             if (!ok) {
                 return;
@@ -1747,18 +1776,25 @@ OccTax.events.on({
             var geom = format.read(geojson)[0].geometry;
 
             geom.transform('EPSG:4326', OccTax.map.projection);
-            var temp_layer = OccTax.layers['observationTempLayer'];
-            var feat = new OpenLayers.Feature.Vector(geom);
-            if (empty_layer) {
-                temp_layer.destroyFeatures();
-            }
+            var feat = new OpenLayers.Feature.Vector(
+                geom,
+                {'type_diffusion': type_diffusion}
+            );
             temp_layer.addFeatures([feat]);
             temp_layer.setVisibility(true);
         }
 
-        function zoomToObservation(geojson) {
-            if (!geojson)
+        function zoomToObservation(geojson, type_diffusion) {
+
+            if (!geojson || geojson == 'null') {
+                if (type_diffusion == 'floutage') {
+                    OccTax.addTimedMessage('occtax-message', "La position de cette géométrie est floutée (sensibilité de la donnée)", 'info', 2000, true);
+                }
+                if (type_diffusion == 'vide') {
+                    OccTax.addTimedMessage('occtax-message', "Cette observation n'a pas de géométrie précise", 'info', 2000, true);
+                }
                 return;
+            }
 
             // current values
             var current_zoom = lizMap.map.getZoom();
@@ -1888,17 +1924,23 @@ OccTax.events.on({
 
                     // Activate button to zoom to observation
                     $('#occtax_fiche_zoom').click(function () {
-                        var geojson = $(this).next('span').html();
-                        zoomToObservation(geojson);
+                        let geojson = $(this).next('span.occtax_fiche_zoom_geojson').html();
+                        let type_diffusion = $(this)
+                            .next('span.occtax_fiche_zoom_geojson')
+                            .next('span.occtax_fiche_zoom_type_diffusion').html();
+                        zoomToObservation(geojson, type_diffusion);
                     });
 
                     // Highlight obs
-                    var geojson = $('#occtax_fiche_zoom').next('span').html();
-                    displayObservationGeom(geojson, true);
+                    let geojson = $('#occtax_fiche_zoom').next('span.occtax_fiche_zoom_geojson').html();
+                    let type_diffusion = $('#occtax_fiche_zoom')
+                        .next('span.occtax_fiche_zoom_geojson')
+                        .next('span.occtax_fiche_zoom_type_diffusion').html();
+                    displayObservationGeom(geojson, type_diffusion, true);
 
                     // Zoom automatically
                     if (with_nav_buttons) {
-                        zoomToObservation(geojson);
+                        zoomToObservation(geojson, type_diffusion);
                     }
 
                     // Get validity detail
@@ -3419,6 +3461,12 @@ OccTax.events.on({
                     messages.push('</thead>');
                     messages.push('<tbody>');
 
+                    let typeDiffusionDict = {
+                        'precise': naturalizLocales['output.type_diffusion.precise'],
+                        'floutage': naturalizLocales['output.type_diffusion.floutage'],
+                        'vide': naturalizLocales['output.type_diffusion.vide']
+                    };
+
                     // Add lines from cluster or single feature
                     // Only one feature
                     if (len == 1) {
@@ -3428,7 +3476,11 @@ OccTax.events.on({
                             if ($.inArray(a, avoided_properties) > -1) {
                                 continue;
                             }
-                            messages.push('<td>' + feature.attributes[a] + '</td>');
+                            let displayedValue = feature.attributes[a];
+                            if (a == 'type_diffusion') {
+                                displayedValue = typeDiffusionDict[displayedValue];
+                            }
+                            messages.push('<td>' + displayedValue + '</td>');
                         }
                         messages.push('</tr>');
                     }
@@ -3441,7 +3493,11 @@ OccTax.events.on({
                                 if ($.inArray(a, avoided_properties) > -1) {
                                     continue;
                                 }
-                                messages.push('<td>' + feature.attributes[a] + '</td>');
+                                let displayedValue = feature.attributes[a];
+                                if (a == 'type_diffusion') {
+                                    displayedValue = typeDiffusionDict[displayedValue];
+                                }
+                                messages.push('<td>' + displayedValue + '</td>');
                             }
                             messages.push('</tr>');
                         }
@@ -3474,20 +3530,18 @@ OccTax.events.on({
                         getObservationDetail(data[0], with_nav_buttons);
                     });
 
-                    // Display raw geometries if cluster is clicked
-                    // or if geometry is not point
+                    // Display raw geometry if it is not a cluster
                     OccTax.layers['observationTempLayer'].destroyFeatures();
-                    var display_raw = false;
                     if (len == 1) {
                         // Do not display if geometry is point
                         if (feature.geometry.CLASS_NAME != 'OpenLayers.Geometry.Point') {
-                            displayObservationGeom(feat_zero.attributes.geojson, true);
+                            displayObservationGeom(feat_zero.attributes.geojson, feat_zero.attributes.type_diffusion, true);
                         }
                     }
                     //else {
                     //for (var f in features) {
                     //var feature = features[f];
-                    //displayObservationGeom(feature.attributes.geojson, false);
+                    //displayObservationGeom(feature.attributes.geojson, '', false);
                     //}
                     //}
                 },
@@ -3661,6 +3715,7 @@ OccTax.events.on({
                                 .show();
                             $('#occtax_toggle_map_display').show();
                             $('#occtax_observation_records_total').val(tData.recordsTotal);
+
                             // Afficher/masquer la légende
                             $('#occtax-legend-title').click(function () {
                                 $('#occtax-legend-classes-container').toggle();

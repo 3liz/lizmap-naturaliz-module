@@ -12,6 +12,8 @@ jClasses::inc('occtax~occtaxSearchObservation');
 
 class occtaxSearchObservationExtent extends occtaxSearchObservation {
 
+    protected $name = 'extent';
+
     protected $returnFields = array(
         'cle_obs',
         'date_debut',
@@ -27,6 +29,7 @@ class occtaxSearchObservationExtent extends occtaxSearchObservation {
         'protectionlist',
         'geojson',
         'observateur',
+        'type_diffusion',
     );
 
     protected $tplFields = array(
@@ -76,17 +79,32 @@ class occtaxSearchObservationExtent extends occtaxSearchObservation {
                 'o.lb_nom_valide' => Null,
                 'o.cd_ref' => Null,
                 "o.date_debut" => Null,
-                'ST_AsGeoJSON( ST_Transform(o.geom, 4326), 6 ) AS geojson' => Null,
+                // On ne met pas ici la sortie geojson
+                // car elles vont dépendre du statut connecté et de la diffusion
+                // 'ST_AsGeoJSON( ST_Transform(o.geom, 4326), 6 ) AS geojson' => Null,
+                // "ST_Centroid(o.geom) AS geom" => NULL,
                 "o.identite_observateur" => Null,
                 "o.menace_regionale" => Null,
                 "o.menace_nationale" => Null,
                 "o.menace_monde" => Null,
                 "o.protection" => Null,
-                "ST_Centroid(o.geom) AS geom" => NULL,
+                // Est ce que la géométrie est affichable en brut,
+                "
+                    CASE
+                        WHEN geom IS NOT NULL THEN
+                            CASE
+                                WHEN o.diffusion ? 'g' THEN 'precise'
+                                ELSE 'floutage'
+                            END
+                        ELSE 'vide'
+                    END AS type_diffusion
+                " => Null,
             )
         )
 
     );
+
+    protected $extent = null;
 
     /**
      * construct
@@ -131,6 +149,50 @@ class occtaxSearchObservationExtent extends occtaxSearchObservation {
         parent::__construct($token, $params, $demande, $login);
     }
 
+    /**
+     * Récupération de la géométrie en fonction du statut de connexion
+     * et de la diffusion des données
+     *
+     */
+    protected function setReturnedGeometryFields()
+    {
+
+        if (!jAcl2::checkByUser($this->login, "visualisation.donnees.brutes") ) {
+            // On ne peut pas voir toutes les données brutes = GRAND PUBLIC
+            if (jAcl2::checkByUser($this->login, "export.geometries.brutes.selon.diffusion")) {
+                // on peut voir les géométries si la diffusion est 'g'
+                // Liste: ["g", "d", "m10", "m02", "m01", "e", "c", "z"]
+                $geojson_expression = "
+                    CASE WHEN diffusion ? 'g'
+                        THEN ST_AsGeoJSON( ST_Transform(o.geom, 4326), 6 )
+                        ELSE NULL::text
+                    END AS geojson
+                ";
+                $centroid_expression = "
+                    CASE WHEN diffusion ? 'g'
+                        THEN ST_Centroid(o.geom)
+                        ELSE NULL
+                    END AS geom
+                ";
+
+                // Utiliser comme avant la maille 10 au lieu de NULL pour le GeoJSON ?
+                //(SELECT ST_AsGeoJSON(ST_Transform(m.geom, 1) FROM sig.maille_10 m WHERE ST_Intersects(lg.geom, m.geom) LIMIT 1)::jsonb As geometry,
+            }else{
+                // on ne peut pas voir les géométries même si la diffusion le permet
+                $geojson_expression = "NULL::text AS geojson";
+                $centroid_expression = "NULL AS geom";
+            }
+        }else{
+            // On peut voir toutes les données brutes: admins ou personnes avec demandes
+            $geojson_expression = "ST_AsGeoJSON( ST_Transform(o.geom, 4326), 6 ) AS geojson";
+            $centroid_expression = "ST_Centroid(o.geom) AS geom";
+        }
+
+        // On défini l'expression pour le GeoJSON dans le querySelectors
+        $this->querySelectors['occtax.vm_observation']['returnFields'][$geojson_expression] = Null;
+        $this->querySelectors['occtax.vm_observation']['returnFields'][$centroid_expression] = Null;
+    }
+
     protected function setWhereClause(){
         // Get parent sql
         $sql = parent::setWhereClause();
@@ -143,6 +205,12 @@ class occtaxSearchObservationExtent extends occtaxSearchObservation {
             if ($extent_filter) {
                 $sql.= $extent_filter;
             }
+        }
+
+        // On récupère seulement les données avec diffusion ? 'g'
+        // sauf si droit de voir les données brutes
+        if (!jAcl2::checkByUser($this->login, "visualisation.donnees.brutes") ) {
+            $sql.= " AND diffusion ? 'g' ";
         }
 
         return $sql;

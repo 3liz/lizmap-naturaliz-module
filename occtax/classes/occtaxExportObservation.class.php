@@ -289,6 +289,8 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
                 // géométrie
                 'o.precision_geometrie' => Null,
                 'o.nature_objet_geo' => Null,
+                // On ne met pas ici les champs liés à la géométrie
+                // car cela dépend du statut connecté et de la diffusion
 
                 // diffusion
                 "o.diffusion" => Null,
@@ -302,6 +304,8 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
         ),
 
     );
+
+    protected $projection = '4326';
 
     public function __construct ($token=Null, $params=Null, $demande=Null, $projection='4326', $login=Null) {
         $this->login = $login;
@@ -317,56 +321,70 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             $children
         );
 
-        // Manage geometries
-        // We do it here because it is used by the setSql method
-        // We need to modify the returnFields of the querySelector depending on rights
+        $this->projection = $projection;
 
-        // CSV: output column "wkt"
-        // GeoJSON: output "geom" and "geojson"
-        $ckey = Null;
-        $gkey = Null;
+        parent::__construct($token, $params, $demande, $login);
+    }
 
+    /**
+     * Récupération des champs de géométrie en fonction du statut de connexion
+     * et de la diffusion des données
+     * Chaque classe héritée doit gérer son propre jeu de champs
+     * Par ex: geojson, wkt, etc.
+     *
+     */
+    protected function setReturnedGeometryFields()
+    {
         // Change export projection
         $transform = "o.geom";
-        if($projection == '4326'){
+        if($this->projection == '4326'){
             $transform = "ST_Transform(o.geom, 4326)";
         }
 
-        if (!jAcl2::checkByUser($login, "visualisation.donnees.brutes") ) {
+        if (!jAcl2::checkByUser($this->login, "visualisation.donnees.brutes") ) {
             // On ne peut pas voir toutes les données brutes = GRAND PUBLIC
-            if (jAcl2::checkByUser($login, "export.geometries.brutes.selon.diffusion")) {
+            if (jAcl2::checkByUser($this->login, "export.geometries.brutes.selon.diffusion")) {
                 // on peut voir les géométries si la diffusion est 'g'
-                $ckey = "CASE WHEN diffusion ? 'g' THEN (ST_AsText( ".$transform." )) ELSE NULL END AS wkt";
-                $gkey = " CASE WHEN diffusion ? 'g' ";
-                $gkey.= " THEN (ST_AsGeoJSON( ".$transform.", 6 ))::jsonb ";
-                $gkey.= " ELSE NULL::jsonb ";
-                $gkey.= " END AS geometry";
+                $wkt_expression = "CASE WHEN diffusion ? 'g' THEN (ST_AsText( ".$transform." )) ELSE NULL END AS wkt";
+
+                $geometry_expression = " CASE WHEN diffusion ? 'g' ";
+                $geometry_expression.= " THEN (ST_AsGeoJSON( ".$transform.", 6 ))::jsonb ";
+                $geometry_expression.= " ELSE NULL::jsonb ";
+                $geometry_expression.= " END AS geometry";
                 // Utiliser comme avant la maille 10 au lieu de NULL pour le GeoJSON ?
                 //(SELECT ST_AsGeoJSON(ST_Transform(m.geom, 1) FROM sig.maille_10 m WHERE ST_Intersects(lg.geom, m.geom) LIMIT 1)::jsonb As geometry,
 
             }else{
                 // on ne peut pas voir les géométries même si la diffusion le permet
-                $ckey = "NULL AS wkt";
-                $gkey = "NULL::jsonb AS geometry";
+                $wkt_expression = "NULL AS wkt";
+
+                $geometry_expression = "NULL::jsonb AS geometry";
             }
         }else{
             // On peut voir toutes les données brutes: admins ou personnes avec demandes
-            $ckey = "ST_AsText(".$transform.") AS wkt";
-            $gkey = "(ST_AsGeoJSON( ".$transform.", 6 ))::jsonb AS geometry";
-        }
-        if($ckey){
-            $this->querySelectors['occtax.vm_observation']['returnFields'][$ckey] = Null;
-        }
-        if($gkey){
-            $this->querySelectors['occtax.vm_observation']['returnFields'][$gkey] = Null;
-            // On doit ajouter un champ geojson car ajouté dans group by de la requête
-            $this->querySelectors['occtax.vm_observation']['returnFields']["NULL::text AS geojson"] = Null;
-        }
-        // For WFS export, add geometry only in 4326
-        $this->querySelectors['occtax.vm_observation']['returnFields']["ST_Transform(o.geom, 4326) AS geom"] = Null;
+            $wkt_expression = "ST_AsText(".$transform.") AS wkt";
 
-        parent::__construct($token, $params, $demande, $login);
+            $geometry_expression = "(ST_AsGeoJSON( ".$transform.", 6 ))::jsonb AS geometry";
+        }
+
+        // On défini l'expression pour le WKT exporté
+        // wkt
+        $this->querySelectors['occtax.vm_observation']['returnFields'][$wkt_expression] = Null;
+
+        // On défini l'expression pour la géométrie PostGIS exportée en JSONB
+        // geometry
+        $this->querySelectors['occtax.vm_observation']['returnFields'][$geometry_expression] = Null;
+
+        // On doit ajouter un champ geojson car ajouté dans group by de la requête
+        // geojson
+        $this->querySelectors['occtax.vm_observation']['returnFields']["NULL::text AS geojson"] = Null;
+
+        // WFS: on fournie la géométrie en 4326
+        // WFS est accessible seulement aux personnes connectées. On ne floute pas selon la diffusion
+        // geom
+        $this->querySelectors['occtax.vm_observation']['returnFields']["ST_Transform(o.geom, 4326) AS geom"] = Null;
     }
+
 
     function setSql() {
         parent::setSql();
@@ -443,7 +461,10 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
             }
         }
         $sql.= ") foo";
-//jLog::log($sql);
+
+        // if($topic == 'principal'){
+        //     \jLog::log($sql);
+        // }
 
         // Use COPY: DEACTIVATED BECAUSE NEEDS SUPERUSER PG RIGHTS
         //$sqlcopy = " COPY (" . $sql ;
@@ -751,7 +772,7 @@ class occtaxExportObservation extends occtaxSearchObservationBrutes {
 --        ) As fc
         ";
 
-//jLog::log($sql);
+// jLog::log($sql);
 
         // Create temporary file name
         $path = '/tmp/'.time().session_id().'.geojson';

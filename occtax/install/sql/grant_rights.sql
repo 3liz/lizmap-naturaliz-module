@@ -1,4 +1,5 @@
 
+
 -- Ajout des droits sur les objets de la base pour naturaliz
 GRANT CONNECT ON DATABASE {$DBNAME} TO "{$DBUSER_READONLY}";
 GRANT USAGE ON SCHEMA public,taxon,sig,occtax,gestion TO "{$DBUSER_READONLY}";

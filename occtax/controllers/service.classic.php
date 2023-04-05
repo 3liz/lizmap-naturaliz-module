@@ -27,14 +27,22 @@ class serviceCtrl extends jController
 
         // Get SRID
         $localConfig = jApp::configPath('naturaliz.ini.php');
-        $ini = new jIniFileModifier($localConfig);
-        $srid = $ini->getValue('srid', 'naturaliz');
+        $ini = parse_ini_file($localConfig, true);
+        $srid = '2975';
+        if (array_key_exists('naturaliz', $ini) && array_key_exists('srid', $ini['naturaliz'])) {
+            $srid = $ini['naturaliz']['srid'];
+        }
         $this->srid = $srid;
 
         // Mailles
-        $mailles_a_utiliser = $ini->getValue('mailles_a_utiliser', 'naturaliz');
-        if (!$mailles_a_utiliser or empty(trim($mailles_a_utiliser))) {
-            $mailles_a_utiliser = 'maille_02,maille_10';
+        $mailles_a_utiliser = 'maille_02,maille_10';
+        if (array_key_exists('naturaliz', $ini)
+            && array_key_exists('mailles_a_utiliser', $ini['naturaliz'])
+        ) {
+            $mailles = $ini['naturaliz']['mailles_a_utiliser'];
+            if (!$mailles || empty(trim($mailles))) {
+                $mailles_a_utiliser = $mailles;
+            }
         }
         $this->mailles_a_utiliser = array_map('trim', explode(',', $mailles_a_utiliser));
 
@@ -132,6 +140,7 @@ class serviceCtrl extends jController
             'status' => 1,
             'token' => $occtaxSearch->getToken(),
             'recordsTotal' => $occtaxSearch->getRecordsTotal(),
+            'typeDiffusionCounts' => $occtaxSearch->getCountsByTypeDiffusion(),
             'recordsExtent' => $occtaxSearch->getRecordsExtent(),
             'description' => $description,
             'wfsUrl' => $wfsUrl
@@ -183,26 +192,27 @@ class serviceCtrl extends jController
             'msg' => array()
         );
 
-        // Do not return data if not connected for observations
-        if ($searchClassName == 'occtaxSearchObservation' || $searchClassName == 'occtaxSearchObservationExtent') {
-            if (!jAcl2::check("visualisation.donnees.brutes")) {
-                $return['status'] = 0;
-                $return['msg'][] = jLocale::get('occtax~search.form.error.right');
-                $rep->data = $return;
-                return $rep;
-            }
-        }
+        // Supprimé le 29/03/2023 pour permettre d'afficher pour le grand public la table des observations
+        // // Do not return data if not connected for observations
+        // if ($searchClassName == 'occtaxSearchObservation' || $searchClassName == 'occtaxSearchObservationExtent') {
+        //     if (!jAcl2::check("visualisation.donnees.brutes")) {
+        //         $return['status'] = 0;
+        //         $return['msg'][] = jLocale::get('occtax~search.form.error.right');
+        //         $rep->data = $return;
+        //         return $rep;
+        //     }
+        // }
 
         // Get occtaxSearch from token
         $token = $this->param('token');
-        if (!$token || $token == '' || !isset($_SESSION['occtaxSearch' . $token])) {
+        if (!$token || $token == '' || !isset($_SESSION['occtaxSearch'.$token])) {
             $return['status'] = 0;
             $return['msg'][] = jLocale::get('occtax~search.invalid.token');
             $rep->data = $return;
             return $rep;
         }
 
-        jClasses::inc('occtax~' . $searchClassName);
+        jClasses::inc('occtax~'.$searchClassName);
 
         // Get user login
         $login = Null;
@@ -247,7 +257,7 @@ class serviceCtrl extends jController
             $return['status'] = 0;
             $return['msg'][] = jLocale::get('occtax~search.form.error.query');
             $message = $e->getMessage();
-            \jLog::log('Naturaliz error: ' . $message, 'error');
+            \jLog::log('Naturaliz error: '.$message, 'error');
             $rep->data = $return;
             return $rep;
         }
@@ -347,7 +357,7 @@ class serviceCtrl extends jController
         $cnx = jDb::getConnection('naturaliz_virtual_profile');
         $sql = ' SELECT cd_nom, nom_valide';
         $sql .= ' FROM taxon.taxref_consolide';
-        $sql .= ' WHERE cd_ref = ' . $cd_nom;
+        $sql .= ' WHERE cd_ref = '.$cd_nom;
         $result = $cnx->limitQuery($sql, 0, 1);
         $d = $result->fetch();
         if ($d) {
@@ -355,7 +365,7 @@ class serviceCtrl extends jController
             $return['status'] = 1;
             $return['result'] = $d;
         } else {
-            $return['msg'][] = jLocale::get($this->moduleName . '~search.getCommune.error');
+            $return['msg'][] = jLocale::get($this->moduleName.'~search.getCommune.error');
         }
         // Return data
         $rep->data = $return;
@@ -462,8 +472,8 @@ class serviceCtrl extends jController
         }
 
         $time = time();
-        $form->saveFile('geojson', jApp::varPath('uploads'), $time . '_' . $_FILES['geojson']['name']);
-        $json = jFile::read(jApp::varPath('uploads/' . $time . '_' . $_FILES['geojson']['name']));
+        $form->saveFile('geojson', jApp::varPath('uploads'), $time.'_'.$_FILES['geojson']['name']);
+        $json = jFile::read(jApp::varPath('uploads/'.$time.'_'.$_FILES['geojson']['name']));
         $json = json_decode($json);
         $return['result'] = $json;
         if (
@@ -532,7 +542,7 @@ class serviceCtrl extends jController
         $cnx = jDb::getConnection('naturaliz_virtual_profile');
         $sql = ' SELECT jdd_id, jdd_code, jdd_libelle, jdd_description';
         $sql .= ' FROM occtax.jdd';
-        $sql .= ' WHERE jdd_id = ' . $jdd_id . '::text';
+        $sql .= ' WHERE jdd_id = '.$jdd_id.'::text';
         $result = $cnx->limitQuery($sql, 0, 1);
         $d = $result->fetch();
         if ($d) {
@@ -540,7 +550,7 @@ class serviceCtrl extends jController
             $return['status'] = 1;
             $return['result'] = $d;
         } else {
-            $return['msg'][] = jLocale::get($this->moduleName . '~search.getCommune.error');
+            $return['msg'][] = jLocale::get($this->moduleName.'~search.getCommune.error');
         }
 
         // Return data

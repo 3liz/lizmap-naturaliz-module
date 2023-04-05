@@ -26,13 +26,17 @@ class occtaxSearchObservation extends occtaxSearch {
         //'source_objet',
         'observateur',
         'validite',
+        'type_diffusion',
     );
 
     protected $tplFields = array(
         'date_debut_buttons' => '
             {$line->date_debut}
             <br/><a class="openObservation" href="#" title="{@occtax~search.output.detail.title@}"><i class="icon-file"></i></a>
-            <a class="zoomToObservation" href="#" title="{@occtax~search.output.zoom.title@}"><i class="icon-search"></i></a>
+            <a class="zoomToObservation {$line->type_diffusion}" href="#" title="{jlocale "search.output.zoom.title".".".$line->type_diffusion}">
+                <i class="icon-search"></i>
+            </a>
+
         ',
 
         'lien_nom_valide' => '
@@ -87,9 +91,23 @@ class occtaxSearchObservation extends occtaxSearch {
                 'o.cd_ref' => Null,
                 "o.date_debut" => Null,
                 "o.source_objet" => Null,
-                'ST_AsGeoJSON( ST_Transform(o.geom, 4326), 6 ) AS geojson' => Null,
-                'o.geom' => Null,
+                // On ne met pas ici les champs liés à la géométrie
+                // car cela dépend du statut connecté et de la diffusion
+                // 'ST_AsGeoJSON( ST_Transform(o.geom, 4326), 6 ) AS geojson' => Null,
+                // 'o.geom' => Null,
                 "o.diffusion" => Null,
+                // Est ce que la géométrie est affichable en brut,
+                "
+                    CASE
+                        WHEN geom IS NOT NULL THEN
+                            CASE
+                                WHEN o.diffusion ? 'g' THEN 'precise'
+                                ELSE 'floutage'
+                            END
+                        ELSE 'vide'
+                    END AS type_diffusion
+                " => Null,
+
                 "o.identite_observateur" => Null,
                 "o.menace_regionale" => Null,
                 "o.menace_nationale" => Null,
@@ -365,6 +383,7 @@ class occtaxSearchObservation extends occtaxSearch {
     public function __construct ($token=Null, $params=Null, $demande=Null, $login=Null) {
         $this->login = $login;
 
+        // Gestion des champs de menace
         if (array_key_exists('lien_nom_valide', $this->tplFields)) {
             // Get local configuration (application name, projects name, list of fields, etc.)
             $localConfig = jApp::configPath('naturaliz.ini.php');
@@ -484,9 +503,53 @@ class occtaxSearchObservation extends occtaxSearch {
             // todo
         }
 
+        // Manage geometries
+        // We do it here because it is used by the setSql method
+        // We need to modify the returnFields of the querySelector depending on rights
+        $this->setReturnedGeometryFields();
+
         parent::__construct($token, $params, $demande, $login);
     }
 
+    /**
+     * Récupération des champs de géométrie en fonction du statut de connexion
+     * et de la diffusion des données
+     * Chaque classe héritée doit gérer son propre jeu de champs
+     * Par ex: geojson, wkt, etc.
+     *
+     */
+    protected function setReturnedGeometryFields()
+    {
+        if (!jAcl2::checkByUser($this->login, "visualisation.donnees.brutes") ) {
+            // On ne peut pas voir toutes les données brutes = GRAND PUBLIC
+            if (jAcl2::checkByUser($this->login, "export.geometries.brutes.selon.diffusion")) {
+                // on peut voir les géométries si la diffusion est 'g'
+                $geom_expression = " CASE WHEN diffusion ? 'g' ";
+                $geom_expression.= " THEN o.geom ";
+                $geom_expression.= " ELSE NULL::geometry(point, 4326) ";
+                $geom_expression.= " END AS geom";
+
+                $geojson_expression = " CASE WHEN diffusion ? 'g' ";
+                $geojson_expression.= " THEN ST_AsGeoJSON( ST_Transform(o.geom, 4326), 6 ) ";
+                $geojson_expression.= " ELSE NULL::text ";
+                $geojson_expression.= " END AS geojson";
+                // Utiliser comme avant la maille 10 au lieu de NULL pour le GeoJSON ?
+                //(SELECT ST_AsGeoJSON(ST_Transform(m.geom, 1) FROM sig.maille_10 m WHERE ST_Intersects(lg.geom, m.geom) LIMIT 1)::jsonb As geometry,
+            }else{
+                // on ne peut pas voir les géométries même si la diffusion le permet
+                $geom_expression = " NULL::geometry(point, 4326) AS geom";
+                $geojson_expression = "NULL::text AS geojson";
+            }
+        }else{
+            // On peut voir toutes les données brutes: admins ou personnes avec demandes
+            $geom_expression = "o.geom";
+            $geojson_expression = "ST_AsGeoJSON( ST_Transform(o.geom, 4326), 6 ) AS geojson";
+        }
+
+        // On défini l'expression pour le GeoJSON dans le querySelectors
+        $this->querySelectors['occtax.vm_observation']['returnFields'][$geom_expression] = Null;
+        $this->querySelectors['occtax.vm_observation']['returnFields'][$geojson_expression] = Null;
+    }
 
     /**
      * Get search description
@@ -517,27 +580,44 @@ class occtaxSearchObservation extends occtaxSearch {
 
         // Dot not query sensitive data if user has queried via spatial tools
         // to avoid guessing position of sensitive data
-        $login = $this->login;
-        if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
-            $qf = $this->queryFilters;
-            $blackQueryParams = array('code_maille', 'code_masse_eau', 'code_commune');
-            $qMatch = array(
-                'code_maille_10' => 'm10',
-                'code_commune' => 'c'
+        // Pour les mailles, pas de souci
+        if( !jAcl2::checkByUser($this->login, "visualisation.donnees.brutes") ){
+            // Paramètres sensibles
+            // NB: code_maille est utilisé pour les requêtes par maille 01, 02 et 10
+            $blackQueryParams = array(
+                'code_maille',
+                // la maille n'est plus passée en code mais utilisée comme géométrie
+                // dans queryFilter, plus de code_maille du coup pas besoin ici normalement
+                'code_masse_eau',
+                'code_commune'
             );
-            foreach( $this->params as $k=>$v ){
-                if( array_key_exists( $k, $qf ) and $v and !in_array($qf[$k]['type'], array('geom'))){
-                    if( in_array($k, $blackQueryParams) ){
-                        $asql = '';
+            $matchDiffusionCodeFromParam = array(
+                'code_maille_10' => 'm10',
+                'code_commune' => 'c',
+                'code_masse_eau' => 'c',
+                // on considère qu'une masse d'eau est comme une commune
+                // car pas de code 'me' dans le champ diffusion
+            );
+
+            // On boucle sur les paramètres
+            foreach( $this->params as $param=>$v ){
+                if( array_key_exists($param, $this->queryFilters)
+                    && $v
+                    && !in_array($this->queryFilters[$param]['type'], array('geom'))
+                ){
+                    // Si le paramètre passé est dans la liste sensible
+                    // on ajoute un filtre pour ne montrer que les données 'g' et
+                    if( in_array($param, $blackQueryParams) ){
+                        $filterSql = '';
                         // Keep only data with open diffusion
-                        $asql.= " AND ( o.diffusion ? 'g' ";
+                        $filterSql.= " AND ( o.diffusion ? 'g' ";
                         // Keep also some more data based on query type
-                        if( array_key_exists($k, $qMatch) ){
-                            $asql.= " OR o.diffusion ? '".$qMatch[$k]."' ";
+                        if( array_key_exists($param, $matchDiffusionCodeFromParam) ){
+                            $filterSql.= " OR o.diffusion ? '".$matchDiffusionCodeFromParam[$param]."' ";
                         }
-                        $asql.= ' ) ';
-//jLog::log($asql);
-                        $sql.= $asql;
+                        $filterSql.= ' ) ';
+                        // \jLog::log($filterSql);
+                        $sql.= $filterSql;
 
                     }
                 }
@@ -547,7 +627,7 @@ class occtaxSearchObservation extends occtaxSearch {
         // Show only validated data for unauthenticated users ("grand public")
         // Désactivé pour passage en OpenData en mars 2023 : le public doit pouvoir
         // avoir accès à toutes les données
-        // if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
+        // if( !jAcl2::checkByUser($this->login, "visualisation.donnees.brutes") ){
         //     $sql.= " AND niv_val_regionale IN ( ".$this->validite_niveaux_grand_public." ) ";
         // }
 

@@ -10,6 +10,8 @@
 
 class occtaxSearch {
 
+    protected $name = null;
+
     protected $login = Null;
 
     protected $isConnected = False;
@@ -20,7 +22,20 @@ class occtaxSearch {
 
     protected $taxon_params = array();
 
+    // Nombre de données renvoyées par la requête
     protected $recordsTotal = Null;
+
+    // Nombre de taxons renvoyés par la requête
+    protected $nb_taxon = Null;
+
+    // Nombre d'observations avec géométrie précise renvoyées par la requête
+    protected $nb_precise = Null;
+
+    // Nombre d'observations avec géométrie floutée pour diffusion renvoyées par la requête
+    protected $nb_floutage = Null;
+
+    // Nombre d'observations sans géométrie précise renvoyées par la requête
+    protected $nb_vide = Null;
 
     protected $recordsExtent = Null;
 
@@ -64,6 +79,25 @@ class occtaxSearch {
 
     protected $nomenclatureFields = array();
 
+    /**
+     * Gestion de la recherche
+     * Cette classes est utilisée en héritage par plusieurs classes
+     *
+     * Voici la hiérarchie
+     * occtaxSearch
+     *     occtaxSearchObservation : observation
+     *         occtaxSearchObservationExtent: extent
+     *         occtaxSearchObservationBrutes: brute
+     *             occtaxExportObservation: export
+     *             occtaxSearchSingleObservation: single
+     *         occtaxSearchObservationJdd: jdd
+     *         occtaxSearchObservationStats: stats
+     *         occtaxSearchObservationTaxon: taxon
+     *         occtaxSearchObservationMaille: maille
+     *             occtaxSearchObservationMaille02: maille_02
+     *             occtaxSearchObservationMaille05: maille_05
+     *             occtaxSearchObservationMaille10: maille_10
+     */
     public function __construct ($token=Null, $params=Null, $demande=Null, $login=Null) {
         $this->login = $login;
 
@@ -81,6 +115,7 @@ class occtaxSearch {
         $cache = $this->getFromCache($token);
         if($cache){
             $this->params = $cache['params'];
+            $this->recordsTotal = $cache['recordsTotal'];
             $this->recordsTotal = $cache['recordsTotal'];
             $this->token = $token;
         }else{
@@ -139,6 +174,16 @@ class occtaxSearch {
       return $this->params;
     }
 
+    /**
+     * Récupération des champs de géométrie en fonction du statut de connexion
+     * et de la diffusion des données
+     * Chaque classe héritée doit gérer son propre jeu de champs
+     * Par ex: geojson, wkt, etc.
+     *
+     */
+    protected function setReturnedGeometryFields()
+    {
+    }
 
     /**
      * Set legend classes for grid from configuration
@@ -206,6 +251,10 @@ class occtaxSearch {
         }
         $tpl->assign('filters', $filters);
         $tpl->assign('nb', $this->recordsTotal );
+        $tpl->assign('nb_taxon', $this->nb_taxon );
+        $tpl->assign('nb_precise', $this->nb_precise );
+        $tpl->assign('nb_floutage', $this->nb_floutage );
+        $tpl->assign('nb_vide', $this->nb_vide );
         $s = '';
         if( $this->recordsTotal > 1 )
             $s = 's';
@@ -463,18 +512,51 @@ class occtaxSearch {
     }
 
     /**
+     * Get the number of observations
+     * foreach diffusion category
+    */
+    public function getCountsByTypeDiffusion()
+    {
+        return array(
+            'nb_taxon' => $this->nb_taxon,
+            'nb_precise' => $this->nb_precise,
+            'nb_floutage' => $this->nb_floutage,
+            'nb_vide' => $this->nb_vide,
+        );
+    }
+
+    /**
     * Calculate the total number of records
     * and set the object property
     */
     function setRecordsTotal() {
         if( $this->sql ) {
             $cnx = jDb::getConnection('naturaliz_virtual_profile');
-            $sql = "SELECT count(*) AS nb FROM (";
+            $sql = " SELECT
+                count(*) AS nb
+            ";
+            if ($this->name == 'observation') {
+                $sql .= ",
+                count(DISTINCT cd_ref) AS nb_taxon,
+                count(*) FILTER (WHERE type_diffusion='precise') AS nb_precise,
+                count(*) FILTER (WHERE type_diffusion='floutage') AS nb_floutage,
+                count(*) FILTER (WHERE type_diffusion='vide') AS nb_vide
+                ";
+            }
+            $sql .= "
+            FROM (
+            ";
             $sql.= $this->sql;
             $sql.= ") AS foo;";
             $result = $cnx->query( $sql );
             foreach( $result->fetchAll() as $line ) {
                 $this->recordsTotal = $line->nb;
+                if ($this->name == 'observation') {
+                    $this->nb_taxon = $line->nb_taxon;
+                    $this->nb_precise = $line->nb_precise;
+                    $this->nb_floutage = $line->nb_floutage;
+                    $this->nb_vide = $line->nb_vide;
+                }
             }
         }
     }
@@ -788,6 +870,7 @@ class occtaxSearch {
             $item = array();
             // Get fields from result
             foreach( $this->returnFields as $field ) {
+
                 // If property key is one of the columns returned by the query
                 if( property_exists( $line, $field ) ) {
                     $val = $line->$field;

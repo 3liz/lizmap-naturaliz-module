@@ -87,6 +87,8 @@ class observationCtrl extends jController {
         $geostring = json_encode($data['geojson']);
         $data['geojson'] = $geostring;
 
+        \jLog::log(json_encode($data), 'error');
+
         // Read local config
         $localConfig = jApp::configPath('naturaliz.ini.php');
         $ini = new jIniFileModifier($localConfig);

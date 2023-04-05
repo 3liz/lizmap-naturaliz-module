@@ -124,4 +124,12 @@ class occtaxSearchObservationTaxon extends occtaxSearchObservation {
 
     }
 
+    /**
+     * We must override this method here to avoid aggregate errors
+     *
+     */
+    protected function setReturnedGeometryFields()
+    {
+    }
+
 }

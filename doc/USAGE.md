@@ -175,13 +175,15 @@ Enfin, ce projet offre 2 autres couches avec une popup :
 
 ## Gestion de la sensibilité des données
 
-Les modalités de diffusion des données sont définies par la charte régionale du SINP.
-Cette dernière prévoit deux niveaux d’accès : experts et professionnels, ou grand public.
-Les experts et professionnels accèdent aux données précisément géolocalisées
-sur la base d’une demande à formuler sur Borbonica.
-Les adhérents à la charte régionale bénéficient d’un accès facilité.
-Le grand public accède aux données à des données moins précises.
-Le niveau de diffusion au grand public résulte de la combinaison de plusieurs paramètres,
+Les modalités de **diffusion des données** sont définies par la **charte régionale** du SINP.
+Cette dernière prévoit deux niveaux d’accès :
+
+* **experts et professionnels** : ils accèdent aux données précisément géolocalisées
+  sur la base d’une demande à formuler sur la plate-forme.
+  Les **adhérents** à la charte régionale bénéficient d’un accès facilité.
+* Le grand public : il accède à des données moins précises ou floutées.
+
+Le **niveau de diffusion** au grand public résulte de la combinaison de plusieurs paramètres,
 hiérarchisés ci-dessous (du plus important au moins important) :
 
 * **statut de validation** de la donnée (champ `validite_niveau`) : seules les données
@@ -201,12 +203,12 @@ Le logigramme suivant synthétise les différents cas de figure possibles:
 
 ### Calcul automatique de sensibilité selon des critères
 
-La sensibilité des observations peut être décidée pendant l'import des données,
+La **sensibilité** des observations peut être décidée pendant l'import des données,
 ou bien après l'import, via une liste de conditions pré-établie.
 La sensibilité des observations dépend en effet de nombreux critères sur les taxons,
 la position de l'observation, les commentaires, et d'autres conditions spécifiques.
 
-L'application Naturaliz permet de stocker l'ensemble des critères de sensibilité dans
+L'application Naturaliz permet de stocker l'ensemble des **critères de sensibilité** dans
 la table `occtax.critere_sensibilite`, puis de les utiliser pour calculer automatiquement la sensibilité
 de chaque observation via une fonction PostgreSQL `occtax.calcul_niveau_sensibilite`.
 
@@ -256,21 +258,34 @@ pour créer un critère qui teste l'intersection entre les observations et des p
 Des exemples complexes montrent comment utiliser un filtre sur `descriptif_sujet`
 
 
-### Vue matérialisée pour gérer la diffusion des données à partir de cette sensibilité
+### Visualisation des données selon la diffusion
 
 Le champ utilisé pour faire les filtres et restreindre les données affichées
 est le champ `diffusion` de la vue matérialisée `occtax.vm_observation`
-qui contient un tableau JSON des diffusions possibles.
+qui contient un tableau `JSON` des diffusions possibles.
 
-Pour l'instant dans l'application, cette diffusion n'est utilisée pour filtrer que si la personne
-n'a pas le droit de voir les données brutes, c'est-à-dire seulement pour les personnes non connectées,
-soit le grand public.
+Par exemple, pour une observation qui a la diffusion maximale,
+le JSON vaut `["g", "d", "m10", "m02", "m01", "e", "c", "z"]`.
 
-Comme le grand public ne peut pas accéder aux données brutes sur la carte (onglet Observations)
-ou via les exports (seul l'export CSV lui est possible sans la géométrie), les garde-fous sont positionnés
+Ce champs peut contenir un ou plusieurs codes :
+
+* `g`: la **géométrie brute** est accessible, c'est-à-dire la position exacte
+* `d`: diffusion départementale de la donnée
+* `m10`: diffusion possible à la **maille 10km**
+* `m02`: diffusion possible à la **maille 2km**
+* `m01`: diffusion possible à la **maille 1km**
+* `e`: diffusion possible à l'**espace naturel**
+* `c`: diffusion possible à la **commune**
+* `z`: diffusion possible à la **znieff**
+
+Les garde-fous sont positionnés
 sur les mailles renvoyées, et sur les possibilités de recherche spatiale.
 
 Dans ce cas, la diffusion est utilisée dans les situations suivantes :
+
+* Le **grand public** ne voit sur la carte que les observations dont la diffusion contient `g`.
+  Les autres observations ressortent dans le tableau de résultat, mais sans possibilité de zoomer
+  sur la position
 
 * la récupération d'une maille à interroger, lorsqu'on clique sur la carte pour récupérer une maille
 * sur laquelle filtrer (boutons spatiaux du formulaire de recherche).

@@ -68,11 +68,11 @@ class occtaxGeometryChecker {
         $sql = 'SELECT c.code_commune, c.nom_commune, ST_AsGeoJSON( ST_Transform(c.geom, 4326), 8 ) AS geojson';
         $sql.= ' FROM sig.commune c';
         if ($this->x) {
-            $sql.= ', ( SELECT ST_Transform(ST_SetSRID(ST_MakePoint('.$this->x.', '.$this->y.'),4326), '. $this->srid .') as geom ) as tgeo';
+            $sql.= ', ( SELECT ST_Transform(ST_SetSRID(ST_MakePoint('.$this->x.', '.$this->y.'),4326), '.$this->srid.') as geom ) as tgeo';
             $sql.= ' WHERE ST_Within( tgeo.geom, c.geom )';
         }
         if ($this->code) {
-            $sql.= ' WHERE c.code_commune = ' . $cnx->quote($this->code);
+            $sql.= ' WHERE c.code_commune = '.$cnx->quote($this->code);
         }
 //~ jLog::log($sql);
         $result = $cnx->limitQuery( $sql, 0, 1 );
@@ -82,7 +82,7 @@ class occtaxGeometryChecker {
             $return['status'] = 1;
             $return['result'] = $d;
         } else {
-            $return['msg'][] = jLocale::get( $this->moduleName . '~search.getCommune.error' );
+            $return['msg'][] = jLocale::get( $this->moduleName.'~search.getCommune.error' );
         }
 
         // Return data
@@ -107,11 +107,11 @@ class occtaxGeometryChecker {
         $sql = 'SELECT me.code_me, me.nom_me, ST_AsGeoJSON( ST_Transform(me.geom, 4326), 8 ) AS geojson';
         $sql.= ' FROM sig.masse_eau me';
         if ($this->x) {
-            $sql.= ', ( SELECT ST_Transform(ST_SetSRID(ST_MakePoint('.$this->x.', '.$this->y.'),4326), '. $this->srid .') as geom ) as tgeo';
+            $sql.= ', ( SELECT ST_Transform(ST_SetSRID(ST_MakePoint('.$this->x.', '.$this->y.'),4326), '.$this->srid.') as geom ) as tgeo';
             $sql.= ' WHERE ST_Within( tgeo.geom, me.geom )';
         }
         if ($this->code) {
-            $sql.= ' WHERE me.code_me = ' . $cnx->quote($this->code);
+            $sql.= ' WHERE me.code_me = '.$cnx->quote($this->code);
         }
         $result = $cnx->limitQuery( $sql, 0, 1 );
         $d = $result->fetch();
@@ -120,7 +120,7 @@ class occtaxGeometryChecker {
             $return['status'] = 1;
             $return['result'] = $d;
         } else {
-            $return['msg'][] = jLocale::get( $this->moduleName . '~search.getMasseEau.error' );
+            $return['msg'][] = jLocale::get( $this->moduleName.'~search.getMasseEau.error' );
         }
 
         // Return data
@@ -140,8 +140,15 @@ class occtaxGeometryChecker {
         if( count($return['msg']) > 0 )
             return $return;
 
+        // Get user login
+        $login = Null;
+        $user = jAuth::getUserSession();
+        if ($user) {
+            $login = $user->login;
+        }
+
         $maille = 'maille_02';
-        if ( $this->type_maille == 'm01' and jAcl2::checkByUser($login, "visualisation.donnees.maille_01") ){
+        if ( $this->type_maille == 'm01' && jAcl2::checkByUser($login, "visualisation.donnees.maille_01") ){
           $maille = 'maille_01';
         }
         //if( $this->type_maille == 'm05')
@@ -150,11 +157,11 @@ class occtaxGeometryChecker {
             $maille = 'maille_10';
 
         $cnx = jDb::getConnection('naturaliz_virtual_profile');
-        if($this->moduleName == 'occtax'){
+        if ($this->moduleName == 'occtax')   {
             $sql = 'SELECT m.code_maille, m.nom_maille, ST_AsGeoJSON(ST_Transform( m.geom , 4326)) AS geojson ';
             $sql.= ' FROM sig.'.$maille.' m';
             if ($this->x) {
-                $sql.= ', (SELECT ST_Transform(ST_SetSRID(ST_MakePoint('.$this->x.', '.$this->y.'),4326), '. $this->srid .') as geom) as tgeo';
+                $sql.= ', (SELECT ST_Transform(ST_SetSRID(ST_MakePoint('.$this->x.', '.$this->y.'),4326), '.$this->srid.') as geom) as tgeo';
             }
             $sql.= ', occtax.observation o';
             $sql.= ' WHERE True';
@@ -162,12 +169,14 @@ class occtaxGeometryChecker {
                 $sql.= ' AND ST_Within( tgeo.geom, m.geom )';
             }
             if ($this->code) {
-                $sql.= ' AND m.code_maille = ' . $cnx->quote($this->code);
+                $sql.= ' AND m.code_maille = '.$cnx->quote($this->code);
             }
             $sql.= ' AND ST_Intersects( o.geom, m.geom )';
-            $sql.= " AND ( occtax.calcul_diffusion(o.sensi_niveau, o.ds_publique, o.diffusion_niveau_precision) ? 'g'
-            OR
-            occtax.calcul_diffusion(o.sensi_niveau, o.ds_publique, o.diffusion_niveau_precision) ? '" . $this->type_maille . "' )";
+            $sql.= "
+            AND ( occtax.calcul_diffusion(o.sensi_niveau, o.ds_publique, o.diffusion_niveau_precision) ? 'g'
+                OR
+                occtax.calcul_diffusion(o.sensi_niveau, o.ds_publique, o.diffusion_niveau_precision) ? '".$this->type_maille."' )
+            ";
         }
 
 // jLog::log($sql, 'error');
@@ -179,7 +188,7 @@ class occtaxGeometryChecker {
             $return['status'] = 1;
             $return['result'] = $d;
         } else {
-            $return['msg'][] = jLocale::get( $this->moduleName . '~search.getMaille.error' );
+            $return['msg'][] = jLocale::get( $this->moduleName.'~search.getMaille.error' );
         }
 
         // Return data

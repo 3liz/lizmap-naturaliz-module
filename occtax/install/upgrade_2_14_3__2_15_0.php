@@ -60,7 +60,6 @@ class occtaxModuleUpgrader_2_14_3__2_15_0 extends jInstallerModule //\Jelix\Inst
             );
             // Champs renommés dans le standard
             $renamed_fields = array(
-                'jdd_metadonnee_dee_id' => 'id_sinp_jdd',
                 'identifiant_origine' => 'id_origine',
                 'identifiant_permanent' => 'id_sinp_occtax',
                 'jdd_metadonnee_dee_id' => 'id_sinp_jdd',

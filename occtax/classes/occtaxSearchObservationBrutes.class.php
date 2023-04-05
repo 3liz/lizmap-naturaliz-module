@@ -103,7 +103,9 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
             // geometrie
             'precision_geometrie' => "Real",
             'nature_objet_geo' => "String",
-            'geojson' => "String",
+            // On ne met pas ici les champs liés à la géométrie
+            // car cela dépend du statut connecté et de la diffusion
+            // 'geojson' => "String",
             'source_objet' => "String",
 
             // acteurs
@@ -262,12 +264,25 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
                 // geometrie
                 'o.precision_geometrie' => Null,
                 'o.nature_objet_geo' => Null,
-                'ST_Transform(o.geom, 4326) AS geom' => Null,
-                'ST_AsGeoJSON( ST_Transform(o.geom, 4326), 6 ) AS geojson' => Null,
+                // On ne met pas ici les champs liés à la géométrie
+                // car cela dépend du statut connecté et de la diffusion
+                // 'ST_Transform(o.geom, 4326) AS geom' => Null,
+                // 'ST_AsGeoJSON( ST_Transform(o.geom, 4326), 6 ) AS geojson' => Null,
                 "o.source_objet" => Null,
 
                 // diffusion
                 "o.diffusion" => Null,
+                // Est ce que la géométrie est affichable en brut,
+                "
+                    CASE
+                        WHEN geom IS NOT NULL THEN
+                            CASE
+                                WHEN o.diffusion ? 'g' THEN 'precise'
+                                ELSE 'floutage'
+                            END
+                        ELSE 'vide'
+                    END AS type_diffusion
+                " => Null,
 
                 // personnes
                 "o.identite_observateur AS observateur" => Null,
@@ -331,6 +346,46 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         }
 
         parent::__construct($token, $params, $demande, $login);
+    }
+
+    /**
+     * Récupération des champs de géométrie en fonction du statut de connexion
+     * et de la diffusion des données
+     * Chaque classe héritée doit gérer son propre jeu de champs
+     * Par ex: geojson, wkt, etc.
+     *
+     */
+    protected function setReturnedGeometryFields()
+    {
+        if (!jAcl2::checkByUser($this->login, "visualisation.donnees.brutes") ) {
+            // On ne peut pas voir toutes les données brutes = GRAND PUBLIC
+            if (jAcl2::checkByUser($this->login, "export.geometries.brutes.selon.diffusion")) {
+                // on peut voir les géométries si la diffusion est 'g'
+                $geom_expression = " CASE WHEN diffusion ? 'g' ";
+                $geom_expression.= " THEN ST_Transform(o.geom, 4326) ";
+                $geom_expression.= " ELSE NULL::geometry(point, 4326) ";
+                $geom_expression.= " END AS geom";
+
+                $geojson_expression = " CASE WHEN diffusion ? 'g' ";
+                $geojson_expression.= " THEN ST_AsGeoJSON( ST_Transform(o.geom, 4326), 6 ) ";
+                $geojson_expression.= " ELSE NULL::text ";
+                $geojson_expression.= " END AS geojson";
+                // Utiliser comme avant la maille 10 au lieu de NULL pour le GeoJSON ?
+                //(SELECT ST_AsGeoJSON(ST_Transform(m.geom, 1) FROM sig.maille_10 m WHERE ST_Intersects(lg.geom, m.geom) LIMIT 1)::jsonb As geometry,
+            }else{
+                // on ne peut pas voir les géométries même si la diffusion le permet
+                $geom_expression = " NULL::geometry(point, 4326) AS geom";
+                $geojson_expression = "NULL::text AS geojson";
+            }
+        }else{
+            // On peut voir toutes les données brutes: admins ou personnes avec demandes
+            $geom_expression = "ST_Transform(o.geom, 4326) AS geom";
+            $geojson_expression = "ST_AsGeoJSON( ST_Transform(o.geom, 4326), 6 ) AS geojson";
+        }
+
+        // On défini l'expression pour le GeoJSON dans le querySelectors
+        $this->querySelectors['occtax.vm_observation']['returnFields'][$geom_expression] = Null;
+        $this->querySelectors['occtax.vm_observation']['returnFields'][$geojson_expression] = Null;
     }
 
     // Override getResult to get all data (no limit nor offset)
@@ -542,7 +597,7 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         // Keep only data where diffusion is possible
         $login = $this->login;
         if( !jAcl2::checkByUser($login, "visualisation.donnees.brutes") ){
-            $sql.= " AND foo.diffusion ? 'e' ";
+            $sql.= " AND foo.diffusion ? 'c' ";
             // Désactivé pour passage en OpenData en mars 2023 : le public doit pouvoir
             // avoir accès à toutes les données
             // $sql.= " AND foo.niv_val_regionale IN ( ".$this->validite_niveaux_grand_public." )";
@@ -639,12 +694,15 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
 
         // Principal topic : we should remove sensitive data
         if( $topic == 'principal' ){
-
             $login = $this->login;
             if(!jAcl2::checkByUser($login, "visualisation.donnees.brutes")){
+                $unsensitiveFields = $this->observation_exported_fields_unsensitive;
+                if ($this->name == 'single') {
+                    $unsensitiveFields = $this->observation_card_fields_unsensitive;
+                }
                 // Get fields from exportdFields which are listed in unsensitive
                 foreach($this->exportedFields['principal'] as $field=>$type){
-                    if(in_array($field, $this->observation_exported_fields_unsensitive)){
+                    if(in_array($field, $unsensitiveFields)){
                         $fields[$field] = $type;
                     }
                 }
@@ -702,8 +760,12 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
         }
 
         // Override exported fields
+        $keepList = $this->$variable;
+        if( !jAcl2::checkByUser($this->login, "visualisation.donnees.brutes") ){
+            $keepList = $this->$variable_unsensitive;
+        }
         foreach( $this->exportedFields['principal'] as $field => $type ){
-            if(!in_array($field, $this->$variable)){
+            if(!in_array($field, $keepList)){
                 unset($this->exportedFields['principal'][$field]);
             }
         }

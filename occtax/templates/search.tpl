@@ -221,7 +221,6 @@ RESUME DE LA RECHERCHE ET DES RÉSULTATS
                     class="btn" name="draw" value="m10">Mailles 10km</button>
                 {/if}
 
-                {ifacl2 "visualisation.donnees.brutes"}
                 <button title="Afficher les données brutes par menace" type="button"
                     id="occtax_results_draw_observation_menace" class="occtax_results_draw_observation menace btn"
                     name="draw" value="observation">Menace</button>
@@ -232,7 +231,6 @@ RESUME DE LA RECHERCHE ET DES RÉSULTATS
                 <button title="Afficher les données brutes par date" type="button"
                     id="occtax_results_draw_observation_date" class="occtax_results_draw_observation date btn"
                     name="draw" value="observation">Date</button>
-                {/ifacl2}
             </div>
         </div>
 
@@ -295,11 +293,9 @@ On doit les conserver dans le DOM car l'affichage carto est très lié au datata
                     title="{@occtax~search.result.maille.m10.help@}">{@occtax~search.result.maille.m10@}</a></li>
             {/if}
 
-            {ifacl2 "visualisation.donnees.brutes"}
             <li><a id="occtax_results_observation_table_tab" href="#occtax_results_observation_table_div"
                     data-toggle="tab"
                     title="{@occtax~search.result.observation.help@}">{@occtax~search.result.observation@}</a></li>
-            {/ifacl2}
 
 <!--
 exports
@@ -399,7 +395,6 @@ mailles 10
 <!--
 donnees brutes
 -->
-            {ifacl2 "visualisation.donnees.brutes"}
             <div id="occtax_results_observation_table_div" class="tab-pane bottom-content attribute-content">
                 <form id="occtax_service_search_form" method="post" action="{jurl 'occtax~service:search'}"
                     style="display:none;">
@@ -415,7 +410,6 @@ donnees brutes
                 {zone 'taxon~datatable',
                 array('classId'=>'occtax~occtaxSearchObservation','tableId'=>'occtax_results_observation_table')}
             </div>
-            {/ifacl2}
 
 <!--
 export

@@ -6,8 +6,9 @@
             <button class="btn btn-mini btn-primary" id="occtax_fiche_before">Précédent</button>
             <span style="font-weight: bold;" id="occtax_fiche_position" class=""></span>
             <button class="btn btn-mini btn-primary" id="occtax_fiche_next">Suivant</button>
-            <button class="btn btn-mini btn-primary pull-right" id="occtax_fiche_zoom">Zoom</button>
-            <span style="display:none;">{if array_key_exists('geojson', $data)}{$data['geojson']}{/if}</span>
+            <button class="btn btn-mini btn-primary pull-right" id="occtax_fiche_zoom" values="">Zoom</button>
+            <span class="occtax_fiche_zoom_geojson" style="display:none;">{if array_key_exists('geojson', $data)}{$data['geojson']}{/if}</span>
+            <span class="occtax_fiche_zoom_type_diffusion" style="display:none;">{if array_key_exists('type_diffusion', $data)}{$data['type_diffusion']}{/if}</span>
         </span>
         {if $in_basket}
         <button value="remove@{$data['id_sinp_occtax']}" class="occtax_validation_button btn btn-mini pull-right" tooltip="{@validation.button.validation_basket.remove.help@}">{@validation.button.validation_basket.remove.title@}</button>
@@ -68,14 +69,22 @@
         {if array_key_exists('nom_cite', $data)}
         <tr>
             <th>{@occtax~observation.output.nom_cite@}</th>
+            {if array_key_exists('cd_nom', $data)}
             <td><a href="#" class="getTaxonDetail cd_nom_{$data['cd_nom']}">{$data['nom_cite']}</a></td>
+            {else}
+            <td>{$data['nom_cite']}</td>
+            {/if}
         </tr>
         {/if}
 
         {if array_key_exists('lb_nom_valide', $data)}
         <tr>
             <th>{@occtax~observation.output.lb_nom_valide@}</th>
+            {if array_key_exists('cd_nom', $data)}
             <td><a href="#" class="getTaxonDetail cd_nom_{$data['cd_nom']}">{$data['lb_nom_valide']}</a></td>
+            {else}
+            <td>{$data['lb_nom_valide']}</td>
+            {/if}
         </tr>
         {/if}
 

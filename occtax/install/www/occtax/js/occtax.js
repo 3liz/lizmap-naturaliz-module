@@ -486,6 +486,37 @@ lizMap.events.on({
                 }
                 return color;
             },
+            getPointStrokeColor: function (feat) {
+                // let color = "#040404";
+                let color = "blue";
+                let sensitiveColor = 'darkred';
+                var len = 1;
+                if (feat.cluster) {
+                    len = feat.cluster.length
+                };
+                if (len > 1) {
+                    // Cluster color
+                    for (var i = 0, len = feat.cluster.length; i < len; i++) {
+                        var afeat = feat.cluster[i];
+                        // Si une des géométries est floutée, on met en rouge
+                        if ('type_diffusion' in afeat.attributes
+                            && afeat.attributes.type_diffusion == 'floutage') {
+                            color = sensitiveColor;
+                        }
+                    }
+                } else {
+                    if (feat.cluster) {
+                        var afeat = feat.cluster[0];
+                    } else {
+                        var afeat = feat;
+                    }
+                    if ('type_diffusion' in afeat.attributes
+                        && afeat.attributes.type_diffusion == 'floutage') {
+                        color = sensitiveColor;
+                    }
+                }
+                return color;
+            },
             getGraphicName: function (feat) {
                 var graphic = 'square';
                 if (feat.cluster && feat.cluster.length > 1) {
@@ -535,7 +566,7 @@ lizMap.events.on({
             pointRadius: "${getPointRadius}",
             fillColor: "${getPointColor}",
             fillOpacity: "${getFillOpacity}",
-            strokeColor: "#040404",
+            strokeColor: "${getPointStrokeColor}",
             strokeOpacity: 1,
             strokeDashstyle: "solid",
             strokeWidth: 1,
@@ -554,7 +585,7 @@ lizMap.events.on({
             pointRadius: "${getPointRadius}",
             fillColor: "${getPointColor}",
             fillOpacity: "${getFillOpacity}",
-            strokeColor: "blue",
+            strokeColor: "${getPointStrokeColor}",//"blue",
             strokeOpacity: 1,
             strokeDashstyle: "solid",
             strokeWidth: 2,
@@ -578,8 +609,7 @@ lizMap.events.on({
             pointRadius: 15,
             fillColor: "lightblue",
             fillOpacity: 0.3,
-            //strokeColor: "${getPointColor}",
-            strokeColor: "blue",
+            strokeColor: "${getPointStrokeColor}",
             strokeOpacity: 1,
             strokeWidth: 3,
             graphicName: 'square'
