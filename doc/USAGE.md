@@ -278,17 +278,40 @@ Ce champs peut contenir un ou plusieurs codes :
 * `c`: diffusion possible à la **commune**
 * `z`: diffusion possible à la **znieff**
 
-Les garde-fous sont positionnés
-sur les mailles renvoyées, et sur les possibilités de recherche spatiale.
+Les modalités d'affichage sont les suivantes :
 
-Dans ce cas, la diffusion est utilisée dans les situations suivantes :
+* **Résultats** Le grand public a accès aux données précises sur les observations
+  **si la diffusion le permet** :
+  * l'onglet **Observations** est affiché dans le panneau des résultats pour tous les utilisateurs
+  * l'**icône de zoom** qui est présent sur chaque ligne d'observation a une couleur
+    qui dépend du type de diffusion :
+    * **bleu** : la position précise est accessible
+    * **rouge**: la position n'est pas accessible (floutage selon la diffusion) pour le grand public
+      mais l'utilisateur connecté peut toujours voir cette position et zoomer sur l'observation.
+    * **gris**: la position n'est pas connue précisément
+* **Carte** : Les observations peuvent être **consultées sur la carte** par menace, protection et date
+    * seules les observations dont la diffusion permet l'affichage de la position précise sont affichées
+      **pour le grand public**
+    * **pour les experts et les ayant-droits**, la **couleur de bordure** de l'observation (ou du cercle
+      de regroupement) dépend de la diffusion. Si une des observations est floutée selon la diffusion
+      la bordure est rouge. Sinon elle est bleue.
+    * le **tableau** qui est affiché en haut sur clic d'une observation ou d'un cercle de regroupement
+      montre une nouvelle colonne qui précise le type de diffusion
+* **Informations sur la requête** : un décompte des observations par grand type de diffusion
+  est affiché dans le panneau qui donne les chiffres-clés.
+
+
+Des garde-fous sont positionnés pour le grand public sur les mailles renvoyées,
+et sur les possibilités de recherche spatiale.
+
+Dans ce cas, la diffusion est utilisée dans les **situations suivantes** :
 
 * Le **grand public** ne voit sur la carte que les observations dont la diffusion contient `g`.
   Les autres observations ressortent dans le tableau de résultat, mais sans possibilité de zoomer
   sur la position
 
-* la récupération d'une maille à interroger, lorsqu'on clique sur la carte pour récupérer une maille
-* sur laquelle filtrer (boutons spatiaux du formulaire de recherche).
+* la récupération d'une **maille à interroger**, lorsqu'on clique sur la carte pour récupérer une maille
+  sur laquelle filtrer (boutons spatiaux du formulaire de recherche) :
 
     - le fichier `occtax/controllers/service.classic.php` utilise la fonction `getMaille` de la
       classe `occtax/classes/occtaxGeometryChecker.class.php`
@@ -298,7 +321,7 @@ Dans ce cas, la diffusion est utilisée dans les situations suivantes :
     - si aucune maille n'est trouvée, un message `Aucune donnée d'observation pour cette maille.` est affiché,
       et l'utilisateur ne peut donc pas faire de recherche spatiale pour cette maille.
 
-* l'affichage des maille 1, 2 ou 10 sur la carte est filtré selon la diffusion, si on n'a pas le droit
+* l'affichage des données par maille 1, 2 ou 10 sur la carte est filtré selon la diffusion, si on n'a pas le droit
   de voir les données brutes. On considère que le fait d'afficher à la maille 1, 2 ou 10 répond
   au floutage nécessaire. Donc on filtre :
 
@@ -346,11 +369,6 @@ Dans ce cas, la diffusion est utilisée dans les situations suivantes :
     - fonctions `getDepartement`, `getCommune`, `getMaille01`, `getMaille02`, `getMaille10`, `getEspaceNaturel`, `getMasseEau`
     - Le filtre ajouté dépend du type de rattachement.
     - Par exemple pour les mailles 2 : `AND ( foo.diffusion ? 'm02')`
-
-
-* todo : vérifier ces critères lorsqu'on va activer le droit pour le grand public (personnes non connectées)
-  de voir l'onglet "observations" sur l'appli. Il faudra filtrer les données via `AND ( foo.diffusion ? 'g')`.
-  Et aussi pour l'export CSV. On pourrait alors toujours faire un `CASE WHEN` pour que la géométrie sortie soit dépendante du champ diffusion
 
 
 ## Gestion de la validité scientifique des données

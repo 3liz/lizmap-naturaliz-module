@@ -2,6 +2,30 @@
 
 ## Unreleased
 
+## 2.16.0 - 2023-04-11
+
+### Changed
+
+* **Résultats** Le grand public a maintenant accès aux données précises sur les observations
+  si la diffusion le permet
+  * l'onglet **Observations** est affiché dans le panneau des résultats
+  * l'**icône de zoom** présent sur chaque ligne d'observation a une couleur
+    qui dépend du type de diffusion :
+    * bleu : la position précise est accessible
+    * rouge: la position n'est pas accessible (floutage selon la diffusion) pour le grand public
+      mais l'utilisateur connecté peut toujours voir cette position et zoomer sur l'observation.
+    * gris: la position n'est pas connue précisément
+* **Carte** : Les observations peuvent être **consultées sur la carte** par menace, protection et date
+    * seules les observations dont la diffusion permet l'affichage de la position précise sont affichées
+      pour le grand public
+    * pour les experts et les ayant-droits, la **couleur de bordure** de l'observation (ou du cercle
+      de regroupement) dépend de la diffusion. Si une des observations est floutée selon la diffusion
+      la bordure est rouge. Sinon elle est bleue.
+    * le **tableau** qui est affiché en haut sur clic d'une observation ou d'un cercle de regroupement
+      montre une nouvelle colonne qui précise le type de diffusion
+* **Informations sur la requête** : un décompte des observations par grand type de diffusion
+  est affiché dans le panneau qui donne les chiffres-clés.
+
 ## 2.15.1 - 2023-03-29
 
 ### Fixed
