@@ -36,7 +36,7 @@ BEGIN
     -- le 2ème le prénom
     -- le point dans le deuxième bloc (pour le prénom) permet d'avoir une initiale
     -- suivie d'un point : DUPONT M. serait donc valide
-    -- L'organisme est le troisième bloc attrapé
+    -- L'organisme est le troisième bloc attrapédenombrement
 
     -- Si on ne trouve rien via la regex, on renvoie FALSE
     IF items IS NULL THEN
@@ -380,13 +380,17 @@ VALUES
 ('obs_reference_biblio_valide', 'La valeur de <b>reference_biblio</b> n''est pas conforme', 'Le champ <b>reference_biblio</b> doit être renseignée si le champ <b>statut_source</b> vaut Li', $$( (statut_source = 'Li' AND reference_biblio IS NOT NULL) OR statut_source != 'Li' )$$, 'conforme'),
 ('obs_ds_publique_valide', 'La valeur de <b>ds_publique</b> n''est pas conforme', 'Le champ <b>ds_publique</b> doit correspondre à la nomenclature', $$( ds_publique IN ( 'Pu', 'Re', 'Ac', 'Pr', 'NSP' ) )$$, 'conforme'),
 ('obs_statut_observation_valide', 'La valeur de <b>statut_observation</b> n''est pas conforme', 'Le champ <b>statut_observation</b> doit correspondre à la nomenclature', $$( statut_observation IN ( 'Pr', 'No', 'NSP' ) )$$, 'conforme'),
-('obs_objet_denombrement_valide', 'La valeur de <b>objet_denombrement</b> n''est pas conforme', 'Le champ <b>objet_denombrement</b> doit être différent de NSP si les champs <b>denombrement_min</b> ou <b>denombrement_max</b> sont renseignés', $$(
+('obs_objet_denombrement_valide', 'La valeur de <b>objet_denombrement</b> n''est pas conforme', 'Le champ <b>objet_denombrement</b> doit être différent de NSP si les champs <b>denombrement_min</b> ou <b>denombrement_max</b> sont renseignés', $$
     ( denombrement_min IS NOT NULL AND denombrement_max IS NOT NULL AND objet_denombrement IN ('COL', 'CPL', 'HAM', 'IND', 'NID', 'NSP', 'PON', 'SURF', 'TIGE', 'TOUF')  )
     OR (denombrement_min IS NULL AND denombrement_max IS NULL AND Coalesce(objet_denombrement, 'NSP') = 'NSP')
-)$$, 'conforme'),
+$$, 'conforme'),
 ('obs_type_denombrement_valide', 'La valeur de t<b>ype_denombrement</b> n''est pas conforme', 'Le champ <b>type_denombrement</b> doit correspondre à la nomenclature', $$( type_denombrement IN ('Co', 'Es', 'Ca', 'NSP') )$$, 'conforme'),
 ('obs_diffusion_niveau_precision_valide', 'La valeur de <b>diffusion_niveau_precision</b> n''est pas conforme', 'Le champ <b>diffusion_niveau_precision</b> doit correspondre à la nomenclature', $$( diffusion_niveau_precision IS NULL OR diffusion_niveau_precision IN ( '0', '1', '2', '3', '4', '5', 'm01', 'm02' ) )$$, 'conforme'),
-('obs_dates_valide', 'La valeur des champs <b>date_debut, heure_debut, date_fin et heure_fin</b> n''est pas conforme', 'Les champs <b>date_debut, heure_debut, date_fin et heure_fin</b> doivent avoir des valeurs cohérentes', $$(date_debut::date <= date_fin::date AND date_debut::date + Coalesce(nullif(heure_debut, ''), '0:00')::time <= date_fin::date + Coalesce(nullif(heure_fin, ''), '0:00')::time )$$, 'conforme'),
+('obs_dates_valide', 'La valeur des champs <b>date_debut, heure_debut, date_fin et heure_fin</b> n''est pas conforme', 'Les champs <b>date_debut, heure_debut, date_fin et heure_fin</b> doivent avoir des valeurs cohérentes et être dans le passé', $$
+    date_debut::date <= date_fin::date
+    AND date_debut::date + Coalesce(nullif(heure_debut, ''), '0:00')::time <= date_fin::date + Coalesce(nullif(heure_fin, ''), '23:59')::time
+    AND COALESCE(date_fin, date_debut) <= now()::date
+$$, 'conforme'),
 ('obs_precision_geometrie_valide', 'La valeur de precision_geometrie</b> n''est pas conforme', 'Le champ <b>precision_geometrie</b> doit être positif ou vide', $$( precision_geometrie::integer IS NULL OR precision_geometrie::integer > 0 )$$, 'conforme'),
 ('obs_altitude_min_max_valide', 'La valeur des champs <b>altitude_min, altitude_moy et altitude_max</b> n''est pas conforme', 'Les champs <b>altitude_min</b> et <b>altitude_max</b> doivent être cohérents', $$( Coalesce( altitude_min::real, 0 ) <= Coalesce( altitude_max::real, 0 ) )$$, 'conforme'),
 ('obs_profondeur_min_max_valide', 'La valeur des champs <b>profondeur_min, profondeur_moy et profondeur_max</b> n''est pas conforme', 'Les champs <b>profondeur_min</b> et <b>profondeur_max</b> doivent être cohérents', $$( Coalesce( profondeur_min::real, 0 ) <= Coalesce( profondeur_max::real, 0 ) )$$, 'conforme'),
@@ -401,11 +405,32 @@ VALUES
 ('obs_validation_ech_val_valide', 'La valeur de <b>validation_ech_val</b> n''est pas conforme', 'Le champ <b>validation_ech_val</b> peut seulement prendre les valeurs suivantes: 1, 2, 3', $$( validation_ech_val IN ( '1', '2', '3' ) )$$, 'conforme'),
 ('obs_validation_typ_val_valide', 'La valeur de <b>validation_typ_val</b> n''est pas conforme', 'Le champ <b>validation_typ_val</b> peut seulement prendre les valeurs suivantes: A, M, C', $$( validation_typ_val IN ( 'A', 'M', 'C' ) )$$, 'conforme'),
 
-('obs_version_taxref_valide', 'La valeur de <b>version_taxref</b> n''est pas conforme', 'La version du TAXREF <b>version_taxref</b> doit être renseignée si le <b>cd_nom</b> est positif', $$(cd_nom IS NULL OR ( cd_nom IS NOT NULL AND cd_nom::integer > 0 AND version_taxref IS NOT NULL) OR ( cd_nom IS NOT NULL AND cd_nom::integer < 0 ))$$, 'conforme'),
+('obs_version_taxref_valide', 'La valeur de <b>version_taxref</b> n''est pas conforme', 'La version du TAXREF <b>version_taxref</b> doit être renseignée si le <b>cd_nom</b> est positif', $$
+    cd_nom IS NULL
+    OR ( cd_nom IS NOT NULL AND cd_nom > 0 AND version_taxref IS NOT NULL)
+    OR ( cd_nom IS NOT NULL AND cd_nom < 0 )
+$$, 'conforme'),
 ('obs_observateurs_valide', 'La valeur de <b>observateurs</b> n''est pas conforme', 'Le champ <b>observateurs</b> doit être du type: NOM Prénom (Organisme 1), AUTRE-NOM Prénoms-Composé (Organisme 2), INCONNU (Indépendant)', $$(occtax.is_valid_identite_multiple(observateurs))$$, 'conforme'),
 ('obs_determinateurs_valide', 'La valeur de <b>determinateurs</b> n''est pas conforme', 'Le champ <b>determinateurs</b> doit être rempli si le cd_nom est rempli', $$(cd_nom IS NULL OR ( cd_nom IS NOT NULL AND determinateurs IS NOT NULL))$$, 'conforme'),
 ('obs_determinateurs_valide_format', 'La valeur de <b>determinateurs</b> n''est pas conforme', 'Le champ <b>determinateurs</b> doit être du type: NOM Prénom (Organisme 1), AUTRE-NOM Prénoms-Composé (Organisme 2), INCONNU (Indépendant)', $$(occtax.is_valid_identite_multiple(determinateurs))$$, 'conforme'),
-('obs_nature_objet_geo_valide', 'La valeur de <b>nature_objet_geo</b> n''est pas conforme', 'Le champ <b>nature_objet_geo</b> peut prendre les valeurs: In, St, NSP', $$(geom IS NOT NULL AND (nature_objet_geo = ANY (ARRAY['St'::text, 'In'::text, 'NSP'::text])) OR geom IS NULL)$$, 'conforme'),
+('obs_nature_objet_geo_valide', 'La valeur de <b>nature_objet_geo</b> n''est pas conforme', 'Le champ <b>nature_objet_geo</b> peut prendre les valeurs: In, St, NSP', $$
+    (nature_objet_geo = ANY (ARRAY['St'::text, 'In'::text, 'NSP'::text]) )
+$$, 'conforme'),
+
+('obs_statut_observation_et_denombrement_valide', 'Les valeurs de valeur de <b>denombrement_min</b> et <b>denombrement_max</b> ne sont pas compatibles avec celle de <b>statut_observation</b>', 'Les dénombrements doivent valoir 0 ou NULL si le statut est "No" (non observé) ou "NSP", et être entières si le statut est "Pr" (présent)', $$
+    (statut_observation = 'No' AND COALESCE(denombrement_min, 0) = 0 AND COALESCE(denombrement_max, 0) = 0)
+    OR (
+            statut_observation = 'Pr'
+            AND (denombrement_min <> 0 OR denombrement_min IS NULL)
+            AND (denombrement_max <> 0 OR denombrement_max IS NULL)
+    )
+    OR statut_observation = 'NSP'
+$$, 'conforme'),
+-- obs_denombrement_min_max_valide
+('obs_denombrement_min_max_valide', 'Les valeurs de <b>denombrement_min</b> et <b>denombrement_max</b> ne sont pas conformes.', 'La valeur de <b>denombrement_min</b> doit être inférieure à celle de <b>denombrement_max</b>', $$
+    COALESCE(denombrement_min, 0) <= COALESCE(denombrement_max, 0)
+    OR denombrement_max IS NULL
+$$, 'conforme'),
 
 -- géométrie dans les mailles 10x10km
 ('obs_geometrie_localisation_dans_maille', 'Les <b>géométries</b> ne sont pas conformes', 'Les <b>géométries</b> doivent être à l''intérieur des mailles 10x10km.' , $$occtax.intersects_maille_10(longitude::real, latitude::real)$$, 'conforme')

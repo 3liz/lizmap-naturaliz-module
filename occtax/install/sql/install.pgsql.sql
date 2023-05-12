@@ -114,8 +114,29 @@ CREATE TABLE occtax.observation (
         OR (denombrement_min IS NULL AND denombrement_max IS NULL AND Coalesce(objet_denombrement, 'NSP') = 'NSP')
     ),
     CONSTRAINT obs_type_denombrement_valide CHECK ( type_denombrement IN ('Co', 'Es', 'Ca', 'NSP') ),
+    CONSTRAINT obs_statut_observation_et_denombrement_valide CHECK (
+        (statut_observation = 'No' AND COALESCE(denombrement_min, 0) = 0 AND COALESCE(denombrement_max, 0) = 0)
+        OR (
+                statut_observation = 'Pr'
+                AND (denombrement_min <> 0 OR denombrement_min IS NULL)
+                AND (denombrement_max <> 0 OR denombrement_max IS NULL)
+        )
+        OR statut_observation = 'NSP'
+    ),
+    CONSTRAINT obs_denombrement_min_max_valide CHECK (
+        COALESCE(denombrement_min, 0) <= COALESCE(denombrement_max, 0)
+        OR denombrement_max IS NULL
+    ),
     CONSTRAINT obs_diffusion_niveau_precision_valide CHECK ( diffusion_niveau_precision IS NULL OR diffusion_niveau_precision IN ( '0', '1', '2', '3', '4', '5', 'm01', 'm02' ) ),
-    CONSTRAINT obs_dates_valide CHECK (date_debut <= date_fin AND date_debut + heure_debut <= date_fin + heure_fin),
+    CONSTRAINT obs_dates_valide CHECK (
+        date_debut::date <= date_fin::date
+        AND date_debut::date + Coalesce(heure_debut, '0:00')::time <= date_fin::date + Coalesce(heure_fin, '23:59')::time
+        AND (COALESCE(date_fin, date_debut) <= date_determination OR date_determination IS NULL)
+        AND COALESCE(date_fin, date_debut) <= now()::date
+        AND (COALESCE(date_fin, date_debut) <= validite_date_validation OR validite_date_validation IS NULL)
+        AND COALESCE(date_fin, date_debut) <= dee_date_transformation
+        AND dee_date_transformation <= dee_date_derniere_modification
+    ),
     CONSTRAINT obs_precision_geometrie_valide CHECK ( precision_geometrie IS NULL OR precision_geometrie > 0 ),
     CONSTRAINT obs_altitude_min_max_valide CHECK ( Coalesce( altitude_min, 0 ) <= Coalesce( altitude_max, 0 ) ),
     CONSTRAINT obs_profondeur_min_max_valide CHECK ( Coalesce( profondeur_min, 0 ) <= Coalesce( profondeur_max, 0 ) ),
@@ -126,13 +147,16 @@ CREATE TABLE occtax.observation (
     CONSTRAINT obs_sensi_niveau_valide CHECK ( sensi_niveau IN ( '0', '1', '2', '3', '4', '5', 'm01', 'm02' ) ),
     CONSTRAINT obs_sensi_referentiel_valide CHECK ( ( sensi_niveau != '0' AND sensi_referentiel IS NOT NULL) OR sensi_niveau = '0' ),
     CONSTRAINT obs_sensi_version_referentiel_valide CHECK ( ( sensi_niveau != '0' AND sensi_version_referentiel IS NOT NULL) OR sensi_niveau = '0' ),
-    CONSTRAINT obs_version_taxref_valide CHECK (cd_nom IS NULL OR ( cd_nom IS NOT NULL AND cd_nom > 0 AND version_taxref IS NOT NULL) OR ( cd_nom IS NOT NULL AND cd_nom < 0 ))
+    CONSTRAINT obs_version_taxref_valide CHECK (
+        cd_nom IS NULL
+        OR ( cd_nom IS NOT NULL AND cd_nom > 0 AND version_taxref IS NOT NULL)
+        OR ( cd_nom IS NOT NULL AND cd_nom < 0 )
+    )
 
 
 );
 
 ALTER TABLE occtax.observation ADD CONSTRAINT obs_nature_objet_geo_valide CHECK ( (geom IS NOT NULL AND nature_objet_geo IN ('St', 'In', 'NSP')) OR geom IS NULL );
-
 
 ALTER TABLE occtax.observation ADD COLUMN odata jsonb;
 
@@ -613,6 +637,21 @@ COMMENT ON COLUMN occtax.jdd.id_sinp_jdd IS 'Identifiant permanent et unique de 
 COMMENT ON COLUMN occtax.jdd.jdd_cadre IS 'Cadre d''acquisition qui permet de regrouper des jdd de même producteur. Ex: on peut avoir un jdd_id par annee pour le même cadre d''acquisition';
 COMMENT ON COLUMN occtax.jdd.ayants_droit IS 'Liste et rôle des structures ayant des droits sur le jeu de données, et rôle concerné (ex : financeur, maître d''oeuvre...). Stocker les structures via leur id_organisme';
 COMMENT ON COLUMN occtax.jdd.date_minimum_de_diffusion IS 'Pour les données de recherche, les producteurs peuvent attendre que la publication scientifique soit publiée avant de diffuser les données. Cette date est utilisée dans le requête de création de la vue matérialisée occtax.vm_observation pour ne pas prendre en compte les données dont la date minimum n''est pas atteinte';
+
+-- clés étrangères
+ALTER TABLE occtax.jdd ADD UNIQUE (jdd_code);
+ALTER TABLE occtax.observation DROP CONSTRAINT IF EXISTS observation_jdd_id_fk;
+ALTER TABLE occtax.observation
+    ADD CONSTRAINT observation_jdd_id_fk
+    FOREIGN KEY (jdd_id) REFERENCES occtax.jdd (jdd_id)
+    ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE occtax.observation DROP CONSTRAINT IF EXISTS observation_jdd_code_fk;
+ALTER TABLE occtax.observation
+    ADD CONSTRAINT observation_jdd_code_fk
+    FOREIGN KEY (jdd_code) REFERENCES occtax.jdd (jdd_code)
+    ON DELETE RESTRICT ON UPDATE CASCADE;
+
+
 
 -- Table lien_observation_identifiant_permanent
 -- utilisée pour ne pas perdre les enregistrements permanents lors d'un réimport et écrasement de données d'un même jdd
