@@ -3843,6 +3843,7 @@ OccTax.events.on({
                     // $(this)[0].sumo.unSelectAll();
                     let selectBox = document.getElementById($(this).attr('id'));
                     selectBox.selectedIndex = -1;
+                    selectBox.dispatchEvent(new Event('change'));
                 }
             });
 

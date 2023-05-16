@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+### Changed
+
+* **Observations** : Ajout de contrôles de conformité supplémentaires
+  * nouvelles contraintes ou contraintes modifiées sur la table `occtax.observation`
+  * ajout et modification des règles pour l'import dans la table occtax.critere_conformite
+
+### Fixed
+
+* **Recherche** : Correction d'un bug du bouton `Réinitialiser` qui ne remettait pas zéro
+  les champs de recherche `Type d'espace naturel` et `Niveau de validité`
+
 ## 2.16.0 - 2023-04-11
 
 ### Changed
