@@ -7,6 +7,11 @@
 * **Observations** : Ajout de contrôles de conformité supplémentaires
   * nouvelles contraintes ou contraintes modifiées sur la table `occtax.observation`
   * ajout et modification des règles pour l'import dans la table occtax.critere_conformite
+* **Import** : La fonction de vérification de conformité des identités (observateurs, déterminateurs)
+  a été assouplie pour ajouter automatiquement l'organisme `Inconnu` si aucun organisme n'est précisé
+* **Résultats et recherche** : Ajout d'un droit `Visualiser les données brutes selon la diffusion`
+  qui permet d'activer ou désactiver la visualisation des géométries et du tableau des observations
+  pour les personnes non connectées.
 
 ### Fixed
 

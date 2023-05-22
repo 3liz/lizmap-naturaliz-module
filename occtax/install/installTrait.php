@@ -99,6 +99,7 @@ trait installTrait
         jAcl2DbManager::addSubject( 'requete.organisme.utilisateur', 'occtax~jacl2.requete.organisme.utilisateur', 'naturaliz.subject.group');
         jAcl2DbManager::addSubject( 'requete.utilisateur.observation', 'occtax~jacl2.requete.utilisateur.observation', 'naturaliz.subject.group');
         jAcl2DbManager::addSubject( 'visualisation.donnees.brutes', 'occtax~jacl2.visualisation.donnees.brutes', 'naturaliz.subject.group');
+        jAcl2DbManager::addSubject( 'visualisation.donnees.brutes.selon.diffusion', 'occtax~jacl2.visualisation.donnees.brutes.selon.diffusion', 'naturaliz.subject.group');
         jAcl2DbManager::addSubject( 'visualisation.donnees.maille_01', 'occtax~jacl2.visualisation.donnees.maille_01', 'naturaliz.subject.group');
         jAcl2DbManager::addSubject( 'visualisation.donnees.maille_02', 'occtax~jacl2.visualisation.donnees.maille_02', 'naturaliz.subject.group');
         jAcl2DbManager::addSubject( 'visualisation.donnees.sensibles', 'occtax~jacl2.visualisation.donnees.sensibles', 'naturaliz.subject.group');
@@ -230,6 +231,7 @@ trait installTrait
         jAcl2DbManager::addRight('admins', 'requete.organisme.utilisateur');
         jAcl2DbManager::addRight('admins', 'requete.utilisateur.observation');
         jAcl2DbManager::addRight('admins', 'visualisation.donnees.brutes');
+        jAcl2DbManager::addRight('admins', 'visualisation.donnees.brutes.selon.diffusion');
         jAcl2DbManager::addRight('admins', 'visualisation.donnees.maille_01');
         jAcl2DbManager::addRight('admins', 'visualisation.donnees.maille_02');
         jAcl2DbManager::addRight('admins', 'visualisation.donnees.sensibles');

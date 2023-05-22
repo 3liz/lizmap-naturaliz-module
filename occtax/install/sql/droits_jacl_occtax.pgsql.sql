@@ -27,7 +27,7 @@ INSERT INTO jacl2_subject VALUES ('visualisation.donnees.maille_02', 'occtax~jac
 INSERT INTO jacl2_subject VALUES ('visualisation.donnees.sensibles', 'occtax~jacl2.visualisation.donnees.sensibles', 'naturaliz.subject.group') ON CONFLICT DO NOTHING;
 INSERT INTO jacl2_subject VALUES ('visualisation.donnees.non.filtrees', 'occtax~jacl2.visualisation.donnees.non.filtrees', 'naturaliz.subject.group') ON CONFLICT DO NOTHING;
 INSERT INTO jacl2_subject VALUES ('export.geometries.brutes.selon.diffusion', 'occtax~jacl2.export.geometries.brutes.selon.diffusion', 'naturaliz.subject.group') ON CONFLICT DO NOTHING;
-
+INSERT INTO jacl2_subject VALUES ('visualisation.donnees.brutes.selon.diffusion', 'occtax~jacl2.visualisation.donnees.brutes.selon.diffusion', 'naturaliz.subject.group') ON CONFLICT DO NOTHING;
 
 INSERT INTO jacl2_rights VALUES ('requete.spatiale.maille_01', 'naturaliz_profil_1', '-', 0) ON CONFLICT DO NOTHING;
 INSERT INTO jacl2_rights VALUES ('requete.spatiale.maille_02', 'naturaliz_profil_1', '-', 0) ON CONFLICT DO NOTHING;

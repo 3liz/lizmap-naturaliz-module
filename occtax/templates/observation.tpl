@@ -10,11 +10,13 @@
             <span class="occtax_fiche_zoom_geojson" style="display:none;">{if array_key_exists('geojson', $data)}{$data['geojson']}{/if}</span>
             <span class="occtax_fiche_zoom_type_diffusion" style="display:none;">{if array_key_exists('type_diffusion', $data)}{$data['type_diffusion']}{/if}</span>
         </span>
+        {ifacl2 "validation.online.access"}
         {if $in_basket}
         <button value="remove@{$data['id_sinp_occtax']}" class="occtax_validation_button btn btn-mini pull-right" tooltip="{@validation.button.validation_basket.remove.help@}">{@validation.button.validation_basket.remove.title@}</button>
         {else}
         <button value="add@{$data['id_sinp_occtax']}" class="occtax_validation_button btn btn-mini pull-right" tooltip="{@validation.button.validation_basket.add.help@}">{@validation.button.validation_basket.add.title@}</button>
         {/if}
+        {/ifacl2}
 
     </center>
 </div>

@@ -180,7 +180,7 @@ RESUME DE LA RECHERCHE ET DES RÉSULTATS
             style="display:none;">{@occtax~search.button.replay.search@}</button>
 
         <!-- validation -->
-        {ifacl2 "visualisation.donnees.brutes"}
+        {ifacl2 "validation.online.access"}
         <button id="occtax-search-to-basket" type="button" class="btn btn-primary" name="mod" value="basket"
             title="{@occtax~validation.button.add.search.to.basket.help@}">{@occtax~validation.button.add.search.to.basket@}</button>
         {/ifacl2}
@@ -221,6 +221,7 @@ RESUME DE LA RECHERCHE ET DES RÉSULTATS
                     class="btn" name="draw" value="m10">Mailles 10km</button>
                 {/if}
 
+                {ifacl2 "visualisation.donnees.brutes.selon.diffusion"}
                 <button title="Afficher les données brutes par menace" type="button"
                     id="occtax_results_draw_observation_menace" class="occtax_results_draw_observation menace btn"
                     name="draw" value="observation">Menace</button>
@@ -231,6 +232,7 @@ RESUME DE LA RECHERCHE ET DES RÉSULTATS
                 <button title="Afficher les données brutes par date" type="button"
                     id="occtax_results_draw_observation_date" class="occtax_results_draw_observation date btn"
                     name="draw" value="observation">Date</button>
+                {/ifacl2}
             </div>
         </div>
 
@@ -293,13 +295,14 @@ On doit les conserver dans le DOM car l'affichage carto est très lié au datata
                     title="{@occtax~search.result.maille.m10.help@}">{@occtax~search.result.maille.m10@}</a></li>
             {/if}
 
+            <!-- Tableau des observations brutes -->
+            {ifacl2 "visualisation.donnees.brutes.selon.diffusion"}
             <li><a id="occtax_results_observation_table_tab" href="#occtax_results_observation_table_div"
                     data-toggle="tab"
                     title="{@occtax~search.result.observation.help@}">{@occtax~search.result.observation@}</a></li>
+            {/ifacl2}
 
-<!--
-exports
--->
+            <!-- Export -->
             <li><a id="occtax_results_export_tab" href="#occtax_results_export_div" data-toggle="tab"
                     title="{@occtax~search.result.export.title.help@}">{@occtax~search.result.export.title@}</a></li>
         </ul>
@@ -395,6 +398,7 @@ mailles 10
 <!--
 donnees brutes
 -->
+            {ifacl2 "visualisation.donnees.brutes.selon.diffusion"}
             <div id="occtax_results_observation_table_div" class="tab-pane bottom-content attribute-content">
                 <form id="occtax_service_search_form" method="post" action="{jurl 'occtax~service:search'}"
                     style="display:none;">
@@ -410,6 +414,7 @@ donnees brutes
                 {zone 'taxon~datatable',
                 array('classId'=>'occtax~occtaxSearchObservation','tableId'=>'occtax_results_observation_table')}
             </div>
+            {/ifacl2}
 
 <!--
 export

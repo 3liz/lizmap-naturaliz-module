@@ -87,7 +87,7 @@ class observationCtrl extends jController {
         $geostring = json_encode($data['geojson']);
         $data['geojson'] = $geostring;
 
-        \jLog::log(json_encode($data), 'error');
+        // \jLog::log(json_encode($data), 'error');
 
         // Read local config
         $localConfig = jApp::configPath('naturaliz.ini.php');
@@ -142,10 +142,10 @@ class observationCtrl extends jController {
 
         // Nomenclature
         $nomenclature = array();
-        $sqlnom = "SELECT * FROM occtax.nomenclature";
+        $sqlNom = "SELECT * FROM occtax.nomenclature";
         $cnx = jDb::getConnection('naturaliz_virtual_profile');
-        $reqnom = $cnx->query($sqlnom);
-        foreach($reqnom as $nom){
+        $requeteNom = $cnx->query($sqlNom);
+        foreach($requeteNom as $nom){
             $nomenclature[$nom->champ.'|'.$nom->code] = $nom->valeur;
         }
         $daot = jDao::get('taxon~t_nomenclature', 'naturaliz_virtual_profile');

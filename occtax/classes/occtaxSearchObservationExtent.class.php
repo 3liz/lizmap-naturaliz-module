@@ -159,7 +159,7 @@ class occtaxSearchObservationExtent extends occtaxSearchObservation {
 
         if (!jAcl2::checkByUser($this->login, "visualisation.donnees.brutes") ) {
             // On ne peut pas voir toutes les données brutes = GRAND PUBLIC
-            if (jAcl2::checkByUser($this->login, "export.geometries.brutes.selon.diffusion")) {
+            if (jAcl2::checkByUser($this->login, "visualisation.donnees.brutes.selon.diffusion")) {
                 // on peut voir les géométries si la diffusion est 'g'
                 // Liste: ["g", "d", "m10", "m02", "m01", "e", "c", "z"]
                 $geojson_expression = "

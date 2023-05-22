@@ -192,16 +192,17 @@ class serviceCtrl extends jController
             'msg' => array()
         );
 
-        // Supprimé le 29/03/2023 pour permettre d'afficher pour le grand public la table des observations
-        // // Do not return data if not connected for observations
-        // if ($searchClassName == 'occtaxSearchObservation' || $searchClassName == 'occtaxSearchObservationExtent') {
-        //     if (!jAcl2::check("visualisation.donnees.brutes")) {
-        //         $return['status'] = 0;
-        //         $return['msg'][] = jLocale::get('occtax~search.form.error.right');
-        //         $rep->data = $return;
-        //         return $rep;
-        //     }
-        // }
+        // Do not return data if not connected for observations
+        if ($searchClassName == 'occtaxSearchObservation' || $searchClassName == 'occtaxSearchObservationExtent') {
+            if (!jAcl2::check("visualisation.donnees.brutes")
+                || !jAcl2::check("visualisation.donnees.brutes.selon.diffusion")
+            ) {
+                $return['status'] = 0;
+                $return['msg'][] = jLocale::get('occtax~search.form.error.right');
+                $rep->data = $return;
+                return $rep;
+            }
+        }
 
         // Get occtaxSearch from token
         $token = $this->param('token');

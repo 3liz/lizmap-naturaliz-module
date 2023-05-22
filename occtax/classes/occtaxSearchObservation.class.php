@@ -522,7 +522,7 @@ class occtaxSearchObservation extends occtaxSearch {
     {
         if (!jAcl2::checkByUser($this->login, "visualisation.donnees.brutes") ) {
             // On ne peut pas voir toutes les données brutes = GRAND PUBLIC
-            if (jAcl2::checkByUser($this->login, "export.geometries.brutes.selon.diffusion")) {
+            if (jAcl2::checkByUser($this->login, "visualisation.donnees.brutes.selon.diffusion")) {
                 // on peut voir les géométries si la diffusion est 'g'
                 $geom_expression = " CASE WHEN diffusion ? 'g' ";
                 $geom_expression.= " THEN o.geom ";

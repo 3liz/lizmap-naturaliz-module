@@ -46,6 +46,19 @@ class occtaxModuleUpgrader_2_16_0__2_16_1 extends jInstallerModule //\Jelix\Inst
 
             // Grant rights
             $this->grantRightsToDatabaseObjects($localConfig, $db, $sqlDirPath.$this->sqlGrantFile);
+
+            // Ajout du droit visualisation.donnees.brutes.selon.diffusion
+            try{
+                jAcl2DbManager::createRight(
+                    'visualisation.donnees.brutes.selon.diffusion',
+                    'occtax~jacl2.visualisation.donnees.brutes.selon.diffusion',
+                    'naturaliz.subject.group'
+                );
+            } catch (Exception $e){
+                jLog::log("Erreur lors de l'ajout du droit visualisation.donnees.brutes.selon.diffusion");
+                jLog::log($e->getMessage());
+            }
+
         }
     }
 }
