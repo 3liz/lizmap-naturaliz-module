@@ -755,3 +755,9 @@ a.zoomToObservation.floutage {
 a.zoomToObservation.vide {
   border-color: orange;
 }
+
+
+/* Correction pour l'interface de prévisualisation d'images sur l'outil de gestion*/
+#bottom-dock {
+  z-index: 1500;
+}

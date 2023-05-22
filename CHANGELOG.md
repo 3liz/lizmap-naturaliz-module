@@ -17,6 +17,8 @@
 
 * **Recherche** : Correction d'un bug du bouton `Réinitialiser` qui ne remettait pas zéro
   les champs de recherche `Type d'espace naturel` et `Niveau de validité`
+* **Projet de gestion** : Correction d'un souci d'affichage de la prévisualisation des images sur
+  le formulaire d'ajout de médias pour les taxons (le panneau du bas était par-dessus l'image)
 
 ## 2.16.0 - 2023-04-11
 
