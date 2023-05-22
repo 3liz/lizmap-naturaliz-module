@@ -26,48 +26,58 @@ RETURNS TABLE (
 ) AS $$
 DECLARE
     items text[];
+    organisme text;
 BEGIN
     items = regexp_match(
         trim(identite),
-        '^([A-Z\u00C0-\u00FF\- ]+) +([A-Za-z\u00C0-\u00FF\-\. ]+ +)?\((.+)\)$'
+        '^([A-Z\u00C0-\u00FF\- ]+) +([A-Za-z\u00C0-\u00FF\-\. ]+ *)?(\(.*\))?$'
     );
     -- NB:
     -- Le premier bloc prend le nom
     -- le 2ème le prénom
     -- le point dans le deuxième bloc (pour le prénom) permet d'avoir une initiale
     -- suivie d'un point : DUPONT M. serait donc valide
-    -- L'organisme est le troisième bloc attrapédenombrement
+    -- L'organisme est le troisième bloc attrapé
+    -- S'il n'est pas trouvé on remplace par (Inconnu)
 
     -- Si on ne trouve rien via la regex, on renvoie FALSE
     IF items IS NULL THEN
         RETURN QUERY
         SELECT FALSE, NULL::text[] AS items
-        -- LIMIT 1
         ;
         RETURN;
     END IF;
 
-    -- On vérifie que le tableau de résultat a bien 3 items
-    IF NOT (array_length(items, 1) = 3) THEN
+    -- Le nom doit être renseigné
+    IF nullif(trim(items[1]), '') IS NULL THEN
         RETURN QUERY
         SELECT FALSE, NULL::text[] AS items
-        -- LIMIT 1
         ;
         RETURN;
     END IF;
 
     -- Si le prénom est vide, il faut que le nom soit INCONNU
-    IF (trim(items[2]) = '' OR trim(items[2]) IS NULL) AND trim(items[1]) != 'INCONNU' THEN
+    IF nullif(trim(items[2]), '') IS NULL AND trim(items[1]) != 'INCONNU' THEN
         RETURN QUERY
         SELECT FALSE, NULL::text[] AS items
-        --LIMIT 1
         ;
         RETURN;
     END IF;
 
+    -- Travail sur l'organisme
+    organisme := Coalesce(trim(nullif(trim(items[3], ' ()'), '')), 'Inconnu');
+    IF organisme IS NULL THEN
+        organisme = 'Inconnu';
+    END IF;
+
     -- Renvoie les données nettoyées
+    -- Si l'organisme est vide, on renvoit 'Inconnu'
     RETURN QUERY
-    SELECT TRUE, ARRAY[trim(items[1]), trim(items[2]), trim(items[3])]::text[] AS items
+    SELECT TRUE, ARRAY[
+        trim(items[1]),
+        trim(items[2]),
+        organisme
+    ]::text[] AS items
     ;
 
     RETURN;
@@ -76,7 +86,8 @@ $$ LANGUAGE plpgsql
 ;
 
 COMMENT ON FUNCTION occtax.is_valid_identite(text)
-IS 'Tester si l''identite est conforme: NOM-SOUS-NOM Prénom Autre prénom (Organisme) ou  INCONNU (Organisme)'
+IS 'Tester si l''identite est conforme: NOM-SOUS-NOM Prénom Autre prénom (Organisme) ou  INCONNU (Organisme).
+Si l''organisme n''est pas trouvé, on le définit en (Inconnu) comme le prévoit le standard.'
 ;
 
 
@@ -675,25 +686,30 @@ BEGIN
     SELECT
         nextval(''occtax.observation_cle_obs_seq''::regclass) AS cle_obs,
         -- C''est la plateforme régionale qui définit les id permanents
+        -- sauf s''ils sont déjà définis en amont (Ex: export MNHN)
         CASE
-            WHEN loip.id_sinp_occtax IS NOT NULL THEN loip.id_sinp_occtax
-            ELSE CAST(uuid_generate_v4() AS text)
+            WHEN nullif(trim(s.id_sinp_occtax), '''') IS NOT NULL THEN trim(s.id_sinp_occtax)
+            ELSE
+                CASE
+                    WHEN loip.id_sinp_occtax IS NOT NULL THEN loip.id_sinp_occtax
+                    ELSE CAST(uuid_generate_v4() AS text)
+                END
         END AS id_sinp_occtax,
-        s.id_origine,
+        trim(s.id_origine),
 
         s.statut_observation,
         s.cd_nom::bigint,
         s.cd_nom::bigint AS cd_ref,
         s.cd_nom::bigint AS cd_nom_cite,
-        s.version_taxref,
-        s.nom_cite,
+        trim(s.version_taxref),
+        trim(s.nom_cite),
 
         s.denombrement_min::integer,
         s.denombrement_max::integer,
         s.objet_denombrement,
         s.type_denombrement,
 
-        s.commentaire,
+        trim(s.commentaire),
 
         s.date_debut::date,
         s.date_fin::date,
@@ -723,12 +739,12 @@ BEGIN
         org.org_transformation AS org_transformation,
 
         s.statut_source,
-        s.reference_biblio,
+        trim(s.reference_biblio),
 
         s.sensi_date_attribution::date,
         s.sensi_niveau::text,
-        s.sensi_referentiel,
-        s.sensi_version_referentiel,
+        trim(s.sensi_referentiel),
+        trim(s.sensi_version_referentiel),
 
         NULL descriptif_sujet,
         NULL AS donnee_complementaire,
@@ -744,8 +760,8 @@ BEGIN
         ) AS geom,
 
         json_build_object(
-            ''observateurs'', s.observateurs,
-            ''determinateurs'', s.determinateurs,
+            ''observateurs'', trim(s.observateurs),
+            ''determinateurs'', trim(s.determinateurs),
             ''import_login'', ''%4$s'',
             ''import_temp_table'', ''%5$s'',
             ''import_time'', now()::timestamp(0)
