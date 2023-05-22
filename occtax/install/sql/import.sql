@@ -814,6 +814,78 @@ INSERT INTO gestion.acteur (id_acteur, nom, prenom, civilite, id_organisme, rema
 VALUES (-1, 'INCONNU', 'Inconnu', 'M', -1, 'Acteur non défini')
 ON CONFLICT DO NOTHING;
 
+
+-- Fonction pour personnaliser ce qui est fait en fin de fonction suivante occtax.import_observations_post_data
+DROP FUNCTION IF EXISTS occtax.import_observations_post_data_regionale(text);
+CREATE OR REPLACE FUNCTION occtax.import_observations_post_data_regionale(
+    _jdd_id text
+)
+RETURNS jsonb AS
+$BODY$
+DECLARE
+    sql_template TEXT;
+    sql_text TEXT;
+    _nb_lignes integer;
+    _result jsonb;
+BEGIN
+
+    -- Le JSON qui sera renvoyé. On l'initialise à {}
+    _result := jsonb_build_object();
+
+    -- Calcul de sensibilité
+    --
+    -- COMMENTE CAR IL FAUT AU PREALABLE VERIFIER occtax.critere_sensibilite
+    -- CAR LES OBS QUI NE TOMBENT PAS SOUS CES CRITERE VOIENT LE NIVEAU 0 DONNE
+    -- sql_template := '
+    -- WITH calcul AS (
+    --     SELECT occtax.calcul_niveau_sensibilite(ARRAY[''%1$s''], False) AS resultat;
+    -- ) SELECT resultat AS nb FROM calcul
+    -- ;
+    -- ';
+    -- sql_text := format(sql_template,
+    --     _jdd_id
+    -- );
+    -- EXECUTE sql_text INTO _nb_lignes;
+    -- _result := _result || jsonb_build_object('calcul_sensibilite', _nb_lignes);
+
+
+    -- Calcul de validite
+    --
+    -- COMMENTE CAR IL FAUT PRECISER DANS LA REQUETE COMMENT RECUPERER LE VALIDATEUR
+    -- (2ème paramètre de calcul_niveau_validation)
+    -- sql_template := '
+    -- WITH calcul AS (
+    --     SELECT occtax.calcul_niveau_validation(
+    --         ARRAY[''%1$s''],
+    --         (SELECT id_personne FROM personne WHERE identite=''Administrateur Borbonica''),
+    --         FALSE
+    --     ) AS resultat
+    -- ) SELECT resultat AS nb FROM calcul
+    -- ;
+    -- ';
+    -- sql_text := format(sql_template,
+    --     _jdd_id
+    -- );
+    -- EXECUTE sql_text INTO _nb_lignes;
+    -- _result := _result || jsonb_build_object('calcul_validite', _nb_lignes);
+
+
+    RETURN _result;
+
+END
+$BODY$
+LANGUAGE plpgsql VOLATILE
+COST 100
+;
+
+
+COMMENT ON FUNCTION occtax.import_observations_post_data_regionale(text)
+IS 'Lancement de traitements SQL réalisés après l''import des données CSV.
+Cette fonction est lancée par occtax.import_observations_post_data.
+Elle attend en paramètre le jdd_id (pas le id_sinp_jdd)'
+;
+
+
 -- Importe les données complémentaires (observateurs, liens spatiaux, etc.)
 DROP FUNCTION IF EXISTS occtax.import_observations_post_data(regclass, text, text);
 DROP FUNCTION IF EXISTS occtax.import_observations_post_data(regclass, text, text, text);
@@ -841,6 +913,7 @@ DECLARE
     _nom_role_personne text;
     _set_val integer;
     _nb_lignes integer;
+    _result_regional jsonb;
     _result_information jsonb;
 BEGIN
     -- Get jdd_id from uid
@@ -848,6 +921,9 @@ BEGIN
     INTO _jdd_id
     FROM occtax.jdd WHERE id_sinp_jdd = _jdd_uid
     ;
+
+    -- Initialisation de la variable JSON de retour à {}
+    _result_information := jsonb_build_object();
 
     -- table occtax.lien_observation_identifiant_permanent
     -- Conservation des liens entre les identifiants origine et les identifiants permanents
@@ -876,7 +952,7 @@ BEGIN
     -- RAISE NOTICE '%', sql_text;
     EXECUTE sql_text INTO _nb_lignes;
     -- RAISE NOTICE 'occtax.organisme: %', _nb_lignes;
-    _result_information := jsonb_build_object('liens', _nb_lignes);
+    _result_information := _result_information || jsonb_build_object('liens', _nb_lignes);
 
     -- Table occtax.organisme
     SELECT setval('occtax.organisme_id_organisme_seq', (SELECT max(id_organisme) FROM occtax.organisme))
@@ -1130,6 +1206,21 @@ BEGIN
     -- RAISE NOTICE '%', sql_text;
     EXECUTE sql_text INTO _nb_lignes;
     _result_information := _result_information || jsonb_build_object('jdd_import', _nb_lignes);
+
+
+    -- Adaptations régionales
+    -- Lancement de la fonction occtax.import_observations_post_data_regionale
+    sql_template := '
+        SELECT occtax.import_observations_post_data_regionale(''%1$s'') AS json_regional
+    ';
+    sql_text := format(sql_template,
+        _jdd_id
+    );
+    -- RAISE NOTICE '-- nettoyage';
+    -- RAISE NOTICE '%', sql_text;
+    EXECUTE sql_text INTO _result_regional;
+    _result_information := _result_information || _result_regional;
+
 
 
     -- Nettoyage

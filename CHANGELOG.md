@@ -4,11 +4,16 @@
 
 ### Changed
 
-* **Observations** : Ajout de contrôles de conformité supplémentaires
-  * nouvelles contraintes ou contraintes modifiées sur la table `occtax.observation`
-  * ajout et modification des règles pour l'import dans la table occtax.critere_conformite
-* **Import** : La fonction de vérification de conformité des identités (observateurs, déterminateurs)
-  a été assouplie pour ajouter automatiquement l'organisme `Inconnu` si aucun organisme n'est précisé
+* **Observations** : Ajout de contrôles de conformité supplémentaires :
+  * nouvelles contraintes ou contraintes modifiées sur la table `occtax.observation`.
+  * ajout et modification des règles pour l'import dans la table `occtax.critere_conformite`.
+* **Import CSV** : 
+  - La fonction de vérification de conformité des identités (observateurs, déterminateurs)
+    a été assouplie pour ajouter automatiquement l'organisme `Inconnu` si aucun organisme n'est précisé.
+  - Une nouvelle fonction `occtax.import_observations_post_data_regionale` a été ajoutée pour permettre
+    les adaptations régionales : elle attend le `jdd_id` comme paramètre, et est lancée une fois 
+    les données du CSV ajoutées à la base. Elle est lancée à la fin de l'exécution de la fonction
+    `occtax.import_observations_post_data`.
 * **Résultats et recherche** : Ajout d'un droit `Visualiser les données brutes selon la diffusion`
   qui permet d'activer ou désactiver la visualisation des géométries et du tableau des observations
   pour les personnes non connectées.
@@ -16,9 +21,9 @@
 ### Fixed
 
 * **Recherche** : Correction d'un bug du bouton `Réinitialiser` qui ne remettait pas zéro
-  les champs de recherche `Type d'espace naturel` et `Niveau de validité`
+  les champs de recherche `Type d'espace naturel` et `Niveau de validité`.
 * **Projet de gestion** : Correction d'un souci d'affichage de la prévisualisation des images sur
-  le formulaire d'ajout de médias pour les taxons (le panneau du bas était par-dessus l'image)
+  le formulaire d'ajout de médias pour les taxons (le panneau du bas était par-dessus l'image).
 
 ## 2.16.0 - 2023-04-11
 
