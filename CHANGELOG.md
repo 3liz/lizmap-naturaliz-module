@@ -2,16 +2,18 @@
 
 ## Unreleased
 
+## 2.16.1 - 2023-05-26
+
 ### Changed
 
 * **Observations** : Ajout de contrôles de conformité supplémentaires :
   * nouvelles contraintes ou contraintes modifiées sur la table `occtax.observation`.
   * ajout et modification des règles pour l'import dans la table `occtax.critere_conformite`.
-* **Import CSV** : 
+* **Import CSV** :
   - La fonction de vérification de conformité des identités (observateurs, déterminateurs)
     a été assouplie pour ajouter automatiquement l'organisme `Inconnu` si aucun organisme n'est précisé.
   - Une nouvelle fonction `occtax.import_observations_post_data_regionale` a été ajoutée pour permettre
-    les adaptations régionales : elle attend le `jdd_id` comme paramètre, et est lancée une fois 
+    les adaptations régionales : elle attend le `jdd_id` comme paramètre, et est lancée une fois
     les données du CSV ajoutées à la base. Elle est lancée à la fin de l'exécution de la fonction
     `occtax.import_observations_post_data`.
 * **Résultats et recherche** : Ajout d'un droit `Visualiser les données brutes selon la diffusion`

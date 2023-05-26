@@ -107,6 +107,7 @@ $$, 'conforme'),
     COALESCE(denombrement_min, 0) <= COALESCE(denombrement_max, 0)
     OR denombrement_max IS NULL
 $$, 'conforme')
+ON CONFLICT DO NOTHING
 ;
 
 -- obs_objet_denombrement_valide

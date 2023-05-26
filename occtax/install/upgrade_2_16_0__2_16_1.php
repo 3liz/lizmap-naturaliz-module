@@ -49,7 +49,7 @@ class occtaxModuleUpgrader_2_16_0__2_16_1 extends jInstallerModule //\Jelix\Inst
 
             // Ajout du droit visualisation.donnees.brutes.selon.diffusion
             try{
-                jAcl2DbManager::createRight(
+                jAcl2DbManager::addSubject(
                     'visualisation.donnees.brutes.selon.diffusion',
                     'occtax~jacl2.visualisation.donnees.brutes.selon.diffusion',
                     'naturaliz.subject.group'
