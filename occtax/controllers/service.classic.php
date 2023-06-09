@@ -193,9 +193,12 @@ class serviceCtrl extends jController
         );
 
         // Do not return data if not connected for observations
-        if ($searchClassName == 'occtaxSearchObservation' || $searchClassName == 'occtaxSearchObservationExtent') {
+        if ($searchClassName == 'occtaxSearchObservation'
+            || $searchClassName == 'occtaxSearchObservationExtent'
+        ) {
+            // no rights, return error
             if (!jAcl2::check("visualisation.donnees.brutes")
-                || !jAcl2::check("visualisation.donnees.brutes.selon.diffusion")
+                && !jAcl2::check("visualisation.donnees.brutes.selon.diffusion")
             ) {
                 $return['status'] = 0;
                 $return['msg'][] = jLocale::get('occtax~search.form.error.right');
