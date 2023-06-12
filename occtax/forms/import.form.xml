@@ -10,6 +10,10 @@
         <help locale="occtax~import.input.observation_csv.help"/>
     </upload>
 
+    <menulist ref="srid" required="true">
+        <label locale="occtax~import.input.srid"/>
+    </menulist>
+
 </group>
 
 <group ref="import_group">

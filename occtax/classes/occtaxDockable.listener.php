@@ -352,6 +352,30 @@ class occtaxDockableListener extends jEventListener{
                         $form->deactivate('import');
                         $form->deactivate('jdd_uid');
                     }
+
+                    // Get SRID
+                    $localConfig = jApp::configPath('naturaliz.ini.php');
+                    $ini = parse_ini_file($localConfig, true);
+                    $srid = '2975';
+                    if (array_key_exists('naturaliz', $ini) && array_key_exists('srid', $ini['naturaliz'])) {
+                        $srid = $ini['naturaliz']['srid'];
+                    }
+                    /** @var \jFormsControlMenuList $sridControl **/
+                    $sridControl = $form->getControl('srid');
+                    $sridHelp = \jLocale::get('occtax~import.input.srid.help', array($srid));
+                    $sridControl->help = $sridHelp;
+                    $sridControl->hint = $sridHelp;
+                    $libelle_srid = 'Projection locale';
+                    if (array_key_exists('naturaliz', $ini) && array_key_exists('libelle_srid', $ini['naturaliz'])) {
+                        $libelle_srid = $ini['naturaliz']['libelle_srid'];
+                    }
+                    $sridData = array(
+                        $srid => \jLocale::get('occtax~import.input.srid.item.local.label', array((integer) $srid)),
+                        4326 => \jLocale::get('occtax~import.input.srid.item.4326.label', array(4326)),
+                    );
+                    $sridControl->datasource->data = $sridData;
+
+                    // Explain
                     $assign = array(
                         'form' => $form,
                     );

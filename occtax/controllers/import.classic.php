@@ -11,7 +11,10 @@
 
 class importCtrl extends jController
 {
-
+    /**
+     * @var integer
+     */
+    protected $startTime;
 
     /**
      * Get the template CSV or the Occtax PDF
@@ -19,6 +22,7 @@ class importCtrl extends jController
      */
     function getRessourceFile()
     {
+        /** @var \jResponseBinary */
         $rep = $this->getResponse('binary');
 
         $fichier = jApp::getModulePath('occtax').'install/config/import_observations_csv_template.csv';
@@ -47,11 +51,30 @@ class importCtrl extends jController
     }
 
     /**
+     * Log metrics
+     *
+     * @param string $action Name of the action to log
+     * @param string $level Log level : error or message
+     *
+     */
+    private function logMetric($action='', $level='message')
+    {
+        \jLog::log(
+            "## TIME ## $action = ".round((microtime(true) - $this->startTime) * 1000, 2)." ms",
+            $level
+        );
+    }
+
+    /**
      * Get the data from the import form
      * and return error or data depending on the status
      */
     function check()
     {
+        // Start time
+        $this->startTime = microtime(true);
+        $this->logMetric('=== start');
+
         // Define the object to return
         $return = array(
             'action' => 'check',
@@ -76,7 +99,8 @@ class importCtrl extends jController
 
         // Automatic form check
         $form->initFromRequest();
-        if (!$form->check()) {
+        $checkForm = $form->check();
+        if (!$checkForm) {
             $errors = $form->getErrors();
             $message = "Le formulaire n'est pas valide. Veuillez renvoyer votre fichier CSV.";
             $return['messages'][] = $message;
@@ -97,6 +121,7 @@ class importCtrl extends jController
         $csv_target_directory = jApp::varPath('uploads/');
         $csv_target_filename = $time.'_'.$_FILES['observation_csv']['name'];
         $save_file = $form->saveFile('observation_csv', $csv_target_directory, $csv_target_filename);
+        $this->logMetric('saveFile');
         if (!$save_file) {
             $return['messages'][] = 'Erreur d\'envoi du fichier CSV';
             $rep->data = $return;
@@ -109,6 +134,7 @@ class importCtrl extends jController
 
         // Check the CSV structure
         list($check, $messages) = $import->checkStructure();
+        $this->logMetric('checkStructure');
         if (!$check) {
             $return['messages'][] = $messages;
             $rep->data = $return;
@@ -117,6 +143,7 @@ class importCtrl extends jController
 
         // Create the temporary tables
         $check = $import->createTemporaryTables();
+        $this->logMetric('createTemporaryTables');
         if (!$check) {
             $return['messages'][] = 'Impossible de créer les tables temporaires nécessaires au déroulement de l\'import (erreur de requête)';
             $rep->data = $return;
@@ -125,6 +152,7 @@ class importCtrl extends jController
 
         // Import the CSV data into the source temporary table
         $check = $import->saveToSourceTemporaryTable();
+        $this->logMetric('saveToSourceTemporaryTable');
         if (!$check) {
             $return['messages'][] = 'Impossible de charger les données du CSV dans la table temporaire (erreur de requête)';
             $rep->data = $return;
@@ -133,6 +161,7 @@ class importCtrl extends jController
 
         // Import the CSV data into the formatted temporary table
         $check = $import->saveToTargetTemporaryTable();
+        $this->logMetric('saveToTargetTemporaryTable');
         if (!$check) {
             $return['messages'][] = 'Impossible de formatter les données du CSV dans le format attendu (erreur de requête)';
             $rep->data = $return;
@@ -140,8 +169,11 @@ class importCtrl extends jController
         }
 
         // Validate the data
+        $sourceSrid = $this->intParam('srid', 4326);
+
         // Check not null
-        $check_not_null = $import->validateCsvData('not_null');
+        $check_not_null = $import->validateCsvData('not_null', $sourceSrid);
+        $this->logMetric('validateCsvData not_null');
         if (!is_array($check_not_null)) {
             $return['messages'][] = 'Impossible de vérifier que les valeurs du CSV sont non vides (erreur de requête)';
             $rep->data = $return;
@@ -149,7 +181,8 @@ class importCtrl extends jController
         }
 
         // Check format
-        $check_format = $import->validateCsvData('format');
+        $check_format = $import->validateCsvData('format', $sourceSrid);
+        $this->logMetric('validateCsvData format');
         if (!is_array($check_format)) {
             $return['messages'][] = 'Impossible de vérifier que les valeurs du CSV sont au bon format (erreur de requête)';
             $rep->data = $return;
@@ -157,7 +190,8 @@ class importCtrl extends jController
         }
 
         // Check validity
-        $check_conforme = $import->validateCsvData('conforme');
+        $check_conforme = $import->validateCsvData('conforme', $sourceSrid);
+        $this->logMetric('validateCsvData conforme');
         if (!is_array($check_conforme)) {
             $return['messages'][] = 'Impossible de vérifier que les valeurs du CSV sont conformes au standard (erreur de requête)';
             $rep->data = $return;
@@ -259,6 +293,7 @@ class importCtrl extends jController
             $login = $user->login;
             $user_email = $user->email;
         }
+        $this->logMetric('formChecks');
         if (!$login) {
             jForms::destroy("occtax~import");
             $import->clean();
@@ -271,9 +306,12 @@ class importCtrl extends jController
         // that are already in the table occtax.observation of the database
 
         // Check first for the specified JDD
-        $check_duplicate = $import->checkCsvDataDuplicatedObservations($jdd_uid, true);
+        $check_duplicate = $import->checkCsvDataDuplicatedObservations($jdd_uid, true, $sourceSrid);
+        $this->logMetric('checkCsvDataDuplicatedObservations');
+
         // Then check against all observations
-        $check_duplicate_all = $import->checkCsvDataDuplicatedObservations($jdd_uid, false);
+        $check_duplicate_all = $import->checkCsvDataDuplicatedObservations($jdd_uid, false, $sourceSrid);
+        $this->logMetric('checkCsvDataDuplicatedObservations');
         if (!is_array($check_duplicate) || !is_array($check_duplicate_all)) {
             jForms::destroy("occtax~import");
             $import->clean();
@@ -320,8 +358,10 @@ class importCtrl extends jController
         }
         $import_observation = $import->importCsvIntoObservation(
             $login, $jdd_uid,
-            $organisme_gestionnaire_donnees, $org_transformation
+            $organisme_gestionnaire_donnees, $org_transformation,
+            $sourceSrid
         );
+        $this->logMetric('importCsvIntoObservation');
         if (!$import_observation) {
             // Delete already imported data
             $import->deleteImportedData($jdd_uid);
@@ -342,6 +382,7 @@ class importCtrl extends jController
             trim($libelle_import), $date_reception, trim($remarque_import),
             $user_email, $validateur
         );
+        $this->logMetric('addImportedObservationPostData');
         if (!$import_other_data) {
             // Delete already imported data
             $import->deleteImportedData($jdd_uid);
@@ -361,6 +402,8 @@ class importCtrl extends jController
         // Clean
         jForms::destroy("occtax~import");
         $import->clean();
+
+        $this->logMetric('END');
 
         // Return data
         $rep->data = $return;

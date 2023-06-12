@@ -171,7 +171,8 @@ IS 'Tester si le contenu d''un champ est du type attendu'
 ;
 
 -- Test d'intersection entre un point et les mailles 10
-CREATE OR REPLACE FUNCTION occtax.intersects_maille_10(longitude real, latitude real) RETURNS BOOLEAN AS $$
+DROP FUNCTION IF EXISTS occtax.intersects_maille_10(real, real, integer);
+CREATE FUNCTION occtax.intersects_maille_10(longitude real, latitude real, _source_srid integer DEFAULT 4326) RETURNS BOOLEAN AS $$
 DECLARE
     _srid integer;
     _nb_maille integer;
@@ -197,7 +198,7 @@ BEGIN
     AND ST_Intersects(
         m.geom,
         ST_Transform(
-            ST_SetSRID(ST_MakePoint(longitude, latitude), _srid),
+            ST_SetSRID(ST_MakePoint(longitude, latitude), _source_srid),
             _srid
         )
     ) ;
@@ -214,14 +215,15 @@ END;
 $$ LANGUAGE plpgsql
 ;
 
-COMMENT ON FUNCTION occtax.intersects_maille_10(real, real)
+COMMENT ON FUNCTION occtax.intersects_maille_10(real, real, integer)
 IS 'Tester si les géométries point issues de longitude et latitude sont contenus dans les mailles 10x10km.'
 ;
 
 
 -- Fonction de test de conformité des observations d'une table au standard
 DROP FUNCTION IF EXISTS occtax.test_conformite_observation(regclass, text);
-CREATE OR REPLACE FUNCTION occtax.test_conformite_observation(_table_temporaire regclass, _type_critere text)
+DROP FUNCTION IF EXISTS occtax.test_conformite_observation(regclass, text, integer);
+CREATE OR REPLACE FUNCTION occtax.test_conformite_observation(_table_temporaire regclass, _type_critere text, _source_srid integer)
 RETURNS TABLE (
     id_critere text,
     code text,
@@ -301,7 +303,10 @@ BEGIN
                 %s
             )
             ';
-            sql_text := sql_text || format(sql_template, var_condition);
+            sql_text := sql_text || format(
+                sql_template,
+                replace(var_condition, '__SOURCE_SRID__', _source_srid::text)
+            );
 
             -- On récupère les données
             EXECUTE sql_text;
@@ -323,7 +328,7 @@ COST 100
 ;
 
 
-COMMENT ON FUNCTION occtax.test_conformite_observation(regclass, text)
+COMMENT ON FUNCTION occtax.test_conformite_observation(regclass, text, integer)
 IS 'Tester la conformité des observations contenues dans la table fournie en paramètre
 selon les critères stockés dans la table occtax.critere_conformite'
 ;
@@ -400,7 +405,7 @@ $$, 'conforme'),
 ('obs_dates_valide', 'La valeur des champs <b>date_debut, heure_debut, date_fin et heure_fin</b> n''est pas conforme', 'Les champs <b>date_debut, heure_debut, date_fin et heure_fin</b> doivent avoir des valeurs cohérentes et être dans le passé', $$
     date_debut::date <= date_fin::date
     AND date_debut::date + Coalesce(nullif(heure_debut, ''), '0:00')::time <= date_fin::date + Coalesce(nullif(heure_fin, ''), '23:59')::time
-    AND COALESCE(date_fin, date_debut) <= now()::date
+    AND COALESCE(date_fin, date_debut)::date <= now()::date
 $$, 'conforme'),
 ('obs_precision_geometrie_valide', 'La valeur de precision_geometrie</b> n''est pas conforme', 'Le champ <b>precision_geometrie</b> doit être positif ou vide', $$( precision_geometrie::integer IS NULL OR precision_geometrie::integer > 0 )$$, 'conforme'),
 ('obs_altitude_min_max_valide', 'La valeur des champs <b>altitude_min, altitude_moy et altitude_max</b> n''est pas conforme', 'Les champs <b>altitude_min</b> et <b>altitude_max</b> doivent être cohérents', $$( Coalesce( altitude_min::real, 0 ) <= Coalesce( altitude_max::real, 0 ) )$$, 'conforme'),
@@ -418,8 +423,8 @@ $$, 'conforme'),
 
 ('obs_version_taxref_valide', 'La valeur de <b>version_taxref</b> n''est pas conforme', 'La version du TAXREF <b>version_taxref</b> doit être renseignée si le <b>cd_nom</b> est positif', $$
     cd_nom IS NULL
-    OR ( cd_nom IS NOT NULL AND cd_nom > 0 AND version_taxref IS NOT NULL)
-    OR ( cd_nom IS NOT NULL AND cd_nom < 0 )
+    OR ( cd_nom IS NOT NULL AND cd_nom::bigint > 0 AND version_taxref IS NOT NULL)
+    OR ( cd_nom IS NOT NULL AND cd_nom::bigint < 0 )
 $$, 'conforme'),
 ('obs_observateurs_valide', 'La valeur de <b>observateurs</b> n''est pas conforme', 'Le champ <b>observateurs</b> doit être du type: NOM Prénom (Organisme 1), AUTRE-NOM Prénoms-Composé (Organisme 2), INCONNU (Indépendant)', $$(occtax.is_valid_identite_multiple(observateurs))$$, 'conforme'),
 ('obs_determinateurs_valide', 'La valeur de <b>determinateurs</b> n''est pas conforme', 'Le champ <b>determinateurs</b> doit être rempli si le cd_nom est rempli', $$(cd_nom IS NULL OR ( cd_nom IS NOT NULL AND determinateurs IS NOT NULL))$$, 'conforme'),
@@ -429,7 +434,7 @@ $$, 'conforme'),
 $$, 'conforme'),
 
 ('obs_statut_observation_et_denombrement_valide', 'Les valeurs de valeur de <b>denombrement_min</b> et <b>denombrement_max</b> ne sont pas compatibles avec celle de <b>statut_observation</b>', 'Les dénombrements doivent valoir 0 ou NULL si le statut est "No" (non observé) ou "NSP", et être entières si le statut est "Pr" (présent)', $$
-    (statut_observation = 'No' AND COALESCE(denombrement_min, 0) = 0 AND COALESCE(denombrement_max, 0) = 0)
+    (statut_observation = 'No' AND COALESCE(denombrement_min::integer, 0) = 0 AND COALESCE(denombrement_max::integer, 0) = 0)
     OR (
             statut_observation = 'Pr'
             AND (denombrement_min <> 0 OR denombrement_min IS NULL)
@@ -439,12 +444,12 @@ $$, 'conforme'),
 $$, 'conforme'),
 -- obs_denombrement_min_max_valide
 ('obs_denombrement_min_max_valide', 'Les valeurs de <b>denombrement_min</b> et <b>denombrement_max</b> ne sont pas conformes.', 'La valeur de <b>denombrement_min</b> doit être inférieure à celle de <b>denombrement_max</b>', $$
-    COALESCE(denombrement_min, 0) <= COALESCE(denombrement_max, 0)
+    COALESCE(denombrement_min::integer, 0) <= COALESCE(denombrement_max::integer, 0)
     OR denombrement_max IS NULL
 $$, 'conforme'),
 
 -- géométrie dans les mailles 10x10km
-('obs_geometrie_localisation_dans_maille', 'Les <b>géométries</b> ne sont pas conformes', 'Les <b>géométries</b> doivent être à l''intérieur des mailles 10x10km.' , $$occtax.intersects_maille_10(longitude::real, latitude::real)$$, 'conforme')
+('obs_geometrie_localisation_dans_maille', 'Les <b>géométries</b> ne sont pas conformes', 'Les <b>géométries</b> doivent être à l''intérieur des mailles 10x10km.' , $$occtax.intersects_maille_10(longitude::real, latitude::real, __SOURCE_SRID__)$$, 'conforme')
 
 ON CONFLICT ON CONSTRAINT critere_conformite_unique_code DO NOTHING
 ;
@@ -454,10 +459,12 @@ ON CONFLICT ON CONSTRAINT critere_conformite_unique_code DO NOTHING
 -- Vérification des doublons
 DROP FUNCTION IF EXISTS occtax.verification_doublons_avant_import(regclass, text);
 DROP FUNCTION IF EXISTS occtax.verification_doublons_avant_import(regclass, text, boolean);
+DROP FUNCTION IF EXISTS occtax.verification_doublons_avant_import(regclass, text, boolean, integer);
 CREATE OR REPLACE FUNCTION occtax.verification_doublons_avant_import(
     _table_temporaire regclass,
     _jdd_uid text,
-    _check_inside_this_jdd boolean
+    _check_inside_this_jdd boolean,
+    _source_srid integer DEFAULT 4326
 ) RETURNS TABLE (
     duplicate_count integer,
     duplicate_ids text
@@ -500,7 +507,7 @@ BEGIN
             AND Coalesce(ST_Transform(
                     ST_SetSRID(
                         ST_MakePoint(t.longitude::real, t.latitude::real),
-                        %1$s
+                        %2$s
                     ),
                     %1$s
                 ), ST_MakePoint(0, 0)) = Coalesce(o.geom, ST_MakePoint(0, 0))
@@ -509,7 +516,8 @@ BEGIN
     '
     ;
     sql_text = sql_text || format(sql_template,
-        _srid
+        _srid,
+        _source_srid
     );
 
     -- If the jdd_uid is '__ALL__' check against the observations with another JDD UID
@@ -554,7 +562,7 @@ LANGUAGE plpgsql VOLATILE
 COST 100
 ;
 
-COMMENT ON FUNCTION occtax.verification_doublons_avant_import(regclass, text, boolean)
+COMMENT ON FUNCTION occtax.verification_doublons_avant_import(regclass, text, boolean, integer)
 IS 'Vérifie que les données en attente d''import (dans la table fournie en paramètre)
 ne contiennent pas des données déjà existantes dans la table occtax.observation.
 Les comparaisons sont faites sur les champs: cd_nom, date_debut, heure_debut,
@@ -566,12 +574,14 @@ date_fin, heure_fin, geom.'
 DROP FUNCTION IF EXISTS occtax.import_observations_depuis_table_temporaire(regclass, text, text, text);
 DROP FUNCTION IF EXISTS occtax.import_observations_depuis_table_temporaire(regclass, text, text, text, text, text);
 DROP FUNCTION IF EXISTS occtax.import_observations_depuis_table_temporaire(regclass, text, text, text, text);
+DROP FUNCTION IF EXISTS occtax.import_observations_depuis_table_temporaire(regclass, text, text, text, text, integer);
 CREATE OR REPLACE FUNCTION occtax.import_observations_depuis_table_temporaire(
     _table_temporaire regclass,
     _import_login text,
     _jdd_uid text,
     _organisme_gestionnaire_donnees text,
-    _org_transformation text
+    _org_transformation text,
+    _source_srid integer DEFAULT 4326
 )
 RETURNS TABLE (
     cle_obs bigint,
@@ -754,7 +764,7 @@ BEGIN
         ST_Transform(
             ST_SetSRID(
                 ST_MakePoint(s.longitude::real, s.latitude::real),
-                %7$s
+                %8$s
             ),
             %7$s
         ) AS geom,
@@ -786,7 +796,8 @@ BEGIN
         _import_login,
         _table_temporaire,
         _jdd_id,
-        _srid
+        _srid,
+        _source_srid
     );
 
     -- RAISE NOTICE '%', sql_text;
@@ -800,7 +811,7 @@ COST 100
 ;
 
 
-COMMENT ON FUNCTION occtax.import_observations_depuis_table_temporaire(regclass, text, text, text, text)
+COMMENT ON FUNCTION occtax.import_observations_depuis_table_temporaire(regclass, text, text, text, text, integer)
 IS 'Importe les observations contenues dans la table fournie en paramètre pour le JDD fourni et les organismes (gestionnaire, transformation et standardisation)'
 ;
 

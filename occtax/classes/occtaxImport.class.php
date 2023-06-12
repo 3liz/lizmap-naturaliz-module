@@ -464,18 +464,20 @@ class occtaxImport
      * listed in the table occtax.critere_conformite
      *
      * @param string $type_conformite Type de la conformité à tester: not_null, format, valide
+     * @param integer $source_srid Projection spatiale des données contenues dans le CSV
      *
      * @return array The list.
      */
-    public function validateCsvData($type_conformite)
+    public function validateCsvData($type_conformite, $source_srid=4326)
     {
         $sql = "SELECT *, array_to_string(ids, ', ') AS ids_text";
-        $sql .= ' FROM occtax.test_conformite_observation($1, $2)';
+        $sql .= ' FROM occtax.test_conformite_observation($1, $2, $3)';
         $sql .= ' WHERE nb_lines > 0';
         $sql .= ' ';
         $params = array(
             $this->temporary_table.'_target',
             $type_conformite,
+            $source_srid,
         );
         $data = $this->query($sql, $params);
 
@@ -489,10 +491,11 @@ class occtaxImport
      * @param string $jdd_uid JDD UUID. If null given, check duplicates against all observations
      * @param boolean $check_inside_this_jdd If True, check among observations of the same jdd.
      *                                       If False, check among the other observations
+     * @param integer $source_srid SRID of the CSV data source
      *
      * @return null|array Null if a SQL request has failed, and array with duplicate check data otherwise.
      */
-    public function checkCsvDataDuplicatedObservations($jdd_uid, $check_inside_this_jdd=true)
+    public function checkCsvDataDuplicatedObservations($jdd_uid, $check_inside_this_jdd=true, $source_srid=4326)
     {
         $sql = "SELECT duplicate_count, duplicate_ids";
         $sql .= ' FROM occtax.verification_doublons_avant_import($1, $2, ';
@@ -501,6 +504,7 @@ class occtaxImport
         } else {
             $sql .= 'FALSE';
         }
+        $sql .= ', $3';
         $sql .= ')';
         $sql .= ' WHERE True';
         $sql .= ' ';
@@ -510,6 +514,7 @@ class occtaxImport
         $params = array(
             $this->temporary_table.'_target',
             $jdd_uid,
+            $source_srid
         );
         $check_duplicate = $this->query($sql, $params);
 
@@ -524,23 +529,27 @@ class occtaxImport
      * @param string  $jdd_uid JDD UUID.
      * @param string  $organisme_gestionnaire_donnees Organisme gestionnaire de données
      * @param string  $org_transformation Organisme de transformation
+     * @param integer $source_srid SRID des géométries du CSV source
      *
      * @return boolean $status The status of the import.
      */
     public function importCsvIntoObservation($login, $jdd_uid,
-        $organisme_gestionnaire_donnees, $org_transformation
+        $organisme_gestionnaire_donnees, $org_transformation,
+        $source_srid=4326
     ) {
         // Import dans la table observation
         $sql = ' SELECT count(*) AS nb';
         $sql .= ' FROM occtax.import_observations_depuis_table_temporaire(
             $1,
             $2, $3,
-            $4, $5
+            $4, $5,
+            $6
         )';
         $params = array(
             $this->temporary_table.'_target',
             $login, $jdd_uid,
-            $organisme_gestionnaire_donnees, $org_transformation
+            $organisme_gestionnaire_donnees, $org_transformation,
+            $source_srid
         );
         $import_observation = $this->query($sql, $params);
         if (!is_array($import_observation)) {
@@ -645,7 +654,7 @@ class occtaxImport
         $sql .= ', "'.$this->temporary_table.'_target"';
         // \jLog::log($this->temporary_table . '_target"');
         $params = array();
-        $data = $this->query($sql, $params);
+        $this->query($sql, $params);
     }
 
     /**

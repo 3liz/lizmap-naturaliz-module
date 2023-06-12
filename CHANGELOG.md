@@ -2,13 +2,19 @@
 
 ## Unreleased
 
+### Changed
+
+* ***Import CSV*
+  - Nouvelle option pour choisir le système de coordonnées des champs longitude et latitude contenus
+    dans le CSV: soit en mètres (projection locale) soit en degrés (EPSG:4326) 
+
 ## 2.16.1 - 2023-05-26
 
 ### Changed
 
 * **Observations** : Ajout de contrôles de conformité supplémentaires :
-  * nouvelles contraintes ou contraintes modifiées sur la table `occtax.observation`.
-  * ajout et modification des règles pour l'import dans la table `occtax.critere_conformite`.
+  - nouvelles contraintes ou contraintes modifiées sur la table `occtax.observation`.
+  - ajout et modification des règles pour l'import dans la table `occtax.critere_conformite`.
 * **Import CSV** :
   - La fonction de vérification de conformité des identités (observateurs, déterminateurs)
     a été assouplie pour ajouter automatiquement l'organisme `Inconnu` si aucun organisme n'est précisé.
