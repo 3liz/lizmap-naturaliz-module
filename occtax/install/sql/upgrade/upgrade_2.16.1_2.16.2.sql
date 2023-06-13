@@ -1,7 +1,12 @@
 -- Fonction de test de conformité des observations d'une table au standard
+-- Fonction de test de conformité des observations d'une table au standard
 DROP FUNCTION IF EXISTS occtax.test_conformite_observation(regclass, text);
 DROP FUNCTION IF EXISTS occtax.test_conformite_observation(regclass, text, integer);
-CREATE OR REPLACE FUNCTION occtax.test_conformite_observation(_table_temporaire regclass, _type_critere text, _source_srid integer DEFAULT 4326)
+CREATE OR REPLACE FUNCTION occtax.test_conformite_observation(
+    _table_temporaire regclass,
+    _type_critere text,
+    _source_srid integer DEFAULT 4326
+)
 RETURNS TABLE (
     id_critere text,
     code text,
@@ -162,21 +167,14 @@ COMMENT ON FUNCTION occtax.intersects_maille_10(real, real, integer)
 IS 'Tester si les géométries point issues de longitude et latitude sont contenus dans les mailles 10x10km.'
 ;
 
-
-UPDATE occtax.critere_conformite
-SET condition = $$occtax.intersects_maille_10(longitude::real, latitude::real, __SOURCE_SRID__)$$
-WHERE code = 'obs_geometrie_localisation_dans_maille'
-;
-
-
-DROP FUNCTION IF EXISTS occtax.verification_doublons_avant_import(regclass, text);
-DROP FUNCTION IF EXISTS occtax.verification_doublons_avant_import(regclass, text, boolean);
 DROP FUNCTION IF EXISTS occtax.verification_doublons_avant_import(regclass, text, boolean, integer);
+DROP FUNCTION IF EXISTS occtax.verification_doublons_avant_import(regclass, text, boolean, integer, text);
 CREATE OR REPLACE FUNCTION occtax.verification_doublons_avant_import(
     _table_temporaire regclass,
     _jdd_uid text,
     _check_inside_this_jdd boolean,
-    _source_srid integer DEFAULT 4326
+    _source_srid integer DEFAULT 4326,
+    _geometry_format text DEFAULT 'lonlat'
 ) RETURNS TABLE (
     duplicate_count integer,
     duplicate_ids text
@@ -216,6 +214,12 @@ BEGIN
             AND Coalesce(t.heure_debut::time with time zone, ''00:00'') = Coalesce(o.heure_debut, ''00:00'')
             AND Coalesce(t.date_fin::date, ''1980-01-01'') = Coalesce(o.date_fin, ''1980-01-01'')
             AND Coalesce(t.heure_fin::time with time zone, ''00:00'') = Coalesce(o.heure_fin, ''00:00'')
+    '
+    ;
+
+    IF _geometry_format = 'lonlat' THEN
+        -- longitude & latitude
+        sql_template = sql_template || '
             AND Coalesce(ST_Transform(
                     ST_SetSRID(
                         ST_MakePoint(t.longitude::real, t.latitude::real),
@@ -224,6 +228,25 @@ BEGIN
                     %1$s
                 ), ST_MakePoint(0, 0)) = Coalesce(o.geom, ST_MakePoint(0, 0))
             )
+        '
+        ;
+
+    ELSE
+        -- wkt
+        sql_template = sql_template || '
+            AND Coalesce(ST_Transform(
+                    ST_SetSRID(
+                        ST_GeomFromEWKT(''SRID=%2$s;'' || t.wkt),
+                        %2$s
+                    ),
+                    %1$s
+                ), ST_MakePoint(0, 0)) = Coalesce(o.geom, ST_MakePoint(0, 0))
+            )
+        '
+        ;
+    END IF
+    ;
+    sql_template = sql_template || '
         WHERE o.cle_obs IS NOT NULL
     '
     ;
@@ -274,7 +297,7 @@ LANGUAGE plpgsql VOLATILE
 COST 100
 ;
 
-COMMENT ON FUNCTION occtax.verification_doublons_avant_import(regclass, text, boolean, integer)
+COMMENT ON FUNCTION occtax.verification_doublons_avant_import(regclass, text, boolean, integer, text)
 IS 'Vérifie que les données en attente d''import (dans la table fournie en paramètre)
 ne contiennent pas des données déjà existantes dans la table occtax.observation.
 Les comparaisons sont faites sur les champs: cd_nom, date_debut, heure_debut,
@@ -282,17 +305,20 @@ date_fin, heure_fin, geom.'
 ;
 
 
+-- Fonction d'import des données d'observation depuis la table temporaire vers occtax.observation
 DROP FUNCTION IF EXISTS occtax.import_observations_depuis_table_temporaire(regclass, text, text, text);
 DROP FUNCTION IF EXISTS occtax.import_observations_depuis_table_temporaire(regclass, text, text, text, text, text);
 DROP FUNCTION IF EXISTS occtax.import_observations_depuis_table_temporaire(regclass, text, text, text, text);
 DROP FUNCTION IF EXISTS occtax.import_observations_depuis_table_temporaire(regclass, text, text, text, text, integer);
+DROP FUNCTION IF EXISTS occtax.import_observations_depuis_table_temporaire(regclass, text, text, text, text, integer, text);
 CREATE OR REPLACE FUNCTION occtax.import_observations_depuis_table_temporaire(
     _table_temporaire regclass,
     _import_login text,
     _jdd_uid text,
     _organisme_gestionnaire_donnees text,
     _org_transformation text,
-    _source_srid integer DEFAULT 4326
+    _source_srid integer DEFAULT 4326,
+    _geometry_format text DEFAULT 'lonlat'
 )
 RETURNS TABLE (
     cle_obs bigint,
@@ -472,6 +498,11 @@ BEGIN
 
         s.precision_geometrie::integer,
         s.nature_objet_geo,
+    ';
+
+    IF _geometry_format = 'lonlat' THEN
+        -- longitude & latitude
+        sql_template = sql_template || '
         ST_Transform(
             ST_SetSRID(
                 ST_MakePoint(s.longitude::real, s.latitude::real),
@@ -479,7 +510,24 @@ BEGIN
             ),
             %7$s
         ) AS geom,
+        '
+        ;
+    ELSE
+        -- wkt
+        sql_template = sql_template || '
+        ST_Transform(
+            ST_SetSRID(
+                ST_GeomFromEWKT(''SRID=%8$s;'' || s.wkt),
+                %8$s
+            ),
+            %7$s
+        ) AS geom,
+        '
+        ;
+    END IF
+    ;
 
+    sql_template = sql_template || '
         json_build_object(
             ''observateurs'', trim(s.observateurs),
             ''determinateurs'', trim(s.determinateurs),
@@ -522,7 +570,7 @@ COST 100
 ;
 
 
-COMMENT ON FUNCTION occtax.import_observations_depuis_table_temporaire(regclass, text, text, text, text, integer)
+COMMENT ON FUNCTION occtax.import_observations_depuis_table_temporaire(regclass, text, text, text, text, integer, text)
 IS 'Importe les observations contenues dans la table fournie en paramètre pour le JDD fourni et les organismes (gestionnaire, transformation et standardisation)'
 ;
 
@@ -534,6 +582,11 @@ DELETE FROM occtax.critere_conformite WHERE code IN (
     'obs_validite_niveau_valide',
     'obs_validite_niveau_format'
 );
+
+UPDATE occtax.critere_conformite
+SET condition = $$occtax.intersects_maille_10(longitude::real, latitude::real, __SOURCE_SRID__)$$
+WHERE code = 'obs_geometrie_localisation_dans_maille'
+;
 
 UPDATE occtax.critere_conformite SET condition = $$
     date_debut::date <= date_fin::date

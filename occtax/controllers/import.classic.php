@@ -116,6 +116,15 @@ class importCtrl extends jController
             return $rep;
         }
 
+        // Check the mandatory parameters for the validation part
+        $sourceSrid = $this->intParam('srid', 4326);
+        $geometryFormat = $this->param('geometry_format', 'lonlat');
+        if ($geometryFormat != 'lonlat' && $geometryFormat != 'wkt') {
+            $return['messages'][] = "Le format des coordonnées doit être 'lonlat' ou 'wkt'";
+            $rep->data = $return;
+            return $rep;
+        }
+
         // Get the CSV file content
         $time = time();
         $csv_target_directory = jApp::varPath('uploads/');
@@ -130,7 +139,7 @@ class importCtrl extends jController
 
         // Import library
         jClasses::inc('occtax~occtaxImport');
-        $import = new occtaxImport($csv_target_directory.'/'.$csv_target_filename);
+        $import = new occtaxImport($csv_target_directory.'/'.$csv_target_filename, $sourceSrid, $geometryFormat);
 
         // Check the CSV structure
         list($check, $messages) = $import->checkStructure();
@@ -169,10 +178,9 @@ class importCtrl extends jController
         }
 
         // Validate the data
-        $sourceSrid = $this->intParam('srid', 4326);
 
         // Check not null
-        $check_not_null = $import->validateCsvData('not_null', $sourceSrid);
+        $check_not_null = $import->validateCsvData('not_null');
         $this->logMetric('validateCsvData not_null');
         if (!is_array($check_not_null)) {
             $return['messages'][] = 'Impossible de vérifier que les valeurs du CSV sont non vides (erreur de requête)';
@@ -181,7 +189,7 @@ class importCtrl extends jController
         }
 
         // Check format
-        $check_format = $import->validateCsvData('format', $sourceSrid);
+        $check_format = $import->validateCsvData('format');
         $this->logMetric('validateCsvData format');
         if (!is_array($check_format)) {
             $return['messages'][] = 'Impossible de vérifier que les valeurs du CSV sont au bon format (erreur de requête)';
@@ -190,7 +198,7 @@ class importCtrl extends jController
         }
 
         // Check validity
-        $check_conforme = $import->validateCsvData('conforme', $sourceSrid);
+        $check_conforme = $import->validateCsvData('conforme');
         $this->logMetric('validateCsvData conforme');
         if (!is_array($check_conforme)) {
             $return['messages'][] = 'Impossible de vérifier que les valeurs du CSV sont conformes au standard (erreur de requête)';
@@ -306,11 +314,11 @@ class importCtrl extends jController
         // that are already in the table occtax.observation of the database
 
         // Check first for the specified JDD
-        $check_duplicate = $import->checkCsvDataDuplicatedObservations($jdd_uid, true, $sourceSrid);
+        $check_duplicate = $import->checkCsvDataDuplicatedObservations($jdd_uid, true);
         $this->logMetric('checkCsvDataDuplicatedObservations');
 
         // Then check against all observations
-        $check_duplicate_all = $import->checkCsvDataDuplicatedObservations($jdd_uid, false, $sourceSrid);
+        $check_duplicate_all = $import->checkCsvDataDuplicatedObservations($jdd_uid, false);
         $this->logMetric('checkCsvDataDuplicatedObservations');
         if (!is_array($check_duplicate) || !is_array($check_duplicate_all)) {
             jForms::destroy("occtax~import");
@@ -358,8 +366,7 @@ class importCtrl extends jController
         }
         $import_observation = $import->importCsvIntoObservation(
             $login, $jdd_uid,
-            $organisme_gestionnaire_donnees, $org_transformation,
-            $sourceSrid
+            $organisme_gestionnaire_donnees, $org_transformation
         );
         $this->logMetric('importCsvIntoObservation');
         if (!$import_observation) {

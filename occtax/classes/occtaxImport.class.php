@@ -74,6 +74,7 @@ class occtaxImport
 
         'longitude',
         'latitude',
+        'wkt',
         'precision_geometrie',
         'nature_objet_geo',
 
@@ -91,8 +92,6 @@ class occtaxImport
         'statut_observation',
         'ds_publique',
         'statut_source',
-        'longitude',
-        'latitude',
         'nature_objet_geo',
     );
 
@@ -117,12 +116,19 @@ class occtaxImport
     // Temporary table to store the content of the CSV file
     protected $temporary_table;
 
+    // SRID of the source CSV geometries
+    protected $source_srid;
+
+    // Geometry source type
+    protected $geometry_format;
+
     /**
      * Constructor of the import class.
      *
      * @param string $csv_file File path of the CSV
+     * @param string $geometry_format Format of the given geometries: lonlat or wkt
      */
-    public function __construct($csv_file)
+    public function __construct($csv_file, $source_srid='4326', $geometry_format='lonlat')
     {
         // Set the csv_file property
         $this->csv_file = $csv_file;
@@ -138,6 +144,9 @@ class occtaxImport
         // Set the temporary table name
         $time = time();
         $this->temporary_table = 'temp_'.$time;
+
+        $this->source_srid = $source_srid;
+        $this->geometry_format = $geometry_format;
     }
 
     /**
@@ -182,6 +191,37 @@ class occtaxImport
             }
         }
 
+        // Check geometry fields
+        $hasNeededGeometryColumns = false;
+        if ($this->geometry_format == 'lonlat' && in_array('longitude', $header) && in_array('latitude', $header)) {
+            $hasNeededGeometryColumns = true;
+            if (!in_array('longitude', $corresponding_fields)) {
+                $corresponding_fields[] = 'longitude';
+            }
+            if (!in_array('latitude', $corresponding_fields)) {
+                $corresponding_fields[] = 'latitude';
+            }
+        } elseif ($this->geometry_format == 'wkt' && in_array('wkt', $header)) {
+            $hasNeededGeometryColumns = true;
+            if (!in_array('wkt', $corresponding_fields)) {
+                $corresponding_fields[] = 'wkt';
+            }
+        }
+        if (!$hasNeededGeometryColumns) {
+            if ($this->geometry_format == 'lonlat') {
+                $neededGeometryFields = array('longitude', 'latitude');
+            } elseif ($this->geometry_format == 'wkt') {
+                $neededGeometryFields = array('wkt');
+            }
+            $message = \jLocale::get(
+                'occtax~import.csv.mandatory.geometry.fields.missing',
+                array(implode(', ', $neededGeometryFields))
+            );
+            $status = false;
+
+            return array($status, $message);
+        }
+
         $this->additional_fields = $additional_fields;
         $this->corresponding_fields = $corresponding_fields;
 
@@ -200,6 +240,22 @@ class occtaxImport
             $status = false;
             return array($status, $message);
         }
+
+        // Validate first line geometry format
+        if ($this->geometry_format == 'wkt') {
+            $wktColIndex = array_search('wkt', $header);
+            $wkt = $first_line[0][$wktColIndex];
+            if (!($this->isValidWkt($wkt))) {
+                $message = \jLocale::get(
+                    'occtax~import.csv.first.line.wkt.wrong.value',
+                    array($wkt)
+                );
+                $status = false;
+
+                return array($status, $message);
+            }
+        }
+
 
         return array($status, $message);
     }
@@ -464,11 +520,10 @@ class occtaxImport
      * listed in the table occtax.critere_conformite
      *
      * @param string $type_conformite Type de la conformité à tester: not_null, format, valide
-     * @param integer $source_srid Projection spatiale des données contenues dans le CSV
      *
      * @return array The list.
      */
-    public function validateCsvData($type_conformite, $source_srid=4326)
+    public function validateCsvData($type_conformite)
     {
         $sql = "SELECT *, array_to_string(ids, ', ') AS ids_text";
         $sql .= ' FROM occtax.test_conformite_observation($1, $2, $3)';
@@ -477,7 +532,7 @@ class occtaxImport
         $params = array(
             $this->temporary_table.'_target',
             $type_conformite,
-            $source_srid,
+            $this->source_srid,
         );
         $data = $this->query($sql, $params);
 
@@ -491,11 +546,10 @@ class occtaxImport
      * @param string $jdd_uid JDD UUID. If null given, check duplicates against all observations
      * @param boolean $check_inside_this_jdd If True, check among observations of the same jdd.
      *                                       If False, check among the other observations
-     * @param integer $source_srid SRID of the CSV data source
      *
      * @return null|array Null if a SQL request has failed, and array with duplicate check data otherwise.
      */
-    public function checkCsvDataDuplicatedObservations($jdd_uid, $check_inside_this_jdd=true, $source_srid=4326)
+    public function checkCsvDataDuplicatedObservations($jdd_uid, $check_inside_this_jdd=true)
     {
         $sql = "SELECT duplicate_count, duplicate_ids";
         $sql .= ' FROM occtax.verification_doublons_avant_import($1, $2, ';
@@ -505,6 +559,7 @@ class occtaxImport
             $sql .= 'FALSE';
         }
         $sql .= ', $3';
+        $sql .= ', $4';
         $sql .= ')';
         $sql .= ' WHERE True';
         $sql .= ' ';
@@ -514,7 +569,8 @@ class occtaxImport
         $params = array(
             $this->temporary_table.'_target',
             $jdd_uid,
-            $source_srid
+            $this->source_srid,
+            $this->geometry_format,
         );
         $check_duplicate = $this->query($sql, $params);
 
@@ -529,13 +585,11 @@ class occtaxImport
      * @param string  $jdd_uid JDD UUID.
      * @param string  $organisme_gestionnaire_donnees Organisme gestionnaire de données
      * @param string  $org_transformation Organisme de transformation
-     * @param integer $source_srid SRID des géométries du CSV source
      *
      * @return boolean $status The status of the import.
      */
     public function importCsvIntoObservation($login, $jdd_uid,
-        $organisme_gestionnaire_donnees, $org_transformation,
-        $source_srid=4326
+        $organisme_gestionnaire_donnees, $org_transformation
     ) {
         // Import dans la table observation
         $sql = ' SELECT count(*) AS nb';
@@ -543,13 +597,13 @@ class occtaxImport
             $1,
             $2, $3,
             $4, $5,
-            $6
+            $6, $7
         )';
         $params = array(
             $this->temporary_table.'_target',
             $login, $jdd_uid,
             $organisme_gestionnaire_donnees, $org_transformation,
-            $source_srid
+            $this->source_srid, $this->geometry_format
         );
         $import_observation = $this->query($sql, $params);
         if (!is_array($import_observation)) {
@@ -676,6 +730,26 @@ class occtaxImport
 
         return true;
     }
+
+
+    /**
+     * Validate a string containing a WKT.
+     *
+     * @param string wkt String to validate. Ex: "POLYGON((1 1,5 1,5 5,1 5,1 1))"
+     * @param mixed $wkt
+     *
+     * @return bool
+     */
+    private function isValidWkt($wkt)
+    {
+        $patterns = array('/multi/', '/point/', '/polygon/', '/linestring/');
+        $replacements = array('', '', '', '');
+        $wkt = preg_replace($patterns, $replacements, trim(strtolower($wkt)));
+        $regex = '#^[0-9 \.,\-\(\)]+$#';
+
+        return preg_match($regex, trim($wkt));
+    }
+
 
     /**
      * Get the data of a given JDD id

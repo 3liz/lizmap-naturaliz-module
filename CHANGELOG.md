@@ -4,9 +4,12 @@
 
 ### Changed
 
-* ***Import CSV*
-  - Nouvelle option pour choisir le système de coordonnées des champs longitude et latitude contenus
-    dans le CSV: soit en mètres (projection locale) soit en degrés (EPSG:4326) 
+* **Import CSV**
+  - Nouvelle option pour choisir le **système de coordonnées** des champs `longitude` et `latitude` contenus
+    dans le CSV: soit en mètres (projection locale) soit en degrés (EPSG:4326)
+  - Nouvelle option pour choisir le **format des géométries** des observations:
+    - soit on passe `longitude` et `latitude`
+    - soit on passe un champ `wkt`, ce qui permet d'**importer aussi des lignes et des polygones**
 
 ## 2.16.1 - 2023-05-26
 

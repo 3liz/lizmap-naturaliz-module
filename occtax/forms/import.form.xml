@@ -10,6 +10,15 @@
         <help locale="occtax~import.input.observation_csv.help"/>
     </upload>
 
+    <menulist ref="geometry_format" required="true">
+        <label locale="occtax~import.input.geometry_format"/>
+        <help locale="occtax~import.input.geometry_format.help" />
+        <hint locale="occtax~import.input.geometry_format.help" />
+
+        <item locale="occtax~import.input.geometry_format.item.lonlat.label" value="lonlat" />
+        <item locale="occtax~import.input.geometry_format.item.wkt.label" value="wkt" />
+    </menulist>
+
     <menulist ref="srid" required="true">
         <label locale="occtax~import.input.srid"/>
     </menulist>
