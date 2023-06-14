@@ -744,10 +744,23 @@ class occtaxImport
     {
         $patterns = array('/multi/', '/point/', '/polygon/', '/linestring/');
         $replacements = array('', '', '', '');
-        $wkt = preg_replace($patterns, $replacements, trim(strtolower($wkt)));
-        $regex = '#^[0-9 \.,\-\(\)]+$#';
+        $wktCoordinates = preg_replace($patterns, $replacements, trim(strtolower($wkt)));
 
-        return preg_match($regex, trim($wkt));
+        // If the original WKT does not contain any item in the listed patterns
+        if ($wktCoordinates == trim(strtolower($wkt))) {
+            return False;
+        }
+
+        // If the WKT coordinates does not contain any parenthesis at the beginning or end
+        if (!preg_match('/^\(.+\)$/', $wktCoordinates) || !strpos($wktCoordinates, ' ')) {
+            return False;
+        }
+
+        // Limit the authorized characters
+        $regex = '#^[0-9 \.,\-\(\)]+$#';
+        $match = preg_match($regex, trim($wktCoordinates));
+
+        return $match;
     }
 
 
