@@ -1,0 +1,3 @@
+"nom_champ_du_csv","nom_attribut","definition_attribut","thematique_attribut","type_attribut","unite_attribut"
+"condition_lumineuse","Luminosité","Les conditions de luminosité au moment de l'observation","Contexte","QUAL",
+"taille_cm","Taille en mm","Hauteur des ailes","saisie","QTA","mm"

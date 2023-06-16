@@ -575,10 +575,10 @@ CREATE TABLE occtax.attribut_additionnel (
     definition text NOT NULL,
     valeur text NOT NULL,
     unite text,
-    thematique text NOT NULL,
-    "type" text NOT NULL,
+    thematique text NOT NULL DEFAULT 'Inconnu',
+    "type" text NOT NULL DEFAULT 'NSP',
 
-    CONSTRAINT attribut_additionnel_type_valide CHECK ("type" IS NULL OR ( "type" IN ('QTA', 'QUAL') )),
+    CONSTRAINT attribut_additionnel_type_valide CHECK ("type" IS NULL OR ( "type" IN ('QTA', 'QUAL', 'NSP') )),
     CONSTRAINT attribut_additionnel_unite_valide CHECK ( ("type" = 'QTA' AND "unite" IS NOT NULL) OR "type" != 'QTA' )
 
 );

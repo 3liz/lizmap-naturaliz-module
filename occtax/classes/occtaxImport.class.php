@@ -17,6 +17,9 @@ class occtaxImport
     // CSV file
     protected $csv_file;
 
+    // CSV file for additional attributes
+    protected $csv_attributes_file;
+
     // CSV separator
     protected $csv_separator = ',';
 
@@ -95,6 +98,16 @@ class occtaxImport
         'nature_objet_geo',
     );
 
+    // Mandatory fields for additional attributes
+    protected $attributes_mandatory_fields = array(
+        'nom_champ_du_csv',
+        'nom_attribut',
+        'definition_attribut',
+        'thematique_attribut',
+        'type_attribut',
+        'unite_attribut',
+    );
+
     // Corresponding fields
     protected $corresponding_fields = array();
 
@@ -104,8 +117,14 @@ class occtaxImport
     // CSV parsed data
     protected $data;
 
+    // CSV parsed data for additional attributes
+    public $attributeData = array();
+
     // CSV header columns
     protected $header;
+
+    // CSV header columns for attributes
+    protected $attributeHeader;
 
     // Login
     protected $login;
@@ -125,13 +144,16 @@ class occtaxImport
     /**
      * Constructor of the import class.
      *
-     * @param string $csv_file File path of the CSV
-     * @param string $geometry_format Format of the given geometries: lonlat or wkt
+     * @param string  $csv_file File path of the CSV
+     * @param integer $source_srid SRID of the given geometries (integer, ex: 4326)
+     * @param string  $geometry_format Format of the given geometries: lonlat or wkt
+     * @param string  $csv_attributes_file File path of the optional attributes CSV
      */
-    public function __construct($csv_file, $source_srid='4326', $geometry_format='lonlat')
+    public function __construct($csv_file, $source_srid='4326', $geometry_format='lonlat', $csv_attributes_file=Null)
     {
         // Set the csv_file property
         $this->csv_file = $csv_file;
+        $this->csv_attributes_file = $csv_attributes_file;
 
         // Get the user login
         $login = null;
@@ -150,7 +172,7 @@ class occtaxImport
     }
 
     /**
-     * Runs the needed check on the CSV structure
+     * Runs the needed check on the observation CSV structure
      *
      * @param string $csv_content Content of the observation CSV file
      */
@@ -160,7 +182,7 @@ class occtaxImport
         $message = '';
 
         // Get the csv header (first line)
-        $header = $this->parseCsv(0, 1);
+        $header = $this->parseCsv($this->csv_file, 0, 1);
 
         // Check header
         if (!is_array($header) || count($header) != 1) {
@@ -234,7 +256,7 @@ class occtaxImport
 
         // Check that the first line (header) contains the same number of columns
         // that the second (data) to avoid errors
-        $first_line = $this->parseCsv(1, 1);
+        $first_line = $this->parseCsv($this->csv_file, 1, 1);
         if (empty($first_line) || count($first_line[0]) != count($header)) {
             $message = jLocale::get("occtax~import.csv.columns.number.mismatch");
             $status = false;
@@ -260,6 +282,64 @@ class occtaxImport
         return array($status, $message);
     }
 
+
+
+    /**
+     * Runs the needed check on the CSV structure
+     *
+     * @param string $csv_content Content of the observation CSV file
+     */
+    public function checkAdditionalAttributesStructure()
+    {
+        $status = true;
+        $message = '';
+
+        // Get the csv header (first line)
+        $attributeHeader = $this->parseCsv($this->csv_attributes_file, 0, 1);
+
+        // Check header
+        if (!is_array($attributeHeader) || count($attributeHeader) != 1) {
+            return array(
+                false,
+                jLocale::get("occtax~import.csv.wrong.header")
+            );
+        }
+        $attributeHeader = $attributeHeader[0];
+        $this->attributeHeader = $attributeHeader;
+
+        // Check mandatory fields are present
+        $missing_mandatory_fields = array();
+        foreach ($this->attributes_mandatory_fields as $field) {
+            if (!in_array($field, $attributeHeader)) {
+                $missing_mandatory_fields[] = $field;
+            }
+        }
+
+        if (count($missing_mandatory_fields) > 0) {
+            $message = jLocale::get("occtax~import.csv.mandatory.fields.missing.attributes");
+            $message .= ': '.implode(', ', $missing_mandatory_fields);
+            $status = false;
+            return array($status, $message);
+        }
+
+        // Check that the first line (header) contains the same number of columns
+        // that the second (first line of data) to avoid errors
+        $first_line = $this->parseCsv($this->csv_attributes_file, 1, 1);
+        if (empty($first_line) || count($first_line[0]) != count($attributeHeader)) {
+            $message = jLocale::get("occtax~import.csv.columns.number.mismatch.attributes");
+            $status = false;
+            return array($status, $message);
+        }
+
+        // Validate all the lines (limit to 30 to avoid big imports)
+        $i = 0;
+        // TODO
+
+        return array($status, $message);
+    }
+
+
+
     /**
      * Set the data property
      *
@@ -267,23 +347,46 @@ class occtaxImport
     public function setData()
     {
         // Avoid the first line which contains the CSV header
-        $this->data = $this->parseCsv(1);
+        $this->data = $this->parseCsv($this->csv_file, 1);
     }
 
     /**
-     * Parse the CSV raw content and fill the data property
+     * Set the additional attributes data property
      *
-     * @param int $offset Number of lines to avoid from the beginning
-     * @param int $limit Number of lines to parse from the beginning. Optionnal.
+     */
+    public function setAdditionalAttributesData()
+    {
+        // Avoid the first line which contains the CSV header
+        $attributeData = $this->parseCsv($this->csv_attributes_file, 1);
+
+        $formattedData = array();
+        foreach($attributeData as $line) {
+            $i = 0;
+            $lineData = array();
+            foreach($line as $columnValue) {
+                $lineData[$this->attributeHeader[$i]] = trim($columnValue);
+                ++$i;
+            }
+            $formattedData[] = $lineData;
+        }
+        $this->attributeData = $formattedData;
+    }
+
+    /**
+     * Parse the CSV raw content and return its data
+     *
+     * @param string $csv_file CSV file full path
+     * @param int    $offset   Number of lines to avoid from the beginning
+     * @param int    $limit    Number of lines to parse from the beginning. Optional.
      *
      * @return array Array on array containing the data
      */
-    protected function parseCsv($offset = 0, $limit = -1)
+    protected function parseCsv($csv_file, $offset = 0, $limit = -1)
     {
         $csv_data = array();
         $row = 1;
         $kept = 0;
-        if (($handle = fopen($this->csv_file, 'r')) !== FALSE) {
+        if (($handle = fopen($csv_file, 'r')) !== FALSE) {
             while (($data = fgetcsv($handle, 1000, $this->csv_separator)) !== FALSE) {
                 // Manage offset
                 if ($row > $offset) {
@@ -300,6 +403,7 @@ class occtaxImport
             }
             fclose($handle);
         }
+
         return $csv_data;
     }
 
@@ -435,7 +539,11 @@ class occtaxImport
     {
         // Read data from the CSV file
         // and set the data property with the read content
-        $set_data = $this->setData();
+        $this->setData();
+
+        if (!empty($this->csv_attributes_file)) {
+            $this->setAdditionalAttributesData();
+        }
 
         // Check the data
         if (count($this->data) == 0) {
@@ -643,7 +751,8 @@ class occtaxImport
             $1,
             $2, $3, $4,
             $5, $6, $7,
-            $8, $9
+            $8, $9,
+            $10
         )';
         $params = array(
             $this->temporary_table.'_target',
@@ -651,6 +760,7 @@ class occtaxImport
             $default_email,
             $libelle_import, $date_reception, $remarque_import,
             $user_email, $validateur,
+            json_encode($this->attributeData)
         );
         $import_other = $this->query($sql, $params);
         if (!is_array($import_other)) {
@@ -702,6 +812,9 @@ class occtaxImport
     {
         // Remove CSV file
         unlink($this->csv_file);
+        if ($this->csv_attributes_file) {
+            unlink($this->csv_attributes_file);
+        }
 
         // Drop the temporary table
         $sql = 'DROP TABLE IF EXISTS "'.$this->temporary_table.'_source"';

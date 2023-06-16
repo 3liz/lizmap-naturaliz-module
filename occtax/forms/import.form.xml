@@ -23,6 +23,12 @@
         <label locale="occtax~import.input.srid"/>
     </menulist>
 
+    <upload ref="attribut_additionnel_csv" required="false" maxsize="50000" accept=".csv,text/csv,application/csv,text/comma-separated-values">
+        <label locale="occtax~import.input.attribut_additionnel_csv"/>
+        <hint locale="occtax~import.input.attribut_additionnel_csv.help"/>
+        <help locale="occtax~import.input.attribut_additionnel_csv.help"/>
+    </upload>
+
 </group>
 
 <group ref="import_group">

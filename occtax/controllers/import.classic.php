@@ -1,5 +1,7 @@
 <?php
 
+use phpDocumentor\Reflection\Types\Null_;
+
 /**
  * @package   lizmap
  * @subpackage occtax
@@ -39,6 +41,10 @@ class importCtrl extends jController
             $fichier = jApp::getModulePath('occtax').'install/config/occtax_nomenclature.xlsx';
             $nom_fichier = 'occtax_nomenclature.xlsx';
             $mime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+        } elseif ($ressource == 'csv_attribut_additionnel') {
+            $fichier = jApp::getModulePath('occtax').'install/config/attributs_additionnels.csv';
+            $nom_fichier = 'attributs_additionnels.csv';
+            $mime = 'text/csv';
         }
 
         $rep->fileName = $fichier;
@@ -57,12 +63,9 @@ class importCtrl extends jController
      * @param string $level Log level : error or message
      *
      */
-    private function logMetric($action='', $level='message')
+    private function logMetric($action='')
     {
-        \jLog::log(
-            "## TIME ## $action = ".round((microtime(true) - $this->startTime) * 1000, 2)." ms",
-            $level
-        );
+        \jLog::log("## TIME ## $action = ".round((microtime(true) - $this->startTime) * 1000, 2)." ms");
     }
 
     /**
@@ -108,7 +111,7 @@ class importCtrl extends jController
             return $rep;
         }
 
-        // Check the file extension and properties
+        // Check the observation CSV file extension and properties
         $ext = strtolower(pathinfo($_FILES['observation_csv']['name'], PATHINFO_EXTENSION));
         if ($ext != 'csv') {
             $return['messages'][] = 'Fichier CSV requis';
@@ -125,29 +128,66 @@ class importCtrl extends jController
             return $rep;
         }
 
-        // Get the CSV file content
+        // Get the observation CSV file content
         $time = time();
         $csv_target_directory = jApp::varPath('uploads/');
         $csv_target_filename = $time.'_'.$_FILES['observation_csv']['name'];
         $save_file = $form->saveFile('observation_csv', $csv_target_directory, $csv_target_filename);
-        $this->logMetric('saveFile');
+        $csv_full_path = $csv_target_directory.'/'.$csv_target_filename;
+        $this->logMetric('saveObservationCsvFile');
         if (!$save_file) {
-            $return['messages'][] = 'Erreur d\'envoi du fichier CSV';
+            $return['messages'][] = 'Erreur de traitement du fichier CSV des observations';
             $rep->data = $return;
             return $rep;
         }
 
+        // Fichier CSV des attributs additionnels (optionnel)
+        $aaCsvFile = $form->getData('attribut_additionnel_csv');
+        // Get the attribut_additionnel_csv file content
+        $csv_aa_full_path = Null;
+        if (!empty($aaCsvFile)) {
+            // Check the attribut_additionnel file extension and properties
+            $ext = strtolower(pathinfo($_FILES['attribut_additionnel_csv']['name'], PATHINFO_EXTENSION));
+            if ($ext != 'csv') {
+                $return['messages'][] = 'Le fichier fourni pour les attributs additionnels doit être au format CSV';
+                $rep->data = $return;
+                return $rep;
+            }
+
+            $csv_aa_target_directory = jApp::varPath('uploads/');
+            $csv_aa_target_filename = $time.'_'.$_FILES['attribut_additionnel_csv']['name'];
+            $save_aa_file = $form->saveFile('attribut_additionnel_csv', $csv_aa_target_directory, $csv_aa_target_filename);
+            $csv_aa_full_path = $csv_aa_target_directory.'/'.$csv_aa_target_filename;
+            $this->logMetric('saveAttributAdditionnelCsvFile');
+            if (!$save_aa_file) {
+                $return['messages'][] = 'Erreur de traitement du fichier CSV des attributs additionnels';
+                $rep->data = $return;
+                return $rep;
+            }
+        }
+
         // Import library
         jClasses::inc('occtax~occtaxImport');
-        $import = new occtaxImport($csv_target_directory.'/'.$csv_target_filename, $sourceSrid, $geometryFormat);
+        $import = new occtaxImport($csv_full_path, $sourceSrid, $geometryFormat, $csv_aa_full_path);
 
-        // Check the CSV structure
+        // Check the observation CSV structure
         list($check, $messages) = $import->checkStructure();
         $this->logMetric('checkStructure');
         if (!$check) {
             $return['messages'][] = $messages;
             $rep->data = $return;
             return $rep;
+        }
+
+        if (!empty($aaCsvFile)) {
+            // Check the observation CSV structure
+            list($check, $messages) = $import->checkAdditionalAttributesStructure();
+            $this->logMetric('checkAdditionalAttributesStructure');
+            if (!$check) {
+                $return['messages'][] = $messages;
+                $rep->data = $return;
+                return $rep;
+            }
         }
 
         // Create the temporary tables

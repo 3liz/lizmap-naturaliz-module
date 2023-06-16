@@ -214,6 +214,7 @@ lizMap.events.on({
                 }
 
             });
+            // TODO Gérer les cas où il y a une erreur (code pas 200 cf fonction sendNewFeatureForm)
 
             return false;
         });

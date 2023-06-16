@@ -958,12 +958,14 @@ DROP FUNCTION IF EXISTS occtax.import_observations_post_data(regclass, text, tex
 DROP FUNCTION IF EXISTS occtax.import_observations_post_data(regclass, text, text, text, text, date, text);
 DROP FUNCTION IF EXISTS occtax.import_observations_post_data(regclass, text, text, text, text, date, text, text);
 DROP FUNCTION IF EXISTS occtax.import_observations_post_data(regclass, text, text, text, text, date, text, text, integer);
+DROP FUNCTION IF EXISTS occtax.import_observations_post_data(regclass, text, text, text, text, date, text, text, integer, text);
 CREATE OR REPLACE FUNCTION occtax.import_observations_post_data(
     _table_temporaire regclass,
     _import_login text, _jdd_uid text, _default_email text,
     _libelle_import text, _date_reception date, _remarque_import text,
     _import_user_email text,
-    _validateur integer
+    _validateur integer,
+    _attributs_additionnels text DEFAULT '[]'
 )
 RETURNS TABLE (
     import_report json
@@ -981,6 +983,8 @@ DECLARE
     _nb_lignes integer;
     _result_regional jsonb;
     _result_information jsonb;
+    _aa_champ text; _aa_nom text; _aa_definition text;
+    _aa_unite text; _aa_thematique text; _aa_type text;
 BEGIN
     -- Get jdd_id from uid
     SELECT jdd_id
@@ -1019,6 +1023,75 @@ BEGIN
     EXECUTE sql_text INTO _nb_lignes;
     -- RAISE NOTICE 'occtax.organisme: %', _nb_lignes;
     _result_information := _result_information || jsonb_build_object('liens', _nb_lignes);
+
+    -- table occtax.attribut_additionnel
+    -- Si l'utilisateur a ajouté un fichier CSV décrivant les attributs
+
+    -- On récupère d'abord les informations des attributs
+    IF _attributs_additionnels IS NOT NULL THEN
+        -- RAISE NOTICE '%', _attributs_additionnels;
+        FOR _aa_champ, _aa_nom, _aa_definition, _aa_unite, _aa_thematique, _aa_type IN
+            SELECT
+                nom_champ_du_csv, nom_attribut, definition_attribut,
+                unite_attribut, thematique_attribut, type_attribut
+            FROM json_to_recordset(_attributs_additionnels::json)
+                AS a(
+                    nom_champ_du_csv text, nom_attribut text, definition_attribut text,
+                    thematique_attribut text, type_attribut text, unite_attribut text
+                )
+        LOOP
+            -- RAISE NOTICE '% - %', _aa_champ, _aa_nom;
+            sql_template := '
+            WITH ins AS (
+                INSERT INTO occtax.attribut_additionnel (
+                    cle_obs,
+                    nom, definition, valeur,
+                    unite, thematique, type
+                )
+                SELECT
+                    o.cle_obs,
+                    Coalesce(%5$s, %4$s) AS nom,
+                    Coalesce(%6$s, %5$s, %4$s) AS definition,
+                    Coalesce(trim(t.odata->>%4$s), ''NSP'') AS valeur,
+                    Coalesce(%7$s, ''NSP'') AS unite,
+                    Coalesce(%8$s, ''NSP'') AS thematique,
+                    Coalesce(%9$s, ''NSP'') AS type
+
+                FROM occtax.observation AS o
+                JOIN "%2$s" AS t
+                    ON t.id_origine = o.id_origine
+                WHERE True
+                    AND o.jdd_id IN (''%1$s'')
+                    AND o.odata->>''import_temp_table'' = ''%2$s''
+                    AND o.odata->>''import_login'' = ''%3$s''
+                    -- il faut avoir une valeur
+                    AND nullif(trim(t.odata->>%4$s), '''') IS NOT NULL
+                ON CONFLICT ON CONSTRAINT attribut_additionnel_pkey
+                DO NOTHING
+                RETURNING cle_obs
+            ) SELECT count(*) AS nb FROM ins
+            ;
+            ';
+            sql_text := format(sql_template,
+                _jdd_id,
+                _table_temporaire,
+                _import_login,
+                quote_literal(_aa_champ),
+                quote_literal(_aa_nom),
+                quote_literal(_aa_definition),
+                quote_literal(_aa_unite),
+                quote_literal(_aa_thematique),
+                quote_literal(_aa_type)
+            );
+            -- RAISE NOTICE '-- table occtax.attribut_additionnel';
+            -- RAISE NOTICE '%', sql_text;
+            EXECUTE sql_text INTO _nb_lignes;
+        END LOOP;
+
+        -- RAISE NOTICE 'occtax.attribut_additionnel: %', _nb_lignes;
+        _result_information := _result_information || jsonb_build_object('attributs_additionnels', _nb_lignes);
+    END IF;
+
 
     -- Table occtax.organisme
     SELECT setval('occtax.organisme_id_organisme_seq', (SELECT max(id_organisme) FROM occtax.organisme))
@@ -1324,10 +1397,12 @@ COST 100
 ;
 
 
-COMMENT ON FUNCTION occtax.import_observations_post_data(regclass, text, text, text, text, date, text, text, integer)
+COMMENT ON FUNCTION occtax.import_observations_post_data(regclass, text, text, text, text, date, text, text, integer, text)
 IS 'Importe les données complémentaires (observateurs, liens spatiaux, validation, etc.)
 sur les observations contenues dans la table fournie en paramètre'
 ;
+
+
 
 
 
@@ -1387,10 +1462,6 @@ BEGIN
     );
     DELETE FROM occtax.observation_personne WHERE cle_obs IN (
         SELECT cle_obs FROM occtax.observation
-        WHERE jdd_id = _jdd_id AND odata->>'import_temp_table' = _table_temporaire::text
-    );
-    DELETE FROM occtax.lien_observation_identifiant_permanent WHERE id_sinp_occtax IN (
-        SELECT id_sinp_occtax FROM occtax.observation
         WHERE jdd_id = _jdd_id AND odata->>'import_temp_table' = _table_temporaire::text
     );
     DELETE FROM occtax.observation

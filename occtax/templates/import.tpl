@@ -12,7 +12,11 @@
             <p>Veuillez consulter au préalable les ressources suivantes</p>
             <ul>
                 <li>la page INPN sur <a href="https://inpn.mnhn.fr/programme/donnees-observations-especes/references/standard-echange" target="_blank">le standard "Occurrences de Taxon"</a>, le <a href="{jurl 'occtax~import:getRessourceFile', array('ressource'=>'pdf')}" target="_blank">fichier PDF descriptif</a> et <a href="{jurl 'occtax~import:getRessourceFile', array('ressource'=>'nomenclature')}" target="_blank">la nomenclature du standard</a></li>
-                <li>un <a href="{jurl 'occtax~import:getRessourceFile', array('ressource'=>'csv')}" target="_blank">Exemple de fichier CSV conforme</a></li>
+                <li>
+                    un <a href="{jurl 'occtax~import:getRessourceFile', array('ressource'=>'csv')}" target="_blank">
+                        Exemple de fichier CSV conforme</a> et du <a href="{jurl 'occtax~import:getRessourceFile', array('ressource'=>'csv_attribut_additionnel')}" target="_blank">
+                        fichier CSV optionnel</a> décrivant les attributs additionnels à importer (mode avancé)
+                </li>
             </ul>
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#import_formulaire" data-toggle="tab">Formulaire</a></li>

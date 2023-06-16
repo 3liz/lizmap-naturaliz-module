@@ -2,14 +2,25 @@
 
 ## Unreleased
 
+## 2.16.2 - 2023-06-19
+
 ### Changed
 
 * **Import CSV**
   - Nouvelle option pour choisir le **système de coordonnées** des champs `longitude` et `latitude` contenus
-    dans le CSV: soit en mètres (projection locale) soit en degrés (EPSG:4326)
+    dans le CSV: soit en mètres (projection locale) soit en degrés (EPSG:4326).
   - Nouvelle option pour choisir le **format des géométries** des observations:
     - soit on passe `longitude` et `latitude`
     - soit on passe un champ `wkt`, ce qui permet d'**importer aussi des lignes et des polygones**
+  - Nouvelle option pour fournir un fichier CSV décrivant les **champs additionnels** : cela permet
+    de déclarer quels champs du CSV des observations qui ne sont pas standards doivent être importés
+    dans la table `occtax.attribut_additionnel`.
+
+### Fixed
+
+* **Panneau de résultats** et **données brutes sur la carte**: le tableau des observations
+  n'était pas visible pour les personnes non connectées  même si on avait activé
+  le droit `Visualiser les données brutes selon la diffusion`.
 
 ## 2.16.1 - 2023-05-26
 
