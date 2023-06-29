@@ -74,6 +74,7 @@ class occtaxImport
         'validation_date_ctrl',
         'validation_ech_val',
         'validation_typ_val',
+        'validation_validateur',
 
         'longitude',
         'latitude',
@@ -736,14 +737,13 @@ class occtaxImport
      * @param string  $date_reception Date de réception des données
      * @param string  $remarque_import Remarques sur l'import
      * @param string  $user_email Email de l'importateur connecté
-     * @param integer $validateur Identifiant de la personne validateur (id_personne)
      *
      * @return boolean $status The status of the import.
      */
     public function addImportedObservationPostData(
         $login, $jdd_uid, $default_email,
         $libelle_import, $date_reception, $remarque_import,
-        $user_email, $validateur
+        $user_email
     ) {
         // Import dans les tables liées à observation
         $sql = ' SELECT import_report';
@@ -751,15 +751,15 @@ class occtaxImport
             $1,
             $2, $3, $4,
             $5, $6, $7,
-            $8, $9,
-            $10
+            $8,
+            $9
         )';
         $params = array(
             $this->temporary_table.'_target',
             $login, $jdd_uid,
             $default_email,
             $libelle_import, $date_reception, $remarque_import,
-            $user_email, $validateur,
+            $user_email,
             json_encode($this->attributeData)
         );
         $import_other = $this->query($sql, $params);

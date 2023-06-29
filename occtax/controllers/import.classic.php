@@ -281,7 +281,7 @@ class importCtrl extends jController
         if (count($check_not_null) || count($check_format) || count($check_conforme)) {
             jForms::destroy("occtax~import");
             $import->clean();
-            $return['messages'][] = "Aucune observation n'a été importée car le contrôle a trouvé des erreurs.";
+            $return['messages'][] = "Aucune observation n'a été importée car le contrôle a trouvé des erreurs. Voir le tableau dans l'onglet Conformité";
             $rep->data = $return;
             return $rep;
         }
@@ -388,15 +388,6 @@ class importCtrl extends jController
             return $rep;
         }
 
-        // Check the given validator
-        $validateur = $form->getData('validateur');
-        if (empty($validateur)) {
-            $import->clean();
-            $return['messages'][] = 'Le validateur doit être défini, même si aucun niveau de validité n\'est fourni.';
-            $rep->data = $return;
-            return $rep;
-        }
-
         // Import observations
         $localConfig = jApp::configPath('naturaliz.ini.php');
         $ini = parse_ini_file($localConfig, true);
@@ -427,7 +418,7 @@ class importCtrl extends jController
         $import_other_data = $import->addImportedObservationPostData(
             $login, $jdd_uid, $default_email,
             trim($libelle_import), $date_reception, trim($remarque_import),
-            $user_email, $validateur
+            $user_email
         );
         $this->logMetric('addImportedObservationPostData');
         if (!$import_other_data) {

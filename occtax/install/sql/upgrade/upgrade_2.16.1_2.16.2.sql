@@ -617,6 +617,20 @@ $$
 WHERE code = 'obs_statut_observation_et_denombrement_valide'
 ;
 
+INSERT INTO occtax.critere_conformite
+(code, libelle, "description", condition, type_critere)
+VALUES
+('obs_validation_validateur_valide_format', 'La valeur de <b>validation_validateur</b> n''est pas conforme',
+'Le champ <b>validation_validateur</b> doit être du type: "NOM Prénom (Organisme 1)" ou "INCONNU (Indépendant)". Il doit contenir une personne valide si "validite_niv_val" est renseigné.',
+$$(
+    (validation_niv_val IS NOT NULL AND occtax.is_valid_identite_multiple(Coalesce(validation_validateur, 'invalide')))
+    OR validation_niv_val IS NULL )
+$$, 'conforme'
+)
+ON CONFLICT DO NOTHING
+;
+
+
 UPDATE occtax.critere_conformite SET condition = $$
     COALESCE(denombrement_min::integer, 0) <= COALESCE(denombrement_max::integer, 0)
     OR denombrement_max IS NULL
@@ -644,12 +658,12 @@ DROP FUNCTION IF EXISTS occtax.import_observations_post_data(regclass, text, tex
 DROP FUNCTION IF EXISTS occtax.import_observations_post_data(regclass, text, text, text, text, date, text, text);
 DROP FUNCTION IF EXISTS occtax.import_observations_post_data(regclass, text, text, text, text, date, text, text, integer);
 DROP FUNCTION IF EXISTS occtax.import_observations_post_data(regclass, text, text, text, text, date, text, text, integer, text);
+DROP FUNCTION IF EXISTS occtax.import_observations_post_data(regclass, text, text, text, text, date, text, text, text);
 CREATE OR REPLACE FUNCTION occtax.import_observations_post_data(
     _table_temporaire regclass,
     _import_login text, _jdd_uid text, _default_email text,
     _libelle_import text, _date_reception date, _remarque_import text,
     _import_user_email text,
-    _validateur integer,
     _attributs_additionnels text DEFAULT '[]'
 )
 RETURNS TABLE (
@@ -789,6 +803,9 @@ BEGIN
             UNION
             SELECT DISTINCT determinateurs AS personnes
             FROM %1$s
+            UNION
+            SELECT DISTINCT validation_validateur AS personnes
+            FROM %1$s
         ),
         personne AS (
             SELECT DISTINCT trim(regexp_split_to_table(personnes, '','')) AS personne
@@ -827,6 +844,9 @@ BEGIN
             FROM %1$s
             UNION
             SELECT DISTINCT determinateurs AS personnes
+            FROM %1$s
+            UNION
+            SELECT DISTINCT validation_validateur AS personnes
             FROM %1$s
         ),
         personne AS (
@@ -900,7 +920,7 @@ BEGIN
         ';
         sql_text := format(sql_template,
             _nom_type_personne,
-            -- on enlève le s final
+            -- on enlève le s final pour créer le nom du champ à nommer
             substr(_nom_type_personne, 1, length(_nom_type_personne) - 1),
             _jdd_uid,
             _nom_role_personne
@@ -948,25 +968,26 @@ BEGIN
                 Coalesce(Nullif(s.validation_typ_val::text, ''), 'M') AS typ_val,
                 Coalesce(Nullif(s.validation_ech_val::text, ''), '2') AS ech_val,
                 '1' AS peri_val,
-                %1$s AS validateur,
+                op.id_personne AS validateur,
                 (SELECT "procedure" FROM occtax.validation_procedure ORDER BY id DESC LIMIT 1) AS "procedure",
                 (SELECT proc_vers FROM occtax.validation_procedure ORDER BY id DESC LIMIT 1) AS proc_vers,
                 (SELECT proc_ref FROM occtax.validation_procedure ORDER BY id DESC LIMIT 1) AS proc_ref,
                 'Données validées pendant l''import CSV du ' || now()::date::text
             FROM occtax.observation AS o
-            INNER JOIN "%2$s" AS s
+            INNER JOIN "%1$s" AS s
                 ON o.id_origine = s.id_origine::text
+            INNER JOIN occtax.personne AS op
+                ON s.validation_validateur = concat(op.identite, ' (', (SELECT nom_organisme FROM occtax.organisme og WHERE og.id_organisme = op.id_organisme), ')')
             WHERE True
-                AND o.odata->>'import_temp_table' = '%2$s'
-                AND o.jdd_id IN ('%3$s')
-                AND o.odata->>'import_login' = '%4$s'
+                AND o.odata->>'import_temp_table' = '%1$s'
+                AND o.jdd_id IN ('%2$s')
+                AND o.odata->>'import_login' = '%3$s'
             ON CONFLICT ON CONSTRAINT validation_observation_id_sinp_occtax_ech_val_unique
             DO NOTHING
 		    RETURNING id_sinp_occtax
         ) SELECT count(*) AS nb FROM ins
     $$;
     sql_text := format(sql_template,
-        _validateur,
         _table_temporaire,
         _jdd_id,
         _import_login
@@ -1082,7 +1103,7 @@ COST 100
 ;
 
 
-COMMENT ON FUNCTION occtax.import_observations_post_data(regclass, text, text, text, text, date, text, text, integer, text)
+COMMENT ON FUNCTION occtax.import_observations_post_data(regclass, text, text, text, text, date, text, text, text)
 IS 'Importe les données complémentaires (observateurs, liens spatiaux, validation, etc.)
 sur les observations contenues dans la table fournie en paramètre'
 ;

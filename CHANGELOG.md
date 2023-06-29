@@ -15,6 +15,9 @@
   - Nouvelle option pour fournir un fichier CSV décrivant les **champs additionnels** : cela permet
     de déclarer quels champs du CSV des observations qui ne sont pas standards doivent être importés
     dans la table `occtax.attribut_additionnel`.
+  - Nouveau champ `validateurs` dans le CSV des observations pour permettre de **spécifier le validateur**
+    pour chaque observation séparément. Le champ `validateur` du formulaire d'import
+    a été supprimé.
 
 ### Fixed
 
