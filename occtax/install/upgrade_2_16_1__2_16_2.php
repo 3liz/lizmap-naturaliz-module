@@ -17,7 +17,7 @@ class occtaxModuleUpgrader_2_16_1__2_16_2 extends jInstallerModule //\Jelix\Inst
     public $targetVersions = array(
         '2.16.2',
     );
-    public $date = '2023-06-12';
+    public $date = '2023-06-29';
 
     protected $sqlUpgradeFile = 'upgrade/upgrade_2.16.1_2.16.2.sql';
 
