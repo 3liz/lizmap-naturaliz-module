@@ -497,7 +497,17 @@ class occtaxImport
             );
             /** @var PgSql\Connection */
             $pgConnection = pg_pconnect($dsn);
-            $sql = ' COPY "'.$this->temporary_table.'_source" (';
+            // We need to add the search path configured in the profile
+            // because here we recreate a new connection with pg_connect
+            // and we do not use the virtual profile with jDb
+            // otherwise the COPY will not find the temporary table if the public schema
+            // is not the first one in the search_path
+            $setSearchPath = "";
+            if (array_key_exists('search_path', $profile) && !empty($profile['search_path'])) {
+                $setSearchPath = "SET search_path TO ".$profile['search_path'].";";
+            }
+
+            $sql = $setSearchPath.' COPY "'.$this->temporary_table.'_source" (';
             $comma = '';
             foreach ($this->header as $column) {
                 $sql .= $comma.'"'.$column.'"';
