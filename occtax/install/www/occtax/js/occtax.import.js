@@ -15,6 +15,7 @@ lizMap.events.on({
                     if (request.status == 200) {
                         resolve(request.responseText);
                     } else {
+                        console.log('Erreur '+request.status);
                         reject();
                     }
                 };

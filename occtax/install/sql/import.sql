@@ -170,56 +170,6 @@ COMMENT ON FUNCTION occtax.is_given_type(text, text)
 IS 'Tester si le contenu d''un champ est du type attendu'
 ;
 
--- Test d'intersection entre un point et les mailles 10
-DROP FUNCTION IF EXISTS occtax.intersects_maille_10(real, real, integer);
-CREATE FUNCTION occtax.intersects_maille_10(longitude real, latitude real, _source_srid integer DEFAULT 4326) RETURNS BOOLEAN AS $$
-DECLARE
-    _srid integer;
-    _nb_maille integer;
-    _inside boolean;
-BEGIN
-    -- Avoid to test empty data
-    IF longitude IS NULL AND latitude IS NULL THEN
-        return true;
-    END IF;
-
-    -- Get observation table SRID
-    SELECT srid
-    INTO _srid
-    FROM geometry_columns
-    WHERE f_table_schema = 'occtax' AND f_table_name = 'observation'
-    ;
-
-    -- Intersects
-    SELECT count(m.*)
-    INTO _nb_maille
-    FROM sig.maille_10 AS m
-    WHERE True
-    AND ST_Intersects(
-        m.geom,
-        ST_Transform(
-            ST_SetSRID(ST_MakePoint(longitude, latitude), _source_srid),
-            _srid
-        )
-    ) ;
-    -- If there is an intersection, return True
-    IF _nb_maille > 0 THEN
-        RETURN True;
-    ELSE
-        RETURN False;
-    END IF;
-
-EXCEPTION WHEN others THEN
-    return false;
-END;
-$$ LANGUAGE plpgsql
-;
-
-COMMENT ON FUNCTION occtax.intersects_maille_10(real, real, integer)
-IS 'Tester si les géométries point issues de longitude et latitude sont contenus dans les mailles 10x10km.'
-;
-
-
 -- Fonction de test de conformité des observations d'une table au standard
 DROP FUNCTION IF EXISTS occtax.test_conformite_observation(regclass, text);
 DROP FUNCTION IF EXISTS occtax.test_conformite_observation(regclass, text, integer);
@@ -461,7 +411,14 @@ $$, 'conforme'),
 $$, 'conforme'),
 
 -- géométrie dans les mailles 10x10km
-('obs_geometrie_localisation_dans_maille', 'Les <b>géométries</b> ne sont pas conformes', 'Les <b>géométries</b> doivent être à l''intérieur des mailles 10x10km.' , $$occtax.intersects_maille_10(longitude::real, latitude::real, __SOURCE_SRID__)$$, 'conforme')
+('obs_geometrie_localisation_dans_maille', 'Les <b>géométries</b> ne sont pas conformes', 'Les <b>géométries</b> doivent être à l''intérieur des mailles 10x10km.' , $$
+ST_Intersects(
+    (SELECT ST_union(geom) FROM sig.maille_10),
+    ST_Transform(
+        ST_SetSRID(ST_MakePoint(o.longitude::real, o.latitude::real), __SOURCE_SRID__),
+        (SELECT srid FROM geometry_columns WHERE f_table_schema = 'occtax' AND f_table_name = 'observation')
+    )
+)$$, 'conforme')
 
 ON CONFLICT ON CONSTRAINT critere_conformite_unique_code DO NOTHING
 ;

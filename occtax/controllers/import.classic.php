@@ -200,10 +200,12 @@ class importCtrl extends jController
         }
 
         // Import the CSV data into the source temporary table
-        $check = $import->saveToSourceTemporaryTable();
+        list($check, $message) = $import->saveToSourceTemporaryTable();
         $this->logMetric('saveToSourceTemporaryTable');
         if (!$check) {
-            $return['messages'][] = 'Impossible de charger les données du CSV dans la table temporaire (erreur de requête)';
+            $msg = 'Impossible de charger les données du CSV dans la table temporaire (erreur de requête).';
+            $msg = ' '.$message;
+            $return['messages'][] = $msg;
             $rep->data = $return;
             return $rep;
         }
@@ -267,6 +269,7 @@ class importCtrl extends jController
 
         // If we only check, we can clean the data and return the response
         if ($action == 'check') {
+            $this->logMetric('checkFinished');
             $return['action'] = 'check';
             jForms::destroy("occtax~import");
             $import->clean();

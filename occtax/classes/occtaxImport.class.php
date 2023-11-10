@@ -339,18 +339,6 @@ class occtaxImport
         return array($status, $message);
     }
 
-
-
-    /**
-     * Set the data property
-     *
-     */
-    public function setData()
-    {
-        // Avoid the first line which contains the CSV header
-        $this->data = $this->parseCsv($this->csv_file, 1);
-    }
-
     /**
      * Set the additional attributes data property
      *
@@ -358,6 +346,7 @@ class occtaxImport
     public function setAdditionalAttributesData()
     {
         // Avoid the first line which contains the CSV header
+        // We use this method as the additionnal attributes CSV is light
         $attributeData = $this->parseCsv($this->csv_attributes_file, 1);
 
         $formattedData = array();
@@ -375,6 +364,9 @@ class occtaxImport
 
     /**
      * Parse the CSV raw content and return its data
+     *
+     * This method must not be used to import heavy data,
+     * as it will have high memory footprint
      *
      * @param string $csv_file CSV file full path
      * @param int    $offset   Number of lines to avoid from the beginning
@@ -483,49 +475,68 @@ class occtaxImport
      * Insert the data from the CSV file
      * into the target table.
      *
-     * @param string $table Name of the table (include schema eg: occtax.a_table)
-     * @param array $multiple_params Array of array of the parameters values
+     * We should not read the CSV data but only copy all the data to PostgreSQL
      *
      * @return boolean True if success
      */
-    private function importCsvDataToTemporaryTable($table, $multiple_params)
+    private function importCsvDataToTemporaryTable()
     {
         $status = true;
+        $message = 'ok';
+        $query = null;
 
-        // Insert the CSV data into the source temporary table
-        $cnx = jDb::getConnection('naturaliz_virtual_profile');
-        $cnx->beginTransaction();
         try {
-            // Loop through each CSV data line
-            foreach ($multiple_params as $params) {
-                $sql = ' INSERT INTO "'.$table.'_source"';
-                $sql .= '(';
-                $comma = '';
-                foreach ($this->header as $column) {
-                    $sql .= $comma.'"'.$column.'"';
-                    $comma = ', ';
-                }
-                $sql .= ')';
-                $sql .= ' VALUES (';
-                $comma = '';
-                $i = 1;
-                foreach ($this->header as $column) {
-                    $sql .= $comma.'Nullif(Nullif(trim($'.$i."), ''), 'NULL')";
-                    $comma = ', ';
-                    $i++;
-                }
-                $sql .= ');';
-                $resultset = $cnx->prepare($sql);
-                $resultset->execute($params);
+            $profile = jProfiles::get('jdb', 'naturaliz_virtual_profile');
+            $dsn = sprintf(
+                "host=%s port=%s dbname=%s user=%s password=%s",
+                $profile['host'],
+                $profile['port'],
+                $profile['database'],
+                $profile['user'],
+                $profile['password']
+            );
+            /** @var PgSql\Connection */
+            $pgConnection = pg_pconnect($dsn);
+            $sql = ' COPY "'.$this->temporary_table.'_source" (';
+            $comma = '';
+            foreach ($this->header as $column) {
+                $sql .= $comma.'"'.$column.'"';
+                $comma = ', ';
             }
-            $cnx->commit();
-        } catch (Exception $e) {
-            jLog::log($e->getMessage());
-            $cnx->rollback();
+            $sql.= ') ';
+            $sql.= " FROM STDIN WITH CSV HEADER DELIMITER ',' ";
+            $query = pg_query($pgConnection, $sql);
+
+            // If we can read the file
+            if ($query && ($handle = fopen($this->csv_file, 'r')) !== FALSE) {
+                while (($data = fgets($handle)) !== FALSE) {
+                    pg_put_line($pgConnection, $data);
+                }
+                fclose($handle);
+                $query = pg_end_copy($pgConnection);
+            } else {
+                $status = false;
+                $message = 'Les données ne peuvent pas être lues depuis le CSV pour import dans la table temporaire';
+            }
+
+        }  catch (Exception $e) {
+            $message = $e->getMessage();
             $status = false;
+            \jLog::log($message, 'error');
+
+        } finally {
+            if ($pgConnection) {
+                if (!$query) {
+                    \jLog::log(pg_last_error($pgConnection), 'error');
+                    $message = 'Erreur : le fichier contient des données supplémentaires après la dernière colonne attendue';
+                    $status = false;
+                }
+
+                pg_close($pgConnection);
+            }
         }
 
-        return $status;
+        return array($status, $message);
     }
 
     /**
@@ -538,23 +549,14 @@ class occtaxImport
      */
     public function saveToSourceTemporaryTable()
     {
-        // Read data from the CSV file
-        // and set the data property with the read content
-        $this->setData();
-
         if (!empty($this->csv_attributes_file)) {
             $this->setAdditionalAttributesData();
         }
 
-        // Check the data
-        if (count($this->data) == 0) {
-            return false;
-        }
-
         // Import the data
-        $status = $this->importCsvDataToTemporaryTable($this->temporary_table, $this->data);
+        list($status, $message) = $this->importCsvDataToTemporaryTable();
 
-        return $status;
+        return array($status, $message);
     }
 
     /**
@@ -572,10 +574,12 @@ class occtaxImport
         $sql .= ' (';
         $comma = '';
         $fields = '';
+        $parsedFields = '';
 
         // Corresponding fields
         foreach ($this->corresponding_fields as $column) {
             $fields .= $comma.'"'.$column.'"';
+            $parsedFields .= $comma.'Nullif(Nullif(trim("'.$column.'"), \'\'), \'NULL\')';
             $comma = ', ';
         }
         $sql .= $fields;
@@ -587,7 +591,7 @@ class occtaxImport
 
         $sql .= ')';
         $sql .= ' SELECT ';
-        $sql .= $fields;
+        $sql .= $parsedFields;
         if (!empty($this->additional_fields)) {
             $comma = '';
             $sql_add = ', json_build_object(';
@@ -817,9 +821,8 @@ class occtaxImport
         }
 
         // Drop the temporary table
-        $sql = 'DROP TABLE IF EXISTS "'.$this->temporary_table.'_source"';
-        $sql .= ', "'.$this->temporary_table.'_target"';
-        // \jLog::log($this->temporary_table . '_target"');
+        $sql = 'DROP TABLE IF EXISTS "'.$this->temporary_table.'_target"';
+        $sql .= ', "'.$this->temporary_table.'_source"';
         $params = array();
         $this->query($sql, $params);
     }
