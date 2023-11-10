@@ -475,6 +475,9 @@ BEGIN
             AND Coalesce(t.heure_debut::time with time zone, ''00:00'') = Coalesce(o.heure_debut, ''00:00'')
             AND Coalesce(t.date_fin::date, ''1980-01-01'') = Coalesce(o.date_fin, ''1980-01-01'')
             AND Coalesce(t.heure_fin::time with time zone, ''00:00'') = Coalesce(o.heure_fin, ''00:00'')
+            AND Coalesce(t.altitude_min::numeric(6,2), 0.0) = Coalesce(o.altitude_min, 0.0)
+            AND Coalesce(t.altitude_moy::numeric(6,2), 0.0) = Coalesce(o.altitude_moy, 0.0)
+            AND Coalesce(t.altitude_max::numeric(6,2), 0.0) = Coalesce(o.altitude_max, 0.0)
     '
     ;
 
