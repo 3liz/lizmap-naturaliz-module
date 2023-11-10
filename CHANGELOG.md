@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 2.16.3 - 2023-11-10
+
+* Import CSV
+  - Optimisation de l'import et du contrôle d'intersection par maille. Cela doit
+    permettre d'importer des jeux de données plus volumineux.
+  - Ajout des champs d'altitude pour le test de doublons.
+  - Fichier CSV exemple : correction du champ `validation_validateur`
+
 ## 2.16.2 - 2023-06-29
 
 ### Changed
