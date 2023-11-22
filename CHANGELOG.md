@@ -2,7 +2,23 @@
 
 ## Unreleased
 
-## 2.16.3 - 2023-11-10
+## 2.16.4 - 2023-11-22
+
+### Changed
+
+* Import CSV : modification de la contrainte d'intégrité sur `occtax.personne`
+  pour éviter d'ajouter automatiquement des nouvelles personnes lors de l'import.
+  La contrainte est maintenant seulement sur `identité` & `id_organisme`
+  et s'appelle `personne_identite_id_organisme_key` et plus `personne_identite_organisme_mail_key`
+
+### Backend
+
+* Modification de la version maximale de Lizmap Web Client supportée par naturaliz :
+  spécification de 3.6.* au lieu de la 3.7.* dans les fichiers XML des modules
+
+## 2.16.3
+
+### Changed
 
 * Import CSV
   - Optimisation de l'import et du contrôle d'intersection par maille. Cela doit

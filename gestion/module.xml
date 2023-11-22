@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module xmlns="http://jelix.org/ns/module/1.0">
     <info id="gestion3liz.com" name="gestion" createdate="2016-12-05">
-        <version date="2023-11-10">2.16.3</version>
+        <version date="2023-11-22">2.16.4</version>
         <label lang="en_US">gestion</label>
         <description lang="en_US" />
         <license URL="http://www.mozilla.org/MPL/">Mozilla Public License</license>
@@ -11,7 +11,7 @@
         <homepageURL>http://3liz.com</homepageURL>
     </info>
     <dependencies>
-        <module name="lizmap" minversion="3.4.0" maxversion="3.7.*"/>
+        <module name="lizmap" minversion="3.4.0" maxversion="3.6.*"/>
         <module name="view" />
         <module name="taxon" />
         <module name="occtax" />
