@@ -1139,7 +1139,7 @@ BEGIN
         LEFT JOIN occtax.organisme AS o
             ON o.nom_organisme = items[3]
         WHERE is_valid
-        ON CONFLICT ON CONSTRAINT personne_identite_organisme_key DO NOTHING
+        ON CONFLICT ON CONSTRAINT personne_identite_id_organisme_key DO NOTHING
 		RETURNING identite
     ) SELECT count(*) AS nb FROM ins
     ;

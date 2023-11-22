@@ -281,7 +281,7 @@ CREATE TABLE occtax.personne (
     id_organisme integer NOT NULL DEFAULT -1,
     anonymiser boolean,
     CONSTRAINT personne_identite_valide CHECK ( identite NOT LIKE '%,%' ),
-    CONSTRAINT personne_identite_organisme_mail_key UNIQUE (identite, id_organisme, mail)
+    CONSTRAINT personne_identite_id_organisme_key UNIQUE (identite, id_organisme)
 );
 ALTER TABLE occtax.personne ADD PRIMARY KEY (id_personne);
 

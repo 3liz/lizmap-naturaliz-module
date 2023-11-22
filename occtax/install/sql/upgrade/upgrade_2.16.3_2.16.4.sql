@@ -2,7 +2,7 @@
 -- et ajout d'une contrainte d'unicité seulement sur l'identité et l'organisme
 ALTER TABLE occtax.personne DROP CONSTRAINT IF EXISTS personne_identite_id_organisme_key;
 ALTER TABLE occtax.personne DROP CONSTRAINT IF EXISTS personne_identite_organisme_mail_key;
-ALTER TABLE occtax.personne ADD CONSTRAINT personne_identite_organisme_key UNIQUE (identite, id_organisme);
+ALTER TABLE occtax.personne ADD CONSTRAINT personne_identite_id_organisme_key UNIQUE (identite, id_organisme);
 
 DROP FUNCTION IF EXISTS occtax.import_observations_post_data(regclass, text, text, text, text, date, text, text, text);
 CREATE OR REPLACE FUNCTION occtax.import_observations_post_data(
@@ -215,7 +215,7 @@ BEGIN
         LEFT JOIN occtax.organisme AS o
             ON o.nom_organisme = items[3]
         WHERE is_valid
-        ON CONFLICT ON CONSTRAINT personne_identite_organisme_key DO NOTHING
+        ON CONFLICT ON CONSTRAINT personne_identite_id_organisme_key DO NOTHING
 		RETURNING identite
     ) SELECT count(*) AS nb FROM ins
     ;
