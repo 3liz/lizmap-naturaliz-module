@@ -4,7 +4,7 @@
 <group ref="source_group">
     <label locale="occtax~import.form.group.source.label"/>
 
-    <upload ref="observation_csv" required="true" maxsize="50000000" accept=".csv,text/csv,application/csv,text/comma-separated-values">
+    <upload ref="observation_csv" required="true" maxsize="52428800" accept=".csv,text/csv,application/csv,text/comma-separated-values">
         <label locale="occtax~import.input.observation_csv"/>
         <hint locale="occtax~import.input.observation_csv.help"/>
         <help locale="occtax~import.input.observation_csv.help"/>

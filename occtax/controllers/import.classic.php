@@ -105,7 +105,43 @@ class importCtrl extends jController
         $checkForm = $form->check();
         if (!$checkForm) {
             $errors = $form->getErrors();
-            $message = "Le formulaire n'est pas valide. Veuillez renvoyer votre fichier CSV.";
+            $message = "Le formulaire n'est pas valide.";
+            if (
+                array_key_exists('observation_csv', $errors)
+                && in_array(
+                    $errors['observation_csv'],
+                    array(
+                        \jForms::ERRDATA_REQUIRED,
+                        \jForms::ERRDATA_INVALID_FILE_SIZE,
+                        \jForms::ERRDATA_INVALID_FILE_TYPE,
+                        \jForms::ERRDATA_FILE_UPLOAD_ERROR,
+                    )
+                )
+            ) {
+                $error = $errors['observation_csv'];
+                $correspondance = array(
+                    \jForms::ERRDATA_REQUIRED => \jLocale::get('jelix~formserr.js.err.required', 'Fichier CSV'),
+                    \jForms::ERRDATA_INVALID_FILE_SIZE => \jLocale::get('jelix~formserr.js.err.invalid.file.size', 'Fichier CSV'),
+                    \jForms::ERRDATA_INVALID_FILE_TYPE => \jLocale::get('jelix~formserr.js.err.invalid.file.type', 'Fichier CSV'),
+                    \jForms::ERRDATA_FILE_UPLOAD_ERROR => \jLocale::get('jelix~formserr.js.err.file.upload', 'Fichier CSV'),
+                );
+                $message .= " Erreur : ".$correspondance[$error].".";
+                // Ajout de la taille max du serveur si besoin
+                if ($error = \jForms::ERRDATA_INVALID_FILE_SIZE) {
+                    /** @var \jFormsControlUpload */
+                    $ctrl = $form->getControl('observation_csv');
+                    $ctrlMaxSize = $ctrl->maxsize;
+                    if (empty($ctrlMaxSize)) {
+                        $ctrlMaxSize = 1000000000;
+                    }
+                    $maxSize = min(
+                        ((integer) str_replace('M', '', ini_get('upload_max_filesize'))) * 1024 * 1024,
+                        ((integer) str_replace('M', '', ini_get('post_max_size'))) * 1024 * 1024,
+                        $ctrlMaxSize
+                    );
+                    $message .= " La taille maximum autorisée est de ".round($maxSize / (1024 * 1024), 2)." Mo";
+                }
+            }
             $return['messages'][] = $message;
             $rep->data = $return;
             return $rep;
