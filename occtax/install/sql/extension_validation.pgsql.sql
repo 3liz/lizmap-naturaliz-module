@@ -135,6 +135,7 @@ CREATE TABLE occtax.critere_validation (
     condition text NOT NULL,
     table_jointure text,
     niveau text NOT NULL,
+    code_critere text,
     CONSTRAINT critere_validation_niveau_valide CHECK ( niveau IN ( '1', '2', '3', '4', '5', '6' ) )
 
 );
@@ -149,6 +150,7 @@ COMMENT ON COLUMN occtax.critere_validation.description IS 'Description de la mo
 COMMENT ON COLUMN occtax.critere_validation.condition IS 'Condition au format SQL s''appliquant sur les champs de la table observation. Une sous-requête peut être effectuée vers d''autres tables. Ex: "altitude_max" > 500 AND altitude_max < 1500';
 COMMENT ON COLUMN occtax.critere_validation.table_jointure IS 'Nom de la table utilisée pour une condition de jointure. On peut par exemple l''utiliser pour une intersection spatiale. Par exemple les tampons à 100m autour des rivières. Pour des soucis de performance, il faut faire une jointure et non une condition simple. Cette table doit être stockée dans le schéma sig';
 COMMENT ON COLUMN occtax.critere_validation.niveau IS 'Niveau de validation à appliquer pour la condition. Doit correspondre à la nomenclature.';
+COMMENT ON COLUMN occtax.critere_validation.code_critere IS 'code du critère dans la base source (ex : tortues_marines_1)';
 
 
 -- table critere_sensibilite
@@ -161,6 +163,7 @@ CREATE TABLE occtax.critere_sensibilite (
     condition text NOT NULL,
     table_jointure text,
     niveau text NOT NULL,
+    code_critere text,
     CONSTRAINT critere_sensibilite_niveau_valide CHECK ( niveau IN ( 'm01', 'm02', '0', '1', '2', '3', '4' ) )
 
 );
@@ -175,6 +178,7 @@ COMMENT ON COLUMN occtax.critere_sensibilite.description IS 'Description de la m
 COMMENT ON COLUMN occtax.critere_sensibilite.condition IS 'Condition au format SQL s''appliquant sur les champs de la table observation. Une sous-requête peut être effectuée vers d''autres tables. Ex: "altitude_max" > 500 AND altitude_max < 1500';
 COMMENT ON COLUMN occtax.critere_sensibilite.table_jointure IS 'Nom de la table utilisée pour une condition de jointure. On peut par exemple l''utiliser pour une intersection spatiale. Par exemple les tampons à 100m autour des rivières. Pour des soucis de performance, il faut faire une jointure et non une condition simple. Cette table doit être stockée dans le schéma sig';
 COMMENT ON COLUMN occtax.critere_sensibilite.niveau IS 'Niveau de sensibilité à appliquer pour la condition. Doit correspondre à la nomenclature. Liste des niveaux : ''m01'', ''m02'', ''0'', ''1'', ''2'', ''3'', ''4'' ';
+COMMENT ON COLUMN occtax.critere_sensibilite.code_critere IS 'code du critère dans la base source (ex : sensibilite_528679)';
 
 
 CREATE OR REPLACE VIEW occtax.v_critere_validation_et_sensibilite AS

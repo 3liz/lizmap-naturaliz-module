@@ -565,7 +565,7 @@ COMMENT ON FUNCTION occtax.verification_doublons_avant_import(regclass, text, bo
 IS 'Vérifie que les données en attente d''import (dans la table fournie en paramètre)
 ne contiennent pas des données déjà existantes dans la table occtax.observation.
 Les comparaisons sont faites sur les champs: cd_nom, date_debut, heure_debut,
-date_fin, heure_fin, geom.'
+date_fin, heure_fin, geom, altitude_min, altitude_moy, altitude_max.'
 ;
 
 

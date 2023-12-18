@@ -96,6 +96,9 @@ CREATE TABLE occtax.observation (
     sensi_referentiel text,
     sensi_version_referentiel text,
 
+    validite_niveau text,
+    validite_date_validation date,
+
     precision_geometrie integer,
     nature_objet_geo text,
     nom_lieu text,
@@ -315,6 +318,43 @@ COMMENT ON TABLE occtax.observation_personne IS 'Table pivot entre les observati
 COMMENT ON COLUMN occtax.observation_personne.cle_obs IS 'Indentifiant de l''observation';
 COMMENT ON COLUMN occtax.observation_personne.id_personne IS 'Identifiant de la personne';
 COMMENT ON COLUMN occtax.observation_personne.role_personne IS 'Rôle de la personne. Voir nomenclature.';
+
+
+-- Table organisme
+CREATE TABLE occtax.organisme (
+    id_organisme serial PRIMARY KEY,
+    nom_organisme text NOT NULL,
+    sigle TEXT, -- Sigle de la structure
+    responsable text, -- Nom de la personne responsable de la structure, pour les envois postaux officiels
+    adresse1 TEXT, -- Adresse de niveau 1
+    adresse2 TEXT, -- Adresse de niveau 2
+    cs TEXT, -- Courrier spécial
+    cp integer, -- Code postal
+    commune TEXT, -- Commune
+    cedex TEXT, -- CEDEX
+    csr boolean, -- Indique si la structure est membre du Comité de suivi régional du SINP
+    commentaire character varying, -- Commentaire sur la structure
+    uuid_national text, -- Identifiant national (UUID)
+    date_maj timestamp without time zone DEFAULT (now())::timestamp without time zone -- Date à laquelle l'enregistrement a été modifé pour la dernière fois (rempli automatiquement)
+);
+ALTER TABLE occtax.organisme ADD UNIQUE (nom_organisme);
+
+
+COMMENT ON TABLE occtax.organisme IS 'Organismes listés dans l''application. Par exemple, les organismes liés aux observations peuvent être liés à cette table. Ou les demandes du module optionnel de gestion sont rattachées à un organisme.';
+COMMENT ON COLUMN occtax.organisme.id_organisme IS 'Identifiant de l''organisme.';
+COMMENT ON COLUMN occtax.organisme.nom_organisme IS 'Nom de l''organisme.';
+COMMENT ON COLUMN occtax.organisme.sigle IS 'Sigle de la structure' ;
+COMMENT ON COLUMN occtax.organisme.responsable IS 'Nom de la personne responsable de la structure, pour les envois postaux officiels' ;
+COMMENT ON COLUMN occtax.organisme.adresse1 IS 'Adresse de niveau 1' ;
+COMMENT ON COLUMN occtax.organisme.adresse2 IS 'Adresse de niveau 2' ;
+COMMENT ON COLUMN occtax.organisme.cs IS 'Courrier spécial' ;
+COMMENT ON COLUMN occtax.organisme.cp IS 'Code postal' ;
+COMMENT ON COLUMN occtax.organisme.commune IS 'Commune' ;
+COMMENT ON COLUMN occtax.organisme.cedex IS 'CEDEX' ;
+COMMENT ON COLUMN occtax.organisme.csr IS 'Indique si la structure est membre du Comité de suivi régional du SINP' ;
+COMMENT ON COLUMN occtax.organisme.commentaire IS 'Commentaire sur la structure' ;
+COMMENT ON COLUMN occtax.organisme.uuid_national IS 'Identifiant de l''organisme au niveau national (uuid)';
+COMMENT ON COLUMN occtax.organisme.date_maj IS 'Date à laquelle l''enregistrement a été modifé pour la dernière fois (rempli automatiquement)' ;
 
 
 -- Vue pour exploiter les personnes
@@ -603,7 +643,8 @@ CREATE TABLE IF NOT EXISTS occtax.cadre (
     description text,
     ayants_droit jsonb,
     date_lancement date,
-    date_cloture date
+    date_cloture date,
+    url_fiche text
 );
 COMMENT ON TABLE occtax.cadre IS 'Recense les cadres d''acquisition tels que renseignés dans l''application nationale https://inpn.mnhn.fr/mtd/. Un cadre d''acquisition regroupe de 1 à n jeux de données. On cherchera la cohérence dans le remplissage par rapport à ce qui est renseigné en ligne.';
 COMMENT ON COLUMN occtax.cadre.cadre_id IS 'Identifiant unique du cadre d''acquisition attribué par la plate-forme nationale INPN (du type ''2393'').';
@@ -613,6 +654,7 @@ COMMENT ON COLUMN occtax.cadre.description IS 'Description du cadre d''acquisiti
 COMMENT ON COLUMN occtax.cadre.ayants_droit IS 'Liste et rôle des structures ayant des droits sur le jeu de données, et rôle concerné (ex : financeur, maître d''oeuvre, maître d''ouvrage, fournisseur...). Stocker les structures via leur id_organisme';
 COMMENT ON COLUMN occtax.cadre.date_lancement IS 'Date de lancement du cadre d''acquisition';
 COMMENT ON COLUMN occtax.cadre.date_cloture IS 'Date de clôture du cadre d''acquisition';
+COMMENT ON COLUMN occtax.cadre.url_fiche IS 'URL de la fiche descriptive du cadre d''acquisition. Selon que la fiche est déjà publiée ou pas sur l''INPN, la fiche est au format "grand public" (de type https://inpn.mnhn.fr/espece/cadre/5313 pour le jdd_id = 10607) ou moins ergonomique issue de l''application de métadonnées (de type https://inpn.mnhn.fr/mtd/cadre/edit/5313). Ce champ est rempli lors de l''import d''un nouveau jeu de données avec la valeur par défaut https://inpn.mnhn.fr/mtd/cadre/edit/ + jdd_id. Il doit être mis à jour manuellement le cas échéant à chaque nouvel import des données régionales dans l''INPN pour prendre son format définitif https://inpn.mnhn.fr/espece/cadre/5313 + cadre_id.' ;
 
 CREATE INDEX cadre_cadre_id_idx ON occtax.cadre USING btree (cadre_id);
 
@@ -625,7 +667,8 @@ CREATE TABLE occtax.jdd (
     id_sinp_jdd text NOT NULL,
     jdd_cadre text,
     ayants_droit jsonb,
-    date_minimum_de_diffusion date
+    date_minimum_de_diffusion date,
+    url_fiche text
 );
 
 COMMENT ON TABLE occtax.jdd IS 'Recense les jeux de données officiels du standard Occurrence de taxons. Un jeu de données correspond souvent à une base de données';
@@ -637,6 +680,8 @@ COMMENT ON COLUMN occtax.jdd.id_sinp_jdd IS 'Identifiant permanent et unique de 
 COMMENT ON COLUMN occtax.jdd.jdd_cadre IS 'Cadre d''acquisition qui permet de regrouper des jdd de même producteur. Ex: on peut avoir un jdd_id par annee pour le même cadre d''acquisition';
 COMMENT ON COLUMN occtax.jdd.ayants_droit IS 'Liste et rôle des structures ayant des droits sur le jeu de données, et rôle concerné (ex : financeur, maître d''oeuvre...). Stocker les structures via leur id_organisme';
 COMMENT ON COLUMN occtax.jdd.date_minimum_de_diffusion IS 'Pour les données de recherche, les producteurs peuvent attendre que la publication scientifique soit publiée avant de diffuser les données. Cette date est utilisée dans le requête de création de la vue matérialisée occtax.vm_observation pour ne pas prendre en compte les données dont la date minimum n''est pas atteinte';
+COMMENT ON COLUMN occtax.jdd.url_fiche IS 'URL de la fiche descriptive du jeu de données. Selon que la fiche est déjà publiée ou pas sur l''INPN, la fiche est au format "grand public" (de type https://inpn.mnhn.fr/espece/jeudonnees/10607 pour le jdd_id = 10607) ou moins ergonomique issue de l''application de métadonnées (de type https://inpn.mnhn.fr/mtd/cadre/jdd/edit/10607). Ce champ est rempli lors de l''import d''un nouveau jeu de données avec la valeur par défaut https://inpn.mnhn.fr/mtd/cadre/jdd/edit/ + jdd_id. Il doit être mis à jour manuellement le cas échéant à chaque nouvel import des données régionales dans l''INPN pour prendre son format définitif https://inpn.mnhn.fr/espece/jeudonnees/ + jdd_id.';
+
 
 -- clés étrangères
 ALTER TABLE occtax.jdd ADD UNIQUE (jdd_code);
@@ -676,42 +721,6 @@ COMMENT ON COLUMN occtax.lien_observation_identifiant_permanent.dee_date_transfo
 ALTER TABLE occtax.lien_observation_identifiant_permanent
 ADD CONSTRAINT lien_observation_id_sinp_occtax_jdd_id_id_origine_id_key UNIQUE (jdd_id, id_origine, id_sinp_occtax);
 
-
--- Table organisme
-CREATE TABLE occtax.organisme (
-    id_organisme serial PRIMARY KEY,
-    nom_organisme text NOT NULL,
-    sigle TEXT, -- Sigle de la structure
-    responsable text, -- Nom de la personne responsable de la structure, pour les envois postaux officiels
-    adresse1 TEXT, -- Adresse de niveau 1
-    adresse2 TEXT, -- Adresse de niveau 2
-    cs TEXT, -- Courrier spécial
-    cp integer, -- Code postal
-    commune TEXT, -- Commune
-    cedex TEXT, -- CEDEX
-    csr boolean, -- Indique si la structure est membre du Comité de suivi régional du SINP
-    commentaire character varying, -- Commentaire sur la structure
-    uuid_national text, -- Identifiant national (UUID)
-    date_maj timestamp without time zone DEFAULT (now())::timestamp without time zone -- Date à laquelle l'enregistrement a été modifé pour la dernière fois (rempli automatiquement)
-);
-ALTER TABLE occtax.organisme ADD UNIQUE (nom_organisme);
-
-
-COMMENT ON TABLE occtax.organisme IS 'Organismes listés dans l''application. Par exemple, les organismes liés aux observations peuvent être liés à cette table. Ou les demandes du module optionnel de gestion sont rattachées à un organisme.';
-COMMENT ON COLUMN occtax.organisme.id_organisme IS 'Identifiant de l''organisme.';
-COMMENT ON COLUMN occtax.organisme.nom_organisme IS 'Nom de l''organisme.';
-COMMENT ON COLUMN occtax.organisme.sigle IS 'Sigle de la structure' ;
-COMMENT ON COLUMN occtax.organisme.responsable IS 'Nom de la personne responsable de la structure, pour les envois postaux officiels' ;
-COMMENT ON COLUMN occtax.organisme.adresse1 IS 'Adresse de niveau 1' ;
-COMMENT ON COLUMN occtax.organisme.adresse2 IS 'Adresse de niveau 2' ;
-COMMENT ON COLUMN occtax.organisme.cs IS 'Courrier spécial' ;
-COMMENT ON COLUMN occtax.organisme.cp IS 'Code postal' ;
-COMMENT ON COLUMN occtax.organisme.commune IS 'Commune' ;
-COMMENT ON COLUMN occtax.organisme.cedex IS 'CEDEX' ;
-COMMENT ON COLUMN occtax.organisme.csr IS 'Indique si la structure est membre du Comité de suivi régional du SINP' ;
-COMMENT ON COLUMN occtax.organisme.commentaire IS 'Commentaire sur la structure' ;
-COMMENT ON COLUMN occtax.organisme.uuid_national IS 'Identifiant de l''organisme au niveau national (uuid)';
-COMMENT ON COLUMN occtax.organisme.date_maj IS 'Date à laquelle l''enregistrement a été modifé pour la dernière fois (rempli automatiquement)' ;
 
 -- Fonction trigger mettant à jour un champ date_maj automatiquement
 DROP FUNCTION IF EXISTS occtax.maj_date();
