@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 2.16.5 - 2023-12-18
+
+### Fixed
+
+* Installation - Correction des scripts SQL
+
 ## 2.16.4 - 2023-11-22
 
 ### Changed
