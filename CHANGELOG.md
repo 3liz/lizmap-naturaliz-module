@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 2.16.6 - 2024-01-02
+
+### Fixed
+
+* Installation - Correction de l'installation
+
 ## 2.16.5 - 2023-12-18
 
 ### Fixed

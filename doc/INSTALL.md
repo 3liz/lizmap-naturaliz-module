@@ -55,6 +55,8 @@ Si vous utilisez Lizmap 3.6 ou plus, lancez les commandes
 
 ```bash
 cd lizmap/install/
+php configurator.php taxon
+php configurator.php occtax
 php configurator.php gestion
 php configurator.php occtax_admin
 ```
