@@ -75,8 +75,8 @@ class exportCtrl extends jControllerCmdLine {
     function __construct( $request ){
 
         // Get SRID
-        $localConfig = jApp::configPath('naturaliz.ini.php');
-        $ini = new jIniFileModifier($localConfig);
+        $localConfig = jApp::varConfigPath('naturaliz.ini.php');
+        $ini = new \Jelix\IniFile\IniModifier($localConfig);
         $srid = $ini->getValue('srid', 'naturaliz');
         if( !empty(trim($srid)) ){
             $this->srid = trim($srid);
@@ -118,7 +118,7 @@ class exportCtrl extends jControllerCmdLine {
         }
         $occtaxSearch = new occtaxSearchObservationBrutes( $token, null, null, $login );
         if( !$occtaxSearch ){
-            echo (jLocale::get( 'occtax~search.invalid.token' ) . "\n");
+            echo (jLocale::get( 'occtax~search.invalid.token' )."\n");
         }
 
         $output = $this->option('-output');
@@ -127,7 +127,7 @@ class exportCtrl extends jControllerCmdLine {
 
         $dee = $occtaxSearch->writeDee($output);
         if( file_exists($dee) ) {
-            echo('Export effectué dans le fichier : '.$dee . "\n");
+            echo('Export effectué dans le fichier : '.$dee."\n");
         }
 
         // Add readme file + search description to ZIP
@@ -146,13 +146,13 @@ class exportCtrl extends jControllerCmdLine {
         // Move files to temp folder
         $unlinks = array();
         foreach ($files_to_zip as $sourcefile=>$destpath) {
-            rename($sourcefile, $temp_folder . '/' . $destpath);
-            $unlinks[] = $temp_folder . '/' . $destpath;
+            rename($sourcefile, $temp_folder.'/'.$destpath);
+            $unlinks[] = $temp_folder.'/'.$destpath;
         }
 
         // Zip files
         try {
-            exec('cd "' . $temp_folder . '" && zip -r ' . $output_path . ' *');
+            exec('cd "'.$temp_folder.'" && zip -r '.$output_path.' *');
         } catch (Exception $e) {
             jLog::log($e->getMessage(), 'error');
             return False;
@@ -179,7 +179,7 @@ class exportCtrl extends jControllerCmdLine {
         // Check parameters
         $token = $this->option('-token');
         if( !$token ){
-            echo 'ERROR: ' . jLocale::get( 'occtax~search.invalid.token' ) . '\n';
+            echo 'ERROR: '.jLocale::get( 'occtax~search.invalid.token' ).'\n';
             return $rep;
         }
         $projection = $this->option('-projection', '4326');
@@ -205,7 +205,7 @@ class exportCtrl extends jControllerCmdLine {
         jClasses::inc('occtax~occtaxExportObservation');
         $occtaxSearch = new occtaxExportObservation( $token, null, null, $projection, $login );
         if( !$occtaxSearch ){
-            echo 'ERROR: ' . jLocale::get( 'occtax~search.invalid.token' ) . '\n';
+            echo 'ERROR: '.jLocale::get( 'occtax~search.invalid.token' ).'\n';
             return $rep;
         }
         $limit = null;
@@ -223,7 +223,7 @@ class exportCtrl extends jControllerCmdLine {
         jFile::createDir($temp_folder);
 
         // LISEZ-MOI.txt : Add readme file + search description to ZIP
-        $lpath = $temp_folder . '/' . 'LISEZ-MOI_' . time() . session_id() . '.txt';
+        $lpath = $temp_folder.'/'.'LISEZ-MOI_'.time().session_id().'.txt';
         jFile::write(
             $lpath,
             $occtaxSearch->getReadme('text', 'geojson')
@@ -231,10 +231,10 @@ class exportCtrl extends jControllerCmdLine {
         $files_to_zip[$lpath] = 'LISEZ-MOI.txt';
 
         // Zip files
-        $zpath = $temp_folder . '.zip';
+        $zpath = $temp_folder.'.zip';
         $zipit = $this->zipFiles($files_to_zip, $temp_folder, $zpath);
         if (!$zipit) {
-            echo 'ERROR: ' . 'Cannot create ZIP file' . '\n';
+            echo 'ERROR: '.'Cannot create ZIP file'.'\n';
             return $rep;
         }
 
@@ -252,7 +252,7 @@ class exportCtrl extends jControllerCmdLine {
         // Check parameters
         $token = $this->option('-token');
         if( !$token ){
-            echo 'ERROR: ' . jLocale::get( 'occtax~search.invalid.token' ) . '\n';
+            echo 'ERROR: '.jLocale::get( 'occtax~search.invalid.token' ).'\n';
             return $rep;
         }
         $projection = $this->option('-projection', '4326');
@@ -278,7 +278,7 @@ class exportCtrl extends jControllerCmdLine {
         jClasses::inc('occtax~occtaxExportObservation');
         $occtaxSearch = new occtaxExportObservation( $token, null, null, $projection, $login );
         if( !$occtaxSearch ){
-            echo 'ERROR: ' . jLocale::get( 'occtax~search.invalid.token' ) . '\n';
+            echo 'ERROR: '.jLocale::get( 'occtax~search.invalid.token' ).'\n';
             return $rep;
         }
         $limit = null;
@@ -305,7 +305,7 @@ class exportCtrl extends jControllerCmdLine {
             }
         }
         catch( Exception $e ) {
-            echo 'ERROR: ' . jLocale::get( 'occtax~search.form.error.query' ) . '\n';
+            echo 'ERROR: '.jLocale::get( 'occtax~search.form.error.query' ).'\n';
             return $rep;
         }
 
@@ -318,10 +318,10 @@ class exportCtrl extends jControllerCmdLine {
                 continue;
             }
             if(file_exists($principal[$geometryType][0]) ){
-                $files_to_zip[$principal[$geometryType][0]] = 'st_' . 'principal' . '_' . $this->geometryTypeTranslation[$geometryType] . '.csv';
+                $files_to_zip[$principal[$geometryType][0]] = 'st_'.'principal'.'_'.$this->geometryTypeTranslation[$geometryType].'.csv';
             }
             if(file_exists($principal[$geometryType][1]) ){
-                $files_to_zip[$principal[$geometryType][1]] = 'st_' . 'principal' . '_' . $this->geometryTypeTranslation[$geometryType] . '.csvt';
+                $files_to_zip[$principal[$geometryType][1]] = 'st_'.'principal'.'_'.$this->geometryTypeTranslation[$geometryType].'.csvt';
             }
         }
         // Get other files
@@ -368,20 +368,20 @@ class exportCtrl extends jControllerCmdLine {
         $subdir = 'rattachements';
         foreach( $data as $topic=>$files ) {
             if(file_exists($files[0]) ){
-                $files_to_zip[$files[0]] = $subdir . '/' . 'st_' . $topic . '.csv';
+                $files_to_zip[$files[0]] = $subdir.'/'.'st_'.$topic.'.csv';
             }
             if(file_exists($files[1]) ){
-                $files_to_zip[$files[1]] = $subdir . '/' . 'st_' . $topic . '.csvt';
+                $files_to_zip[$files[1]] = $subdir.'/'.'st_'.$topic.'.csvt';
             }
         }
 
         // Temp output folder
-        $temp_folder = rtrim($this->tempFolder, '/ ') . $temp_folder_name;
+        $temp_folder = rtrim($this->tempFolder, '/ ').$temp_folder_name;
         jFile::createDir($temp_folder);
-        jFile::createDir($temp_folder . '/' . $subdir);
+        jFile::createDir($temp_folder.'/'.$subdir);
 
         // LISEZ-MOI.txt : Add readme file + search description to ZIP
-        $lpath = $temp_folder . '/' . 'LISEZ-MOI_' . time() . session_id() . '.txt';
+        $lpath = $temp_folder.'/'.'LISEZ-MOI_'.time().session_id().'.txt';
         jFile::write(
             $lpath,
             $occtaxSearch->getReadme('text', 'csv')
@@ -389,10 +389,10 @@ class exportCtrl extends jControllerCmdLine {
         $files_to_zip[$lpath] = 'LISEZ-MOI.txt';
 
         // Zip files
-        $zpath = $temp_folder . '.zip';
+        $zpath = $temp_folder.'.zip';
         $zipit = $this->zipFiles($files_to_zip, $temp_folder, $zpath);
         if (!$zipit) {
-            echo 'ERROR: ' . 'Cannot create ZIP file' . '\n';
+            echo 'ERROR: '.'Cannot create ZIP file'.'\n';
             return $rep;
         }
 

@@ -22,7 +22,7 @@ class taxonModuleConfigurator extends \Jelix\Installer\Module\Configurator {
     function configure(\Jelix\Installer\Module\API\ConfigurationHelpers $helpers)
     {
         // Copy taxon configuration
-        $taxonConfFile = jApp::configPath('taxon.ini.php');
+        $taxonConfFile = jApp::varConfigPath('taxon.ini.php');
         if (!file_exists($taxonConfFile)) {
             $helpers->copyFile('config/taxon.ini.php', $taxonConfFile);
         }

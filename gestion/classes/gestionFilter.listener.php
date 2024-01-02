@@ -62,8 +62,8 @@ class gestionFilterListener extends jEventListener{
             // Add geometry filter if set
             if ($demande->geom) {
                 // Get SRID
-                $localConfig = jApp::configPath('naturaliz.ini.php');
-                $ini = new jIniFileModifier($localConfig);
+                $localConfig = jApp::varConfigPath('naturaliz.ini.php');
+                $ini = new \Jelix\IniFile\IniModifier($localConfig);
                 $srid = $ini->getValue('srid', 'naturaliz');
                 if( !$srid )
                     $srid = 4326;
@@ -72,14 +72,14 @@ class gestionFilterListener extends jEventListener{
                 if ($filter_method == 'a' or $filter_method == 'b') {
                     $sql_geom = 'ST_Intersects(
                         '.$observation_column_prefix.'.geom,
-                        ST_GeomFromText(' . $cnx->quote($demande->geom) . ', '. $srid .')
+                        ST_GeomFromText('.$cnx->quote($demande->geom).', '.$srid.')
                     )' ;
                 }
                 // d test: use subquery on gestion.demand: very slow for queries with aggregation (count, etc.)
                 if ($filter_method == 'd') {
                     $sql_geom = 'ST_Intersects(
-                        ' . $observation_column_prefix . '.geom,
-                        (SELECT geom FROM gestion.demande WHERE id =' . $demande->id . ' LIMIT 1)
+                        '.$observation_column_prefix.'.geom,
+                        (SELECT geom FROM gestion.demande WHERE id ='.$demande->id.' LIMIT 1)
                     )' ;
                 }
                 // c test: use a JOIN inside subquery with ST_Intersects(o.geom, d.geom) AND d.id = X)
@@ -92,15 +92,15 @@ class gestionFilterListener extends jEventListener{
 
             // Add validity dates
             if ($demande->date_validite_min) {
-                $sql_demande[] = $cnx->quote($demande->date_validite_min) . '::date <= now()::date' ;
+                $sql_demande[] = $cnx->quote($demande->date_validite_min).'::date <= now()::date' ;
             }
             if ($demande->date_validite_max) {
-                $sql_demande[] = 'now()::date <= ' . $cnx->quote($demande->date_validite_max) . '::date' ;
+                $sql_demande[] = 'now()::date <= '.$cnx->quote($demande->date_validite_max).'::date' ;
             }
 
             // Add critere_additionnel
             if (!empty(trim($demande->critere_additionnel))) {
-                $sql_demande[] = '( ' . $demande->critere_additionnel . ' )';
+                $sql_demande[] = '( '.$demande->critere_additionnel.' )';
             }
 
             // Build full sql for this demand
@@ -111,12 +111,12 @@ class gestionFilterListener extends jEventListener{
                 if ($filter_method == 'a') {
                     // a: where clause are directly used on main observation table o.
                     $sql_demand_text = '
-                    ( ' . implode(
+                    ( '.implode(
                         '
                         AND
                         ',
                         $sql_demande
-                    ) . '
+                    ).'
                     )
                     ';
                 } elseif ($filter_method == 'b') {
@@ -126,12 +126,12 @@ class gestionFilterListener extends jEventListener{
                     SELECT cle_obs
                     FROM occtax.vm_observation vo
                     WHERE True AND
-                    ' . implode(
+                    '.implode(
                         '
                         AND
                         ',
                         $sql_demande
-                    ) . '
+                    ).'
                     )
                     ';
                 } elseif ($filter_method == 'c') {
@@ -142,28 +142,28 @@ class gestionFilterListener extends jEventListener{
                     if ($demande->geom) {
                         $sql_demand_text .= '
                         JOIN gestion.demande d
-                        ON d.id = ' . $demande->id . '
+                        ON d.id = '.$demande->id.'
                         AND ST_Intersects(vo.geom, d.geom)
                         ';
                     }
                     $sql_demand_text.= '
                     WHERE True AND
-                    ' . implode(
+                    '.implode(
                         '
                         AND
                         ',
                         $sql_demande
-                    ) . '
+                    ).'
                     )
                     ';
                 } elseif ($filter_method == 'd') {
                     $sql_demand_text = '
-                    ( ' . implode(
+                    ( '.implode(
                         '
                         AND
                         ',
                         $sql_demande
-                    ) . '
+                    ).'
                     )
                     ';
                 } else {
@@ -188,7 +188,7 @@ class gestionFilterListener extends jEventListener{
             // Final filter is an AND to the demands sub_filter
             $filter = '
             AND (
-            ' . $sub_filter . '
+            '.$sub_filter.'
             ) ';
         }else{
             // Remove all rights to see any observation if the user has no line in demande table, and is not admin

@@ -25,8 +25,8 @@ class exportCtrl extends jController {
     function __construct( $request ){
 
         // Get SRID
-        $localConfig = jApp::configPath('naturaliz.ini.php');
-        $ini = new jIniFileModifier($localConfig);
+        $localConfig = jApp::varConfigPath('naturaliz.ini.php');
+        $ini = new \Jelix\IniFile\IniModifier($localConfig);
         $srid = $ini->getValue('srid', 'naturaliz');
         $this->srid = $srid;
 
@@ -64,11 +64,11 @@ class exportCtrl extends jController {
         }
 
         // Create export token
-        $export_token = md5($format . $token . $projection . microtime(true));
+        $export_token = md5($format.$token.$projection.microtime(true));
         $_SESSION['occtax_export_'.$export_token] = 'wait';
 
         // Create file path
-        $logfile = rtrim($this->tempFolder, '/ ') . '/' . $export_token . '.log';
+        $logfile = rtrim($this->tempFolder, '/ ').'/'.$export_token.'.log';
 
         // Get user login
         $login = 'null';
@@ -87,15 +87,15 @@ class exportCtrl extends jController {
         // We use varPath for 3liz specific infra-v2 lizmap folder management
         $path = jApp::varPath('../');
         $cmd = '';
-        $cmd.= ' cd ' . $path . ' &&';
+        $cmd.= ' cd '.$path.' &&';
         $cmd.= ' php scripts/script.php';
-        $cmd.= ' occtax~export:' . strtolower($format);
-        $cmd.= ' -login ' . $login;
-        $cmd.= ' -locale ' . $locale;
-        $cmd.= ' -token ' . $token;
-        $cmd.= ' -projection ' . $projection;
-        $cmd.= ' -output_directory ' . 'export_observation_' . date("Y-m-d_H-i-s");
-        exec($cmd . " > " . $logfile . " &");
+        $cmd.= ' occtax~export:'.strtolower($format);
+        $cmd.= ' -login '.$login;
+        $cmd.= ' -locale '.$locale;
+        $cmd.= ' -token '.$token;
+        $cmd.= ' -projection '.$projection;
+        $cmd.= ' -output_directory '.'export_observation_'.date("Y-m-d_H-i-s");
+        exec($cmd." > ".$logfile." &");
 
         // jLog::log($cmd, 'error');
 
@@ -124,21 +124,21 @@ class exportCtrl extends jController {
         $rep->body->assign('user', jAuth::getUserSession());
 
         // Add JS code to refresh
-        $rep->addJSCode("var token = '" . $token . "'; ");
+        $rep->addJSCode("var token = '".$token."'; ");
         $checkUrl = jUrl::getFull(
             'occtax~export:check',
             $this->params()
         );
-        $rep->addJSCode("var checkUrl = '" . $checkUrl . "'; ");
+        $rep->addJSCode("var checkUrl = '".$checkUrl."'; ");
         $basePath = jApp::urlBasePath();
-        $rep->addJSLink($basePath . 'occtax/js/occtax.export.js');
+        $rep->addJSLink($basePath.'occtax/js/occtax.export.js');
 
         // Locales
         $locales = $this->getLocales();
-        $rep->addJSCode("var naturalizLocales = " . json_encode($locales) . ';');
+        $rep->addJSCode("var naturalizLocales = ".json_encode($locales).';');
 
         $tpl = new jTpl();
-        $rep->body->assign('MAIN', '<div id="waitExport" ><p style="background:lightblue; padding:5px">'.jLocale::get( 'occtax~search.export.pending.title'). '</p><p>' . jLocale::get( 'occtax~search.export.pending.description') . '</p></div>');
+        $rep->body->assign('MAIN', '<div id="waitExport" ><p style="background:lightblue; padding:5px">'.jLocale::get( 'occtax~search.export.pending.title').'</p><p>'.jLocale::get( 'occtax~search.export.pending.description').'</p></div>');
 
         return $rep;
     }
@@ -151,7 +151,7 @@ class exportCtrl extends jController {
         $token = $this->param('token');
 
         // Get log path
-        $log = rtrim($this->tempFolder, '/ ') . '/' . $token . '.log';
+        $log = rtrim($this->tempFolder, '/ ').'/'.$token.'.log';
         $logcontent = jFile::read($log);
         if(!array_key_exists('occtax_export_'.$token, $_SESSION) ){
             $data = array(
@@ -211,7 +211,7 @@ class exportCtrl extends jController {
         }
 
         // Get log path
-        $logfile = rtrim($this->tempFolder, '/ ') . '/' . $token . '.log';
+        $logfile = rtrim($this->tempFolder, '/ ').'/'.$token.'.log';
         $logcontent = jFile::read($logfile);
         if (!empty($logcontent)) {
             if (preg_match('#^ERROR#', $logcontent)) {

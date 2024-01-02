@@ -90,8 +90,8 @@ class observationCtrl extends jController {
         // \jLog::log(json_encode($data), 'error');
 
         // Read local config
-        $localConfig = jApp::configPath('naturaliz.ini.php');
-        $ini = new jIniFileModifier($localConfig);
+        $localConfig = jApp::varConfigPath('naturaliz.ini.php');
+        $ini = new \Jelix\IniFile\IniModifier($localConfig);
 
         // Children to display
         $observation_card_children = array();

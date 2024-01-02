@@ -3,8 +3,8 @@ class occtaxViewListener extends jEventListener{
 
     function onmainviewGetMaps ($event) {
         // Get local configuration (application name, projects name, etc.)
-        $localConfig = jApp::configPath('naturaliz.ini.php');
-        $ini = new jIniFileModifier($localConfig);
+        $localConfig = jApp::varConfigPath('naturaliz.ini.php');
+        $ini = new \Jelix\IniFile\IniModifier($localConfig);
 
         $defaultRep = $ini->getValue('defaultRepository', 'naturaliz');
         $defaultProject = $ini->getValue('defaultProject', 'naturaliz');
@@ -34,7 +34,7 @@ class occtaxViewListener extends jEventListener{
                         $mrep->childItems[] = new lizmapMainViewItem(
                             'occtax_'.$lproj->getData('id'),
                             $projectName,
-                            $projectName .'&nbsp;: <br/>'.$projectDescription,
+                            $projectName.'&nbsp;: <br/>'.$projectDescription,
                             $lproj->getData('proj'),
                             $lproj->getData('bbox'),
                             jUrl::get('occtax~default:index'),
@@ -47,7 +47,7 @@ class occtaxViewListener extends jEventListener{
                         $mrep->childItems[] = new lizmapMainViewItem(
                             'occtax_'.$lproj->getData('id'),
                             $projectName,
-                            $projectName .'&nbsp;: <br/>'.$projectDescription,
+                            $projectName.'&nbsp;: <br/>'.$projectDescription,
                             '', // keywords added here in LWC 3.4
                             $lproj->getData('proj'),
                             $lproj->getData('bbox'),

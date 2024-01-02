@@ -114,8 +114,8 @@ class occtaxSearchObservationExtent extends occtaxSearchObservation {
         $this->extent = trim($extent);
 
         // Get local configuration (application name, projects name, list of fields, etc.)
-        $localConfig = jApp::configPath('naturaliz.ini.php');
-        $ini = new jIniFileModifier($localConfig);
+        $localConfig = jApp::varConfigPath('naturaliz.ini.php');
+        $ini = new \Jelix\IniFile\IniModifier($localConfig);
 
         // Hide menace fields depending on configuration
         $taxon_detail_nom_menace = $ini->getValue('taxon_detail_nom_menace', 'naturaliz');

@@ -7,24 +7,22 @@ trait installTrait
     {
 
         // Get SRID
-        $localConfig = jApp::configPath('naturaliz.ini.php');
-        $ini = new jIniFileModifier($localConfig);
+        $localConfig = jApp::varConfigPath('naturaliz.ini.php');
+        $ini = new \Jelix\IniFile\IniModifier($localConfig);
         $srid = $this->getParameter('srid');
         if(empty($srid)){
             $srid = $ini->getValue('srid', 'naturaliz');
         }
 
         // Add occtax schema and tables
-        $sqlPath = $sqlPath.'install.pgsql.sql';
-        $sqlTpl = jFile::read( $sqlPath );
+        $sqlTpl = jFile::read( $sqlPath.'install.pgsql.sql' );
         $tpl = new jTpl();
         $tpl->assign('SRID', $srid);
         $sql = $tpl->fetchFromString($sqlTpl, 'text');
         $db->exec($sql);
 
         // Add gestion
-        $sqlPath = $sqlPath.'gestion.pgsql.sql';
-        $sqlTpl = jFile::read( $sqlPath );
+        $sqlTpl = jFile::read($sqlPath.'gestion.pgsql.sql');
         $tpl = new jTpl();
         $tpl->assign('SRID', $srid);
         $sql = $tpl->fetchFromString($sqlTpl, 'text');
@@ -57,13 +55,11 @@ trait installTrait
 
         // Add extension validation
         // DO NOT USE TEMPLATE : no need (no srid) AND bug with some PostgreSQL regexp inside
-        $sqlPath = $sqlPath.'extension_validation.pgsql.sql';
-        $sql = jFile::read( $sqlPath );
+        $sql = jFile::read($sqlPath.'extension_validation.pgsql.sql');
         $db->exec($sql);
 
         // Add materialized views
-        $sqlPath = $sqlPath.'materialized_views.pgsql.sql';
-        $sqlTpl = jFile::read( $sqlPath );
+        $sqlTpl = jFile::read($sqlPath.'materialized_views.pgsql.sql');
         $tpl = new jTpl();
         $colonne_locale = $ini->getValue('colonne_locale', 'naturaliz');
         $tpl->assign('colonne_locale', $colonne_locale);
@@ -71,11 +67,10 @@ trait installTrait
         $db->exec($sql);
 
         // Import
-        $sqlPath = $sqlPath.'import.pgsql.sql';
-        $sqlTpl = jFile::read( $sqlPath );
-        $tpl = new jTpl();
-        $tpl->assign('SRID', $srid);
-        $sql = $tpl->fetchFromString($sqlTpl, 'text');
+        // DO NOT USE TEMPLATE : bug with some PostgreSQL regexp inside
+        // We need to manually replace {$SRID} with the value
+        $sqlTpl = jFile::read($sqlPath.'import.pgsql.sql');
+        $sql = str_replace('{$SRID}', $srid, $sqlTpl);
         $db->exec($sql);
 
     }

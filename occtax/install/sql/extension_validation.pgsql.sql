@@ -1,4 +1,3 @@
-BEGIN;
 
 --
 -- Extension validation
@@ -838,7 +837,3 @@ WHERE ech_val = '2'
 COMMENT ON VIEW occtax.v_validation_regionale
 IS 'Vue qui récupère les lignes de la validation régionale depuis occtax.validation_observation (pour l''échelle 2 donc).
 Elle est utilisée dans l''application pour les requêtes réalisées en tant que validateur (sinon on utilise les champs de vm_observation).';
-
-
-
-COMMIT;

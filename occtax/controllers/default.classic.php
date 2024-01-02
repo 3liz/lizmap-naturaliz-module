@@ -17,8 +17,8 @@ class defaultCtrl extends lizMapCtrl {
 
     function __construct ( $request){
 
-        $monfichier = jApp::configPath('naturaliz.ini.php');
-        $ini = new jIniFileModifier($monfichier);
+        $monfichier = jApp::varConfigPath('naturaliz.ini.php');
+        $ini = new \Jelix\IniFile\IniModifier($monfichier);
 
         $defaultRep = $ini->getValue('defaultRepository', 'naturaliz');
         $defaultProject = $ini->getValue('defaultProject', 'naturaliz');
@@ -83,18 +83,18 @@ class defaultCtrl extends lizMapCtrl {
             $rep->addJSLink($basePath.'assets/js/bootstrapErrorDecoratorHtml.js');
 
             // Get local configuration (application name, projects name, etc.)
-            $localConfig = jApp::configPath('naturaliz.ini.php');
-            $ini = new jIniFileModifier($localConfig);
+            $localConfig = jApp::varConfigPath('naturaliz.ini.php');
+            $ini = new \Jelix\IniFile\IniModifier($localConfig);
 
             $rep->body->assign( 'WMSServiceTitle', $ini->getValue('projectName', 'naturaliz') );
             $rep->title = $ini->getValue('projectName', 'naturaliz');
             $rep->body->assign( 'repositoryLabel', $ini->getValue('appName', 'naturaliz') );
 
             // inline-select : remplace un <select multiple> par un web-component <inline-select>
-            $rep->addCSSLink($basePath . 'occtax/css/occtax.inlineSelect.css');
+            $rep->addCSSLink($basePath.'occtax/css/occtax.inlineSelect.css');
 
             // carousel
-            $rep->addCSSLink($basePath . 'occtax/css/occtax.carousel.css');
+            $rep->addCSSLink($basePath.'occtax/css/occtax.carousel.css');
 
             // For recent versions of Lizmap Wbe Client, since 3.4.0, we need to add some OpenLayers 2.13.1 JS files
             // Which have been removed from the OL 2 build
@@ -106,45 +106,45 @@ class defaultCtrl extends lizMapCtrl {
             $major = (integer) $exp_version[0];
             $minor = (integer) $exp_version[1];
             if ($major >= 4 || ($major = 3 && $minor >= 4)) {
-                $rep->addJsLink($basePath . 'occtax/js/OpenLayers_2_13_1/Strategy.js');
-                $rep->addJsLink($basePath . 'occtax/js/OpenLayers_2_13_1/Strategy/Cluster.js');
+                $rep->addJsLink($basePath.'occtax/js/OpenLayers_2_13_1/Strategy.js');
+                $rep->addJsLink($basePath.'occtax/js/OpenLayers_2_13_1/Strategy/Cluster.js');
 
             }
 
             // occtax
-            $rep->addJsLink($basePath . 'occtax/js/occtax.inlineSelect.js');
-            $rep->addJsLink($basePath . 'occtax/js/occtax.carousel.js');
-            $rep->addJsLink($basePath . 'occtax/js/occtax.js');
-            $rep->addJsLink($basePath . 'occtax/js/occtax.search.js');
+            $rep->addJsLink($basePath.'occtax/js/occtax.inlineSelect.js');
+            $rep->addJsLink($basePath.'occtax/js/occtax.carousel.js');
+            $rep->addJsLink($basePath.'occtax/js/occtax.js');
+            $rep->addJsLink($basePath.'occtax/js/occtax.search.js');
 
             // Add nomenclature
             $nomenclature = array();
             $daot = jDao::get('taxon~t_nomenclature', 'naturaliz_virtual_profile');
             foreach($daot->findAll() as $nom){
-                $nomenclature[$nom->champ . '|' . $nom->code] = $nom->valeur;
+                $nomenclature[$nom->champ.'|'.$nom->code] = $nom->valeur;
             }
-            $rep->addJSCode("var t_nomenclature = " . json_encode($nomenclature) . ';');
+            $rep->addJSCode("var t_nomenclature = ".json_encode($nomenclature).';');
             // Occtax nomenclature
             $nomenclature = array();
             $sqlnom = "SELECT * FROM occtax.nomenclature";
             $cnx = jDb::getConnection('naturaliz_virtual_profile');
             $reqnom = $cnx->query($sqlnom);
             foreach($reqnom as $nom){
-                $nomenclature[$nom->champ . '|' . $nom->code] = $nom->valeur;
+                $nomenclature[$nom->champ.'|'.$nom->code] = $nom->valeur;
             }
-            $rep->addJSCode("var occtax_nomenclature = " . json_encode($nomenclature) . ';');
+            $rep->addJSCode("var occtax_nomenclature = ".json_encode($nomenclature).';');
 
             // Add locales
             $locales = $this->getLocales();
-            $rep->addJSCode("var naturalizLocales = " . json_encode($locales) . ';');
+            $rep->addJSCode("var naturalizLocales = ".json_encode($locales).';');
 
             // Add validation API URL
             $validationProperties = array(
                 'url' => jUrl::getFull('occtax~validation:index')
             );
-            $rep->addJSCode("var naturalizValidationProperties = " . json_encode($validationProperties) . ';');
+            $rep->addJSCode("var naturalizValidationProperties = ".json_encode($validationProperties).';');
 
-            $rep->addHeadContent( '<style>' . $ini->getValue('projectCss', 'naturaliz') . '</style>');
+            $rep->addHeadContent( '<style>'.$ini->getValue('projectCss', 'naturaliz').'</style>');
         }
 
         return $rep;

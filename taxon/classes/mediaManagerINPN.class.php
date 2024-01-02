@@ -29,7 +29,7 @@ class mediaManagerINPN
         $this->ressourceUrl = sprintf($this->baseUrl, $this->cd_ref);
 
         // Get Occtax default repository and project
-        $localConfig = jApp::configPath('naturaliz.ini.php');
+        $localConfig = jApp::varConfigPath('naturaliz.ini.php');
         $ini = parse_ini_file($localConfig, true);
         $repository = null;
         $project = null;
@@ -184,9 +184,9 @@ class mediaManagerINPN
             SELECT *
             FROM taxon.medias
             WHERE cd_ref =
-        " . $this->cd_ref . "
+        ".$this->cd_ref."
             AND source =
-        " . $cnx->quote($source);
+        ".$cnx->quote($source);
         $getMedias = $cnx->query($sql);
         $medias = array();
         foreach ($getMedias as $media) {
@@ -351,7 +351,7 @@ class mediaManagerINPN
     private function computeRelativeMediaPath($mediaId)
     {
         // Base directory
-        $mediaFtpDirectory = 'media/upload/taxon/inpn/' . $this->cd_ref;
+        $mediaFtpDirectory = 'media/upload/taxon/inpn/'.$this->cd_ref;
 
         // Lizmap media path
         // File name
@@ -360,13 +360,13 @@ class mediaManagerINPN
             $this->cd_ref,
             $mediaId
         );
-        $mediaRelativePath = $mediaFtpDirectory . '/' . $fileName;
+        $mediaRelativePath = $mediaFtpDirectory.'/'.$fileName;
 
         // Full path
-        $lizmapProject = lizmap::getProject($this->repository . '~' . $this->project);
+        $lizmapProject = lizmap::getProject($this->repository.'~'.$this->project);
         $repositoryPath = $lizmapProject->getRepository()->getPath();
-        $mediaFullDirectory = $repositoryPath . '/' . $mediaFtpDirectory;
-        $mediaFullPath = $repositoryPath . '/' . $mediaRelativePath;
+        $mediaFullDirectory = $repositoryPath.'/'.$mediaFtpDirectory;
+        $mediaFullPath = $repositoryPath.'/'.$mediaRelativePath;
 
         return array($mediaFtpDirectory, $mediaRelativePath, $mediaFullDirectory, $mediaFullPath);
     }
@@ -396,7 +396,7 @@ class mediaManagerINPN
             return $apiUrl;
         }
         if (!is_dir($mediaFullDirectory)) {
-            \jLog::log('Error while creating ' . $mediaFullDirectory);
+            \jLog::log('Error while creating '.$mediaFullDirectory);
             return $apiUrl;
         }
 

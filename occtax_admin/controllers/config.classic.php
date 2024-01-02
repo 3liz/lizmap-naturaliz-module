@@ -25,8 +25,8 @@ class configCtrl extends jController {
 
     function __construct( $request ) {
         parent::__construct( $request );
-        $monfichier = jApp::configPath('naturaliz.ini.php');
-        $this->ini = new jIniFileModifier ($monfichier);
+        $monfichier = jApp::varConfigPath('naturaliz.ini.php');
+        $this->ini = new \Jelix\IniFile\IniModifier ($monfichier);
     }
 
     /**

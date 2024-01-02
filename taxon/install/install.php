@@ -16,9 +16,9 @@ class taxonModuleInstaller extends \Jelix\Installer\Module\Installer
 
         $db = $helpers->database();
         // Add taxon schema and tables
-        $sqlPath = $this->getPath() . 'install/sql/install.pgsql.sql';
-        $localConfig = jApp::configPath('naturaliz.ini.php');
-        $ini = new jIniFileModifier($localConfig);
+        $sqlPath = $this->getPath().'install/sql/install.pgsql.sql';
+        $localConfig = jApp::varConfigPath('naturaliz.ini.php');
+        $ini = new \Jelix\IniFile\IniModifier($localConfig);
         $sqlTpl = jFile::read( $sqlPath );
         $tpl = new jTpl();
         $colonne_locale = $ini->getValue('colonne_locale', 'naturaliz');
@@ -27,10 +27,10 @@ class taxonModuleInstaller extends \Jelix\Installer\Module\Installer
         if(empty($liste_rangs)){
             $liste_rangs = "FM, GN, AGES, ES, SSES, NAT, VAR, SVAR, FO, SSFO, RACE, CAR, AB";
         }
-        $liste_rangs = "'" . implode(
+        $liste_rangs = "'".implode(
                 "', '",
                 array_map( 'trim', explode(',', $liste_rangs) )
-            ) . "'";
+            )."'";
         $tpl->assign('liste_rangs', $liste_rangs);
         $sql = $tpl->fetchFromString($sqlTpl, 'text');
         $db->dbConnection()->exec($sql);
