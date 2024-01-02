@@ -14,8 +14,8 @@ class occtaxDockableListener extends jEventListener{
                 $lproj = lizmap::getProject( $repository.'~'.$project );
 
                 // Get local configuration (application name, projects name, list of fields, etc.)
-                $localConfig = jApp::varConfigPath('naturaliz.ini.php');
-                $ini = new \Jelix\IniFile\IniModifier($localConfig);
+                $localConfig = jApp::configPath('naturaliz.ini.php');
+                $ini = new jIniFileModifier($localConfig);
 
                 // Add empty taxon dock
                 // Todo check why it is still needed
@@ -354,7 +354,7 @@ class occtaxDockableListener extends jEventListener{
                     }
 
                     // Get SRID
-                    $localConfig = jApp::varConfigPath('naturaliz.ini.php');
+                    $localConfig = jApp::configPath('naturaliz.ini.php');
                     $ini = parse_ini_file($localConfig, true);
                     $srid = '2975';
                     if (array_key_exists('naturaliz', $ini) && array_key_exists('srid', $ini['naturaliz'])) {

@@ -39,7 +39,7 @@ strokeColor=#FFFFFF80
 ; configuration des classes de légende pour les mailles
 ; on doit mettre, dans l'ordre et séparé par point-virgule:
 ; intitulé de la classe; borne inférieure; borne supérieure; couleur
-legend_class[]="De 1 à 10 observations; 1; 10; #FFFBC3|De 11 à 100 observations; 11; 100; #FFFF00|De 101 à 500 observations; 101; 500; #FFAD00|Supérieur à 500 observations; 501; 1000000; #FF5500"
+legend_class="De 1 à 10 observations; 1; 10; #FFFBC3|De 11 à 100 observations; 11; 100; #FFFF00|De 101 à 500 observations; 101; 500; #FFAD00|Supérieur à 500 observations; 501; 1000000; #FF5500"
 
 ; rayon min et max pour les ronds représentant les mailles
 ; ( pour tenir dans un carré de 1000 m)

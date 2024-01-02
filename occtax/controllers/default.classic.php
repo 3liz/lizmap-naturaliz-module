@@ -17,8 +17,8 @@ class defaultCtrl extends lizMapCtrl {
 
     function __construct ( $request){
 
-        $monfichier = jApp::varConfigPath('naturaliz.ini.php');
-        $ini = new \Jelix\IniFile\IniModifier($monfichier);
+        $monfichier = jApp::configPath('naturaliz.ini.php');
+        $ini = new jIniFileModifier($monfichier);
 
         $defaultRep = $ini->getValue('defaultRepository', 'naturaliz');
         $defaultProject = $ini->getValue('defaultProject', 'naturaliz');
@@ -61,18 +61,33 @@ class defaultCtrl extends lizMapCtrl {
             $rep->addJSLink($www.'js/jforms_jquery.js');
 
             // Add datepickers jForms js
+            // LWC <= 3.5
             $confDate = &jApp::config()->datepickers;
-            $rep->addJSLink($confDate['default']);
-            if (isset($confDate['default.js'])) {
-                $js = $confDate['default.js'];
-                foreach ($js as $file) {
-                    $file = str_replace('$lang', $lang, $file);
-                    if (strpos($file, 'jquery.ui.datepicker-en.js') !== false) {
-                        continue;
+            if (!empty($confDate)) {
+                $rep->addJSLink($confDate['default']);
+                if (isset($confDate['default.js'])) {
+                    $js = $confDate['default.js'];
+                    foreach ($js as $file) {
+                        $file = str_replace('$lang', $lang, $file);
+                        if (strpos($file, 'jquery.ui.datepicker-en.js') !== false) {
+                            continue;
+                        }
+                        $rep->addJSLink($file);
                     }
-                    $rep->addJSLink($file);
                 }
             }
+            // LWC >= 3.6
+            // DÉJÀ FAIT AUTOMATIQUEMENT, PLUS BESOIN
+            // $confWebAssests = &jApp::config()->webassets_common;
+            // if (
+            //     !empty($confWebAssests)
+            //     && array_key_exists('jforms_datepicker_default.js', $confWebAssests)
+            // ) {
+            //     $jsFiles = $confWebAssests['jforms_datepicker_default.js'];
+            //     foreach ($jsFiles as $file) {
+            //         $rep->addJSLink($file);
+            //     }
+            // }
 
             // Add other jForms js
             $rep->addJSLink($basePath.'assets/js/ckeditor5/ckeditor.js');
@@ -83,8 +98,8 @@ class defaultCtrl extends lizMapCtrl {
             $rep->addJSLink($basePath.'assets/js/bootstrapErrorDecoratorHtml.js');
 
             // Get local configuration (application name, projects name, etc.)
-            $localConfig = jApp::varConfigPath('naturaliz.ini.php');
-            $ini = new \Jelix\IniFile\IniModifier($localConfig);
+            $localConfig = jApp::configPath('naturaliz.ini.php');
+            $ini = new jIniFileModifier($localConfig);
 
             $rep->body->assign( 'WMSServiceTitle', $ini->getValue('projectName', 'naturaliz') );
             $rep->title = $ini->getValue('projectName', 'naturaliz');

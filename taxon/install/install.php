@@ -17,8 +17,8 @@ class taxonModuleInstaller extends \Jelix\Installer\Module\Installer
         $db = $helpers->database();
         // Add taxon schema and tables
         $sqlPath = $this->getPath().'install/sql/install.pgsql.sql';
-        $localConfig = jApp::varConfigPath('naturaliz.ini.php');
-        $ini = new \Jelix\IniFile\IniModifier($localConfig);
+        $localConfig = jApp::configPath('naturaliz.ini.php');
+        $ini = new jIniFileModifier($localConfig);
         $sqlTpl = jFile::read( $sqlPath );
         $tpl = new jTpl();
         $colonne_locale = $ini->getValue('colonne_locale', 'naturaliz');

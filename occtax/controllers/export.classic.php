@@ -25,8 +25,8 @@ class exportCtrl extends jController {
     function __construct( $request ){
 
         // Get SRID
-        $localConfig = jApp::varConfigPath('naturaliz.ini.php');
-        $ini = new \Jelix\IniFile\IniModifier($localConfig);
+        $localConfig = jApp::configPath('naturaliz.ini.php');
+        $ini = new jIniFileModifier($localConfig);
         $srid = $ini->getValue('srid', 'naturaliz');
         $this->srid = $srid;
 

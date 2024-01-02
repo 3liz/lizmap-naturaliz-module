@@ -105,8 +105,8 @@ class occtaxSearch {
         $this->demande = $demande;
 
         // Get SRID
-        $localConfig = jApp::varConfigPath('naturaliz.ini.php');
-        $ini = new \Jelix\IniFile\IniModifier($localConfig);
+        $localConfig = jApp::configPath('naturaliz.ini.php');
+        $ini = new jIniFileModifier($localConfig);
         $srid = $ini->getValue('srid', 'naturaliz');
         if( $srid )
             $this->srid = $srid;
@@ -190,8 +190,8 @@ class occtaxSearch {
     */
     protected function setLegendClasses(){
         // Get min, max, and colors for classes
-        $localConfig = jApp::varConfigPath('naturaliz.ini.php');
-        $ini = new \Jelix\IniFile\IniModifier($localConfig);
+        $localConfig = jApp::configPath('naturaliz.ini.php');
+        $ini = new jIniFileModifier($localConfig);
         $legend_classes = $ini->getValue('legend_class', 'naturaliz');
         if( !$legend_classes or empty($legend_classes) ){
             $legend_classes = array();
@@ -199,6 +199,7 @@ class occtaxSearch {
             $legend_classes[] = "De 11 à 100 observations; 11; 100; #FFFF00";
             $legend_classes[] = "De 101 à 500 observations; 101; 500; #FFAD00";
             $legend_classes[] = "Supérieur à 500 observations; 501; 1000000; #FF5500";
+            $legend_classes = implode('|', $legend_classes);
         }
         $this->legend_classes = explode('|', $legend_classes);
         $legend_min_radius = $ini->getValue('legend_min_radius', 'naturaliz');
@@ -321,7 +322,7 @@ class occtaxSearch {
     }
 
     public function getReadme($format='html', $type='csv'){
-        $readme = jApp::varConfigPath("occtax-export-LISEZ-MOI.$type.txt");
+        $readme = jApp::configPath("occtax-export-LISEZ-MOI.$type.txt");
         $content = '';
         if( is_file( $readme ) ){
             // replace line end

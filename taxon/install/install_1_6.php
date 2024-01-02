@@ -14,7 +14,7 @@ class taxonModuleInstaller extends jInstallerModule {
     function install() {
 
         // Copy taxon configuration
-        $taxonConfFile = jApp::varConfigPath('taxon.ini.php');
+        $taxonConfFile = jApp::configPath('taxon.ini.php');
         if (!file_exists($taxonConfFile)) {
             $this->copyFile('config/taxon.ini.php', $taxonConfFile);
         }
@@ -27,8 +27,8 @@ class taxonModuleInstaller extends jInstallerModule {
 
             // Add taxon schema and tables
             $sqlPath = $this->path.'install/sql/install.pgsql.sql';
-            $localConfig = jApp::varConfigPath('naturaliz.ini.php');
-            $ini = new \Jelix\IniFile\IniModifier($localConfig);
+            $localConfig = jApp::configPath('naturaliz.ini.php');
+            $ini = new jIniFileModifier($localConfig);
             $sqlTpl = jFile::read( $sqlPath );
             $tpl = new jTpl();
             $colonne_locale = $ini->getValue('colonne_locale', 'naturaliz');
