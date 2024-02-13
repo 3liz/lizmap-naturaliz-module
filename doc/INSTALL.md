@@ -4,7 +4,7 @@ Pour pouvoir installer l'application Naturaliz, vous devez au préalable avoir i
 Vous pouvez pour cela utiliser les scripts de déploiement automatique **lizmap-box** pour cela. Nous considérons dans la suite de
 ce document que Lizmap Web Client a été installé et est fonctionnel.
 
-Il faut au minimum Lizmap 3.6.
+Il faut au minimum Lizmap 3.6. Si vous avez Lizmap 3.5, installez la version 2.16 de Naturaliz et suivez les instructions d'installation de cette version.
 
 > Attention: Pour que la recherche plein texte dans taxons fonctionne correctement, il est important de vérifier que la variable locale $LANG est bien spécifiée à fr_FR.UTF-8 avant l'installation de PostgreSQL. On peut par exemple ajouter cette ligne dans le fichier /etc/profile ```: ${LANG:=fr_FR.UTF-8}; export LANG``` et se déconnecter puis reconnecter, ou on peut exporter manuellement la variable.
 
