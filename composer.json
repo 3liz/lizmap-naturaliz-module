@@ -3,7 +3,7 @@
     "type": "jelix-module",
     "description": "Jelix module to manage data on species observations for Lizmap.",
     "keywords": ["module", "jelix", "lizmap", "naturaliz"],
-    "homepage": "http://3liz.com",
+    "homepage": "https://www.3liz.com",
     "license": "MPL-2.0",
     "authors": [
         {
@@ -29,28 +29,7 @@
                 "occtax/",
                 "occtax_admin/",
                 "gestion/"
-            ],
-            "autoconfig-access-16" : {
-                "lizmap@3liz.com" : {
-                    "taxon": {
-                        "__global": 1,
-                        "index" : 2
-                    },
-                    "occtax": {
-                        "__global": 1,
-                        "index" : 2,
-                        "script": 2
-                    },
-                    "gestion": {
-                        "__global": 1,
-                        "index" : 2
-                    },
-                    "occtax_admin": {
-                        "__global": 1,
-                        "admin" : 2
-                    }
-                }
-            }
+            ]
         }
     }
 }

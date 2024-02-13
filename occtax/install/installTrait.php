@@ -8,7 +8,7 @@ trait installTrait
 
         // Get SRID
         $localConfig = jApp::varConfigPath('naturaliz.ini.php');
-        $ini = new Jelix\IniFile\IniModifier($localConfig);
+        $ini = new \Jelix\IniFile\IniModifier($localConfig);
         $srid = $this->getParameter('srid');
         if(empty($srid)){
             $srid = $ini->getValue('srid', 'naturaliz');

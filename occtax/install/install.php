@@ -5,32 +5,25 @@
  * @subpackage occtax
  * @author    Michaël Douchin
  * @contributor Laurent Jouanneau
- * @copyright 2014-2022 3liz
+ * @copyright 2014-2024 3liz
  * @link      http://3liz.com
  * @license    All rights reserved
  */
 require_once(__DIR__.'/installTrait.php');
 
-// class occtaxModuleInstaller extends \Jelix\Installer\Module\Installer
-class occtaxModuleInstaller extends jInstallerModule
+class occtaxModuleInstaller extends \Jelix\Installer\Module\Installer
 {
     use installTrait;
 
-    // public function install(\Jelix\Installer\Module\API\InstallHelpers $helpers)
-    public function install()
+    public function install(\Jelix\Installer\Module\API\InstallHelpers $helpers)
     {
         // Install database structure
-        $sqlDirPath = $this->path.'install/sql/';
-        $db = $this->dbConnection();
-        // LWC >= 3.6
-        // $sqlDirPath = $this->getPath() . 'install/sql/';
-        // $db = $helpers->database()->dbConnection()
+        $sqlDirPath = $this->getPath() . 'install/sql/';
+        $db = $helpers->database()->dbConnection();
         $this->setupOcctaxDatabase($db, $sqlDirPath);
 
         // Add data for lists
-        $this->execSQLScript('sql/data');
-        // LWC >= 3.6
-        // $helpers->database()->execSQLScript('sql/data');
+        $helpers->database()->execSQLScript('sql/data');
 
         // Setup groups and rights
         $this->setupOcctaxRights();
@@ -39,6 +32,6 @@ class occtaxModuleInstaller extends jInstallerModule
         // We use overwrite to be sure the new versions of the JS files
         // will be used
         $overwrite = true;
-        $this->copyDirectoryContent('www', jApp::wwwPath(), $overwrite);
+        $helpers->copyDirectoryContent('www', jApp::wwwPath(), $overwrite);
     }
 }

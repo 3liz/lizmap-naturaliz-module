@@ -1,10 +1,10 @@
 # Installation des modules Naturaliz pour Lizmap
 
 Pour pouvoir installer l'application Naturaliz, vous devez au préalable avoir installé un serveur cartographique basé sur Lizmap.
-Vous pouvez pour cela utiliser les script de déploiement automatique **lizmap-box** pour cela. Nous considérons dans la suite de
+Vous pouvez pour cela utiliser les scripts de déploiement automatique **lizmap-box** pour cela. Nous considérons dans la suite de
 ce document que Lizmap Web Client a été installé et est fonctionnel.
 
-Il faut au minimum Lizmap 3.4.
+Il faut au minimum Lizmap 3.6.
 
 > Attention: Pour que la recherche plein texte dans taxons fonctionne correctement, il est important de vérifier que la variable locale $LANG est bien spécifiée à fr_FR.UTF-8 avant l'installation de PostgreSQL. On peut par exemple ajouter cette ligne dans le fichier /etc/profile ```: ${LANG:=fr_FR.UTF-8}; export LANG``` et se déconnecter puis reconnecter, ou on peut exporter manuellement la variable.
 
@@ -51,7 +51,7 @@ composer require "lizmap/naturaliz-modules"
 
 ### Lancer le configurateur
 
-Si vous utilisez Lizmap 3.6 ou plus, lancez les commandes
+Lancez les commandes
 
 ```bash
 cd lizmap/install/
@@ -59,12 +59,6 @@ php configurator.php taxon
 php configurator.php occtax
 php configurator.php gestion
 php configurator.php occtax_admin
-```
-
-Sinon, pour Lizmap 3.4 ou 3.5, lancez les commandes
-
-```bash
-cp lizmap/lizmap-modules/occtax/install/config/naturaliz.ini.php.dist lizmap/var/config/naturaliz.ini.php
 ```
 
 
@@ -476,7 +470,7 @@ comme décrit précédemment.
 
 ### Import TAXREF : données officielles des taxons
 
-Pour pouvoir effectuer des recherche via le module taxon, vous devez au
+Pour pouvoir effectuer des recherches via le module taxon, vous devez au
 préalable récupérer les données officielles du TAXREF, puis les importer.
 
 Les fichiers concernant TAXREF, les menaces (listes rouges) et les protections sont téléchargés directement depuis la plateforme SINP (site du MNHN)

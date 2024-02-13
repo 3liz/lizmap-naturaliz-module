@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+## 2.17.0 - 2024-02-14
+
+* compatibilité des modules avec Lizmap 3.6 uniquement. Abandon du
+  support lizmap 3.5 dans les versions 2.17 et plus.
+
+## 2.16.8 - 2024-02-13
+
+### Backend
+
+* PHP - annulation remplacement des fonctions dépréciées. Les versions 2.16
+  doivent rester compatible Lizmap 3.5
+
+
 ## 2.16.7 - 2024-02-13
 
 ### Backend
