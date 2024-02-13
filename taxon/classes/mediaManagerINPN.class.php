@@ -29,7 +29,7 @@ class mediaManagerINPN
         $this->ressourceUrl = sprintf($this->baseUrl, $this->cd_ref);
 
         // Get Occtax default repository and project
-        $localConfig = jApp::configPath('naturaliz.ini.php');
+        $localConfig = jApp::varConfigPath('naturaliz.ini.php');
         $ini = parse_ini_file($localConfig, true);
         $repository = null;
         $project = null;

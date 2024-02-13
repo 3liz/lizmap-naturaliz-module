@@ -9,7 +9,7 @@
  * @link      http://3liz.com
  * @license    All rights reserved
  */
-require_once(__DIR__ . '/installTrait.php');
+require_once(__DIR__.'/installTrait.php');
 
 // class occtaxModuleInstaller extends \Jelix\Installer\Module\Installer
 class occtaxModuleInstaller extends jInstallerModule
@@ -20,7 +20,7 @@ class occtaxModuleInstaller extends jInstallerModule
     public function install()
     {
         // Install database structure
-        $sqlDirPath = $this->path . 'install/sql/';
+        $sqlDirPath = $this->path.'install/sql/';
         $db = $this->dbConnection();
         // LWC >= 3.6
         // $sqlDirPath = $this->getPath() . 'install/sql/';
@@ -34,5 +34,11 @@ class occtaxModuleInstaller extends jInstallerModule
 
         // Setup groups and rights
         $this->setupOcctaxRights();
+
+        // Copy CSS and JS assets
+        // We use overwrite to be sure the new versions of the JS files
+        // will be used
+        $overwrite = true;
+        $this->copyDirectoryContent('www', jApp::wwwPath(), $overwrite);
     }
 }

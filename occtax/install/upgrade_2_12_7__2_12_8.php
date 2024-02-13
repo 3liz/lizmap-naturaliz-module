@@ -12,7 +12,7 @@ class occtaxModuleUpgrader_2_12_7__2_12_8 extends jInstallerModule
         if ($this->firstDbExec()) {
             // Get variables
             // Keep here variable srid, colonne_locale
-            $localConfig = jApp::configPath('naturaliz.ini.php');
+            $localConfig = jApp::varConfigPath('naturaliz.ini.php');
             $ini = parse_ini_file($localConfig, true);
             $srid = '2975';
             if (array_key_exists('naturaliz', $ini) && array_key_exists('srid', $ini['naturaliz'])) {

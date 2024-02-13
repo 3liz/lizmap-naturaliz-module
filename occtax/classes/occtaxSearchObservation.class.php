@@ -386,8 +386,8 @@ class occtaxSearchObservation extends occtaxSearch {
         // Gestion des champs de menace
         if (array_key_exists('lien_nom_valide', $this->tplFields)) {
             // Get local configuration (application name, projects name, list of fields, etc.)
-            $localConfig = jApp::configPath('naturaliz.ini.php');
-            $ini = new jIniFileModifier($localConfig);
+            $localConfig = jApp::varConfigPath('naturaliz.ini.php');
+            $ini = new Jelix\IniFile\IniModifier($localConfig);
 
             // Choose menace field depending on configuration
             // Displayed on Observations table

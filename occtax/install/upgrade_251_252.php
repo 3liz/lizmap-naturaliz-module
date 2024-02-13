@@ -9,8 +9,8 @@ class occtaxModuleUpgrader_251_252 extends jInstallerModule {
     function install() {
         if( $this->firstDbExec() ) {
             // Get variables
-            $localConfig = jApp::configPath('naturaliz.ini.php');
-            $ini = new jIniFileModifier($localConfig);
+            $localConfig = jApp::varConfigPath('naturaliz.ini.php');
+            $ini = new Jelix\IniFile\IniModifier($localConfig);
 
             // modify jlx_user columns
             $this->useDbProfile('jauth_super');

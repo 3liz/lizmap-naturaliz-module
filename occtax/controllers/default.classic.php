@@ -17,8 +17,8 @@ class defaultCtrl extends lizMapCtrl {
 
     function __construct ( $request){
 
-        $monfichier = jApp::configPath('naturaliz.ini.php');
-        $ini = new jIniFileModifier($monfichier);
+        $monfichier = jApp::varConfigPath('naturaliz.ini.php');
+        $ini = new Jelix\IniFile\IniModifier($monfichier);
 
         $defaultRep = $ini->getValue('defaultRepository', 'naturaliz');
         $defaultProject = $ini->getValue('defaultProject', 'naturaliz');
@@ -98,8 +98,8 @@ class defaultCtrl extends lizMapCtrl {
             $rep->addJSLink($basePath.'assets/js/bootstrapErrorDecoratorHtml.js');
 
             // Get local configuration (application name, projects name, etc.)
-            $localConfig = jApp::configPath('naturaliz.ini.php');
-            $ini = new jIniFileModifier($localConfig);
+            $localConfig = jApp::varConfigPath('naturaliz.ini.php');
+            $ini = new Jelix\IniFile\IniModifier($localConfig);
 
             $rep->body->assign( 'WMSServiceTitle', $ini->getValue('projectName', 'naturaliz') );
             $rep->title = $ini->getValue('projectName', 'naturaliz');

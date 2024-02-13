@@ -741,8 +741,8 @@ class occtaxSearchObservationBrutes extends occtaxSearchObservation {
     ){
 
         // Get configuration from ini file
-        $localConfig = jApp::configPath('naturaliz.ini.php');
-        $ini = new jIniFileModifier($localConfig);
+        $localConfig = jApp::varConfigPath('naturaliz.ini.php');
+        $ini = new Jelix\IniFile\IniModifier($localConfig);
 
         // Get values
         if($limited_fields = $ini->getValue($variable, 'naturaliz')){

@@ -11,8 +11,8 @@ class occtaxModuleUpgrader_2_12_1__2_12_2 extends jInstallerModule
     {
         if ($this->firstDbExec()) {
             // Get variables
-            $localConfig = jApp::configPath('naturaliz.ini.php');
-            $ini = new jIniFileModifier($localConfig);
+            $localConfig = jApp::varConfigPath('naturaliz.ini.php');
+            $ini = new Jelix\IniFile\IniModifier($localConfig);
             $srid = $ini->getValue('srid', 'naturaliz');
 
             // SQL upgrade

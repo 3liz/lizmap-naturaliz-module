@@ -13,8 +13,8 @@ class occtaxModuleUpgrader_221_222 extends jInstallerModule {
             $sqlPath = $this->path . 'install/sql/upgrade/upgrade_2.2.1_2.2.2.sql';
             $sqlTpl = jFile::read( $sqlPath );
             $tpl = new jTpl();
-            $localConfig = jApp::configPath('naturaliz.ini.php');
-            $ini = new jIniFileModifier($localConfig);
+            $localConfig = jApp::varConfigPath('naturaliz.ini.php');
+            $ini = new Jelix\IniFile\IniModifier($localConfig);
             $srid = $ini->getValue('srid', 'naturaliz');
             $tpl->assign('SRID', $srid);
             $sql = $tpl->fetchFromString($sqlTpl, 'text');

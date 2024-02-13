@@ -428,7 +428,7 @@ class importCtrl extends jController
         }
 
         // Import observations
-        $localConfig = jApp::configPath('naturaliz.ini.php');
+        $localConfig = jApp::varConfigPath('naturaliz.ini.php');
         $ini = parse_ini_file($localConfig, true);
         $org_transformation = 'Inconnu';
         if (array_key_exists('naturaliz', $ini) && array_key_exists('org_transformation', $ini['naturaliz'])) {

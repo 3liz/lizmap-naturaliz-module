@@ -37,8 +37,8 @@ class occtaxModuleUpgrader_2_13_0__2_13_1 extends jInstallerModule //\Jelix\Inst
         $db = $this->dbConnection(); // A PLACER TOUJOURS DERRIERE $this->useDbProfile('jauth_super');
 
         // Naturaliz specific config file
-        // $localConfig = jApp::configPath('naturaliz.ini.php');
-        $localConfig = jApp::configPath('naturaliz.ini.php');
+        // $localConfig = jApp::varConfigPath('naturaliz.ini.php');
+        $localConfig = jApp::varConfigPath('naturaliz.ini.php');
 
         // Upgrade structure
         $this->upgradeDatabaseStructure($localConfig, $db, $sqlDirPath . $this->sqlUpgradeFile);

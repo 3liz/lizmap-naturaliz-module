@@ -3,8 +3,8 @@ class occtaxViewListener extends jEventListener{
 
     function onmainviewGetMaps ($event) {
         // Get local configuration (application name, projects name, etc.)
-        $localConfig = jApp::configPath('naturaliz.ini.php');
-        $ini = new jIniFileModifier($localConfig);
+        $localConfig = jApp::varConfigPath('naturaliz.ini.php');
+        $ini = new Jelix\IniFile\IniModifier($localConfig);
 
         $defaultRep = $ini->getValue('defaultRepository', 'naturaliz');
         $defaultProject = $ini->getValue('defaultProject', 'naturaliz');
