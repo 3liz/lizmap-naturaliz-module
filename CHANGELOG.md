@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 2.16.7 - 2024-02-13
+
+### Backend
+
+* PHP - Remplacement des fonctions dépréciées par leur équivalent
+
 ## 2.16.6 - 2024-01-02
 
 ### Fixed
