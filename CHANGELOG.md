@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+
+## 2.16.8 - 2024-02-13
+
+### Backend
+
+* PHP - annulation remplacement des fonctions dépréciées. Les versions 2.16
+  doivent rester compatible Lizmap 3.5
+
 ## 2.16.7 - 2024-02-13
 
 ### Backend

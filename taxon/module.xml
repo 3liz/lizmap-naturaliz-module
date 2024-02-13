@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module xmlns="http://jelix.org/ns/module/1.0">
     <info id="taxon3liz.com" name="taxon" createdate="2014-10-01">
-        <version date="2024-02-13">2.16.7</version>
+        <version date="2024-02-13">2.16.8</version>
         <label lang="en_US">taxon</label>
         <description lang="en_US" />
         <license URL="http://www.mozilla.org/MPL/">Mozilla Public License</license>
-        <copyright>2011-2023 3liz</copyright>
+        <copyright>2011-2024 3liz</copyright>
         <creator name="your name" email="infol@3liz.com" active="true"/>
         <!--<contributor name="hisname" email="hisemail@yoursite.undefined" active="true" since="" role=""/>-->
         <homepageURL>http://3liz.com</homepageURL>
