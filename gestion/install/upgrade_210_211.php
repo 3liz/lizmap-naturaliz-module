@@ -11,13 +11,13 @@ class gestionModuleUpgrader_210_211 extends jInstallerModule {
             // modify jlx_user columns
             $this->useDbProfile('jauth');
 
-            $sqlPath = $this->path.'install/sql/upgrade/upgrade_2.1.0_2.1.1.sql';
+            $sqlPath = $this->path . 'install/sql/upgrade/upgrade_2.1.0_2.1.1.sql';
             $sqlTpl = jFile::read( $sqlPath );
             $tpl = new jTpl();
 
             // Get SRID
-            $localConfig = jApp::varConfigPath('naturaliz.ini.php');
-            $ini = new Jelix\IniFile\IniModifier($localConfig);
+            $localConfig = jApp::configPath('naturaliz.ini.php');
+            $ini = new jIniFileModifier($localConfig);
             $srid = $ini->getValue('srid', 'naturaliz');
             $tpl->assign('SRID', $srid);
             $sql = $tpl->fetchFromString($sqlTpl, 'text');

@@ -16,8 +16,8 @@ class occtaxModuleUpgrader_210_211 extends jInstallerModule {
             $tpl = new jTpl();
 
             // Get SRID
-            $localConfig = jApp::varConfigPath('localconfig.ini.php');
-            $ini = new Jelix\IniFile\IniModifier($localConfig);
+            $localConfig = jApp::configPath('localconfig.ini.php');
+            $ini = new jIniFileModifier($localConfig);
             $srid = $ini->getValue('srid', 'naturaliz');
             $tpl->assign('SRID', $srid);
             $sql = $tpl->fetchFromString($sqlTpl, 'text');

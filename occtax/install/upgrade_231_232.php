@@ -26,8 +26,8 @@ class occtaxModuleUpgrader_231_232 extends jInstallerModule {
             $tpl = new jTpl();
             $prof = jProfiles::get('jdb', $this->dbProfile, true);
             $tpl->assign('DBNAME', $prof['database'] );
-            $localConfig = jApp::varConfigPath('naturaliz.ini.php');
-            $ini = new Jelix\IniFile\IniModifier($localConfig);
+            $localConfig = jApp::configPath('naturaliz.ini.php');
+            $ini = new jIniFileModifier($localConfig);
             $dbuser_readonly = $ini->getValue('dbuser_readonly', 'naturaliz');
             $dbuser_owner = $ini->getValue('dbuser_owner', 'naturaliz');
             if(empty($dbuser_readonly)){

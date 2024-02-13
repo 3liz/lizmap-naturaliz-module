@@ -9,8 +9,8 @@ class occtaxModuleUpgrader_277_280 extends jInstallerModule {
     function install() {
         if ($this->firstDbExec()) {
             // Get variables
-            $localConfig = jApp::varConfigPath('naturaliz.ini.php');
-            $ini = new Jelix\IniFile\IniModifier($localConfig);
+            $localConfig = jApp::configPath('naturaliz.ini.php');
+            $ini = new jIniFileModifier($localConfig);
 
             $colonne_locale = $ini->getValue('colonne_locale', 'naturaliz');
             if (empty($dbuser_readonly)) {

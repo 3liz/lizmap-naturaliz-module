@@ -38,8 +38,8 @@ class occtaxModuleUpgrader_2_14_3__2_15_0 extends jInstallerModule //\Jelix\Inst
             $db = $this->dbConnection(); // A PLACER TOUJOURS DERRIERE $this->useDbProfile('jauth_super');
 
             // Naturaliz specific config file
-            // $localConfig = jApp::varConfigPath('naturaliz.ini.php');
-            $localConfig = jApp::varConfigPath('naturaliz.ini.php');
+            // $localConfig = jApp::configPath('naturaliz.ini.php');
+            $localConfig = jApp::configPath('naturaliz.ini.php');
 
             // Upgrade structure
             $this->upgradeDatabaseStructure($localConfig, $db, $sqlDirPath.$this->sqlUpgradeFile);
@@ -49,7 +49,7 @@ class occtaxModuleUpgrader_2_14_3__2_15_0 extends jInstallerModule //\Jelix\Inst
 
             // Modifier le fichier de configuration naturaliz.ini.php
             // Get configuration from ini file
-            $ini = new Jelix\IniFile\IniModifier($localConfig);
+            $ini = new jIniFileModifier($localConfig);
             // Champs pour lesquels chercher / remplacer du contenu
             $configConcernedFields = array(
                 'observation_card_fields',

@@ -26,7 +26,7 @@ class serviceCtrl extends jController
     {
 
         // Get SRID
-        $localConfig = jApp::varConfigPath('naturaliz.ini.php');
+        $localConfig = jApp::configPath('naturaliz.ini.php');
         $ini = parse_ini_file($localConfig, true);
         $srid = '2975';
         if (array_key_exists('naturaliz', $ini) && array_key_exists('srid', $ini['naturaliz'])) {
