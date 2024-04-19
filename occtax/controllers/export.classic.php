@@ -138,7 +138,11 @@ class exportCtrl extends jController {
         $rep->addJSCode("var naturalizLocales = ".json_encode($locales).';');
 
         $tpl = new jTpl();
-        $rep->body->assign('MAIN', '<div id="waitExport" ><p style="background:lightblue; padding:5px">'.jLocale::get( 'occtax~search.export.pending.title').'</p><p>'.jLocale::get( 'occtax~search.export.pending.description').'</p></div>');
+        $rep->body->assign(
+            'MAIN',
+            '<div id="waitExport" ><p style="background:lightblue; padding:5px">'.jLocale::get( 'occtax~search.export.pending.title').'</p><p>'.jLocale::get( 'occtax~search.export.pending.description').'</p></div>'
+        );
+        $rep->body->assign('checkServerInformation', null);
 
         return $rep;
     }
@@ -228,11 +232,14 @@ class exportCtrl extends jController {
                 $outputfile = trim(str_replace('SUCCESS: ', '', $logcontent));
 
                 if (file_exists($outputfile)) {
+                    /** @var \jResponseBinary $rep */
                     $rep = $this->getResponse('binary');
                     $rep->deleteFileAfterSending = true;
                     $rep->fileName = $outputfile;
-                    $rep->outputFileName = 'export_observations.zip';
-                    $rep->mimeType = 'archive/zip';
+                    // $rep->outputFileName = 'export_observations.zip';
+                    // $rep->mimeType = 'archive/zip';
+                    $rep->outputFileName = 'export_observations.tar';
+                    $rep->mimeType = 'archive/x-tar';
                     $rep->doDownload = true;
                     unlink($logfile);
                     clearstatcache();

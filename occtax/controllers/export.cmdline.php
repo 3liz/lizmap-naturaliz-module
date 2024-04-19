@@ -152,7 +152,8 @@ class exportCtrl extends jControllerCmdLine {
 
         // Zip files
         try {
-            exec('cd "'.$temp_folder.'" && zip -r '.$output_path.' *');
+            // exec('cd "'.$temp_folder.'" && zip -r '.$output_path.' *');
+            exec('cd "'.$temp_folder.'" && tar -cvf '.$output_path.' *');
         } catch (Exception $e) {
             jLog::log($e->getMessage(), 'error');
             return False;
@@ -231,10 +232,11 @@ class exportCtrl extends jControllerCmdLine {
         $files_to_zip[$lpath] = 'LISEZ-MOI.txt';
 
         // Zip files
-        $zpath = $temp_folder.'.zip';
+        // $zpath = $temp_folder.'.zip';
+        $zpath = $temp_folder.'.tar';
         $zipit = $this->zipFiles($files_to_zip, $temp_folder, $zpath);
         if (!$zipit) {
-            echo 'ERROR: '.'Cannot create ZIP file'.'\n';
+            echo 'ERROR: '.'Cannot create archive file'.'\n';
             return $rep;
         }
 
@@ -389,10 +391,11 @@ class exportCtrl extends jControllerCmdLine {
         $files_to_zip[$lpath] = 'LISEZ-MOI.txt';
 
         // Zip files
-        $zpath = $temp_folder.'.zip';
+        // $zpath = $temp_folder.'.zip';
+        $zpath = $temp_folder.'.tar';
         $zipit = $this->zipFiles($files_to_zip, $temp_folder, $zpath);
         if (!$zipit) {
-            echo 'ERROR: '.'Cannot create ZIP file'.'\n';
+            echo 'ERROR: '.'Cannot create archive file'.'\n';
             return $rep;
         }
 
