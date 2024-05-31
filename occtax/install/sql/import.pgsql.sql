@@ -1170,7 +1170,7 @@ BEGIN
 
     -- table occtax.lien_observation_identifiant_permanent
     -- Conservation des liens entre les identifiants origine et les identifiants permanents
-    sql_template := $$
+    sql_template := $SQL$
     WITH ins AS (
         INSERT INTO occtax.lien_observation_identifiant_permanent
         (jdd_id, id_origine, id_sinp_occtax, dee_date_derniere_modification, dee_date_transformation)
@@ -1185,7 +1185,7 @@ BEGIN
         RETURNING id_origine
     ) SELECT count(*) AS nb FROM ins
     ;
-    $$;
+    $SQL$;
     sql_text := format(sql_template,
         _jdd_id,
         _table_temporaire,
@@ -1214,7 +1214,7 @@ BEGIN
                 )
         LOOP
             -- RAISE NOTICE '% - %', _aa_champ, _aa_nom;
-            sql_template := $$
+            sql_template := $SQL$
             WITH ins AS (
                 INSERT INTO occtax.attribut_additionnel (
                     cle_obs,
@@ -1244,7 +1244,7 @@ BEGIN
                 RETURNING cle_obs
             ) SELECT count(*) AS nb FROM ins
             ;
-            $$;
+            $SQL$;
 
             sql_text := format(sql_template,
                 _jdd_id,
@@ -1270,7 +1270,7 @@ BEGIN
     -- Table occtax.organisme
     SELECT setval('occtax.organisme_id_organisme_seq', (SELECT max(id_organisme) FROM occtax.organisme))
     INTO _set_val;
-    sql_template := $$
+    sql_template := $SQL$
     WITH ins AS (
         WITH personnes AS (
             SELECT DISTINCT observateurs AS personnes
@@ -1299,7 +1299,7 @@ BEGIN
 		RETURNING nom_organisme
     ) SELECT count(*) AS nb FROM ins
     ;
-    $$;
+    $SQL$;
     sql_text := format(sql_template,
         _table_temporaire
     );
@@ -1312,7 +1312,7 @@ BEGIN
     -- Table occtax.personne
     SELECT setval('occtax.personne_id_personne_seq', (SELECT max(id_personne) FROM occtax.personne))
     INTO _set_val;
-    sql_template := $$
+    sql_template := $SQL$
     WITH ins AS (
         WITH personnes AS (
             SELECT DISTINCT observateurs AS personnes
@@ -1348,7 +1348,7 @@ BEGIN
 		RETURNING identite
     ) SELECT count(*) AS nb FROM ins
     ;
-    $$;
+    $SQL$;
     sql_text := format(sql_template,
         _table_temporaire,
         _default_email
@@ -1366,11 +1366,11 @@ BEGIN
         UNION
         SELECT 'determinateurs' AS nom, 'Det' AS typ
     LOOP
-        sql_template := $$
+        sql_template := $SQL$
         WITH ins AS (
             INSERT INTO occtax.observation_personne (cle_obs, id_personne, role_personne)
             WITH source AS (
-                SELECT
+                SELECT DISTINCT
                 cle_obs,
                 o.odata->>'%1$s' AS odata_%1$s,
                 trim(%1$s) AS %2$s, rn
@@ -1392,7 +1392,7 @@ BEGIN
 		    RETURNING cle_obs, id_personne, role_personne
         ) SELECT count(*) AS nb FROM ins
         ;
-        $$;
+        $SQL$;
         sql_text := format(sql_template,
             _nom_type_personne,
             -- on enlève le s final pour créer le nom du champ à nommer
@@ -1409,9 +1409,9 @@ BEGIN
     END LOOP;
 
     -- Relations spatiales
-    sql_template := $$
+    sql_template := $SQL$
         SELECT occtax.occtax_update_spatial_relationships(ARRAY['%1$s']) AS update_spatial;
-    $$;
+    $SQL$;
     sql_text := format(sql_template,
         _jdd_id
     );
@@ -1421,7 +1421,7 @@ BEGIN
     _result_information := _result_information || jsonb_build_object('update_spatial', _nb_lignes);
 
     -- Informations de validation
-    sql_template := $$
+    sql_template := $SQL$
         WITH ins AS (
             INSERT INTO occtax.validation_observation (
                 id_sinp_occtax,
@@ -1461,7 +1461,7 @@ BEGIN
             DO NOTHING
 		    RETURNING id_sinp_occtax
         ) SELECT count(*) AS nb FROM ins
-    $$;
+    $SQL$;
     sql_text := format(sql_template,
         _table_temporaire,
         _jdd_id,
@@ -1475,7 +1475,7 @@ BEGIN
 
     -- Log d'import: table occtax.jdd_import
     -- Table import
-    sql_template := $$
+    sql_template := $SQL$
     WITH rapport AS (
         SELECT
             count(*) AS nb_importe,
@@ -1515,7 +1515,7 @@ BEGIN
         RETURNING id_import
     ) SELECT count(*) AS nb FROM ins
     ;
-    $$;
+    $SQL$;
     sql_text := format(sql_template,
         _table_temporaire,
         _jdd_id,
@@ -1530,9 +1530,9 @@ BEGIN
 
     -- Adaptations régionales
     -- Lancement de la fonction occtax.import_observations_post_data_regionale
-    sql_template := $$
+    sql_template := $SQL$
         SELECT occtax.import_observations_post_data_regionale('%1$s') AS json_regional
-    $$;
+    $SQL$;
     sql_text := format(sql_template,
         _jdd_id
     );
@@ -1544,7 +1544,7 @@ BEGIN
 
 
     -- Nettoyage
-    sql_template := $$
+    sql_template := $SQL$
     WITH ins AS (
         UPDATE occtax.observation
         SET odata = odata - 'observateurs' - 'determinateurs'
@@ -1555,7 +1555,7 @@ BEGIN
         RETURNING cle_obs
     ) SELECT count(*) AS nb FROM ins
     ;
-    $$;
+    $SQL$;
     sql_text := format(sql_template,
         _jdd_id,
         _table_temporaire::text,
@@ -1576,6 +1576,7 @@ $BODY$
 LANGUAGE plpgsql VOLATILE
 COST 100
 ;
+
 
 
 COMMENT ON FUNCTION occtax.import_observations_post_data(regclass, text, text, text, text, date, text, text, text)
