@@ -82,7 +82,61 @@ class occtaxImport
         'precision_geometrie',
         'nature_objet_geo',
 
-        'descriptif_sujet',
+        // descriptif du sujet
+        // 1er item
+        'obs_technique',
+        'occ_etat_biologique',
+        'occ_naturalite',
+        'occ_sexe',
+        'occ_stade_de_vie',
+        'occ_denombrement_min',
+        'occ_denombrement_max',
+        'occ_type_denombrement',
+        'occ_statut_biogeographique',
+        'occ_statut_biologique',
+        'occ_comportement',
+        'preuve_existante',
+        'url_preuve_numerique',
+        'preuve_non_numerique',
+        'obs_contexte',
+        'obs_description',
+        'occ_methode_determination',
+        // Deuxième item possible
+        'obs_technique_2',
+        'occ_etat_biologique_2',
+        'occ_naturalite_2',
+        'occ_sexe_2',
+        'occ_stade_de_vie_2',
+        'occ_denombrement_min_2',
+        'occ_denombrement_max_2',
+        'occ_type_denombrement_2',
+        'occ_statut_biogeographique_2',
+        'occ_statut_biologique_2',
+        'occ_comportement_2',
+        'preuve_existante_2',
+        'url_preuve_numerique_2',
+        'preuve_non_numerique_2',
+        'obs_contexte_2',
+        'obs_description_2',
+        'occ_methode_determination_2',
+        // Troisième item possible
+        'obs_technique_3',
+        'occ_etat_biologique_3',
+        'occ_naturalite_3',
+        'occ_sexe_3',
+        'occ_stade_de_vie_3',
+        'occ_denombrement_min_3',
+        'occ_denombrement_max_3',
+        'occ_type_denombrement_3',
+        'occ_statut_biogeographique_3',
+        'occ_statut_biologique_3',
+        'occ_comportement_3',
+        'preuve_existante_3',
+        'url_preuve_numerique_3',
+        'preuve_non_numerique_3',
+        'obs_contexte_3',
+        'obs_description_3',
+        'occ_methode_determination_3',
     );
 
     // Mandatory fields
@@ -283,12 +337,8 @@ class occtaxImport
         return array($status, $message);
     }
 
-
-
     /**
      * Runs the needed check on the CSV structure
-     *
-     * @param string $csv_content Content of the observation CSV file
      */
     public function checkAdditionalAttributesStructure()
     {
@@ -346,7 +396,7 @@ class occtaxImport
     public function setAdditionalAttributesData()
     {
         // Avoid the first line which contains the CSV header
-        // We use this method as the additionnal attributes CSV is light
+        // We use this method as the additional attributes CSV is light
         $attributeData = $this->parseCsv($this->csv_attributes_file, 1);
 
         $formattedData = array();
@@ -415,9 +465,15 @@ class occtaxImport
         $data = array();
         try {
             $resultset = $cnx->prepare($sql);
-            $resultset->execute($params);
+            $execute = $resultset->execute($params);
+            if ($resultset && $resultset->id() === false) {
+                $errorCode = $cnx->errorCode();
+
+                throw new Exception($errorCode);
+            }
             $data = $resultset->fetchAll();
             $cnx->commit();
+
         } catch (Exception $e) {
             $cnx->rollback();
             $data = null;
@@ -438,7 +494,9 @@ class occtaxImport
         $params = array();
 
         // Drop tables
-        $sql = 'DROP TABLE IF EXISTS "'.$this->temporary_table.'_source", "'.$this->temporary_table.'_target"';
+        $sql = 'DROP TABLE IF EXISTS ';
+        $sql .= '"'.$this->temporary_table.'_source", ';
+        $sql .= '"'.$this->temporary_table.'_target"';
         $params = array();
         $data = $this->query($sql, $params);
 
@@ -472,6 +530,55 @@ class occtaxImport
     }
 
     /**
+     * Copy the observations data from the CSV into the temporary source table
+     *
+     * @param array $profile Jelix profile name
+     * @param PgSql\Connection $pgConnection PostgreSQL connection
+     *
+     * @return array Array with status, message and query result
+     */
+    private function copyDataFromCSV($profile, $pgConnection) {
+        // We need to add the search path configured in the profile
+        // because here we recreate a new connection with pg_connect
+        // and we do not use the virtual profile with jDb
+        // otherwise the COPY will not find the temporary table if the public schema
+        // is not the first one in the search_path
+        $setSearchPath = "";
+        if (array_key_exists('search_path', $profile) && !empty($profile['search_path'])) {
+            $setSearchPath = "SET search_path TO ".$profile['search_path'].";";
+        }
+        $table = '"'.$this->temporary_table.'_source"';
+        $columns = $this->header;
+        $file = $this->csv_file;
+        $sql = $setSearchPath.' COPY '.$table.' (';
+        $comma = '';
+        foreach ($columns as $column) {
+            $sql .= $comma.'"'.$column.'"';
+            $comma = ', ';
+        }
+        $sql.= ') ';
+        $sql.= " FROM STDIN WITH CSV HEADER DELIMITER ',' ";
+        $query = pg_query($pgConnection, $sql);
+
+        // If we can read the file
+        if ($query && ($handle = fopen($file, 'r')) !== FALSE) {
+            while (($data = fgets($handle)) !== FALSE) {
+                pg_put_line($pgConnection, $data);
+            }
+            fclose($handle);
+            $query = pg_end_copy($pgConnection);
+            $status = true;
+            $message = 'Les données ont été lues depuis le CSV et importées dans la table temporaire';
+        } else {
+            $status = false;
+            $message = 'Les données ne peuvent pas être lues depuis le CSV pour import dans la table temporaire';
+            $query = null;
+        }
+
+        return array($status, $message, $query);
+    }
+
+    /**
      * Insert the data from the CSV file
      * into the target table.
      *
@@ -497,37 +604,9 @@ class occtaxImport
             );
             /** @var PgSql\Connection */
             $pgConnection = pg_pconnect($dsn);
-            // We need to add the search path configured in the profile
-            // because here we recreate a new connection with pg_connect
-            // and we do not use the virtual profile with jDb
-            // otherwise the COPY will not find the temporary table if the public schema
-            // is not the first one in the search_path
-            $setSearchPath = "";
-            if (array_key_exists('search_path', $profile) && !empty($profile['search_path'])) {
-                $setSearchPath = "SET search_path TO ".$profile['search_path'].";";
-            }
 
-            $sql = $setSearchPath.' COPY "'.$this->temporary_table.'_source" (';
-            $comma = '';
-            foreach ($this->header as $column) {
-                $sql .= $comma.'"'.$column.'"';
-                $comma = ', ';
-            }
-            $sql.= ') ';
-            $sql.= " FROM STDIN WITH CSV HEADER DELIMITER ',' ";
-            $query = pg_query($pgConnection, $sql);
-
-            // If we can read the file
-            if ($query && ($handle = fopen($this->csv_file, 'r')) !== FALSE) {
-                while (($data = fgets($handle)) !== FALSE) {
-                    pg_put_line($pgConnection, $data);
-                }
-                fclose($handle);
-                $query = pg_end_copy($pgConnection);
-            } else {
-                $status = false;
-                $message = 'Les données ne peuvent pas être lues depuis le CSV pour import dans la table temporaire';
-            }
+            // Import observation data
+            list($status, $message, $query) = $this->copyDataFromCSV($profile, $pgConnection);
 
         }  catch (Exception $e) {
             $message = $e->getMessage();
@@ -538,7 +617,7 @@ class occtaxImport
             if ($pgConnection) {
                 if (!$query) {
                     \jLog::log(pg_last_error($pgConnection), 'error');
-                    $message = 'Erreur : le fichier contient des données supplémentaires après la dernière colonne attendue';
+                    $message = 'Erreur : le fichier '.$this->csv_file.' contient des données supplémentaires après la dernière colonne attendue';
                     $status = false;
                 }
 

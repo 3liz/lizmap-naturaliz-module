@@ -424,6 +424,96 @@ ON CONFLICT ON CONSTRAINT critere_conformite_unique_code DO NOTHING
 ;
 
 
+-- Ajout des critères de conformité pour les champs de descriptif du sujet
+
+-- CHECK
+INSERT INTO occtax.critere_conformite (code, libelle, condition, type_critere)
+VALUES
+-- format
+('descriptif_obs_technique_format', 'Le format de <b>obs_technique</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(obs_technique, 'integer')$$, 'format'),
+('descriptif_occ_etat_biologique_format', 'Le format de <b>occ_etat_biologique</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_etat_biologique, 'integer')$$, 'format'),
+('descriptif_occ_naturalite_format', 'Le format de <b>occ_naturalite</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_naturalite, 'integer')$$, 'format'),
+('descriptif_occ_sexe_format', 'Le format de <b>occ_sexe</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_sexe, 'integer')$$, 'format'),
+('descriptif_occ_stade_de_vie_format', 'Le format de <b>occ_stade_de_vie</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_stade_de_vie, 'integer')$$, 'format'),
+('descriptif_occ_denombrement_min_format', 'Le format de <b>occ_denombrement_min</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_denombrement_min, 'integer')$$, 'format'),
+('descriptif_occ_denombrement_max_format', 'Le format de <b>occ_denombrement_max</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_denombrement_max, 'integer')$$, 'format'),
+('descriptif_occ_type_denombrement_format', 'Le format de <b>occ_type_denombrement</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_type_denombrement, 'text')$$, 'format'),
+('descriptif_occ_statut_biogeographique_format', 'Le format de <b>occ_statut_biogeographique</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_statut_biogeographique, 'integer')$$, 'format'),
+('descriptif_occ_statut_biologique_format', 'Le format de <b>occ_statut_biologique</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_statut_biologique, 'integer')$$, 'format'),
+('descriptif_occ_comportement_format', 'Le format de <b>occ_comportement</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_comportement, 'integer')$$, 'format'),
+('descriptif_preuve_existante_format', 'Le format de <b>preuve_existante</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(preuve_existante, 'integer')$$, 'format'),
+
+('descriptif_obs_technique_format_2', 'Le format de <b>obs_technique_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(obs_technique_2, 'integer')$$, 'format'),
+('descriptif_occ_etat_biologique_format_2', 'Le format de <b>occ_etat_biologique_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_etat_biologique_2, 'integer')$$, 'format'),
+('descriptif_occ_naturalite_format_2', 'Le format de <b>occ_naturalite_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_naturalite_2, 'integer')$$, 'format'),
+('descriptif_occ_sexe_format_2', 'Le format de <b>occ_sexe_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_sexe_2, 'integer')$$, 'format'),
+('descriptif_occ_stade_de_vie_format_2', 'Le format de <b>occ_stade_de_vie_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_stade_de_vie_2, 'integer')$$, 'format'),
+('descriptif_occ_denombrement_min_format_2', 'Le format de <b>occ_denombrement_min_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_denombrement_min_2, 'integer')$$, 'format'),
+('descriptif_occ_denombrement_max_format_2', 'Le format de <b>occ_denombrement_max_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_denombrement_max_2, 'integer')$$, 'format'),
+('descriptif_occ_type_denombrement_format_2', 'Le format de <b>occ_type_denombrement_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_type_denombrement_2, 'text')$$, 'format'),
+('descriptif_occ_statut_biogeographique_format_2', 'Le format de <b>occ_statut_biogeographique_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_statut_biogeographique_2, 'integer')$$, 'format'),
+('descriptif_occ_statut_biologique_format_2', 'Le format de <b>occ_statut_biologique_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_statut_biologique_2, 'integer')$$, 'format'),
+('descriptif_occ_comportement_format_2', 'Le format de <b>occ_comportement_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_comportement_2, 'integer')$$, 'format'),
+('descriptif_preuve_existante_format_2', 'Le format de <b>preuve_existante_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(preuve_existante_2, 'integer')$$, 'format'),
+
+('descriptif_obs_technique_format_3', 'Le format de <b>obs_technique_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(obs_technique_3, 'integer')$$, 'format'),
+('descriptif_occ_etat_biologique_format_3', 'Le format de <b>occ_etat_biologique_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_etat_biologique_3, 'integer')$$, 'format'),
+('descriptif_occ_naturalite_format_3', 'Le format de <b>occ_naturalite_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_naturalite_3, 'integer')$$, 'format'),
+('descriptif_occ_sexe_format_3', 'Le format de <b>occ_sexe_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_sexe_3, 'integer')$$, 'format'),
+('descriptif_occ_stade_de_vie_format_3', 'Le format de <b>occ_stade_de_vie_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_stade_de_vie_3, 'integer')$$, 'format'),
+('descriptif_occ_denombrement_min_format_3', 'Le format de <b>occ_denombrement_min_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_denombrement_min_3, 'integer')$$, 'format'),
+('descriptif_occ_denombrement_max_format_3', 'Le format de <b>occ_denombrement_max_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_denombrement_max_3, 'integer')$$, 'format'),
+('descriptif_occ_type_denombrement_format_3', 'Le format de <b>occ_type_denombrement_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_type_denombrement_3, 'text')$$, 'format'),
+('descriptif_occ_statut_biogeographique_format_3', 'Le format de <b>occ_statut_biogeographique_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_statut_biogeographique_3, 'integer')$$, 'format'),
+('descriptif_occ_statut_biologique_format_3', 'Le format de <b>occ_statut_biologique_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_statut_biologique_3, 'integer')$$, 'format'),
+('descriptif_occ_comportement_format_3', 'Le format de <b>occ_comportement_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_comportement_3, 'integer')$$, 'format'),
+('descriptif_preuve_existante_format_3', 'Le format de <b>preuve_existante_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(preuve_existante_3, 'integer')$$, 'format')
+
+
+
+ON CONFLICT ON CONSTRAINT critere_conformite_unique_code DO NOTHING
+;
+
+-- conforme
+INSERT INTO occtax.critere_conformite (code, libelle, description, condition, type_critere)
+VALUES
+
+('descriptif_obs_technique_valide', 'La valeur de <b>obs_technique</b> n''est pas conforme', 'Le champ <b>obs_technique</b> doit correspondre à la nomenclature', $$( obs_technique IN ('0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27')  )$$, 'conforme'),
+('descriptif_occ_etat_biologique_valide', 'La valeur de <b>occ_etat_biologique</b> n''est pas conforme', 'Le champ <b>occ_etat_biologique</b> doit correspondre à la nomenclature', $$( occ_etat_biologique IN ( '0','1','2','3' ) )$$, 'conforme'),
+('descriptif_occ_naturalite_valide', 'La valeur de <b>occ_naturalite</b> n''est pas conforme', 'Le champ <b>occ_naturalite</b> doit correspondre à la nomenclature', $$( occ_naturalite IN ( '0','1','2','3','4','5' ) )$$, 'conforme'),
+('descriptif_occ_sexe_valide', 'La valeur de <b>occ_sexe</b> n''est pas conforme', 'Le champ <b>occ_sexe</b> doit correspondre à la nomenclature', $$( occ_sexe IN ('0','1','2','3','4','5' ) )$$, 'conforme'),
+('descriptif_occ_stade_de_vie_valide', 'La valeur de <b>occ_stade_de_vie</b> n''est pas conforme', 'Le champ <b>occ_stade_de_vie</b> doit correspondre à la nomenclature', $$( occ_stade_de_vie IN ('0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27' ) )$$, 'conforme'),
+('descriptif_occ_type_denombrement_valide', 'La valeur de <b>occ_type_denombrement</b> n''est pas conforme', 'Le champ <b>occ_type_denombrement</b> doit correspondre à la nomenclature', $$( occ_type_denombrement IN ( 'Ca', 'Co', 'Es', 'NSP' ) )$$, 'conforme'),
+('descriptif_occ_statut_biogeographique_valide', 'La valeur de <b>occ_statut_biogeographique</b> n''est pas conforme', 'Le champ <b>occ_statut_biogeographique</b> doit correspondre à la nomenclature', $$( occ_statut_biogeographique IN ( '0','1','2','3','4','5', '6' ) )$$, 'conforme'),
+('descriptif_occ_statut_biologique_valide', 'La valeur de <b>occ_statut_biologique</b> n''est pas conforme', 'Le champ <b>occ_statut_biologique</b> doit correspondre à la nomenclature', $$( occ_statut_biologique IN ( '0','1','2','3','4','5', '9', '13' ) )$$, 'conforme'),
+('descriptif_occ_comportement_valide', 'La valeur de <b>occ_comportement</b> n''est pas conforme', 'Le champ <b>occ_comportement</b> doit correspondre à la nomenclature', $$( occ_comportement IN ( '0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23' ) )$$, 'conforme'),
+('descriptif_preuve_existante_valide', 'La valeur de <b>preuve_existante</b> n''est pas conforme', 'Le champ <b>preuve_existante</b> doit correspondre à la nomenclature', $$( preuve_existante IN ( '0','1','2','3' ) )$$, 'conforme'),
+
+('descriptif_obs_technique_valide_2', 'La valeur de <b>obs_technique_2</b> n''est pas conforme', 'Le champ <b>obs_technique_2</b> doit correspondre à la nomenclature', $$( obs_technique_2 IN ('0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27')  )$$, 'conforme'),
+('descriptif_occ_etat_biologique_valide_2', 'La valeur de <b>occ_etat_biologique_2</b> n''est pas conforme', 'Le champ <b>occ_etat_biologique_2</b> doit correspondre à la nomenclature', $$( occ_etat_biologique_2 IN ( '0','1','2','3' ) )$$, 'conforme'),
+('descriptif_occ_naturalite_valide_2', 'La valeur de <b>occ_naturalite_2</b> n''est pas conforme', 'Le champ <b>occ_naturalite_2</b> doit correspondre à la nomenclature', $$( occ_naturalite_2 IN ( '0','1','2','3','4','5' ) )$$, 'conforme'),
+('descriptif_occ_sexe_valide_2', 'La valeur de <b>occ_sexe_2</b> n''est pas conforme', 'Le champ <b>occ_sexe_2</b> doit correspondre à la nomenclature', $$( occ_sexe_2 IN ('0','1','2','3','4','5' ) )$$, 'conforme'),
+('descriptif_occ_stade_de_vie_valide_2', 'La valeur de <b>occ_stade_de_vie_2</b> n''est pas conforme', 'Le champ <b>occ_stade_de_vie_2</b> doit correspondre à la nomenclature', $$( occ_stade_de_vie_2 IN ('0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27' ) )$$, 'conforme'),
+('descriptif_occ_type_denombrement_valide_2', 'La valeur de <b>occ_type_denombrement_2</b> n''est pas conforme', 'Le champ <b>occ_type_denombrement_2</b> doit correspondre à la nomenclature', $$( occ_type_denombrement_2 IN ( 'Ca', 'Co', 'Es', 'NSP' ) )$$, 'conforme'),
+('descriptif_occ_statut_biogeographique_valide_2', 'La valeur de <b>occ_statut_biogeographique_2</b> n''est pas conforme', 'Le champ <b>occ_statut_biogeographique_2</b> doit correspondre à la nomenclature', $$( occ_statut_biogeographique_2 IN ( '0','1','2','3','4','5', '6' ) )$$, 'conforme'),
+('descriptif_occ_statut_biologique_valide_2', 'La valeur de <b>occ_statut_biologique_2</b> n''est pas conforme', 'Le champ <b>occ_statut_biologique_2</b> doit correspondre à la nomenclature', $$( occ_statut_biologique_2 IN ( '0','1','2','3','4','5', '9', '13' ) )$$, 'conforme'),
+('descriptif_occ_comportement_valide_2', 'La valeur de <b>occ_comportement_2</b> n''est pas conforme', 'Le champ <b>occ_comportement_2</b> doit correspondre à la nomenclature', $$( occ_comportement_2 IN ( '0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23' ) )$$, 'conforme'),
+('descriptif_preuve_existante_valide_2', 'La valeur de <b>preuve_existante_2</b> n''est pas conforme', 'Le champ <b>preuve_existante_2</b> doit correspondre à la nomenclature', $$( preuve_existante_2 IN ( '0','1','2','3' ) )$$, 'conforme'),
+
+('descriptif_obs_technique_valide_3', 'La valeur de <b>obs_technique_3</b> n''est pas conforme', 'Le champ <b>obs_technique_3</b> doit correspondre à la nomenclature', $$( obs_technique_3 IN ('0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27')  )$$, 'conforme'),
+('descriptif_occ_etat_biologique_valide_3', 'La valeur de <b>occ_etat_biologique_3</b> n''est pas conforme', 'Le champ <b>occ_etat_biologique_3</b> doit correspondre à la nomenclature', $$( occ_etat_biologique_3 IN ( '0','1','2','3' ) )$$, 'conforme'),
+('descriptif_occ_naturalite_valide_3', 'La valeur de <b>occ_naturalite_3</b> n''est pas conforme', 'Le champ <b>occ_naturalite_3</b> doit correspondre à la nomenclature', $$( occ_naturalite_3 IN ( '0','1','2','3','4','5' ) )$$, 'conforme'),
+('descriptif_occ_sexe_valide_3', 'La valeur de <b>occ_sexe_3</b> n''est pas conforme', 'Le champ <b>occ_sexe_3</b> doit correspondre à la nomenclature', $$( occ_sexe_3 IN ('0','1','2','3','4','5' ) )$$, 'conforme'),
+('descriptif_occ_stade_de_vie_valide_3', 'La valeur de <b>occ_stade_de_vie_3</b> n''est pas conforme', 'Le champ <b>occ_stade_de_vie_3</b> doit correspondre à la nomenclature', $$( occ_stade_de_vie_3 IN ('0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27' ) )$$, 'conforme'),
+('descriptif_occ_type_denombrement_valide_3', 'La valeur de <b>occ_type_denombrement_3</b> n''est pas conforme', 'Le champ <b>occ_type_denombrement_3</b> doit correspondre à la nomenclature', $$( occ_type_denombrement_3 IN ( 'Ca', 'Co', 'Es', 'NSP' ) )$$, 'conforme'),
+('descriptif_occ_statut_biogeographique_valide_3', 'La valeur de <b>occ_statut_biogeographique_3</b> n''est pas conforme', 'Le champ <b>occ_statut_biogeographique_3</b> doit correspondre à la nomenclature', $$( occ_statut_biogeographique_3 IN ( '0','1','2','3','4','5', '6' ) )$$, 'conforme'),
+('descriptif_occ_statut_biologique_valide_3', 'La valeur de <b>occ_statut_biologique_3</b> n''est pas conforme', 'Le champ <b>occ_statut_biologique_3</b> doit correspondre à la nomenclature', $$( occ_statut_biologique_3 IN ( '0','1','2','3','4','5', '9', '13' ) )$$, 'conforme'),
+('descriptif_occ_comportement_valide_3', 'La valeur de <b>occ_comportement_3</b> n''est pas conforme', 'Le champ <b>occ_comportement_3</b> doit correspondre à la nomenclature', $$( occ_comportement_3 IN ( '0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23' ) )$$, 'conforme'),
+('descriptif_preuve_existante_valide_3', 'La valeur de <b>preuve_existante_3</b> n''est pas conforme', 'Le champ <b>preuve_existante_3</b> doit correspondre à la nomenclature', $$( preuve_existante_3 IN ( '0','1','2','3' ) )$$, 'conforme')
+
+ON CONFLICT ON CONSTRAINT critere_conformite_unique_code DO NOTHING
+;
+
 
 -- Vérification des doublons
 DROP FUNCTION IF EXISTS occtax.verification_doublons_avant_import(regclass, text);
@@ -611,7 +701,7 @@ BEGIN
     PERFORM 'SELECT Setval(''occtax.observation_cle_obs_seq'', (SELECT max(cle_obs) FROM occtax.observation ) )';
 
     -- Buils INSERT SQL
-    sql_template := '
+    sql_template := $SQL$
     INSERT INTO occtax.observation
     (
         cle_obs,
@@ -676,7 +766,7 @@ BEGIN
         odata
     )
     WITH info_jdd AS (
-        SELECT * FROM occtax.jdd WHERE id_sinp_jdd = ''%1$s''
+        SELECT * FROM occtax.jdd WHERE id_sinp_jdd = '%1$s'
     ),
     organisme_responsable AS (
         SELECT
@@ -695,11 +785,11 @@ BEGIN
 		)
     )
     SELECT
-        nextval(''occtax.observation_cle_obs_seq''::regclass) AS cle_obs,
-        -- C''est la plateforme régionale qui définit les id permanents
-        -- sauf s''ils sont déjà définis en amont (Ex: export MNHN)
+        nextval('occtax.observation_cle_obs_seq'::regclass) AS cle_obs,
+        -- C'est la plateforme régionale qui définit les id permanents
+        -- sauf s'ils sont déjà définis en amont (Ex: export MNHN)
         CASE
-            WHEN nullif(trim(s.id_sinp_occtax), '''') IS NOT NULL THEN trim(s.id_sinp_occtax)
+            WHEN nullif(trim(s.id_sinp_occtax), '') IS NOT NULL THEN trim(s.id_sinp_occtax)
             ELSE
                 CASE
                     WHEN loip.id_sinp_occtax IS NOT NULL THEN loip.id_sinp_occtax
@@ -757,12 +847,126 @@ BEGIN
         trim(s.sensi_referentiel),
         trim(s.sensi_version_referentiel),
 
-        NULL descriptif_sujet,
+        -- descriptif du sujet
+        -- On est obligé de passer par des array car array_to_string enlève les items NULL
+        -- On fait en sorte que chaque item puisse être NULL si aucun champ n'a de valeur
+        -- On finalise par transformer la String finale en json
+        -- Ex simple:
+        -- SELECT ('[' || array_to_string(array [NULL, json_build_object('a', 2, 'b', 34), NULL, json_build_object('a', 6, 'b', 12) ], ',') || ']')::json
+        -- renvoie
+        -- [{"a" : 2, "b" : 34},{"a" : 6, "b" : 12}]
+        ('[' || array_to_string(ARRAY[
+            -- 1er groupe de champs
+            CASE
+                WHEN nullif(concat(
+                    nullif(s.obs_technique, ''), nullif(s.occ_etat_biologique, ''),
+                    nullif(s.occ_naturalite, ''), nullif(s.occ_sexe, ''),
+                    nullif(s.occ_stade_de_vie, ''), nullif(s.occ_denombrement_min, ''),
+                    nullif(s.occ_denombrement_max, ''), nullif(s.occ_type_denombrement, ''),
+                    nullif(s.occ_statut_biogeographique, ''), nullif(s.occ_statut_biologique, ''),
+                    nullif(s.occ_comportement, ''), nullif(s.preuve_existante, ''),
+                    nullif(s.url_preuve_numerique, ''), nullif(s.preuve_non_numerique, ''),
+                    nullif(s.obs_contexte, ''), nullif(s.obs_description, ''),
+                    nullif(s.occ_methode_determination, '')
+                ), '') IS NOT NULL THEN
+                    json_build_object(
+                        'obs_technique', trim(s.obs_technique),
+                        'occ_etat_biologique', trim(s.occ_etat_biologique),
+                        'occ_naturalite', trim(s.occ_naturalite),
+                        'occ_sexe', trim(s.occ_sexe),
+                        'occ_stade_de_vie', trim(s.occ_stade_de_vie),
+                        'occ_denombrement_min', trim(s.occ_denombrement_min),
+                        'occ_denombrement_max', trim(s.occ_denombrement_max),
+                        'occ_type_denombrement', trim(s.occ_type_denombrement),
+                        'occ_statut_biogeographique', trim(s.occ_statut_biogeographique),
+                        'occ_statut_biologique', trim(s.occ_statut_biologique),
+                        'occ_comportement', trim(s.occ_comportement),
+                        'preuve_existante', trim(s.preuve_existante),
+                        'url_preuve_numerique', trim(s.url_preuve_numerique),
+                        'preuve_non_numerique', trim(s.preuve_non_numerique),
+                        'obs_contexte', trim(s.obs_contexte),
+                        'obs_description', trim(s.obs_description),
+                        'occ_methode_determination', trim(s.occ_methode_determination)
+                    )
+                ELSE NULL::json
+            END,
+
+            -- 2ème groupe de champs
+            CASE
+                WHEN nullif(concat(
+                    nullif(s.obs_technique_2, ''), nullif(s.occ_etat_biologique_2, ''),
+                    nullif(s.occ_naturalite_2, ''), nullif(s.occ_sexe_2, ''),
+                    nullif(s.occ_stade_de_vie_2, ''), nullif(s.occ_denombrement_min_2, ''),
+                    nullif(s.occ_denombrement_max_2, ''), nullif(s.occ_type_denombrement_2, ''),
+                    nullif(s.occ_statut_biogeographique_2, ''), nullif(s.occ_statut_biologique_2, ''),
+                    nullif(s.occ_comportement_2, ''), nullif(s.preuve_existante_2, ''),
+                    nullif(s.url_preuve_numerique_2, ''), nullif(s.preuve_non_numerique_2, ''),
+                    nullif(s.obs_contexte_2, ''), nullif(s.obs_description_2, ''),
+                    nullif(s.occ_methode_determination_2, '')
+                ), '') IS NOT NULL THEN
+                    json_build_object(
+                        'obs_technique', trim(s.obs_technique_2),
+                        'occ_etat_biologique', trim(s.occ_etat_biologique_2),
+                        'occ_naturalite', trim(s.occ_naturalite_2),
+                        'occ_sexe', trim(s.occ_sexe_2),
+                        'occ_stade_de_vie', trim(s.occ_stade_de_vie_2),
+                        'occ_denombrement_min', trim(s.occ_denombrement_min_2),
+                        'occ_denombrement_max', trim(s.occ_denombrement_max_2),
+                        'occ_type_denombrement', trim(s.occ_type_denombrement_2),
+                        'occ_statut_biogeographique', trim(s.occ_statut_biogeographique_2),
+                        'occ_statut_biologique', trim(s.occ_statut_biologique_2),
+                        'occ_comportement', trim(s.occ_comportement_2),
+                        'preuve_existante', trim(s.preuve_existante_2),
+                        'url_preuve_numerique', trim(s.url_preuve_numerique_2),
+                        'preuve_non_numerique', trim(s.preuve_non_numerique_2),
+                        'obs_contexte', trim(s.obs_contexte_2),
+                        'obs_description', trim(s.obs_description_2),
+                        'occ_methode_determination', trim(s.occ_methode_determination_2)
+                    )
+                ELSE NULL::json
+            END,
+
+            -- 3ème groupe de champs
+            CASE
+                WHEN nullif(concat(
+                    nullif(s.obs_technique_3, ''), nullif(s.occ_etat_biologique_3, ''),
+                    nullif(s.occ_naturalite_3, ''), nullif(s.occ_sexe_3, ''),
+                    nullif(s.occ_stade_de_vie_3, ''), nullif(s.occ_denombrement_min_3, ''),
+                    nullif(s.occ_denombrement_max_3, ''), nullif(s.occ_type_denombrement_3, ''),
+                    nullif(s.occ_statut_biogeographique_3, ''), nullif(s.occ_statut_biologique_3, ''),
+                    nullif(s.occ_comportement_3, ''), nullif(s.preuve_existante_3, ''),
+                    nullif(s.url_preuve_numerique_3, ''), nullif(s.preuve_non_numerique_3, ''),
+                    nullif(s.obs_contexte_3, ''), nullif(s.obs_description_3, ''),
+                    nullif(s.occ_methode_determination_3, '')
+                ), '') IS NOT NULL THEN
+                    json_build_object(
+                        'obs_technique', trim(s.obs_technique_3),
+                        'occ_etat_biologique', trim(s.occ_etat_biologique_3),
+                        'occ_naturalite', trim(s.occ_naturalite_3),
+                        'occ_sexe', trim(s.occ_sexe_3),
+                        'occ_stade_de_vie', trim(s.occ_stade_de_vie_3),
+                        'occ_denombrement_min', trim(s.occ_denombrement_min_3),
+                        'occ_denombrement_max', trim(s.occ_denombrement_max_3),
+                        'occ_type_denombrement', trim(s.occ_type_denombrement_3),
+                        'occ_statut_biogeographique', trim(s.occ_statut_biogeographique_3),
+                        'occ_statut_biologique', trim(s.occ_statut_biologique_3),
+                        'occ_comportement', trim(s.occ_comportement_3),
+                        'preuve_existante', trim(s.preuve_existante_3),
+                        'url_preuve_numerique', trim(s.url_preuve_numerique_3),
+                        'preuve_non_numerique', trim(s.preuve_non_numerique_3),
+                        'obs_contexte', trim(s.obs_contexte_3),
+                        'obs_description', trim(s.obs_description_3),
+                        'occ_methode_determination', trim(s.occ_methode_determination_3)
+                    )
+                ELSE NULL::json
+            END
+        ], ',') || ']')::json AS descriptif_sujet,
+
         NULL AS donnee_complementaire,
 
         s.precision_geometrie::integer,
         s.nature_objet_geo,
-    ';
+    $SQL$;
 
     IF _geometry_format = 'lonlat' THEN
         -- longitude & latitude
@@ -966,22 +1170,22 @@ BEGIN
 
     -- table occtax.lien_observation_identifiant_permanent
     -- Conservation des liens entre les identifiants origine et les identifiants permanents
-    sql_template := '
+    sql_template := $$
     WITH ins AS (
         INSERT INTO occtax.lien_observation_identifiant_permanent
         (jdd_id, id_origine, id_sinp_occtax, dee_date_derniere_modification, dee_date_transformation)
         SELECT o.jdd_id, o.id_origine, o.id_sinp_occtax, o.dee_date_derniere_modification, o.dee_date_transformation
         FROM occtax.observation o
         WHERE True
-            AND o.jdd_id IN (''%1$s'')
-            AND o.odata->>''import_temp_table'' = ''%2$s''
-            AND o.odata->>''import_login'' = ''%3$s''
+            AND o.jdd_id IN ('%1$s')
+            AND o.odata->>'import_temp_table' = '%2$s'
+            AND o.odata->>'import_login' = '%3$s'
         ON CONFLICT ON CONSTRAINT lien_observation_id_sinp_occtax_jdd_id_id_origine_id_key
         DO NOTHING
         RETURNING id_origine
     ) SELECT count(*) AS nb FROM ins
     ;
-    ';
+    $$;
     sql_text := format(sql_template,
         _jdd_id,
         _table_temporaire,
@@ -1010,7 +1214,7 @@ BEGIN
                 )
         LOOP
             -- RAISE NOTICE '% - %', _aa_champ, _aa_nom;
-            sql_template := '
+            sql_template := $$
             WITH ins AS (
                 INSERT INTO occtax.attribut_additionnel (
                     cle_obs,
@@ -1021,26 +1225,27 @@ BEGIN
                     o.cle_obs,
                     Coalesce(%5$s, %4$s) AS nom,
                     Coalesce(%6$s, %5$s, %4$s) AS definition,
-                    Coalesce(trim(t.odata->>%4$s), ''NSP'') AS valeur,
-                    Coalesce(%7$s, ''NSP'') AS unite,
-                    Coalesce(%8$s, ''NSP'') AS thematique,
-                    Coalesce(%9$s, ''NSP'') AS type
+                    Coalesce(trim(t.odata->>%4$s), 'NSP') AS valeur,
+                    Coalesce(%7$s, 'NSP') AS unite,
+                    Coalesce(%8$s, 'NSP') AS thematique,
+                    Coalesce(%9$s, 'NSP') AS type
 
                 FROM occtax.observation AS o
                 JOIN "%2$s" AS t
                     ON t.id_origine = o.id_origine
                 WHERE True
-                    AND o.jdd_id IN (''%1$s'')
-                    AND o.odata->>''import_temp_table'' = ''%2$s''
-                    AND o.odata->>''import_login'' = ''%3$s''
+                    AND o.jdd_id IN ('%1$s')
+                    AND o.odata->>'import_temp_table' = '%2$s'
+                    AND o.odata->>'import_login' = '%3$s'
                     -- il faut avoir une valeur
-                    AND nullif(trim(t.odata->>%4$s), '''') IS NOT NULL
+                    AND nullif(trim(t.odata->>%4$s), '') IS NOT NULL
                 ON CONFLICT ON CONSTRAINT attribut_additionnel_pkey
                 DO NOTHING
                 RETURNING cle_obs
             ) SELECT count(*) AS nb FROM ins
             ;
-            ';
+            $$;
+
             sql_text := format(sql_template,
                 _jdd_id,
                 _table_temporaire,
@@ -1065,7 +1270,7 @@ BEGIN
     -- Table occtax.organisme
     SELECT setval('occtax.organisme_id_organisme_seq', (SELECT max(id_organisme) FROM occtax.organisme))
     INTO _set_val;
-    sql_template := '
+    sql_template := $$
     WITH ins AS (
         WITH personnes AS (
             SELECT DISTINCT observateurs AS personnes
@@ -1078,7 +1283,7 @@ BEGIN
             FROM %1$s
         ),
         personne AS (
-            SELECT DISTINCT trim(regexp_split_to_table(personnes, '','')) AS personne
+            SELECT DISTINCT trim(regexp_split_to_table(personnes, ',')) AS personne
             FROM personnes
         ),
         valide AS (
@@ -1094,7 +1299,7 @@ BEGIN
 		RETURNING nom_organisme
     ) SELECT count(*) AS nb FROM ins
     ;
-    ';
+    $$;
     sql_text := format(sql_template,
         _table_temporaire
     );
@@ -1107,7 +1312,7 @@ BEGIN
     -- Table occtax.personne
     SELECT setval('occtax.personne_id_personne_seq', (SELECT max(id_personne) FROM occtax.personne))
     INTO _set_val;
-    sql_template := '
+    sql_template := $$
     WITH ins AS (
         WITH personnes AS (
             SELECT DISTINCT observateurs AS personnes
@@ -1120,7 +1325,7 @@ BEGIN
             FROM %1$s
         ),
         personne AS (
-            SELECT DISTINCT trim(regexp_split_to_table(personnes, '','')) AS personne
+            SELECT DISTINCT trim(regexp_split_to_table(personnes, ',')) AS personne
             FROM personnes
         ),
         valide AS (
@@ -1130,10 +1335,10 @@ BEGIN
         )
         INSERT INTO occtax.personne (identite, nom, prenom, mail, id_organisme)
         SELECT DISTINCT
-            concat(items[1], '' '' || items[2]) AS identite,
+            concat(items[1], ' ' || items[2]) AS identite,
             items[1] AS nom,
             items[2] AS prenom,
-            ''%2$s'' AS mail,
+            '%2$s' AS mail,
             o.id_organisme
         FROM valide AS v
         LEFT JOIN occtax.organisme AS o
@@ -1143,7 +1348,7 @@ BEGIN
 		RETURNING identite
     ) SELECT count(*) AS nb FROM ins
     ;
-    ';
+    $$;
     sql_text := format(sql_template,
         _table_temporaire,
         _default_email
@@ -1161,33 +1366,33 @@ BEGIN
         UNION
         SELECT 'determinateurs' AS nom, 'Det' AS typ
     LOOP
-        sql_template := '
+        sql_template := $$
         WITH ins AS (
             INSERT INTO occtax.observation_personne (cle_obs, id_personne, role_personne)
             WITH source AS (
                 SELECT
                 cle_obs,
-                o.odata->>''%1$s'' AS odata_%1$s,
+                o.odata->>'%1$s' AS odata_%1$s,
                 trim(%1$s) AS %2$s, rn
                 FROM
                 occtax.observation AS o,
-                regexp_split_to_table(o.odata->>''%1$s'', '','')  WITH ORDINALITY x(%1$s, rn)
+                regexp_split_to_table(o.odata->>'%1$s', ',')  WITH ORDINALITY x(%1$s, rn)
                 WHERE True
-                AND o.odata->>''%1$s'' IS NOT NULL
-                AND o.id_sinp_jdd = ''%3$s''
+                AND o.odata->>'%1$s' IS NOT NULL
+                AND o.id_sinp_jdd = '%3$s'
                 ORDER BY o.cle_obs, rn
             )
             SELECT
-                s.cle_obs, p.id_personne, ''%4$s'' AS role_personne
+                s.cle_obs, p.id_personne, '%4$s' AS role_personne
             FROM source AS s
             JOIN occtax.personne AS p
-                ON s.%2$s = concat(p.identite, '' ('', (SELECT nom_organisme FROM occtax.organisme og WHERE og.id_organisme = p.id_organisme), '')'')
+                ON s.%2$s = concat(p.identite, ' (', (SELECT nom_organisme FROM occtax.organisme og WHERE og.id_organisme = p.id_organisme), ')')
             ORDER BY cle_obs, rn
             ON CONFLICT DO NOTHING
 		    RETURNING cle_obs, id_personne, role_personne
         ) SELECT count(*) AS nb FROM ins
         ;
-        ';
+        $$;
         sql_text := format(sql_template,
             _nom_type_personne,
             -- on enlève le s final pour créer le nom du champ à nommer
@@ -1204,9 +1409,9 @@ BEGIN
     END LOOP;
 
     -- Relations spatiales
-    sql_template := '
-        SELECT occtax.occtax_update_spatial_relationships(ARRAY[''%1$s'']) AS update_spatial;
-    ';
+    sql_template := $$
+        SELECT occtax.occtax_update_spatial_relationships(ARRAY['%1$s']) AS update_spatial;
+    $$;
     sql_text := format(sql_template,
         _jdd_id
     );
@@ -1270,7 +1475,7 @@ BEGIN
 
     -- Log d'import: table occtax.jdd_import
     -- Table import
-    sql_template := '
+    sql_template := $$
     WITH rapport AS (
         SELECT
             count(*) AS nb_importe,
@@ -1310,7 +1515,7 @@ BEGIN
         RETURNING id_import
     ) SELECT count(*) AS nb FROM ins
     ;
-    ';
+    $$;
     sql_text := format(sql_template,
         _table_temporaire,
         _jdd_id,
@@ -1325,9 +1530,9 @@ BEGIN
 
     -- Adaptations régionales
     -- Lancement de la fonction occtax.import_observations_post_data_regionale
-    sql_template := '
-        SELECT occtax.import_observations_post_data_regionale(''%1$s'') AS json_regional
-    ';
+    sql_template := $$
+        SELECT occtax.import_observations_post_data_regionale('%1$s') AS json_regional
+    $$;
     sql_text := format(sql_template,
         _jdd_id
     );
@@ -1339,18 +1544,18 @@ BEGIN
 
 
     -- Nettoyage
-    sql_template := '
+    sql_template := $$
     WITH ins AS (
         UPDATE occtax.observation
-        SET odata = odata - ''observateurs'' - ''determinateurs''
+        SET odata = odata - 'observateurs' - 'determinateurs'
         WHERE True
-        AND jdd_id = ''%1$s''
-        AND odata->>''import_temp_table'' = ''%2$s''
-        AND odata->>''import_login'' = ''%3$s''
+        AND jdd_id = '%1$s'
+        AND odata->>'import_temp_table' = '%2$s'
+        AND odata->>'import_login' = '%3$s'
         RETURNING cle_obs
     ) SELECT count(*) AS nb FROM ins
     ;
-    ';
+    $$;
     sql_text := format(sql_template,
         _jdd_id,
         _table_temporaire::text,

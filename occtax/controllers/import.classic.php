@@ -204,7 +204,9 @@ class importCtrl extends jController
 
         // Import library
         jClasses::inc('occtax~occtaxImport');
-        $import = new occtaxImport($csv_full_path, $sourceSrid, $geometryFormat, $csv_aa_full_path);
+        $import = new occtaxImport(
+            $csv_full_path, $sourceSrid, $geometryFormat, $csv_aa_full_path
+        );
 
         // Check the observation CSV structure
         list($check, $messages) = $import->checkStructure();
@@ -215,6 +217,7 @@ class importCtrl extends jController
             return $rep;
         }
 
+        // Attributs additionnels
         if (!empty($aaCsvFile)) {
             // Check the observation CSV structure
             list($check, $messages) = $import->checkAdditionalAttributesStructure();
