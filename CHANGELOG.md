@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 2.17.1 - 2024-06-03
+
+* Import CSV
+  * Ajout de l'import des descriptifs du sujet
+  * Observateurs & déterminateurs : éviter les doublons dans observation_personne
+* Export - Remplacement de ZIP par TAR pour la création d'archive
+
 ## 2.17.0 - 2024-02-14
 
 * compatibilité des modules avec Lizmap 3.6 uniquement. Abandon du

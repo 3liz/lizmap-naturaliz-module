@@ -372,94 +372,6 @@ COST 100
 
 
 
--- CHECK
-INSERT INTO occtax.critere_conformite (code, libelle, condition, type_critere)
-VALUES
--- format
-('descriptif_obs_technique_format', 'Le format de <b>obs_technique</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(obs_technique, 'integer')$$, 'format'),
-('descriptif_occ_etat_biologique_format', 'Le format de <b>occ_etat_biologique</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_etat_biologique, 'integer')$$, 'format'),
-('descriptif_occ_naturalite_format', 'Le format de <b>occ_naturalite</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_naturalite, 'integer')$$, 'format'),
-('descriptif_occ_sexe_format', 'Le format de <b>occ_sexe</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_sexe, 'integer')$$, 'format'),
-('descriptif_occ_stade_de_vie_format', 'Le format de <b>occ_stade_de_vie</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_stade_de_vie, 'integer')$$, 'format'),
-('descriptif_occ_denombrement_min_format', 'Le format de <b>occ_denombrement_min</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_denombrement_min, 'integer')$$, 'format'),
-('descriptif_occ_denombrement_max_format', 'Le format de <b>occ_denombrement_max</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_denombrement_max, 'integer')$$, 'format'),
-('descriptif_occ_type_denombrement_format', 'Le format de <b>occ_type_denombrement</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_type_denombrement, 'text')$$, 'format'),
-('descriptif_occ_statut_biogeographique_format', 'Le format de <b>occ_statut_biogeographique</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_statut_biogeographique, 'integer')$$, 'format'),
-('descriptif_occ_statut_biologique_format', 'Le format de <b>occ_statut_biologique</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_statut_biologique, 'integer')$$, 'format'),
-('descriptif_occ_comportement_format', 'Le format de <b>occ_comportement</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_comportement, 'integer')$$, 'format'),
-('descriptif_preuve_existante_format', 'Le format de <b>preuve_existante</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(preuve_existante, 'integer')$$, 'format'),
-
-('descriptif_obs_technique_format_2', 'Le format de <b>obs_technique_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(obs_technique_2, 'integer')$$, 'format'),
-('descriptif_occ_etat_biologique_format_2', 'Le format de <b>occ_etat_biologique_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_etat_biologique_2, 'integer')$$, 'format'),
-('descriptif_occ_naturalite_format_2', 'Le format de <b>occ_naturalite_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_naturalite_2, 'integer')$$, 'format'),
-('descriptif_occ_sexe_format_2', 'Le format de <b>occ_sexe_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_sexe_2, 'integer')$$, 'format'),
-('descriptif_occ_stade_de_vie_format_2', 'Le format de <b>occ_stade_de_vie_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_stade_de_vie_2, 'integer')$$, 'format'),
-('descriptif_occ_denombrement_min_format_2', 'Le format de <b>occ_denombrement_min_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_denombrement_min_2, 'integer')$$, 'format'),
-('descriptif_occ_denombrement_max_format_2', 'Le format de <b>occ_denombrement_max_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_denombrement_max_2, 'integer')$$, 'format'),
-('descriptif_occ_type_denombrement_format_2', 'Le format de <b>occ_type_denombrement_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_type_denombrement_2, 'text')$$, 'format'),
-('descriptif_occ_statut_biogeographique_format_2', 'Le format de <b>occ_statut_biogeographique_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_statut_biogeographique_2, 'integer')$$, 'format'),
-('descriptif_occ_statut_biologique_format_2', 'Le format de <b>occ_statut_biologique_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_statut_biologique_2, 'integer')$$, 'format'),
-('descriptif_occ_comportement_format_2', 'Le format de <b>occ_comportement_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_comportement_2, 'integer')$$, 'format'),
-('descriptif_preuve_existante_format_2', 'Le format de <b>preuve_existante_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(preuve_existante_2, 'integer')$$, 'format'),
-
-('descriptif_obs_technique_format_3', 'Le format de <b>obs_technique_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(obs_technique_3, 'integer')$$, 'format'),
-('descriptif_occ_etat_biologique_format_3', 'Le format de <b>occ_etat_biologique_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_etat_biologique_3, 'integer')$$, 'format'),
-('descriptif_occ_naturalite_format_3', 'Le format de <b>occ_naturalite_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_naturalite_3, 'integer')$$, 'format'),
-('descriptif_occ_sexe_format_3', 'Le format de <b>occ_sexe_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_sexe_3, 'integer')$$, 'format'),
-('descriptif_occ_stade_de_vie_format_3', 'Le format de <b>occ_stade_de_vie_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_stade_de_vie_3, 'integer')$$, 'format'),
-('descriptif_occ_denombrement_min_format_3', 'Le format de <b>occ_denombrement_min_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_denombrement_min_3, 'integer')$$, 'format'),
-('descriptif_occ_denombrement_max_format_3', 'Le format de <b>occ_denombrement_max_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_denombrement_max_3, 'integer')$$, 'format'),
-('descriptif_occ_type_denombrement_format_3', 'Le format de <b>occ_type_denombrement_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_type_denombrement_3, 'text')$$, 'format'),
-('descriptif_occ_statut_biogeographique_format_3', 'Le format de <b>occ_statut_biogeographique_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_statut_biogeographique_3, 'integer')$$, 'format'),
-('descriptif_occ_statut_biologique_format_3', 'Le format de <b>occ_statut_biologique_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_statut_biologique_3, 'integer')$$, 'format'),
-('descriptif_occ_comportement_format_3', 'Le format de <b>occ_comportement_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_comportement_3, 'integer')$$, 'format'),
-('descriptif_preuve_existante_format_3', 'Le format de <b>preuve_existante_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(preuve_existante_3, 'integer')$$, 'format')
-
-
-
-ON CONFLICT ON CONSTRAINT critere_conformite_unique_code DO NOTHING
-;
-
--- conforme
-INSERT INTO occtax.critere_conformite (code, libelle, description, condition, type_critere)
-VALUES
-
-('descriptif_obs_technique_valide', 'La valeur de <b>obs_technique</b> n''est pas conforme', 'Le champ <b>obs_technique</b> doit correspondre à la nomenclature', $$( obs_technique IN ('0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27')  )$$, 'conforme'),
-('descriptif_occ_etat_biologique_valide', 'La valeur de <b>occ_etat_biologique</b> n''est pas conforme', 'Le champ <b>occ_etat_biologique</b> doit correspondre à la nomenclature', $$( occ_etat_biologique IN ( '0','1','2','3' ) )$$, 'conforme'),
-('descriptif_occ_naturalite_valide', 'La valeur de <b>occ_naturalite</b> n''est pas conforme', 'Le champ <b>occ_naturalite</b> doit correspondre à la nomenclature', $$( occ_naturalite IN ( '0','1','2','3','4','5' ) )$$, 'conforme'),
-('descriptif_occ_sexe_valide', 'La valeur de <b>occ_sexe</b> n''est pas conforme', 'Le champ <b>occ_sexe</b> doit correspondre à la nomenclature', $$( occ_sexe IN ('0','1','2','3','4','5' ) )$$, 'conforme'),
-('descriptif_occ_stade_de_vie_valide', 'La valeur de <b>occ_stade_de_vie</b> n''est pas conforme', 'Le champ <b>occ_stade_de_vie</b> doit correspondre à la nomenclature', $$( occ_stade_de_vie IN ('0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27' ) )$$, 'conforme'),
-('descriptif_occ_type_denombrement_valide', 'La valeur de <b>occ_type_denombrement</b> n''est pas conforme', 'Le champ <b>occ_type_denombrement</b> doit correspondre à la nomenclature', $$( occ_type_denombrement IN ( 'Ca', 'Co', 'Es', 'NSP' ) )$$, 'conforme'),
-('descriptif_occ_statut_biogeographique_valide', 'La valeur de <b>occ_statut_biogeographique</b> n''est pas conforme', 'Le champ <b>occ_statut_biogeographique</b> doit correspondre à la nomenclature', $$( occ_statut_biogeographique IN ( '0','1','2','3','4','5', '6' ) )$$, 'conforme'),
-('descriptif_occ_statut_biologique_valide', 'La valeur de <b>occ_statut_biologique</b> n''est pas conforme', 'Le champ <b>occ_statut_biologique</b> doit correspondre à la nomenclature', $$( occ_statut_biologique IN ( '0','1','2','3','4','5', '9', '13' ) )$$, 'conforme'),
-('descriptif_occ_comportement_valide', 'La valeur de <b>occ_comportement</b> n''est pas conforme', 'Le champ <b>occ_comportement</b> doit correspondre à la nomenclature', $$( occ_comportement IN ( '0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23' ) )$$, 'conforme'),
-('descriptif_preuve_existante_valide', 'La valeur de <b>preuve_existante</b> n''est pas conforme', 'Le champ <b>preuve_existante</b> doit correspondre à la nomenclature', $$( preuve_existante IN ( '0','1','2','3' ) )$$, 'conforme'),
-
-('descriptif_obs_technique_valide_2', 'La valeur de <b>obs_technique_2</b> n''est pas conforme', 'Le champ <b>obs_technique_2</b> doit correspondre à la nomenclature', $$( obs_technique_2 IN ('0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27')  )$$, 'conforme'),
-('descriptif_occ_etat_biologique_valide_2', 'La valeur de <b>occ_etat_biologique_2</b> n''est pas conforme', 'Le champ <b>occ_etat_biologique_2</b> doit correspondre à la nomenclature', $$( occ_etat_biologique_2 IN ( '0','1','2','3' ) )$$, 'conforme'),
-('descriptif_occ_naturalite_valide_2', 'La valeur de <b>occ_naturalite_2</b> n''est pas conforme', 'Le champ <b>occ_naturalite_2</b> doit correspondre à la nomenclature', $$( occ_naturalite_2 IN ( '0','1','2','3','4','5' ) )$$, 'conforme'),
-('descriptif_occ_sexe_valide_2', 'La valeur de <b>occ_sexe_2</b> n''est pas conforme', 'Le champ <b>occ_sexe_2</b> doit correspondre à la nomenclature', $$( occ_sexe_2 IN ('0','1','2','3','4','5' ) )$$, 'conforme'),
-('descriptif_occ_stade_de_vie_valide_2', 'La valeur de <b>occ_stade_de_vie_2</b> n''est pas conforme', 'Le champ <b>occ_stade_de_vie_2</b> doit correspondre à la nomenclature', $$( occ_stade_de_vie_2 IN ('0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27' ) )$$, 'conforme'),
-('descriptif_occ_type_denombrement_valide_2', 'La valeur de <b>occ_type_denombrement_2</b> n''est pas conforme', 'Le champ <b>occ_type_denombrement_2</b> doit correspondre à la nomenclature', $$( occ_type_denombrement_2 IN ( 'Ca', 'Co', 'Es', 'NSP' ) )$$, 'conforme'),
-('descriptif_occ_statut_biogeographique_valide_2', 'La valeur de <b>occ_statut_biogeographique_2</b> n''est pas conforme', 'Le champ <b>occ_statut_biogeographique_2</b> doit correspondre à la nomenclature', $$( occ_statut_biogeographique_2 IN ( '0','1','2','3','4','5', '6' ) )$$, 'conforme'),
-('descriptif_occ_statut_biologique_valide_2', 'La valeur de <b>occ_statut_biologique_2</b> n''est pas conforme', 'Le champ <b>occ_statut_biologique_2</b> doit correspondre à la nomenclature', $$( occ_statut_biologique_2 IN ( '0','1','2','3','4','5', '9', '13' ) )$$, 'conforme'),
-('descriptif_occ_comportement_valide_2', 'La valeur de <b>occ_comportement_2</b> n''est pas conforme', 'Le champ <b>occ_comportement_2</b> doit correspondre à la nomenclature', $$( occ_comportement_2 IN ( '0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23' ) )$$, 'conforme'),
-('descriptif_preuve_existante_valide_2', 'La valeur de <b>preuve_existante_2</b> n''est pas conforme', 'Le champ <b>preuve_existante_2</b> doit correspondre à la nomenclature', $$( preuve_existante_2 IN ( '0','1','2','3' ) )$$, 'conforme'),
-
-('descriptif_obs_technique_valide_3', 'La valeur de <b>obs_technique_3</b> n''est pas conforme', 'Le champ <b>obs_technique_3</b> doit correspondre à la nomenclature', $$( obs_technique_3 IN ('0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27')  )$$, 'conforme'),
-('descriptif_occ_etat_biologique_valide_3', 'La valeur de <b>occ_etat_biologique_3</b> n''est pas conforme', 'Le champ <b>occ_etat_biologique_3</b> doit correspondre à la nomenclature', $$( occ_etat_biologique_3 IN ( '0','1','2','3' ) )$$, 'conforme'),
-('descriptif_occ_naturalite_valide_3', 'La valeur de <b>occ_naturalite_3</b> n''est pas conforme', 'Le champ <b>occ_naturalite_3</b> doit correspondre à la nomenclature', $$( occ_naturalite_3 IN ( '0','1','2','3','4','5' ) )$$, 'conforme'),
-('descriptif_occ_sexe_valide_3', 'La valeur de <b>occ_sexe_3</b> n''est pas conforme', 'Le champ <b>occ_sexe_3</b> doit correspondre à la nomenclature', $$( occ_sexe_3 IN ('0','1','2','3','4','5' ) )$$, 'conforme'),
-('descriptif_occ_stade_de_vie_valide_3', 'La valeur de <b>occ_stade_de_vie_3</b> n''est pas conforme', 'Le champ <b>occ_stade_de_vie_3</b> doit correspondre à la nomenclature', $$( occ_stade_de_vie_3 IN ('0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27' ) )$$, 'conforme'),
-('descriptif_occ_type_denombrement_valide_3', 'La valeur de <b>occ_type_denombrement_3</b> n''est pas conforme', 'Le champ <b>occ_type_denombrement_3</b> doit correspondre à la nomenclature', $$( occ_type_denombrement_3 IN ( 'Ca', 'Co', 'Es', 'NSP' ) )$$, 'conforme'),
-('descriptif_occ_statut_biogeographique_valide_3', 'La valeur de <b>occ_statut_biogeographique_3</b> n''est pas conforme', 'Le champ <b>occ_statut_biogeographique_3</b> doit correspondre à la nomenclature', $$( occ_statut_biogeographique_3 IN ( '0','1','2','3','4','5', '6' ) )$$, 'conforme'),
-('descriptif_occ_statut_biologique_valide_3', 'La valeur de <b>occ_statut_biologique_3</b> n''est pas conforme', 'Le champ <b>occ_statut_biologique_3</b> doit correspondre à la nomenclature', $$( occ_statut_biologique_3 IN ( '0','1','2','3','4','5', '9', '13' ) )$$, 'conforme'),
-('descriptif_occ_comportement_valide_3', 'La valeur de <b>occ_comportement_3</b> n''est pas conforme', 'Le champ <b>occ_comportement_3</b> doit correspondre à la nomenclature', $$( occ_comportement_3 IN ( '0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23' ) )$$, 'conforme'),
-('descriptif_preuve_existante_valide_3', 'La valeur de <b>preuve_existante_3</b> n''est pas conforme', 'Le champ <b>preuve_existante_3</b> doit correspondre à la nomenclature', $$( preuve_existante_3 IN ( '0','1','2','3' ) )$$, 'conforme')
-
-ON CONFLICT ON CONSTRAINT critere_conformite_unique_code DO NOTHING
-;
-
 CREATE OR REPLACE FUNCTION occtax.import_observations_post_data(
     _table_temporaire regclass,
     _import_login text, _jdd_uid text, _default_email text,
@@ -902,4 +814,94 @@ END
 $BODY$
 LANGUAGE plpgsql VOLATILE
 COST 100
+;
+
+
+
+-- CHECK
+INSERT INTO occtax.critere_conformite (code, libelle, condition, type_critere)
+VALUES
+-- format
+('descriptif_obs_technique_format', 'Le format de <b>obs_technique</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(obs_technique, 'integer')$$, 'format'),
+('descriptif_occ_etat_biologique_format', 'Le format de <b>occ_etat_biologique</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_etat_biologique, 'integer')$$, 'format'),
+('descriptif_occ_naturalite_format', 'Le format de <b>occ_naturalite</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_naturalite, 'integer')$$, 'format'),
+('descriptif_occ_sexe_format', 'Le format de <b>occ_sexe</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_sexe, 'integer')$$, 'format'),
+('descriptif_occ_stade_de_vie_format', 'Le format de <b>occ_stade_de_vie</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_stade_de_vie, 'integer')$$, 'format'),
+('descriptif_occ_denombrement_min_format', 'Le format de <b>occ_denombrement_min</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_denombrement_min, 'integer')$$, 'format'),
+('descriptif_occ_denombrement_max_format', 'Le format de <b>occ_denombrement_max</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_denombrement_max, 'integer')$$, 'format'),
+('descriptif_occ_type_denombrement_format', 'Le format de <b>occ_type_denombrement</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_type_denombrement, 'text')$$, 'format'),
+('descriptif_occ_statut_biogeographique_format', 'Le format de <b>occ_statut_biogeographique</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_statut_biogeographique, 'integer')$$, 'format'),
+('descriptif_occ_statut_biologique_format', 'Le format de <b>occ_statut_biologique</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_statut_biologique, 'integer')$$, 'format'),
+('descriptif_occ_comportement_format', 'Le format de <b>occ_comportement</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_comportement, 'integer')$$, 'format'),
+('descriptif_preuve_existante_format', 'Le format de <b>preuve_existante</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(preuve_existante, 'integer')$$, 'format'),
+
+('descriptif_obs_technique_format_2', 'Le format de <b>obs_technique_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(obs_technique_2, 'integer')$$, 'format'),
+('descriptif_occ_etat_biologique_format_2', 'Le format de <b>occ_etat_biologique_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_etat_biologique_2, 'integer')$$, 'format'),
+('descriptif_occ_naturalite_format_2', 'Le format de <b>occ_naturalite_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_naturalite_2, 'integer')$$, 'format'),
+('descriptif_occ_sexe_format_2', 'Le format de <b>occ_sexe_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_sexe_2, 'integer')$$, 'format'),
+('descriptif_occ_stade_de_vie_format_2', 'Le format de <b>occ_stade_de_vie_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_stade_de_vie_2, 'integer')$$, 'format'),
+('descriptif_occ_denombrement_min_format_2', 'Le format de <b>occ_denombrement_min_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_denombrement_min_2, 'integer')$$, 'format'),
+('descriptif_occ_denombrement_max_format_2', 'Le format de <b>occ_denombrement_max_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_denombrement_max_2, 'integer')$$, 'format'),
+('descriptif_occ_type_denombrement_format_2', 'Le format de <b>occ_type_denombrement_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_type_denombrement_2, 'text')$$, 'format'),
+('descriptif_occ_statut_biogeographique_format_2', 'Le format de <b>occ_statut_biogeographique_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_statut_biogeographique_2, 'integer')$$, 'format'),
+('descriptif_occ_statut_biologique_format_2', 'Le format de <b>occ_statut_biologique_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_statut_biologique_2, 'integer')$$, 'format'),
+('descriptif_occ_comportement_format_2', 'Le format de <b>occ_comportement_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_comportement_2, 'integer')$$, 'format'),
+('descriptif_preuve_existante_format_2', 'Le format de <b>preuve_existante_2</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(preuve_existante_2, 'integer')$$, 'format'),
+
+('descriptif_obs_technique_format_3', 'Le format de <b>obs_technique_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(obs_technique_3, 'integer')$$, 'format'),
+('descriptif_occ_etat_biologique_format_3', 'Le format de <b>occ_etat_biologique_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_etat_biologique_3, 'integer')$$, 'format'),
+('descriptif_occ_naturalite_format_3', 'Le format de <b>occ_naturalite_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_naturalite_3, 'integer')$$, 'format'),
+('descriptif_occ_sexe_format_3', 'Le format de <b>occ_sexe_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_sexe_3, 'integer')$$, 'format'),
+('descriptif_occ_stade_de_vie_format_3', 'Le format de <b>occ_stade_de_vie_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_stade_de_vie_3, 'integer')$$, 'format'),
+('descriptif_occ_denombrement_min_format_3', 'Le format de <b>occ_denombrement_min_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_denombrement_min_3, 'integer')$$, 'format'),
+('descriptif_occ_denombrement_max_format_3', 'Le format de <b>occ_denombrement_max_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_denombrement_max_3, 'integer')$$, 'format'),
+('descriptif_occ_type_denombrement_format_3', 'Le format de <b>occ_type_denombrement_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_type_denombrement_3, 'text')$$, 'format'),
+('descriptif_occ_statut_biogeographique_format_3', 'Le format de <b>occ_statut_biogeographique_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_statut_biogeographique_3, 'integer')$$, 'format'),
+('descriptif_occ_statut_biologique_format_3', 'Le format de <b>occ_statut_biologique_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_statut_biologique_3, 'integer')$$, 'format'),
+('descriptif_occ_comportement_format_3', 'Le format de <b>occ_comportement_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(occ_comportement_3, 'integer')$$, 'format'),
+('descriptif_preuve_existante_format_3', 'Le format de <b>preuve_existante_3</b> est incorrect. Attendu: Entier' , $$occtax.is_given_type(preuve_existante_3, 'integer')$$, 'format')
+
+
+
+ON CONFLICT ON CONSTRAINT critere_conformite_unique_code DO NOTHING
+;
+
+-- conforme
+INSERT INTO occtax.critere_conformite (code, libelle, description, condition, type_critere)
+VALUES
+
+('descriptif_obs_technique_valide', 'La valeur de <b>obs_technique</b> n''est pas conforme', 'Le champ <b>obs_technique</b> doit correspondre à la nomenclature', $$( obs_technique IN ('0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27')  )$$, 'conforme'),
+('descriptif_occ_etat_biologique_valide', 'La valeur de <b>occ_etat_biologique</b> n''est pas conforme', 'Le champ <b>occ_etat_biologique</b> doit correspondre à la nomenclature', $$( occ_etat_biologique IN ( '0','1','2','3' ) )$$, 'conforme'),
+('descriptif_occ_naturalite_valide', 'La valeur de <b>occ_naturalite</b> n''est pas conforme', 'Le champ <b>occ_naturalite</b> doit correspondre à la nomenclature', $$( occ_naturalite IN ( '0','1','2','3','4','5' ) )$$, 'conforme'),
+('descriptif_occ_sexe_valide', 'La valeur de <b>occ_sexe</b> n''est pas conforme', 'Le champ <b>occ_sexe</b> doit correspondre à la nomenclature', $$( occ_sexe IN ('0','1','2','3','4','5' ) )$$, 'conforme'),
+('descriptif_occ_stade_de_vie_valide', 'La valeur de <b>occ_stade_de_vie</b> n''est pas conforme', 'Le champ <b>occ_stade_de_vie</b> doit correspondre à la nomenclature', $$( occ_stade_de_vie IN ('0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27' ) )$$, 'conforme'),
+('descriptif_occ_type_denombrement_valide', 'La valeur de <b>occ_type_denombrement</b> n''est pas conforme', 'Le champ <b>occ_type_denombrement</b> doit correspondre à la nomenclature', $$( occ_type_denombrement IN ( 'Ca', 'Co', 'Es', 'NSP' ) )$$, 'conforme'),
+('descriptif_occ_statut_biogeographique_valide', 'La valeur de <b>occ_statut_biogeographique</b> n''est pas conforme', 'Le champ <b>occ_statut_biogeographique</b> doit correspondre à la nomenclature', $$( occ_statut_biogeographique IN ( '0','1','2','3','4','5', '6' ) )$$, 'conforme'),
+('descriptif_occ_statut_biologique_valide', 'La valeur de <b>occ_statut_biologique</b> n''est pas conforme', 'Le champ <b>occ_statut_biologique</b> doit correspondre à la nomenclature', $$( occ_statut_biologique IN ( '0','1','2','3','4','5', '9', '13' ) )$$, 'conforme'),
+('descriptif_occ_comportement_valide', 'La valeur de <b>occ_comportement</b> n''est pas conforme', 'Le champ <b>occ_comportement</b> doit correspondre à la nomenclature', $$( occ_comportement IN ( '0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23' ) )$$, 'conforme'),
+('descriptif_preuve_existante_valide', 'La valeur de <b>preuve_existante</b> n''est pas conforme', 'Le champ <b>preuve_existante</b> doit correspondre à la nomenclature', $$( preuve_existante IN ( '0','1','2','3' ) )$$, 'conforme'),
+
+('descriptif_obs_technique_valide_2', 'La valeur de <b>obs_technique_2</b> n''est pas conforme', 'Le champ <b>obs_technique_2</b> doit correspondre à la nomenclature', $$( obs_technique_2 IN ('0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27')  )$$, 'conforme'),
+('descriptif_occ_etat_biologique_valide_2', 'La valeur de <b>occ_etat_biologique_2</b> n''est pas conforme', 'Le champ <b>occ_etat_biologique_2</b> doit correspondre à la nomenclature', $$( occ_etat_biologique_2 IN ( '0','1','2','3' ) )$$, 'conforme'),
+('descriptif_occ_naturalite_valide_2', 'La valeur de <b>occ_naturalite_2</b> n''est pas conforme', 'Le champ <b>occ_naturalite_2</b> doit correspondre à la nomenclature', $$( occ_naturalite_2 IN ( '0','1','2','3','4','5' ) )$$, 'conforme'),
+('descriptif_occ_sexe_valide_2', 'La valeur de <b>occ_sexe_2</b> n''est pas conforme', 'Le champ <b>occ_sexe_2</b> doit correspondre à la nomenclature', $$( occ_sexe_2 IN ('0','1','2','3','4','5' ) )$$, 'conforme'),
+('descriptif_occ_stade_de_vie_valide_2', 'La valeur de <b>occ_stade_de_vie_2</b> n''est pas conforme', 'Le champ <b>occ_stade_de_vie_2</b> doit correspondre à la nomenclature', $$( occ_stade_de_vie_2 IN ('0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27' ) )$$, 'conforme'),
+('descriptif_occ_type_denombrement_valide_2', 'La valeur de <b>occ_type_denombrement_2</b> n''est pas conforme', 'Le champ <b>occ_type_denombrement_2</b> doit correspondre à la nomenclature', $$( occ_type_denombrement_2 IN ( 'Ca', 'Co', 'Es', 'NSP' ) )$$, 'conforme'),
+('descriptif_occ_statut_biogeographique_valide_2', 'La valeur de <b>occ_statut_biogeographique_2</b> n''est pas conforme', 'Le champ <b>occ_statut_biogeographique_2</b> doit correspondre à la nomenclature', $$( occ_statut_biogeographique_2 IN ( '0','1','2','3','4','5', '6' ) )$$, 'conforme'),
+('descriptif_occ_statut_biologique_valide_2', 'La valeur de <b>occ_statut_biologique_2</b> n''est pas conforme', 'Le champ <b>occ_statut_biologique_2</b> doit correspondre à la nomenclature', $$( occ_statut_biologique_2 IN ( '0','1','2','3','4','5', '9', '13' ) )$$, 'conforme'),
+('descriptif_occ_comportement_valide_2', 'La valeur de <b>occ_comportement_2</b> n''est pas conforme', 'Le champ <b>occ_comportement_2</b> doit correspondre à la nomenclature', $$( occ_comportement_2 IN ( '0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23' ) )$$, 'conforme'),
+('descriptif_preuve_existante_valide_2', 'La valeur de <b>preuve_existante_2</b> n''est pas conforme', 'Le champ <b>preuve_existante_2</b> doit correspondre à la nomenclature', $$( preuve_existante_2 IN ( '0','1','2','3' ) )$$, 'conforme'),
+
+('descriptif_obs_technique_valide_3', 'La valeur de <b>obs_technique_3</b> n''est pas conforme', 'Le champ <b>obs_technique_3</b> doit correspondre à la nomenclature', $$( obs_technique_3 IN ('0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27')  )$$, 'conforme'),
+('descriptif_occ_etat_biologique_valide_3', 'La valeur de <b>occ_etat_biologique_3</b> n''est pas conforme', 'Le champ <b>occ_etat_biologique_3</b> doit correspondre à la nomenclature', $$( occ_etat_biologique_3 IN ( '0','1','2','3' ) )$$, 'conforme'),
+('descriptif_occ_naturalite_valide_3', 'La valeur de <b>occ_naturalite_3</b> n''est pas conforme', 'Le champ <b>occ_naturalite_3</b> doit correspondre à la nomenclature', $$( occ_naturalite_3 IN ( '0','1','2','3','4','5' ) )$$, 'conforme'),
+('descriptif_occ_sexe_valide_3', 'La valeur de <b>occ_sexe_3</b> n''est pas conforme', 'Le champ <b>occ_sexe_3</b> doit correspondre à la nomenclature', $$( occ_sexe_3 IN ('0','1','2','3','4','5' ) )$$, 'conforme'),
+('descriptif_occ_stade_de_vie_valide_3', 'La valeur de <b>occ_stade_de_vie_3</b> n''est pas conforme', 'Le champ <b>occ_stade_de_vie_3</b> doit correspondre à la nomenclature', $$( occ_stade_de_vie_3 IN ('0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27' ) )$$, 'conforme'),
+('descriptif_occ_type_denombrement_valide_3', 'La valeur de <b>occ_type_denombrement_3</b> n''est pas conforme', 'Le champ <b>occ_type_denombrement_3</b> doit correspondre à la nomenclature', $$( occ_type_denombrement_3 IN ( 'Ca', 'Co', 'Es', 'NSP' ) )$$, 'conforme'),
+('descriptif_occ_statut_biogeographique_valide_3', 'La valeur de <b>occ_statut_biogeographique_3</b> n''est pas conforme', 'Le champ <b>occ_statut_biogeographique_3</b> doit correspondre à la nomenclature', $$( occ_statut_biogeographique_3 IN ( '0','1','2','3','4','5', '6' ) )$$, 'conforme'),
+('descriptif_occ_statut_biologique_valide_3', 'La valeur de <b>occ_statut_biologique_3</b> n''est pas conforme', 'Le champ <b>occ_statut_biologique_3</b> doit correspondre à la nomenclature', $$( occ_statut_biologique_3 IN ( '0','1','2','3','4','5', '9', '13' ) )$$, 'conforme'),
+('descriptif_occ_comportement_valide_3', 'La valeur de <b>occ_comportement_3</b> n''est pas conforme', 'Le champ <b>occ_comportement_3</b> doit correspondre à la nomenclature', $$( occ_comportement_3 IN ( '0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23' ) )$$, 'conforme'),
+('descriptif_preuve_existante_valide_3', 'La valeur de <b>preuve_existante_3</b> n''est pas conforme', 'Le champ <b>preuve_existante_3</b> doit correspondre à la nomenclature', $$( preuve_existante_3 IN ( '0','1','2','3' ) )$$, 'conforme')
+
+ON CONFLICT ON CONSTRAINT critere_conformite_unique_code DO NOTHING
 ;
